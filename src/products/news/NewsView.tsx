@@ -19,7 +19,7 @@ export function NewsView() {
         </div>
         
         {/* Right Panel */}
-        <div className="w-96 bg-[var(--background)] border-l border-[var(--border)] flex-shrink-0">
+        <div className="w-96 bg-background border-l border-border flex-shrink-0">
           <RightPanel />
         </div>
       </div>

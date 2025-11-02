@@ -164,7 +164,7 @@ export function getRiskPillStyles(riskLevel: RiskAssessment['riskLevel']) {
     case 'LOW':
       return 'bg-green-100 text-green-800 border-green-200';
     default:
-      return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
+      return 'bg-hover text-gray-800 border-border';
   }
 }
 

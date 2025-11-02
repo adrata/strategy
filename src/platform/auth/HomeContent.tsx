@@ -93,14 +93,14 @@ export function HomeContent() {
 
   // Show login form with hardcoded colors for reliability
   return (
-    <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[var(--panel-background)]">
+    <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8 bg-panel-background">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-[var(--foreground)]">Adrata</h1>
-          <p className="mt-2 text-sm text-[var(--muted)]">Sign in to continue</p>
+          <h1 className="text-4xl font-bold text-foreground">Adrata</h1>
+          <p className="mt-2 text-sm text-muted">Sign in to continue</p>
         </div>
 
-        <div className="bg-[var(--background)] py-8 px-6 shadow-lg rounded-xl border border-[var(--border)] sm:px-10">
+        <div className="bg-background py-8 px-6 shadow-lg rounded-xl border border-border sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
@@ -115,7 +115,7 @@ export function HomeContent() {
                 type="text"
                 autoComplete="username email"
                 required
-                className="appearance-none block w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-[var(--background)] text-[var(--foreground)]"
+                className="appearance-none block w-full px-3 py-2 border border-border rounded-md shadow-sm placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-background text-foreground"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoFocus
@@ -137,7 +137,7 @@ export function HomeContent() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none block w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-[var(--background)] text-[var(--foreground)]"
+                className="appearance-none block w-full px-3 py-2 border border-border rounded-md shadow-sm placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-background text-foreground"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
@@ -154,7 +154,7 @@ export function HomeContent() {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-semibold bg-[var(--foreground)] text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-semibold bg-foreground text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -170,24 +170,24 @@ export function HomeContent() {
           </form>
 
           {/* Test credentials help */}
-          <div className="mt-6 p-3 bg-[var(--panel-background)] rounded-md">
-            <p className="text-xs text-[var(--muted)] mb-2">Test credentials:</p>
+          <div className="mt-6 p-3 bg-panel-background rounded-md">
+            <p className="text-xs text-muted mb-2">Test credentials:</p>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <code className="bg-[var(--background)] px-2 py-1 rounded border text-gray-700">
+                <code className="bg-background px-2 py-1 rounded border text-gray-700">
                   admin
                 </code>
-                <span className="text-[var(--muted)] mx-1">/</span>
-                <code className="bg-[var(--background)] px-2 py-1 rounded border text-gray-700">
+                <span className="text-muted mx-1">/</span>
+                <code className="bg-background px-2 py-1 rounded border text-gray-700">
                   admin123
                 </code>
               </div>
               <div>
-                <code className="bg-[var(--background)] px-2 py-1 rounded border text-gray-700">
+                <code className="bg-background px-2 py-1 rounded border text-gray-700">
                   demo
                 </code>
-                <span className="text-[var(--muted)] mx-1">/</span>
-                <code className="bg-[var(--background)] px-2 py-1 rounded border text-gray-700">
+                <span className="text-muted mx-1">/</span>
+                <code className="bg-background px-2 py-1 rounded border text-gray-700">
                   demo123
                 </code>
               </div>

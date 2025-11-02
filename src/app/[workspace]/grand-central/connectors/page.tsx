@@ -10,7 +10,7 @@ export default function ConnectorsPage() {
   const [showLibrary, setShowLibrary] = useState(false);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Standardized Header */}
       <StandardHeader
         title="All Connectors"

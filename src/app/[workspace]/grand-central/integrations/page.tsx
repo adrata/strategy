@@ -418,20 +418,20 @@ const IntegrationsHub = () => {
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-2xl border border-[var(--border)] shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+      <div className="bg-background rounded-2xl border border-border shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="relative p-8 text-center border-b border-[var(--border)]">
+        <div className="relative p-8 text-center border-b border-border">
           <button
             onClick={() => (window['location']['href'] = "/")}
-            className="absolute top-4 right-4 p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="absolute top-4 right-4 p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-[var(--muted)]" />
+            <X className="w-5 h-5 text-muted" />
           </button>
 
-          <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             Integrations
           </h2>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             Connect your essential business applications
           </p>
         </div>
@@ -449,7 +449,7 @@ const IntegrationsHub = () => {
               <span>{oauthMessage.message}</span>
               <button
                 onClick={() => setOauthMessage(null)}
-                className="ml-4 text-[var(--muted)] hover:text-gray-700"
+                className="ml-4 text-muted hover:text-gray-700"
               >
                 ✕
               </button>
@@ -466,27 +466,27 @@ const IntegrationsHub = () => {
             return (
               <div
                 key={integration.id}
-                className={`flex items-center justify-between p-4 border rounded-lg hover:bg-[var(--hover-bg)] transition-colors ${
+                className={`flex items-center justify-between p-4 border rounded-lg hover:bg-hover transition-colors ${
                   integration.connected 
                     ? 'border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10' 
-                    : 'border-[var(--border)]'
+                    : 'border-border'
                 }`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-2 rounded-lg ${
                     integration.connected 
                       ? 'bg-green-100 dark:bg-green-900/20' 
-                      : 'bg-[var(--hover-bg)]'
+                      : 'bg-hover'
                   }`}>
                     <IconComponent className={`h-6 w-6 ${
                       integration.connected 
                         ? 'text-green-600 dark:text-green-400' 
-                        : 'text-[var(--foreground)]'
+                        : 'text-foreground'
                     }`} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-[var(--foreground)]">
+                      <h3 className="font-medium text-foreground">
                         {integration.name}
                       </h3>
                       {integration['connected'] && (
@@ -495,7 +495,7 @@ const IntegrationsHub = () => {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-[var(--muted)]">
+                    <p className="text-sm text-muted">
                       {integration.description}
                     </p>
                     {integration['connected'] && integration['email'] && (
@@ -504,7 +504,7 @@ const IntegrationsHub = () => {
                       </p>
                     )}
                     {integration['connected'] && integration['lastUpdated'] && (
-                      <p className="text-xs text-[var(--muted)] mt-1">
+                      <p className="text-xs text-muted mt-1">
                         Last synced: {new Date(integration.lastUpdated).toLocaleDateString()}
                       </p>
                     )}
@@ -523,8 +523,8 @@ const IntegrationsHub = () => {
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <Clock className="h-5 w-5 text-[var(--muted)]" />
-                        <span className="text-sm text-[var(--muted)]">
+                        <Clock className="h-5 w-5 text-muted" />
+                        <span className="text-sm text-muted">
                           Not Connected
                         </span>
                       </div>
@@ -573,7 +573,7 @@ const IntegrationsHub = () => {
         </div>
 
         {/* Enhanced Footer */}
-        <div className="p-6 border-t border-[var(--border)]">
+        <div className="p-6 border-t border-border">
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <div className="flex items-center gap-1">
@@ -582,15 +582,15 @@ const IntegrationsHub = () => {
                   {connectedProviders.length} Connected
                 </span>
               </div>
-              <span className="text-[var(--muted)]">•</span>
+              <span className="text-muted">•</span>
               <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4 text-[var(--muted)]" />
-                <span className="text-sm text-[var(--muted)]">
+                <Clock className="h-4 w-4 text-muted" />
+                <span className="text-sm text-muted">
                   {integrations.length - connectedProviders.length} Available
                 </span>
               </div>
             </div>
-            <p className="text-xs text-[var(--muted)]">
+            <p className="text-xs text-muted">
               {connectedProviders.length > 0 
                 ? `Active integrations: ${integrations.filter(i => i.connected).map(i => i.name).join(', ')}`
                 : 'No integrations connected yet'

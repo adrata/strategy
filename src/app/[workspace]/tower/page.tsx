@@ -225,7 +225,7 @@ export default function TowerPage() {
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         <TowerHeader
           lastUpdated={new Date().toISOString()}
           isRefreshing={true}
@@ -236,7 +236,7 @@ export default function TowerPage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 mx-auto mb-4 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-            <p className="text-[var(--muted)]">Loading Tower metrics...</p>
+            <p className="text-muted">Loading Tower metrics...</p>
           </div>
         </div>
       </div>
@@ -245,7 +245,7 @@ export default function TowerPage() {
 
   if (error) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         <TowerHeader
           lastUpdated={new Date().toISOString()}
           isRefreshing={isRefreshing}
@@ -260,8 +260,8 @@ export default function TowerPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Failed to load metrics</h3>
-            <p className="text-[var(--muted)] mb-4">{error}</p>
+            <h3 className="text-lg font-medium text-foreground mb-2">Failed to load metrics</h3>
+            <p className="text-muted mb-4">{error}</p>
             <button
               onClick={handleRefresh}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -276,7 +276,7 @@ export default function TowerPage() {
 
   if (!metrics) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         <TowerHeader
           lastUpdated={new Date().toISOString()}
           isRefreshing={isRefreshing}
@@ -286,7 +286,7 @@ export default function TowerPage() {
         />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-[var(--muted)]">No metrics data available</p>
+            <p className="text-muted">No metrics data available</p>
           </div>
         </div>
       </div>
@@ -296,7 +296,7 @@ export default function TowerPage() {
   const cards = convertToCards(metrics);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       <TowerHeader
         lastUpdated={metrics.lastUpdated}
         isRefreshing={isRefreshing}

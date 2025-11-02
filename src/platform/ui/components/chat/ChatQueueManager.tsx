@@ -136,12 +136,12 @@ export function ChatQueueManager({
   }
 
   return (
-    <div className={`bg-[var(--background)] border-b border-[var(--border)] ${className}`}>
+    <div className={`bg-background border-b border-border ${className}`}>
       {/* Queue Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[var(--hover-bg)]/30">
+      <div className="flex items-center justify-between px-4 py-2 bg-hover/30">
         <div className="flex items-center gap-2">
-          <QueueListIcon className="w-4 h-4 text-[var(--muted)]" />
-          <span className="text-sm font-medium text-[var(--foreground)]">
+          <QueueListIcon className="w-4 h-4 text-muted" />
+          <span className="text-sm font-medium text-foreground">
             Queue
           </span>
           {pendingCount > 0 && (
@@ -163,14 +163,14 @@ export function ChatQueueManager({
           {queue.some(item => item['status'] === 'completed') && (
             <button
               onClick={clearCompleted}
-              className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] px-2 py-1 rounded hover:bg-[var(--hover-bg)] transition-colors"
+              className="text-xs text-muted hover:text-foreground px-2 py-1 rounded hover:bg-hover transition-colors"
             >
               Clear completed
             </button>
           )}
           <button
             onClick={() => setIsVisible(false)}
-            className="text-[var(--muted)] hover:text-[var(--foreground)] p-1 rounded hover:bg-[var(--hover-bg)] transition-colors"
+            className="text-muted hover:text-foreground p-1 rounded hover:bg-hover transition-colors"
           >
             <XMarkIcon className="w-4 h-4" />
           </button>
@@ -182,7 +182,7 @@ export function ChatQueueManager({
         {queue.map((item, index) => (
           <div
             key={item.id}
-            className={`flex items-center gap-3 px-4 py-2 border-b border-[var(--border)] last:border-b-0 ${
+            className={`flex items-center gap-3 px-4 py-2 border-b border-border last:border-b-0 ${
               item['status'] === 'processing' 
                 ? 'bg-blue-50 dark:bg-blue-900/20' 
                 : item['status'] === 'completed'
@@ -191,7 +191,7 @@ export function ChatQueueManager({
             }`}
           >
             {/* Drag Handle */}
-            <div className="cursor-move text-[var(--muted)]">
+            <div className="cursor-move text-muted">
               <Bars3Icon className="w-3 h-3" />
             </div>
 
@@ -210,10 +210,10 @@ export function ChatQueueManager({
 
             {/* Query Text */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-[var(--foreground)] truncate">
+              <p className="text-sm text-foreground truncate">
                 {item.query}
               </p>
-              <p className="text-xs text-[var(--muted)]">
+              <p className="text-xs text-muted">
                 {item.timestamp.toLocaleTimeString()}
               </p>
             </div>
@@ -222,7 +222,7 @@ export function ChatQueueManager({
             {item['status'] === 'pending' && (
               <button
                 onClick={() => removeFromQueue(item.id)}
-                className="text-[var(--muted)] hover:text-red-500 p-1 rounded hover:bg-[var(--hover-bg)] transition-colors"
+                className="text-muted hover:text-red-500 p-1 rounded hover:bg-hover transition-colors"
               >
                 <XMarkIcon className="w-3 h-3" />
               </button>

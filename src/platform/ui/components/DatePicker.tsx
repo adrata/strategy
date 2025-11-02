@@ -143,12 +143,12 @@ export function DatePicker({
             disabled={disabled}
             className={`
               w-full px-3 py-2 pr-20 text-sm border rounded-md
-              bg-[var(--background)] text-[var(--foreground)]
-              placeholder:text-[var(--muted)] placeholder:italic
+              bg-background text-foreground
+              placeholder:text-muted placeholder:italic
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
               disabled:opacity-50 disabled:cursor-not-allowed
               transition-colors duration-200
-              ${!isValidInput && inputValue ? 'border-red-500' : 'border-[var(--border)]'}
+              ${!isValidInput && inputValue ? 'border-red-500' : 'border-border'}
             `}
           />
           
@@ -157,7 +157,7 @@ export function DatePicker({
             <button
               type="button"
               disabled={disabled}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-foreground disabled:opacity-50"
             >
               <CalendarIcon className="w-4 h-4" />
             </button>
@@ -168,7 +168,7 @@ export function DatePicker({
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-8 top-1/2 -translate-y-1/2 p-1 text-[var(--muted)] hover:text-[var(--foreground)]"
+              className="absolute right-8 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-foreground"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -179,7 +179,7 @@ export function DatePicker({
 
         <Popover.Portal>
           <Popover.Content
-            className={`w-auto p-0 bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg ${
+            className={`w-auto p-0 bg-background border border-border rounded-md shadow-lg ${
               inModal ? 'z-[60]' : 'z-50'
             }`}
             sideOffset={inModal ? 8 : 4}
@@ -212,7 +212,7 @@ export function DatePicker({
 
       {/* Helper text when empty */}
       {!inputValue && (
-        <div className="absolute top-full left-0 mt-1 text-xs text-[var(--muted)]">
+        <div className="absolute top-full left-0 mt-1 text-xs text-muted">
           Type date or click calendar icon
         </div>
       )}

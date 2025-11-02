@@ -112,11 +112,11 @@ export function ParticleLeftPanel() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)] border-r border-[var(--border)]">
+    <div className="h-full flex flex-col bg-background border-r border-border">
       {/* Header */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">Experiments</h2>
+          <h2 className="text-lg font-semibold text-foreground">Experiments</h2>
           <button
             onClick={() => setIsCreateModalOpen(true)}
             className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -133,7 +133,7 @@ export function ParticleLeftPanel() {
           <select
             value={experimentType || ''}
             onChange={(e) => setExperimentType(e.target.value || null)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Types</option>
             <option value="ab_test">A/B Test</option>
@@ -146,7 +146,7 @@ export function ParticleLeftPanel() {
           <select
             value={experimentStatus || ''}
             onChange={(e) => setExperimentStatus(e.target.value || null)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Status</option>
             <option value="draft">Draft</option>
@@ -159,29 +159,29 @@ export function ParticleLeftPanel() {
       </div>
 
       {/* Stats Overview */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="grid grid-cols-2 gap-3">
           <div className="text-center">
-            <div className="text-lg font-bold text-[var(--foreground)]">{stats.total}</div>
-            <div className="text-xs text-[var(--muted-foreground)]">Total</div>
+            <div className="text-lg font-bold text-foreground">{stats.total}</div>
+            <div className="text-xs text-muted">Total</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-[var(--foreground)]">{stats.active}</div>
-            <div className="text-xs text-[var(--muted-foreground)]">Active</div>
+            <div className="text-lg font-bold text-foreground">{stats.active}</div>
+            <div className="text-xs text-muted">Active</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-[var(--foreground)]">{stats.completed}</div>
-            <div className="text-xs text-[var(--muted-foreground)]">Completed</div>
+            <div className="text-lg font-bold text-foreground">{stats.completed}</div>
+            <div className="text-xs text-muted">Completed</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-[var(--foreground)]">{stats.avgConfidence}%</div>
-            <div className="text-xs text-[var(--muted-foreground)]">Avg Confidence</div>
+            <div className="text-lg font-bold text-foreground">{stats.avgConfidence}%</div>
+            <div className="text-xs text-muted">Avg Confidence</div>
           </div>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="flex space-x-1">
           {[
             { id: 'experiments', label: 'Experiments', icon: '🧪' },
@@ -195,7 +195,7 @@ export function ParticleLeftPanel() {
               className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.id
                   ? 'bg-blue-100 text-blue-800'
-                  : 'text-[var(--muted-foreground)] hover:bg-[var(--hover)]'
+                  : 'text-muted hover:bg-hover'
               }`}
             >
               <span className="mr-1">{tab.icon}</span>
@@ -209,7 +209,7 @@ export function ParticleLeftPanel() {
       <div className="flex-1 overflow-y-auto">
         {filteredExperiments.length === 0 ? (
           <div className="p-4 text-center">
-            <p className="text-[var(--muted-foreground)] text-sm">No experiments found</p>
+            <p className="text-muted text-sm">No experiments found</p>
           </div>
         ) : (
           <div className="p-2">
@@ -220,13 +220,13 @@ export function ParticleLeftPanel() {
                 className={`p-3 rounded-lg cursor-pointer transition-colors mb-2 ${
                   selectedExperiment?.id === experiment.id
                     ? 'bg-blue-50 border border-blue-200'
-                    : 'hover:bg-[var(--hover)]'
+                    : 'hover:bg-hover'
                 }`}
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center space-x-2">
                     <span className="text-lg">{getTypeIcon(experiment.experimentType)}</span>
-                    <h3 className="font-medium text-[var(--foreground)] text-sm truncate">
+                    <h3 className="font-medium text-foreground text-sm truncate">
                       {experiment.name}
                     </h3>
                   </div>
@@ -236,12 +236,12 @@ export function ParticleLeftPanel() {
                 </div>
                 
                 {experiment.description && (
-                  <p className="text-xs text-[var(--muted-foreground)] mb-2 line-clamp-2">
+                  <p className="text-xs text-muted mb-2 line-clamp-2">
                     {experiment.description}
                   </p>
                 )}
                 
-                <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
+                <div className="flex items-center justify-between text-xs text-muted">
                   <span>{(experiment.confidenceLevel * 100).toFixed(0)}% confidence</span>
                   <span>{new Date(experiment.createdAt).toLocaleDateString()}</span>
                 </div>

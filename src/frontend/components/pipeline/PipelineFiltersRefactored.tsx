@@ -147,7 +147,7 @@ export function PipelineFiltersRefactored({
         <select
           value={currentValue}
           onChange={(e) => handleFilterChange(filterType, e.target.value)}
-          className="appearance-none bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2.5 sm:py-2 pr-8 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full min-h-[2.5rem] sm:min-h-0"
+          className="appearance-none bg-background border border-border rounded-lg px-3 py-2.5 sm:py-2 pr-8 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full min-h-[2.5rem] sm:min-h-0"
         >
           <option value="all">All {label}</option>
           {options.map((option) => (
@@ -157,7 +157,7 @@ export function PipelineFiltersRefactored({
           ))}
         </select>
         <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-          <svg className="h-4 w-4 text-[var(--muted)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-4 w-4 text-muted flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
@@ -181,7 +181,7 @@ export function PipelineFiltersRefactored({
               placeholder={`Search ${sectionConfig?.displayName || section}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-3 pr-3 py-2.5 sm:py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="block w-full pl-3 pr-3 py-2.5 sm:py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
           </div>
 
@@ -193,7 +193,7 @@ export function PipelineFiltersRefactored({
               className={`flex items-center space-x-1.5 sm:space-x-2 px-3 py-2.5 sm:py-2 rounded-lg border transition-colors min-h-[2.5rem] sm:min-h-0 ${
                 showFilters || activeFilterCount > 0
                   ? 'bg-gray-50 border-gray-200 text-gray-700'
-                  : 'bg-[var(--background)] border-[var(--border)] text-gray-700 hover:bg-[var(--panel-background)]'
+                  : 'bg-background border-border text-gray-700 hover:bg-panel-background'
               }`}
             >
               <FunnelIcon className="h-4 w-4 flex-shrink-0" />
@@ -208,7 +208,7 @@ export function PipelineFiltersRefactored({
             {/* Column selector */}
             <button
               onClick={() => setShowColumnSelector(!showColumnSelector)}
-              className="flex items-center space-x-1.5 sm:space-x-2 px-3 py-2.5 sm:py-2 rounded-lg border border-[var(--border)] text-gray-700 hover:bg-[var(--panel-background)] transition-colors min-h-[2.5rem] sm:min-h-0"
+              className="flex items-center space-x-1.5 sm:space-x-2 px-3 py-2.5 sm:py-2 rounded-lg border border-border text-gray-700 hover:bg-panel-background transition-colors min-h-[2.5rem] sm:min-h-0"
             >
               <AdjustmentsHorizontalIcon className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm font-medium hidden xs:inline">Columns</span>
@@ -227,9 +227,9 @@ export function PipelineFiltersRefactored({
 
       {/* Filters panel - Responsive */}
       {showFilters && (
-        <div className="bg-[var(--panel-background)] rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
+        <div className="bg-panel-background rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-[var(--foreground)]">Filters</h3>
+            <h3 className="text-sm font-medium text-foreground">Filters</h3>
             {activeFilterCount > 0 && (
               <button
                 onClick={clearAllFilters}
@@ -258,11 +258,11 @@ export function PipelineFiltersRefactored({
 
       {/* Column selector panel - Responsive */}
       {showColumnSelector && (
-        <div className="bg-[var(--panel-background)] rounded-lg p-3 sm:p-4">
-          <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Visible Columns</h3>
+        <div className="bg-panel-background rounded-lg p-3 sm:p-4">
+          <h3 className="text-sm font-medium text-foreground mb-3">Visible Columns</h3>
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
             {getSectionDefaultColumns(section).map((column) => (
-              <label key={column} className="flex items-center space-x-2 p-2 rounded hover:bg-[var(--hover)] transition-colors cursor-pointer">
+              <label key={column} className="flex items-center space-x-2 p-2 rounded hover:bg-hover transition-colors cursor-pointer">
                 <input
                   type="checkbox"
                   checked={visibleColumns.includes(column)}
@@ -273,7 +273,7 @@ export function PipelineFiltersRefactored({
                       onColumnVisibilityChange(visibleColumns.filter(c => c !== column));
                     }
                   }}
-                  className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500 h-4 w-4 flex-shrink-0"
+                  className="rounded border-border text-blue-600 focus:ring-blue-500 h-4 w-4 flex-shrink-0"
                 />
                 <span className="text-sm text-gray-700 truncate">
                   {column.charAt(0).toUpperCase() + column.slice(1)}
@@ -285,7 +285,7 @@ export function PipelineFiltersRefactored({
       )}
 
       {/* Results summary - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-sm text-[var(--muted)]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-sm text-muted">
         <span className="text-center sm:text-left">
           {totalCount} {sectionConfig?.displayName || section}
           {activeFilterCount > 0 && ` (filtered)`}
@@ -300,7 +300,7 @@ export function PipelineFiltersRefactored({
                 const [field, direction] = e.target.value.split(':');
                 onSortChange(field, direction as 'asc' | 'desc');
               }}
-              className="border border-[var(--border)] rounded-lg px-3 py-2 text-sm bg-[var(--background)] focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-0 flex-1 xs:flex-none"
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-background focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-0 flex-1 xs:flex-none"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={`${option.value}:asc`}>

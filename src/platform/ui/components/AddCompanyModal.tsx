@@ -259,10 +259,10 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-[60]">
-      <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
+    <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-[60]">
+      <div className="bg-background rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div 
               className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -279,15 +279,15 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">Add Company</h2>
-              <p className="text-sm text-[var(--muted)]">Search or add a new company</p>
+              <h2 className="text-xl font-bold text-foreground">Add Company</h2>
+              <p className="text-sm text-muted">Search or add a new company</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
+            <XMarkIcon className="w-4.5 h-4.5 text-muted" />
           </button>
         </div>
 
@@ -309,7 +309,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           {/* Company Search */}
           {!showCreateForm && !selectedCompany && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Search for Company
               </label>
               <CompanySelector
@@ -320,7 +320,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               <button
                 type="button"
                 onClick={() => setShowCreateForm(true)}
-                className="mt-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                className="mt-2 text-sm text-muted hover:text-foreground transition-colors"
               >
                 Or create a new company →
               </button>
@@ -330,24 +330,24 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           {/* Selected Company Preview */}
           {!showCreateForm && selectedCompany && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Selected Company
               </label>
-              <div className="p-4 border border-[var(--border)] rounded-lg bg-[var(--panel-background)]">
+              <div className="p-4 border border-border rounded-lg bg-panel-background">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium text-[var(--foreground)]">{selectedCompany.name}</h4>
+                    <h4 className="font-medium text-foreground">{selectedCompany.name}</h4>
                     {selectedCompany.website && (
-                      <p className="text-sm text-[var(--muted)]">{selectedCompany.website}</p>
+                      <p className="text-sm text-muted">{selectedCompany.website}</p>
                     )}
                     {selectedCompany.industry && (
-                      <p className="text-sm text-[var(--muted)]">{selectedCompany.industry}</p>
+                      <p className="text-sm text-muted">{selectedCompany.industry}</p>
                     )}
                   </div>
                   <button
                     type="button"
                     onClick={() => setSelectedCompany(null)}
-                    className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                    className="text-sm text-muted hover:text-foreground transition-colors"
                   >
                     Change
                   </button>
@@ -359,7 +359,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-2 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm"
                 >
                   Cancel
                 </button>
@@ -388,11 +388,11 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           {showCreateForm && (
             <>
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-[var(--foreground)]">Create New Company</h3>
+                <h3 className="text-sm font-medium text-foreground">Create New Company</h3>
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
-                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1"
+                  className="text-sm text-muted hover:text-foreground transition-colors flex items-center gap-1"
                 >
                   <ArrowLeftIcon className="w-3 h-3" />
                   Back to search
@@ -401,7 +401,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
 
               {/* Company Name */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Company Name *
                 </label>
             <input
@@ -414,7 +414,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
                 if (errorMessage) setErrorMessage('');
               }}
               placeholder="Enter company name"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
               style={{
                 '--tw-ring-color': `${colors.primary}30`,
                 '--tw-border-color': colors.primary
@@ -425,7 +425,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
 
           {/* Website */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Website
             </label>
             <input
@@ -433,13 +433,13 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               value={formData.website}
               onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
               placeholder="example.com or https://example.com"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>
 
           {/* LinkedIn */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               LinkedIn
             </label>
             <input
@@ -447,14 +447,14 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               value={formData.linkedin}
               onChange={(e) => setFormData(prev => ({ ...prev, linkedin: e.target.value }))}
               placeholder="linkedin.com/company/example"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>
 
           {/* State field - only for Notary Everyday workspace */}
           {isNotaryEveryday && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 State
               </label>
               <input
@@ -462,14 +462,14 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
                 value={formData.state}
                 onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value }))}
                 placeholder="e.g., California, TX"
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
               />
             </div>
           )}
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Notes
                 </label>
                 <textarea
@@ -477,7 +477,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
                   onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                   placeholder="Additional notes about this company"
                   rows={3}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
               </div>
             </>
@@ -490,7 +490,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               type="button"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm disabled:opacity-50"
+              className="flex-1 px-4 py-2 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm disabled:opacity-50"
             >
               Cancel
             </button>

@@ -259,7 +259,7 @@ export const ChatInterface: React['FC'] = () => {
   };
 
   return (
-    <div className="flex-1 bg-[var(--background)] flex flex-col justify-end relative">
+    <div className="flex-1 bg-background flex flex-col justify-end relative">
       {/* Magical Changes Overlay */}
       {showMagicalChanges && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -276,12 +276,12 @@ export const ChatInterface: React['FC'] = () => {
 
       {/* Chat header row fixed to top */}
       <div className="absolute top-0 left-0 w-full z-10 flex flex-row items-center justify-between px-6 pt-6">
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-2 text-[var(--foreground)] font-normal text-lg">
+        <div className="bg-background border border-border rounded-xl px-4 py-2 text-foreground font-normal text-lg">
           Grand Central
         </div>
         <div className="flex flex-row items-center space-x-3">
           {/* Cost optimization indicator */}
-          <div className="text-xs text-[var(--muted)]">
+          <div className="text-xs text-muted">
             {messages
               .filter((m) => m.cost)
               .reduce((sum, m) => sum + (m.cost || 0), 0) > 0 && (
@@ -303,7 +303,7 @@ export const ChatInterface: React['FC'] = () => {
         style={{ maxHeight: "calc(100vh - 220px)", overflowY: "auto" }}
       >
         {/* Welcome message */}
-        <div className="bg-transparent px-0 py-0 text-base text-[var(--foreground)] w-fit max-w-full mb-2">
+        <div className="bg-transparent px-0 py-0 text-base text-foreground w-fit max-w-full mb-2">
           Welcome! My name is Adrata. I&apos;m here to help you sell convincingly. I can help with:<br/><br/>1. Pipeline optimization,<br/>2. Message crafting, and<br/>3. Sales analytics.<br/><br/>What would you like to focus on?
         </div>
         {[...messages].reverse().map((msg, idx) => (
@@ -311,14 +311,14 @@ export const ChatInterface: React['FC'] = () => {
             key={`msg-${idx}`}
             className={
               msg['role'] === "user"
-                ? "bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-2 text-base text-[var(--foreground)] w-fit max-w-[80%] self-start"
-                : "bg-[var(--background)] px-6 py-3 text-base text-[var(--foreground)] w-fit max-w-[95%] self-start shadow-sm"
+                ? "bg-background border border-border rounded-xl px-4 py-2 text-base text-foreground w-fit max-w-[80%] self-start"
+                : "bg-background px-6 py-3 text-base text-foreground w-fit max-w-[95%] self-start shadow-sm"
             }
             style={{ alignSelf: "flex-start" }}
           >
             {msg.content}
             {msg['modelUsed'] && msg['cost'] && (
-              <div className="text-xs text-[var(--muted)] mt-2 opacity-70">
+              <div className="text-xs text-muted mt-2 opacity-70">
                 {msg.modelUsed} • ${msg.cost.toFixed(4)}
               </div>
             )}
@@ -339,7 +339,7 @@ export const ChatInterface: React['FC'] = () => {
           </div>
         ))}
         {isLoading && (
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-2 text-[var(--muted)] font-normal text-lg w-fit max-w-full leading-tight self-start">
+          <div className="bg-background border border-border rounded-xl px-4 py-2 text-muted font-normal text-lg w-fit max-w-full leading-tight self-start">
             <span>Adrata is thinking...</span>
           </div>
         )}
@@ -357,7 +357,7 @@ export const ChatInterface: React['FC'] = () => {
             <div className="absolute left-[15px] top-0 pt-[10px] mt-[2px] z-10 flex items-center space-x-2">
               <button
                 type="button"
-                className="text-[var(--muted)] text-sm font-medium border border-[var(--border)] rounded px-3 py-1 bg-[var(--background)] shadow-sm"
+                className="text-muted text-sm font-medium border border-border rounded px-3 py-1 bg-background shadow-sm"
                 style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.01)" }}
               >
                 Add nuance
@@ -368,7 +368,7 @@ export const ChatInterface: React['FC'] = () => {
               rows={3}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="w-full pl-[14px] pr-[48px] pt-[52px] pb-[54px] rounded-md border border-[var(--border)] focus:outline-none resize-none overflow-y-auto min-h-[4.25em] max-h-[10.75em] placeholder-[var(--muted)] text-[var(--foreground)]"
+              className="w-full pl-[14px] pr-[48px] pt-[52px] pb-[54px] rounded-md border border-border focus:outline-none resize-none overflow-y-auto min-h-[4.25em] max-h-[10.75em] placeholder-[var(--muted)] text-foreground"
               style={{ minHeight: "4.25em", maxHeight: "10.75em" }}
             />
             <button
@@ -379,7 +379,7 @@ export const ChatInterface: React['FC'] = () => {
                 top: "calc(76% + 7px)",
                 right: "11px",
               }}
-              className="absolute right-2 top-[76%] -translate-y-1/2 p-2 rounded-md bg-[var(--foreground)] hover:bg-[var(--foreground)] text-[var(--background)] flex items-center justify-center cursor-pointer"
+              className="absolute right-2 top-[76%] -translate-y-1/2 p-2 rounded-md bg-foreground hover:bg-foreground text-background flex items-center justify-center cursor-pointer"
               aria-label="Send"
               disabled={isLoading || !input.trim()}
             >

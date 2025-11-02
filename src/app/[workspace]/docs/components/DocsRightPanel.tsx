@@ -73,12 +73,12 @@ export function DocsRightPanel() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+    <div className="h-full flex flex-col bg-background border-l border-border">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div>
-          <h2 className="font-semibold text-[var(--foreground)]">Table of Contents</h2>
-          <p className="text-sm text-[var(--muted)]">{selectedPage.title}</p>
+          <h2 className="font-semibold text-foreground">Table of Contents</h2>
+          <p className="text-sm text-muted">{selectedPage.title}</p>
         </div>
       </div>
 
@@ -90,14 +90,14 @@ export function DocsRightPanel() {
               <button
                 key={item.id}
                 onClick={() => scrollToHeading(item.id)}
-                className={`block w-full text-left px-2 py-1 text-sm rounded transition-colors hover:bg-[var(--hover)] ${
+                className={`block w-full text-left px-2 py-1 text-sm rounded transition-colors hover:bg-hover ${
                   item.level === 1 
-                    ? 'font-medium text-[var(--foreground)]' 
+                    ? 'font-medium text-foreground' 
                     : item.level === 2
-                    ? 'text-[var(--foreground)] ml-2'
+                    ? 'text-foreground ml-2'
                     : item.level === 3
-                    ? 'text-[var(--muted-foreground)] ml-4'
-                    : 'text-[var(--muted)] ml-6'
+                    ? 'text-muted ml-4'
+                    : 'text-muted ml-6'
                 }`}
               >
                 {item.title}
@@ -105,23 +105,23 @@ export function DocsRightPanel() {
             ))}
           </nav>
         ) : (
-          <div className="text-center text-[var(--muted)] py-8">
+          <div className="text-center text-muted py-8">
             <p className="text-sm">No headings found</p>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-[var(--border)]">
+      <div className="p-4 border-t border-border">
         <div className="space-y-2">
           <button className="w-full px-3 py-2 text-sm bg-[var(--button-primary)] text-white rounded-lg hover:bg-[var(--button-primary-hover)] transition-colors">
             Was this helpful?
           </button>
           <div className="flex gap-2">
-            <button className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors">
+            <button className="flex-1 px-3 py-2 text-sm border border-border rounded-lg hover:bg-hover transition-colors">
               👍
             </button>
-            <button className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors">
+            <button className="flex-1 px-3 py-2 text-sm border border-border rounded-lg hover:bg-hover transition-colors">
               👎
             </button>
           </div>

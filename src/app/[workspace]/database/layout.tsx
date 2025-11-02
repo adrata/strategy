@@ -80,18 +80,18 @@ function DatabaseRightPanel() {
 
   if (selectedRecord) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+      <div className="h-full flex flex-col bg-background border-l border-border">
         {/* Header with X button */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div>
-            <h2 className="font-semibold text-[var(--foreground)]">Record Details</h2>
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <h2 className="font-semibold text-foreground">Record Details</h2>
+            <p className="text-sm text-muted">
               {selectedTable} - {selectedRecord.id || 'New Record'}
             </p>
           </div>
           <button
             onClick={() => setSelectedRecord(null)}
-            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-1.5 hover:bg-hover rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -103,9 +103,9 @@ function DatabaseRightPanel() {
         <div className="flex-1 p-4 space-y-4 overflow-y-auto">
           <div className="space-y-3">
             {Object.entries(selectedRecord).map(([key, value]) => (
-              <div key={key} className="p-3 bg-[var(--panel-background)] rounded-lg">
-                <h3 className="font-medium text-[var(--foreground)] mb-1">{key}</h3>
-                <p className="text-sm text-[var(--muted)] break-all">
+              <div key={key} className="p-3 bg-panel-background rounded-lg">
+                <h3 className="font-medium text-foreground mb-1">{key}</h3>
+                <p className="text-sm text-muted break-all">
                   {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
                 </p>
               </div>

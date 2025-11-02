@@ -327,26 +327,26 @@ export default function FirstPremierBankReportPage() {
           <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
             First Premier Bank Buyer Group Intelligence Report
           </h1>
-          <p className="text-xl text-[var(--muted)] mb-8">
+          <p className="text-xl text-muted mb-8">
             Strategic Analysis for Winning Variant: Navigating First Premier Bank's Financial Services Structure
           </p>
           
-          <div className="bg-[var(--panel-background)] p-6 rounded-lg border-l-4 border-gray-400">
+          <div className="bg-panel-background p-6 rounded-lg border-l-4 border-gray-400">
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared For</p>
+                <p className="text-xs font-semibold text-muted uppercase tracking-wide">Prepared For</p>
                 <p className="text-sm font-semibold text-black">Winning Variant Leadership Team</p>
               </div>
               <div>
-                <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Target Company</p>
+                <p className="text-xs font-semibold text-muted uppercase tracking-wide">Target Company</p>
                 <p className="text-sm font-semibold text-black">First Premier Bank</p>
               </div>
               <div>
-                <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared By</p>
+                <p className="text-xs font-semibold text-muted uppercase tracking-wide">Prepared By</p>
                 <p className="text-sm font-semibold text-black">Adrata Sales Intelligence Team</p>
               </div>
               <div>
-                <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Strategic Focus</p>
+                <p className="text-xs font-semibold text-muted uppercase tracking-wide">Strategic Focus</p>
                 <p className="text-sm font-semibold text-black">C-Suite Level Engagement</p>
               </div>
             </div>
@@ -370,7 +370,7 @@ export default function FirstPremierBankReportPage() {
             successful engagement.
           </p>
 
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-6">
+          <div className="bg-panel-background border border-border p-6 rounded-lg mb-6">
             <h3 className="text-lg font-semibold text-black mb-3">Strategic Intelligence Advantage</h3>
             <p className="text-gray-700 mb-4">
               We've identified First Premier Bank's exact buyer group structure, saving you months of research 
@@ -401,21 +401,21 @@ export default function FirstPremierBankReportPage() {
 
           {/* Key Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+            <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
               <div className="text-3xl font-bold text-black">{buyerGroup.totalMembers}</div>
-              <div className="text-sm text-[var(--muted)]">Buyer Group Size</div>
+              <div className="text-sm text-muted">Buyer Group Size</div>
             </div>
-            <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+            <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
               <div className="text-3xl font-bold text-black">{buyerGroup.members.filter(m => m.role === 'Decision Maker').length}</div>
-              <div className="text-sm text-[var(--muted)]">Decision Makers</div>
+              <div className="text-sm text-muted">Decision Makers</div>
             </div>
-            <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+            <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
               <div className="text-3xl font-bold text-black">{buyerGroup.members.filter(m => m.role === 'Champion').length}</div>
-              <div className="text-sm text-[var(--muted)]">Champions</div>
+              <div className="text-sm text-muted">Champions</div>
             </div>
-            <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+            <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
               <div className="text-3xl font-bold text-black">$400K+</div>
-              <div className="text-sm text-[var(--muted)]">Deal Value Range</div>
+              <div className="text-sm text-muted">Deal Value Range</div>
             </div>
           </div>
         </section>
@@ -424,7 +424,7 @@ export default function FirstPremierBankReportPage() {
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-black mb-6">First Premier Bank Company Overview</h2>
           
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
+          <div className="bg-panel-background border border-border p-6 rounded-lg mb-8">
             <h3 className="text-xl font-semibold text-black mb-4">Company Profile</h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
@@ -464,7 +464,7 @@ export default function FirstPremierBankReportPage() {
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-black mb-6">Sales Intent Analysis</h2>
           
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
+          <div className="bg-panel-background border border-border p-6 rounded-lg mb-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold text-black">Sales Intent Score</h3>
               {salesIntent && (
@@ -505,7 +505,7 @@ export default function FirstPremierBankReportPage() {
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-black mb-6">First Premier Bank Buyer Group Intelligence</h2>
           
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
+          <div className="bg-panel-background border border-border p-6 rounded-lg mb-8">
             <h3 className="text-xl font-semibold text-black mb-4">Strategic Context</h3>
             <p className="text-gray-700 mb-4">
               First Premier Bank operates in the competitive banking market, where digital transformation and 
@@ -575,7 +575,7 @@ export default function FirstPremierBankReportPage() {
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-black mb-6">Strategic Recommendations</h2>
           
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg">
+          <div className="bg-panel-background border border-border p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-black mb-4">Recommended Engagement Strategy</h3>
             <ul className="space-y-3">
               {strategicRecommendations?.map((recommendation, index) => (
@@ -589,7 +589,7 @@ export default function FirstPremierBankReportPage() {
         </section>
 
         {/* Call to Action */}
-        <section className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-8 text-center">
+        <section className="bg-panel-background border border-border rounded-lg p-8 text-center">
           <h3 className="text-2xl font-bold text-black mb-4">Ready to Accelerate Your Sales Process?</h3>
           <p className="text-gray-700 mb-6">
             This intelligence is just the beginning. Schedule a call with Dan to discuss how Adrata can 

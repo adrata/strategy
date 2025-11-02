@@ -165,7 +165,7 @@ export function AllConnectorsView() {
   };
 
   return (
-    <div className="h-full bg-[var(--background)] text-[var(--foreground)] overflow-y-auto invisible-scrollbar">
+    <div className="h-full bg-background text-foreground overflow-y-auto invisible-scrollbar">
       <div className="p-6 space-y-6">
 
         {/* Search and Filters */}
@@ -177,7 +177,7 @@ export function AllConnectorsView() {
               placeholder="Search connectors..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -190,7 +190,7 @@ export function AllConnectorsView() {
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category.id
                     ? 'bg-blue-100 text-blue-800'
-                    : 'bg-[var(--panel-background)] text-[var(--muted)] hover:bg-[var(--hover)]'
+                    : 'bg-panel-background text-muted hover:bg-hover'
                 }`}
               >
                 {category.name} ({category.count})
@@ -204,17 +204,17 @@ export function AllConnectorsView() {
           {filteredConnectors.map(connector => (
             <div
               key={connector.id}
-              className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+              className="bg-panel-background border border-border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-[var(--foreground)]">{connector.name}</h3>
+                    <h3 className="font-semibold text-foreground">{connector.name}</h3>
                     <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeBadge(connector.type)}`}>
                       {connector.type.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-[var(--muted)] text-sm">{connector.description}</p>
+                  <p className="text-muted text-sm">{connector.description}</p>
                 </div>
                 <div className="flex items-center gap-1">
                   {getStatusIcon(connector.status)}
@@ -225,7 +225,7 @@ export function AllConnectorsView() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[var(--muted)] capitalize">
+                <span className="text-xs text-muted capitalize">
                   {connector.category.replace('-', ' ')}
                 </span>
                 <div className="flex gap-2">
@@ -248,41 +248,41 @@ export function AllConnectorsView() {
         {/* Empty State */}
         {filteredConnectors.length === 0 && (
           <div className="text-center py-12">
-            <FunnelIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">No connectors found</h3>
-            <p className="text-[var(--muted)]">
+            <FunnelIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">No connectors found</h3>
+            <p className="text-muted">
               Try adjusting your search or filter criteria
             </p>
           </div>
         )}
 
         {/* Stats */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3">Integration Summary</h3>
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3">Integration Summary</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {connectors.filter(c => c.status === 'configured').length}
               </div>
-              <div className="text-sm text-[var(--muted)]">Configured</div>
+              <div className="text-sm text-muted">Configured</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {connectors.filter(c => c.status === 'not-configured').length}
               </div>
-              <div className="text-sm text-[var(--muted)]">Available</div>
+              <div className="text-sm text-muted">Available</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {connectors.filter(c => c.type === 'api').length}
               </div>
-              <div className="text-sm text-[var(--muted)]">APIs</div>
+              <div className="text-sm text-muted">APIs</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {connectors.filter(c => c.type === 'nango').length}
               </div>
-              <div className="text-sm text-[var(--muted)]">Nango</div>
+              <div className="text-sm text-muted">Nango</div>
             </div>
           </div>
         </div>

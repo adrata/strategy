@@ -97,10 +97,10 @@ export function ConfigurableTable({
         <div className="text-4xl mb-4">
           {sectionConfig?.icon || '📄'}
         </div>
-        <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+        <h3 className="text-lg font-medium text-foreground mb-2">
           No {sectionConfig?.displayName || section} found
         </h3>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           {sectionConfig?.description || `There are no ${section} records to display.`}
         </p>
       </div>

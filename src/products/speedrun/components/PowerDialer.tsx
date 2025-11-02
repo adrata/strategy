@@ -33,16 +33,16 @@ function PowerDialerHeader({
   onDialerClose: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+    <div className="flex items-center justify-between p-6 border-b border-border">
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center">
           <PhoneIcon className="w-6 h-6 text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-[var(--foreground)]">
+          <h2 className="text-xl font-bold text-foreground">
             Power Dialer
           </h2>
-          <p className="text-[var(--muted)] text-sm">
+          <p className="text-muted text-sm">
             Contact {callState.currentContact + 1} of {contacts.length}
           </p>
           {forwardingStatus && (
@@ -64,19 +64,19 @@ function PowerDialerHeader({
       <div className="flex items-center gap-2">
         <button
           onClick={togglePause}
-          className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+          className="p-2 hover:bg-hover rounded-lg transition-colors"
         >
           {callState.isPaused ? (
-            <PlayIcon className="w-5 h-5 text-[var(--foreground)]" />
+            <PlayIcon className="w-5 h-5 text-foreground" />
           ) : (
-            <PauseIcon className="w-5 h-5 text-[var(--foreground)]" />
+            <PauseIcon className="w-5 h-5 text-foreground" />
           )}
         </button>
         <button
           onClick={onDialerClose}
-          className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+          className="p-2 hover:bg-hover rounded-lg transition-colors"
         >
-          <XMarkIcon className="w-5 h-5 text-[var(--foreground)]" />
+          <XMarkIcon className="w-5 h-5 text-foreground" />
         </button>
       </div>
     </div>
@@ -86,16 +86,16 @@ function PowerDialerHeader({
 // Extracted Contact Card Component
 function PowerDialerContact({ contact }: { contact: any }) {
   return (
-    <div className="bg-[var(--hover-bg)] rounded-xl p-6 mb-6">
+    <div className="bg-hover rounded-xl p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-2xl font-bold text-[var(--foreground)]">
+          <h3 className="text-2xl font-bold text-foreground">
             {contact.name}
           </h3>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             {contact.title} at {contact.company}
           </p>
-          <p className="text-[var(--muted)] text-sm mt-1">{contact.phone}</p>
+          <p className="text-muted text-sm mt-1">{contact.phone}</p>
         </div>
         <div className="text-right">
           <span
@@ -111,7 +111,7 @@ function PowerDialerContact({ contact }: { contact: any }) {
           </span>
         </div>
       </div>
-      <div className="text-sm text-[var(--muted)]">
+      <div className="text-sm text-muted">
         <span className="font-medium">Next Action:</span> {contact.nextAction}
       </div>
     </div>
@@ -127,16 +127,16 @@ function PowerDialerProgress({
   contacts: any[];
 }) {
   return (
-    <div className="bg-[var(--hover-bg)] rounded-lg p-4 mb-4">
+    <div className="bg-hover rounded-lg p-4 mb-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-[var(--foreground)]">
+        <span className="text-sm font-medium text-foreground">
           Progress
         </span>
-        <span className="text-sm text-[var(--muted)]">
+        <span className="text-sm text-muted">
           {callState.currentContact + 1}/{contacts.length}
         </span>
       </div>
-      <div className="w-full bg-[var(--border)] rounded-full h-2">
+      <div className="w-full bg-border rounded-full h-2">
         <div
           className="bg-blue-500 h-2 rounded-full transition-all duration-300"
           style={{
@@ -183,7 +183,7 @@ function PowerDialerCallStatus({
           </button>
 
           <div className="text-center">
-            <p className="text-xs text-[var(--muted)] mb-2">
+            <p className="text-xs text-muted mb-2">
               📞 Native calling: Direct computer-to-phone via Twilio WebRTC
             </p>
           </div>
@@ -197,7 +197,7 @@ function PowerDialerCallStatus({
             📞 Initializing call...
           </div>
           <div className="text-center">
-            <p className="text-sm text-[var(--muted)]">
+            <p className="text-sm text-muted">
               Setting up WebRTC connection...
             </p>
           </div>
@@ -212,13 +212,13 @@ function PowerDialerCallStatus({
           </div>
 
           <div className="text-center mb-4">
-            <p className="text-sm text-[var(--foreground)] font-medium mb-2">
+            <p className="text-sm text-foreground font-medium mb-2">
               📞 {currentContact.name}&apos;s phone is ringing!
             </p>
           </div>
 
-          <div className="bg-[var(--hover-bg)] rounded-lg p-4 w-full">
-            <p className="text-sm font-medium text-[var(--foreground)] mb-3 text-center">
+          <div className="bg-hover rounded-lg p-4 w-full">
+            <p className="text-sm font-medium text-foreground mb-3 text-center">
               What happened with the call?
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -276,16 +276,16 @@ function PowerDialerCallStatus({
           </div>
 
           <div className="text-center mb-4">
-            <p className="text-sm text-[var(--foreground)] font-medium mb-2">
+            <p className="text-sm text-foreground font-medium mb-2">
               💻 {currentContact.name} answered - you&apos;re connected!
             </p>
-            <p className="text-xs text-[var(--muted)]">
+            <p className="text-xs text-muted">
               Duration: {formatDuration(callState.callDuration)}
             </p>
           </div>
 
-          <div className="bg-[var(--hover-bg)] rounded-lg p-4 w-full">
-            <p className="text-sm font-medium text-[var(--foreground)] mb-3 text-center">
+          <div className="bg-hover rounded-lg p-4 w-full">
+            <p className="text-sm font-medium text-foreground mb-3 text-center">
               How did the call go?
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -347,7 +347,7 @@ function PowerDialerCallStatus({
             <p className="text-sm text-red-600 dark:text-red-400 font-medium mb-2">
               {callState.error || "Call failed"}
             </p>
-            <p className="text-xs text-[var(--muted)]">
+            <p className="text-xs text-muted">
               Please check connection and try again
             </p>
           </div>
@@ -528,7 +528,7 @@ export function PowerDialer({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl max-w-2xl w-full">
+      <div className="bg-background border border-border rounded-2xl shadow-2xl max-w-2xl w-full">
         <PowerDialerHeader
           callState={callState}
           contacts={contacts}
@@ -552,14 +552,14 @@ export function PowerDialer({
           {/* Call Notes - only show when completing */}
           {callState['status'] === "complete" && (
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Call Notes
               </label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add notes about this call..."
-                className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows={3}
               />
 
@@ -580,12 +580,12 @@ export function PowerDialer({
           {/* Settings */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+              <label className="flex items-center gap-2 text-sm text-foreground">
                 <input
                   type="checkbox"
                   checked={isAutoAdvance}
                   onChange={(e) => setIsAutoAdvance(e.target.checked)}
-                  className="rounded border-[var(--border)]"
+                  className="rounded border-border"
                 />
                 Auto-advance to next contact
               </label>
@@ -597,13 +597,13 @@ export function PowerDialer({
             </div>
 
             <div className="flex items-center gap-3">
-              <label className="text-sm text-[var(--foreground)] font-medium">
+              <label className="text-sm text-foreground font-medium">
                 Delay between calls:
               </label>
               <select
                 value={delayBetweenCalls}
                 onChange={(e) => setDelayBetweenCalls(Number(e.target.value))}
-                className="px-2 py-1 border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] text-sm"
+                className="px-2 py-1 border border-border rounded bg-background text-foreground text-sm"
               >
                 <option value={5}>5 seconds</option>
                 <option value={10}>10 seconds</option>

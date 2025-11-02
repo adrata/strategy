@@ -189,7 +189,7 @@ export function EnhancedEmailPreview({
       case "breakup":
         return "text-red-600 bg-red-100 dark:bg-red-900/30";
       default:
-        return "text-[var(--muted)] bg-[var(--hover)] dark:bg-[var(--foreground)]/30";
+        return "text-muted bg-hover dark:bg-foreground/30";
     }
   };
 
@@ -201,18 +201,18 @@ export function EnhancedEmailPreview({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-[10000]">
-      <div className="bg-[var(--background)] rounded-xl w-[1200px] max-w-[95vw] max-h-[95vh] overflow-y-auto border border-[var(--border)] shadow-2xl">
+      <div className="bg-background rounded-xl w-[1200px] max-w-[95vw] max-h-[95vh] overflow-y-auto border border-border shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <SparklesIcon className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
+              <h2 className="text-xl font-bold text-foreground">
                 Intelligent Email Preview
               </h2>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Pre-generated emails for {leadName} at {leadCompany} • Powered
                 by your voice profile
               </p>
@@ -220,7 +220,7 @@ export function EnhancedEmailPreview({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
             ✕
           </button>
@@ -228,7 +228,7 @@ export function EnhancedEmailPreview({
 
         {/* Voice Profile Status */}
         {voiceProfile && (
-          <div className="p-4 bg-green-50 dark:bg-green-900/20 border-b border-[var(--border)]">
+          <div className="p-4 bg-green-50 dark:bg-green-900/20 border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <CheckBadgeIcon className="w-5 h-5 text-green-600" />
@@ -261,20 +261,20 @@ export function EnhancedEmailPreview({
 
         <div className="flex h-[600px]">
           {/* Email List */}
-          <div className="w-1/3 border-r border-[var(--border)] overflow-y-auto">
-            <div className="p-4 border-b border-[var(--border)]">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">
+          <div className="w-1/3 border-r border-border overflow-y-auto">
+            <div className="p-4 border-b border-border">
+              <h3 className="font-semibold text-foreground mb-2">
                 Pre-Generated Emails
               </h3>
               {isGenerating ? (
-                <div className="flex items-center gap-2 text-[var(--muted)]">
+                <div className="flex items-center gap-2 text-muted">
                   <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                   <span className="text-sm">
                     Generating personalized emails...
                   </span>
                 </div>
               ) : (
-                <div className="text-sm text-[var(--muted)]">
+                <div className="text-sm text-muted">
                   {preGeneratedEmails.length} emails ready
                 </div>
               )}
@@ -288,7 +288,7 @@ export function EnhancedEmailPreview({
                   className={`w-full text-left p-3 rounded-lg mb-2 transition-colors ${
                     selectedEmail?.id === email.id
                       ? "bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
-                      : "hover:bg-[var(--hover-bg)] border border-transparent"
+                      : "hover:bg-hover border border-transparent"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -303,25 +303,25 @@ export function EnhancedEmailPreview({
                       >
                         {Math.round(email.confidence * 100)}%
                       </span>
-                      <ChartBarIcon className="w-3 h-3 text-[var(--muted)]" />
+                      <ChartBarIcon className="w-3 h-3 text-muted" />
                     </div>
                   </div>
 
-                  <div className="font-medium text-sm text-[var(--foreground)] mb-1 truncate">
+                  <div className="font-medium text-sm text-foreground mb-1 truncate">
                     {email.subject}
                   </div>
 
-                  <div className="text-xs text-[var(--muted)] mb-2 line-clamp-2">
+                  <div className="text-xs text-muted mb-2 line-clamp-2">
                     {email.body.split("\n")[2] || email.body.split("\n")[0]}
                   </div>
 
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[var(--muted)]">
+                    <span className="text-muted">
                       {Math.round(email.estimatedReplyProbability * 100)}% reply
                       rate
                     </span>
                     {email['suggestedSendTime'] && (
-                      <div className="flex items-center gap-1 text-[var(--muted)]">
+                      <div className="flex items-center gap-1 text-muted">
                         <ClockIcon className="w-3 h-3" />
                         <span>
                           {email.suggestedSendTime.toLocaleDateString()}
@@ -339,16 +339,16 @@ export function EnhancedEmailPreview({
             {selectedEmail ? (
               <>
                 {/* Email Header */}
-                <div className="p-4 border-b border-[var(--border)]">
+                <div className="p-4 border-b border-border">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-[var(--foreground)]">
+                    <h3 className="font-semibold text-foreground">
                       {selectedEmail.emailType.replace("-", " ").toUpperCase()}{" "}
                       EMAIL
                     </h3>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="flex items-center gap-1 px-3 py-1 text-sm bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-3 py-1 text-sm bg-hover hover:bg-loading-bg rounded-lg transition-colors"
                       >
                         <PencilIcon className="w-4 h-4" />
                         {isEditing ? "Preview" : "Edit"}
@@ -359,36 +359,36 @@ export function EnhancedEmailPreview({
                   {/* Personalization Insights */}
                   <div className="grid grid-cols-3 gap-4 text-xs">
                     <div>
-                      <div className="font-medium text-[var(--foreground)] mb-1">
+                      <div className="font-medium text-foreground mb-1">
                         Personalizations
                       </div>
                       <div className="space-y-1">
                         {selectedEmail.personalizations.map((p, i) => (
-                          <div key={i} className="text-[var(--muted)]">
+                          <div key={i} className="text-muted">
                             • {p}
                           </div>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <div className="font-medium text-[var(--foreground)] mb-1">
+                      <div className="font-medium text-foreground mb-1">
                         Industry Insights
                       </div>
                       <div className="space-y-1">
                         {selectedEmail.industryInsights.map((insight, i) => (
-                          <div key={i} className="text-[var(--muted)]">
+                          <div key={i} className="text-muted">
                             • {insight}
                           </div>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <div className="font-medium text-[var(--foreground)] mb-1">
+                      <div className="font-medium text-foreground mb-1">
                         Voice Elements
                       </div>
                       <div className="space-y-1">
                         {selectedEmail.voiceElements.map((element, i) => (
-                          <div key={i} className="text-[var(--muted)]">
+                          <div key={i} className="text-muted">
                             • {element}
                           </div>
                         ))}
@@ -402,43 +402,43 @@ export function EnhancedEmailPreview({
                   {isEditing ? (
                     <div className="h-full flex flex-col gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                        <label className="block text-sm font-medium text-foreground mb-2">
                           Subject Line
                         </label>
                         <input
                           type="text"
                           value={editedSubject}
                           onChange={(e) => setEditedSubject(e.target.value)}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
                       <div className="flex-1">
-                        <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                        <label className="block text-sm font-medium text-foreground mb-2">
                           Email Body
                         </label>
                         <textarea
                           value={editedBody}
                           onChange={(e) => setEditedBody(e.target.value)}
-                          className="w-full h-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                          className="w-full h-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
                         />
                       </div>
                     </div>
                   ) : (
                     <div className="h-full">
                       <div className="mb-4">
-                        <div className="text-sm font-medium text-[var(--muted)] mb-1">
+                        <div className="text-sm font-medium text-muted mb-1">
                           Subject:
                         </div>
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           {editedSubject}
                         </div>
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-[var(--muted)] mb-1">
+                        <div className="text-sm font-medium text-muted mb-1">
                           Body:
                         </div>
-                        <div className="bg-[var(--panel-background)] dark:bg-[var(--foreground)] rounded-lg p-4 h-full">
-                          <pre className="whitespace-pre-wrap text-[var(--foreground)] font-sans">
+                        <div className="bg-panel-background dark:bg-foreground rounded-lg p-4 h-full">
+                          <pre className="whitespace-pre-wrap text-foreground font-sans">
                             {editedBody}
                           </pre>
                         </div>
@@ -448,8 +448,8 @@ export function EnhancedEmailPreview({
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-4 border-t border-[var(--border)] flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+                <div className="p-4 border-t border-border flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-sm text-muted">
                     <div className="flex items-center gap-1">
                       <ChartBarIcon className="w-4 h-4" />
                       <span>
@@ -494,7 +494,7 @@ export function EnhancedEmailPreview({
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
-                <div className="text-center text-[var(--muted)]">
+                <div className="text-center text-muted">
                   <SparklesIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <div>Select an email to preview</div>
                 </div>

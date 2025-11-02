@@ -120,24 +120,24 @@ export function MiddlePanel({
   // Show skeleton loading state only when actually loading (not when there's simply no data)
   if (showSkeleton) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Header skeleton */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <div className="h-6 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
-              <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
+              <div className="h-6 bg-loading-bg rounded w-24 animate-pulse"></div>
+              <div className="h-4 bg-loading-bg rounded w-32 animate-pulse"></div>
             </div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-20 animate-pulse"></div>
           </div>
         </div>
         
         {/* Filters skeleton */}
-        <div className="flex-shrink-0 px-6 py-3 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-3 border-b border-border">
           <div className="flex gap-4">
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-48 animate-pulse"></div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-48 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-24 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-24 animate-pulse"></div>
           </div>
         </div>
         
@@ -146,12 +146,12 @@ export function MiddlePanel({
           <div className="space-y-3">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="flex gap-4">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-28 animate-pulse"></div>
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-40 animate-pulse"></div>
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-8 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-32 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-28 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-24 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-40 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-32 animate-pulse"></div>
               </div>
             ))}
           </div>
@@ -192,7 +192,7 @@ export function MiddlePanel({
 
   // FULL-FEATURED: Use complete pipeline layout with header and filters
   return (
-    <div className="h-full flex flex-col bg-[var(--background)] overflow-hidden">
+    <div className="h-full flex flex-col bg-background overflow-hidden">
       {/* Header with metrics and actions */}
       <PipelineHeader
         section={activeSection}

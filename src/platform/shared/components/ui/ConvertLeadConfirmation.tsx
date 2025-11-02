@@ -212,12 +212,12 @@ export const ConvertLeadConfirmation: React.FC<
     <>
       <Confetti isActive={showConfetti} />
       <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-[var(--background)] rounded-2xl shadow-2xl border border-[var(--border)] w-full max-w-md overflow-hidden">
+        <div className="bg-background rounded-2xl shadow-2xl border border-border w-full max-w-md overflow-hidden">
           {/* Header with gradient */}
           <div
             className={`${isFinalConversion ? "bg-gradient-to-r from-purple-500 via-pink-500 to-red-500" : "bg-gradient-to-r from-emerald-500 to-blue-600"} px-6 py-8 text-center`}
           >
-            <div className="w-16 h-16 bg-[var(--background)] rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center mx-auto mb-4">
               {isFinalConversion ? (
                 <svg
                   className="w-8 h-8 text-purple-500"
@@ -261,10 +261,10 @@ export const ConvertLeadConfirmation: React.FC<
           {/* Content */}
           <div className="px-6 py-6">
             {/* Current vs Next Stage */}
-            <div className="bg-[var(--panel-background)] rounded-lg p-4 mb-6">
+            <div className="bg-panel-background rounded-lg p-4 mb-6">
               <div className="flex items-center justify-between">
                 <div className="text-center flex-1">
-                  <div className="text-sm font-medium text-[var(--muted)] mb-1">
+                  <div className="text-sm font-medium text-muted mb-1">
                     Current Stage
                   </div>
                   <div
@@ -285,7 +285,7 @@ export const ConvertLeadConfirmation: React.FC<
                 {/* Arrow */}
                 <div className="flex-shrink-0 mx-4">
                   <svg
-                    className="w-6 h-6 text-[var(--muted)]"
+                    className="w-6 h-6 text-muted"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -300,7 +300,7 @@ export const ConvertLeadConfirmation: React.FC<
                 </div>
 
                 <div className="text-center flex-1">
-                  <div className="text-sm font-medium text-[var(--muted)] mb-1">
+                  <div className="text-sm font-medium text-muted mb-1">
                     Next Stage
                   </div>
                   <div
@@ -319,26 +319,26 @@ export const ConvertLeadConfirmation: React.FC<
             {/* Lead Details */}
             <div className="space-y-3 mb-6">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm font-medium text-[var(--muted)]">Name</span>
-                <span className="text-sm text-[var(--foreground)]">{lead.name}</span>
+                <span className="text-sm font-medium text-muted">Name</span>
+                <span className="text-sm text-foreground">{lead.name}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm font-medium text-[var(--muted)]">
+                <span className="text-sm font-medium text-muted">
                   Company
                 </span>
-                <span className="text-sm text-[var(--foreground)]">
+                <span className="text-sm text-foreground">
                   {lead.company || "-"}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm font-medium text-[var(--muted)]">Role</span>
-                <span className="text-sm text-[var(--foreground)]">
+                <span className="text-sm font-medium text-muted">Role</span>
+                <span className="text-sm text-foreground">
                   {lead.buyerGroupRole || "-"}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="text-sm font-medium text-[var(--muted)]">Email</span>
-                <span className="text-sm text-[var(--foreground)]">
+                <span className="text-sm font-medium text-muted">Email</span>
+                <span className="text-sm text-foreground">
                   {lead.email || "-"}
                 </span>
               </div>
@@ -362,11 +362,11 @@ export const ConvertLeadConfirmation: React.FC<
           </div>
 
           {/* Footer Actions */}
-          <div className="px-6 py-4 bg-[var(--panel-background)] flex justify-end space-x-3">
+          <div className="px-6 py-4 bg-panel-background flex justify-end space-x-3">
             <button
               onClick={onClose}
               disabled={isConverting}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
             >
               Cancel
             </button>

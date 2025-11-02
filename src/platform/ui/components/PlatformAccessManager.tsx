@@ -65,13 +65,13 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
   };
 
   return (
-    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-background rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-[var(--foreground)]">Platform Access Manager</h2>
-            <p className="text-[var(--muted)] text-sm">
+            <h2 className="text-xl font-bold text-foreground">Platform Access Manager</h2>
+            <p className="text-muted text-sm">
               Configure user access levels: Monaco standalone or full AOS platform
             </p>
           </div>
@@ -86,7 +86,7 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
             {onClose && (
               <button
                 onClick={onClose}
-                className="text-[var(--muted)] hover:text-[var(--muted)]"
+                className="text-muted hover:text-muted"
               >
                 <XCircleIcon className="h-6 w-6" />
               </button>
@@ -98,15 +98,15 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="text-[var(--muted)]">Loading configurations...</div>
+              <div className="text-muted">Loading configurations...</div>
             </div>
           ) : configs['length'] === 0 ? (
             <div className="text-center py-12">
-              <UserIcon className="h-12 w-12 text-[var(--muted)] mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+              <UserIcon className="h-12 w-12 text-muted mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 No Platform Access Configurations
               </h3>
-              <p className="text-[var(--muted)] mb-6">
+              <p className="text-muted mb-6">
                 Create your first user platform access configuration to get started.
               </p>
               <button
@@ -119,17 +119,17 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
           ) : (
             <div className="space-y-4">
               {/* Legend */}
-              <div className="bg-[var(--panel-background)] rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-[var(--foreground)] mb-3">Platform Access Levels</h3>
+              <div className="bg-panel-background rounded-lg p-4 mb-6">
+                <h3 className="font-semibold text-foreground mb-3">Platform Access Levels</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-start gap-3">
                     <div className="w-4 h-4 bg-blue-500 rounded-full mt-1"></div>
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">Monaco Standalone</div>
-                      <div className="text-sm text-[var(--muted)]">
+                      <div className="font-medium text-foreground">Monaco Standalone</div>
+                      <div className="text-sm text-muted">
                         Simplified interface with Monaco buyer group intelligence only
                       </div>
-                      <div className="text-xs text-[var(--muted)] mt-1">
+                      <div className="text-xs text-muted mt-1">
                         Apps: Monaco • Features: Basic
                       </div>
                     </div>
@@ -137,11 +137,11 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
                   <div className="flex items-start gap-3">
                     <div className="w-4 h-4 bg-green-500 rounded-full mt-1"></div>
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">Full AOS Platform</div>
-                      <div className="text-sm text-[var(--muted)]">
+                      <div className="font-medium text-foreground">Full AOS Platform</div>
+                      <div className="text-sm text-muted">
                         Complete platform with all apps and advanced features
                       </div>
-                      <div className="text-xs text-[var(--muted)] mt-1">
+                      <div className="text-xs text-muted mt-1">
                         Apps: Monaco, Speedrun, Pipeline, Oasis, Tower, Garage
                       </div>
                     </div>
@@ -150,13 +150,13 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
               </div>
 
               {/* Configurations Table */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-[var(--panel-background)] border-b border-[var(--border)]">
-                  <h3 className="font-medium text-[var(--foreground)]">User Access Configurations</h3>
+              <div className="bg-background border border-border rounded-lg overflow-hidden">
+                <div className="px-6 py-3 bg-panel-background border-b border-border">
+                  <h3 className="font-medium text-foreground">User Access Configurations</h3>
                 </div>
                 <div className="divide-y divide-gray-200">
                   {configs.map((config) => (
-                    <div key={config.id} className="px-6 py-4 hover:bg-[var(--panel-background)]">
+                    <div key={config.id} className="px-6 py-4 hover:bg-panel-background">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div
@@ -168,20 +168,20 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
                           ></div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <UserIcon className="h-4 w-4 text-[var(--muted)]" />
-                              <span className="font-medium text-[var(--foreground)]">
+                              <UserIcon className="h-4 w-4 text-muted" />
+                              <span className="font-medium text-foreground">
                                 User ID: {config.userId}
                               </span>
                               {config['workspaceId'] && (
                                 <>
-                                  <BuildingOfficeIcon className="h-4 w-4 text-[var(--muted)] ml-2" />
-                                  <span className="text-[var(--muted)]">
+                                  <BuildingOfficeIcon className="h-4 w-4 text-muted ml-2" />
+                                  <span className="text-muted">
                                     Workspace: {config.workspaceId}
                                   </span>
                                 </>
                               )}
                             </div>
-                            <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+                            <div className="flex items-center gap-4 text-sm text-muted">
                               <span
                                 className={`px-2 py-1 rounded-full text-xs font-medium ${
                                   config['platformAccess'] === "monaco-standalone"
@@ -203,14 +203,14 @@ export function PlatformAccessManagerComponent({ onClose }: PlatformAccessManage
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEdit(config)}
-                            className="p-2 text-[var(--muted)] hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2 text-muted hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                             title="Edit configuration"
                           >
                             <PencilIcon className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => config['userId'] && handleDelete(config.userId)}
-                            className="p-2 text-[var(--muted)] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-muted hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete configuration"
                           >
                             <TrashIcon className="h-4 w-4" />
@@ -292,9 +292,9 @@ function CreateEditModal({ config, onClose, onSave }: CreateEditModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
-      <div className="bg-[var(--background)] rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div className="px-6 py-4 border-b border-[var(--border)]">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">
+      <div className="bg-background rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div className="px-6 py-4 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">
             {config ? "Edit" : "Create"} Platform Access Configuration
           </h3>
         </div>
@@ -309,7 +309,7 @@ function CreateEditModal({ config, onClose, onSave }: CreateEditModalProps) {
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               placeholder="e.g., demo-user-2025, dan, ross"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:border-[var(--border)]"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:border-border"
               disabled={!!config} // Don't allow changing user ID for existing configs
             />
           </div>
@@ -323,7 +323,7 @@ function CreateEditModal({ config, onClose, onSave }: CreateEditModalProps) {
               value={workspaceId}
               onChange={(e) => setWorkspaceId(e.target.value)}
               placeholder="e.g., demo-workspace, adrata"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:border-[var(--border)]"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:border-border"
             />
           </div>
 
@@ -332,7 +332,7 @@ function CreateEditModal({ config, onClose, onSave }: CreateEditModalProps) {
               Platform Access Level *
             </label>
             <div className="space-y-3">
-              <label className="flex items-start gap-3 p-3 border border-[var(--border)] rounded-lg cursor-pointer hover:bg-[var(--panel-background)]">
+              <label className="flex items-start gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-panel-background">
                 <input
                   type="radio"
                   name="platformAccess"
@@ -342,17 +342,17 @@ function CreateEditModal({ config, onClose, onSave }: CreateEditModalProps) {
                   className="mt-1"
                 />
                 <div>
-                  <div className="font-medium text-[var(--foreground)]">Monaco Standalone</div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="font-medium text-foreground">Monaco Standalone</div>
+                  <div className="text-sm text-muted">
                     Simplified interface focused on buyer group intelligence
                   </div>
-                  <div className="text-xs text-[var(--muted)] mt-1">
+                  <div className="text-xs text-muted mt-1">
                     Perfect for sales reps who need focused prospecting tools
                   </div>
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 p-3 border border-[var(--border)] rounded-lg cursor-pointer hover:bg-[var(--panel-background)]">
+              <label className="flex items-start gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-panel-background">
                 <input
                   type="radio"
                   name="platformAccess"
@@ -362,11 +362,11 @@ function CreateEditModal({ config, onClose, onSave }: CreateEditModalProps) {
                   className="mt-1"
                 />
                 <div>
-                  <div className="font-medium text-[var(--foreground)]">Full AOS Platform</div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="font-medium text-foreground">Full AOS Platform</div>
+                  <div className="text-sm text-muted">
                     Complete platform with all apps and advanced features
                   </div>
-                  <div className="text-xs text-[var(--muted)] mt-1">
+                  <div className="text-xs text-muted mt-1">
                     Ideal for power users, managers, and advanced sales professionals
                   </div>
                 </div>
@@ -375,10 +375,10 @@ function CreateEditModal({ config, onClose, onSave }: CreateEditModalProps) {
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-[var(--border)] flex justify-end gap-3">
+        <div className="px-6 py-4 border-t border-border flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+            className="px-4 py-2 text-gray-700 border border-border rounded-lg hover:bg-panel-background transition-colors"
             disabled={saving}
           >
             Cancel

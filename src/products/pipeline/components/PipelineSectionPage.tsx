@@ -243,7 +243,7 @@ function PipelinePanelLayout({ section }: { section: string }) {
       {/* Monaco Signal Popup - Only show for speedrun section */}
       {section === 'speedrun' && isSlideUpVisible && (
         <div className="fixed bottom-6 right-4 z-[9999] animate-in slide-in-from-right duration-300">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl w-[520px] p-7">
+          <div className="bg-background border border-border rounded-2xl shadow-2xl w-[520px] p-7">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
@@ -252,13 +252,13 @@ function PipelinePanelLayout({ section }: { section: string }) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[var(--foreground)] text-lg">Buying Intent Detected</h3>
-                  <p className="text-[var(--muted)] text-sm">Pipeline Speedrun Signal</p>
+                  <h3 className="font-semibold text-foreground text-lg">Buying Intent Detected</h3>
+                  <p className="text-muted text-sm">Pipeline Speedrun Signal</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsSlideUpVisible(false)}
-                className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+                className="text-muted hover:text-muted transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -267,10 +267,10 @@ function PipelinePanelLayout({ section }: { section: string }) {
             </div>
             
             <div className="space-y-4">
-              <div className="bg-[var(--panel-background)] rounded-xl p-4">
+              <div className="bg-panel-background rounded-xl p-4">
                 <div className="mb-2">
-                  <p className="font-medium text-[var(--foreground)]">{activeSignal?.contact.name || 'Sarah Mitchell'}</p>
-                  <p className="text-sm text-[var(--muted)]">{activeSignal?.contact.title || 'IT Director'} at {activeSignal?.contact.company || 'Retail Solutions Inc'}</p>
+                  <p className="font-medium text-foreground">{activeSignal?.contact.name || 'Sarah Mitchell'}</p>
+                  <p className="text-sm text-muted">{activeSignal?.contact.title || 'IT Director'} at {activeSignal?.contact.company || 'Retail Solutions Inc'}</p>
                 </div>
                 <p className="text-sm text-gray-700 leading-relaxed">
                   "{activeSignal?.note.content || 'Looking to upgrade our POS system next quarter with budget approved for $50K solution'}"
@@ -278,7 +278,7 @@ function PipelinePanelLayout({ section }: { section: string }) {
               </div>
               
               <p className="text-sm text-gray-700 leading-relaxed">
-                <span className="text-[var(--foreground)] font-medium">Recommendation:</span> Move to #1 on Speedrun (prime timing for outreach)
+                <span className="text-foreground font-medium">Recommendation:</span> Move to #1 on Speedrun (prime timing for outreach)
               </p>
               
               <div className="flex items-center gap-2">
@@ -301,7 +301,7 @@ function PipelinePanelLayout({ section }: { section: string }) {
                     }
                     setIsSlideUpVisible(false);
                   }}
-                  className="bg-[var(--hover)] hover:bg-[var(--loading-bg)] text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors"
+                  className="bg-hover hover:bg-loading-bg text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors"
                 >
                   Dismiss
                 </button>

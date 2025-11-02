@@ -377,7 +377,7 @@ export function CompanySelector({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         />
         
         {/* Clear button */}
@@ -385,7 +385,7 @@ export function CompanySelector({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-8 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+            className="absolute right-8 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground"
           >
             <XMarkIcon className="w-4 h-4" />
           </button>
@@ -411,7 +411,7 @@ export function CompanySelector({
             setIsOpen(!isOpen);
           }}
           disabled={disabled}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground disabled:opacity-50"
         >
           <ChevronDownIcon className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
@@ -419,7 +419,7 @@ export function CompanySelector({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className={`absolute z-50 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg overflow-y-auto ${showAddForm ? 'max-h-[500px]' : 'max-h-64'}`}>
+        <div className={`absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-lg overflow-y-auto ${showAddForm ? 'max-h-[500px]' : 'max-h-64'}`}>
           {/* Search Results */}
           {searchResults.length > 0 && (
             <div className="py-1">
@@ -453,7 +453,7 @@ export function CompanySelector({
 
           {/* Add New Company Option */}
           {searchQuery.trim() && !showAddForm && (
-            <div className="border-t border-[var(--border)] py-1">
+            <div className="border-t border-border py-1">
               <button
                 type="button"
                 onClick={() => {
@@ -461,8 +461,8 @@ export function CompanySelector({
                   setNewCompanyName(searchQuery.trim());
                   setCreateError('');
                 }}
-                className={`w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none text-blue-600 ${
-                  selectedIndex === searchResults.length ? 'bg-[var(--panel-background)]' : ''
+                className={`w-full px-4 py-2 text-left hover:bg-panel-background focus:bg-panel-background focus:outline-none text-blue-600 ${
+                  selectedIndex === searchResults.length ? 'bg-panel-background' : ''
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -475,7 +475,7 @@ export function CompanySelector({
 
           {/* Add New Company Form */}
           {showAddForm && (
-            <div className="border-t border-[var(--border)] p-4 bg-[var(--panel-background)]">
+            <div className="border-t border-border p-4 bg-panel-background">
               <div className="space-y-3">
                 {/* Error Message */}
                 {createError && (
@@ -490,7 +490,7 @@ export function CompanySelector({
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Company Name *
                   </label>
                   <input
@@ -501,13 +501,13 @@ export function CompanySelector({
                       setCreateError('');
                     }}
                     placeholder="Enter company name"
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     autoFocus
                     disabled={isCreating}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Website (optional)
                   </label>
                   <input
@@ -518,7 +518,7 @@ export function CompanySelector({
                       setCreateError('');
                     }}
                     placeholder="https://example.com or example.com"
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isCreating}
                   />
                 </div>
@@ -538,7 +538,7 @@ export function CompanySelector({
                       setCreateError('');
                     }}
                     disabled={isCreating}
-                    className="px-3 py-1.5 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+                    className="px-3 py-1.5 text-sm font-medium text-muted hover:text-foreground disabled:opacity-50"
                   >
                     Cancel
                   </button>
@@ -549,14 +549,14 @@ export function CompanySelector({
 
           {/* Loading State */}
           {isSearching && (
-            <div className="px-4 py-2 text-sm text-[var(--muted)]">
+            <div className="px-4 py-2 text-sm text-muted">
               Searching...
             </div>
           )}
 
           {/* No Results */}
           {!isSearching && searchQuery.trim() && searchResults.length === 0 && !showAddForm && (
-            <div className="px-4 py-3 text-sm text-[var(--muted)] text-center">
+            <div className="px-4 py-3 text-sm text-muted text-center">
               <p>No companies found matching "{searchQuery}"</p>
               <p className="text-xs mt-1 opacity-75">Try a different search term or add a new company</p>
             </div>

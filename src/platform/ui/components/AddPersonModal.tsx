@@ -165,9 +165,9 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
     <>
 
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-        <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
+        <div className="bg-background rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
               <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,15 +175,15 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">Add New Person</h2>
-              <p className="text-sm text-[var(--muted)]">Create a new person contact</p>
+              <h2 className="text-xl font-bold text-foreground">Add New Person</h2>
+              <p className="text-sm text-muted">Create a new person contact</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
+            <XMarkIcon className="w-4.5 h-4.5 text-muted" />
           </button>
         </div>
 
@@ -191,13 +191,13 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Status *
             </label>
             <select
               value={formData.status}
               onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-              className="w-full border border-[var(--border)] rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
+              className="w-full border border-border rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
               required
             >
               <option value="LEAD">Lead</option>
@@ -210,7 +210,7 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
           {/* Name Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 First Name *
               </label>
               <input
@@ -219,7 +219,7 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
                 value={formData.firstName}
                 onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                 placeholder="Enter first name"
-                className="w-full border border-[var(--border)] rounded-lg px-4 py-2 outline-none transition-colors focus:ring-2"
+                className="w-full border border-border rounded-lg px-4 py-2 outline-none transition-colors focus:ring-2"
                 style={{
                   '--tw-ring-color': `${colors.primary}30`,
                   '--tw-border-color': colors.primary
@@ -228,7 +228,7 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Last Name *
               </label>
               <input
@@ -236,7 +236,7 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
                 value={formData.lastName}
                 onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                 placeholder="Enter last name"
-                className="w-full border border-[var(--border)] rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
+                className="w-full border border-border rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
                 required
               />
             </div>
@@ -245,7 +245,7 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
 
           {/* Job Title */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Job Title
             </label>
             <input
@@ -253,13 +253,13 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
               value={formData.jobTitle}
               onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
               placeholder="Enter job title"
-              className="w-full border border-[var(--border)] rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
+              className="w-full border border-border rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
             />
           </div>
 
           {/* Company */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Company
             </label>
             <CompanySelector
@@ -281,7 +281,7 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
+              className="flex-1 px-4 py-3 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm"
             >
               Cancel
             </button>

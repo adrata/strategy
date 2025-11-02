@@ -62,7 +62,7 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
 
   return (
     <div 
-      className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group ${
+      className={`bg-background border border-border rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group ${
         !article.isRead ? 'ring-2 ring-blue-200' : ''
       }`}
       onClick={handleClick}
@@ -70,7 +70,7 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+          <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
             {article.title}
           </h3>
           
@@ -81,7 +81,7 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
             </span>
             
             {getContextDisplay() && (
-              <span className="text-sm text-[var(--muted)] font-medium">
+              <span className="text-sm text-muted font-medium">
                 {getContextDisplay()}
               </span>
             )}
@@ -96,7 +96,7 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
               className={`p-2 rounded-lg transition-colors ${
                 article.isFavorite 
                   ? 'text-yellow-500 hover:text-yellow-600' 
-                  : 'text-[var(--muted)] hover:text-yellow-500'
+                  : 'text-muted hover:text-yellow-500'
               }`}
               title={article.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             >
@@ -109,7 +109,7 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
               onClick={handleMarkAsRead}
               className={`p-2 rounded-lg transition-colors ${
                 article.isRead 
-                  ? 'text-[var(--muted)] hover:text-blue-500' 
+                  ? 'text-muted hover:text-blue-500' 
                   : 'text-blue-500 hover:text-blue-600'
               }`}
               title={article.isRead ? 'Mark as unread' : 'Mark as read'}
@@ -128,7 +128,7 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
 
       {/* Description */}
       {article.description && (
-        <p className="text-[var(--muted)] text-sm mb-4 line-clamp-3">
+        <p className="text-muted text-sm mb-4 line-clamp-3">
           {article.description}
         </p>
       )}
@@ -148,7 +148,7 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-sm text-[var(--muted)]">
+      <div className="flex items-center justify-between text-sm text-muted">
         <div className="flex items-center gap-4">
           <span className="font-medium">{article.source}</span>
           {article.author && (
@@ -174,13 +174,13 @@ export function NewsArticleCard({ article, onClick, showActions = true }: NewsAr
           {article.tags.slice(0, 3).map((tag, index) => (
             <span 
               key={index}
-              className="px-2 py-1 text-xs bg-[var(--hover)] text-[var(--muted)] rounded-md"
+              className="px-2 py-1 text-xs bg-hover text-muted rounded-md"
             >
               {tag}
             </span>
           ))}
           {article.tags.length > 3 && (
-            <span className="px-2 py-1 text-xs bg-[var(--hover)] text-[var(--muted)] rounded-md">
+            <span className="px-2 py-1 text-xs bg-hover text-muted rounded-md">
               +{article.tags.length - 3} more
             </span>
           )}

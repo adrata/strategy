@@ -81,7 +81,7 @@ export function ReportViewer({
             <h3 className="font-semibold">Report Content</h3>
             <p className="whitespace-pre-wrap">{report.content.content}</p>
           </div>
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-muted">
             <p>Generated on: {new Date(report.createdAt).toLocaleString()}</p>
             <p>Last updated: {new Date(report.updatedAt).toLocaleString()}</p>
           </div>

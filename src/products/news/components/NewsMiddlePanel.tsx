@@ -47,8 +47,8 @@ export function NewsMiddlePanel() {
       return (
         <div className="flex-1 overflow-y-auto p-6">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Top 3 Articles</h2>
-            <p className="text-[var(--muted)]">Most relevant articles for your workspace</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Top 3 Articles</h2>
+            <p className="text-muted">Most relevant articles for your workspace</p>
           </div>
           
           {overview?.topArticles ? (
@@ -59,13 +59,13 @@ export function NewsMiddlePanel() {
             />
           ) : (
             <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 text-[var(--muted)]">
+              <div className="w-16 h-16 mx-auto mb-4 text-muted">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Top Articles</h3>
-              <p className="text-[var(--muted)]">No top articles available yet</p>
+              <h3 className="text-lg font-medium text-foreground mb-2">No Top Articles</h3>
+              <p className="text-muted">No top articles available yet</p>
             </div>
           )}
         </div>
@@ -75,8 +75,8 @@ export function NewsMiddlePanel() {
       return (
         <div className="flex-1 overflow-y-auto p-6">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">All Articles</h2>
-            <p className="text-[var(--muted)]">
+            <h2 className="text-2xl font-bold text-foreground mb-2">All Articles</h2>
+            <p className="text-muted">
               {viewState.filters.category !== 'all' && `Filtered by ${viewState.filters.category.toLowerCase()}`}
               {viewState.filters.unreadOnly && ' • Unread only'}
             </p>
@@ -100,8 +100,8 @@ export function NewsMiddlePanel() {
       return (
         <div className="flex-1 overflow-y-auto p-6">
           <div className="text-center py-12">
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Invalid Tab</h3>
-            <p className="text-[var(--muted)]">Please select a valid news tab</p>
+            <h3 className="text-lg font-medium text-foreground mb-2">Invalid Tab</h3>
+            <p className="text-muted">Please select a valid news tab</p>
           </div>
         </div>
       );

@@ -172,7 +172,7 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
       case 'error':
         return <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />;
       default:
-        return <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <XMarkIcon className="w-5 h-5 text-muted" />;
     }
   };
 
@@ -185,7 +185,7 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
       case 'error':
         return 'text-red-600 bg-red-50 border-red-200';
       default:
-        return 'text-[var(--muted)] bg-[var(--panel-background)] border-[var(--border)]';
+        return 'text-muted bg-panel-background border-border';
     }
   };
 
@@ -193,26 +193,26 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--background)] rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-background rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <LinkIcon className="w-8 h-8 text-blue-600" />
             <div>
-              <h2 className="text-2xl font-bold text-[var(--foreground)]">Grand Central</h2>
-              <p className="text-[var(--muted)]">Integration Hub & Data Connections</p>
+              <h2 className="text-2xl font-bold text-foreground">Grand Central</h2>
+              <p className="text-muted">Integration Hub & Data Connections</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-[var(--border)]">
+        <div className="border-b border-border">
           <div className="flex space-x-8 px-6">
             {[
               { id: 'integrations', name: 'Integrations', icon: LinkIcon },
@@ -225,7 +225,7 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
+                    : 'border-transparent text-muted hover:text-gray-700 hover:border-border'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -240,8 +240,8 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
           {activeTab === 'integrations' && (
             <div className="space-y-4">
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Active Integrations</h3>
-                <p className="text-[var(--muted)] text-sm">
+                <h3 className="text-lg font-semibold text-foreground mb-2">Active Integrations</h3>
+                <p className="text-muted text-sm">
                   Connect your data sources to enable real-time sync and intelligence
                 </p>
               </div>
@@ -249,12 +249,12 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
               {loading ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map(i => (
-                    <div key={i} className="animate-pulse border border-[var(--border)] rounded-lg p-4">
+                    <div key={i} className="animate-pulse border border-border rounded-lg p-4">
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-[var(--loading-bg)] rounded-lg"></div>
+                        <div className="w-12 h-12 bg-loading-bg rounded-lg"></div>
                         <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4"></div>
-                          <div className="h-3 bg-[var(--loading-bg)] rounded w-3/4"></div>
+                          <div className="h-4 bg-loading-bg rounded w-1/4"></div>
+                          <div className="h-3 bg-loading-bg rounded w-3/4"></div>
                         </div>
                       </div>
                     </div>
@@ -265,7 +265,7 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                   {integrations.map((integration) => (
                     <div
                       key={integration.id}
-                      className="border border-[var(--border)] rounded-lg p-4 hover:shadow-sm transition-shadow"
+                      className="border border-border rounded-lg p-4 hover:shadow-sm transition-shadow"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
@@ -273,13 +273,13 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                             {getStatusIcon(integration.status)}
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-semibold text-[var(--foreground)]">{integration.name}</h4>
-                            <p className="text-sm text-[var(--muted)]">{integration.description}</p>
+                            <h4 className="font-semibold text-foreground">{integration.name}</h4>
+                            <p className="text-sm text-muted">{integration.description}</p>
                             {integration['email'] && (
-                              <p className="text-xs text-[var(--muted)] mt-1">Connected: {integration.email}</p>
+                              <p className="text-xs text-muted mt-1">Connected: {integration.email}</p>
                             )}
                             {integration['lastSync'] && (
-                              <p className="text-xs text-[var(--muted)]">
+                              <p className="text-xs text-muted">
                                 Last sync: {new Date(integration.lastSync).toLocaleString()}
                               </p>
                             )}
@@ -300,7 +300,7 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                             <button
                               onClick={() => handleTest(integration)}
                               disabled={testingIntegration === integration.id}
-                              className="px-4 py-2 bg-[var(--hover)] text-gray-700 text-sm rounded-lg hover:bg-[var(--loading-bg)] transition-colors disabled:opacity-50"
+                              className="px-4 py-2 bg-hover text-gray-700 text-sm rounded-lg hover:bg-loading-bg transition-colors disabled:opacity-50"
                             >
                               {testingIntegration === integration.id ? 'Testing...' : 'Test'}
                             </button>
@@ -317,8 +317,8 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
           {activeTab === 'sync' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Sync Status</h3>
-                <p className="text-[var(--muted)] text-sm mb-4">
+                <h3 className="text-lg font-semibold text-foreground mb-2">Sync Status</h3>
+                <p className="text-muted text-sm mb-4">
                   Monitor real-time data synchronization across all connected platforms
                 </p>
               </div>
@@ -359,15 +359,15 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {integrations.filter(i => i['status'] === 'connected').map((integration) => (
-                  <div key={integration.id} className="border border-[var(--border)] rounded-lg p-4">
+                  <div key={integration.id} className="border border-border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-medium text-[var(--foreground)]">{integration.name}</h4>
+                      <h4 className="font-medium text-foreground">{integration.name}</h4>
                       <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${
                           integration['status'] === 'connected' ? 'bg-green-500' : 
                           integration['status'] === 'expired' ? 'bg-yellow-500' : 'bg-gray-400'
                         }`}></div>
-                        <span className="text-xs text-[var(--muted)]">
+                        <span className="text-xs text-muted">
                           {integration['status'] === 'connected' ? 'Active' : 
                            integration['status'] === 'expired' ? 'Expired' : 'Inactive'}
                         </span>
@@ -375,7 +375,7 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                     </div>
                     
                     {integration['lastSync'] && (
-                      <div className="text-sm text-[var(--muted)]">
+                      <div className="text-sm text-muted">
                         Last sync: {new Date(integration.lastSync).toLocaleString()}
                       </div>
                     )}
@@ -383,7 +383,7 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                     <button
                       onClick={() => handleTest(integration)}
                       disabled={testingIntegration === integration.id}
-                      className="mt-3 w-full px-3 py-2 bg-[var(--hover)] text-gray-700 text-sm rounded hover:bg-[var(--loading-bg)] transition-colors disabled:opacity-50"
+                      className="mt-3 w-full px-3 py-2 bg-hover text-gray-700 text-sm rounded hover:bg-loading-bg transition-colors disabled:opacity-50"
                     >
                       {testingIntegration === integration.id ? 'Syncing...' : 'Sync Now'}
                     </button>
@@ -393,9 +393,9 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
 
               {integrations.filter(i => i['status'] === 'connected').length === 0 && (
                 <div className="text-center py-8">
-                  <ExclamationTriangleIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Active Integrations</h3>
-                  <p className="text-[var(--muted)]">Connect your data sources to enable sync monitoring</p>
+                  <ExclamationTriangleIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">No Active Integrations</h3>
+                  <p className="text-muted">Connect your data sources to enable sync monitoring</p>
                 </div>
               )}
             </div>
@@ -404,16 +404,16 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
           {activeTab === 'settings' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Integration Settings</h3>
-                <p className="text-[var(--muted)] text-sm mb-4">
+                <h3 className="text-lg font-semibold text-foreground mb-2">Integration Settings</h3>
+                <p className="text-muted text-sm mb-4">
                   Configure sync frequency and data processing options
                 </p>
               </div>
 
               <div className="space-y-4">
-                <div className="border border-[var(--border)] rounded-lg p-4">
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Email Sync Frequency</h4>
-                  <select className="w-full px-3 py-2 border border-[var(--border)] rounded-lg">
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-medium text-foreground mb-2">Email Sync Frequency</h4>
+                  <select className="w-full px-3 py-2 border border-border rounded-lg">
                     <option value="5">Every 5 minutes</option>
                     <option value="15" selected>Every 15 minutes</option>
                     <option value="30">Every 30 minutes</option>
@@ -421,8 +421,8 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                   </select>
                 </div>
 
-                <div className="border border-[var(--border)] rounded-lg p-4">
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Signal Detection</h4>
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-medium text-foreground mb-2">Signal Detection</h4>
                   <div className="space-y-2">
                     <label className="flex items-center">
                       <input type="checkbox" className="mr-2" defaultChecked />
@@ -439,9 +439,9 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
                   </div>
                 </div>
 
-                <div className="border border-[var(--border)] rounded-lg p-4">
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Data Retention</h4>
-                  <select className="w-full px-3 py-2 border border-[var(--border)] rounded-lg">
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-medium text-foreground mb-2">Data Retention</h4>
+                  <select className="w-full px-3 py-2 border border-border rounded-lg">
                     <option value="30">30 days</option>
                     <option value="90" selected>90 days</option>
                     <option value="365">1 year</option>
@@ -454,14 +454,14 @@ export function GrandCentralModal({ isOpen, onClose }: GrandCentralModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
-          <div className="text-sm text-[var(--muted)]">
+        <div className="flex items-center justify-between p-6 border-t border-border bg-panel-background">
+          <div className="text-sm text-muted">
             {integrations.filter(i => i['status'] === 'connected').length} of {integrations.length} integrations active
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={loadIntegrationStatus}
-              className="px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="px-4 py-2 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               Refresh Status
             </button>

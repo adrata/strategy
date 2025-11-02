@@ -175,12 +175,12 @@ export const FindPersonPipeline: React.FC = () => {
   }, [pipelineSteps.length]);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Back Button */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)] px-6 py-3">
+      <div className="flex-shrink-0 border-b border-border bg-background px-6 py-3">
         <button
           onClick={() => window.history.back()}
-          className="flex items-center gap-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -192,7 +192,7 @@ export const FindPersonPipeline: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - Configuration */}
-        <div className="w-1/3 border-r border-[var(--border)] p-6">
+        <div className="w-1/3 border-r border-border p-6">
           <ContextSelector
             inputMode={inputMode}
             onInputModeChange={setInputMode}
@@ -216,83 +216,83 @@ export const FindPersonPipeline: React.FC = () => {
 
       {/* Results Panel */}
       {results.length > 0 && (
-        <div className="flex-shrink-0 border-t border-[var(--border)] bg-[var(--background)] p-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+        <div className="flex-shrink-0 border-t border-border bg-background p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Person Intelligence Results
           </h3>
           <div className="space-y-6">
             {results.map((person, index) => (
-              <div key={index} className="bg-[var(--hover)] border border-[var(--border)] rounded-lg p-6">
+              <div key={index} className="bg-hover border border-border rounded-lg p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h4 className="text-xl font-semibold text-[var(--foreground)]">{person.name}</h4>
-                    <p className="text-[var(--muted)]">{person.title} at {person.company}</p>
-                    <div className="flex gap-4 mt-2 text-sm text-[var(--muted)]">
+                    <h4 className="text-xl font-semibold text-foreground">{person.name}</h4>
+                    <p className="text-muted">{person.title} at {person.company}</p>
+                    <div className="flex gap-4 mt-2 text-sm text-muted">
                       <span>{person.email}</span>
                       <span>{person.phone}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-[var(--muted)]">Influence Score</div>
+                    <div className="text-sm text-muted">Influence Score</div>
                     <div className="text-2xl font-bold text-blue-600">{person.buyingAuthority.influenceScore}</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   {/* Innovation Profile */}
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                    <h5 className="font-medium text-[var(--foreground)] mb-2">Innovation Profile</h5>
+                  <div className="bg-background border border-border rounded-lg p-4">
+                    <h5 className="font-medium text-foreground mb-2">Innovation Profile</h5>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Segment:</span>
+                        <span className="text-sm text-muted">Segment:</span>
                         <span className="text-sm font-medium">{person.innovationProfile.segment}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Confidence:</span>
+                        <span className="text-sm text-muted">Confidence:</span>
                         <span className="text-sm font-medium">{(person.innovationProfile.confidence * 100).toFixed(0)}%</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Buying Authority */}
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                    <h5 className="font-medium text-[var(--foreground)] mb-2">Buying Authority</h5>
+                  <div className="bg-background border border-border rounded-lg p-4">
+                    <h5 className="font-medium text-foreground mb-2">Buying Authority</h5>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Role:</span>
+                        <span className="text-sm text-muted">Role:</span>
                         <span className="text-sm font-medium">{person.buyingAuthority.role}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Signing Limit:</span>
+                        <span className="text-sm text-muted">Signing Limit:</span>
                         <span className="text-sm font-medium">${person.buyingAuthority.signingLimit.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Pain Awareness */}
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                    <h5 className="font-medium text-[var(--foreground)] mb-2">Pain Awareness</h5>
+                  <div className="bg-background border border-border rounded-lg p-4">
+                    <h5 className="font-medium text-foreground mb-2">Pain Awareness</h5>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Urgency:</span>
+                        <span className="text-sm text-muted">Urgency:</span>
                         <span className="text-sm font-medium">{(person.painAwareness.urgencyScore * 100).toFixed(0)}%</span>
                       </div>
-                      <div className="text-sm text-[var(--muted)]">
+                      <div className="text-sm text-muted">
                         Active Pains: {person.painAwareness.activePains.join(', ')}
                       </div>
                     </div>
                   </div>
 
                   {/* Career Trajectory */}
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                    <h5 className="font-medium text-[var(--foreground)] mb-2">Career Trajectory</h5>
+                  <div className="bg-background border border-border rounded-lg p-4">
+                    <h5 className="font-medium text-foreground mb-2">Career Trajectory</h5>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Trend:</span>
+                        <span className="text-sm text-muted">Trend:</span>
                         <span className="text-sm font-medium">{person.careerTrajectory.trend}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Velocity:</span>
+                        <span className="text-sm text-muted">Velocity:</span>
                         <span className="text-sm font-medium">{person.careerTrajectory.promotionVelocity}</span>
                       </div>
                     </div>

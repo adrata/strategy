@@ -26,8 +26,8 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
     return (
       <div className="space-y-8">
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Loading Strategy Information</h3>
-          <p className="text-[var(--muted)]">Please wait while we load the strategy data...</p>
+          <h3 className="text-lg font-medium text-foreground mb-2">Loading Strategy Information</h3>
+          <p className="text-muted">Please wait while we load the strategy data...</p>
         </div>
       </div>
     );
@@ -54,10 +54,10 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
           <div className="space-y-8">
             {/* Strategic Assessment */}
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Strategic Assessment</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Strategic Assessment</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Authority</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Authority</label>
                   <InlineEditField
                     value={record?.authority || ''}
                     field="authority"
@@ -77,7 +77,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Need Urgency</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Need Urgency</label>
                   <InlineEditField
                     value={record?.needUrgency || ''}
                     field="needUrgency"
@@ -96,7 +96,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Timeline</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Timeline</label>
                   <InlineEditField
                     value={record?.timeline || ''}
                     field="timeline"
@@ -115,7 +115,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Engagement Level</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Engagement Level</label>
                   <InlineEditField
                     value={record?.engagementLevel || 'initial'}
                     field="engagementLevel"
@@ -137,10 +137,10 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
 
             {/* Financial Details */}
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Financial Details</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Financial Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Budget</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Budget</label>
                   <InlineEditField
                     value={record?.budget?.toString() || ''}
                     field="budget"
@@ -152,7 +152,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Estimated Value</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Estimated Value</label>
                   <InlineEditField
                     value={record?.estimatedValue?.toString() || ''}
                     field="estimatedValue"
@@ -164,7 +164,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Currency</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Currency</label>
                   <InlineEditField
                     value={record?.currency || 'USD'}
                     field="currency"
@@ -182,7 +182,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Marketing Qualified</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Marketing Qualified</label>
                   <div className="text-sm text-gray-800 font-medium">
                     {record?.marketingQualified ? (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -190,7 +190,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         Yes
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
                         No
                       </span>
                     )}
@@ -201,10 +201,10 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
 
             {/* Sales Qualification */}
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Sales Qualification</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Sales Qualification</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Sales Qualified</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Sales Qualified</label>
                   <div className="text-sm text-gray-800 font-medium">
                     {record?.salesQualified ? (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -212,14 +212,14 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         Yes
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
                         No
                       </span>
                     )}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Communication Style</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Communication Style</label>
                   <InlineEditField
                     value={record?.communicationStyle || 'Professional'}
                     field="communicationStyle"
@@ -237,7 +237,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Decision Making Style</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Decision Making Style</label>
                   <InlineEditField
                     value={record?.decisionMakingStyle || 'Analytical'}
                     field="decisionMakingStyle"
@@ -255,7 +255,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-1">Relationship Status</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Relationship Status</label>
                   <InlineEditField
                     value={record?.relationship || ''}
                     field="relationship"
@@ -282,7 +282,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Pain Points</label>
-                    <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <div className="bg-background p-4 rounded-lg border border-border">
                       {record?.painPoints?.length > 0 ? (
                         <div className="space-y-2">
                           {record.painPoints.map((painPoint: string, index: number) => (
@@ -293,7 +293,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-[var(--muted)]">No pain points identified yet</p>
+                        <p className="text-sm text-muted">No pain points identified yet</p>
                       )}
                     </div>
                   </div>
@@ -301,7 +301,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Interests</label>
-                    <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <div className="bg-background p-4 rounded-lg border border-border">
                       {record?.interests?.length > 0 ? (
                         <div className="space-y-2">
                           {record.interests.map((interest: string, index: number) => (
@@ -312,7 +312,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-[var(--muted)]">No interests identified yet</p>
+                        <p className="text-sm text-muted">No interests identified yet</p>
                       )}
                     </div>
                   </div>
@@ -326,7 +326,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Buying Signals</label>
-                    <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <div className="bg-background p-4 rounded-lg border border-border">
                       {record?.buyingSignals?.length > 0 ? (
                         <div className="space-y-2">
                           {record.buyingSignals.map((signal: string, index: number) => (
@@ -337,7 +337,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-[var(--muted)]">No buying signals detected yet</p>
+                        <p className="text-sm text-muted">No buying signals detected yet</p>
                       )}
                     </div>
                   </div>
@@ -345,7 +345,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Competitor Mentions</label>
-                    <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <div className="bg-background p-4 rounded-lg border border-border">
                       {record?.competitorMentions?.length > 0 ? (
                         <div className="space-y-2">
                           {record.competitorMentions.map((competitor: string, index: number) => (
@@ -356,7 +356,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-[var(--muted)]">No competitors mentioned yet</p>
+                        <p className="text-sm text-muted">No competitors mentioned yet</p>
                       )}
                     </div>
                   </div>
@@ -370,7 +370,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Professional Goals</label>
-                    <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <div className="bg-background p-4 rounded-lg border border-border">
                       {record?.professionalGoals?.length > 0 ? (
                         <div className="space-y-2">
                           {record.professionalGoals.map((goal: string, index: number) => (
@@ -381,7 +381,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-[var(--muted)]">No professional goals identified yet</p>
+                        <p className="text-sm text-muted">No professional goals identified yet</p>
                       )}
                     </div>
                   </div>
@@ -402,7 +402,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         { value: 'Friendly', label: 'Friendly' }
                       ]}
                       onSave={handleInlineSave}
-                      className="text-sm text-[var(--foreground)]"
+                      className="text-sm text-foreground"
                     />
                   </div>
                   <div>
@@ -420,7 +420,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         { value: 'Directive', label: 'Directive' }
                       ]}
                       onSave={handleInlineSave}
-                      className="text-sm text-[var(--foreground)]"
+                      className="text-sm text-foreground"
                     />
                   </div>
                 </div>
@@ -440,7 +440,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       recordType={recordType}
                       placeholder="Enter next action"
                       onSave={handleInlineSave}
-                      className="text-sm text-[var(--foreground)]"
+                      className="text-sm text-foreground"
                     />
                   </div>
                   <div>
@@ -453,7 +453,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       inputType="date"
                       placeholder="Schedule next action"
                       onSave={handleInlineSave}
-                      className="text-sm text-[var(--foreground)]"
+                      className="text-sm text-foreground"
                     />
                   </div>
                 </div>
@@ -474,7 +474,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         { value: 'champion', label: 'Champion' }
                       ]}
                       onSave={handleInlineSave}
-                      className="text-sm text-[var(--foreground)]"
+                      className="text-sm text-foreground"
                     />
                   </div>
                   <div>
@@ -495,7 +495,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         { value: 'purchase', label: 'Purchase' }
                       ]}
                       onSave={handleInlineSave}
-                      className="text-sm text-[var(--foreground)]"
+                      className="text-sm text-foreground"
                     />
                   </div>
                 </div>
@@ -507,28 +507,28 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Touch Points</label>
-                    <div className="text-sm text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted mb-1">Touch Points</label>
+                    <div className="text-sm text-muted">
                       {record?.touchPointsCount || 0} interactions
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Response Rate</label>
-                    <div className="text-sm text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted mb-1">Response Rate</label>
+                    <div className="text-sm text-muted">
                       {record?.responseRate ? `${Math.round(record.responseRate * 100)}%` : '0%'}
                     </div>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Last Contact</label>
-                    <div className="text-sm text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted mb-1">Last Contact</label>
+                    <div className="text-sm text-muted">
                       {record?.lastContactDate ? new Date(record.lastContactDate).toLocaleDateString() : 'No recent contact'}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Next Follow-up</label>
-                    <div className="text-sm text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted mb-1">Next Follow-up</label>
+                    <div className="text-sm text-muted">
                       {record?.nextFollowUpDate ? new Date(record.nextFollowUpDate).toLocaleDateString() : 'Not scheduled'}
                     </div>
                   </div>
@@ -542,8 +542,8 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
         return (
           <div className="space-y-6">
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Strategy Information</h3>
-              <p className="text-[var(--muted)]">Strategy information is available for prospects and opportunities.</p>
+              <h3 className="text-lg font-medium text-foreground mb-2">Strategy Information</h3>
+              <p className="text-muted">Strategy information is available for prospects and opportunities.</p>
             </div>
           </div>
         );

@@ -18,12 +18,12 @@ export function ActionPlatformMiddlePanelV2() {
   const renderContent = () => {
     if (!activeSubApp) {
       return (
-        <div className="h-full flex items-center justify-center bg-[var(--panel-background)]">
+        <div className="h-full flex items-center justify-center bg-panel-background">
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+            <h2 className="text-xl font-semibold text-foreground mb-2">
               Welcome to Adrata
             </h2>
-            <p className="text-[var(--muted)]">
+            <p className="text-muted">
               Select an app from the left panel to get started.
             </p>
           </div>
@@ -38,46 +38,46 @@ export function ActionPlatformMiddlePanelV2() {
       // Fallback to switch statement for now to maintain functionality
       switch (activeSubApp) {
         case 'pipeline':
-          return <div className="h-full flex items-center justify-center bg-[var(--panel-background)]">
+          return <div className="h-full flex items-center justify-center bg-panel-background">
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 Pipeline App
               </h2>
-              <p className="text-[var(--muted)]">
+              <p className="text-muted">
                 Pipeline functionality would be rendered here.
               </p>
             </div>
           </div>;
         case 'speedrun':
-          return <div className="h-full flex items-center justify-center bg-[var(--panel-background)]">
+          return <div className="h-full flex items-center justify-center bg-panel-background">
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 Speedrun App
               </h2>
-              <p className="text-[var(--muted)]">
+              <p className="text-muted">
                 Speedrun functionality would be rendered here.
               </p>
             </div>
           </div>;
         case 'monaco':
-          return <div className="h-full flex items-center justify-center bg-[var(--panel-background)]">
+          return <div className="h-full flex items-center justify-center bg-panel-background">
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 Monaco App
               </h2>
-              <p className="text-[var(--muted)]">
+              <p className="text-muted">
                 Monaco functionality would be rendered here.
               </p>
             </div>
           </div>;
         default:
           return (
-            <div className="h-full flex items-center justify-center bg-[var(--panel-background)]">
+            <div className="h-full flex items-center justify-center bg-panel-background">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+                <h2 className="text-xl font-semibold text-foreground mb-2">
                   App Not Found
                 </h2>
-                <p className="text-[var(--muted)]">
+                <p className="text-muted">
                   The app "{activeSubApp}" is not available.
                 </p>
               </div>

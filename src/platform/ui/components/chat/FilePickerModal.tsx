@@ -74,7 +74,7 @@ const FILE_TYPES = [
     label: 'Code Files', 
     icon: CodeBracketIcon, 
     extensions: ['.js', '.ts', '.tsx', '.jsx', '.py', '.java', '.cpp'],
-    color: 'text-[var(--muted)]'
+    color: 'text-muted'
   },
   { 
     key: 'archives', 
@@ -258,31 +258,31 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col">
+      <div className="bg-background rounded-xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">Add Context</h2>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <h2 className="text-xl font-semibold text-foreground">Add Context</h2>
+            <p className="text-sm text-muted mt-1">
               Add files or data to provide context for the AI
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-[var(--border)]">
+        <div className="flex border-b border-border">
           <button
             onClick={() => setActiveTab('files')}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'files'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-[var(--muted)] hover:text-gray-700'
+                : 'border-transparent text-muted hover:text-gray-700'
             }`}
           >
             <DocumentIcon className="w-4 h-4 inline mr-2" />
@@ -293,7 +293,7 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'data'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-[var(--muted)] hover:text-gray-700'
+                : 'border-transparent text-muted hover:text-gray-700'
             }`}
           >
             <BuildingOfficeIcon className="w-4 h-4 inline mr-2" />
@@ -308,7 +308,7 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
             {activeTab === 'files' ? (
               <div className="space-y-6">
                 {/* File Upload Area */}
-                <div className="border-2 border-dashed border-[var(--border)] rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
                   <input
                     type="file"
                     multiple
@@ -317,11 +317,11 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                     id="file-upload"
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
-                    <FolderIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-                    <p className="text-lg font-medium text-[var(--foreground)] mb-2">
+                    <FolderIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+                    <p className="text-lg font-medium text-foreground mb-2">
                       Drop files here or click to browse
                     </p>
-                    <p className="text-sm text-[var(--muted)]">
+                    <p className="text-sm text-muted">
                       Support for documents, images, spreadsheets, and more
                     </p>
                   </label>
@@ -329,18 +329,18 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
 
                 {/* File Type Categories */}
                 <div>
-                  <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">File Types</h3>
+                  <h3 className="text-sm font-medium text-foreground mb-3">File Types</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {FILE_TYPES.map((fileType) => {
                       const Icon = fileType.icon;
                       return (
                         <div
                           key={fileType.key}
-                          className="p-3 border border-[var(--border)] rounded-lg hover:border-[var(--border)] transition-colors"
+                          className="p-3 border border-border rounded-lg hover:border-border transition-colors"
                         >
                           <Icon className={`w-6 h-6 ${fileType.color} mb-2`} />
-                          <p className="text-sm font-medium text-[var(--foreground)]">{fileType.label}</p>
-                          <p className="text-xs text-[var(--muted)]">
+                          <p className="text-sm font-medium text-foreground">{fileType.label}</p>
+                          <p className="text-xs text-muted">
                             {fileType.extensions.join(', ')}
                           </p>
                         </div>
@@ -353,7 +353,7 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
               <div className="space-y-6">
                 {/* Data Type Selection */}
                 <div>
-                  <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Select Data Type</h3>
+                  <h3 className="text-sm font-medium text-foreground mb-3">Select Data Type</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {DATA_TYPES.map((dataType) => {
                       const Icon = dataType.icon;
@@ -365,12 +365,12 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                           className={`p-4 border rounded-lg text-left transition-colors ${
                             isSelected
                               ? 'border-blue-500 bg-blue-50'
-                              : 'border-[var(--border)] hover:border-[var(--border)]'
+                              : 'border-border hover:border-border'
                           }`}
                         >
                           <Icon className={`w-6 h-6 ${dataType.color} mb-2`} />
-                          <p className="text-sm font-medium text-[var(--foreground)]">{dataType.label}</p>
-                          <p className="text-xs text-[var(--muted)]">{dataType.description}</p>
+                          <p className="text-sm font-medium text-foreground">{dataType.label}</p>
+                          <p className="text-xs text-muted">{dataType.description}</p>
                         </button>
                       );
                     })}
@@ -386,7 +386,7 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                         placeholder={`Search ${selectedDataType}...`}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
 
@@ -394,7 +394,7 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                     {isSearching ? (
                       <div className="mt-4 text-center py-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="text-sm text-[var(--muted)] mt-2">Searching...</p>
+                        <p className="text-sm text-muted mt-2">Searching...</p>
                       </div>
                     ) : searchResults.length > 0 ? (
                       <div className="mt-4 space-y-2">
@@ -402,15 +402,15 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                           <button
                             key={record.id}
                             onClick={() => handleDataRecordSelect(record)}
-                            className="w-full p-3 border border-[var(--border)] rounded-lg hover:border-[var(--border)] text-left transition-colors"
+                            className="w-full p-3 border border-border rounded-lg hover:border-border text-left transition-colors"
                           >
-                            <p className="font-medium text-[var(--foreground)]">{record.name}</p>
-                            <p className="text-sm text-[var(--muted)] capitalize">{record.type}</p>
+                            <p className="font-medium text-foreground">{record.name}</p>
+                            <p className="text-sm text-muted capitalize">{record.type}</p>
                           </button>
                         ))}
                       </div>
                     ) : searchQuery && selectedDataType ? (
-                      <div className="mt-4 text-center py-8 text-[var(--muted)]">
+                      <div className="mt-4 text-center py-8 text-muted">
                         <div className="text-4xl mb-3">🔍</div>
                         <p className="text-sm font-medium">No {selectedDataType} found for "{searchQuery}"</p>
                         <p className="text-xs mt-2 opacity-75">Try a different search term or select a different data type</p>
@@ -424,8 +424,8 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
 
           {/* Selected Files Sidebar */}
           {selectedFiles.length > 0 && (
-            <div className="w-80 border-l border-[var(--border)] p-6">
-              <h3 className="text-sm font-medium text-[var(--foreground)] mb-4">
+            <div className="w-80 border-l border-border p-6">
+              <h3 className="text-sm font-medium text-foreground mb-4">
                 Selected ({selectedFiles.length})
               </h3>
               <div className="space-y-2">
@@ -434,22 +434,22 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                   return (
                     <div
                       key={file.id}
-                      className="flex items-center gap-3 p-2 bg-[var(--panel-background)] rounded-lg"
+                      className="flex items-center gap-3 p-2 bg-panel-background rounded-lg"
                     >
-                      <Icon className="w-5 h-5 text-[var(--muted)] flex-shrink-0" />
+                      <Icon className="w-5 h-5 text-muted flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[var(--foreground)] truncate">
+                        <p className="text-sm font-medium text-foreground truncate">
                           {file.name}
                         </p>
-                        <p className="text-xs text-[var(--muted)] capitalize">
+                        <p className="text-xs text-muted capitalize">
                           {file['type'] === 'file' ? 'File' : file.type}
                         </p>
                       </div>
                       <button
                         onClick={() => removeSelectedFile(file.id)}
-                        className="p-1 hover:bg-[var(--loading-bg)] rounded transition-colors"
+                        className="p-1 hover:bg-loading-bg rounded transition-colors"
                       >
-                        <XMarkIcon className="w-4 h-4 text-[var(--muted)]" />
+                        <XMarkIcon className="w-4 h-4 text-muted" />
                       </button>
                     </div>
                   );
@@ -460,14 +460,14 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-[var(--border)]">
-          <p className="text-sm text-[var(--muted)]">
+        <div className="flex items-center justify-between p-6 border-t border-border">
+          <p className="text-sm text-muted">
             {selectedFiles.length} item{selectedFiles.length !== 1 ? 's' : ''} selected
           </p>
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               Cancel
             </button>

@@ -102,7 +102,7 @@ export const BackToProfile: React.FC<BackToProfileProps> = ({
   return (
     <button
       onClick={onBack}
-      className={`flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors ${className || ""}`}
+      className={`flex items-center gap-2 text-muted hover:text-foreground transition-colors ${className || ""}`}
     >
       <ArrowLeftIcon className="w-4 h-4" />
       Back to Profile
@@ -162,32 +162,32 @@ export const ShareLink: React.FC<{ className?: string }> = ({ className }) => {
 
   return (
     <div
-      className={`flex items-center space-x-2 border border-[var(--border)] rounded-lg px-3 py-1.5 ${className || ""}`}
+      className={`flex items-center space-x-2 border border-border rounded-lg px-3 py-1.5 ${className || ""}`}
     >
-      <span className="text-[var(--foreground)] text-base font-normal truncate">
+      <span className="text-foreground text-base font-normal truncate">
         {displayUrl}
       </span>
 
       {/* Copy Button */}
       <button
         onClick={handleCopy}
-        className="ml-2 p-1 rounded hover:bg-[var(--hover)] transition-colors"
+        className="ml-2 p-1 rounded hover:bg-hover transition-colors"
         title="Copy URL"
       >
         {copied ? (
           <CheckIcon className="w-5 h-5 text-black dark:text-white" />
         ) : (
-          <DocumentDuplicateIcon className="w-5 h-5 text-[var(--foreground)]" />
+          <DocumentDuplicateIcon className="w-5 h-5 text-foreground" />
         )}
       </button>
 
       {/* Launch Button */}
       <button
         onClick={handleOpen}
-        className="p-1 rounded hover:bg-[var(--hover)] transition-colors"
+        className="p-1 rounded hover:bg-hover transition-colors"
         title="Open in browser"
       >
-        <ArrowTopRightOnSquareIcon className="w-5 h-5 text-[var(--foreground)]" />
+        <ArrowTopRightOnSquareIcon className="w-5 h-5 text-foreground" />
       </button>
     </div>
   );
@@ -205,7 +205,7 @@ export const PDFButton: React.FC<{
   return (
     <button
       onClick={onClick}
-      className={`flex items-center border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--hover)] transition-colors h-[38px] ${className || ""}`}
+      className={`flex items-center border border-border rounded-lg px-3 py-1.5 text-sm font-medium text-foreground hover:bg-hover transition-colors h-[38px] ${className || ""}`}
       title="Download PDF"
       type="button"
     >

@@ -49,7 +49,7 @@ export function MCPDetailView({ mcp, displayName, onBack, onBackToList }: MCPDet
   };
 
   return (
-    <div className="h-full bg-[var(--background)] text-[var(--foreground)] overflow-y-auto invisible-scrollbar">
+    <div className="h-full bg-background text-foreground overflow-y-auto invisible-scrollbar">
       <Breadcrumb items={[
         { label: 'Grand Central', onClick: () => window.location.href = '/grand-central' },
         { label: 'MCPs', onClick: () => window.location.href = '/grand-central/mcps' },
@@ -57,14 +57,14 @@ export function MCPDetailView({ mcp, displayName, onBack, onBackToList }: MCPDet
       ]} />
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="border-b border-[var(--border)] pb-6">
+        <div className="border-b border-border pb-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <ServerIcon className="w-8 h-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-[var(--foreground)]">{mcp.name}</h1>
+                <h1 className="text-2xl font-bold text-foreground">{mcp.name}</h1>
               </div>
-              <p className="text-[var(--muted)] text-lg">{mcp.description}</p>
+              <p className="text-muted text-lg">{mcp.description}</p>
             </div>
             <div className="flex items-center gap-2">
               {getStatusIcon()}
@@ -76,34 +76,34 @@ export function MCPDetailView({ mcp, displayName, onBack, onBackToList }: MCPDet
         </div>
 
         {/* Status Information */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <ShieldCheckIcon className="w-5 h-5" />
             MCP Server Status
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Status:</span>
+              <span className="text-muted">Status:</span>
               <span className={`font-medium ${getStatusColor()}`}>
                 {mcp.status.charAt(0).toUpperCase() + mcp.status.slice(1)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Type:</span>
+              <span className="text-muted">Type:</span>
               <span className="font-medium">Model Context Protocol Server</span>
             </div>
           </div>
         </div>
 
         {/* Endpoints */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <CodeBracketIcon className="w-5 h-5" />
             MCP Endpoints
           </h3>
           <div className="space-y-3">
             {mcp.endpoints.map((endpoint, index) => (
-              <div key={index} className="border border-[var(--border)] rounded-lg p-3">
+              <div key={index} className="border border-border rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`px-2 py-1 rounded text-xs font-medium ${
                     endpoint.method === 'GET' ? 'bg-green-100 text-green-800' :
@@ -114,33 +114,33 @@ export function MCPDetailView({ mcp, displayName, onBack, onBackToList }: MCPDet
                   }`}>
                     {endpoint.method}
                   </span>
-                  <code className="text-sm font-mono text-[var(--foreground)] bg-[var(--background)] px-2 py-1 rounded">
+                  <code className="text-sm font-mono text-foreground bg-background px-2 py-1 rounded">
                     {endpoint.path}
                   </code>
                 </div>
-                <p className="text-[var(--muted)] text-sm">{endpoint.description}</p>
+                <p className="text-muted text-sm">{endpoint.description}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Authentication */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <ShieldCheckIcon className="w-5 h-5" />
             Authentication
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Type:</span>
+              <span className="text-muted">Type:</span>
               <span className="font-medium">{mcp.authentication.type}</span>
             </div>
             {mcp.authentication.envVars.length > 0 && (
               <div>
-                <span className="text-[var(--muted)]">Environment Variables:</span>
+                <span className="text-muted">Environment Variables:</span>
                 <div className="mt-1 space-y-1">
                   {mcp.authentication.envVars.map((envVar, index) => (
-                    <code key={index} className="block text-sm font-mono bg-[var(--background)] px-2 py-1 rounded">
+                    <code key={index} className="block text-sm font-mono bg-background px-2 py-1 rounded">
                       {envVar}
                     </code>
                   ))}
@@ -151,8 +151,8 @@ export function MCPDetailView({ mcp, displayName, onBack, onBackToList }: MCPDet
         </div>
 
         {/* Documentation */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <LinkIcon className="w-5 h-5" />
             Documentation
           </h3>
@@ -168,22 +168,22 @@ export function MCPDetailView({ mcp, displayName, onBack, onBackToList }: MCPDet
               </a>
             </div>
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Setup Guide:</h4>
-              <p className="text-[var(--muted)] text-sm">{mcp.documentation.setupGuide}</p>
+              <h4 className="font-medium text-foreground mb-2">Setup Guide:</h4>
+              <p className="text-muted text-sm">{mcp.documentation.setupGuide}</p>
             </div>
           </div>
         </div>
 
         {/* Usage Locations */}
         {mcp.usageLocations.length > 0 && (
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+          <div className="bg-panel-background rounded-lg p-4">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <CodeBracketIcon className="w-5 h-5" />
               Usage Locations
             </h3>
             <div className="space-y-1">
               {mcp.usageLocations.map((location, index) => (
-                <code key={index} className="block text-sm font-mono text-[var(--muted)] bg-[var(--background)] px-2 py-1 rounded">
+                <code key={index} className="block text-sm font-mono text-muted bg-background px-2 py-1 rounded">
                   {location}
                 </code>
               ))}

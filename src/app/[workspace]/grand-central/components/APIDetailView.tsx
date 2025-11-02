@@ -66,7 +66,7 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
   };
 
   return (
-    <div className="h-full bg-[var(--background)] text-[var(--foreground)] overflow-y-auto invisible-scrollbar">
+    <div className="h-full bg-background text-foreground overflow-y-auto invisible-scrollbar">
       <Breadcrumb items={[
         { label: 'Grand Central', onClick: () => window.location.href = window.location.pathname.split('/').slice(0, 3).join('/') },
         { label: 'APIs', onClick: () => window.location.href = window.location.pathname.split('/').slice(0, 3).join('/') + '/apis' },
@@ -74,16 +74,16 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
       ]} />
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="border-b border-[var(--border)] pb-6">
+        <div className="border-b border-border pb-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold text-[var(--foreground)]">{api.name}</h1>
+                <h1 className="text-2xl font-bold text-foreground">{api.name}</h1>
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(api.category)}`}>
                   {api.category.replace('-', ' ').toUpperCase()}
                 </span>
               </div>
-              <p className="text-[var(--muted)] text-lg">{api.description}</p>
+              <p className="text-muted text-lg">{api.description}</p>
             </div>
             <div className="flex items-center gap-2">
               {getStatusIcon()}
@@ -96,20 +96,20 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
 
         {/* Status Information */}
         {status && (
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+          <div className="bg-panel-background rounded-lg p-4">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <ShieldCheckIcon className="w-5 h-5" />
               Configuration Status
             </h3>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Configured:</span>
+                <span className="text-muted">Configured:</span>
                 <span className={status.isConfigured ? 'text-green-600' : 'text-red-600'}>
                   {status.isConfigured ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Valid Keys:</span>
+                <span className="text-muted">Valid Keys:</span>
                 <span className={status.hasValidKeys ? 'text-green-600' : 'text-red-600'}>
                   {status.hasValidKeys ? 'Yes' : 'No'}
                 </span>
@@ -124,14 +124,14 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
         )}
 
         {/* Endpoints */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <CodeBracketIcon className="w-5 h-5" />
             API Endpoints
           </h3>
           <div className="space-y-3">
             {api.endpoints.map((endpoint, index) => (
-              <div key={index} className="border border-[var(--border)] rounded-lg p-3">
+              <div key={index} className="border border-border rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`px-2 py-1 rounded text-xs font-medium ${
                     endpoint.method === 'GET' ? 'bg-green-100 text-green-800' :
@@ -142,32 +142,32 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
                   }`}>
                     {endpoint.method}
                   </span>
-                  <code className="text-sm font-mono text-[var(--foreground)] bg-[var(--background)] px-2 py-1 rounded">
+                  <code className="text-sm font-mono text-foreground bg-background px-2 py-1 rounded">
                     {endpoint.path}
                   </code>
                 </div>
-                <p className="text-[var(--muted)] text-sm">{endpoint.description}</p>
+                <p className="text-muted text-sm">{endpoint.description}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Authentication */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <ShieldCheckIcon className="w-5 h-5" />
             Authentication
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Type:</span>
+              <span className="text-muted">Type:</span>
               <span className="font-medium">{api.authentication.type}</span>
             </div>
             <div>
-              <span className="text-[var(--muted)]">Environment Variables:</span>
+              <span className="text-muted">Environment Variables:</span>
               <div className="mt-1 space-y-1">
                 {api.authentication.envVars.map((envVar, index) => (
-                  <code key={index} className="block text-sm font-mono bg-[var(--background)] px-2 py-1 rounded">
+                  <code key={index} className="block text-sm font-mono bg-background px-2 py-1 rounded">
                     {envVar}
                   </code>
                 ))}
@@ -177,23 +177,23 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
         </div>
 
         {/* Pricing */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <CurrencyDollarIcon className="w-5 h-5" />
             Pricing
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Model:</span>
+              <span className="text-muted">Model:</span>
               <span className="font-medium">{api.pricing.model}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Cost:</span>
+              <span className="text-muted">Cost:</span>
               <span className="font-medium">{api.pricing.cost}</span>
             </div>
             {api.pricing.rateLimit && (
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Rate Limit:</span>
+                <span className="text-muted">Rate Limit:</span>
                 <span className="font-medium">{api.pricing.rateLimit}</span>
               </div>
             )}
@@ -201,8 +201,8 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
         </div>
 
         {/* Documentation */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <LinkIcon className="w-5 h-5" />
             Documentation
           </h3>
@@ -218,21 +218,21 @@ export function APIDetailView({ api, status, displayName, onBack, onBackToList }
               </a>
             </div>
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Setup Guide:</h4>
-              <p className="text-[var(--muted)] text-sm">{api.documentation.setupGuide}</p>
+              <h4 className="font-medium text-foreground mb-2">Setup Guide:</h4>
+              <p className="text-muted text-sm">{api.documentation.setupGuide}</p>
             </div>
           </div>
         </div>
 
         {/* Usage Locations */}
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+        <div className="bg-panel-background rounded-lg p-4">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <CodeBracketIcon className="w-5 h-5" />
             Usage Locations
           </h3>
           <div className="space-y-1">
             {api.usageLocations.map((location, index) => (
-              <code key={index} className="block text-sm font-mono text-[var(--muted)] bg-[var(--background)] px-2 py-1 rounded">
+              <code key={index} className="block text-sm font-mono text-muted bg-background px-2 py-1 rounded">
                 {location}
               </code>
             ))}

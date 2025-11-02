@@ -48,12 +48,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
   return (
     <div
-      className="fixed bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-1 z-50 min-w-[160px]"
+      className="fixed bg-background border border-border rounded-lg shadow-lg py-1 z-50 min-w-[160px]"
       style={{ left: contextMenu.x, top: contextMenu.y }}
       onMouseLeave={() => setContextMenu(null)}
     >
       <button
-        className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-[var(--hover)]"
+        className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-hover"
         onClick={() => {
           const step = workflowSteps.find(s => s.id === contextMenu.stepId);
           if (step) {
@@ -72,7 +72,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         Duplicate
       </button>
       <button
-        className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-[var(--hover)]"
+        className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-hover"
         onClick={() => {
           const step = workflowSteps.find(s => s.id === contextMenu.stepId);
           if (step) {

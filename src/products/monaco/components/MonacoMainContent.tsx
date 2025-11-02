@@ -146,12 +146,12 @@ export const MonacoMainContent: React.FC<MonacoMainContentProps> = ({
       {/* Header */}
       <div className="flex-shrink-0 p-6 pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">
+          <h1 className="text-2xl font-bold text-foreground">
             {activeSection === "notes"
               ? "Notes"
               : `Find ${activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}`}
           </h1>
-          <p className="text-[var(--muted)] mt-1">
+          <p className="text-muted mt-1">
             {activeSection === "companies" &&
               "Discover and research target companies"}
             {activeSection === "partners" && "Explore your partner ecosystem"}

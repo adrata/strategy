@@ -310,21 +310,21 @@ const InteractiveWorkflowValidator: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--panel-background)] p-6">
+    <div className="min-h-screen bg-panel-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             🎯 TOP Interactive Workflow Validator
           </h1>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             Step-by-step validation of the buyer group generation process with real-time monitoring
           </p>
         </div>
 
         {/* Workflow Controls */}
-        <div className="bg-[var(--background)] rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-background rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">Workflow Controls</h2>
+            <h2 className="text-xl font-semibold text-foreground">Workflow Controls</h2>
             <div className="flex gap-3">
               <button
                 onClick={executeAllRunnableSteps}
@@ -342,7 +342,7 @@ const InteractiveWorkflowValidator: React.FC = () => {
             </div>
           </div>
           
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-muted">
             <p><strong>Company:</strong> {workflow.companyName}</p>
             <p><strong>Runnable Steps:</strong> {getRunnableSteps().length}</p>
             <p><strong>Completed Steps:</strong> {workflow.steps.filter(s => s.status === 'completed').length}</p>
@@ -361,8 +361,8 @@ const InteractiveWorkflowValidator: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Workflow Steps */}
           <div className="lg:col-span-2">
-            <div className="bg-[var(--background)] rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Workflow Steps</h2>
+            <div className="bg-background rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-4">Workflow Steps</h2>
               <div className="space-y-3">
                 {workflow.steps.map((step, index) => (
                   <div
@@ -370,23 +370,23 @@ const InteractiveWorkflowValidator: React.FC = () => {
                     className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       selectedStep === step.id 
                         ? 'border-blue-500 bg-blue-50' 
-                        : 'border-[var(--border)] hover:border-[var(--border)]'
+                        : 'border-border hover:border-border'
                     }`}
                     onClick={() => setSelectedStep(selectedStep === step.id ? null : step.id)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className={`w-4 h-4 rounded-full ${getStepStatusColor(step.status)}`}></div>
-                        <span className="text-sm font-medium text-[var(--muted)]">#{index + 1}</span>
-                        <span className="font-medium text-[var(--foreground)]">{step.name}</span>
-                        <span className="text-sm text-[var(--muted)]">
+                        <span className="text-sm font-medium text-muted">#{index + 1}</span>
+                        <span className="font-medium text-foreground">{step.name}</span>
+                        <span className="text-sm text-muted">
                           {step.parallel ? '⚡ Parallel' : '➡️ Sequential'}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{getStepStatusIcon(step.status)}</span>
                         {step.duration && (
-                          <span className="text-xs text-[var(--muted)]">{step.duration}ms</span>
+                          <span className="text-xs text-muted">{step.duration}ms</span>
                         )}
                         {canRunStep(step) && (
                           <button
@@ -401,9 +401,9 @@ const InteractiveWorkflowValidator: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-[var(--muted)] mt-1 ml-7">{step.description}</p>
+                    <p className="text-sm text-muted mt-1 ml-7">{step.description}</p>
                     {step.dependencies.length > 0 && (
-                      <p className="text-xs text-[var(--muted)] mt-1 ml-7">
+                      <p className="text-xs text-muted mt-1 ml-7">
                         Depends on: {step.dependencies.join(', ')}
                       </p>
                     )}
@@ -417,8 +417,8 @@ const InteractiveWorkflowValidator: React.FC = () => {
           <div className="space-y-6">
             {/* Step Details */}
             {selectedStep && (
-              <div className="bg-[var(--background)] rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Step Details</h3>
+              <div className="bg-background rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Step Details</h3>
                 {(() => {
                   const step = workflow.steps.find(s => s.id === selectedStep);
                   if (!step) return null;
@@ -426,8 +426,8 @@ const InteractiveWorkflowValidator: React.FC = () => {
                   return (
                     <div className="space-y-3">
                       <div>
-                        <h4 className="font-medium text-[var(--foreground)]">{step.name}</h4>
-                        <p className="text-sm text-[var(--muted)]">{step.description}</p>
+                        <h4 className="font-medium text-foreground">{step.name}</h4>
+                        <p className="text-sm text-muted">{step.description}</p>
                       </div>
                       
                       <div className="text-sm">
@@ -443,8 +443,8 @@ const InteractiveWorkflowValidator: React.FC = () => {
 
                       {step.output && (
                         <div>
-                          <h5 className="font-medium text-[var(--foreground)] mb-2">Output:</h5>
-                          <pre className="text-xs bg-[var(--hover)] p-3 rounded overflow-auto max-h-40">
+                          <h5 className="font-medium text-foreground mb-2">Output:</h5>
+                          <pre className="text-xs bg-hover p-3 rounded overflow-auto max-h-40">
                             {JSON.stringify(step.output, null, 2)}
                           </pre>
                         </div>
@@ -465,11 +465,11 @@ const InteractiveWorkflowValidator: React.FC = () => {
             )}
 
             {/* Execution Log */}
-            <div className="bg-[var(--background)] rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Execution Log</h3>
-              <div className="bg-[var(--foreground)] text-green-400 p-4 rounded-lg font-mono text-sm max-h-96 overflow-auto">
+            <div className="bg-background rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Execution Log</h3>
+              <div className="bg-foreground text-green-400 p-4 rounded-lg font-mono text-sm max-h-96 overflow-auto">
                 {executionLog.length === 0 ? (
-                  <p className="text-[var(--muted)]">No execution log entries yet...</p>
+                  <p className="text-muted">No execution log entries yet...</p>
                 ) : (
                   executionLog.map((entry, index) => (
                     <div key={index} className="mb-1">

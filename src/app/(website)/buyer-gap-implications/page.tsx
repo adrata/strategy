@@ -5,29 +5,29 @@ import Link from "next/link";
 
 export default function BuyerGapImplicationsPage() {
   return (
-    <div className="min-h-screen bg-[var(--background)] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="bg-[var(--background)] border-b border-[var(--border)]">
+      <header className="bg-background border-b border-border">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="flex justify-between items-center py-4">
             {/* Logo and Navigation */}
             <div className="flex items-center space-x-12">
-              <Link href="/" className="text-xl font-medium text-[var(--foreground)]">
+              <Link href="/" className="text-xl font-medium text-foreground">
                 Adrata
               </Link>
               
               {/* Navigation */}
               <nav className="hidden md:flex space-x-6">
-                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Buyer Gap
                 </Link>
-                <Link href="/platform" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/platform" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Platform
                 </Link>
-                <Link href="/pricing" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/pricing" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Pricing
                 </Link>
-                <Link href="/company" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/company" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Company
                 </Link>
               </nav>
@@ -35,7 +35,7 @@ export default function BuyerGapImplicationsPage() {
 
             {/* Sign In and CTA Button */}
             <div className="flex items-center space-x-4">
-              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                 Sign In
               </Link>
               <Link
@@ -52,10 +52,10 @@ export default function BuyerGapImplicationsPage() {
       {/* Main Content */}
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="py-32 bg-[var(--background)]">
+        <section className="py-32 bg-background">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-semibold text-[var(--foreground)] mb-6">
+              <h1 className="text-4xl md:text-5xl font-semibold text-foreground mb-6">
                 The True Cost of the Buyer Gap
               </h1>
               <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
@@ -64,7 +64,7 @@ export default function BuyerGapImplicationsPage() {
               <div className="text-center mb-8">
                 <Link
                   href="/what-is-the-buyer-gap"
-                  className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors inline-flex items-center gap-2 mb-4"
+                  className="text-muted hover:text-foreground transition-colors inline-flex items-center gap-2 mb-4"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -88,22 +88,22 @@ export default function BuyerGapImplicationsPage() {
         </section>
 
         {/* The Root Problem */}
-        <section className="py-20 bg-[var(--panel-background)]">
+        <section className="py-20 bg-panel-background">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">
+              <h2 className="text-3xl font-semibold text-foreground mb-4">
                 The Root Cause Behind Endless Sales Problems
               </h2>
-              <p className="text-lg text-[var(--muted)] max-w-3xl mx-auto">
+              <p className="text-lg text-muted max-w-3xl mx-auto">
                 When you don't know who matters in a deal, everything else falls apart. Here's how the buyer gap creates the problems that keep sales leaders awake at night.
               </p>
             </div>
 
-            <div className="bg-[var(--background)] p-12 rounded-2xl border border-[var(--border)] text-center">
+            <div className="bg-background p-12 rounded-2xl border border-border text-center">
               <div className="max-w-4xl mx-auto">
                 <div className="mb-8">
-                  <div className="text-6xl font-bold text-[var(--foreground)] mb-4">THE BUYER GAP</div>
-                  <p className="text-xl text-[var(--muted)]">
+                  <div className="text-6xl font-bold text-foreground mb-4">THE BUYER GAP</div>
+                  <p className="text-xl text-muted">
                     Not knowing who matters in your deals
                   </p>
                 </div>
@@ -111,8 +111,8 @@ export default function BuyerGapImplicationsPage() {
                 
                 <div className="grid md:grid-cols-3 gap-8 text-left">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)]">Immediate Effects</h3>
-                    <ul className="space-y-2 text-[var(--muted)]">
+                    <h3 className="text-lg font-semibold text-foreground">Immediate Effects</h3>
+                    <ul className="space-y-2 text-muted">
                       <li>• Wrong people contacted</li>
                       <li>• Missing key stakeholders</li>
                       <li>• Wasted sales effort</li>
@@ -121,8 +121,8 @@ export default function BuyerGapImplicationsPage() {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)]">Deal Consequences</h3>
-                    <ul className="space-y-2 text-[var(--muted)]">
+                    <h3 className="text-lg font-semibold text-foreground">Deal Consequences</h3>
+                    <ul className="space-y-2 text-muted">
                       <li>• Deals stall for months</li>
                       <li>• Forecast becomes unreliable</li>
                       <li>• No-decisions multiply</li>
@@ -131,8 +131,8 @@ export default function BuyerGapImplicationsPage() {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)]">Business Impact</h3>
-                    <ul className="space-y-2 text-[var(--muted)]">
+                    <h3 className="text-lg font-semibold text-foreground">Business Impact</h3>
+                    <ul className="space-y-2 text-muted">
                       <li>• Revenue targets missed</li>
                       <li>• Customer churn increases</li>
                       <li>• Team morale plummets</li>
@@ -146,79 +146,79 @@ export default function BuyerGapImplicationsPage() {
         </section>
 
         {/* Specific Implications */}
-        <section className="py-20 bg-[var(--background)]">
+        <section className="py-20 bg-background">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">
+              <h2 className="text-3xl font-semibold text-foreground mb-4">
                 How the Buyer Gap Destroys Revenue
               </h2>
-              <p className="text-lg text-[var(--muted)]">
+              <p className="text-lg text-muted">
                 These aren't separate problems—they're all symptoms of the same underlying issue
               </p>
             </div>
 
             <div className="space-y-12">
               {/* Churn */}
-              <div className="bg-[var(--panel-background)] p-8 rounded-2xl">
+              <div className="bg-panel-background p-8 rounded-2xl">
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                   <div>
-                    <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-4">
+                    <h3 className="text-2xl font-semibold text-foreground mb-4">
                       Customer Churn: The Silent Killer
                     </h3>
-                    <p className="text-[var(--muted)] mb-6">
+                    <p className="text-muted mb-6">
                       You win the deal but miss the renewals team. Six months later, they churn because the people who actually use your product were never properly onboarded or engaged.
                     </p>
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Expansion revenue disappears</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Reference accounts turn hostile</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">CAC payback never happens</span>
                       </div>
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-5xl font-bold text-[var(--foreground)] mb-1">
+                    <div className="text-5xl font-bold text-foreground mb-1">
                       68%<a href="#footnote-7" className="text-black hover:underline ml-1 text-base">⁷</a>
                     </div>
-                    <p className="text-[var(--muted)]">of churn happens because wrong stakeholders were engaged during sales</p>
+                    <p className="text-muted">of churn happens because wrong stakeholders were engaged during sales</p>
                   </div>
                 </div>
               </div>
 
               {/* Stalled Deals */}
-              <div className="bg-[var(--panel-background)] p-8 rounded-2xl">
+              <div className="bg-panel-background p-8 rounded-2xl">
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                   <div className="order-2 md:order-1 text-center">
-                    <div className="text-5xl font-bold text-[var(--foreground)] mb-1">
+                    <div className="text-5xl font-bold text-foreground mb-1">
                       7.2<a href="#footnote-8" className="text-black hover:underline ml-1 text-base">⁸</a>
                     </div>
-                    <p className="text-[var(--muted)]">months average for deals that stall vs 3.1 months for those that don't</p>
+                    <p className="text-muted">months average for deals that stall vs 3.1 months for those that don't</p>
                   </div>
                   <div className="order-1 md:order-2">
-                    <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-4">
+                    <h3 className="text-2xl font-semibold text-foreground mb-4">
                       Deal Paralysis: The Momentum Killer
                     </h3>
-                    <p className="text-[var(--muted)] mb-6">
+                    <p className="text-muted mb-6">
                       Your champion says "yes" but nothing happens. Months pass. Deals sit in pipeline purgatory because you never identified the people who actually approve budgets and drive internal adoption.
                     </p>
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Pipeline becomes fantasy</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Reps miss quota consistently</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Deals expire in legal</span>
                       </div>
                     </div>
@@ -227,66 +227,66 @@ export default function BuyerGapImplicationsPage() {
               </div>
 
               {/* Forecast Panic */}
-              <div className="bg-[var(--panel-background)] p-8 rounded-2xl">
+              <div className="bg-panel-background p-8 rounded-2xl">
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                   <div>
-                    <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-4">
+                    <h3 className="text-2xl font-semibold text-foreground mb-4">
                       Forecast Panic: The Leadership Nightmare
                     </h3>
-                    <p className="text-[var(--muted)] mb-6">
+                    <p className="text-muted mb-6">
                       Your forecast is built on relationships with people who don't actually make decisions. When deals slip quarter after quarter, leadership loses confidence in the entire revenue organization.
                     </p>
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Board meetings become defensive</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Hiring plans get slashed</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Valuation multiples compress</span>
                       </div>
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-5xl font-bold text-[var(--foreground)] mb-1">
+                    <div className="text-5xl font-bold text-foreground mb-1">
                       43%<a href="#footnote-9" className="text-black hover:underline ml-1 text-base">⁹</a>
                     </div>
-                    <p className="text-[var(--muted)]">of forecasted deals slip to next quarter due to incomplete stakeholder coverage</p>
+                    <p className="text-muted">of forecasted deals slip to next quarter due to incomplete stakeholder coverage</p>
                   </div>
                 </div>
               </div>
 
               {/* Competitive Losses */}
-              <div className="bg-[var(--panel-background)] p-8 rounded-2xl">
+              <div className="bg-panel-background p-8 rounded-2xl">
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                   <div className="order-2 md:order-1 text-center">
-                    <div className="text-5xl font-bold text-[var(--foreground)] mb-2">
+                    <div className="text-5xl font-bold text-foreground mb-2">
                       2.3x<a href="#footnote-10" className="text-black hover:underline ml-1 text-base">¹⁰</a>
                     </div>
-                    <p className="text-[var(--muted)]">more likely to lose deals when you have incomplete buyer group intelligence</p>
+                    <p className="text-muted">more likely to lose deals when you have incomplete buyer group intelligence</p>
                   </div>
                   <div className="order-1 md:order-2">
-                    <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-4">
+                    <h3 className="text-2xl font-semibold text-foreground mb-4">
                       Competitive Blindsiding: The Silent Defeat
                     </h3>
-                    <p className="text-[var(--muted)] mb-6">
+                    <p className="text-muted mb-6">
                       You think you're winning until the last minute when a competitor emerges with relationships you never knew existed. They've been working the real decision-makers while you pitched the wrong people.
                     </p>
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Months of work wasted</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Team morale crushed</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-[var(--foreground)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-foreground rounded-full"></div>
                         <span className="text-gray-700">Win rate plummets</span>
                       </div>
                     </div>
@@ -344,61 +344,61 @@ export default function BuyerGapImplicationsPage() {
         </section>
 
         {/* The Hidden Cost */}
-        <section className="py-20 bg-[var(--background)]">
+        <section className="py-20 bg-background">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">
+              <h2 className="text-3xl font-semibold text-foreground mb-4">
                 The Hidden Cost to Your Business
               </h2>
-              <p className="text-lg text-[var(--muted)]">
+              <p className="text-lg text-muted">
                 Every quarter you don't solve the buyer gap problem, the damage compounds
               </p>
             </div>
 
-            <div className="bg-[var(--panel-background)] p-12 rounded-2xl">
+            <div className="bg-panel-background p-12 rounded-2xl">
               <div className="grid md:grid-cols-2 gap-12">
                 <div>
-                  <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-6">Revenue Impact</h3>
+                  <h3 className="text-2xl font-semibold text-foreground mb-6">Revenue Impact</h3>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center py-3 border-b border-[var(--border)]">
+                    <div className="flex justify-between items-center py-3 border-b border-border">
                       <span className="text-gray-700">Missed quota attainment</span>
-                      <span className="font-semibold text-[var(--foreground)]">
+                      <span className="font-semibold text-foreground">
                         -47%<a href="#footnote-11" className="text-black hover:underline ml-1 text-xs">¹¹</a>
                       </span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-[var(--border)]">
+                    <div className="flex justify-between items-center py-3 border-b border-border">
                       <span className="text-gray-700">Extended sales cycles</span>
-                      <span className="font-semibold text-[var(--foreground)]">+127%<a href="#footnote-8" className="text-black hover:underline ml-1 text-xs">⁸</a></span>
+                      <span className="font-semibold text-foreground">+127%<a href="#footnote-8" className="text-black hover:underline ml-1 text-xs">⁸</a></span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-[var(--border)]">
+                    <div className="flex justify-between items-center py-3 border-b border-border">
                       <span className="text-gray-700">Deal slippage rate</span>
-                      <span className="font-semibold text-[var(--foreground)]">+89%<a href="#footnote-9" className="text-black hover:underline ml-1 text-xs">⁹</a></span>
+                      <span className="font-semibold text-foreground">+89%<a href="#footnote-9" className="text-black hover:underline ml-1 text-xs">⁹</a></span>
                     </div>
                     <div className="flex justify-between items-center py-3">
                       <span className="text-gray-700">Customer churn increase</span>
-                      <span className="font-semibold text-[var(--foreground)]">+34%<a href="#footnote-7" className="text-black hover:underline ml-1 text-xs">⁷</a></span>
+                      <span className="font-semibold text-foreground">+34%<a href="#footnote-7" className="text-black hover:underline ml-1 text-xs">⁷</a></span>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <h3 className="text-2xl font-semibold text-[var(--foreground)] mb-6">Operational Cost</h3>
+                  <h3 className="text-2xl font-semibold text-foreground mb-6">Operational Cost</h3>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center py-3 border-b border-[var(--border)]">
+                    <div className="flex justify-between items-center py-3 border-b border-border">
                       <span className="text-gray-700">Wasted sales effort per enterprise company</span>
-                      <span className="font-semibold text-[var(--foreground)]">$1.2M/year<a href="#footnote-11" className="text-black hover:underline ml-1 text-xs">¹¹</a></span>
+                      <span className="font-semibold text-foreground">$1.2M/year<a href="#footnote-11" className="text-black hover:underline ml-1 text-xs">¹¹</a></span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-[var(--border)]">
+                    <div className="flex justify-between items-center py-3 border-b border-border">
                       <span className="text-gray-700">Increased CAC</span>
-                      <span className="font-semibold text-[var(--foreground)]">+156%<a href="#footnote-11" className="text-black hover:underline ml-1 text-xs">¹¹</a></span>
+                      <span className="font-semibold text-foreground">+156%<a href="#footnote-11" className="text-black hover:underline ml-1 text-xs">¹¹</a></span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-[var(--border)]">
+                    <div className="flex justify-between items-center py-3 border-b border-border">
                       <span className="text-gray-700">Rep turnover cost</span>
-                      <span className="font-semibold text-[var(--foreground)]">$480K/year<a href="#footnote-11" className="text-black hover:underline ml-1 text-xs">¹¹</a></span>
+                      <span className="font-semibold text-foreground">$480K/year<a href="#footnote-11" className="text-black hover:underline ml-1 text-xs">¹¹</a></span>
                     </div>
                     <div className="flex justify-between items-center py-3">
                       <span className="text-gray-700">Forecast inaccuracy</span>
-                      <span className="font-semibold text-[var(--foreground)]">±43%<a href="#footnote-9" className="text-black hover:underline ml-1 text-xs">⁹</a></span>
+                      <span className="font-semibold text-foreground">±43%<a href="#footnote-9" className="text-black hover:underline ml-1 text-xs">⁹</a></span>
                     </div>
                   </div>
                 </div>
@@ -408,13 +408,13 @@ export default function BuyerGapImplicationsPage() {
         </section>
 
         {/* Call to Action */}
-        <section className="py-20 bg-[var(--panel-background)]">
+        <section className="py-20 bg-panel-background">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center">
-              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-6">
+              <h2 className="text-3xl font-semibold text-foreground mb-6">
                 Stop Treating Symptoms. Fix the Root Cause.
               </h2>
-              <p className="text-lg text-[var(--muted)] mb-12 max-w-3xl mx-auto">
+              <p className="text-lg text-muted mb-12 max-w-3xl mx-auto">
                 Most tools, processes, and training programs focus on fixing symptoms. But until you address the buyer gap—the root cause—these problems tend to persist.
               </p>
               
@@ -435,9 +435,9 @@ export default function BuyerGapImplicationsPage() {
       </main>
 
       {/* Footnotes Section */}
-      <section className="py-12 bg-[var(--hover)] border-t border-[var(--border)]">
+      <section className="py-12 bg-hover border-t border-border">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-6">Research Sources & References</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-6">Research Sources & References</h3>
           <div className="space-y-3 text-sm text-gray-700">
             <div id="footnote-7" className="border-l-4 border-black pl-4">
               <strong>⁷</strong> Customer Success Association & Totango: "B2B Churn Analysis Report 2023" - Study of 1,200+ SaaS companies tracking churn correlation with stakeholder engagement patterns. 
@@ -461,12 +461,12 @@ export default function BuyerGapImplicationsPage() {
             
             <div id="footnote-11" className="border-l-4 border-black pl-4">
               <strong>¹¹</strong> Adrata Revenue Impact Model: Comprehensive analysis of sales performance metrics across enterprise client organizations (2022-2024). 
-              <span className="text-[var(--muted)]">Detailed methodology and supporting data available upon request.</span>
+              <span className="text-muted">Detailed methodology and supporting data available upon request.</span>
             </div>
           </div>
           
-          <div className="mt-8 p-4 bg-[var(--background)] rounded-lg border border-[var(--border)]">
-            <p className="text-xs text-[var(--muted)]">
+          <div className="mt-8 p-4 bg-background rounded-lg border border-border">
+            <p className="text-xs text-muted">
               <strong>Data Integrity:</strong> All statistics are from verified industry research or internal analysis of real sales data. 
               External sources are publicly available reports from recognized research organizations. 
               Internal analysis is based on anonymized, aggregated data with strict privacy compliance. 
@@ -521,17 +521,17 @@ export default function BuyerGapImplicationsPage() {
 
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-[var(--muted)] text-sm">
+              <p className="text-muted text-sm">
                 © 2025 Adrata. All rights reserved.
               </p>
               <div className="flex space-x-6 mt-4 md:mt-0">
-                <Link href="/privacy" className="text-[var(--muted)] hover:text-white text-sm transition-colors">
+                <Link href="/privacy" className="text-muted hover:text-white text-sm transition-colors">
                   Privacy
                 </Link>
-                <Link href="/terms" className="text-[var(--muted)] hover:text-white text-sm transition-colors">
+                <Link href="/terms" className="text-muted hover:text-white text-sm transition-colors">
                   Terms
                 </Link>
-                <Link href="/cookies" className="text-[var(--muted)] hover:text-white text-sm transition-colors">
+                <Link href="/cookies" className="text-muted hover:text-white text-sm transition-colors">
                   Cookies
                 </Link>
               </div>

@@ -96,11 +96,11 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
             <div className="flex items-center gap-4">
               <button
                 onClick={onBack}
-                className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                className="text-muted hover:text-foreground transition-colors"
               >
                 ← Back
               </button>
-              <h1 className="text-3xl font-bold text-[var(--foreground)]">
+              <h1 className="text-3xl font-bold text-foreground">
                 Partner Detail
               </h1>
             </div>
@@ -127,7 +127,7 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
             type="skeleton" 
             size="md"
             message="Loading partner details..."
-            className="bg-[var(--background)]"
+            className="bg-background"
           />
         )}
 
@@ -136,7 +136,7 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
           <>
             {/* Tabs */}
             <div
-              className="flex gap-2 mb-0 pb-2 border-b border-[var(--border)]"
+              className="flex gap-2 mb-0 pb-2 border-b border-border"
               style={{
                 borderColor: "var(--border)",
                 marginTop: "-18px",
@@ -149,8 +149,8 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
                   className={`px-5 py-2 text-base font-semibold rounded-t-lg transition-colors focus:outline-none
                     ${
                       activeTab === tab
-                        ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                        : "text-[var(--muted,#888)] hover:text-[var(--accent)] border border-transparent"
+                        ? "bg-background border-x border-t border-border text-foreground z-10"
+                        : "text-[var(--muted,#888)] hover:text-primary border border-transparent"
                     }
                   `}
                   onClick={() => setActiveTab(tab)}
@@ -161,26 +161,26 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
             </div>
 
             {/* Tab Content */}
-            <div className="bg-[var(--background)] rounded-b-xl border-b border-[var(--border)] shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
+            <div className="bg-background rounded-b-xl border-b border-border shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
               <div className="pt-6">
                 {activeTab === "Overview" && (
                   <>
                     {/* At a Glance */}
                     <div className="mb-8">
-                      <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                      <h2 className="text-xl font-semibold text-foreground mb-4">
                         At a Glance
                       </h2>
                       <div className="flex flex-wrap gap-4">
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                          <div className="font-semibold text-[var(--muted)] mb-1">
+                        <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                          <div className="font-semibold text-muted mb-1">
                             Partnership Type
                           </div>
-                          <div className="text-lg text-[var(--foreground)]">
+                          <div className="text-lg text-foreground">
                             {partner.partnershipType}
                           </div>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                          <div className="font-semibold text-[var(--muted)] mb-1">
+                        <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                          <div className="font-semibold text-muted mb-1">
                             Status
                           </div>
                           <span
@@ -195,11 +195,11 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
                             {partner.status}
                           </span>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                          <div className="font-semibold text-[var(--muted)] mb-1">
+                        <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                          <div className="font-semibold text-muted mb-1">
                             Industry
                           </div>
-                          <div className="text-lg text-[var(--foreground)]">
+                          <div className="text-lg text-foreground">
                             {partner.industry}
                           </div>
                         </div>
@@ -209,39 +209,39 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
                     {/* Main info */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                        <h2 className="text-xl font-semibold text-foreground mb-4">
                           Partner Information
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Partner Name
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {partner.name}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Partnership Type
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {partner.partnershipType}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Website
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {partner.website || 'No website provided'}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Location
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {partner.city}, {partner.state}, {partner.country}
                             </p>
                           </div>
@@ -249,31 +249,31 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
                       </div>
 
                       <div>
-                        <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                        <h2 className="text-xl font-semibold text-foreground mb-4">
                           Contact Information
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Contact Person
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {partner.contactPerson}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Email
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {partner.contactEmail}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Phone
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {partner.contactPhone}
                             </p>
                           </div>
@@ -282,11 +282,11 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
                     </div>
 
                     <div className="mt-8">
-                      <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                      <h2 className="text-xl font-semibold text-foreground mb-4">
                         Notes
                       </h2>
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <p className="text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <p className="text-foreground">
                           {partner.notes || "No notes available for this partner."}
                         </p>
                       </div>
@@ -296,29 +296,29 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
 
                 {activeTab === "Engagement" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Engagement
                     </h2>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Last Contact
                         </label>
-                        <p className="mt-1 text-lg text-[var(--foreground)]">
+                        <p className="mt-1 text-lg text-foreground">
                           {partner.lastContact}
                         </p>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           {formatRelativeDate(partner.lastContactDate)}
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Next Action
                         </label>
-                        <p className="mt-1 text-lg text-[var(--foreground)]">
+                        <p className="mt-1 text-lg text-foreground">
                           {partner.nextAction}
                         </p>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           {formatRelativeDate(partner.nextActionDate)}
                         </p>
                       </div>
@@ -328,40 +328,40 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
 
                 {activeTab === "Opportunities" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Joint Opportunities
                     </h2>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                      <p className="text-[var(--muted)]">No joint opportunities found with this partner.</p>
+                    <div className="bg-background border border-border rounded-lg p-4">
+                      <p className="text-muted">No joint opportunities found with this partner.</p>
                     </div>
                   </>
                 )}
 
                 {activeTab === "Activity" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Activity Summary
                     </h2>
                     <div className="grid grid-cols-3 gap-6 mb-6">
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                        <div className="text-2xl font-bold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-foreground">
                           0
                         </div>
-                        <div className="text-sm text-[var(--muted)]">
+                        <div className="text-sm text-muted">
                           Joint Deals
                         </div>
                       </div>
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                        <div className="text-2xl font-bold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-foreground">
                           0
                         </div>
-                        <div className="text-sm text-[var(--muted)]">Meetings</div>
+                        <div className="text-sm text-muted">Meetings</div>
                       </div>
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                        <div className="text-2xl font-bold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-foreground">
                           0
                         </div>
-                        <div className="text-sm text-[var(--muted)]">Emails</div>
+                        <div className="text-sm text-muted">Emails</div>
                       </div>
                     </div>
                   </>

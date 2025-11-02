@@ -152,7 +152,7 @@ export function UpdatePersonPopup({
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
             placeholder={person.name || "-"}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+            className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
             required
           />
         </div>
@@ -165,7 +165,7 @@ export function UpdatePersonPopup({
             value={formData.title}
             onChange={(e) => handleChange("title", e.target.value)}
             placeholder={person.title || "-"}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+            className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
           />
         </div>
       </div>
@@ -180,7 +180,7 @@ export function UpdatePersonPopup({
             value={formData.email}
             onChange={(e) => handleChange("email", e.target.value)}
             placeholder={person.email || "-"}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+            className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
           />
         </div>
         <div>
@@ -192,7 +192,7 @@ export function UpdatePersonPopup({
             value={formData.phone}
             onChange={(e) => handleChange("phone", e.target.value)}
             placeholder={person.phone || "-"}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+            className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
           />
         </div>
       </div>
@@ -220,7 +220,7 @@ export function UpdatePersonPopup({
     <div className="space-y-6 max-h-[600px] overflow-y-auto">
       {/* Form Fields Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-[var(--foreground)]">Action Settings</h3>
+        <h3 className="text-lg font-medium text-foreground">Action Settings</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -229,7 +229,7 @@ export function UpdatePersonPopup({
             <select
               value={formData.status}
               onChange={(e) => handleChange("status", e.target.value)}
-              className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+              className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
             >
               <option value="New">New</option>
               <option value="Contacted">Contacted</option>
@@ -246,7 +246,7 @@ export function UpdatePersonPopup({
             <select
               value={formData.priority}
               onChange={(e) => handleChange("priority", e.target.value)}
-              className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+              className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
             >
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -265,17 +265,17 @@ export function UpdatePersonPopup({
             value={formData.nextAction}
             onChange={(e) => handleChange("nextAction", e.target.value)}
             placeholder={person.nextAction || "-"}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+            className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
           />
         </div>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-[var(--border)]"></div>
+      <div className="border-t border-border"></div>
 
       {/* Actions List Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-[var(--foreground)]">Existing Actions</h3>
+        <h3 className="text-lg font-medium text-foreground">Existing Actions</h3>
         <UniversalActionsTab 
           record={person} 
           recordType="people"
@@ -300,7 +300,7 @@ export function UpdatePersonPopup({
           value={formData.relationship}
           onChange={(e) => handleChange("relationship", e.target.value)}
           placeholder={person.relationship || "-"}
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+          className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
         />
       </div>
     </div>
@@ -309,7 +309,7 @@ export function UpdatePersonPopup({
   const renderCareerTab = () => (
     <div className="space-y-6">
       <div className="text-center py-8">
-        <p className="text-[var(--muted)]">Career information will be available here</p>
+        <p className="text-muted">Career information will be available here</p>
       </div>
     </div>
   );
@@ -325,7 +325,7 @@ export function UpdatePersonPopup({
           value={formData.bio}
           onChange={(e) => handleChange("bio", e.target.value)}
           placeholder={person.bio || "-"}
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+          className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
         />
       </div>
 
@@ -338,7 +338,7 @@ export function UpdatePersonPopup({
           value={formData.linkedinNavigatorUrl}
           onChange={(e) => handleChange("linkedinNavigatorUrl", e.target.value)}
           placeholder={person.linkedinNavigatorUrl || "-"}
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+          className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
         />
       </div>
 
@@ -350,7 +350,7 @@ export function UpdatePersonPopup({
           type="date"
           value={formData.linkedinConnectionDate}
           onChange={(e) => handleChange("linkedinConnectionDate", e.target.value)}
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+          className="w-full px-3 py-2 border border-border dark:border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background text-foreground dark:text-white"
         />
       </div>
     </div>
@@ -409,10 +409,10 @@ export function UpdatePersonPopup({
     return (
       <div className="p-6 space-y-6">
         <div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+          <h3 className="text-lg font-medium text-foreground mb-2">
             Delete Person
           </h3>
-          <p className="text-sm text-[var(--muted)] mb-6">
+          <p className="text-sm text-muted mb-6">
             This action cannot be undone. This will soft delete the person and remove them from your active lists.
           </p>
         </div>
@@ -495,22 +495,22 @@ export function UpdatePersonPopup({
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-[var(--background)] rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-background rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)] dark:border-[var(--border)]">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] dark:text-white">
+        <div className="flex items-center justify-between p-6 border-b border-border dark:border-border">
+          <h2 className="text-xl font-semibold text-foreground dark:text-white">
             Update Contact Details
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="p-2 rounded-lg hover:bg-hover transition-colors"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-[var(--border)] dark:border-[var(--border)]">
+        <div className="border-b border-border dark:border-border">
           <nav className="flex space-x-8 px-6">
             {TABS.map((tab) => (
               <button
@@ -519,7 +519,7 @@ export function UpdatePersonPopup({
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab
                     ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                    : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)] hover:border-gray-300"
+                    : "border-transparent text-muted hover:text-foreground hover:border-gray-300"
                 }`}
               >
                 {tab}
@@ -535,11 +535,11 @@ export function UpdatePersonPopup({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 p-6 border-t border-[var(--border)] dark:border-[var(--border)] bg-[var(--background)]">
+          <div className="flex justify-end space-x-3 p-6 border-t border-border dark:border-border bg-background">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-[var(--hover)] dark:bg-gray-600 rounded-lg hover:bg-[var(--loading-bg)] dark:hover:bg-[var(--panel-background)] transition-colors"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-hover dark:bg-gray-600 rounded-lg hover:bg-loading-bg dark:hover:bg-panel-background transition-colors"
             >
               Cancel
             </button>

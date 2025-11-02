@@ -79,10 +79,10 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="h-4 bg-loading-bg rounded animate-pulse"></div>
         <div className="grid grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-20 bg-[var(--loading-bg)] rounded-lg animate-pulse"></div>
+            <div key={i} className="h-20 bg-loading-bg rounded-lg animate-pulse"></div>
           ))}
         </div>
       </div>
@@ -103,9 +103,9 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
 
   if (!stats) {
     return (
-      <div className="p-4 bg-[var(--panel-background)] rounded-lg text-center">
-        <EnvelopeIcon className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" />
-        <p className="text-[var(--muted)]">No email statistics available</p>
+      <div className="p-4 bg-panel-background rounded-lg text-center">
+        <EnvelopeIcon className="w-8 h-8 text-muted mx-auto mb-2" />
+        <p className="text-muted">No email statistics available</p>
       </div>
     );
   }
@@ -155,9 +155,9 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-[var(--foreground)]">Email Statistics</h3>
+        <h3 className="text-lg font-semibold text-foreground">Email Statistics</h3>
         {stats.lastSyncTime && (
-          <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+          <div className="flex items-center gap-2 text-sm text-muted">
             <CheckCircleIcon className="w-4 h-4" />
             Last sync: {new Date(stats.lastSyncTime).toLocaleTimeString()}
           </div>
@@ -189,9 +189,9 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
       </div>
 
       {/* Sync Health */}
-      <div className="p-4 bg-[var(--panel-background)] rounded-lg">
+      <div className="p-4 bg-panel-background rounded-lg">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium text-[var(--foreground)]">Sync Health</h4>
+          <h4 className="font-medium text-foreground">Sync Health</h4>
           {stats.syncErrors > 0 ? (
             <div className="flex items-center gap-1 text-red-600">
               <ExclamationTriangleIcon className="w-4 h-4" />
@@ -207,7 +207,7 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
         
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-[var(--muted)]">Link Rate</span>
+            <span className="text-muted">Link Rate</span>
             <span className="font-medium">{stats.linkRate}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -218,7 +218,7 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
           </div>
           
           <div className="flex justify-between text-sm">
-            <span className="text-[var(--muted)]">Action Rate</span>
+            <span className="text-muted">Action Rate</span>
             <span className="font-medium">{stats.actionRate}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -236,7 +236,7 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
           <ChartBarIcon className="w-4 h-4" />
           View Details
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-2 bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-medium hover:bg-[var(--hover)] transition-colors">
+        <button className="flex items-center justify-center gap-2 px-4 py-2 bg-background border border-border text-foreground rounded-lg text-sm font-medium hover:bg-hover transition-colors">
           <ClockIcon className="w-4 h-4" />
           Sync History
         </button>

@@ -290,20 +290,20 @@ export function GridEditor({ document, onSave, onAutoSave }: GridEditorProps) {
   }, []);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div className="flex items-center gap-3">
           <TableCellsIcon className="w-6 h-6 text-green-600" />
           <div>
-            <h1 className="text-lg font-semibold text-[var(--foreground)]">{document.title}</h1>
-            <p className="text-sm text-[var(--muted)]">Spreadsheet Editor</p>
+            <h1 className="text-lg font-semibold text-foreground">{document.title}</h1>
+            <p className="text-sm text-muted">Spreadsheet Editor</p>
           </div>
         </div>
         
         <div className="flex items-center gap-4">
           {/* Grid Stats */}
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-muted">
             {rowCount} row{rowCount !== 1 ? 's' : ''} × {columnCount} column{columnCount !== 1 ? 's' : ''}
           </div>
           
@@ -333,14 +333,14 @@ export function GridEditor({ document, onSave, onAutoSave }: GridEditorProps) {
           <div className="flex items-center gap-2">
             <button
               onClick={handleAddRow}
-              className="px-3 py-1 text-sm bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors flex items-center gap-2"
+              className="px-3 py-1 text-sm bg-hover text-gray-700 rounded hover:bg-loading-bg transition-colors flex items-center gap-2"
             >
               <PlusIcon className="w-4 h-4" />
               Add Row
             </button>
             <button
               onClick={handleAddColumn}
-              className="px-3 py-1 text-sm bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors flex items-center gap-2"
+              className="px-3 py-1 text-sm bg-hover text-gray-700 rounded hover:bg-loading-bg transition-colors flex items-center gap-2"
             >
               <PlusIcon className="w-4 h-4" />
               Add Column

@@ -281,7 +281,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
   const getValue = (value: any) => value || null;
   
   // Helper component for displaying values with proper empty state
-  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-foreground" }: { 
     value: any, 
     children?: React.ReactNode, 
     className?: string 
@@ -289,7 +289,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm text-[var(--muted)]">-</span>;
+    return <span className="text-sm text-muted">-</span>;
   };
   
   // Use real company data from merged record with local state fallbacks - no fallback to '-'
@@ -456,8 +456,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     <div className="space-y-8">
       {/* Company Summary */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Summary</h3>
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Company Summary</h3>
+        <div className="bg-background p-4 rounded-lg border border-border">
           <InlineEditField
             value={companyData.description}
             field="description"
@@ -466,7 +466,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
             recordType={recordType}
             onSuccess={handleSuccess}
             type="textarea"
-            className="text-sm text-[var(--foreground)] leading-relaxed font-medium"
+            className="text-sm text-foreground leading-relaxed font-medium"
             placeholder="Enter company description..."
           />
         </div>
@@ -474,14 +474,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Company Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Information</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Company Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Company Name:</span>
+                <span className="text-sm text-muted w-24">Company Name:</span>
                 <InlineEditField
                   value={companyData.name}
                   field="name"
@@ -489,11 +489,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Legal Name:</span>
+                <span className="text-sm text-muted w-24">Legal Name:</span>
                 <InlineEditField
                   value={record?.legalName || ''}
                   field="legalName"
@@ -501,11 +501,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Trading Name:</span>
+                <span className="text-sm text-muted w-24">Trading Name:</span>
                 <InlineEditField
                   value={record?.tradingName || ''}
                   field="tradingName"
@@ -513,11 +513,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Local Name:</span>
+                <span className="text-sm text-muted w-24">Local Name:</span>
                 <InlineEditField
                   value={record?.localName || ''}
                   field="localName"
@@ -525,11 +525,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Total Employees:</span>
+                <span className="text-sm text-muted w-24">Total Employees:</span>
                 <InlineEditField
                   value={companyData.size}
                   field="size"
@@ -537,15 +537,15 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">HQ Location:</span>
+                <span className="text-sm text-muted">HQ Location:</span>
                 <DisplayValue value={companyData.headquarters} />
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Founded:</span>
+                <span className="text-sm text-muted">Founded:</span>
                 <DisplayValue value={record?.foundedYear}>
                   {(() => {
                     if (record?.foundedYear) {
@@ -558,13 +558,13 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 </DisplayValue>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Company Type:</span>
+                <span className="text-sm text-muted">Company Type:</span>
                 <DisplayValue value={record?.isPublic !== undefined}>
                   {record?.isPublic ? 'Public Company' : record?.isPublic === false ? 'Private Company' : null}
                 </DisplayValue>
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
+                <span className="text-sm text-muted w-24">Phone:</span>
                 <InlineEditField
                   value={record?.phone || ''}
                   field="phone"
@@ -572,18 +572,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Column */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact & Market</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Contact & Market</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Email:</span>
+                <span className="text-sm text-muted w-24">Email:</span>
                 <InlineEditField
                   value={record?.email || ''}
                   field="email"
@@ -592,11 +592,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="email"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Fax:</span>
+                <span className="text-sm text-muted w-24">Fax:</span>
                 <InlineEditField
                   value={record?.fax || ''}
                   field="fax"
@@ -604,11 +604,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Website:</span>
+                <span className="text-sm text-muted w-24">Website:</span>
                 <InlineEditField
                   value={website || companyData.website}
                   field="website"
@@ -621,7 +621,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
                   value={linkedinUrl || companyData.linkedin || ''}
                   field="linkedinUrl"
@@ -629,11 +629,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={(message) => handleFieldSuccess('linkedinUrl', linkedinUrl || companyData.linkedin || '', message)}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Navigator:</span>
                 <InlineEditField
                   value={linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || ''}
                   field="linkedinNavigatorUrl"
@@ -641,16 +641,16 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={(message) => handleFieldSuccess('linkedinNavigatorUrl', linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || '', message)}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Market:</span>
+                <span className="text-sm text-muted">Market:</span>
                 <DisplayValue value={record?.industry} />
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Category:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <span className="text-sm text-muted">Category:</span>
+                <span className="text-sm font-medium text-foreground">
                   {(() => {
                     // AI-powered market category determination
                     const industry = record?.industry?.toLowerCase() || '';
@@ -681,8 +681,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Segment:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <span className="text-sm text-muted">Segment:</span>
+                <span className="text-sm font-medium text-foreground">
                   {(() => {
                     // AI-powered market segment determination
                     const industry = record?.industry?.toLowerCase() || '';
@@ -738,14 +738,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Location Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Location Information</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Location Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Basic Location */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Primary Address</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Primary Address</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Address:</span>
+                <span className="text-sm text-muted w-24">Address:</span>
                 <InlineEditField
                   value={mergedRecord?.address || ''}
                   field="address"
@@ -753,11 +753,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">City:</span>
+                <span className="text-sm text-muted w-24">City:</span>
                 <InlineEditField
                   value={city || mergedRecord?.city || ''}
                   field="city"
@@ -765,11 +765,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={(message) => handleFieldSuccess('city', city || mergedRecord?.city || '', message)}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">State:</span>
+                <span className="text-sm text-muted w-24">State:</span>
                 <InlineEditField
                   value={state || mergedRecord?.state || ''}
                   field="state"
@@ -777,11 +777,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={(message) => handleFieldSuccess('state', state || mergedRecord?.state || '', message)}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Country:</span>
+                <span className="text-sm text-muted w-24">Country:</span>
                 <InlineEditField
                   value={mergedRecord?.country || ''}
                   field="country"
@@ -789,11 +789,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Postal Code:</span>
+                <span className="text-sm text-muted w-24">Postal Code:</span>
                 <InlineEditField
                   value={mergedRecord?.postalCode || ''}
                   field="postalCode"
@@ -801,18 +801,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Column - Headquarters */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Headquarters</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Headquarters</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">HQ Street:</span>
+                <span className="text-sm text-muted w-24">HQ Street:</span>
                 <InlineEditField
                   value={record?.hqStreet || ''}
                   field="hqStreet"
@@ -820,11 +820,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">HQ City:</span>
+                <span className="text-sm text-muted w-24">HQ City:</span>
                 <InlineEditField
                   value={record?.hqCity || ''}
                   field="hqCity"
@@ -832,11 +832,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">HQ State:</span>
+                <span className="text-sm text-muted w-24">HQ State:</span>
                 <InlineEditField
                   value={record?.hqState || ''}
                   field="hqState"
@@ -844,11 +844,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">HQ Zip:</span>
+                <span className="text-sm text-muted w-24">HQ Zip:</span>
                 <InlineEditField
                   value={record?.hqZipcode || ''}
                   field="hqZipcode"
@@ -856,11 +856,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">HQ Full:</span>
+                <span className="text-sm text-muted w-24">HQ Full:</span>
                 <InlineEditField
                   value={record?.hqFullAddress || ''}
                   field="hqFullAddress"
@@ -869,7 +869,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
@@ -879,14 +879,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Business Profile */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Profile</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Business Profile</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Business Details */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Business Details</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Business Details</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Industry:</span>
+                <span className="text-sm text-muted w-24">Industry:</span>
                 <InlineEditField
                   value={record?.industry || ''}
                   field="industry"
@@ -894,11 +894,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Target Industry:</span>
+                <span className="text-sm text-muted w-24">Target Industry:</span>
                 <InlineEditField
                   value={record?.customFields?.targetIndustry || ''}
                   field="targetIndustry"
@@ -906,12 +906,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="e.g., Title Companies, Healthcare Providers"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Sector:</span>
+                <span className="text-sm text-muted w-24">Sector:</span>
                 <InlineEditField
                   value={record?.sector || ''}
                   field="sector"
@@ -919,11 +919,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Revenue:</span>
+                <span className="text-sm text-muted w-24">Revenue:</span>
                 <InlineEditField
                   value={record?.revenue ? record.revenue.toString() : ''}
                   field="revenue"
@@ -932,11 +932,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Currency:</span>
+                <span className="text-sm text-muted w-24">Currency:</span>
                 <InlineEditField
                   value={record?.currency || ''}
                   field="currency"
@@ -944,11 +944,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Founded:</span>
+                <span className="text-sm text-muted w-24">Founded:</span>
                 <InlineEditField
                   value={record?.foundedYear ? record.foundedYear.toString() : ''}
                   field="foundedYear"
@@ -957,11 +957,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Employees:</span>
+                <span className="text-sm text-muted w-24">Employees:</span>
                 <InlineEditField
                   value={record?.employeeCount ? record.employeeCount.toString() : ''}
                   field="employeeCount"
@@ -970,18 +970,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Column - Legal & Registration */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Legal & Registration</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Legal & Registration</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Domain:</span>
+                <span className="text-sm text-muted w-24">Domain:</span>
                 <InlineEditField
                   value={record?.domain || ''}
                   field="domain"
@@ -989,11 +989,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Reg Number:</span>
+                <span className="text-sm text-muted w-24">Reg Number:</span>
                 <InlineEditField
                   value={record?.registrationNumber || ''}
                   field="registrationNumber"
@@ -1001,11 +1001,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Tax ID:</span>
+                <span className="text-sm text-muted w-24">Tax ID:</span>
                 <InlineEditField
                   value={record?.taxId || ''}
                   field="taxId"
@@ -1013,11 +1013,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">VAT Number:</span>
+                <span className="text-sm text-muted w-24">VAT Number:</span>
                 <InlineEditField
                   value={record?.vatNumber || ''}
                   field="vatNumber"
@@ -1025,11 +1025,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Logo URL:</span>
+                <span className="text-sm text-muted w-24">Logo URL:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.logoUrl)}
                   field="logoUrl"
@@ -1037,7 +1037,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
@@ -1047,14 +1047,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Social Media & Online Presence */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Social Media & Online Presence</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Social Media & Online Presence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Social URLs */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Social Media URLs</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Social Media URLs</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.linkedinUrl)}
                   field="linkedinUrl"
@@ -1062,11 +1062,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Navigator:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.linkedinNavigatorUrl)}
                   field="linkedinNavigatorUrl"
@@ -1074,11 +1074,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Twitter:</span>
+                <span className="text-sm text-muted w-24">Twitter:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.twitterUrl)}
                   field="twitterUrl"
@@ -1086,11 +1086,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Facebook:</span>
+                <span className="text-sm text-muted w-24">Facebook:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.facebookUrl)}
                   field="facebookUrl"
@@ -1098,11 +1098,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Instagram:</span>
+                <span className="text-sm text-muted w-24">Instagram:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.instagramUrl)}
                   field="instagramUrl"
@@ -1110,11 +1110,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">GitHub:</span>
+                <span className="text-sm text-muted w-24">GitHub:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.githubUrl)}
                   field="githubUrl"
@@ -1122,11 +1122,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">YouTube:</span>
+                <span className="text-sm text-muted w-24">YouTube:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.youtubeUrl)}
                   field="youtubeUrl"
@@ -1134,18 +1134,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Column - Follower Counts */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Follower Counts</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Follower Counts</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
                   value={record?.linkedinFollowers ? record.linkedinFollowers.toString() : ''}
                   field="linkedinFollowers"
@@ -1154,11 +1154,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Twitter:</span>
+                <span className="text-sm text-muted w-24">Twitter:</span>
                 <InlineEditField
                   value={record?.twitterFollowers ? record.twitterFollowers.toString() : ''}
                   field="twitterFollowers"
@@ -1167,11 +1167,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Job Postings:</span>
+                <span className="text-sm text-muted w-24">Job Postings:</span>
                 <InlineEditField
                   value={record?.activeJobPostings ? record.activeJobPostings.toString() : ''}
                   field="activeJobPostings"
@@ -1180,11 +1180,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Tech Count:</span>
+                <span className="text-sm text-muted w-24">Tech Count:</span>
                 <InlineEditField
                   value={record?.numTechnologiesUsed ? record.numTechnologiesUsed.toString() : ''}
                   field="numTechnologiesUsed"
@@ -1193,11 +1193,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Digital Maturity:</span>
+                <span className="text-sm text-muted w-24">Digital Maturity:</span>
                 <InlineEditField
                   value={record?.digitalMaturity ? record.digitalMaturity.toString() : ''}
                   field="digitalMaturity"
@@ -1206,7 +1206,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
@@ -1216,55 +1216,55 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Seller Intelligence - Key Metrics */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Seller Intelligence</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Seller Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Technology Stack</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Technology Stack</h4>
             <div className="text-2xl font-bold text-green-600">{record?.technologiesUsed?.length || 0}</div>
-            <div className="text-xs text-[var(--muted)] mt-1">Systems in use</div>
-            <div className="text-xs text-[var(--muted)] mt-1">Complexity indicator</div>
+            <div className="text-xs text-muted mt-1">Systems in use</div>
+            <div className="text-xs text-muted mt-1">Complexity indicator</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Hiring Activity</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Hiring Activity</h4>
             <div className="text-2xl font-bold text-purple-600">{record?.activeJobPostings || 0}</div>
-            <div className="text-xs text-[var(--muted)] mt-1">Active job postings</div>
-            <div className="text-xs text-[var(--muted)] mt-1">Growth indicator</div>
+            <div className="text-xs text-muted mt-1">Active job postings</div>
+            <div className="text-xs text-muted mt-1">Growth indicator</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Social Reach</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Social Reach</h4>
             <div className="text-2xl font-bold text-blue-600">
               {record?.linkedinFollowers ? `${(record.linkedinFollowers / 1000).toFixed(0)}K` : '-'}
             </div>
-            <div className="text-xs text-[var(--muted)] mt-1">LinkedIn followers</div>
-            <div className="text-xs text-[var(--muted)] mt-1">Brand strength</div>
+            <div className="text-xs text-muted mt-1">LinkedIn followers</div>
+            <div className="text-xs text-muted mt-1">Brand strength</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Competitive Landscape</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Competitive Landscape</h4>
             <div className="text-2xl font-bold text-orange-600">{record?.competitors?.length || 0}</div>
-            <div className="text-xs text-[var(--muted)] mt-1">Competitors identified</div>
-            <div className="text-xs text-[var(--muted)] mt-1">Market positioning</div>
+            <div className="text-xs text-muted mt-1">Competitors identified</div>
+            <div className="text-xs text-muted mt-1">Market positioning</div>
           </div>
         </div>
       </div>
 
       {/* Strategic Seller Insights */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Strategic Seller Insights</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Strategic Seller Insights</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Technology Complexity</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Technology Complexity</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Total Technologies:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{record?.technologiesUsed?.length || 0}</span>
+                <span className="text-sm text-muted">Total Technologies:</span>
+                <span className="text-sm font-medium text-foreground">{record?.technologiesUsed?.length || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Integration Complexity:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <span className="text-sm text-muted">Integration Complexity:</span>
+                <span className="text-sm font-medium text-foreground">
                   {(record?.technologiesUsed?.length || 0) > 200 ? 'High' : (record?.technologiesUsed?.length || 0) > 50 ? 'Medium' : 'Low'}
                 </span>
               </div>
-              <div className="text-xs text-[var(--muted)] mt-2">
+              <div className="text-xs text-muted mt-2">
                 {(record?.technologiesUsed?.length || 0) > 200 ? 'Complex integration challenges - TOP\'s expertise valuable' : 
                  (record?.technologiesUsed?.length || 0) > 50 ? 'Moderate complexity - strategic planning needed' : 
                  'Simple stack - focus on efficiency gains'}
@@ -1272,23 +1272,23 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
             </div>
           </div>
           
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Market Position</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Market Position</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Company Type:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <span className="text-sm text-muted">Company Type:</span>
+                <span className="text-sm font-medium text-foreground">
                   {record?.isPublic ? 'Public Company' : 'Private Company'}
                   {record?.stockSymbol && ` (${record.stockSymbol})`}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Competitive Pressure:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <span className="text-sm text-muted">Competitive Pressure:</span>
+                <span className="text-sm font-medium text-foreground">
                   {(record?.competitors?.length || 0) > 15 ? 'High' : (record?.competitors?.length || 0) > 5 ? 'Medium' : 'Low'}
                 </span>
               </div>
-              <div className="text-xs text-[var(--muted)] mt-2">
+              <div className="text-xs text-muted mt-2">
                 {(record?.competitors?.length || 0) > 15 ? 'Highly competitive market - differentiation key' : 
                  (record?.competitors?.length || 0) > 5 ? 'Moderate competition - value proposition important' : 
                  'Less competitive - relationship building crucial'}
@@ -1300,14 +1300,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Market Position & Metadata */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Market Position & Metadata</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Market Position & Metadata</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Market Position */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Market Position</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Market Position</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Market Position:</span>
+                <span className="text-sm text-muted w-24">Market Position:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.marketPosition)}
                   field="marketPosition"
@@ -1315,11 +1315,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Stock Symbol:</span>
+                <span className="text-sm text-muted w-24">Stock Symbol:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.stockSymbol)}
                   field="stockSymbol"
@@ -1327,11 +1327,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Public Company:</span>
+                <span className="text-sm text-muted w-24">Public Company:</span>
                 <InlineEditField
                   value={record?.isPublic !== undefined ? (record.isPublic ? 'Yes' : 'No') : ''}
                   field="isPublic"
@@ -1344,11 +1344,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                     { value: 'true', label: 'Yes' },
                     { value: 'false', label: 'No' }
                   ]}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Key Influencers:</span>
+                <span className="text-sm text-muted w-24">Key Influencers:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.keyInfluencers)}
                   field="keyInfluencers"
@@ -1356,18 +1356,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Column - Status & Priority */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Status & Priority</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Status & Priority</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Status:</span>
+                <span className="text-sm text-muted w-24">Status:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.status)}
                   field="status"
@@ -1382,11 +1382,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                     { value: 'PROSPECT', label: 'Prospect' },
                     { value: 'CUSTOMER', label: 'Customer' }
                   ]}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Priority:</span>
+                <span className="text-sm text-muted w-24">Priority:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.priority)}
                   field="priority"
@@ -1400,11 +1400,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                     { value: 'MEDIUM', label: 'Medium' },
                     { value: 'LOW', label: 'Low' }
                   ]}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Tags:</span>
+                <span className="text-sm text-muted w-24">Tags:</span>
                 <InlineEditField
                   value={record?.tags ? record.tags.join(', ') : ''}
                   field="tags"
@@ -1412,12 +1412,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter tags separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Notes:</span>
+                <span className="text-sm text-muted w-24">Notes:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.notes)}
                   field="notes"
@@ -1426,7 +1426,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
@@ -1436,8 +1436,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Recent Company Activity */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Company Activity</h3>
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Recent Company Activity</h3>
+        <div className="bg-background p-4 rounded-lg border border-border">
           <div className="space-y-3">
             {recentActivity.map((activity: any, index: number) => (
               <div key={index} className="flex items-start space-x-3">
@@ -1448,10 +1448,10 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   'bg-orange-500'
                 }`}></div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-[var(--foreground)]">
+                  <div className="text-sm font-medium text-foreground">
                     {activity.type} from {activity.contact}
                   </div>
-                  <div className="text-xs text-[var(--muted)]">
+                  <div className="text-xs text-muted">
                     {activity.time} • {activity.description}
                   </div>
                 </div>
@@ -1463,14 +1463,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Action Tracking & Funding */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Action Tracking & Funding</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Action Tracking & Funding</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Action Tracking */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Action Tracking</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Action Tracking</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Last Action:</span>
+                <span className="text-sm text-muted w-24">Last Action:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.lastAction)}
                   field="lastAction"
@@ -1478,11 +1478,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Last Action Date:</span>
+                <span className="text-sm text-muted w-24">Last Action Date:</span>
                 <InlineEditField
                   value={record?.lastActionDate ? new Date(record.lastActionDate).toISOString().split('T')[0] : ''}
                   field="lastActionDate"
@@ -1491,11 +1491,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   variant="date"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
+                <span className="text-sm text-muted w-24">Next Action:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.nextAction)}
                   field="nextAction"
@@ -1503,11 +1503,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Next Action Date:</span>
+                <span className="text-sm text-muted w-24">Next Action Date:</span>
                 <InlineEditField
                   value={record?.nextActionDate ? new Date(record.nextActionDate).toISOString().split('T')[0] : ''}
                   field="nextActionDate"
@@ -1516,11 +1516,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   variant="date"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Action Status:</span>
+                <span className="text-sm text-muted w-24">Action Status:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.actionStatus)}
                   field="actionStatus"
@@ -1528,11 +1528,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Next Action Type:</span>
+                <span className="text-sm text-muted w-24">Next Action Type:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.nextActionType)}
                   field="nextActionType"
@@ -1540,18 +1540,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Column - Funding & Financial */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Funding & Financial</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Funding & Financial</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Last Funding:</span>
+                <span className="text-sm text-muted w-24">Last Funding:</span>
                 <InlineEditField
                   value={record?.lastFundingAmount ? record.lastFundingAmount.toString() : ''}
                   field="lastFundingAmount"
@@ -1560,11 +1560,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Funding Date:</span>
+                <span className="text-sm text-muted w-24">Funding Date:</span>
                 <InlineEditField
                   value={record?.lastFundingDate ? new Date(record.lastFundingDate).toISOString().split('T')[0] : ''}
                   field="lastFundingDate"
@@ -1573,11 +1573,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   variant="date"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Opportunity Amount:</span>
+                <span className="text-sm text-muted w-24">Opportunity Amount:</span>
                 <InlineEditField
                   value={record?.opportunityAmount ? record.opportunityAmount.toString() : ''}
                   field="opportunityAmount"
@@ -1586,11 +1586,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Opportunity Probability:</span>
+                <span className="text-sm text-muted w-24">Opportunity Probability:</span>
                 <InlineEditField
                   value={record?.opportunityProbability ? record.opportunityProbability.toString() : ''}
                   field="opportunityProbability"
@@ -1599,11 +1599,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="number"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Opportunity Stage:</span>
+                <span className="text-sm text-muted w-24">Opportunity Stage:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.opportunityStage)}
                   field="opportunityStage"
@@ -1611,11 +1611,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Decision Timeline:</span>
+                <span className="text-sm text-muted w-24">Decision Timeline:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.decisionTimeline)}
                   field="decisionTimeline"
@@ -1623,7 +1623,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
@@ -1633,14 +1633,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Parent Company & Strategy */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Parent Company & Strategy</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Parent Company & Strategy</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Parent Company */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Parent Company</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Parent Company</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Parent Name:</span>
+                <span className="text-sm text-muted w-24">Parent Name:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.parentCompanyName)}
                   field="parentCompanyName"
@@ -1648,11 +1648,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Parent Domain:</span>
+                <span className="text-sm text-muted w-24">Parent Domain:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.parentCompanyDomain)}
                   field="parentCompanyDomain"
@@ -1660,11 +1660,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Business Challenges:</span>
+                <span className="text-sm text-muted w-24">Business Challenges:</span>
                 <InlineEditField
                   value={record?.businessChallenges ? record.businessChallenges.join(', ') : ''}
                   field="businessChallenges"
@@ -1673,12 +1673,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter challenges separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Business Priorities:</span>
+                <span className="text-sm text-muted w-24">Business Priorities:</span>
                 <InlineEditField
                   value={record?.businessPriorities ? record.businessPriorities.join(', ') : ''}
                   field="businessPriorities"
@@ -1687,7 +1687,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter priorities separated by commas"
                 />
               </div>
@@ -1695,11 +1695,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
           </div>
 
           {/* Right Column - Strategy & Competitive */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Strategy & Competitive</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Strategy & Competitive</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Competitive Advantages:</span>
+                <span className="text-sm text-muted w-24">Competitive Advantages:</span>
                 <InlineEditField
                   value={record?.competitiveAdvantages ? record.competitiveAdvantages.join(', ') : ''}
                   field="competitiveAdvantages"
@@ -1708,12 +1708,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter advantages separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Strategic Initiatives:</span>
+                <span className="text-sm text-muted w-24">Strategic Initiatives:</span>
                 <InlineEditField
                   value={record?.strategicInitiatives ? record.strategicInitiatives.join(', ') : ''}
                   field="strategicInitiatives"
@@ -1722,12 +1722,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter initiatives separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Growth Opportunities:</span>
+                <span className="text-sm text-muted w-24">Growth Opportunities:</span>
                 <InlineEditField
                   value={record?.growthOpportunities ? record.growthOpportunities.join(', ') : ''}
                   field="growthOpportunities"
@@ -1736,12 +1736,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter opportunities separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Success Metrics:</span>
+                <span className="text-sm text-muted w-24">Success Metrics:</span>
                 <InlineEditField
                   value={record?.successMetrics ? record.successMetrics.join(', ') : ''}
                   field="successMetrics"
@@ -1750,7 +1750,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter metrics separated by commas"
                 />
               </div>
@@ -1761,14 +1761,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       {/* Classification Codes */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Classification Codes</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Classification Codes</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Industry Codes */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Industry Codes</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Industry Codes</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">NAICS Codes:</span>
+                <span className="text-sm text-muted w-24">NAICS Codes:</span>
                 <InlineEditField
                   value={record?.naicsCodes ? record.naicsCodes.join(', ') : ''}
                   field="naicsCodes"
@@ -1776,12 +1776,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter NAICS codes separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">SIC Codes:</span>
+                <span className="text-sm text-muted w-24">SIC Codes:</span>
                 <InlineEditField
                   value={record?.sicCodes ? record.sicCodes.join(', ') : ''}
                   field="sicCodes"
@@ -1789,12 +1789,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter SIC codes separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Sources:</span>
+                <span className="text-sm text-muted w-24">Sources:</span>
                 <InlineEditField
                   value={record?.sources ? record.sources.join(', ') : ''}
                   field="sources"
@@ -1802,12 +1802,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter sources separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Competitors:</span>
+                <span className="text-sm text-muted w-24">Competitors:</span>
                 <InlineEditField
                   value={record?.competitors ? record.competitors.join(', ') : ''}
                   field="competitors"
@@ -1816,7 +1816,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter competitors separated by commas"
                 />
               </div>
@@ -1824,11 +1824,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
           </div>
 
           {/* Right Column - Technology & Additional */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Technology & Additional</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Technology & Additional</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Tech Stack:</span>
+                <span className="text-sm text-muted w-24">Tech Stack:</span>
                 <InlineEditField
                   value={record?.techStack ? record.techStack.join(', ') : ''}
                   field="techStack"
@@ -1837,12 +1837,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter technologies separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Technologies Used:</span>
+                <span className="text-sm text-muted w-24">Technologies Used:</span>
                 <InlineEditField
                   value={record?.technologiesUsed ? record.technologiesUsed.join(', ') : ''}
                   field="technologiesUsed"
@@ -1851,12 +1851,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter technologies separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Market Threats:</span>
+                <span className="text-sm text-muted w-24">Market Threats:</span>
                 <InlineEditField
                   value={record?.marketThreats ? record.marketThreats.join(', ') : ''}
                   field="marketThreats"
@@ -1865,12 +1865,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="textarea"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter threats separated by commas"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">HQ Region:</span>
+                <span className="text-sm text-muted w-24">HQ Region:</span>
                 <InlineEditField
                   value={record?.hqRegion ? record.hqRegion.join(', ') : ''}
                   field="hqRegion"
@@ -1878,7 +1878,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                   placeholder="Enter regions separated by commas"
                 />
               </div>
@@ -1888,18 +1888,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       </div>
 
       {/* Record Information */}
-      <div className="mt-8 pt-6 border-t border-[var(--border)]">
-        <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-4">Record Information</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wide mb-4">Record Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Created:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(record?.createdAt)}>
               {formatRelativeDate(record?.createdAt)}
             </span>
           </div>
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Last Updated:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(record?.updatedAt)}>
               {formatRelativeDate(record?.updatedAt)}
             </span>
           </div>

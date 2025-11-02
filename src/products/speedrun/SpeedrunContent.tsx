@@ -880,13 +880,13 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
     content = (
       <div className="h-full flex flex-col">
         {/* Header with ranking mode button */}
-        <div className="flex items-center justify-between p-4 border-b bg-[var(--background)]">
+        <div className="flex items-center justify-between p-4 border-b bg-background">
           <div className="flex items-center space-x-4">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">
+            <h2 className="text-lg font-semibold text-foreground">
               Speedrun Outreach
             </h2>
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-[var(--muted)]">Ranking:</span>
+              <span className="text-sm text-muted">Ranking:</span>
               <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
                 Global
               </span>
@@ -1002,16 +1002,16 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   // If no person selected but we have people, show simple message
   else if (SpeedrunPeople.length > 0) {
     content = (
-      <div className="p-4 bg-[var(--background)] h-full flex items-center justify-center">
+      <div className="p-4 bg-background h-full flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">📋</div>
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Ready for Outreach
           </h2>
-          <p className="text-[var(--muted)] mb-4">
+          <p className="text-muted mb-4">
             Select a contact from the left to begin your outreach workflow
           </p>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-muted">
             {SpeedrunPeople.length} contacts ready for outreach
           </p>
         </div>
@@ -1021,13 +1021,13 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   // If no people at all, show loading state
   else {
     content = (
-      <div className="p-4 bg-[var(--background)] h-full flex items-center justify-center">
+      <div className="p-4 bg-background h-full flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">⚡</div>
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Loading Contacts
           </h2>
-          <p className="text-[var(--muted)] mb-4">
+          <p className="text-muted mb-4">
             Preparing your outreach workflow...
           </p>
         </div>

@@ -205,9 +205,9 @@ export function StandaloneAppFramework({
     UNIVERSAL_APP_STRUCTURE.dashboard;
 
   return (
-    <div className="h-screen bg-[var(--background)] flex">
+    <div className="h-screen bg-background flex">
       {/* THIN LEFT PANEL */}
-      <div className="w-16 bg-[var(--background)] border-r border-[var(--border)] flex flex-col items-center py-4">
+      <div className="w-16 bg-background border-r border-border flex flex-col items-center py-4">
         {/* App Icon */}
         <div
           className="w-10 h-10 rounded-lg flex items-center justify-center mb-6 cursor-pointer transition-all hover:scale-110"
@@ -233,7 +233,7 @@ export function StandaloneAppFramework({
                 className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all group relative ${
                   isActive
                     ? "text-white shadow-lg transform scale-110"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]"
+                    : "text-muted hover:text-foreground hover:bg-hover"
                 }`}
                 style={isActive ? { backgroundColor: accentColor } : {}}
                 title={app.name}
@@ -241,11 +241,11 @@ export function StandaloneAppFramework({
                 <Icon className="w-5 h-5" />
 
                 {/* Tooltip */}
-                <div className="absolute left-16 bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap">
-                  <div className="font-medium text-[var(--foreground)]">
+                <div className="absolute left-16 bg-[var(--card)] border border-border rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap">
+                  <div className="font-medium text-foreground">
                     {app.name}
                   </div>
-                  <div className="text-xs text-[var(--muted)]">
+                  <div className="text-xs text-muted">
                     {app.description}
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export function StandaloneAppFramework({
             className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
               isAiChatOpen
                 ? "bg-blue-500 text-white"
-                : "text-[var(--muted)] hover:text-blue-500 hover:bg-blue-500/10"
+                : "text-muted hover:text-blue-500 hover:bg-blue-500/10"
             }`}
             title="AI Assistant"
           >
@@ -285,7 +285,7 @@ export function StandaloneAppFramework({
             // MAIN ACTIONS SCREEN
             <div className="h-full flex flex-col">
               {/* Header */}
-              <div className="p-8 border-b border-[var(--border)]">
+              <div className="p-8 border-b border-border">
                 <div className="flex items-center gap-4 mb-4">
                   <div
                     className="w-16 h-16 rounded-2xl flex items-center justify-center"
@@ -297,10 +297,10 @@ export function StandaloneAppFramework({
                     <AppIcon className="w-8 h-8" />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                    <h1 className="text-3xl font-bold text-foreground">
                       {appName}
                     </h1>
-                    <p className="text-[var(--muted)]">
+                    <p className="text-muted">
                       What would you like to do?
                     </p>
                   </div>
@@ -313,7 +313,7 @@ export function StandaloneAppFramework({
                     placeholder="Search or describe what you want to do..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   />
                 </div>
               </div>
@@ -330,7 +330,7 @@ export function StandaloneAppFramework({
                         className={`p-6 rounded-2xl border transition-all duration-200 text-left group hover:scale-105 hover:shadow-lg ${
                           action.primary
                             ? "border-transparent shadow-lg"
-                            : "border-[var(--border)] hover:border-[var(--foreground)]/20"
+                            : "border-border hover:border-foreground/20"
                         }`}
                         style={
                           action.primary
@@ -361,13 +361,13 @@ export function StandaloneAppFramework({
                             <h3
                               className={`font-semibold mb-2 ${
                                 action.primary
-                                  ? "text-[var(--foreground)]"
-                                  : "text-[var(--foreground)]"
+                                  ? "text-foreground"
+                                  : "text-foreground"
                               }`}
                             >
                               {action.name}
                             </h3>
-                            <p className="text-[var(--muted)] text-sm leading-relaxed">
+                            <p className="text-muted text-sm leading-relaxed">
                               {action.description}
                             </p>
                           </div>
@@ -379,7 +379,7 @@ export function StandaloneAppFramework({
 
                 {/* Quick Access to Left Panel Apps */}
                 <div className="mt-12">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)] mb-6">
+                  <h2 className="text-xl font-semibold text-foreground mb-6">
                     Quick Access
                   </h2>
                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
@@ -392,7 +392,7 @@ export function StandaloneAppFramework({
                             onLeftAppChange?.(app.id);
                             onShowMainActions?.(false);
                           }}
-                          className="p-4 rounded-xl border border-[var(--border)] hover:border-[var(--foreground)]/20 transition-all text-center group hover:scale-105"
+                          className="p-4 rounded-xl border border-border hover:border-foreground/20 transition-all text-center group hover:scale-105"
                         >
                           <div
                             className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2"
@@ -403,10 +403,10 @@ export function StandaloneAppFramework({
                           >
                             <Icon className="w-5 h-5" />
                           </div>
-                          <div className="font-medium text-[var(--foreground)] text-sm">
+                          <div className="font-medium text-foreground text-sm">
                             {app.name}
                           </div>
-                          <div className="text-xs text-[var(--muted)] mt-1">
+                          <div className="text-xs text-muted mt-1">
                             {app.description}
                           </div>
                         </button>
@@ -420,19 +420,19 @@ export function StandaloneAppFramework({
             // LEFT PANEL CONTENT
             <div className="h-full flex flex-col">
               {/* Left Panel Header */}
-              <div className="p-6 border-b border-[var(--border)]">
+              <div className="p-6 border-b border-border">
                 <div className="flex items-center gap-3 mb-4">
                   <button
                     onClick={() => onShowMainActions?.(true)}
-                    className="w-8 h-8 rounded-lg bg-[var(--hover-bg)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                    className="w-8 h-8 rounded-lg bg-hover flex items-center justify-center text-muted hover:text-foreground transition-colors"
                   >
                     <AppIcon className="w-4 h-4" />
                   </button>
                   <div>
-                    <h2 className="text-xl font-bold text-[var(--foreground)]">
+                    <h2 className="text-xl font-bold text-foreground">
                       {currentLeftApp.name}
                     </h2>
-                    <p className="text-sm text-[var(--muted)]">
+                    <p className="text-sm text-muted">
                       {currentLeftApp.description}
                     </p>
                   </div>
@@ -453,10 +453,10 @@ export function StandaloneAppFramework({
                       >
                         <currentLeftApp.icon className="w-8 h-8" />
                       </div>
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
                         {currentLeftApp.name} Coming Soon
                       </h3>
-                      <p className="text-[var(--muted)]">
+                      <p className="text-muted">
                         {currentLeftApp.description}
                       </p>
                     </div>
@@ -472,18 +472,18 @@ export function StandaloneAppFramework({
 
         {/* AI CHAT PANEL */}
         {aiChatEnabled && isAiChatOpen && (
-          <div className="w-80 bg-[var(--background)] border-l border-[var(--border)] flex flex-col">
+          <div className="w-80 bg-background border-l border-border flex flex-col">
             {/* AI Chat Header */}
-            <div className="p-4 border-b border-[var(--border)]">
+            <div className="p-4 border-b border-border">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                   <SparklesIcon className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[var(--foreground)]">
+                  <h3 className="font-semibold text-foreground">
                     AI Assistant
                   </h3>
-                  <p className="text-xs text-[var(--muted)]">
+                  <p className="text-xs text-muted">
                     Ask me anything about {appName}
                   </p>
                 </div>
@@ -492,14 +492,14 @@ export function StandaloneAppFramework({
 
             {/* Chat Messages */}
             <div className="flex-1 p-4 overflow-y-auto">
-              <div className="text-center text-[var(--muted)] text-sm">
+              <div className="text-center text-muted text-sm">
                 👋 Hi! I&apos;m your {appName} AI assistant. How can I help you
                 today?
               </div>
             </div>
 
             {/* Chat Input */}
-            <div className="p-4 border-t border-[var(--border)]">
+            <div className="p-4 border-t border-border">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -507,7 +507,7 @@ export function StandaloneAppFramework({
                   value={aiChatMessage}
                   onChange={(e) => setAiChatMessage(e.target.value)}
                   onKeyPress={(e) => e['key'] === "Enter" && handleAiChatSubmit()}
-                  className="flex-1 px-3 py-2 bg-[var(--hover-bg)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="flex-1 px-3 py-2 bg-hover border border-border rounded-lg text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
                 <button
                   onClick={handleAiChatSubmit}

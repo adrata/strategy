@@ -292,20 +292,20 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
   }, [charts, dataSource, document.title]);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div className="flex items-center gap-3">
           <ChartBarIcon className="w-6 h-6 text-orange-600" />
           <div>
-            <h1 className="text-lg font-semibold text-[var(--foreground)]">{document.title}</h1>
-            <p className="text-sm text-[var(--muted)]">Matrix Dashboard</p>
+            <h1 className="text-lg font-semibold text-foreground">{document.title}</h1>
+            <p className="text-sm text-muted">Matrix Dashboard</p>
           </div>
         </div>
         
         <div className="flex items-center gap-4">
           {/* Chart Count */}
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-muted">
             {charts.length} chart{charts.length !== 1 ? 's' : ''}
           </div>
           
@@ -338,14 +338,14 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
               className={`px-3 py-1 text-sm rounded transition-colors ${
                 isPreviewMode 
                   ? 'bg-blue-100 text-blue-700' 
-                  : 'bg-[var(--hover)] text-gray-700 hover:bg-[var(--loading-bg)]'
+                  : 'bg-hover text-gray-700 hover:bg-loading-bg'
               }`}
             >
               <EyeIcon className="w-4 h-4" />
             </button>
             <button
               onClick={exportDashboard}
-              className="px-3 py-1 text-sm bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors"
+              className="px-3 py-1 text-sm bg-hover text-gray-700 rounded hover:bg-loading-bg transition-colors"
             >
               <DocumentArrowDownIcon className="w-4 h-4" />
             </button>
@@ -364,9 +364,9 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
         {!isPreviewMode && (
-          <div className="w-80 border-r border-[var(--border)] bg-[var(--panel-background)] flex flex-col">
+          <div className="w-80 border-r border-border bg-panel-background flex flex-col">
             {/* Add Chart */}
-            <div className="p-4 border-b border-[var(--border)]">
+            <div className="p-4 border-b border-border">
               <button
                 onClick={() => setShowAddChart(true)}
                 className="w-full flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -387,20 +387,20 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
                     className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                       selectedChart === chart.id
                         ? 'border-blue-300 bg-blue-50'
-                        : 'border-[var(--border)] bg-[var(--background)] hover:border-[var(--border)]'
+                        : 'border-border bg-background hover:border-border'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="text-sm font-medium text-[var(--foreground)]">{chart.title}</h4>
-                        <p className="text-xs text-[var(--muted)] capitalize">{chart.type} Chart</p>
+                        <h4 className="text-sm font-medium text-foreground">{chart.title}</h4>
+                        <p className="text-xs text-muted capitalize">{chart.type} Chart</p>
                       </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteChart(chart.id);
                         }}
-                        className="p-1 text-[var(--muted)] hover:text-red-600 transition-colors"
+                        className="p-1 text-muted hover:text-red-600 transition-colors"
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>
@@ -413,13 +413,13 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
         )}
 
         {/* Canvas */}
-        <div className="flex-1 relative overflow-auto bg-[var(--hover)]">
+        <div className="flex-1 relative overflow-auto bg-hover">
           {charts.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <ChartBarIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No charts yet</h3>
-                <p className="text-[var(--muted)] mb-4">Create your first chart to get started</p>
+                <ChartBarIcon className="w-16 h-16 text-muted mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">No charts yet</h3>
+                <p className="text-muted mb-4">Create your first chart to get started</p>
                 <button
                   onClick={() => setShowAddChart(true)}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -434,8 +434,8 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
                 {charts.map((chart) => (
                   <div
                     key={chart.id}
-                    className={`absolute border-2 rounded-lg bg-[var(--background)] shadow-lg ${
-                      selectedChart === chart.id ? 'border-blue-500' : 'border-[var(--border)]'
+                    className={`absolute border-2 rounded-lg bg-background shadow-lg ${
+                      selectedChart === chart.id ? 'border-blue-500' : 'border-border'
                     }`}
                     style={{
                       left: chart.x,
@@ -445,8 +445,8 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
                     }}
                     onClick={() => setSelectedChart(chart.id)}
                   >
-                    <div className="p-3 border-b border-[var(--border)] bg-[var(--panel-background)] rounded-t-lg">
-                      <h4 className="text-sm font-medium text-[var(--foreground)]">{chart.title}</h4>
+                    <div className="p-3 border-b border-border bg-panel-background rounded-t-lg">
+                      <h4 className="text-sm font-medium text-foreground">{chart.title}</h4>
                     </div>
                     <div className="p-2">
                       <ResponsiveContainer width="100%" height={chart.height - 60}>
@@ -465,14 +465,14 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
       {showAddChart && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4">
-            <div className="fixed inset-0 bg-[var(--panel-background)]0 bg-opacity-75 transition-opacity" onClick={() => setShowAddChart(false)} />
+            <div className="fixed inset-0 bg-panel-background0 bg-opacity-75 transition-opacity" onClick={() => setShowAddChart(false)} />
             
-            <div className="relative bg-[var(--background)] rounded-lg shadow-xl max-w-2xl w-full">
-              <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
-                <h3 className="text-lg font-semibold text-[var(--foreground)]">Add Chart</h3>
+            <div className="relative bg-background rounded-lg shadow-xl max-w-2xl w-full">
+              <div className="flex items-center justify-between p-6 border-b border-border">
+                <h3 className="text-lg font-semibold text-foreground">Add Chart</h3>
                 <button
                   onClick={() => setShowAddChart(false)}
-                  className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-hover rounded-lg transition-colors"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
@@ -484,10 +484,10 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
                     <button
                       key={type.id}
                       onClick={() => addChart(type.id)}
-                      className="p-4 text-left border border-[var(--border)] rounded-lg hover:border-blue-300 hover:shadow-md transition-all group"
+                      className="p-4 text-left border border-border rounded-lg hover:border-blue-300 hover:shadow-md transition-all group"
                     >
                       <div className="text-2xl mb-2">{type.icon}</div>
-                      <h4 className="font-medium text-[var(--foreground)] group-hover:text-blue-600 transition-colors">
+                      <h4 className="font-medium text-foreground group-hover:text-blue-600 transition-colors">
                         {type.name}
                       </h4>
                     </button>

@@ -29,10 +29,10 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   render() {
     if (this.state.hasError) {
       return (
-        <div className="h-full bg-[var(--background)] p-6">
+        <div className="h-full bg-background p-6">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Component Error</h1>
           <p className="text-lg">A component crashed and was caught by the error boundary.</p>
-          <pre className="text-sm bg-[var(--hover)] p-4 mt-4 overflow-auto">
+          <pre className="text-sm bg-hover p-4 mt-4 overflow-auto">
             {this.state.error?.toString()}
           </pre>
         </div>

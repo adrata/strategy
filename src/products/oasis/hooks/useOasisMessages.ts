@@ -111,6 +111,14 @@ export function useOasisMessages(
       setLoading(true);
       setError(null);
 
+      // Validate workspaceId is provided
+      if (!workspaceId) {
+        const errorMsg = 'Workspace ID is required to fetch messages';
+        console.error('❌ [OASIS MESSAGES]', errorMsg);
+        setError(errorMsg);
+        return;
+      }
+
       const currentOffset = reset ? 0 : offset;
       const params = new URLSearchParams({
         workspaceId,
@@ -126,13 +134,37 @@ export function useOasisMessages(
       });
       
       if (!response.ok) {
-        throw new Error('Failed to fetch messages');
+        // Get error details from response if available
+        let errorMessage = 'Failed to fetch messages';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        
+        console.error(`❌ [OASIS MESSAGES] Fetch failed: ${response.status} ${errorMessage}`, {
+          url: `/api/v1/oasis/oasis/messages?${params}`,
+          channelId,
+          dmId,
+          workspaceId,
+          status: response.status
+        });
+        
+        throw new Error(`${errorMessage} (${response.status})`);
       }
 
       const data = await response.json();
       
+      // Validate response structure
+      if (!data || !Array.isArray(data.messages)) {
+        console.error('❌ [OASIS MESSAGES] Invalid response format:', data);
+        throw new Error('Invalid response from server');
+      }
+      
       if (reset) {
-        setMessages(data.messages);
+        setMessages(data.messages || []);
         setOffset(50);
         
         // Check if conversation is empty and trigger initial greeting
@@ -178,8 +210,13 @@ export function useOasisMessages(
       
       setHasMore(data.hasMore);
     } catch (err) {
-      console.error('❌ [OASIS MESSAGES] Fetch error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch messages');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch messages';
+      console.error('❌ [OASIS MESSAGES] Error fetching messages:', errorMessage, err);
+      setError(errorMessage);
+      // Set empty messages on error to prevent UI stuck state
+      if (reset) {
+        setMessages([]);
+      }
     } finally {
       setLoading(false);
     }

@@ -52,20 +52,20 @@ export function OasisThreadView({ isVisible, onClose, threadMessages = [], conve
   const messages = threadMessages.length > 0 ? threadMessages : mockThreadMessages;
 
   return (
-    <div className="fixed top-0 right-0 w-96 h-screen z-50 flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+    <div className="fixed top-0 right-0 w-96 h-screen z-50 flex flex-col bg-background border-l border-border">
       {/* Thread Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 p-4 border-b border-border bg-background">
         <div className="flex items-center gap-3">
           <button
             onClick={onClose}
-            className="p-1 hover:bg-[var(--hover)] rounded-md transition-colors"
+            className="p-1 hover:bg-hover rounded-md transition-colors"
             title="Back to main chat"
           >
-            <ArrowLeftIcon className="w-5 h-5 text-[var(--muted)]" />
+            <ArrowLeftIcon className="w-5 h-5 text-muted" />
           </button>
           <div>
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">{conversationName}</h2>
-            <p className="text-sm text-[var(--muted)]">Thread replies</p>
+            <h2 className="text-lg font-semibold text-foreground">{conversationName}</h2>
+            <p className="text-sm text-muted">Thread replies</p>
           </div>
         </div>
       </div>
@@ -75,36 +75,36 @@ export function OasisThreadView({ isVisible, onClose, threadMessages = [], conve
         {messages.map((message) => (
           <div key={message.id} className="flex gap-3">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-white border border-[var(--border)] rounded flex items-center justify-center">
-                <span className="text-sm font-medium text-[var(--foreground)]">{message.author.avatar}</span>
+              <div className="w-8 h-8 bg-background border border-border rounded flex items-center justify-center">
+                <span className="text-sm font-medium text-foreground">{message.author.avatar}</span>
               </div>
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-[var(--foreground)]">{message.author.name}</span>
-                <span className="text-sm text-[var(--muted)]">{message.timestamp}</span>
+                <span className="font-medium text-foreground">{message.author.name}</span>
+                <span className="text-sm text-muted">{message.timestamp}</span>
                 {message.isRead && (
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                 )}
               </div>
               
-              <p className="text-gray-700">{message.content}</p>
+              <p className="text-foreground">{message.content}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Thread Input */}
-      <div className="flex-shrink-0 p-4 border-t border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 p-4 border-t border-border bg-background">
         <div className="relative">
           <input
             type="text"
             placeholder="Reply in thread..."
-            className="w-full px-4 py-3 pr-12 border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--muted)] text-sm bg-white"
+            className="w-full px-4 py-3 pr-12 border border-border rounded-lg focus:outline-none focus:border-muted text-sm bg-background"
           />
-          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1.5 bg-white border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors">
-            <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1.5 bg-background border border-border rounded-md hover:bg-hover transition-colors">
+            <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
           </button>

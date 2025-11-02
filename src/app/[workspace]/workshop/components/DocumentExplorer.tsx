@@ -8,7 +8,7 @@ import { WorkshopDocument } from "../types/document";
 import { generateSlug } from "@/platform/utils/url-utils";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
-import { apiFetch } from "@/platform/api-fetch";
+import { apiFetch, apiPost } from "@/platform/api-fetch";
 import { 
   FolderIcon,
   DocumentTextIcon,
@@ -49,20 +49,123 @@ export function DocumentExplorer() {
   useEffect(() => {
     if (workspaceId) {
       loadData();
+    } else {
+      // If no workspaceId, set loading to false to prevent stuck state
+      setIsLoading(false);
     }
   }, [workspaceId]);
+
+  const ensureStandardFolders = async (existingFolders: WorkshopFolder[]) => {
+    // If folders already exist, no need to create defaults
+    if (existingFolders.length > 0) {
+      return existingFolders;
+    }
+
+    // Check if user is authenticated before attempting to create folders
+    if (!authUser?.id || !workspaceId) {
+      console.log('Skipping folder creation - user not authenticated or workspaceId missing', {
+        hasAuthUser: !!authUser?.id,
+        hasWorkspaceId: !!workspaceId
+      });
+      return existingFolders;
+    }
+
+    // Get workspace name for the top-level folder
+    const workspaceName = ui.activeWorkspace?.name || workspace?.name || 'Workspace';
+    
+    try {
+      // Create the workspace folder (top-level container)
+      const workspaceFolder = await apiPost<WorkshopFolder>(
+        '/api/v1/documents/folders',
+        {
+          name: workspaceName,
+          workspaceId,
+          description: 'Main workspace folder',
+        },
+        null
+      );
+
+      if (!workspaceFolder) {
+        console.error('Failed to create workspace folder - check authentication and network', {
+          workspaceId,
+          workspaceName,
+          hasAuthUser: !!authUser?.id
+        });
+        return existingFolders;
+      }
+
+      const workspaceFolderId = workspaceFolder.id;
+      
+      // Create standard subfolders
+      const standardFolders = [
+        { name: 'Clients', description: 'Client-specific documents' },
+        { name: 'Prospects', description: 'Prospect and lead materials' },
+        { name: 'Templates', description: 'Reusable document templates' },
+        { name: 'Archive', description: 'Archived documents' },
+      ];
+
+      const createdFolders: WorkshopFolder[] = [workspaceFolder];
+
+      // Create subfolders under the workspace folder
+      for (const folder of standardFolders) {
+        try {
+          const subfolder = await apiPost<WorkshopFolder>(
+            '/api/v1/documents/folders',
+            {
+              name: folder.name,
+              description: folder.description,
+              parentId: workspaceFolderId,
+              workspaceId,
+            },
+            null
+          );
+          
+          if (subfolder) {
+            createdFolders.push(subfolder);
+          }
+        } catch (err) {
+          console.error(`Failed to create folder ${folder.name}:`, err);
+        }
+      }
+
+      return createdFolders;
+    } catch (error) {
+      console.error('Error creating standard folders:', error);
+      return existingFolders;
+    }
+  };
 
   const loadData = async () => {
     try {
       setIsLoading(true);
       
       // Load all folders
-      const foldersData = await apiFetch<WorkshopFolder[]>(
+      let foldersData = await apiFetch<WorkshopFolder[]>(
         `/api/v1/documents/folders?workspaceId=${workspaceId}`,
         {},
         []
       );
-      setFolders(foldersData);
+      
+      // If folders data is empty and we got a successful response, try to create defaults
+      if (foldersData && foldersData.length === 0 && workspaceId && authUser?.id) {
+        // Ensure standard folders exist if none exist
+        const foldersWithDefaults = await ensureStandardFolders(foldersData);
+        
+        // If we created new folders, reload to get the complete hierarchy from server
+        if (foldersWithDefaults && foldersWithDefaults.length > foldersData.length) {
+          // Reload all folders from server to get complete hierarchy
+          const reloadedFolders = await apiFetch<WorkshopFolder[]>(
+            `/api/v1/documents/folders?workspaceId=${workspaceId}`,
+            {},
+            []
+          );
+          setFolders(reloadedFolders || []);
+        } else {
+          setFolders(foldersData || []);
+        }
+      } else {
+        setFolders(foldersData || []);
+      }
 
       // Load all documents (root level only, documents in folders will be shown via folder structure)
       const docsData = await apiFetch<{
@@ -72,9 +175,12 @@ export function DocumentExplorer() {
         {},
         { documents: [] }
       );
-      setDocuments(docsData.documents || []);
+      setDocuments(docsData?.documents || []);
     } catch (error) {
       console.error('Error loading explorer data:', error);
+      // Set empty arrays on error to prevent stuck loading state
+      setFolders([]);
+      setDocuments([]);
     } finally {
       setIsLoading(false);
     }
@@ -216,24 +322,24 @@ export function DocumentExplorer() {
       <div key={node.id}>
         <div
           onClick={() => handleNodeClick(node)}
-          className={`flex items-center gap-0.5 px-1 py-0.5 text-xs cursor-pointer hover:bg-[var(--hover)] transition-colors ${
-            isSelected ? 'bg-[var(--hover)]' : ''
+          className={`flex items-center gap-0.5 px-1 py-0.5 text-xs cursor-pointer hover:bg-hover transition-colors ${
+            isSelected ? 'bg-hover' : ''
           }`}
           style={{ paddingLeft: `${node.level * 12 + 4}px` }}
         >
           {/* Expand/Collapse Button */}
           {isFolder && hasChildren ? (
             <button
-              className="p-0.5 hover:bg-[var(--panel-background)] rounded flex-shrink-0"
+              className="p-0.5 hover:bg-panel-background rounded flex-shrink-0"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleNode(node.id);
               }}
             >
               {isExpanded ? (
-                <ChevronDownIcon className="w-3 h-3 text-[var(--muted)]" />
+                <ChevronDownIcon className="w-3 h-3 text-muted" />
               ) : (
-                <ChevronRightIcon className="w-3 h-3 text-[var(--muted)]" />
+                <ChevronRightIcon className="w-3 h-3 text-muted" />
               )}
             </button>
           ) : (
@@ -243,17 +349,17 @@ export function DocumentExplorer() {
           {/* Icon */}
           <div className="flex-shrink-0 mr-1">
             {isFolder ? (
-              <FolderIcon className="w-3.5 h-3.5 text-[var(--muted)]" />
+              <FolderIcon className="w-3.5 h-3.5 text-muted" />
             ) : (
               (() => {
                 const Icon = getDocumentIcon(node.document?.documentType || 'paper');
-                return <Icon className="w-3.5 h-3.5 text-[var(--muted)]" />;
+                return <Icon className="w-3.5 h-3.5 text-muted" />;
               })()
             )}
           </div>
 
           {/* Name */}
-          <span className="text-xs text-[var(--foreground)] truncate flex-1">
+          <span className="text-xs text-foreground truncate flex-1">
             {node.name}
           </span>
         </div>
@@ -275,9 +381,9 @@ export function DocumentExplorer() {
           const width = 60 + (i % 3) * 20;
           return (
             <div key={i} className="flex items-center gap-0.5 px-1 py-0.5" style={{ paddingLeft: `${(i % 3) * 12 + 4}px` }}>
-              <div className="w-3.5 h-3.5 bg-[var(--loading-bg)] rounded animate-pulse flex-shrink-0"></div>
-              <div className="w-3.5 h-3.5 bg-[var(--loading-bg)] rounded animate-pulse flex-shrink-0"></div>
-              <div className="h-3 bg-[var(--loading-bg)] rounded animate-pulse" style={{ width: `${width}%` }}></div>
+              <div className="w-3.5 h-3.5 bg-loading-bg rounded animate-pulse flex-shrink-0"></div>
+              <div className="w-3.5 h-3.5 bg-loading-bg rounded animate-pulse flex-shrink-0"></div>
+              <div className="h-3 bg-loading-bg rounded animate-pulse" style={{ width: `${width}%` }}></div>
             </div>
           );
         })}
@@ -289,7 +395,7 @@ export function DocumentExplorer() {
     <div className="py-1">
       {buildTree.length === 0 ? (
         <div className="p-4 text-center">
-          <div className="text-xs text-[var(--muted)]">No folders or documents</div>
+          <div className="text-xs text-muted">No folders or documents</div>
         </div>
       ) : (
         buildTree.map(node => renderNode(node))

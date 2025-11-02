@@ -370,7 +370,7 @@ export function RevenueOSLeftPanel() {
   };
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col pt-0 pr-2 pb-6 pl-2 overflow-y-auto invisible-scrollbar">
+    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col pt-0 pr-2 pb-6 pl-2 overflow-y-auto invisible-scrollbar">
       <div className="flex-1 flex flex-col">
         <div className="mx-2 mt-4 mb-2">
           <h3 className="text-xl font-bold mb-0.5 mt-[2px]">
@@ -394,7 +394,7 @@ export function RevenueOSLeftPanel() {
               <>
                 {/* Hide SECTIONS heading for Cal app */}
                 {currentSubApp.id !== "cal" && (
-                  <h3 className="text-xs font-bold text-[var(--muted)] uppercase mb-2 pl-2 tracking-widest mt-2">
+                  <h3 className="text-xs font-bold text-muted uppercase mb-2 pl-2 tracking-widest mt-2">
                     Sections
                   </h3>
                 )}
@@ -411,8 +411,8 @@ export function RevenueOSLeftPanel() {
                       key={section}
                       className={`pl-3 pr-4 py-2 rounded-lg cursor-pointer font-medium text-base transition-colors mb-0.5 ${
                         activeSection === section
-                          ? "bg-[var(--hover-bg)] text-[var(--foreground)]"
-                          : "text-[var(--muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--foreground)]"
+                          ? "bg-hover text-foreground"
+                          : "text-muted hover:bg-hover hover:text-foreground"
                       }`}
                       onClick={() => handleSectionClick(section)}
                     >
@@ -423,13 +423,13 @@ export function RevenueOSLeftPanel() {
                       </div>
                       {/* Hide stats for Pipeline app */}
                       {currentSubApp.id !== "pipeline" && (
-                        <div className="flex items-center gap-4 mt-1 text-xs text-[var(--muted)]">
+                        <div className="flex items-center gap-4 mt-1 text-xs text-muted">
                           <span>
-                            All: <span className="text-[var(--foreground)] font-semibold">{stats.all}</span>
+                            All: <span className="text-foreground font-semibold">{stats.all}</span>
                           </span>
                           <span>
-                            This Week: <span className="text-[var(--foreground)] font-semibold">{stats.week}</span>
-                            <span className="ml-2 font-semibold text-[var(--muted)]">{formatChange(stats.change)}</span>
+                            This Week: <span className="text-foreground font-semibold">{stats.week}</span>
+                            <span className="ml-2 font-semibold text-muted">{formatChange(stats.change)}</span>
                           </span>
                         </div>
                       )}

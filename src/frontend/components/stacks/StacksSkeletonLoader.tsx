@@ -4,9 +4,9 @@ import React from 'react';
 
 export function StacksSkeletonLoader() {
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header Skeleton */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="h-6 bg-gray-200 rounded w-32 mb-2 animate-pulse"></div>
@@ -27,8 +27,8 @@ export function StacksSkeletonLoader() {
       <div className="flex-1 p-4">
         <div className="space-y-4">
           {/* Table Header Skeleton */}
-          <div className="bg-white border border-[var(--border)] rounded-lg overflow-hidden">
-            <div className="bg-gray-50 border-b border-[var(--border)] p-4">
+          <div className="bg-white border border-border rounded-lg overflow-hidden">
+            <div className="bg-gray-50 border-b border-border p-4">
               <div className="grid grid-cols-8 gap-4">
                 <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
                 <div className="h-4 bg-gray-200 rounded animate-pulse"></div>

@@ -71,7 +71,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-[9999] bg-black bg-opacity-50 flex items-center justify-center">
       <div
         className={`
-          w-full h-full bg-[var(--background)] flex flex-col
+          w-full h-full bg-background flex flex-col
           transform transition-all duration-300 ease-in-out
           ${isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
         `}
@@ -80,17 +80,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
         aria-describedby="admin-panel-description"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="flex items-center justify-between p-6 border-b border-border bg-background">
           <div>
             <h1
               id="admin-panel-title"
-              className="text-2xl font-bold text-[var(--foreground)]"
+              className="text-2xl font-bold text-foreground"
             >
               Admin Panel
             </h1>
             <p
               id="admin-panel-description"
-              className="text-sm text-[var(--muted)] mt-1"
+              className="text-sm text-muted mt-1"
             >
               Manage users, workspaces, and invitations
             </p>
@@ -98,18 +98,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
           
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
             title="Close Admin Panel"
             aria-label="Close Admin Panel"
           >
-            <XMarkIcon className="h-6 w-6 text-[var(--muted)]" />
+            <XMarkIcon className="h-6 w-6 text-muted" />
           </button>
         </div>
 
         {/* Main Content - 3 Panel Layout */}
         <div className="flex-1 flex overflow-hidden">
           {/* Left Panel - Navigation */}
-          <div className="w-64 bg-[var(--background)] border-r border-[var(--border)] flex-shrink-0">
+          <div className="w-64 bg-background border-r border-border flex-shrink-0">
             <AdminLeftPanel
               activeSection={activeSection}
               onSectionChange={setActiveSection}
@@ -124,7 +124,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Right Panel - AI Assistant & Context */}
-          <div className="w-96 bg-[var(--background)] border-l border-[var(--border)] flex-shrink-0">
+          <div className="w-96 bg-background border-l border-border flex-shrink-0">
             <div className="h-full">
               <RightPanel />
             </div>

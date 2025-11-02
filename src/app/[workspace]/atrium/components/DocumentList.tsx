@@ -167,9 +167,9 @@ console.log('Total:', total);
       case 'grid':
         return 'text-green-600 bg-green-100';
       case 'code':
-        return 'text-[var(--muted)] bg-[var(--hover)]';
+        return 'text-muted bg-hover';
       default:
-        return 'text-[var(--muted)] bg-[var(--hover)]';
+        return 'text-muted bg-hover';
     }
   };
 
@@ -193,7 +193,7 @@ console.log('Total:', total);
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        <span className="ml-3 text-[var(--muted)]">Loading documents...</span>
+        <span className="ml-3 text-muted">Loading documents...</span>
       </div>
     );
   }
@@ -218,9 +218,9 @@ console.log('Total:', total);
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <DocumentTextIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No documents found</h3>
-          <p className="text-[var(--muted)] mb-4">
+          <DocumentTextIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">No documents found</h3>
+          <p className="text-muted mb-4">
             {searchQuery 
               ? "No documents match your search criteria."
               : "Get started by creating or uploading your first document."
@@ -234,9 +234,9 @@ console.log('Total:', total);
   return (
     <div className="p-6">
       {/* Table Header */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
-        <div className="bg-[var(--panel-background)] border-b border-[var(--border)]">
-          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-[var(--muted)] uppercase tracking-wide">
+      <div className="bg-background border border-border rounded-lg overflow-hidden">
+        <div className="bg-panel-background border-b border-border">
+          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">
             <div className="col-span-5">
               <button
                 onClick={() => handleSort('name')}
@@ -307,7 +307,7 @@ console.log('Total:', total);
                   const workspaceSlug = workspace?.slug || 'default';
                   router.push(`/${workspaceSlug}/workshop/${slug}`);
                 }}
-                className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-[var(--panel-background)] cursor-pointer group"
+                className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-panel-background cursor-pointer group"
               >
                 {/* Name */}
                 <div className="col-span-5 flex items-center gap-3">
@@ -315,11 +315,11 @@ console.log('Total:', total);
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-[var(--foreground)] truncate">
+                    <div className="font-medium text-foreground truncate">
                       {document.title}
                     </div>
                     {document.description && (
-                      <div className="text-sm text-[var(--muted)] truncate">
+                      <div className="text-sm text-muted truncate">
                         {document.description}
                       </div>
                     )}
@@ -328,21 +328,21 @@ console.log('Total:', total);
 
                 {/* Type */}
                 <div className="col-span-2 flex items-center">
-                  <span className="capitalize text-sm text-[var(--muted)]">
+                  <span className="capitalize text-sm text-muted">
                     {document.documentType}
                   </span>
                 </div>
 
                 {/* Size */}
                 <div className="col-span-2 flex items-center">
-                  <span className="text-sm text-[var(--muted)]">
+                  <span className="text-sm text-muted">
                     {formatFileSize(document.fileSize)}
                   </span>
                 </div>
 
                 {/* Modified */}
                 <div className="col-span-2 flex items-center">
-                  <span className="text-sm text-[var(--muted)]">
+                  <span className="text-sm text-muted">
                     {new Date(document.updatedAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -350,14 +350,14 @@ console.log('Total:', total);
                 {/* Actions */}
                 <div className="col-span-1 flex items-center justify-center">
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-1 hover:bg-[var(--loading-bg)] rounded">
-                      <EyeIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <button className="p-1 hover:bg-loading-bg rounded">
+                      <EyeIcon className="w-4 h-4 text-muted" />
                     </button>
-                    <button className="p-1 hover:bg-[var(--loading-bg)] rounded">
-                      <ShareIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <button className="p-1 hover:bg-loading-bg rounded">
+                      <ShareIcon className="w-4 h-4 text-muted" />
                     </button>
-                    <button className="p-1 hover:bg-[var(--loading-bg)] rounded">
-                      <EllipsisVerticalIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <button className="p-1 hover:bg-loading-bg rounded">
+                      <EllipsisVerticalIcon className="w-4 h-4 text-muted" />
                     </button>
                   </div>
                 </div>

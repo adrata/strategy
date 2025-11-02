@@ -21,7 +21,7 @@ export const PersonCareerJourney: React.FC<PersonCareerJourneyProps> = ({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
           <span>🗺️</span> Career Journey
         </h3>
         <div className="space-y-4">
@@ -29,7 +29,7 @@ export const PersonCareerJourney: React.FC<PersonCareerJourneyProps> = ({
             <div key={idx} className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#9B59B6] rounded-full mt-2"></div>
               <div className="flex-1">
-                <p className="text-sm text-[var(--foreground)]">{step}</p>
+                <p className="text-sm text-foreground">{step}</p>
               </div>
             </div>
           ))}
@@ -37,14 +37,14 @@ export const PersonCareerJourney: React.FC<PersonCareerJourneyProps> = ({
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
           <span>🏢</span> Previous Companies
         </h3>
         <div className="space-y-2">
           {previousCompanies.map((company, idx) => (
             <div key={idx} className="flex items-center gap-2">
               <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-              <span className="text-sm text-[var(--foreground)]">
+              <span className="text-sm text-foreground">
                 {company}
               </span>
             </div>

@@ -48,7 +48,7 @@ export function PowerDialerModal({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-[10000]">
-      <div className="bg-[var(--background)] rounded-lg p-6 w-96 max-w-[90vw] border border-[var(--border)] max-h-[80vh] overflow-y-auto">
+      <div className="bg-background rounded-lg p-6 w-96 max-w-[90vw] border border-border max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <div
@@ -66,13 +66,13 @@ export function PowerDialerModal({
                 />
               )}
             </div>
-            <h3 className="text-xl font-bold text-[var(--foreground)]">
+            <h3 className="text-xl font-bold text-foreground">
               {action} Power Dialer
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="text-muted hover:text-foreground transition-colors"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -115,8 +115,8 @@ export function PowerDialerModal({
           </div>
 
           {/* Action Description */}
-          <div className="bg-[var(--hover-bg)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2 flex items-center gap-2">
+          <div className="bg-hover rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
               {isDialerActive ? (
                 <>
                   <PauseIcon className="w-4 h-4" />
@@ -129,7 +129,7 @@ export function PowerDialerModal({
                 </>
               )}
             </h4>
-            <ul className="text-sm text-[var(--muted)] space-y-1">
+            <ul className="text-sm text-muted space-y-1">
               {isDialerActive ? (
                 <>
                   <li>• Immediately pause all automatic dialing</li>
@@ -174,10 +174,10 @@ export function PowerDialerModal({
 
           {/* Contact Count */}
           <div className="text-center py-2">
-            <div className="text-2xl font-bold text-[var(--foreground)]">
+            <div className="text-2xl font-bold text-foreground">
               {readyContactsCount}
             </div>
-            <div className="text-sm text-[var(--muted)]">
+            <div className="text-sm text-muted">
               contacts ready to dial
             </div>
           </div>
@@ -188,7 +188,7 @@ export function PowerDialerModal({
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors disabled:opacity-50"
           >
             Cancel
           </button>

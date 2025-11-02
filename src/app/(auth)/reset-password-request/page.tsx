@@ -40,9 +40,9 @@ export default function ResetPasswordRequestPage() {
 
   if (isSubmitted) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[var(--background)]">
-        <div className="bg-[var(--background)] rounded-xl shadow-lg p-8 w-full max-w-md border">
-          <h1 className="text-2xl font-bold mb-6 text-center text-[var(--foreground)]">
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="bg-background rounded-xl shadow-lg p-8 w-full max-w-md border">
+          <h1 className="text-2xl font-bold mb-6 text-center text-foreground">
             Check Your Email
           </h1>
           
@@ -51,7 +51,7 @@ export default function ResetPasswordRequestPage() {
               We've sent a password reset link to {email}
             </div>
             
-            <p className="text-sm text-[var(--muted)] mb-6">
+            <p className="text-sm text-muted mb-6">
               If you don't see the email, check your spam folder or try again.
             </p>
             
@@ -68,13 +68,13 @@ export default function ResetPasswordRequestPage() {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[var(--background)]">
-      <div className="bg-[var(--background)] rounded-xl shadow-lg p-8 w-full max-w-md border">
-        <h1 className="text-2xl font-bold mb-6 text-center text-[var(--foreground)]">
+    <div className="fixed inset-0 flex items-center justify-center bg-background">
+      <div className="bg-background rounded-xl shadow-lg p-8 w-full max-w-md border">
+        <h1 className="text-2xl font-bold mb-6 text-center text-foreground">
           Reset Your Password
         </h1>
 
-        <p className="text-sm text-[var(--muted)] mb-6 text-center">
+        <p className="text-sm text-muted mb-6 text-center">
           Enter your email address and we'll send you a secure link to reset your password.
         </p>
 
@@ -95,7 +95,7 @@ export default function ResetPasswordRequestPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-[var(--border)] rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-[var(--border)]"
+              className="w-full border border-border rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-border"
               placeholder="Enter your email address"
               required
               disabled={isLoading}
@@ -114,7 +114,7 @@ export default function ResetPasswordRequestPage() {
         <div className="mt-6 text-center">
           <Link
             href="/sign-in"
-            className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+            className="text-sm text-muted hover:text-black transition-colors"
           >
             ← Back to Sign In
           </Link>

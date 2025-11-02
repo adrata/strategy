@@ -31,12 +31,17 @@ export function PanelLayout({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rightPanelRef = useRef<HTMLDivElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const [leftDragging, setLeftDragging] = useState(false);
+  const [leftHovering, setLeftHovering] = useState(false);
   
   // Performance-optimized panel width management
   const rightPanelWidthRef = useRef<number>(0.35); // Store width in ref (no re-renders)
+  const leftPanelWidthRef = useRef<number>(209.357); // Default width ~13.085rem in pixels
   const rafIdRef = useRef<number | null>(null);
+  const leftRafIdRef = useRef<number | null>(null);
   const containerDimensionsRef = useRef<{ width: number; leftPanelWidth: number } | null>(null);
   
   // Visual enhancement state
@@ -44,9 +49,11 @@ export function PanelLayout({
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [currentWidthPercent, setCurrentWidthPercent] = useState(35);
+  const [currentLeftWidth, setCurrentLeftWidth] = useState(209);
   
   // Fix hydration issue: always start with the same value on server and client  
   const [rightPanelFlex, setRightPanelFlex] = useState(0.35); // Only for initial render and localStorage
+  const [leftPanelWidth, setLeftPanelWidth] = useState(209.357); // Default width in pixels
   const [isHydrated, setIsHydrated] = useState(false);
 
   const router = useRouter();
@@ -60,6 +67,12 @@ export function PanelLayout({
       if (saved) {
         setRightPanelFlex(parseFloat(saved));
       }
+      const savedLeft = localStorage.getItem("adrata-left-panel-width");
+      if (savedLeft) {
+        const width = parseFloat(savedLeft);
+        setLeftPanelWidth(width);
+        leftPanelWidthRef.current = width;
+      }
     }
   }, []);
 
@@ -69,6 +82,13 @@ export function PanelLayout({
       localStorage.setItem("adrata-panel-ratio", rightPanelFlex.toString());
     }
   }, [rightPanelFlex, isHydrated]);
+
+  // Save left panel width to localStorage whenever it changes
+  useEffect(() => {
+    if (isHydrated && typeof window !== "undefined") {
+      localStorage.setItem("adrata-left-panel-width", leftPanelWidth.toString());
+    }
+  }, [leftPanelWidth, isHydrated]);
 
   // Divider logic: always a 1px line, 100% height, with a wider responsive hit area
   const dividerHitArea = 8; // Reduced for more precise cursor alignment
@@ -96,12 +116,66 @@ export function PanelLayout({
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
-    const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
+    const currentLeftWidth = isLeftPanelVisible ? leftPanelWidthRef.current : 0;
     containerDimensionsRef.current = {
       width: containerRect.width,
-      leftPanelWidth
+      leftPanelWidth: currentLeftWidth
     };
   }, [isLeftPanelVisible]);
+
+  // Left panel drag handlers
+  const startLeftDrag = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!containerRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const isTouch = 'touches' in e;
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    
+    const startMouseX = clientX;
+    const startPanelWidth = leftPanelWidthRef.current;
+    
+    setLeftDragging(true);
+    document.body.classList.add("dragging-panel-divider");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    
+    if (leftPanelRef.current) {
+      leftPanelRef.current.style.pointerEvents = "none";
+    }
+    
+    const leftDragStartData = {
+      startMouseX,
+      startPanelWidth,
+      containerRect,
+      isTouch
+    };
+    (window as any).__leftPanelDragStart = leftDragStartData;
+  }, []);
+
+  const endLeftDrag = useCallback(() => {
+    setLeftDragging(false);
+    document.body.classList.remove("dragging-panel-divider");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+    
+    if (leftPanelRef.current) {
+      leftPanelRef.current.style.pointerEvents = "";
+    }
+    
+    if (leftRafIdRef.current) {
+      cancelAnimationFrame(leftRafIdRef.current);
+      leftRafIdRef.current = null;
+    }
+    
+    delete (window as any).__leftPanelDragStart;
+    
+    if (isHydrated && typeof window !== "undefined") {
+      localStorage.setItem("adrata-left-panel-width", leftPanelWidthRef.current.toString());
+    }
+  }, [isHydrated]);
 
   // High-performance drag handlers using requestAnimationFrame and CSS transforms
   const startDrag = useCallback((e: React.MouseEvent | React.TouchEvent) => {
@@ -121,10 +195,10 @@ export function PanelLayout({
     
     // Calculate the offset of the pointer from the divider position
     const containerRect = containerRef.current!.getBoundingClientRect();
-    const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
-    const availableWidth = containerRect.width - leftPanelWidth;
+    const currentLeftWidth = isLeftPanelVisible ? leftPanelWidthRef.current : 0;
+    const availableWidth = containerRect.width - currentLeftWidth;
     const currentRightPanelWidth = availableWidth * (startPanelWidth / (1 + startPanelWidth));
-    const dividerX = containerRect.left + leftPanelWidth + (availableWidth - currentRightPanelWidth);
+    const dividerX = containerRect.left + currentLeftWidth + (availableWidth - currentRightPanelWidth);
     const mouseOffsetFromDivider = startMouseX - dividerX;
     
     setDragging(true);
@@ -143,7 +217,7 @@ export function PanelLayout({
       startPanelWidth, 
       mouseOffsetFromDivider,
       containerRect,
-      leftPanelWidth,
+      leftPanelWidth: currentLeftWidth,
       availableWidth,
       isTouch
     };
@@ -187,6 +261,52 @@ export function PanelLayout({
       localStorage.setItem("adrata-panel-ratio", rightPanelWidthRef.current.toString());
     }
   }, [isHydrated]);
+
+  // Left panel drag effect
+  useEffect(() => {
+    if (!leftDragging) {
+      return;
+    }
+
+    const onMove = (e: MouseEvent) => {
+      e.preventDefault();
+      
+      if (leftRafIdRef.current) {
+        cancelAnimationFrame(leftRafIdRef.current);
+      }
+      
+      leftRafIdRef.current = requestAnimationFrame(() => {
+        const dragStartData = (window as any).__leftPanelDragStart;
+        if (!dragStartData) return;
+        
+        const { startMouseX, startPanelWidth, containerRect } = dragStartData;
+        const deltaX = e.clientX - startMouseX;
+        const newWidth = Math.max(200, Math.min(600, startPanelWidth + deltaX));
+        
+        leftPanelWidthRef.current = newWidth;
+        setLeftPanelWidth(newWidth);
+        setCurrentLeftWidth(Math.round(newWidth));
+        
+        if (leftPanelRef.current) {
+          leftPanelRef.current.style.width = `${newWidth}px`;
+        }
+      });
+    };
+
+    const onUp = (e: MouseEvent) => {
+      e.preventDefault();
+      endLeftDrag();
+    };
+
+    document.addEventListener("mousemove", onMove, { capture: true, passive: false });
+    document.addEventListener("mouseup", onUp, { capture: true, passive: false });
+    
+    return () => {
+      document.removeEventListener("mousemove", onMove, { capture: true });
+      document.removeEventListener("mouseup", onUp, { capture: true });
+      endLeftDrag();
+    };
+  }, [leftDragging, endLeftDrag]);
 
   useEffect(() => {
     if (!dragging) {
@@ -396,7 +516,7 @@ export function PanelLayout({
 
   return (
     <div
-      className="w-full h-screen overflow-hidden bg-[var(--background)]"
+      className="w-full h-screen overflow-hidden bg-background"
       style={{ position: "relative" }}
     >
       <div ref={containerRef} className="flex h-full w-full relative">
@@ -417,13 +537,76 @@ export function PanelLayout({
         )}
         {/* Left Panel */}
         {isLeftPanelVisible && (
-          <div key="left-panel-container" className="h-full">
-            {leftPanel}
+          <div key="left-panel-container" className="h-full relative">
+            <div
+              ref={leftPanelRef}
+              className="h-full"
+              style={{
+                width: `${leftPanelWidth}px`,
+                minWidth: 200,
+                maxWidth: 600,
+                willChange: leftDragging ? "width" : "auto",
+              }}
+            >
+              {leftPanel}
+            </div>
+            {/* Draggable Divider on right edge of left panel */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                width: dividerHitArea,
+                height: "100%",
+                cursor: "col-resize",
+                zIndex: 30,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                background: "transparent",
+                pointerEvents: "auto" as const,
+              }}
+              onMouseDown={startLeftDrag}
+              onMouseEnter={() => {
+                setLeftHovering(true);
+                document.body.style.cursor = "col-resize";
+              }}
+              onMouseLeave={() => {
+                setLeftHovering(false);
+                if (!leftDragging) {
+                  document.body.style.cursor = "";
+                }
+              }}
+              onDoubleClick={() => {
+                const defaultWidth = 209.357;
+                leftPanelWidthRef.current = defaultWidth;
+                setLeftPanelWidth(defaultWidth);
+                if (leftPanelRef.current) {
+                  leftPanelRef.current.style.transition = "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+                  leftPanelRef.current.style.width = `${defaultWidth}px`;
+                  setTimeout(() => {
+                    if (leftPanelRef.current) {
+                      leftPanelRef.current.style.transition = "";
+                    }
+                  }, 300);
+                }
+              }}
+              role="separator"
+              aria-label="Resize left panel"
+            >
+              <div
+                style={{
+                  width: dividerLineWidth,
+                  height: "100%",
+                  background: leftDragging ? "#3B82F6" : leftHovering ? "#6B7280" : "#e5e7eb",
+                }}
+              />
+            </div>
           </div>
         )}
         {/* Middle Panel */}
         <div
-          className="relative min-w-0 bg-[var(--background)] h-full overflow-hidden"
+          className="relative min-w-0 bg-background h-full overflow-hidden"
           style={{
             flex: isRightPanelVisible ? 1 : "1 1 0%",
             background: "var(--background)",

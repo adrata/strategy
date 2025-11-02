@@ -108,15 +108,15 @@ export function CallbackForwardingSetup({
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-[var(--background)] border border-[var(--border)] rounded-2xl p-8">
+    <div className="max-w-2xl mx-auto bg-background border border-border rounded-2xl p-8">
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <PhoneIcon className="w-8 h-8 text-blue-600" />
         </div>
-        <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           Callback Forwarding Setup
         </h2>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           Ensure all return calls from prospects ring directly to your cell
           phone
         </p>
@@ -178,7 +178,7 @@ export function CallbackForwardingSetup({
       {!isSetupComplete && (
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Your Cell Phone Number *
             </label>
             <input
@@ -186,10 +186,10 @@ export function CallbackForwardingSetup({
               value={cellPhone}
               onChange={handlePhoneChange}
               placeholder="(555) 123-4567"
-              className="w-full p-4 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+              className="w-full p-4 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
               maxLength={14}
             />
-            <p className="text-sm text-[var(--muted)] mt-2">
+            <p className="text-sm text-muted mt-2">
               This is where all return calls from prospects will ring
             </p>
           </div>
@@ -252,7 +252,7 @@ export function CallbackForwardingSetup({
 
             <button
               onClick={() => setIsSetupComplete(false)}
-              className="px-6 py-3 border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="px-6 py-3 border border-border bg-background text-foreground hover:bg-hover rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
             >
               <CogIcon className="w-5 h-5" />
               Update Settings
@@ -262,34 +262,34 @@ export function CallbackForwardingSetup({
       )}
 
       {/* FAQ */}
-      <div className="mt-8 pt-6 border-t border-[var(--border)]">
-        <h3 className="font-semibold text-[var(--foreground)] mb-4">
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="font-semibold text-foreground mb-4">
           Frequently Asked Questions
         </h3>
         <div className="space-y-3 text-sm">
           <div>
-            <div className="font-medium text-[var(--foreground)]">
+            <div className="font-medium text-foreground">
               Q: Will prospects see my personal cell phone number?
             </div>
-            <div className="text-[var(--muted)]">
+            <div className="text-muted">
               A: No, they&apos;ll see the local business number. Only return
               calls are forwarded to your cell.
             </div>
           </div>
           <div>
-            <div className="font-medium text-[var(--foreground)]">
+            <div className="font-medium text-foreground">
               Q: What if I don&apos;t answer the forwarded call?
             </div>
-            <div className="text-[var(--muted)]">
+            <div className="text-muted">
               A: The call will go to a professional voicemail, and you&apos;ll
               get a notification with the recording.
             </div>
           </div>
           <div>
-            <div className="font-medium text-[var(--foreground)]">
+            <div className="font-medium text-foreground">
               Q: Can I disable forwarding for certain times?
             </div>
-            <div className="text-[var(--muted)]">
+            <div className="text-muted">
               A: Yes, you can set business hours and after-hours rules in the
               advanced settings.
             </div>
@@ -302,7 +302,7 @@ export function CallbackForwardingSetup({
         <div className="flex justify-end mt-6">
           <button
             onClick={onClose}
-            className="px-6 py-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="px-6 py-2 text-muted hover:text-foreground transition-colors"
           >
             Close
           </button>

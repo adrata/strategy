@@ -189,8 +189,8 @@ export class EnhancedDesktopErrorBoundary extends Component<Props, State> {
           : [];
 
       return (
-        <div className="min-h-screen bg-[var(--panel-background)] flex items-center justify-center p-6">
-          <div className="max-w-2xl w-full bg-[var(--background)] rounded-lg shadow-lg p-6">
+        <div className="min-h-screen bg-panel-background flex items-center justify-center p-6">
+          <div className="max-w-2xl w-full bg-background rounded-lg shadow-lg p-6">
             <div className="text-center mb-6">
               <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
                 <svg
@@ -208,7 +208,7 @@ export class EnhancedDesktopErrorBoundary extends Component<Props, State> {
                 </svg>
               </div>
 
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 Desktop Application Error
               </h2>
 
@@ -239,7 +239,7 @@ export class EnhancedDesktopErrorBoundary extends Component<Props, State> {
             {/* Diagnosed Issues */}
             {commonIssues.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-[var(--foreground)] mb-2">
+                <h3 className="text-sm font-medium text-foreground mb-2">
                   Likely Causes:
                 </h3>
                 <ul className="text-sm text-gray-700 space-y-1">
@@ -256,10 +256,10 @@ export class EnhancedDesktopErrorBoundary extends Component<Props, State> {
             {/* Environment Info */}
             {envInfo && (
               <details className="mb-4">
-                <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-[var(--foreground)]">
+                <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-foreground">
                   Environment Information
                 </summary>
-                <div className="mt-2 p-3 bg-[var(--hover)] rounded text-xs font-mono">
+                <div className="mt-2 p-3 bg-hover rounded text-xs font-mono">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <strong>Platform:</strong> {envInfo.platform}
@@ -296,10 +296,10 @@ export class EnhancedDesktopErrorBoundary extends Component<Props, State> {
 
             {/* Technical Details */}
             <details>
-              <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-[var(--foreground)]">
+              <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-foreground">
                 Technical Details
               </summary>
-              <div className="mt-2 p-3 bg-[var(--hover)] rounded text-xs font-mono max-h-40 overflow-auto">
+              <div className="mt-2 p-3 bg-hover rounded text-xs font-mono max-h-40 overflow-auto">
                 <div className="space-y-2">
                   <div>
                     <strong>Error:</strong> {error?.name}

@@ -60,8 +60,8 @@ export function StoryGridView({ story }: StoryGridViewProps) {
 
   if (!gridData || !ui.activeWorkspace?.id) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
-        <div className="text-[var(--muted)]">Loading grid view...</div>
+      <div className="h-full flex items-center justify-center bg-background">
+        <div className="text-muted">Loading grid view...</div>
       </div>
     );
   }
@@ -71,13 +71,13 @@ export function StoryGridView({ story }: StoryGridViewProps) {
   return (
     <div className="h-full overflow-y-auto p-6">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg border border-[var(--border)] overflow-hidden">
+        <div className="bg-white rounded-lg border border-border overflow-hidden">
           {/* Grid Header */}
-          <div className="grid grid-cols-5 gap-0 border-b border-[var(--border)] bg-[var(--hover)]">
+          <div className="grid grid-cols-5 gap-0 border-b border-border bg-hover">
             {gridData.columns.slice(0, 5).map((col) => (
               <div
                 key={col.key}
-                className="px-4 py-3 text-sm font-semibold text-[var(--foreground)] border-r border-[var(--border)] last:border-r-0"
+                className="px-4 py-3 text-sm font-semibold text-foreground border-r border-border last:border-r-0"
               >
                 {col.name}
               </div>
@@ -88,12 +88,12 @@ export function StoryGridView({ story }: StoryGridViewProps) {
           {gridData.rows.map((row, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid grid-cols-5 gap-0 border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--hover)]"
+              className="grid grid-cols-5 gap-0 border-b border-border last:border-b-0 hover:bg-hover"
             >
               {gridData.columns.slice(0, 5).map((col) => (
                 <div
                   key={col.key}
-                  className="px-4 py-3 text-sm text-[var(--foreground)] border-r border-[var(--border)] last:border-r-0 overflow-hidden text-ellipsis whitespace-nowrap"
+                  className="px-4 py-3 text-sm text-foreground border-r border-border last:border-r-0 overflow-hidden text-ellipsis whitespace-nowrap"
                   title={String(row[col.key] || '')}
                 >
                   {String(row[col.key] || '')}
@@ -105,12 +105,12 @@ export function StoryGridView({ story }: StoryGridViewProps) {
 
         {/* Additional columns if more than 5 */}
         {gridData.columns.length > 5 && (
-          <div className="mt-4 bg-white rounded-lg border border-[var(--border)] overflow-hidden">
-            <div className="grid grid-cols-5 gap-0 border-b border-[var(--border)] bg-[var(--hover)]">
+          <div className="mt-4 bg-white rounded-lg border border-border overflow-hidden">
+            <div className="grid grid-cols-5 gap-0 border-b border-border bg-hover">
               {gridData.columns.slice(5).map((col) => (
                 <div
                   key={col.key}
-                  className="px-4 py-3 text-sm font-semibold text-[var(--foreground)] border-r border-[var(--border)] last:border-r-0"
+                  className="px-4 py-3 text-sm font-semibold text-foreground border-r border-border last:border-r-0"
                 >
                   {col.name}
                 </div>
@@ -120,7 +120,7 @@ export function StoryGridView({ story }: StoryGridViewProps) {
               {gridData.columns.slice(5).map((col) => (
                 <div
                   key={col.key}
-                  className="px-4 py-3 text-sm text-[var(--foreground)] border-r border-[var(--border)] last:border-r-0 overflow-hidden text-ellipsis whitespace-nowrap"
+                  className="px-4 py-3 text-sm text-foreground border-r border-border last:border-r-0 overflow-hidden text-ellipsis whitespace-nowrap"
                   title={String(gridData.rows[0]?.[col.key] || '')}
                 >
                   {String(gridData.rows[0]?.[col.key] || '')}

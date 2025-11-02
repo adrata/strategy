@@ -93,11 +93,25 @@ export function DocumentList() {
       const data = await apiFetch<{
         documents: WorkshopDocument[];
         pagination?: { total: number };
-      }>(`/api/v1/documents/documents?${params.toString()}`);
+      }>(
+        `/api/v1/documents/documents?${params.toString()}`,
+        {},
+        { documents: [], pagination: { total: 0 } }
+      );
       setDocuments(data.documents || []);
+      // Clear error if we got a successful response (even if it's a fallback)
+      setError(null);
     } catch (err) {
+      // Only set error if it's not an auth error (fallback should have handled it)
       const errorMessage = err instanceof Error ? err.message : 'Failed to load documents';
-      setError(errorMessage);
+      // If it's an auth error and we have fallback, don't set error
+      if (!errorMessage.includes('Authentication required')) {
+        setError(errorMessage);
+      } else {
+        // Auth error - use empty state
+        setDocuments([]);
+        setError(null);
+      }
       console.error('Error loading documents:', err);
     } finally {
       setIsLoading(false);
@@ -128,9 +142,9 @@ export function DocumentList() {
       case 'grid':
         return 'text-green-600 bg-green-100';
       case 'code':
-        return 'text-[var(--muted)] bg-[var(--hover)]';
+        return 'text-muted bg-hover';
       default:
-        return 'text-[var(--muted)] bg-[var(--hover)]';
+        return 'text-muted bg-hover';
     }
   };
 
@@ -153,11 +167,11 @@ export function DocumentList() {
   if (isLoading || error) {
     return (
       <div className="p-6">
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
-          <div className="bg-[var(--panel-background)] border-b border-[var(--border)]">
+        <div className="bg-background border border-border rounded-lg overflow-hidden">
+          <div className="bg-panel-background border-b border-border">
             <div className="grid grid-cols-12 gap-4 px-4 py-3">
               {['Name', 'Type', 'Size', 'Modified', 'Actions'].map((col, i) => (
-                <div key={i} className={`${i === 0 ? 'col-span-5' : i < 4 ? 'col-span-2' : 'col-span-1'} h-4 bg-[var(--loading-bg)] rounded animate-pulse`}></div>
+                <div key={i} className={`${i === 0 ? 'col-span-5' : i < 4 ? 'col-span-2' : 'col-span-1'} h-4 bg-loading-bg rounded animate-pulse`}></div>
               ))}
             </div>
           </div>
@@ -165,16 +179,16 @@ export function DocumentList() {
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="grid grid-cols-12 gap-4 px-4 py-3">
                 <div className="col-span-5 flex items-center gap-3">
-                  <div className="h-8 w-8 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="h-8 w-8 bg-loading-bg rounded animate-pulse"></div>
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse"></div>
-                    <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse"></div>
+                    <div className="h-4 bg-loading-bg rounded w-3/4 animate-pulse"></div>
+                    <div className="h-3 bg-loading-bg rounded w-1/2 animate-pulse"></div>
                   </div>
                 </div>
-                <div className="col-span-2 h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="col-span-2 h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="col-span-2 h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="col-span-1 h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="col-span-2 h-4 bg-loading-bg rounded animate-pulse"></div>
+                <div className="col-span-2 h-4 bg-loading-bg rounded animate-pulse"></div>
+                <div className="col-span-2 h-4 bg-loading-bg rounded animate-pulse"></div>
+                <div className="col-span-1 h-4 bg-loading-bg rounded animate-pulse"></div>
               </div>
             ))}
           </div>
@@ -187,9 +201,9 @@ export function DocumentList() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <DocumentTextIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No documents found</h3>
-          <p className="text-[var(--muted)] mb-4">
+          <DocumentTextIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">No documents found</h3>
+          <p className="text-muted mb-4">
             {searchQuery 
               ? "No documents match your search criteria."
               : "Get started by creating or uploading your first document."
@@ -203,9 +217,9 @@ export function DocumentList() {
   return (
     <div className="p-6">
       {/* Table Header */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
-        <div className="bg-[var(--panel-background)] border-b border-[var(--border)]">
-          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-[var(--muted)] uppercase tracking-wide">
+      <div className="bg-background border border-border rounded-lg overflow-hidden">
+        <div className="bg-panel-background border-b border-border">
+          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">
             <div className="col-span-5">
               <button
                 onClick={() => handleSort('name')}
@@ -276,7 +290,7 @@ export function DocumentList() {
                   const workspaceSlug = workspace?.slug || 'default';
                   router.push(`/${workspaceSlug}/workbench/${slug}`);
                 }}
-                className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-[var(--panel-background)] cursor-pointer group"
+                className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-panel-background cursor-pointer group"
               >
                 {/* Name */}
                 <div className="col-span-5 flex items-center gap-3">
@@ -284,11 +298,11 @@ export function DocumentList() {
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-[var(--foreground)] truncate">
+                    <div className="font-medium text-foreground truncate">
                       {document.title}
                     </div>
                     {document.description && (
-                      <div className="text-sm text-[var(--muted)] truncate">
+                      <div className="text-sm text-muted truncate">
                         {document.description}
                       </div>
                     )}
@@ -297,21 +311,21 @@ export function DocumentList() {
 
                 {/* Type */}
                 <div className="col-span-2 flex items-center">
-                  <span className="capitalize text-sm text-[var(--muted)]">
+                  <span className="capitalize text-sm text-muted">
                     {document.documentType}
                   </span>
                 </div>
 
                 {/* Size */}
                 <div className="col-span-2 flex items-center">
-                  <span className="text-sm text-[var(--muted)]">
+                  <span className="text-sm text-muted">
                     {formatFileSize(document.fileSize)}
                   </span>
                 </div>
 
                 {/* Modified */}
                 <div className="col-span-2 flex items-center">
-                  <span className="text-sm text-[var(--muted)]">
+                  <span className="text-sm text-muted">
                     {new Date(document.updatedAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -319,14 +333,14 @@ export function DocumentList() {
                 {/* Actions */}
                 <div className="col-span-1 flex items-center justify-center">
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-1 hover:bg-[var(--loading-bg)] rounded">
-                      <EyeIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <button className="p-1 hover:bg-loading-bg rounded">
+                      <EyeIcon className="w-4 h-4 text-muted" />
                     </button>
-                    <button className="p-1 hover:bg-[var(--loading-bg)] rounded">
-                      <ShareIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <button className="p-1 hover:bg-loading-bg rounded">
+                      <ShareIcon className="w-4 h-4 text-muted" />
                     </button>
-                    <button className="p-1 hover:bg-[var(--loading-bg)] rounded">
-                      <EllipsisVerticalIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <button className="p-1 hover:bg-loading-bg rounded">
+                      <EllipsisVerticalIcon className="w-4 h-4 text-muted" />
                     </button>
                   </div>
                 </div>

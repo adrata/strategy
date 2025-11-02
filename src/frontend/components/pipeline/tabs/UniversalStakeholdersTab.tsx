@@ -42,15 +42,15 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Stakeholders</h2>
-        <p className="text-[var(--muted)]">People involved in this opportunity</p>
+        <h2 className="text-xl font-semibold text-foreground mb-2">Stakeholders</h2>
+        <p className="text-muted">People involved in this opportunity</p>
       </div>
 
       {stakeholders['length'] === 0 ? (
         <div className="text-center py-12">
           <div className="text-4xl mb-4">👥</div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No stakeholders yet</h3>
-          <p className="text-[var(--muted)]">Add stakeholders to track who's involved in this opportunity</p>
+          <h3 className="text-lg font-medium text-foreground mb-2">No stakeholders yet</h3>
+          <p className="text-muted">Add stakeholders to track who's involved in this opportunity</p>
           
           <button className="mt-4 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
             Add Stakeholder
@@ -59,7 +59,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {stakeholders.map((stakeholder: any, index: number) => (
-            <div key={stakeholder.id || index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+            <div key={stakeholder.id || index} className="bg-background border border-border rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                   <span className="text-blue-600 font-semibold">
@@ -75,7 +75,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
                     recordType="stakeholder"
                     onSuccess={handleSuccess}
                     placeholder="Enter stakeholder name"
-                    className="font-medium text-[var(--foreground)]"
+                    className="font-medium text-foreground"
                   />
                   <InlineEditField
                     value={stakeholder.title || stakeholder.role}
@@ -85,7 +85,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
                     recordType="stakeholder"
                     onSuccess={handleSuccess}
                     placeholder="Enter stakeholder title"
-                    className="text-sm text-[var(--muted)]"
+                    className="text-sm text-muted"
                   />
                   <InlineEditField
                     value={stakeholder.email}

@@ -38,15 +38,15 @@ function MonacoSections({
           onClick={() => handleSectionClick(section.id)}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
             activeSection === section.id
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-gray-700'
+              ? 'bg-hover text-foreground'
+              : 'hover:bg-panel-background text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">{section.name}</span>
-                            <span className="text-sm text-[var(--muted)]">{section.count.toLocaleString()}</span>
+                            <span className="text-sm text-muted">{section.count.toLocaleString()}</span>
           </div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             {section.description}
           </div>
         </button>
@@ -134,7 +134,7 @@ export function MonacoLeftPanel() {
   };
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col pt-0 pr-2 pb-6 pl-2 overflow-y-auto invisible-scrollbar">
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col pt-0 pr-2 pb-6 pl-2 overflow-y-auto invisible-scrollbar">
       <div className="flex-1 flex flex-col">
         <div className="mx-2 mt-4 mb-2">
           <h3 className="text-xl font-bold mb-0.5 mt-[2px]">
@@ -146,22 +146,22 @@ export function MonacoLeftPanel() {
         </div>
 
         {/* Executive Performance Dashboard */}
-        <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
+        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Total Prospects</span>
+              <span className="text-xs font-medium text-muted">Total Prospects</span>
               <span className="text-sm font-semibold text-black">3,247</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Target Accounts</span>
+              <span className="text-xs font-medium text-muted">Target Accounts</span>
               <span className="text-sm font-semibold text-black">{(590).toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Decision Makers</span>
+              <span className="text-xs font-medium text-muted">Decision Makers</span>
               <span className="text-sm font-semibold text-black">1,847</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Pipeline Growth</span>
+              <span className="text-xs font-medium text-muted">Pipeline Growth</span>
               <span className="text-sm font-semibold text-black">+12%</span>
             </div>
           </div>

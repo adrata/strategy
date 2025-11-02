@@ -138,7 +138,7 @@ export function ChatInput({
 
   return (
     <>
-    <div className="w-full bg-[var(--background)] flex-shrink-0" style={{ paddingBottom: '3px' }}>
+    <div className="w-full bg-background flex-shrink-0" style={{ paddingBottom: '3px' }}>
       <form className="flex items-center p-4 pt-[16px] mt-0" onSubmit={onSubmit}>
         <div className="relative flex-1">
           <input
@@ -198,7 +198,7 @@ export function ChatInput({
               className={`relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border transition-all duration-200 cursor-pointer ${
                 isVoiceModeActive || isModalListening
                   ? 'bg-blue-100 text-blue-700 border-blue-300 shadow-sm'
-                  : 'bg-[var(--background)] text-[var(--muted)] border-[var(--border)] hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600'
+                  : 'bg-background text-muted border-border hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600'
               }`}
               >
                 <RiVoiceAiFill className="w-4 h-4" />
@@ -223,7 +223,7 @@ export function ChatInput({
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onDrop={onDrop}
-              className={`w-full text-base rounded-md resize-none overflow-y-auto placeholder-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:border-[var(--border)] ${isDragOver ? 'border-blue-500 bg-blue-50' : ''}`}
+              className={`w-full text-base rounded-md resize-none overflow-y-auto placeholder-[var(--muted)] text-foreground focus:outline-none focus:border-border ${isDragOver ? 'border-blue-500 bg-blue-50' : ''}`}
               onKeyDown={e => {
                 const isStandardShortcut = (
                   (e.metaKey || e.ctrlKey) && ['v', 'c', 'x', 'a', 'z', 'y'].includes(e.key.toLowerCase())

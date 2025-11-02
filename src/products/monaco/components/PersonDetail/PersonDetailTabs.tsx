@@ -57,7 +57,7 @@ export function PersonDetailTabs({
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Tabs */}
       <div
-        className="flex gap-2 mb-0 pb-2 border-b border-[var(--border)] px-6"
+        className="flex gap-2 mb-0 pb-2 border-b border-border px-6"
         style={{
           borderColor: "var(--border)",
           marginTop: "0px",
@@ -70,8 +70,8 @@ export function PersonDetailTabs({
             className={`px-5 py-2 text-base font-semibold rounded-t-lg transition-colors focus:outline-none
               ${
                 activeTab === tab
-                  ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                  : "text-[var(--muted)] dark:text-[var(--muted)] hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
+                  ? "bg-background border-x border-t border-border text-foreground z-10"
+                  : "text-muted dark:text-muted hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
               }
             `}
             style={{
@@ -89,7 +89,7 @@ export function PersonDetailTabs({
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 bg-[var(--background)] rounded-b-xl border-b border-[var(--border)] shadow-sm px-6 pb-6 overflow-auto">
+      <div className="flex-1 bg-background rounded-b-xl border-b border-border shadow-sm px-6 pb-6 overflow-auto">
         <div className="pt-6">{renderTabContent()}</div>
       </div>
     </div>

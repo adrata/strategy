@@ -87,33 +87,33 @@ export function SnoozeRemoveModal({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-[10000]">
-      <div className="bg-[var(--background)] rounded-xl w-[480px] max-w-[90vw] max-h-[90vh] overflow-y-auto border border-[var(--border)] shadow-2xl">
+      <div className="bg-background rounded-xl w-[480px] max-w-[90vw] max-h-[90vh] overflow-y-auto border border-border shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-xl font-bold text-[var(--foreground)]">
+            <h2 className="text-xl font-bold text-foreground">
               Manage Lead
             </h2>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               {leadName} • {leadCompany}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-[var(--border)]">
+        <div className="flex border-b border-border">
           <button
             onClick={() => setActiveTab("snooze")}
             className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
               activeTab === "snooze"
                 ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/50 dark:bg-blue-900/20"
-                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]"
+                : "text-muted hover:text-foreground hover:bg-hover"
             }`}
           >
             <ClockIcon className="w-4 h-4 inline-block mr-2" />
@@ -124,7 +124,7 @@ export function SnoozeRemoveModal({
             className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
               activeTab === "remove"
                 ? "text-red-600 border-b-2 border-red-600 bg-red-50/50 dark:bg-red-900/20"
-                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]"
+                : "text-muted hover:text-foreground hover:bg-hover"
             }`}
           >
             <TrashIcon className="w-4 h-4 inline-block mr-2" />
@@ -137,7 +137,7 @@ export function SnoozeRemoveModal({
           {activeTab === "snooze" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">
+                <h3 className="text-sm font-medium text-foreground mb-3">
                   When should we bring this lead back?
                 </h3>
 
@@ -149,12 +149,12 @@ export function SnoozeRemoveModal({
                       className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
                         selectedSnooze?.id === option.id
                           ? "border-blue-500 bg-blue-50/50 dark:bg-blue-900/20"
-                          : "border-[var(--border)] hover:border-blue-300 hover:bg-[var(--hover-bg)]"
+                          : "border-border hover:border-blue-300 hover:bg-hover"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-[var(--foreground)]">
+                          <div className="font-medium text-foreground">
                             {option['id'] === "custom" ? (
                               <span className="flex items-center">
                                 <CalendarIcon className="w-4 h-4 mr-2" />
@@ -174,11 +174,11 @@ export function SnoozeRemoveModal({
                           className={`w-4 h-4 rounded-full border-2 ${
                             selectedSnooze?.id === option.id
                               ? "border-blue-500 bg-blue-500"
-                              : "border-[var(--border)]"
+                              : "border-border"
                           }`}
                         >
                           {selectedSnooze?.id === option['id'] && (
-                            <div className="w-2 h-2 bg-[var(--background)] rounded-full m-0.5"></div>
+                            <div className="w-2 h-2 bg-background rounded-full m-0.5"></div>
                           )}
                         </div>
                       </div>
@@ -188,10 +188,10 @@ export function SnoozeRemoveModal({
 
                 {/* Custom Date/Time Picker */}
                 {selectedSnooze?.type === "custom" && (
-                  <div className="mt-4 p-4 bg-[var(--panel-background)]/50 rounded-lg">
+                  <div className="mt-4 p-4 bg-panel-background/50 rounded-lg">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                           Date
                         </label>
                         <input
@@ -199,18 +199,18 @@ export function SnoozeRemoveModal({
                           value={customDate}
                           onChange={(e) => setCustomDate(e.target.value)}
                           min={new Date().toISOString().split("T")[0]}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                           Time
                         </label>
                         <input
                           type="time"
                           value={customTime}
                           onChange={(e) => setCustomTime(e.target.value)}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -220,7 +220,7 @@ export function SnoozeRemoveModal({
 
               {/* Optional Reason */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Reason (optional)
                 </label>
                 <input
@@ -228,7 +228,7 @@ export function SnoozeRemoveModal({
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="e.g., Waiting for budget approval"
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
@@ -236,7 +236,7 @@ export function SnoozeRemoveModal({
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={onClose}
-                  className="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors"
                 >
                   Cancel
                 </button>
@@ -257,7 +257,7 @@ export function SnoozeRemoveModal({
           {activeTab === "remove" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">
+                <h3 className="text-sm font-medium text-foreground mb-3">
                   How should we remove this lead?
                 </h3>
 
@@ -267,15 +267,15 @@ export function SnoozeRemoveModal({
                     className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
                       removeType === "temp"
                         ? "border-orange-500 bg-orange-50/50 dark:bg-orange-900/20"
-                        : "border-[var(--border)] hover:border-orange-300 hover:bg-[var(--hover-bg)]"
+                        : "border-border hover:border-orange-300 hover:bg-hover"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           Remove for now
                         </div>
-                        <div className="text-sm text-[var(--muted)] mt-1">
+                        <div className="text-sm text-muted mt-1">
                           Can be re-added to speedrun later
                         </div>
                       </div>
@@ -283,11 +283,11 @@ export function SnoozeRemoveModal({
                         className={`w-4 h-4 rounded-full border-2 ${
                           removeType === "temp"
                             ? "border-orange-500 bg-orange-500"
-                            : "border-[var(--border)]"
+                            : "border-border"
                         }`}
                       >
                         {removeType === "temp" && (
-                          <div className="w-2 h-2 bg-[var(--background)] rounded-full m-0.5"></div>
+                          <div className="w-2 h-2 bg-background rounded-full m-0.5"></div>
                         )}
                       </div>
                     </div>
@@ -298,15 +298,15 @@ export function SnoozeRemoveModal({
                     className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
                       removeType === "permanent"
                         ? "border-red-500 bg-red-50/50 dark:bg-red-900/20"
-                        : "border-[var(--border)] hover:border-red-300 hover:bg-[var(--hover-bg)]"
+                        : "border-border hover:border-red-300 hover:bg-hover"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           Remove permanently
                         </div>
-                        <div className="text-sm text-[var(--muted)] mt-1">
+                        <div className="text-sm text-muted mt-1">
                           Will never appear in speedrun again
                         </div>
                       </div>
@@ -314,11 +314,11 @@ export function SnoozeRemoveModal({
                         className={`w-4 h-4 rounded-full border-2 ${
                           removeType === "permanent"
                             ? "border-red-500 bg-red-500"
-                            : "border-[var(--border)]"
+                            : "border-border"
                         }`}
                       >
                         {removeType === "permanent" && (
-                          <div className="w-2 h-2 bg-[var(--background)] rounded-full m-0.5"></div>
+                          <div className="w-2 h-2 bg-background rounded-full m-0.5"></div>
                         )}
                       </div>
                     </div>
@@ -328,7 +328,7 @@ export function SnoozeRemoveModal({
 
               {/* Required Reason for Permanent Removal */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Reason{" "}
                   {removeType === "permanent" && (
                     <span className="text-red-500">*</span>
@@ -343,7 +343,7 @@ export function SnoozeRemoveModal({
                       ? "e.g., Wrong target market, competitor, unqualified"
                       : "e.g., Not a priority right now"
                   }
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
               </div>
 
@@ -351,7 +351,7 @@ export function SnoozeRemoveModal({
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={onClose}
-                  className="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors"
                 >
                   Cancel
                 </button>

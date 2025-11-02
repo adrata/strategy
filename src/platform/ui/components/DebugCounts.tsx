@@ -178,17 +178,17 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
   }
 
   return (
-    <div className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg">
+    <div className="p-4 bg-panel-background border border-border rounded-lg">
       <div className="flex items-center gap-2 mb-4">
         <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
-        <h3 className="text-sm font-medium text-[var(--foreground)]">Debug Counts - TOP Engineering Plus</h3>
+        <h3 className="text-sm font-medium text-foreground">Debug Counts - TOP Engineering Plus</h3>
       </div>
       
       <div className="space-y-4">
         {/* Basic Info */}
         <div>
           <h4 className="text-xs font-medium text-gray-700 mb-2">Workspace Info</h4>
-          <div className="text-xs text-[var(--muted)] space-y-1">
+          <div className="text-xs text-muted space-y-1">
             <div>Workspace ID: {debugInfo.workspaceId || 'Not found'}</div>
             <div>User ID: {debugInfo.userId || 'Not found'}</div>
             <div>Timestamp: {debugInfo.timestamp}</div>
@@ -198,7 +198,7 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
         {/* Auth User Info */}
         <div>
           <h4 className="text-xs font-medium text-gray-700 mb-2">Auth User</h4>
-          <div className="text-xs text-[var(--muted)] space-y-1">
+          <div className="text-xs text-muted space-y-1">
             <div>ID: {debugInfo.authUser.id || 'Not found'}</div>
             <div>Active Workspace: {debugInfo.authUser.activeWorkspaceId || 'Not found'}</div>
             <div>Workspaces: {debugInfo.authUser.workspaces?.length || 0}</div>
@@ -208,7 +208,7 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
         {/* Acquisition Data */}
         <div>
           <h4 className="text-xs font-medium text-gray-700 mb-2">Acquisition Data</h4>
-          <div className="text-xs text-[var(--muted)] space-y-1">
+          <div className="text-xs text-muted space-y-1">
             <div>Exists: {debugInfo.acquisitionData.exists ? 'Yes' : 'No'}</div>
             <div>Loading: {debugInfo.acquisitionData.loading ? 'Yes' : 'No'}</div>
             <div>Has Acquire Data: {debugInfo.acquisitionData.hasAcquireData ? 'Yes' : 'No'}</div>
@@ -221,7 +221,7 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
         {apiResponse && (
           <div>
             <h4 className="text-xs font-medium text-gray-700 mb-2">API Response</h4>
-            <div className="text-xs text-[var(--muted)] space-y-1">
+            <div className="text-xs text-muted space-y-1">
               <div>Success: {debugInfo.apiResponse.success ? 'Yes' : 'No'}</div>
               <div>Cache Hit: {debugInfo.apiResponse.meta?.cacheHit ? 'Yes' : 'No'}</div>
               <div>Response Time: {debugInfo.apiResponse.meta?.responseTime}ms</div>
@@ -257,7 +257,7 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
         {/* Raw Data */}
         <details className="text-xs">
           <summary className="cursor-pointer text-gray-700 font-medium">Raw Debug Data</summary>
-          <pre className="mt-2 p-2 bg-[var(--hover)] rounded text-xs overflow-auto">
+          <pre className="mt-2 p-2 bg-hover rounded text-xs overflow-auto">
             {JSON.stringify(debugInfo, null, 2)}
           </pre>
         </details>

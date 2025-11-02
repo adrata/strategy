@@ -158,17 +158,17 @@ export function SpeedrunSprintLeftPanel({
   const currentSprintNumber = currentSprintIndex + 1;
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] h-full flex flex-col bg-[var(--background)] border-r border-gray-100">
+    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] h-full flex flex-col bg-background border-r border-gray-100">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 bg-[var(--background)]">
+      <div className="p-4 border-b border-gray-100 bg-background">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold text-[var(--foreground)]">Sprint {currentSprintNumber}</h2>
+              <h2 className="text-lg font-bold text-foreground">Sprint {currentSprintNumber}</h2>
             </div>
-            <span className="text-xs font-medium text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
+            <span className="text-xs font-medium text-muted bg-hover px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
           </div>
-          <div className="text-xs text-[var(--muted)]">
+          <div className="text-xs text-muted">
             {currentSprintNumber} of {totalSprints} sprints • {data.length} total people in speedrun
           </div>
           <div className="text-xs text-blue-600 font-medium">
@@ -182,8 +182,8 @@ export function SpeedrunSprintLeftPanel({
         {/* Loading indicator for data refresh */}
         {(loading || dataLoading) && data.length > 0 && (
           <div className="flex items-center justify-center py-2">
-            <div className="flex items-center gap-2 text-xs text-[var(--muted)]">
-              <div className="w-3 h-3 border-2 border-[var(--border)] border-t-blue-500 rounded-full animate-spin"></div>
+            <div className="flex items-center gap-2 text-xs text-muted">
+              <div className="w-3 h-3 border-2 border-border border-t-blue-500 rounded-full animate-spin"></div>
               <span>Updating sprint data...</span>
             </div>
           </div>
@@ -208,10 +208,10 @@ export function SpeedrunSprintLeftPanel({
               onClick={() => onRecordSelect(record)}
               className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border relative ${
                 isCompleted
-                  ? 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] opacity-60'
+                  ? 'bg-panel-background text-muted border-border opacity-60'
                   : isSelected 
-                    ? 'bg-[var(--hover)] text-[var(--foreground)] border-[var(--border)] shadow-sm' 
-                    : 'bg-[var(--background)] hover:bg-[var(--panel-background)] border-gray-100 hover:border-[var(--border)] hover:shadow-sm'
+                    ? 'bg-hover text-foreground border-border shadow-sm' 
+                    : 'bg-background hover:bg-panel-background border-gray-100 hover:border-border hover:shadow-sm'
               }`}
             >
               {/* Completion overlay */}
@@ -232,14 +232,14 @@ export function SpeedrunSprintLeftPanel({
                         ? 'bg-green-100 text-green-800'
                         : isSelected 
                           ? 'bg-green-100 text-green-800' 
-                          : 'bg-[var(--hover)] text-[var(--muted)]'
+                          : 'bg-hover text-muted'
                     }`}>
                       {displayNumber}
                     </span>
                     <h3 className={`text-sm font-semibold truncate ${
                       isCompleted 
-                        ? 'text-[var(--muted)]' 
-                        : isSelected ? 'text-[var(--foreground)]' : 'text-[var(--foreground)]'
+                        ? 'text-muted' 
+                        : isSelected ? 'text-foreground' : 'text-foreground'
                     }`}>
                       {displayName}
                     </h3>
@@ -251,15 +251,15 @@ export function SpeedrunSprintLeftPanel({
                   </div>
                   <p className={`text-xs truncate mb-1 ${
                     isCompleted 
-                      ? 'text-[var(--muted)]' 
-                      : isSelected ? 'text-[var(--muted)]' : 'text-[var(--muted)]'
+                      ? 'text-muted' 
+                      : isSelected ? 'text-muted' : 'text-muted'
                   }`}>
                     {record.title || record.jobTitle || 'No Title'}
                   </p>
                   <p className={`text-xs truncate ${
                     isCompleted 
-                      ? 'text-[var(--muted)]' 
-                      : isSelected ? 'text-[var(--muted)]' : 'text-[var(--muted)]'
+                      ? 'text-muted' 
+                      : isSelected ? 'text-muted' : 'text-muted'
                   }`}>
                     {getCompanyName(record.company)}
                   </p>

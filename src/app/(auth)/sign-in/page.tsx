@@ -199,8 +199,8 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
-      <div className="bg-[var(--background)] rounded-xl shadow-lg p-8 w-full max-w-md border">
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="bg-background rounded-xl shadow-lg p-8 w-full max-w-md border">
         <h1 className="text-2xl font-bold mb-6 text-center">
           Adrata Sign In
         </h1>
@@ -225,7 +225,7 @@ export default function SignInPage() {
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-[var(--border)]"
+              className="w-full border border-border rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-border"
               placeholder="Enter your username or email"
               required
               disabled={isLoading}
@@ -243,7 +243,7 @@ export default function SignInPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-[var(--border)]"
+              className="w-full border border-border rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-border"
               placeholder="Enter your password"
               required
               disabled={isLoading}
@@ -259,7 +259,7 @@ export default function SignInPage() {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-black focus:ring-black border-[var(--border)] rounded"
+                className="h-4 w-4 text-black focus:ring-black border-border rounded"
                 disabled={isLoading}
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
@@ -268,7 +268,7 @@ export default function SignInPage() {
             </div>
             <Link
               href="/reset-password"
-              className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+              className="text-sm text-muted hover:text-black transition-colors"
             >
               Forgot password?
             </Link>
@@ -285,7 +285,7 @@ export default function SignInPage() {
 
         {/* Demo Link */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-muted">
             Don&apos;t have an account yet?{" "}
             <Link
               href="/demo"

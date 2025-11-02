@@ -599,7 +599,7 @@ function AcquisitionOSLayoutInner({
             }}
           >
             <div
-              className="bg-[var(--background)] rounded-2xl border border-[var(--border)] shadow-2xl p-6 w-full max-w-md"
+              className="bg-background rounded-2xl border border-border shadow-2xl p-6 w-full max-w-md"
               style={{ zIndex: 10000 }}
               onClick={(e) => {
                 console.log(
@@ -609,7 +609,7 @@ function AcquisitionOSLayoutInner({
               }}
             >
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-[var(--foreground)]">
+                <h2 className="text-xl font-bold text-foreground">
                   Theme Settings
                 </h2>
                 <button
@@ -619,7 +619,7 @@ function AcquisitionOSLayoutInner({
                     );
                     setIsThemeModalOpen(false);
                   }}
-                  className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-hover rounded-lg transition-colors"
                 >
                   ✕
                 </button>

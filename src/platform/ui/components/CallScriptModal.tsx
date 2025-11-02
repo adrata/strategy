@@ -85,19 +85,19 @@ export function CallScriptModal({
   const renderScriptSection = (section: any, title: string) => (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-[var(--foreground)] dark:text-white">{title}</h4>
+        <h4 className="font-medium text-foreground dark:text-white">{title}</h4>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-[var(--muted)]">{section.duration}</span>
+          <span className="text-xs text-muted">{section.duration}</span>
           <button
             onClick={() => copyToClipboard(section.content)}
-            className="p-1 hover:bg-[var(--hover)] rounded"
+            className="p-1 hover:bg-hover rounded"
           >
-            <ClipboardDocumentIcon className="w-4 h-4 text-[var(--muted)]" />
+            <ClipboardDocumentIcon className="w-4 h-4 text-muted" />
           </button>
         </div>
       </div>
 
-      <div className="p-3 bg-[var(--panel-background)] rounded-lg">
+      <div className="p-3 bg-panel-background rounded-lg">
         <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans">
           {section.content}
         </pre>
@@ -105,10 +105,10 @@ export function CallScriptModal({
 
       {section['keyPoints'] && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-[var(--muted)] dark:text-[var(--muted)]">
+          <p className="text-xs font-medium text-muted dark:text-muted">
             Key Points:
           </p>
-          <ul className="text-xs text-[var(--muted)] dark:text-[var(--muted)] space-y-1">
+          <ul className="text-xs text-muted dark:text-muted space-y-1">
             {section.keyPoints.map((point: string, i: number) => (
               <li key={i} className="flex items-start gap-2">
                 <span className="w-1 h-1 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
@@ -125,7 +125,7 @@ export function CallScriptModal({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-xl w-[900px] max-w-[95vw] max-h-[95vh] overflow-hidden border shadow-2xl">
+      <div className="bg-background rounded-xl w-[900px] max-w-[95vw] max-h-[95vh] overflow-hidden border shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center gap-3">
@@ -133,10 +133,10 @@ export function CallScriptModal({
               <PhoneIcon className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)] dark:text-white">
+              <h2 className="text-xl font-bold text-foreground dark:text-white">
                 Call Script Generator
               </h2>
-              <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
+              <p className="text-sm text-muted dark:text-muted">
                 {callPurpose.charAt(0).toUpperCase() + callPurpose.slice(1)}{" "}
                 call with {leadData.name}
               </p>
@@ -144,16 +144,16 @@ export function CallScriptModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg"
+            className="p-2 hover:bg-hover rounded-lg"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         {/* Content */}
         <div className="flex h-[70vh]">
           {/* Sidebar Navigation */}
-          <div className="w-64 border-r bg-[var(--panel-background)] dark:bg-[var(--foreground)] p-4">
+          <div className="w-64 border-r bg-panel-background dark:bg-foreground p-4">
             <div className="space-y-2">
               {callScript &&
                 [
@@ -194,11 +194,11 @@ export function CallScriptModal({
                     className={`w-full text-left p-3 rounded-lg text-sm ${
                       activeSection === section.id
                         ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"
-                        : "hover:bg-[var(--hover)] text-gray-700 dark:text-gray-300"
+                        : "hover:bg-hover text-gray-700 dark:text-gray-300"
                     }`}
                   >
                     <div className="font-medium">{section.label}</div>
-                    <div className="text-xs text-[var(--muted)]">
+                    <div className="text-xs text-muted">
                       {section.duration}
                     </div>
                   </button>
@@ -206,11 +206,11 @@ export function CallScriptModal({
             </div>
 
             {callScript && (
-              <div className="mt-6 p-3 bg-[var(--background)] rounded-lg border">
-                <h4 className="font-medium text-[var(--foreground)] dark:text-white mb-2">
+              <div className="mt-6 p-3 bg-background rounded-lg border">
+                <h4 className="font-medium text-foreground dark:text-white mb-2">
                   Call Info
                 </h4>
-                <div className="space-y-2 text-xs text-[var(--muted)] dark:text-[var(--muted)]">
+                <div className="space-y-2 text-xs text-muted dark:text-muted">
                   <div>Duration: {callScript.estimatedDuration}</div>
                   <div>
                     Confidence: {Math.round(callScript.confidence * 100)}%
@@ -227,7 +227,7 @@ export function CallScriptModal({
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <ArrowPathIcon className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-                  <p className="text-[var(--muted)] dark:text-[var(--muted)]">
+                  <p className="text-muted dark:text-muted">
                     Generating personalized call script...
                   </p>
                 </div>
@@ -299,14 +299,14 @@ export function CallScriptModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t bg-[var(--panel-background)] dark:bg-[var(--foreground)]">
-          <div className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
+        <div className="flex items-center justify-between p-6 border-t bg-panel-background dark:bg-foreground">
+          <div className="text-sm text-muted dark:text-muted">
             Generated using your voice profile and real Pipeline data
           </div>
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 border rounded-lg hover:bg-[var(--hover)]"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 border rounded-lg hover:bg-hover"
             >
               Close
             </button>

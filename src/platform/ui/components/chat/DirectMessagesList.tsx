@@ -44,12 +44,12 @@ export function DirectMessagesList({
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header with back button and start conversation */}
-      <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
+      <div className="flex items-center justify-between p-4 border-b border-border">
         <button
           onClick={onBack}
-          className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="p-1 text-muted hover:text-foreground transition-colors"
         >
           <ArrowLeftIcon className="w-5 h-5" />
         </button>
@@ -61,11 +61,11 @@ export function DirectMessagesList({
       {/* DM List - Oasis style */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="p-4 text-center text-[var(--muted)]">
+          <div className="p-4 text-center text-muted">
             Loading conversations...
           </div>
         ) : dms.length === 0 ? (
-          <div className="p-4 text-center text-[var(--muted)]">
+          <div className="p-4 text-center text-muted">
             No direct messages yet
           </div>
         ) : (
@@ -74,32 +74,32 @@ export function DirectMessagesList({
               <button
                 key={dm.id}
                 onClick={() => onSelectDM(dm)}
-                className="w-full flex items-center px-2 py-1.5 rounded-md hover:bg-[var(--hover)] transition-colors text-left"
+                className="w-full flex items-center px-2 py-1.5 rounded-md hover:bg-hover transition-colors text-left"
               >
                 <div className="relative mr-2">
-                  <div className="w-4 h-4 bg-white border border-[var(--border)] rounded flex items-center justify-center">
-                    <span className="text-xs font-medium text-[var(--foreground)]">
+                  <div className="w-4 h-4 bg-white border border-border rounded flex items-center justify-center">
+                    <span className="text-xs font-medium text-foreground">
                       {dm.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   {dm.isOnline && (
-                    <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-[var(--background)] rounded-full"></div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-background rounded-full"></div>
                   )}
                 </div>
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-[var(--foreground)] truncate">
+                    <span className="text-sm font-medium text-foreground truncate">
                       {dm.name}
                     </span>
                     {dm.lastMessageTime && (
-                      <span className="text-xs text-[var(--muted)] ml-2">
+                      <span className="text-xs text-muted ml-2">
                         {formatTimeAgo(dm.lastMessageTime)}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center justify-between mt-0.5">
-                    <p className="text-xs text-[var(--muted)] truncate flex-1">
+                    <p className="text-xs text-muted truncate flex-1">
                       {dm.lastMessage || 'No messages yet'}
                     </p>
                     {dm.unreadCount && dm.unreadCount > 0 && (

@@ -98,30 +98,30 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
     switch (activeSection) {
       case 'leads':
         return (
-          <tr key={item.id || index} className="hover:bg-[var(--panel-background)] cursor-pointer" onClick={handleRowClick}>
+          <tr key={item.id || index} className="hover:bg-panel-background cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4">
-              <div className="text-sm text-[var(--foreground)] truncate max-w-32">
+              <div className="text-sm text-foreground truncate max-w-32">
                 {item.company?.name || '-'}
               </div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm font-medium text-[var(--foreground)] truncate max-w-32">
+              <div className="text-sm font-medium text-foreground truncate max-w-32">
                 {item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || '-'}
               </div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-[var(--foreground)] truncate max-w-32">{item.title || item.jobTitle || '-'}</div>
+              <div className="text-sm text-foreground truncate max-w-32">{item.title || item.jobTitle || '-'}</div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-[var(--foreground)] truncate max-w-40">{item.email || item.workEmail || '-'}</div>
+              <div className="text-sm text-foreground truncate max-w-40">{item.email || item.workEmail || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm">
-              <span className="text-[var(--muted)]">
+              <span className="text-muted">
                 {item.lastActionDate ? new Date(item.lastActionDate).toLocaleDateString() : '-'}
               </span>
-              <div className="text-xs text-[var(--muted)]">{item.lastAction || '-'}</div>
+              <div className="text-xs text-muted">{item.lastAction || '-'}</div>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               {item.nextAction || '-'}
             </td>
           </tr>
@@ -129,31 +129,31 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
       
       case 'prospects':
         return (
-          <tr key={item.id || index} className="hover:bg-[var(--panel-background)] cursor-pointer" onClick={handleRowClick}>
+          <tr key={item.id || index} className="hover:bg-panel-background cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4">
-              <div className="text-sm text-[var(--foreground)] truncate max-w-32">{item.company || '-'}</div>
+              <div className="text-sm text-foreground truncate max-w-32">{item.company || '-'}</div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm font-medium text-[var(--foreground)] truncate max-w-32">
+              <div className="text-sm font-medium text-foreground truncate max-w-32">
                 {item.name || item.fullName || '-'}
               </div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-[var(--foreground)] truncate max-w-32">{item.title || '-'}</div>
+              <div className="text-sm text-foreground truncate max-w-32">{item.title || '-'}</div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-[var(--foreground)] truncate max-w-40">{item.email || '-'}</div>
+              <div className="text-sm text-foreground truncate max-w-40">{item.email || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm">
-              <span className="text-[var(--muted)]">1 day ago</span>
-              <div className="text-xs text-[var(--muted)]">Call</div>
+              <span className="text-muted">1 day ago</span>
+              <div className="text-xs text-muted">Call</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm">
               <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 {item.opportunities?.length > 0 ? 'Yes' : 'Not yet'}
               </span>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               Schedule product demo
             </td>
           </tr>
@@ -161,49 +161,49 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
       
       case 'companies':
         return (
-          <tr key={item.id || index} className="hover:bg-[var(--panel-background)] cursor-pointer" onClick={handleRowClick}>
+          <tr key={item.id || index} className="hover:bg-panel-background cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm font-medium text-[var(--foreground)]">{item.name || '-'}</div>
+              <div className="text-sm font-medium text-foreground">{item.name || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.industry || '-'}</div>
+              <div className="text-sm text-foreground">{item.industry || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.employeeCount || '-'}</div>
+              <div className="text-sm text-foreground">{item.employeeCount || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.revenue || '-'}</div>
+              <div className="text-sm text-foreground">{item.revenue || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.location || '-'}</div>
+              <div className="text-sm text-foreground">{item.location || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.contacts_count || 0}</div>
+              <div className="text-sm text-foreground">{item.contacts_count || 0}</div>
             </td>
           </tr>
         );
       
       case 'people':
         return (
-          <tr key={item.id || index} className="hover:bg-[var(--panel-background)] cursor-pointer" onClick={handleRowClick}>
+          <tr key={item.id || index} className="hover:bg-panel-background cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm font-medium text-[var(--foreground)]">{item.name || item.fullName || '-'}</div>
+              <div className="text-sm font-medium text-foreground">{item.name || item.fullName || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.title || item.jobTitle || '-'}</div>
+              <div className="text-sm text-foreground">{item.title || item.jobTitle || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">
+              <div className="text-sm text-foreground">
                 {item.company || item.account?.name || (item.email ? item.email.split('@')[1] : '-')}
               </div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.email || item.workEmail || '-'}</div>
+              <div className="text-sm text-foreground">{item.email || item.workEmail || '-'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-[var(--foreground)]">{item.phone || item.mobilePhone || item.workPhone || '-'}</div>
+              <div className="text-sm text-foreground">{item.phone || item.mobilePhone || item.workPhone || '-'}</div>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-'}
             </td>
           </tr>
@@ -211,7 +211,7 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
       
       default:
         return (
-          <tr key={item.id || index} className="hover:bg-[var(--panel-background)] cursor-pointer" onClick={handleRowClick}>
+          <tr key={item.id || index} className="hover:bg-panel-background cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4">{item.name || '-'}</td>
             <td className="px-6 py-4">{JSON.stringify(item).substring(0, 100)}...</td>
           </tr>
@@ -220,37 +220,37 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   };
 
   return (
-    <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] h-full flex flex-col">
+    <div className="bg-background rounded-lg border border-border h-full flex flex-col">
       {currentData.length > 0 ? (
         <div className="flex-1 overflow-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[var(--panel-background)] sticky top-0 z-10">
+            <thead className="bg-panel-background sticky top-0 z-10">
               <tr>
                 {getTableHeaders().map((header) => (
                   <th 
                     key={header}
-                    className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider"
+                    className="px-6 py-4 text-left text-xs font-medium text-muted uppercase tracking-wider"
                   >
                     {header}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-[var(--background)] divide-y divide-gray-200">
+            <tbody className="bg-background divide-y divide-gray-200">
               {currentData.map(renderTableRow)}
             </tbody>
           </table>
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center text-[var(--muted)] p-6">
-            <div className="w-16 h-16 bg-[var(--hover)] rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl text-[var(--muted)]">📋</span>
+          <div className="text-center text-muted p-6">
+            <div className="w-16 h-16 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl text-muted">📋</span>
             </div>
-            <h4 className="text-lg font-medium text-[var(--foreground)] mb-2">
+            <h4 className="text-lg font-medium text-foreground mb-2">
               No {activeSection} yet
             </h4>
-            <p className="text-sm text-[var(--muted)] max-w-sm">
+            <p className="text-sm text-muted max-w-sm">
               Start building your {activeSection} pipeline by adding new entries.
             </p>
           </div>

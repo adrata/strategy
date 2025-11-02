@@ -57,9 +57,9 @@ export const SearchPillComponent: React.FC<SearchPillComponentProps> = ({
         };
       case "role_level":
         return {
-              bg: "bg-[var(--hover)] dark:bg-[var(--foreground)]/30",
+              bg: "bg-hover dark:bg-foreground/30",
     text: "text-gray-700 dark:text-gray-300",
-    border: "border-[var(--border)] dark:border-[var(--border)]",
+    border: "border-border dark:border-border",
         };
       case "department":
         return {
@@ -90,13 +90,13 @@ export const SearchPillComponent: React.FC<SearchPillComponentProps> = ({
         className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full border text-sm font-medium ${
           pill.isActive
             ? `${colors.bg} ${colors.text} ${colors.border}`
-            : "bg-[var(--panel-background)]/50 text-[var(--muted)] dark:text-[var(--muted)] border-[var(--border)] dark:border-[var(--border)]"
+            : "bg-panel-background/50 text-muted dark:text-muted border-border dark:border-border"
         } transition-all duration-200`}
       >
         <button
           onClick={() => onToggle(pill.id)}
           className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${
-            pill.isActive ? "bg-current border-current" : "border-[var(--border)]"
+            pill.isActive ? "bg-current border-current" : "border-border"
           }`}
         >
           {pill['isActive'] && (
@@ -134,9 +134,9 @@ export const SearchPillComponent: React.FC<SearchPillComponentProps> = ({
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50 min-w-48">
+        <div className="absolute top-full left-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-50 min-w-48">
           <div className="p-2">
-            <div className="text-xs font-medium text-[var(--muted)] mb-2 uppercase tracking-wide">
+            <div className="text-xs font-medium text-muted mb-2 uppercase tracking-wide">
               Alternative {pill.type}s
             </div>
             {pill.alternatives.map((alt, index) => (
@@ -146,7 +146,7 @@ export const SearchPillComponent: React.FC<SearchPillComponentProps> = ({
                   onUpdateValue(pill.id, alt);
                   setShowDropdown(false);
                 }}
-                className="block w-full text-left px-2 py-1.5 text-sm text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded transition-colors"
+                className="block w-full text-left px-2 py-1.5 text-sm text-foreground hover:bg-hover rounded transition-colors"
               >
                 {alt}
               </button>

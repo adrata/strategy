@@ -273,7 +273,7 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
   if (!workspaceId) {
     return (
       <div className="p-6">
-        <div className="text-center text-[var(--muted)]">
+        <div className="text-center text-muted">
           Loading workspace...
         </div>
       </div>
@@ -287,11 +287,11 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
         <div className="p-6">
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6 animate-pulse">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 mb-4"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-full mb-2"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-2/3"></div>
+              <div key={i} className="bg-background rounded-lg border border-border p-6 animate-pulse">
+                <div className="h-4 bg-loading-bg rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-loading-bg rounded w-1/2 mb-4"></div>
+                <div className="h-3 bg-loading-bg rounded w-full mb-2"></div>
+                <div className="h-3 bg-loading-bg rounded w-2/3"></div>
               </div>
             ))}
           </div>
@@ -337,7 +337,7 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
   return (
     <div className="h-full w-full">
       {/* Search and Filters */}
-      <div className="p-6 border-b border-[var(--border)]">
+      <div className="p-6 border-b border-border">
         <div className="flex gap-4 items-center">
           <div className="flex-1">
             <input
@@ -345,13 +345,13 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
               placeholder="Search reports..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">All Types</option>
             <option value="PITCH">Pitch</option>
@@ -366,13 +366,13 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
       <div className="p-6 overflow-y-auto invisible-scrollbar">
         {filteredReports.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-[var(--muted)] mb-4">
+            <div className="text-muted mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No reports found</h3>
-            <p className="text-[var(--muted)] mb-4">
+            <h3 className="text-lg font-medium text-foreground mb-2">No reports found</h3>
+            <p className="text-muted mb-4">
               {searchQuery || filterType !== 'all' 
                 ? 'Try adjusting your search or filters.' 
                 : 'Reports are automatically generated daily and weekly.'}
@@ -384,7 +384,7 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
               <div
                 key={report.id}
                 onClick={() => handleReportClick(report)}
-                className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-3 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
+                className="bg-background rounded-lg border border-border p-3 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex flex-col gap-2">
                   {/* Pill at top */}
@@ -398,7 +398,7 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
                           New
                         </span>
                       )}
-                      <div className="text-xs text-[var(--foreground)] font-medium">
+                      <div className="text-xs text-foreground font-medium">
                         {formatTime(report.createdAt)}
                       </div>
                     </div>
@@ -406,10 +406,10 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
                   
                   {/* Title and description */}
                   <div>
-                    <h3 className="text-base font-semibold text-[var(--foreground)] group-hover:text-blue-700 transition-colors mb-1">
+                    <h3 className="text-base font-semibold text-foreground group-hover:text-blue-700 transition-colors mb-1">
                       {report.title}
                     </h3>
-                    <p className="text-sm text-[var(--muted)] line-clamp-1">
+                    <p className="text-sm text-muted line-clamp-1">
                       {report.content?.summary?.weekProgress || 
                        report.content?.summary?.executiveSummary || 
                        'Report generated automatically'}
@@ -417,34 +417,34 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
                   </div>
                   
                   {/* Metrics at bottom */}
-                  <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
                     <div className="flex items-center gap-4 text-xs">
                       <div className="text-center">
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           {report.content?.activityMetrics?.callsCompleted || 0}
                         </div>
-                        <div className="text-[var(--muted)]">Calls</div>
+                        <div className="text-muted">Calls</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           {report.content?.activityMetrics?.emailsCompleted || 0}
                         </div>
-                        <div className="text-[var(--muted)]">Emails</div>
+                        <div className="text-muted">Emails</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           {report.content?.conversionFunnel?.prospects || 0}
                         </div>
-                        <div className="text-[var(--muted)]">Prospects</div>
+                        <div className="text-muted">Prospects</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           {report.content?.conversionFunnel?.opportunities || 0}
                         </div>
-                        <div className="text-[var(--muted)]">Opps</div>
+                        <div className="text-muted">Opps</div>
                       </div>
                     </div>
-                    <svg className="h-5 w-5 text-[var(--muted)] group-hover:text-blue-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-muted group-hover:text-blue-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>

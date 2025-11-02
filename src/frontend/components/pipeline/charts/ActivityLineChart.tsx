@@ -20,20 +20,20 @@ export function ActivityLineChart({ data, height = 200 }: ActivityLineChartProps
   if (!data || data.length === 0) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-6">
-        <div className="w-16 h-16 rounded-full bg-[var(--muted)]/10 flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 rounded-full bg-muted/10 flex items-center justify-center mb-4">
+          <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         </div>
-        <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">No activity data</h3>
-        <p className="text-xs text-[var(--muted)]">Activity will appear here once you start making calls, sending emails, or scheduling meetings.</p>
+        <h3 className="text-sm font-medium text-foreground mb-1">No activity data</h3>
+        <p className="text-xs text-muted">Activity will appear here once you start making calls, sending emails, or scheduling meetings.</p>
       </div>
     );
   }
 
   return (
     <div className="h-full">
-      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+      <h3 className="text-lg font-semibold text-foreground mb-4">
         Daily Activity Trend
       </h3>
       <ResponsiveContainer width="100%" height={height}>

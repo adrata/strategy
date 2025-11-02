@@ -623,20 +623,20 @@ export function UniversalAIAssistant({
   if (!isOpen) return null;
 
   return (
-    <div className={`flex flex-col h-full bg-[var(--background)] ${className}`}>
+    <div className={`flex flex-col h-full bg-background ${className}`}>
       {/* Enhanced Header with Health Status and Voice Controls */}
-      <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
+      <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <SparklesIcon className="w-5 h-5" style={{ color: accentColor }} />
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               {capabilities.name}
             </span>
           </div>
           {healthStatus && (
             <div className="flex items-center gap-2 text-xs">
               <HeartIcon className="w-4 h-4 text-green-500" />
-              <span className="text-[var(--muted)]">
+              <span className="text-muted">
                 {healthStatus.overall}% Health
               </span>
             </div>
@@ -648,7 +648,7 @@ export function UniversalAIAssistant({
           {voiceActivation && (
             <div className="flex items-center gap-1">
               {voiceActivation['isListening'] && (
-                <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+                <div className="flex items-center gap-1 text-xs text-muted">
                   <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                   <span>Listening</span>
                 </div>
@@ -658,7 +658,7 @@ export function UniversalAIAssistant({
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <MicrophoneIcon className="w-3 h-3" />
                   <span>Adrata Active</span>
-                  <span className="text-[var(--muted)]">
+                  <span className="text-muted">
                     ({Math.floor(voiceActivation.sessionDuration / 60)}s)
                   </span>
                 </div>
@@ -666,7 +666,7 @@ export function UniversalAIAssistant({
               {!voiceActivation['isActive'] && (
                 <button
                   onClick={() => voiceActivation.activateVoice()}
-                  className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                  className="flex items-center gap-1 text-xs text-muted hover:text-foreground transition-colors"
                   title="Start voice activation (say 'Adrata Start')"
                 >
                   <MicrophoneIcon className="w-3 h-3" />
@@ -679,7 +679,7 @@ export function UniversalAIAssistant({
           {onToggle && (
             <button
               onClick={onToggle}
-              className="text-[var(--muted)] hover:text-[var(--foreground)]"
+              className="text-muted hover:text-foreground"
             >
               ✕
             </button>
@@ -700,7 +700,7 @@ export function UniversalAIAssistant({
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-3">
                   <DocumentTextIcon className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-medium text-[var(--foreground)]">
+                  <span className="text-sm font-medium text-foreground">
                     Added Content ({uploadedContent.length})
                   </span>
                 </div>
@@ -720,7 +720,7 @@ export function UniversalAIAssistant({
                     </div>
                   ))}
                   {uploadedContent.length > 3 && (
-                    <div className="px-3 py-2 bg-[var(--panel-background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg text-xs text-center">
+                    <div className="px-3 py-2 bg-panel-background border border-border dark:border-border rounded-lg text-xs text-center">
                       +{uploadedContent.length - 3} more
                     </div>
                   )}
@@ -745,10 +745,10 @@ export function UniversalAIAssistant({
         {messages.map((message) => (
           <div
             key={message.id}
-            className="bg-transparent px-0 py-0 text-base text-[var(--foreground)] w-fit max-w-full mb-2 leading-snug"
+            className="bg-transparent px-0 py-0 text-base text-foreground w-fit max-w-full mb-2 leading-snug"
           >
             {message['type'] === "user" ? (
-              <div className="bg-[var(--hover-bg)] rounded-lg px-3 py-2">
+              <div className="bg-hover rounded-lg px-3 py-2">
                 {message.content}
               </div>
             ) : (
@@ -816,7 +816,7 @@ export function UniversalAIAssistant({
                           setInputMessage(suggestion);
                           setTimeout(handleSendMessage, 100);
                         }}
-                        className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                        className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-background text-foreground border border-border rounded-lg hover:bg-panel-background transition-colors"
                       >
                         <span>{suggestion}</span>
                       </button>
@@ -829,8 +829,8 @@ export function UniversalAIAssistant({
         ))}
 
         {isProcessing && (
-          <div className="bg-transparent px-0 py-0 text-base text-[var(--foreground)] w-fit max-w-full mb-2 leading-snug">
-            <div className="flex items-center gap-2 text-[var(--muted)]">
+          <div className="bg-transparent px-0 py-0 text-base text-foreground w-fit max-w-full mb-2 leading-snug">
+            <div className="flex items-center gap-2 text-muted">
               <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
               <div
                 className="w-2 h-2 bg-current rounded-full animate-bounce"
@@ -851,7 +851,7 @@ export function UniversalAIAssistant({
         {voiceActivation &&
           voiceActivation['isListening'] &&
           !voiceActivation['isActive'] && (
-            <div className="mb-2 text-xs text-[var(--muted)] flex items-center gap-2">
+            <div className="mb-2 text-xs text-muted flex items-center gap-2">
               <SpeakerWaveIcon className="w-3 h-3" />
               <span>Say &quot;Adrata Start&quot; to begin voice session</span>
             </div>
@@ -871,12 +871,12 @@ export function UniversalAIAssistant({
         <div className="flex items-center gap-2 mb-3">
           <button
             onClick={() => setShowContentUploader(!showContentUploader)}
-            className="px-3 py-1 text-xs border border-[var(--border)] rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+            className="px-3 py-1 text-xs border border-border rounded-lg hover:bg-hover transition-colors"
           >
             📄 Add Content
           </button>
           {healthStatus && (
-            <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+            <div className="flex items-center gap-1 text-xs text-muted">
               <ChartBarIcon className="w-3 h-3" />
               <span>
                 Revenue: {healthStatus.revenue}% | Team: {healthStatus.team}%
@@ -891,7 +891,7 @@ export function UniversalAIAssistant({
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder={`Ask me anything about ${capabilities.name.toLowerCase()}...`}
-              className="w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full resize-none rounded-lg border border-border bg-background px-3 py-3 text-sm text-foreground placeholder-[var(--muted)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               rows={2}
               style={{ minHeight: "44px", maxHeight: "120px" }}
               onKeyDown={handleKeyDown}
@@ -911,7 +911,7 @@ export function UniversalAIAssistant({
               className={`p-2 rounded-lg transition-all duration-150 ease-out hover:scale-105 ${
                 voiceActivation.isActive
                   ? "bg-sky-500 text-white shadow-lg shadow-sky-500/40 border border-sky-500"
-                  : "bg-[var(--hover-bg)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-sky-50 border border-transparent"
+                  : "bg-hover text-muted hover:text-foreground hover:bg-sky-50 border border-transparent"
               }`}
               title={
                 voiceActivation.isActive
@@ -932,7 +932,7 @@ export function UniversalAIAssistant({
               backgroundColor:
                 inputMessage.trim() && !isProcessing
                   ? accentColor
-                  : "var(--hover-bg)",
+                  : "var(--hover)",
               color:
                 inputMessage.trim() && !isProcessing ? "white" : "var(--muted)",
             }}

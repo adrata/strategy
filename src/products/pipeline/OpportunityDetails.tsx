@@ -317,11 +317,11 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
             <div className="flex items-center gap-4">
               <button
                 onClick={handleBackNavigation}
-                className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                className="text-muted hover:text-foreground transition-colors"
               >
                 ← Back
               </button>
-              <h1 className="text-3xl font-bold text-[var(--foreground)]">
+              <h1 className="text-3xl font-bold text-foreground">
                 Opportunity Detail
               </h1>
             </div>
@@ -384,7 +384,7 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
             type="skeleton" 
             size="md"
             message="Loading opportunity details..."
-            className="bg-[var(--background)]"
+            className="bg-background"
           />
         )}
 
@@ -393,7 +393,7 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
           <>
             {/* Tabs */}
             <div
-              className="flex gap-2 mb-0 pb-2 border-b border-[var(--border)]"
+              className="flex gap-2 mb-0 pb-2 border-b border-border"
               style={{
                 borderColor: "var(--border)",
                 marginTop: "-18px",
@@ -406,8 +406,8 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                   className={`px-5 py-2 text-base font-semibold rounded-t-lg transition-colors focus:outline-none
                     ${
                       activeTab === tab
-                        ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                        : "text-[var(--muted,#888)] hover:text-[var(--accent)] border border-transparent"
+                        ? "bg-background border-x border-t border-border text-foreground z-10"
+                        : "text-[var(--muted,#888)] hover:text-primary border border-transparent"
                     }
                   `}
                   style={{
@@ -425,37 +425,37 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
             </div>
 
             {/* Tab Content */}
-            <div className="bg-[var(--background)] rounded-b-xl border-b border-[var(--border)] shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
+            <div className="bg-background rounded-b-xl border-b border-border shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
               <div className="pt-6">
                 {activeTab === "Overview" && (
                   <>
                     {/* At a Glance */}
                     <div className="mb-8">
-                      <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                      <h2 className="text-xl font-semibold text-foreground mb-4">
                         At a Glance
                       </h2>
                       <div className="flex flex-wrap gap-4">
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                          <div className="font-semibold text-[var(--muted)] mb-1">
+                        <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                          <div className="font-semibold text-muted mb-1">
                             Stage
                           </div>
-                          <div className="text-lg text-[var(--foreground)]">
+                          <div className="text-lg text-foreground">
                             {currentOpportunity.stage}
                           </div>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                          <div className="font-semibold text-[var(--muted)] mb-1">
+                        <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                          <div className="font-semibold text-muted mb-1">
                             Close Probability
                           </div>
-                          <div className="text-lg text-[var(--foreground)]">
+                          <div className="text-lg text-foreground">
                             {currentOpportunity.probability}%
                           </div>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                          <div className="font-semibold text-[var(--muted)] mb-1">
+                        <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                          <div className="font-semibold text-muted mb-1">
                             Expected Close
                           </div>
-                          <div className="text-lg text-[var(--foreground)]">
+                          <div className="text-lg text-foreground">
                             {formatRelativeDate(opportunity.closeDate)}
                           </div>
                         </div>
@@ -465,28 +465,28 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                     {/* Main info */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                        <h2 className="text-xl font-semibold text-foreground mb-4">
                           Opportunity Information
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Opportunity Name
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {opportunity.name}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Company
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {opportunity.company}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Value
                             </label>
                             <p className="mt-1 text-lg font-bold text-green-600">
@@ -494,10 +494,10 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Source
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {opportunity.source}
                             </p>
                           </div>
@@ -505,29 +505,29 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                       </div>
 
                       <div>
-                        <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                        <h2 className="text-xl font-semibold text-foreground mb-4">
                           Engagement
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Last Action
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {opportunity.lastAction}
                             </p>
-                            <p className="text-sm text-[var(--muted)]">
+                            <p className="text-sm text-muted">
                               {formatRelativeDate(opportunity.lastActionDate)}
                             </p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-[var(--muted)]">
+                            <label className="block text-sm font-medium text-muted">
                               Next Action
                             </label>
-                            <p className="mt-1 text-lg text-[var(--foreground)]">
+                            <p className="mt-1 text-lg text-foreground">
                               {opportunity.nextAction}
                             </p>
-                            <p className="text-sm text-[var(--muted)]">
+                            <p className="text-sm text-muted">
                               {formatRelativeDate(opportunity.nextActionDate)}
                             </p>
                           </div>
@@ -536,11 +536,11 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                     </div>
 
                     <div className="mt-8">
-                      <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                      <h2 className="text-xl font-semibold text-foreground mb-4">
                         Notes
                       </h2>
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <p className="text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <p className="text-foreground">
                           {opportunity.notes || "No notes available for this opportunity."}
                         </p>
                       </div>
@@ -550,7 +550,7 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
 
                 {activeTab === "Buyer Group" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Buyer Group
                     </h2>
                     <div className="space-y-4">
@@ -558,14 +558,14 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                         opportunity.buyerGroup.map((member: string, idx: number) => (
                           <div
                             key={idx}
-                            className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4"
+                            className="bg-background border border-border rounded-lg p-4"
                           >
                             <div className="flex justify-between items-start">
                               <div>
-                                <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                                <h3 className="text-lg font-semibold text-foreground">
                                   {member}
                                 </h3>
-                                <p className="text-[var(--muted)]">Stakeholder</p>
+                                <p className="text-muted">Stakeholder</p>
                               </div>
                               <span className="px-3 py-1 rounded-full text-sm font-semibold bg-[#6b7280] text-white">
                                 Member
@@ -574,8 +574,8 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                           </div>
                         ))
                       ) : (
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                          <p className="text-[var(--muted)]">No buyer group members defined yet.</p>
+                        <div className="bg-background border border-border rounded-lg p-4">
+                          <p className="text-muted">No buyer group members defined yet.</p>
                         </div>
                       )}
                     </div>
@@ -584,20 +584,20 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
 
                 {activeTab === "Deal Analysis" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Deal Analysis
                     </h2>
                     <div className="space-y-6">
                       {/* Deal Score */}
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
                           Deal Health Score
                         </h3>
                         <div className="flex items-center gap-4">
                           <div className="text-3xl font-bold text-green-600">
                             {opportunity.probability || 75}%
                           </div>
-                          <div className="text-[var(--muted)]">
+                          <div className="text-muted">
                             Based on stage, engagement, and pipeline velocity
                           </div>
                         </div>
@@ -605,62 +605,62 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
 
                       {/* Risk Assessment */}
                       <div className="grid grid-cols-2 gap-6">
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                        <div className="bg-background border border-border rounded-lg p-4">
+                          <h3 className="text-lg font-semibold text-foreground mb-3">
                             Key Risks
                           </h3>
                           <ul className="space-y-2">
                             <li className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                              <span className="text-[var(--foreground)]">Budget approval timeline</span>
+                              <span className="text-foreground">Budget approval timeline</span>
                             </li>
                             <li className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                              <span className="text-[var(--foreground)]">Technical evaluation pending</span>
+                              <span className="text-foreground">Technical evaluation pending</span>
                             </li>
                             <li className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                              <span className="text-[var(--foreground)]">Competitor activity</span>
+                              <span className="text-foreground">Competitor activity</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                        <div className="bg-background border border-border rounded-lg p-4">
+                          <h3 className="text-lg font-semibold text-foreground mb-3">
                             Success Factors
                           </h3>
                           <ul className="space-y-2">
                             <li className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="text-[var(--foreground)]">Strong champion identified</span>
+                              <span className="text-foreground">Strong champion identified</span>
                             </li>
                             <li className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="text-[var(--foreground)]">Budget allocated</span>
+                              <span className="text-foreground">Budget allocated</span>
                             </li>
                             <li className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="text-[var(--foreground)]">Timeline alignment</span>
+                              <span className="text-foreground">Timeline alignment</span>
                             </li>
                           </ul>
                         </div>
                       </div>
 
                       {/* Deal Progression */}
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
                           Next Steps & Timeline
                         </h3>
                         <div className="space-y-3">
                           <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <span className="text-[var(--foreground)] font-medium">
+                            <span className="text-foreground font-medium">
                               {opportunity.nextAction || "Follow up with key stakeholder"}
                             </span>
-                            <span className="text-sm text-[var(--muted)]">
+                            <span className="text-sm text-muted">
                               {formatRelativeDate(opportunity.nextActionDate) || "Next week"}
                             </span>
                           </div>
-                          <div className="text-[var(--muted)] text-sm">
+                          <div className="text-muted text-sm">
                             Critical path to close: Technical demo → Final proposal → Legal review → Contract signature
                           </div>
                         </div>
@@ -671,40 +671,40 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
 
                 {activeTab === "Buying Committee" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Buying Committee
                     </h2>
                     <div className="space-y-6">
                       {/* Committee Overview */}
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
                           Committee Status
                         </h3>
                         <div className="grid grid-cols-3 gap-4">
                           <div className="text-center">
-                            <div className="text-2xl font-bold text-[var(--foreground)]">
+                            <div className="text-2xl font-bold text-foreground">
                               {opportunityData?.contacts?.length || 3}
                             </div>
-                            <div className="text-sm text-[var(--muted)]">Total Members</div>
+                            <div className="text-sm text-muted">Total Members</div>
                           </div>
                           <div className="text-center">
                             <div className="text-2xl font-bold text-green-600">
                               {Math.ceil((opportunityData?.contacts?.length || 3) * 0.67)}
                             </div>
-                            <div className="text-sm text-[var(--muted)]">Engaged</div>
+                            <div className="text-sm text-muted">Engaged</div>
                           </div>
                           <div className="text-center">
                             <div className="text-2xl font-bold text-blue-600">
                               {Math.ceil((opportunityData?.contacts?.length || 3) * 0.33)}
                             </div>
-                            <div className="text-sm text-[var(--muted)]">Champions</div>
+                            <div className="text-sm text-muted">Champions</div>
                           </div>
                         </div>
                       </div>
 
                       {/* Key Stakeholders */}
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
                           Key Stakeholders
                         </h3>
                         <div className="space-y-4">
@@ -715,10 +715,10 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                                 DM
                               </div>
                               <div>
-                                <div className="font-semibold text-[var(--foreground)]">
+                                <div className="font-semibold text-foreground">
                                   {opportunity.contactName || "Executive Sponsor"}
                                 </div>
-                                <div className="text-sm text-[var(--muted)]">Decision Maker</div>
+                                <div className="text-sm text-muted">Decision Maker</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -735,8 +735,8 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                                 TE
                               </div>
                               <div>
-                                <div className="font-semibold text-[var(--foreground)]">Technical Lead</div>
-                                <div className="text-sm text-[var(--muted)]">Technical Evaluator</div>
+                                <div className="font-semibold text-foreground">Technical Lead</div>
+                                <div className="text-sm text-muted">Technical Evaluator</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -753,8 +753,8 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                                 EB
                               </div>
                               <div>
-                                <div className="font-semibold text-[var(--foreground)]">Budget Owner</div>
-                                <div className="text-sm text-[var(--muted)]">Economic Buyer</div>
+                                <div className="font-semibold text-foreground">Budget Owner</div>
+                                <div className="text-sm text-muted">Economic Buyer</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -767,20 +767,20 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                       </div>
 
                       {/* Engagement Strategy */}
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
                           Engagement Strategy
                         </h3>
                         <div className="space-y-3">
                           <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                            <div className="font-medium text-[var(--foreground)]">Priority Action</div>
-                            <div className="text-sm text-[var(--muted)] mt-1">
+                            <div className="font-medium text-foreground">Priority Action</div>
+                            <div className="text-sm text-muted mt-1">
                               Schedule technical demo with evaluation team
                             </div>
                           </div>
-                          <div className="p-3 bg-[var(--panel-background)]/50 rounded-lg">
-                            <div className="font-medium text-[var(--foreground)]">Next Week</div>
-                            <div className="text-sm text-[var(--muted)] mt-1">
+                          <div className="p-3 bg-panel-background/50 rounded-lg">
+                            <div className="font-medium text-foreground">Next Week</div>
+                            <div className="text-sm text-muted mt-1">
                               Follow up with economic buyer on budget timeline
                             </div>
                           </div>
@@ -793,27 +793,27 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
 
                 {activeTab === "Activity" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Activity Summary
                     </h2>
                     <div className="grid grid-cols-3 gap-6 mb-6">
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                        <div className="text-2xl font-bold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-foreground">
                           {activityData.emails}
                         </div>
-                        <div className="text-sm text-[var(--muted)]">Emails</div>
+                        <div className="text-sm text-muted">Emails</div>
                       </div>
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                        <div className="text-2xl font-bold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-foreground">
                           {activityData.calls}
                         </div>
-                        <div className="text-sm text-[var(--muted)]">Calls</div>
+                        <div className="text-sm text-muted">Calls</div>
                       </div>
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                        <div className="text-2xl font-bold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-foreground">
                           {activityData.meetings}
                         </div>
-                        <div className="text-sm text-[var(--muted)]">Meetings</div>
+                        <div className="text-sm text-muted">Meetings</div>
                       </div>
                     </div>
                   </>
@@ -821,31 +821,31 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
 
                 {activeTab === "History" && (
                   <>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Opportunity History
                     </h2>
                     <div className="space-y-4">
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <div className="font-semibold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <div className="font-semibold text-foreground">
                           Stage History
                         </div>
-                        <div className="mt-2 text-[var(--muted)]">
+                        <div className="mt-2 text-muted">
                           Created → Build Rapport → Build Interest → Build Consensus
                           → Build Decision
                         </div>
                       </div>
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <div className="font-semibold text-[var(--foreground)]">
+                      <div className="bg-background border border-border rounded-lg p-4">
+                        <div className="font-semibold text-foreground">
                           Key Milestones
                         </div>
                         <div className="mt-2 space-y-2">
-                          <div className="text-[var(--foreground)]">
+                          <div className="text-foreground">
                             Initial contact made
                           </div>
-                          <div className="text-[var(--foreground)]">
+                          <div className="text-foreground">
                             Demo completed
                           </div>
-                          <div className="text-[var(--foreground)]">
+                          <div className="text-foreground">
                             Proposal submitted
                           </div>
                         </div>

@@ -318,7 +318,7 @@ export function MonacoRecordDetail({
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
         >
           <ChevronLeftIcon className="w-4 h-4" />
           Back
@@ -345,10 +345,10 @@ export function MonacoRecordDetail({
                   </span>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                  <h1 className="text-3xl font-bold text-foreground">
                     {record.name}
                   </h1>
-                  <p className="text-lg text-[var(--muted)]">
+                  <p className="text-lg text-muted">
                     {(record as Company).domain}
                   </p>
                   <div className="flex items-center gap-4 mt-2">
@@ -363,7 +363,7 @@ export function MonacoRecordDetail({
                 </div>
               </div>
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                <p className="text-[var(--foreground)]">
+                <p className="text-foreground">
                   High-value enterprise software company with strong technical
                   leadership and active buying signals. Recent Series B funding
                   indicates growth trajectory and budget availability.
@@ -374,20 +374,20 @@ export function MonacoRecordDetail({
             // Person header
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-xl bg-[var(--hover-bg)] flex items-center justify-center text-2xl font-semibold text-[var(--foreground)] border border-[var(--border)]">
+                <div className="w-16 h-16 rounded-xl bg-hover flex items-center justify-center text-2xl font-semibold text-foreground border border-border">
                   {record.name
                     .split(" ")
                     .map((n) => n?.[0] || '')
                     .join("")}
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                  <h1 className="text-3xl font-bold text-foreground">
                     {record.name}
                   </h1>
-                  <p className="text-lg text-[var(--muted)]">
+                  <p className="text-lg text-muted">
                     {(record as Person).title}
                   </p>
-                  <p className="text-lg font-medium text-[var(--foreground)]">
+                  <p className="text-lg font-medium text-foreground">
                     {(record as Person).company}
                   </p>
                   <div className="flex items-center gap-4 mt-2">
@@ -401,7 +401,7 @@ export function MonacoRecordDetail({
                 </div>
               </div>
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
-                <p className="text-[var(--foreground)]">
+                <p className="text-foreground">
                   {isCompany ? "" : (richData as any).bio}
                 </p>
               </div>
@@ -417,10 +417,10 @@ export function MonacoRecordDetail({
                 <span className="text-white text-lg">🧠</span>
               </div>
               <div>
-                <div className="font-semibold text-[var(--foreground)]">
+                <div className="font-semibold text-foreground">
                   AI Intelligence Available
                 </div>
-                <div className="text-sm text-[var(--muted)]">
+                <div className="text-sm text-muted">
                   Pipeline analysis completed with actionable insights
                 </div>
               </div>
@@ -430,7 +430,7 @@ export function MonacoRecordDetail({
                 <div className="text-2xl font-bold text-purple-600">
                   {intelligenceData.buyingSignals?.length || 0}
                 </div>
-                <div className="text-xs text-[var(--muted)]">
+                <div className="text-xs text-muted">
                   Buying Signals
                 </div>
               </div>
@@ -438,27 +438,27 @@ export function MonacoRecordDetail({
                 <div className="text-2xl font-bold text-blue-600">
                   {intelligenceData.salesIntelligence?.avgDealSize || "N/A"}
                 </div>
-                <div className="text-xs text-[var(--muted)]">Avg Deal Size</div>
+                <div className="text-xs text-muted">Avg Deal Size</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-green-600">
                   {intelligenceData.salesIntelligence?.avgSalesCycle || "N/A"}
                 </div>
-                <div className="text-xs text-[var(--muted)]">Sales Cycle</div>
+                <div className="text-xs text-muted">Sales Cycle</div>
               </div>
             </div>
           </div>
         )}
 
         {/* Enhanced tabs navigation */}
-        <div className="flex gap-2 mb-6 border-b border-[var(--border)] overflow-x-auto">
+        <div className="flex gap-2 mb-6 border-b border-border overflow-x-auto">
           {(isCompany ? companyTabs : personTabs).map((tab) => (
             <button
               key={tab}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab
                   ? "border-[#9B59B6] text-[#9B59B6]"
-                  : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)]"
+                  : "border-transparent text-muted hover:text-foreground"
               }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -495,10 +495,10 @@ export function MonacoRecordDetail({
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 border border-purple-200 dark:border-purple-800 rounded-xl p-6">
                   <div className="text-center">
                     <div className="text-4xl mb-3">🧠</div>
-                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
                       Generate Intelligence
                     </h3>
-                    <p className="text-[var(--muted)] mb-4">
+                    <p className="text-muted mb-4">
                       Run our full data pipeline to generate unique directional
                       intelligence, personality assessments, and actionable
                       insights for {record.name}.
@@ -576,7 +576,7 @@ export function MonacoRecordDetail({
                         </div>
                       </div>
                       <div>
-                                        <div className="text-2xl font-bold text-[var(--muted)]">
+                                        <div className="text-2xl font-bold text-muted">
                   {Math.round(
                     (pipelineIntelligence.confidenceMetrics
                       ?.uniquenessScore || 0) * 100,
@@ -609,8 +609,8 @@ export function MonacoRecordDetail({
                 hasIntelligence && (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-6">
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                      <div className="bg-background border border-border rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                           <span>🎯</span> Business Priorities
                         </h3>
                         <div className="space-y-2">
@@ -621,21 +621,21 @@ export function MonacoRecordDetail({
                                 className="flex items-center gap-2"
                               >
                                 <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                <span className="text-sm text-[var(--foreground)]">
+                                <span className="text-sm text-foreground">
                                   {priority}
                                 </span>
                               </div>
                             ),
                           ) || (
-                            <p className="text-sm text-[var(--muted)]">
+                            <p className="text-sm text-muted">
                               No priorities identified
                             </p>
                           )}
                         </div>
                       </div>
 
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                      <div className="bg-background border border-border rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                           <span>⚠️</span> Pain Points
                         </h3>
                         <div className="space-y-2">
@@ -646,13 +646,13 @@ export function MonacoRecordDetail({
                                 className="flex items-center gap-2"
                               >
                                 <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                                <span className="text-sm text-[var(--foreground)]">
+                                <span className="text-sm text-foreground">
                                   {pain}
                                 </span>
                               </div>
                             ),
                           ) || (
-                            <p className="text-sm text-[var(--muted)]">
+                            <p className="text-sm text-muted">
                               No pain points identified
                             </p>
                           )}
@@ -661,8 +661,8 @@ export function MonacoRecordDetail({
                     </div>
 
                     <div className="space-y-6">
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                      <div className="bg-background border border-border rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                           <span>📈</span> Buying Signals
                         </h3>
                         <div className="space-y-2">
@@ -673,24 +673,24 @@ export function MonacoRecordDetail({
                                 className="flex items-center gap-2"
                               >
                                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                                <span className="text-sm text-[var(--foreground)]">
+                                <span className="text-sm text-foreground">
                                   {signal}
                                 </span>
                               </div>
                             ),
                           ) || (
-                            <p className="text-sm text-[var(--muted)]">
+                            <p className="text-sm text-muted">
                               No buying signals detected
                             </p>
                           )}
                         </div>
                       </div>
 
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                      <div className="bg-background border border-border rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                           <span>🧠</span> Executive Insights
                         </h3>
-                        <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                        <p className="text-sm text-foreground leading-relaxed">
                           {intelligenceData.executiveInsights ||
                             "No executive insights available"}
                         </p>
@@ -708,36 +708,36 @@ export function MonacoRecordDetail({
                 // Company sections
                 <>
                   <div className="space-y-6">
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                    <div className="bg-background border border-border rounded-xl p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
                         Company Overview
                       </h3>
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-[var(--muted)]">Industry:</span>
-                          <span className="font-medium text-[var(--foreground)]">
+                          <span className="text-muted">Industry:</span>
+                          <span className="font-medium text-foreground">
                             {(record as Company).industry}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-[var(--muted)]">
+                          <span className="text-muted">
                             Employees:
                           </span>
-                          <span className="font-medium text-[var(--foreground)]">
+                          <span className="font-medium text-foreground">
                             {(record as Company).employeeCount}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-[var(--muted)]">Revenue:</span>
-                          <span className="font-medium text-[var(--foreground)]">
+                          <span className="text-muted">Revenue:</span>
+                          <span className="font-medium text-foreground">
                             {(record as Company).revenue}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-[var(--muted)]">
+                          <span className="text-muted">
                             Market Cap:
                           </span>
-                          <span className="font-medium text-[var(--foreground)]">
+                          <span className="font-medium text-foreground">
                             {(richData as any).marketCap}
                           </span>
                         </div>
@@ -745,8 +745,8 @@ export function MonacoRecordDetail({
                     </div>
                   </div>
                   <div className="space-y-6">
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                    <div className="bg-background border border-border rounded-xl p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
                         Technology Stack
                       </h3>
                       <div className="flex flex-wrap gap-2">
@@ -766,28 +766,28 @@ export function MonacoRecordDetail({
                 // Person sections
                 <>
                   <div className="space-y-6">
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                    <div className="bg-background border border-border rounded-xl p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
                         Contact Information
                       </h3>
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-[var(--muted)]">Title:</span>
-                          <span className="font-medium text-[var(--foreground)]">
+                          <span className="text-muted">Title:</span>
+                          <span className="font-medium text-foreground">
                             {(record as Person).title}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-[var(--muted)]">Company:</span>
-                          <span className="font-medium text-[var(--foreground)]">
+                          <span className="text-muted">Company:</span>
+                          <span className="font-medium text-foreground">
                             {(record as Person).company}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-[var(--muted)]">
+                          <span className="text-muted">
                             Department:
                           </span>
-                          <span className="font-medium text-[var(--foreground)]">
+                          <span className="font-medium text-foreground">
                             {(record as Person).department}
                           </span>
                         </div>
@@ -795,8 +795,8 @@ export function MonacoRecordDetail({
                     </div>
                   </div>
                   <div className="space-y-6">
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                    <div className="bg-background border border-border rounded-xl p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
                         Professional Background
                       </h3>
                       <div className="space-y-4">
@@ -807,10 +807,10 @@ export function MonacoRecordDetail({
                               key={index}
                               className="border-l-4 border-[#2563EB] pl-4"
                             >
-                              <div className="font-medium text-[var(--foreground)]">
+                              <div className="font-medium text-foreground">
                                 {work.title} at {work.company}
                               </div>
-                              <div className="text-sm text-[var(--muted)]">
+                              <div className="text-sm text-muted">
                                 {work.duration}
                               </div>
                             </div>

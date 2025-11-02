@@ -143,7 +143,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
 
   return (
     <div 
-      className={`flex-1 bg-[var(--background)] overflow-hidden relative ${
+      className={`flex-1 bg-background overflow-hidden relative ${
         activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
       }`}
       data-canvas-container="true"
@@ -183,7 +183,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
           {workflowSteps.map((step) => (
             <div
               key={step.id}
-              className={`absolute bg-[var(--background)] border rounded-lg p-3 shadow-sm transition-all duration-150 ${
+              className={`absolute bg-background border rounded-lg p-3 shadow-sm transition-all duration-150 ${
                 draggingStep === step.id ? 'scale-105 shadow-xl border-blue-300' : ''
               } ${activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'} ${
                 draggingStep === step.id ? 'cursor-grabbing' : ''
@@ -196,7 +196,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                   ? 'border-green-500 bg-green-50' 
                   : step.isActive 
                     ? 'border-blue-500 bg-blue-50' 
-                    : 'border-gray-100 hover:border-[var(--border)]'
+                    : 'border-gray-100 hover:border-border'
               }`}
               style={{
                 transform: draggingStep === step.id && dragPosition 
@@ -218,7 +218,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
               {/* Connection Points - Only show closest one on hover */}
               {hoveredCard === step.id && closestConnectionPoint && (
                 <div
-                  className={`absolute w-4 h-4 bg-[var(--background)] border border-[var(--border)] rounded-full flex items-center justify-center transition-all duration-150 hover:border-blue-400 ${
+                  className={`absolute w-4 h-4 bg-background border border-border rounded-full flex items-center justify-center transition-all duration-150 hover:border-blue-400 ${
                     closestConnectionPoint === `${step.id}-right` ? '-right-2 top-1/2 transform -translate-y-1/2' :
                     closestConnectionPoint === `${step.id}-left` ? '-left-2 top-1/2 transform -translate-y-1/2' :
                     closestConnectionPoint === `${step.id}-top` ? '-top-2 left-1/2 transform -translate-x-1/2' :
@@ -230,7 +230,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                     onConnectionPointClick(step.id, side);
                   }}
                 >
-                  <svg className="w-2 h-2 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-2 h-2 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </div>
@@ -247,8 +247,8 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                         : isExecuting && currentStepIndex === workflowSteps.findIndex(s => s.id === step.id)
                         ? 'bg-green-500 text-white border-green-500'
                         : step.isActive 
-                          ? 'bg-[var(--loading-bg)] text-gray-800 border-gray-800' 
-                          : 'bg-[var(--background)] text-[var(--muted)] border-[var(--border)]'
+                          ? 'bg-loading-bg text-gray-800 border-gray-800' 
+                          : 'bg-background text-muted border-border'
                     }`}>
                       {workflowSteps.findIndex(s => s.id === step.id) + 1}
                     </div>
@@ -258,19 +258,19 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                       step.category === 'Enrichment' ? 'bg-green-100 text-green-700' :
                       step.category === 'Verification' ? 'bg-yellow-100 text-yellow-700' :
                       step.category === 'Aggregation' ? 'bg-indigo-100 text-indigo-700' :
-                      step.category === 'Storage' ? 'bg-[var(--hover)] text-gray-700' :
+                      step.category === 'Storage' ? 'bg-hover text-gray-700' :
                       'bg-blue-100 text-blue-700'
                     }`}>
                       {step.category || 'Step'}
                     </div>
                   </div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">{step.title}</div>
+                  <div className="text-sm font-medium text-foreground">{step.title}</div>
                 </div>
               </div>
-              <div className="text-xs text-[var(--muted)] mt-1">{step.description}</div>
+              <div className="text-xs text-muted mt-1">{step.description}</div>
               
               {/* Key metrics */}
-              <div className="flex items-center gap-3 mt-2 text-xs text-[var(--muted)]">
+              <div className="flex items-center gap-3 mt-2 text-xs text-muted">
                 <div className="flex items-center gap-1">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

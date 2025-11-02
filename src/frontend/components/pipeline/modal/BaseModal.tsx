@@ -85,22 +85,22 @@ export function BaseModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50 p-4">
-      <div className={`bg-[var(--background)] rounded-lg shadow-xl w-full ${getSizeClasses()} max-h-[90vh] flex flex-col border border-[var(--border)] ${className}`}>
+    <div className="fixed inset-0 bg-overlay-bg bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50 p-4">
+      <div className={`bg-background rounded-lg shadow-xl w-full ${getSizeClasses()} max-h-[90vh] flex flex-col border border-border ${className}`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center space-x-3">
             {icon && (
-              <div className="p-2 bg-[var(--info-bg)] rounded-lg border border-[var(--info-border)]">
+              <div className="p-2 bg-info-bg rounded-lg border border-info-border">
                 {icon}
               </div>
             )}
             <div>
-              <h2 className="text-xl font-semibold text-[var(--foreground)]">
+              <h2 className="text-xl font-semibold text-foreground">
                 {title}
               </h2>
               {subtitle && (
-                <p className="text-sm text-[var(--muted)] mt-1">
+                <p className="text-sm text-muted mt-1">
                   {subtitle}
                 </p>
               )}
@@ -109,16 +109,16 @@ export function BaseModal({
           
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
             title="Close"
           >
-            <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
+            <XMarkIcon className="h-5 w-5 text-muted" />
           </button>
         </div>
 
         {/* Tab Navigation */}
         {tabs && tabs.length > 0 && (
-          <div className="border-b border-[var(--border)]">
+          <div className="border-b border-border">
             <nav className="flex space-x-8 px-6">
               {tabs.map((tab) => (
                 <button
@@ -126,8 +126,8 @@ export function BaseModal({
                   onClick={() => setActiveTab(tab.id)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? 'border-[var(--accent)] text-[var(--accent)]'
-                      : 'border-transparent text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted hover:text-foreground hover:border-border'
                   }`}
                 >
                   <span className="flex items-center space-x-2">
@@ -147,7 +147,7 @@ export function BaseModal({
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
+          <div className="flex items-center justify-between p-6 border-t border-border bg-panel-background">
             {footer}
           </div>
         )}

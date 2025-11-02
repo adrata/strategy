@@ -326,7 +326,7 @@ export function NotesEditor({
       {/* Header with Notes title and status indicator */}
       {showHeader && (
         <div className="flex items-center justify-between mb-4 px-1">
-          <h2 className="text-xl font-semibold text-[var(--foreground)]" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
+          <h2 className="text-xl font-semibold text-foreground" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
             Notes
           </h2>
           <div className="flex items-center gap-2">
@@ -359,7 +359,7 @@ export function NotesEditor({
             w-full h-full min-h-[200px] p-4
             bg-transparent
             text-base
-            text-[var(--foreground)]
+            text-foreground
             placeholder-[var(--muted)]
             resize-none
             border-0
@@ -368,7 +368,7 @@ export function NotesEditor({
             focus:ring-0
             focus:border-0
             transition-all duration-200
-            ${isFocused ? 'bg-[var(--background)]' : 'bg-transparent'}
+            ${isFocused ? 'bg-background' : 'bg-transparent'}
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text'}
           `}
           style={{

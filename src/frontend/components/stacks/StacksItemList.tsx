@@ -23,11 +23,11 @@ interface StacksItemListProps {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'todo': return 'bg-[var(--hover)] text-gray-800';
+    case 'todo': return 'bg-hover text-gray-800';
     case 'in-progress': return 'bg-blue-100 text-blue-800';
     case 'done': return 'bg-green-100 text-green-800';
     case 'idea': return 'bg-purple-100 text-purple-800';
-    default: return 'bg-[var(--hover)] text-gray-800';
+    default: return 'bg-hover text-gray-800';
   }
 };
 
@@ -36,7 +36,7 @@ const getPriorityColor = (priority: string) => {
     case 'low': return 'text-green-600';
     case 'medium': return 'text-yellow-600';
     case 'high': return 'text-red-600';
-    default: return 'text-[var(--muted)]';
+    default: return 'text-muted';
   }
 };
 
@@ -68,7 +68,7 @@ export function StacksItemList({ items, onItemClick, isLoading, searchQuery }: S
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary)] mx-auto mb-4"></div>
-          <p className="text-[var(--muted)]">Loading items...</p>
+          <p className="text-muted">Loading items...</p>
         </div>
       </div>
     );
@@ -78,10 +78,10 @@ export function StacksItemList({ items, onItemClick, isLoading, searchQuery }: S
     return (
       <div className="flex flex-col items-center justify-center h-full text-center">
         <div className="text-6xl mb-4">📋</div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+        <h3 className="text-lg font-semibold text-foreground mb-2">
           No items found
         </h3>
-        <p className="text-[var(--muted)] mb-4">
+        <p className="text-muted mb-4">
           {searchQuery ? 'Try adjusting your search terms' : 'No items available yet'}
         </p>
       </div>
@@ -95,15 +95,15 @@ export function StacksItemList({ items, onItemClick, isLoading, searchQuery }: S
           <div
             key={item.id}
             onClick={() => onItemClick(item)}
-            className="p-4 border border-[var(--border)] rounded-lg bg-[var(--card)] hover:bg-[var(--hover-bg)] cursor-pointer transition-colors"
+            className="p-4 border border-border rounded-lg bg-[var(--card)] hover:bg-hover cursor-pointer transition-colors"
           >
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-3 flex-1">
                 <span className="text-lg">{getTypeIcon(item.type)}</span>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-[var(--foreground)] flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground flex items-center gap-2">
                     {item.title}
-                    <span className="text-xs font-mono text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded">
+                    <span className="text-xs font-mono text-muted bg-hover px-2 py-1 rounded">
                       {item.id.slice(-8)}
                     </span>
                   </h3>
@@ -114,11 +114,11 @@ export function StacksItemList({ items, onItemClick, isLoading, searchQuery }: S
               </span>
             </div>
             
-            <p className="text-sm text-[var(--muted)] mb-3 line-clamp-2 ml-8">
+            <p className="text-sm text-muted mb-3 line-clamp-2 ml-8">
               {item.description}
             </p>
             
-            <div className="flex items-center justify-between text-xs text-[var(--muted)] ml-8">
+            <div className="flex items-center justify-between text-xs text-muted ml-8">
               <div className="flex items-center gap-4">
                 <span className={`font-medium ${getPriorityColor(item.priority)}`}>
                   {item.priority} priority

@@ -405,13 +405,13 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fadeIn">
-      <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6 max-w-lg mx-4 w-full animate-scaleIn shadow-2xl">
+      <div className="bg-background rounded-xl border border-border p-6 max-w-lg mx-4 w-full animate-scaleIn shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-[var(--foreground)]">Adrata</h2>
+          <h2 className="text-xl font-semibold text-foreground">Adrata</h2>
           <button
             onClick={handleClose}
-            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors p-1 rounded-md hover:bg-[var(--hover)]"
+            className="text-muted hover:text-foreground transition-colors p-1 rounded-md hover:bg-hover"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -421,7 +421,7 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
         <div className="space-y-4">
           {/* Prompt - Left aligned at top */}
           <div className="text-left">
-            <p className="text-lg text-[var(--foreground)] font-medium">What can I help with?</p>
+            <p className="text-lg text-foreground font-medium">What can I help with?</p>
           </div>
 
           {/* Error state */}
@@ -446,7 +446,7 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
 
           {/* Audio quality indicator */}
           {isListening && (
-            <div className="flex items-center gap-2 text-xs text-[var(--muted)] mb-2">
+            <div className="flex items-center gap-2 text-xs text-muted mb-2">
               <div className={`w-2 h-2 rounded-full ${
                 audioQuality === 'good' ? 'bg-green-500' : 
                 audioQuality === 'fair' ? 'bg-yellow-500' : 'bg-red-500'
@@ -479,8 +479,8 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
           {/* Real-time transcription */}
           {(transcript || interimTranscript) && (
             <div className="mb-4">
-              <div className="bg-[var(--hover-bg)] rounded-lg px-3 py-2 w-full">
-                <span className="text-sm text-[var(--muted)]">Ross:</span> <span className="text-[var(--foreground)]">{transcript || interimTranscript}</span>
+              <div className="bg-hover rounded-lg px-3 py-2 w-full">
+                <span className="text-sm text-muted">Ross:</span> <span className="text-foreground">{transcript || interimTranscript}</span>
               </div>
             </div>
           )}
@@ -490,11 +490,11 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
           {isProcessing && (
             <div className="mb-4">
               <div className="flex items-end gap-1">
-                <span className="text-sm text-[var(--muted)]">Thinking</span>
+                <span className="text-sm text-muted">Thinking</span>
                 <div className="flex gap-0.5 items-end pb-0.5">
-                  <span className="w-1 h-1 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                  <span className="w-1 h-1 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                  <span className="w-1 h-1 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                  <span className="w-1 h-1 bg-muted rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="w-1 h-1 bg-muted rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="w-1 h-1 bg-muted rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                 </div>
               </div>
             </div>

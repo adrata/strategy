@@ -115,7 +115,7 @@ export function AppNavIcons({
         return (
           <Icon
             key={slug}
-            className={`w-[33px] h-[69px] cursor-pointer ${isActive ? "text-[var(--foreground)] font-bold" : "text-[var(--muted)]"}`}
+            className={`w-[33px] h-[69px] cursor-pointer ${isActive ? "text-foreground font-bold" : "text-muted"}`}
             aria-label={label}
             onClick={() => handleClick(slug)}
           />
@@ -123,7 +123,7 @@ export function AppNavIcons({
       })}
       {/* 4th icon: App Switcher */}
       <BuildingOffice2Icon
-        className={`w-[33px] h-[69px] cursor-pointer ${showAppSwitcher ? "text-[var(--foreground)] font-bold" : "text-[var(--muted)]"}`}
+        className={`w-[33px] h-[69px] cursor-pointer ${showAppSwitcher ? "text-foreground font-bold" : "text-muted"}`}
         aria-label="Apps"
         onClick={() => {
           if (onAppsClick) {

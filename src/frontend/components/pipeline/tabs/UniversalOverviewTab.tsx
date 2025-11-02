@@ -248,7 +248,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   }
   
   // Helper component for displaying values with proper empty state
-  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-foreground" }: { 
     value: any, 
     children?: React.ReactNode, 
     className?: string 
@@ -256,7 +256,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm text-[var(--muted)]">-</span>;
+    return <span className="text-sm text-muted">-</span>;
   };
 
   // Extract comprehensive record data from CoreSignal with database fallback
@@ -653,13 +653,13 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
+        <h2 className="text-xl font-semibold text-foreground">Overview</h2>
       </div>
 
       {/* Overview Summary */}
       <div className="space-y-6">
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <div className="text-sm text-[var(--foreground)]">
+        <div className="bg-background p-4 rounded-lg border border-border">
+          <div className="text-sm text-foreground">
             {generateBioText()}
           </div>
         </div>
@@ -669,11 +669,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Basic Information Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Stage:</span>
+                <span className="text-sm text-muted w-24">Stage:</span>
                 <InlineEditField
                   value={recordData.status || recordData.stage || 'LEAD'}
                   field="status"
@@ -700,7 +700,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Name:</span>
+                <span className="text-sm text-muted w-24">Name:</span>
                 <InlineEditField
                   value={recordData.name}
                   field="name"
@@ -708,12 +708,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               {recordType !== 'companies' && (
                 <div className="flex items-center">
-                  <span className="text-sm text-[var(--muted)] w-24">Title:</span>
+                  <span className="text-sm text-muted w-24">Title:</span>
                   <InlineEditField
                     value={recordData.title}
                     field="title"
@@ -721,12 +721,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-foreground"
                   />
                 </div>
               )}
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Company:</span>
+                <span className="text-sm text-muted w-24">Company:</span>
                 <InlineEditField
                   value={recordData.company}
                   field="company"
@@ -735,12 +735,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               {recordType !== 'companies' && (
                 <div className="flex items-center">
-                  <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+                  <span className="text-sm text-muted w-24">Department:</span>
                   <InlineEditField
                     value={recordData.department}
                     field="department"
@@ -748,12 +748,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-foreground"
                   />
                 </div>
               )}
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">State:</span>
+                <span className="text-sm text-muted w-24">State:</span>
                 <InlineEditField
                   value={recordData.hqState || recordData.state}
                   field="state"
@@ -761,12 +761,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               {recordType !== 'companies' && (
                 <div className="flex items-center">
-                  <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                  <span className="text-sm text-muted w-24">Bio URL:</span>
                   <InlineEditField
                     value={recordData.bio || null}
                     field="bio"
@@ -774,7 +774,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-foreground"
                   />
                 </div>
               )}
@@ -782,11 +782,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           </div>
 
           {/* Intelligence Snapshot Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Intelligence Snapshot</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Intelligence Snapshot</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Buyer Group Member:</span>
+                <span className="text-sm text-muted w-24">Buyer Group Member:</span>
                 <InlineEditField
                   value={recordData.isBuyerGroupMember ? 'Yes' : 'No'}
                   field="isBuyerGroupMember"
@@ -799,13 +799,13 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               {recordType !== 'companies' && (
                 <>
                   <div className="flex items-center">
-                    <span className="text-sm text-[var(--muted)] w-24">Role:</span>
+                    <span className="text-sm text-muted w-24">Role:</span>
                     <InlineEditField
                       value={record.buyerGroupRole || 'Stakeholder'}
                       field="buyerGroupRole"
@@ -813,11 +813,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                       recordId={record.id}
                       recordType={recordType}
                       onSuccess={handleSuccess}
-                      className="text-sm font-medium text-[var(--foreground)]"
+                      className="text-sm font-medium text-foreground"
                     />
                   </div>
                   <div className="flex items-center">
-                    <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
+                    <span className="text-sm text-muted w-24">Influence Level:</span>
                     <InlineEditField
                       value={recordData.influenceLevel || null}
                       field="influenceLevel"
@@ -825,13 +825,13 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                       recordId={record.id}
                       recordType={recordType}
                       onSuccess={handleSuccess}
-                      className="text-sm font-medium text-[var(--foreground)]"
+                      className="text-sm font-medium text-foreground"
                     />
                   </div>
                 </>
               )}
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Decision Power:</span>
+                <span className="text-sm text-muted w-24">Decision Power:</span>
                 <InlineEditField
                   value={record.customFields?.decisionPower || '70'}
                   field="decisionPower"
@@ -839,11 +839,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Engagement Level:</span>
+                <span className="text-sm text-muted w-24">Engagement Level:</span>
                 <InlineEditField
                   value={record.customFields?.engagementLevel || 'Medium'}
                   field="engagementLevel"
@@ -851,7 +851,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
@@ -863,11 +863,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Contact Information</h4>
                 <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Email:</span>
+                <span className="text-sm text-muted w-24">Email:</span>
                 <InlineEditField
                   value={recordData.email || null}
                   field="email"
@@ -875,11 +875,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
+                <span className="text-sm text-muted w-24">Phone:</span>
                 <InlineEditField
                   value={recordData.phone || null}
                   field="phone"
@@ -887,11 +887,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
                   value={recordData.linkedin || null}
                   field="linkedinUrl"
@@ -899,11 +899,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={(message) => handleFieldSuccess('linkedinUrl', recordData.linkedin || '', message)}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Navigator:</span>
                 <InlineEditField
                   value={recordData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
@@ -911,11 +911,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleLinkedinNavigatorSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Connection Date:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Connection Date:</span>
                 <InlineEditField
                   value={recordData.linkedinConnectionDate}
                   field="linkedinConnectionDate"
@@ -924,20 +924,20 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
                 </div>
               </div>
 
           {/* Engagement History Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Engagement History</h4>
                 <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Last Action:</span>
+                <span className="text-sm text-muted w-24">Last Action:</span>
                 <div className="flex items-center gap-2">
-                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-[var(--hover)] text-gray-800">
+                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-gray-800">
                     {getTimingLabel(recordData.lastContact)}
                   </span>
                   <InlineEditField
@@ -947,14 +947,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-foreground"
                   />
                 </div>
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
+                <span className="text-sm text-muted w-24">Next Action:</span>
                 <div className="flex items-center gap-2">
-                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-[var(--hover)] text-gray-800">
+                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-gray-800">
                     {getTimingLabel(recordData.nextActionDate)}
                   </span>
                   <InlineEditField
@@ -964,7 +964,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-foreground"
                   />
                 </div>
               </div>
@@ -976,19 +976,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
 
       {/* Last Actions */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Top Recent Actions</h3>
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Top Recent Actions</h3>
+        <div className="bg-background p-4 rounded-lg border border-border">
           {actionsLoading ? (
             <Skeleton lines={3} className="py-4" />
           ) : actionsError ? (
             <div className="text-center py-4">
-              <p className="text-sm text-[var(--error)] mb-3">Error loading actions</p>
-              <p className="text-xs text-[var(--muted)]">{actionsError}</p>
+              <p className="text-sm text-error mb-3">Error loading actions</p>
+              <p className="text-xs text-muted">{actionsError}</p>
             </div>
           ) : lastActions.length > 0 ? (
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
-                <li key={index} className="text-sm text-[var(--foreground)] flex items-center gap-2">
+                <li key={index} className="text-sm text-foreground flex items-center gap-2">
                   <span>•</span>
                   <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
                     {action.user}
@@ -999,8 +999,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
             </ul>
           ) : (
             <div className="text-center py-4">
-              <p className="text-sm text-[var(--muted)] mb-3">No actions logged yet</p>
-              <p className="text-xs text-[var(--muted)]">Actions will appear here when logged through the Actions tab</p>
+              <p className="text-sm text-muted mb-3">No actions logged yet</p>
+              <p className="text-xs text-muted">Actions will appear here when logged through the Actions tab</p>
             </div>
           )}
         </div>
@@ -1008,10 +1008,10 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
 
       {/* Notes on them */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Notes on them</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Recent Notes Summary</h4>
             <InlineEditField
               value={record.notes && record.notes !== 'No notes available' && record.notes.trim() !== '' ? record.notes : ''}
               field="notes"
@@ -1020,13 +1020,13 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
-              className="text-sm text-[var(--foreground)] leading-relaxed"
+              className="text-sm text-foreground leading-relaxed"
               placeholder="Add notes about this contact..."
             />
                 </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
-            <div className="text-sm text-[var(--foreground)] leading-relaxed">
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Engagement Strategy</h4>
+            <div className="text-sm text-foreground leading-relaxed">
               Focus on {(recordData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(recordData.lastContact)}. 
               Next action: {recordData.nextAction}.
@@ -1036,12 +1036,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
             </div>
 
             {/* Record Information */}
-            <div className="mt-8 pt-6 border-t border-[var(--border)]">
-              <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-4">Record Information</h3>
+            <div className="mt-8 pt-6 border-t border-border">
+              <h3 className="text-sm font-medium text-muted uppercase tracking-wide mb-4">Record Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-3">
-                  <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
-                  <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
+                  <span className="text-xs text-muted uppercase tracking-wide w-28">Created:</span>
+                  <span className="text-sm text-foreground" title={formatFullDate(record?.createdAt)}>
                     {(() => {
                       console.log('🔍 [DATE DEBUG] Created date values:', {
                         recordId: record?.id,
@@ -1059,8 +1059,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   </span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
-                  <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
+                  <span className="text-xs text-muted uppercase tracking-wide w-28">Last Updated:</span>
+                  <span className="text-sm text-foreground" title={formatFullDate(record?.updatedAt)}>
                     {(() => {
                       console.log('🔍 [DATE DEBUG] Updated date values:', {
                         recordId: record?.id,

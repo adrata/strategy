@@ -98,9 +98,9 @@ export class TabErrorBoundary extends Component<Props, State> {
                 </div>
                 
                 {/* Debug Information */}
-                <div className="mt-4 p-3 bg-[var(--panel-background)] rounded-md">
+                <div className="mt-4 p-3 bg-panel-background rounded-md">
                   <h4 className="text-xs font-medium text-gray-700 mb-2">Debug Information:</h4>
-                  <div className="text-xs text-[var(--muted)] space-y-1">
+                  <div className="text-xs text-muted space-y-1">
                     <div><strong>Tab:</strong> {this.props.tabName}</div>
                     <div><strong>Record Type:</strong> {this.props.recordType || 'Unknown'}</div>
                     <div><strong>Record ID:</strong> {this.props.recordId || 'Unknown'}</div>
@@ -152,7 +152,7 @@ export class TabErrorBoundary extends Component<Props, State> {
                   </button>
                   <button
                     onClick={() => window.location.reload()}
-                    className="bg-[var(--hover)] text-gray-800 px-3 py-1 text-xs rounded hover:bg-[var(--loading-bg)] transition-colors"
+                    className="bg-hover text-gray-800 px-3 py-1 text-xs rounded hover:bg-loading-bg transition-colors"
                   >
                     Reload Page
                   </button>
