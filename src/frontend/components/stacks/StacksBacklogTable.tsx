@@ -68,7 +68,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
   const [sortBy, setSortBy] = useState<'priority' | 'dueDate' | 'createdAt' | 'title' | 'rank'>('rank');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [draggedItem, setDraggedItem] = useState<BacklogItem | null>(null);
   const [sortField, setSortField] = useState('rank');
@@ -294,14 +293,32 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Filter and sort items
   const filteredItems = items
     .filter(item => {
+      // Search filter
       const matchesSearch = searchQuery === '' || 
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      const matchesStatus = filterStatus === 'all' || item.status === filterStatus;
+      // Status filter
+      const matchesStatus = filters.status === 'all' || item.status === filters.status;
       
-      return matchesSearch && matchesStatus;
+      // Priority filter
+      const matchesPriority = filters.priority === 'all' || item.priority === filters.priority;
+      
+      // Workstream filter (check tags for workstream names)
+      const matchesWorkstream = filters.workstream === 'all' || 
+        (item.tags && item.tags.some(tag => 
+          tag.toLowerCase() === filters.workstream.toLowerCase()
+        ));
+      
+      // Assignee filter
+      const matchesAssignee = filters.assignee === 'all' || 
+        (item.assignee && (
+          item.assignee.toLowerCase().includes(filters.assignee.toLowerCase()) ||
+          filters.assignee.toLowerCase() === item.assignee.toLowerCase()
+        ));
+      
+      return matchesSearch && matchesStatus && matchesPriority && matchesWorkstream && matchesAssignee;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -320,6 +337,29 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           return 0;
       }
     });
+
+  // Debug logging
+  useEffect(() => {
+    const upNextCount = filteredItems.filter(item => item.status === 'up-next').length;
+    const otherCount = filteredItems.filter(item => item.status !== 'up-next').length;
+    
+    console.log('📊 [StacksBacklogTable] Filtering debug:', {
+      totalItems: items.length,
+      filteredItems: filteredItems.length,
+      upNextItems: upNextCount,
+      otherItems: otherCount,
+      filters,
+      searchQuery,
+      firstFewItems: items.slice(0, 3).map(item => ({
+        id: item.id,
+        title: item.title.substring(0, 30),
+        status: item.status,
+        priority: item.priority,
+        assignee: item.assignee,
+        tags: item.tags
+      }))
+    });
+  }, [items.length, filteredItems.length, filters, searchQuery]);
 
   // Helper function to check if an item is a bug
   const isBug = (item: BacklogItem): boolean => {
