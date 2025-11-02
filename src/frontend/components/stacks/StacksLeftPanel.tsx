@@ -109,21 +109,30 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         return;
       }
 
+      // Add cache-busting timestamp to prevent stale data
+      const cacheBuster = `&_t=${Date.now()}`;
+
       try {
-        // Fetch stories
-        const storiesResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`, {
+        // Fetch stories with cache-busting and no-cache headers
+        const storiesResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}${cacheBuster}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
           },
+          cache: 'no-store' as RequestCache,
         });
 
-        // Fetch tasks/bugs
-        const tasksResponse = await fetch(`/api/stacks/tasks?workspaceId=${ui.activeWorkspace.id}`, {
+        // Fetch tasks/bugs with cache-busting and no-cache headers
+        const tasksResponse = await fetch(`/api/stacks/tasks?workspaceId=${ui.activeWorkspace.id}${cacheBuster}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
           },
+          cache: 'no-store' as RequestCache,
         });
 
         let stories: any[] = [];
@@ -162,15 +171,22 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         setStats({ total, active, completed });
       } catch (error) {
         console.error('Failed to fetch story/task counts:', error);
-        // Keep existing stats instead of resetting to 0 on error
-        // This way if the API temporarily fails, we don't lose the last known counts
+        // Reset stats to 0 on error to show that data is unavailable
+        setStats({ total: 0, active: 0, completed: 0 });
       } finally {
         setStatsLoading(false);
       }
     };
 
     fetchStacksCounts();
-  }, [ui.activeWorkspace?.id]);
+    
+    // Refresh counts periodically (every 30 seconds) to keep data fresh
+    const refreshInterval = setInterval(() => {
+      fetchStacksCounts();
+    }, 30000);
+
+    return () => clearInterval(refreshInterval);
+  }, [ui.activeWorkspace?.id, pathname]); // Add pathname to refresh when navigating
 
   // Get current workspace from pathname
   const workspaceSlug = pathname.split('/')[1];
