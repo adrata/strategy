@@ -8,6 +8,7 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { SettingsPopupProvider } from "@/platform/ui/components/SettingsPopupContext";
 import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { useUnifiedAuth } from "@/platform/auth";
@@ -125,11 +126,13 @@ export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
         <RevenueOSProvider>
           <ZoomProvider>
             <ProfilePopupProvider>
-              <ProfilePanelProvider>
-                <WorkshopLayoutContent>
-                  {children}
-                </WorkshopLayoutContent>
-              </ProfilePanelProvider>
+              <SettingsPopupProvider>
+                <ProfilePanelProvider>
+                  <WorkshopLayoutContent>
+                    {children}
+                  </WorkshopLayoutContent>
+                </ProfilePanelProvider>
+              </SettingsPopupProvider>
             </ProfilePopupProvider>
           </ZoomProvider>
         </RevenueOSProvider>

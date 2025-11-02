@@ -6,7 +6,8 @@
       "@/*": ["../src-mobile/*"]
     },
     "baseUrl": ".",
-    "rootDir": ".."
+    "rootDir": "..",
+    "types": ["nativewind/types", "jest", "@testing-library/jest-native"]
   },
   "include": [
     "../src-mobile/**/*.ts",

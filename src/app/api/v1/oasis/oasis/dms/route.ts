@@ -210,8 +210,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    // Add current user to participants
-    const allParticipantIds = [userId, ...participantIds];
+    // Handle self-DM (empty participantIds array)
+    // For self-DM, only include the current user
+    const allParticipantIds = participantIds.length === 0 
+      ? [userId] 
+      : [userId, ...participantIds];
     const uniqueParticipantIds = [...new Set(allParticipantIds)];
 
     // Verify all participants are in the workspace
@@ -232,21 +235,39 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if DM already exists with these participants
-    const existingDm = await prisma.oasisDirectMessage.findFirst({
-      where: {
-        workspaceId,
-        participants: {
-          every: {
-            userId: { in: uniqueParticipantIds }
-          }
+    // For self-DM, check for DM with only the current user
+    const existingDmQuery: any = {
+      workspaceId,
+      participants: {
+        every: {
+          userId: { in: uniqueParticipantIds }
         }
-      },
+      }
+    };
+
+    if (participantIds.length === 0) {
+      // Self-DM: check for DM with only current user
+      existingDmQuery.participants = {
+        every: {
+          userId: userId
+        }
+      };
+    }
+
+    const existingDm = await prisma.oasisDirectMessage.findFirst({
+      where: existingDmQuery,
       include: {
         participants: true
       }
     });
 
-    if (existingDm && existingDm.participants.length === uniqueParticipantIds.length) {
+    // For self-DM, match if participant count is 1 (just the user)
+    // For regular DM, match if participant count matches
+    const matches = participantIds.length === 0
+      ? existingDm && existingDm.participants.length === 1 && existingDm.participants[0].userId === userId
+      : existingDm && existingDm.participants.length === uniqueParticipantIds.length;
+
+    if (matches && existingDm) {
       return NextResponse.json({
         dm: {
           id: existingDm.id,

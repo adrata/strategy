@@ -29,8 +29,16 @@ export function WorkshopLeftPanel() {
   // State for user profile data
   const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
   
+  // State for stats
+  const [stats, setStats] = useState<{
+    totalDocuments: number;
+    totalFolders: number;
+    myDocuments: number;
+  } | null>(null);
+  
   // Get workspace slug from pathname
   const workspaceSlug = pathname.split('/')[1];
+  const workspaceId = ui.activeWorkspace?.id || authUser?.activeWorkspaceId;
 
   // Fetch user profile data with firstName and lastName
   useEffect(() => {
@@ -59,6 +67,46 @@ export function WorkshopLeftPanel() {
     fetchUserProfile();
   }, [authUser?.id]);
 
+  // Fetch stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!workspaceId || !authUser?.id) return;
+      
+      try {
+        // Fetch total documents count
+        const docsResponse = await fetch(`/api/v1/documents/documents?workspaceId=${workspaceId}&limit=1&status=active`);
+        const docsData = await docsResponse.json();
+        const totalDocuments = docsData?.pagination?.total || 0;
+        
+        // Fetch my documents count
+        const myDocsResponse = await fetch(`/api/v1/documents/documents?workspaceId=${workspaceId}&ownerId=${authUser.id}&limit=1&status=active`);
+        const myDocsData = await myDocsResponse.json();
+        const myDocuments = myDocsData?.pagination?.total || 0;
+        
+        // Fetch folders count
+        const foldersResponse = await fetch(`/api/v1/documents/folders?workspaceId=${workspaceId}`);
+        const foldersData = await foldersResponse.json();
+        const totalFolders = Array.isArray(foldersData) ? foldersData.length : 0;
+        
+        setStats({
+          totalDocuments,
+          totalFolders,
+          myDocuments
+        });
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+        // Set default stats on error
+        setStats({
+          totalDocuments: 0,
+          totalFolders: 0,
+          myDocuments: 0
+        });
+      }
+    };
+    
+    fetchStats();
+  }, [workspaceId, authUser?.id]);
+
   const handleProfileClick = () => {
     setIsProfilePanelVisible(true);
   };
@@ -68,7 +116,7 @@ export function WorkshopLeftPanel() {
     return (
       <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
         <div className="p-4 text-center">
-          <div className="text-sm text-[var(--muted)]">Loading Workshop...</div>
+          <div className="text-sm text-[var(--muted)]">Loading Workbench...</div>
         </div>
       </div>
     );
@@ -76,8 +124,24 @@ export function WorkshopLeftPanel() {
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      {/* Fixed Header Section */}
+      <div className="flex-shrink-0 pt-0 pr-2 pl-2">
+        {/* Header */}
+        <div className="mx-2 mt-4 mb-2">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+              <DocumentTextIcon className="w-5 h-5 text-[var(--foreground)]" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-[var(--foreground)]">Workbench</h2>
+              <p className="text-xs text-[var(--muted)]">Documents</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Navigation */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-1 pt-4">
+      <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {/* My Documents */}
         <button
           onClick={() => setActiveTab('my-documents')}
@@ -111,7 +175,7 @@ export function WorkshopLeftPanel() {
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
           >
             <PlusIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">New Document</span>
+            <span className="text-sm font-medium">New</span>
           </button>
           <button
             onClick={() => setIsUploadModalOpen(true)}

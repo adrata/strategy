@@ -3,33 +3,14 @@
  * Speedrun outreach view (placeholder for now)
  */
 
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
 export default function SpeedrunScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Speedrun</Text>
-      <Text style={styles.subtitle}>Speedrun features coming soon</Text>
+    <View className="flex-1 justify-center items-center p-6 bg-white">
+      <Text className="text-2xl font-bold mb-2 text-black">Speedrun</Text>
+      <Text className="text-base text-gray-600">Speedrun features coming soon</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-});
 

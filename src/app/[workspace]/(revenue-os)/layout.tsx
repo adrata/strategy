@@ -206,6 +206,17 @@ function PipelineLayoutInner({
     ? true 
     : ui.isRightPanelVisible;
 
+  // For /pinpoint/adrata route, always show profile panel and prevent closing
+  const isPinpointAdrataRoute = pathname.includes('/pinpoint/adrata');
+  const forcedProfilePanelVisible = isPinpointAdrataRoute ? true : isProfilePanelVisible;
+  
+  // Effect to ensure profile panel stays open for pinpoint/adrata route
+  useEffect(() => {
+    if (isPinpointAdrataRoute && !isProfilePanelVisible) {
+      setIsProfilePanelVisible(true);
+    }
+  }, [isPinpointAdrataRoute, isProfilePanelVisible, setIsProfilePanelVisible]);
+
   return (
     <>
       <PanelLayout
@@ -218,16 +229,17 @@ function PipelineLayoutInner({
             user={pipelineUser}
             company={company}
             workspace={workspace}
-            isOpen={isProfilePanelVisible}
-            onClose={() => setIsProfilePanelVisible(false)}
+            isOpen={forcedProfilePanelVisible}
+            onClose={isPinpointAdrataRoute ? () => {} : () => setIsProfilePanelVisible(false)}
             username={username}
             currentApp={currentApp}
             userId={authUser?.id}
             userEmail={authUser?.email}
             onToggleLeftPanel={ui.toggleLeftPanel}
+            hideCloseButton={isPinpointAdrataRoute}
           />
         }
-        isProfilePanelVisible={isProfilePanelVisible}
+        isProfilePanelVisible={forcedProfilePanelVisible}
         zoom={100}
         isLeftPanelVisible={isLeftPanelVisible}
         isRightPanelVisible={isRightPanelVisible}

@@ -44,7 +44,7 @@ const navigationItems: NavigationItem[] = [
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
     description: 'Prioritized work queue',
-    getCount: (stats) => stats.total // Backlog shows total items
+    getCount: (stats) => stats.active // Backlog shows only active items (excludes done/shipped)
   },
   {
     id: 'metrics',

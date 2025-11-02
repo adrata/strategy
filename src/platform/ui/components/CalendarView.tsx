@@ -14,7 +14,7 @@ import {
   useSensors,
   PointerSensor,
   KeyboardSensor,
-  closestCenter,
+  closestCorners,
   type DragStartEvent,
   type DragEndEvent,
   type DragOverEvent,
@@ -178,6 +178,8 @@ const TimeSlot = React.memo(function TimeSlot({
         role="button"
         tabIndex={0}
         aria-label={`Time slot ${time}`}
+        data-time-slot={time}
+        data-overlay-disabled="true"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -185,9 +187,9 @@ const TimeSlot = React.memo(function TimeSlot({
           }
         }}
       >
-        {/* Drop indicator line */}
+        {/* Drop indicator line - enhanced visual feedback */}
         {isDragOver && (
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-blue-500 z-30" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500 z-30 rounded-full shadow-lg animate-pulse" />
         )}
 
         {/* Inline creating event */}
@@ -284,12 +286,22 @@ const DraggableBlock = React.memo(function DraggableBlock({
         zIndex: isDragging ? 50 : 10,
       }}
       {...attributes}
-      {...listeners}
       role="button"
       tabIndex={0}
       aria-label={`Event: ${block.title} from ${block.startTime} to ${block.endTime}`}
       aria-describedby={`event-${block.id}-description`}
     >
+      {/* Drag handle - center area, excluding resize handles and action buttons */}
+      <div
+        {...listeners}
+        className="absolute inset-0 cursor-move pointer-events-auto"
+        style={{
+          top: "8px", // Exclude top resize handle area (h-2 = 8px)
+          bottom: "8px", // Exclude bottom resize handle area (h-2 = 8px)
+          zIndex: 1, // Behind action buttons but allows drag
+        }}
+      />
+      
       <ActionBlockComponent
         block={block}
         onExecute={onExecute}
@@ -568,6 +580,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
   
   // Handle keyboard events for inline creation
   const handleInlineKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Only handle Enter and Escape - let all other keys (including Space) pass through normally
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSaveInlineEvent();
@@ -575,15 +588,21 @@ export function CalendarView({ onClose }: CalendarViewProps) {
       e.preventDefault();
       handleCancelInlineEvent();
     }
+    // Don't prevent default for other keys like Space - let them type normally
   }, [handleSaveInlineEvent, handleCancelInlineEvent]);
   
   // Auto-save on blur (Google Calendar style)
   const handleInlineBlur = useCallback(() => {
-    // Small delay to allow click events to register first
+    // Longer delay to ensure click events register and user has finished typing
+    // Only save if there's actual content (not just whitespace)
     setTimeout(() => {
-      handleSaveInlineEvent();
-    }, 150);
-  }, [handleSaveInlineEvent]);
+      if (inlineBlockTitle.trim()) {
+        handleSaveInlineEvent();
+      } else {
+        handleCancelInlineEvent();
+      }
+    }, 200);
+  }, [handleSaveInlineEvent, handleCancelInlineEvent, inlineBlockTitle]);
   
   // Handle click outside to save/cancel
   useEffect(() => {
@@ -720,14 +739,19 @@ export function CalendarView({ onClose }: CalendarViewProps) {
     [blocks]
   );
 
-  // Calculate time slot from Y position
+  // Calculate time slot from Y position with improved accuracy
   const getTimeFromY = useCallback((y: number): string | null => {
     if (!calendarGridRef.current) return null;
 
     const rect = calendarGridRef.current.getBoundingClientRect();
-    const relativeY = y - rect.top - 16;
-    const slotIndex = Math.round(relativeY / 60);
-
+    // Account for padding at top (p-4 = 16px) and scroll position
+    const scrollTop = calendarGridRef.current.scrollTop;
+    const relativeY = y - rect.top + scrollTop - 16;
+    
+    // Each slot is 60px tall, calculate which slot we're in
+    const slotIndex = Math.floor(relativeY / 60);
+    
+    // Clamp to valid range
     if (slotIndex < 0 || slotIndex >= TIME_SLOTS.length) return null;
 
     return TIME_SLOTS[slotIndex]!;
@@ -738,51 +762,72 @@ export function CalendarView({ onClose }: CalendarViewProps) {
     setActiveId(event.active.id as string);
   }, []);
 
-  // Handle drag over
+  // Handle drag over with improved time slot detection
   const handleDragOver = useCallback((event: DragOverEvent) => {
     if (!event.over) {
       setDragOverTime(null);
       return;
     }
 
+    let detectedTime: string | null = null;
+
+    // First, try to get time from the over element's data
     const overElement = event.over.data.current;
     if (overElement && overElement['timeSlot']) {
-      setDragOverTime(overElement['timeSlot'] as string);
+      detectedTime = overElement['timeSlot'] as string;
     } else {
-      // Try to get time from element
+      // Fallback: Calculate from mouse position
       const activatorEvent = event.activatorEvent as MouseEvent | undefined;
-      if (!activatorEvent) return;
-      const element = document.elementFromPoint(
-        activatorEvent.clientX,
-        activatorEvent.clientY
-      );
-      const timeSlot = element?.closest("[data-time-slot]");
-      if (timeSlot) {
-        setDragOverTime(timeSlot.getAttribute("data-time-slot"));
+      if (activatorEvent) {
+        // Use current mouse position for accurate detection
+        detectedTime = getTimeFromY(activatorEvent.clientY);
+      }
+      
+      // If that doesn't work, try finding the time slot element
+      if (!detectedTime && activatorEvent) {
+        const element = document.elementFromPoint(
+          activatorEvent.clientX,
+          activatorEvent.clientY
+        );
+        const timeSlot = element?.closest("[data-time-slot]");
+        if (timeSlot) {
+          detectedTime = timeSlot.getAttribute("data-time-slot");
+        }
       }
     }
-  }, []);
 
-  // Handle drag end
+    setDragOverTime(detectedTime);
+  }, [getTimeFromY]);
+
+  // Handle drag end with improved drop target detection
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+      
+      const draggedBlock = blocks.find((b) => b.id === active.id);
+      if (!draggedBlock) {
+        setActiveId(null);
+        setDragOverTime(null);
+        return;
+      }
+
+      // Capture dragOverTime before clearing it
+      const currentDragOverTime = dragOverTime;
       setActiveId(null);
       setDragOverTime(null);
 
-      if (!over) return;
+      // Get drop target time - prefer currentDragOverTime if available, otherwise calculate
+      let dropTime: string | null = currentDragOverTime;
 
-      const draggedBlock = blocks.find((b) => b.id === active.id);
-      if (!draggedBlock) return;
+      if (!dropTime && over) {
+        const overElement = over.data.current;
+        if (overElement && overElement['timeSlot']) {
+          dropTime = overElement['timeSlot'] as string;
+        }
+      }
 
-      // Get drop target time
-      let dropTime: string | null = null;
-
-      const overElement = over.data.current;
-      if (overElement && overElement['timeSlot']) {
-        dropTime = overElement['timeSlot'] as string;
-      } else {
-        // Calculate from mouse position
+      // Final fallback: calculate from mouse position
+      if (!dropTime) {
         const mouseEvent = event.activatorEvent as MouseEvent;
         if (mouseEvent) {
           dropTime = getTimeFromY(mouseEvent.clientY);
@@ -844,7 +889,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
         );
       }
     },
-    [blocks, getTimeFromY, announceChange]
+    [blocks, dragOverTime, getTimeFromY, announceChange]
   );
 
   // Handle resize start
@@ -1060,7 +1105,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
       {/* Calendar Grid */}
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}

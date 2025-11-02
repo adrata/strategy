@@ -96,8 +96,84 @@ export async function GET(request: NextRequest) {
       return (a.name || '').localeCompare(b.name || '');
     });
 
+    // Auto-create default channels if none exist
     if (sortedChannels.length === 0) {
-      console.warn(`⚠️ [OASIS CHANNELS API] No channels found for workspace ${workspaceId} - default channels may need to be seeded`);
+      console.warn(`⚠️ [OASIS CHANNELS API] No channels found for workspace ${workspaceId} - auto-creating default channels`);
+      
+      const DEFAULT_CHANNELS = [
+        { name: 'general', description: 'General discussion and announcements' },
+        { name: 'sell', description: 'Sales strategies and customer conversations' },
+        { name: 'build', description: 'Product development and engineering discussions' },
+        { name: 'random', description: 'Random thoughts, memes, and off-topic discussions' },
+        { name: 'wins', description: 'Celebrate victories and success stories' }
+      ];
+
+      // Create all default channels
+      for (const channelData of DEFAULT_CHANNELS) {
+        const createdChannel = await prisma.oasisChannel.create({
+          data: {
+            workspaceId,
+            name: channelData.name,
+            description: channelData.description
+          }
+        });
+
+        // Add current user as member
+        await prisma.oasisChannelMember.create({
+          data: {
+            channelId: createdChannel.id,
+            userId: userId
+          }
+        });
+
+        console.log(`✅ [OASIS CHANNELS API] Auto-created channel: #${channelData.name}`);
+      }
+
+      // Re-fetch channels after creation
+      const newChannels = await prisma.oasisChannel.findMany({
+        where: { workspaceId },
+        include: {
+          members: {
+            include: {
+              user: {
+                select: { id: true, name: true, username: true }
+              }
+            }
+          },
+          messages: {
+            where: {
+              createdAt: {
+                gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+              }
+            },
+            select: { id: true }
+          }
+        },
+        orderBy: { createdAt: 'asc' }
+      });
+
+      const newChannelsWithStats = newChannels.map(channel => ({
+        id: channel.id,
+        name: channel.name,
+        description: channel.description,
+        createdAt: channel.createdAt,
+        memberCount: channel.members.length,
+        recentMessageCount: channel.messages.length,
+        isMember: channel.members.some(member => member.userId === userId)
+      }));
+
+      const newSortedChannels = newChannelsWithStats.sort((a, b) => {
+        const aIndex = customOrder.indexOf(a.name);
+        const bIndex = customOrder.indexOf(b.name);
+        if (aIndex !== -1 && bIndex !== -1) {
+          return aIndex - bIndex;
+        }
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+        return (a.name || '').localeCompare(b.name || '');
+      });
+
+      return NextResponse.json({ channels: newSortedChannels });
     }
 
     return NextResponse.json({ channels: sortedChannels });

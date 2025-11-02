@@ -258,7 +258,7 @@ const platformApps: AdrataPlatformApp[] = [
     tags: ["Operations", "Control", "Optimization"],
   },
   {
-    name: "Workshop",
+    name: "Workbench",
     slug: "workshop",
     description: "Document collaboration & management.",
     icon: DocumentIcon,

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useWorkshop } from "../layout";
 import { WorkshopDocument } from "../types/document";
 import { generateSlug } from "@/platform/utils/url-utils";
+import { useUnifiedAuth } from "@/platform/auth";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { 
   DocumentTextIcon,
   PresentationChartBarIcon,
@@ -26,111 +28,73 @@ export function DocumentGrid() {
     currentFolderId,
     workspace,
   } = useWorkshop();
+  const { user: authUser } = useUnifiedAuth();
+  const { ui } = useRevenueOS();
 
   const [documents, setDocuments] = useState<WorkshopDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const workspaceId = ui.activeWorkspace?.id || authUser?.activeWorkspaceId;
+
   // Load documents
   useEffect(() => {
     loadDocuments();
-  }, [activeTab, searchQuery, selectedDocumentType, currentFolderId]);
+  }, [activeTab, searchQuery, selectedDocumentType, currentFolderId, workspaceId, authUser?.id]);
 
   const loadDocuments = async () => {
+    if (!workspaceId) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
       
-      // TODO: Implement actual API call
-      // const response = await fetch('/api/workshop/documents?...');
-      // const data = await response.json();
+      // Build query parameters
+      const params = new URLSearchParams({
+        workspaceId,
+        limit: '100',
+        status: 'active',
+      });
+
+      if (currentFolderId) {
+        params.append('folderId', currentFolderId);
+      }
+
+      if (selectedDocumentType) {
+        params.append('type', selectedDocumentType);
+      }
+
+      if (searchQuery) {
+        params.append('search', searchQuery);
+      }
+
+      if (activeTab === 'my-documents' && authUser?.id) {
+        params.append('ownerId', authUser.id);
+      }
+
+      if (activeTab === 'starred') {
+        params.append('starred', 'true');
+      }
+
+      if (activeTab === 'recent') {
+        params.append('sortBy', 'updatedAt');
+        params.append('sortOrder', 'desc');
+      } else {
+        params.append('sortBy', 'updatedAt');
+        params.append('sortOrder', 'desc');
+      }
+
+      const response = await fetch(`/api/v1/documents/documents?${params.toString()}`);
       
-      // Mock data for now
-      const mockDocuments: WorkshopDocument[] = [
-        {
-          id: '1',
-          title: 'Project Proposal',
-          description: 'Q1 2024 project proposal document',
-          documentType: 'paper',
-          status: 'published',
-          version: '1.0',
-          isEncrypted: false,
-          classification: 'internal',
-          requiresAuth: false,
-          tags: ['proposal', 'q1-2024'],
-          isStarred: false,
-          isTemplate: false,
-          ownerId: 'user1',
-          workspaceId: 'workspace1',
-          fileType: 'application/json',
-          viewCount: 15,
-          downloadCount: 3,
-          createdAt: new Date('2024-01-15'),
-          updatedAt: new Date('2024-01-20'),
-          content: '<h1>Project Proposal</h1><p>This is a sample project proposal document. You can edit this content by clicking the Edit button above.</p><h2>Objectives</h2><ul><li>Increase productivity by 25%</li><li>Reduce costs by 15%</li><li>Improve customer satisfaction</li></ul><h2>Timeline</h2><p>The project is expected to be completed within 6 months, starting from Q1 2024.</p>',
-          owner: {
-            id: 'user1',
-            name: 'John Doe',
-            email: 'john@example.com',
-          },
-          _count: {
-            shares: 2,
-            versions: 3,
-            comments: 5,
-            activities: 12,
-          },
-        },
-        {
-          id: '2',
-          title: 'JavaScript Code Sample',
-          description: 'Sample JavaScript code for demonstration',
-          documentType: 'code',
-          status: 'published',
-          version: '2.1',
-          isEncrypted: false,
-          classification: 'internal',
-          requiresAuth: false,
-          tags: ['javascript', 'sample'],
-          isStarred: true,
-          isTemplate: false,
-          ownerId: 'user2',
-          workspaceId: 'workspace1',
-          fileType: 'application/json',
-          viewCount: 8,
-          downloadCount: 1,
-          createdAt: new Date('2024-01-10'),
-          updatedAt: new Date('2024-01-18'),
-          content: `// Welcome to Workshop Code Editor
-function calculateTotal(items) {
-  return items.reduce((sum, item) => sum + item.price, 0);
-}
+      if (!response.ok) {
+        throw new Error('Failed to fetch documents');
+      }
 
-const products = [
-  { name: 'Laptop', price: 999 },
-  { name: 'Mouse', price: 25 },
-  { name: 'Keyboard', price: 75 }
-];
-
-const total = calculateTotal(products);
-console.log('Total:', total);
-
-// This is a sample code document
-// You can edit this code by clicking the Edit button above`,
-          owner: {
-            id: 'user2',
-            name: 'Jane Smith',
-            email: 'jane@example.com',
-          },
-          _count: {
-            shares: 1,
-            versions: 4,
-            comments: 2,
-            activities: 8,
-          },
-        },
-      ];
-
-      setDocuments(mockDocuments);
+      const data = await response.json();
+      setDocuments(data.documents || []);
     } catch (err) {
       setError('Failed to load documents');
       console.error('Error loading documents:', err);
@@ -179,8 +143,7 @@ console.log('Total:', total);
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        <span className="ml-3 text-[var(--muted)]">Loading documents...</span>
+        <span className="text-[var(--muted)]">Loading documents...</span>
       </div>
     );
   }

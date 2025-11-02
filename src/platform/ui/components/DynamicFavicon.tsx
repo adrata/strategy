@@ -45,22 +45,29 @@ export function DynamicFavicon({ isWebsite = false, defaultColor = '#6366f1' }: 
       // Use default color if provided and no specific theme found
       const color = appTheme.name === 'Adrata' ? defaultColor : appTheme.color;
       
-      // Try to get workspace name and generate client initials
+      // Apps that should always use app initials instead of workspace initials
+      const appsWithAppInitials = ['Revenue-OS', 'Stacks', 'Oasis', 'Workbench'];
+      
+      // Determine favicon text: use app letter for specific apps, otherwise use workspace initials
       let faviconText = appTheme.letter; // Fallback to app letter
       
-      if (authUser?.workspaces && authUser.workspaces.length > 0) {
-        // Get the active workspace or first available workspace
-        const activeWorkspace = authUser.workspaces.find(w => w.id === authUser.activeWorkspaceId) || authUser.workspaces[0];
-        
-        if (activeWorkspace?.name) {
-          const clientInitials = generateInitials(activeWorkspace.name);
-          if (clientInitials) {
-            faviconText = clientInitials;
+      if (!appsWithAppInitials.includes(appTheme.name)) {
+        // For other apps, try to get workspace name and generate client initials
+        if (authUser?.workspaces && authUser.workspaces.length > 0) {
+          // Get the active workspace or first available workspace
+          const activeWorkspace = authUser.workspaces.find(w => w.id === authUser.activeWorkspaceId) || authUser.workspaces[0];
+          
+          if (activeWorkspace?.name) {
+            const clientInitials = generateInitials(activeWorkspace.name);
+            if (clientInitials) {
+              faviconText = clientInitials;
+            }
           }
         }
       }
+      // For revenue-os, stacks, oasis, and workbench, faviconText is already set to appTheme.letter
       
-      // Generate favicon with client initials (or app letter as fallback) and color
+      // Generate favicon with app initials (for specific apps) or workspace initials (for others)
       const faviconDataUrl = generateFavicon(faviconText, color);
       
       // Update the favicon in the document

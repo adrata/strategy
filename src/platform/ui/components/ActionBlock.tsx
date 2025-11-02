@@ -77,8 +77,13 @@ export const ActionBlockComponent = React.memo(function ActionBlockComponent({
 
   const handleResizeMouseDown = useCallback(
     (edge: "top" | "bottom", e: React.MouseEvent) => {
+      // Stop all propagation to prevent drag from starting
       e.stopPropagation();
       e.preventDefault();
+      // Stop immediate propagation as well
+      if (e.nativeEvent) {
+        e.nativeEvent.stopImmediatePropagation();
+      }
       if (onResizeStart) {
         onResizeStart(edge, e);
       }
@@ -151,14 +156,19 @@ export const ActionBlockComponent = React.memo(function ActionBlockComponent({
 
         {/* Action buttons - shown on hover */}
         {isHovered && !isDragging && (
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0 relative z-10">
             {block.status !== "completed" && (
               <>
                 {block.status === "pending" && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      e.preventDefault();
                       onExecute();
+                    }}
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                     }}
                     className="p-1 hover:bg-white/20 rounded transition-colors"
                     title="Execute"
@@ -171,7 +181,12 @@ export const ActionBlockComponent = React.memo(function ActionBlockComponent({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      e.preventDefault();
                       onComplete();
+                    }}
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                     }}
                     className="p-1 hover:bg-white/20 rounded transition-colors"
                     title="Complete"
@@ -183,7 +198,12 @@ export const ActionBlockComponent = React.memo(function ActionBlockComponent({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    e.preventDefault();
                     onEdit();
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
                   }}
                   className="p-1 hover:bg-white/20 rounded transition-colors"
                   title="Edit"
@@ -196,7 +216,12 @@ export const ActionBlockComponent = React.memo(function ActionBlockComponent({
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 onDelete();
+              }}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
               }}
               className="p-1 hover:bg-white/20 rounded transition-colors"
               title="Delete"

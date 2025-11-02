@@ -47,6 +47,7 @@ interface ProfilePanelProps {
   username?: string;
   currentApp?: string;
   onToggleLeftPanel?: () => void;
+  hideCloseButton?: boolean;
 }
 
 // Action List Item Component with animations
@@ -274,6 +275,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   username,
   currentApp: propCurrentApp = 'revenueos',
   onToggleLeftPanel,
+  hideCloseButton = false,
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -322,9 +324,27 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   // Use detected app or fallback to prop
   const currentApp = getCurrentAppFromPath();
   
+  // Get saved view mode from localStorage, default to 'main'
+  const getInitialViewMode = (): 'main' | 'actionList' | 'calendar' | 'notes' => {
+    if (typeof window === 'undefined') return 'main';
+    const saved = localStorage.getItem('profilePanelViewMode');
+    if (saved && ['main', 'actionList', 'calendar', 'notes'].includes(saved)) {
+      return saved as 'main' | 'actionList' | 'calendar' | 'notes';
+    }
+    return 'main';
+  };
+  
   // State for view mode (main, action list, calendar, or notes)
-  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar' | 'notes'>('actionList');
+  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar' | 'notes'>(getInitialViewMode);
   const [previousViewMode, setPreviousViewMode] = useState<'main' | 'actionList'>('main');
+  
+  // Save view mode to localStorage whenever it changes
+  const updateViewMode = (mode: 'main' | 'actionList' | 'calendar' | 'notes') => {
+    setViewMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('profilePanelViewMode', mode);
+    }
+  };
   
   // State for action list input
   const [newItemText, setNewItemText] = useState('');
@@ -375,7 +395,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const handleHomeClick = () => {
     // Show main view instead of navigating
     console.log(`🏠 ProfilePanel: Showing main view`);
-    setViewMode('main');
+    updateViewMode('main');
   };
 
   const handleSignOutClick = () => {
@@ -623,10 +643,27 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
   const PlatformIcon = getPlatformIcon();
 
-  // Handle Escape key to close panel
+  // Restore view mode from localStorage when panel opens
+  const prevIsOpenRef = useRef(isOpen);
+  useEffect(() => {
+    // Only restore when panel transitions from closed to open
+    if (isOpen && !prevIsOpenRef.current && typeof window !== 'undefined') {
+      const saved = localStorage.getItem('profilePanelViewMode');
+      if (saved && ['main', 'actionList', 'calendar', 'notes'].includes(saved)) {
+        const savedMode = saved as 'main' | 'actionList' | 'calendar' | 'notes';
+        setViewMode(savedMode);
+      } else {
+        // Default to main if no saved preference
+        setViewMode('main');
+      }
+    }
+    prevIsOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  // Handle Escape key to close panel (unless hideCloseButton is true)
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape' && isOpen && !hideCloseButton) {
         onClose();
       }
     };
@@ -636,7 +673,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       return () => document.removeEventListener('keydown', handleEscape);
     }
     return undefined;
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, hideCloseButton]);
 
   if (!isOpen) return null;
 
@@ -697,7 +734,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </button>
             <button
               onClick={() => {
-                setViewMode('calendar');
+                updateViewMode('calendar');
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'calendar'
@@ -711,7 +748,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </button>
             <button
               onClick={() => {
-                setViewMode('actionList');
+                updateViewMode('actionList');
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'actionList'
@@ -725,7 +762,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </button>
             <button
               onClick={() => {
-                setViewMode('notes');
+                updateViewMode('notes');
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'notes'
@@ -737,14 +774,16 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <DocumentTextIcon className="w-5 h-5" />
             </button>
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-md bg-transparent hover:bg-gray-50 text-[var(--foreground)] transition-colors"
-              title="Hide profile panel"
-              aria-label="Hide profile panel"
-            >
-              <PanelLeft className="w-5 h-5" />
-            </button>
+            {!hideCloseButton && (
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-md bg-transparent hover:bg-gray-50 text-[var(--foreground)] transition-colors"
+                title="Hide profile panel"
+                aria-label="Hide profile panel"
+              >
+                <PanelLeft className="w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -771,6 +810,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">RevenueOS</span>
             </button>
 
+            {/* Workbench */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'workshop' 
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => handleNavigation("/workshop")}
+            >
+              <DocumentTextIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Workbench</span>
+            </button>
+
             {/* Adrata */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -784,17 +836,17 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Adrata</span>
             </button>
 
-            {/* Workshop */}
+            {/* Stacks */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'workshop' 
+                currentApp === 'stacks' 
                   ? 'bg-slate-100 text-slate-700' 
                   : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
               }`}
-              onClick={() => handleNavigation("/workshop")}
+              onClick={() => handleNavigation("/stacks")}
             >
-              <DocumentTextIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Workshop</span>
+              <Squares2X2Icon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Stacks</span>
             </button>
 
             {/* Oasis */}
@@ -808,19 +860,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <ChatBubbleLeftRightIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Oasis</span>
-            </button>
-
-            {/* Stacks */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'stacks' 
-                  ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/stacks")}
-            >
-              <Squares2X2Icon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Stacks</span>
             </button>
 
             {/* Grand Central */}
@@ -867,7 +906,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         {/* Calendar Section */}
         {viewMode === 'calendar' && (
           <div className="h-full flex flex-col flex-1 min-h-0">
-            <CalendarView onClose={() => setViewMode('actionList')} />
+            <CalendarView onClose={() => updateViewMode('actionList')} />
           </div>
         )}
 

@@ -95,7 +95,12 @@
     "format:check": "prettier --check .",
     "dev:mobile": "cd mobile && expo start",
     "build:mobile:ios": "cd mobile && eas build --platform ios",
-    "build:mobile:android": "cd mobile && eas build --platform android"
+    "build:mobile:android": "cd mobile && eas build --platform android",
+    "test:mobile": "cd mobile && npm test",
+    "test:mobile:watch": "cd mobile && npm run test:watch",
+    "test:mobile:coverage": "cd mobile && npm run test:coverage",
+    "lint:mobile": "cd mobile && npm run lint",
+    "lint:mobile:fix": "cd mobile && npm run lint:fix"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",

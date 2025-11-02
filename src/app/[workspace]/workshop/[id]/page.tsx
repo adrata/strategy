@@ -218,10 +218,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center bg-[var(--background)]">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[var(--muted)]">Loading document...</p>
-        </div>
+        <p className="text-[var(--muted)]">Loading document...</p>
       </div>
     );
   }

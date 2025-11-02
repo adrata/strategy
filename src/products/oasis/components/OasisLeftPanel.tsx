@@ -220,7 +220,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showAddDMModal, setShowAddDMModal] = useState(false);
 
-  const handleConversationClick = (conversation: Conversation) => {
+  const handleConversationClick = async (conversation: Conversation) => {
     setSelectedChannel(conversation);
     
     // Navigate to the conversation with human-readable URLs
@@ -233,8 +233,54 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       return name.toLowerCase().replace(/\s+/g, '-');
     };
     
+    // Handle "Me" self-DM - create or find existing self-DM
+    if (conversation.id === 'me-self-dm' && workspaceId && authUser?.id) {
+      try {
+        // Check if self-DM already exists
+        const response = await fetch(`/api/v1/oasis/oasis/dms?workspaceId=${workspaceId}`, {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          // Look for self-DM (DM with only current user as participant)
+          const selfDM = data.dms?.find((dm: any) => 
+            dm.participants.length === 0 || 
+            (dm.participants.length === 1 && dm.participants[0].id === authUser.id)
+          );
+          
+          if (selfDM) {
+            // Use existing self-DM
+            const slug = `${generateSlug('me')}-${selfDM.id}`;
+            router.push(`/${workspaceSlug}/oasis/${slug}`);
+            return;
+          } else {
+            // Create new self-DM
+            const createResponse = await fetch('/api/v1/oasis/oasis/dms', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({
+                workspaceId: workspaceId,
+                participantIds: [] // Empty array creates a self-DM
+              })
+            });
+            
+            if (createResponse.ok) {
+              const newDM = await createResponse.json();
+              const slug = `${generateSlug('me')}-${newDM.dm.id}`;
+              router.push(`/${workspaceSlug}/oasis/${slug}`);
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to handle self-DM:', error);
+      }
+    }
+    
     // Save last conversation to localStorage
-    if (workspaceId) {
+    if (workspaceId && conversation.id !== 'me-self-dm') {
       saveLastConversation(
         workspaceId,
         conversation.id,
@@ -247,7 +293,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       // Format: general-abc123
       const slug = `${generateSlug(conversation.name)}-${conversation.id}`;
       router.push(`/${workspaceSlug}/oasis/${slug}`);
-    } else if (conversation.type === 'dm') {
+    } else if (conversation.type === 'dm' && conversation.id !== 'me-self-dm') {
       // Format: dan-mirolli-xyz789
       const slug = `${generateSlug(conversation.name)}-${conversation.id}`;
       router.push(`/${workspaceSlug}/oasis/${slug}`);
@@ -315,8 +361,19 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     }
   }, [channels, channelsLoading]);
 
-  // Get current workspace name for the "Me" pill
-  const currentWorkspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || '';
+  // Get current workspace name for the "Me" pill - use authUser workspaces, not acquisitionData
+  const currentWorkspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || 'Adrata';
+
+  // Helper to get initials - prefer first letter of first name if name can be parsed
+  const getInitial = (name: string | undefined) => {
+    if (!name) return 'U';
+    // Parse name to get first letter of first name
+    const nameParts = name.trim().split(' ');
+    if (nameParts.length > 0) {
+      return nameParts[0].charAt(0).toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+  };
 
   const dmConversations: Conversation[] = [
     // Add "Me" self-DM at the top
@@ -335,7 +392,11 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     // Add other DMs
     ...dms.map(dm => ({
       id: dm.id,
-      name: dm.participants[0]?.name || 'Unknown User',
+      name: (() => {
+        const participantName = dm.participants[0]?.name || 'Unknown User';
+        // Capitalize first letter of name (Ross -> Ross, not ross)
+        return participantName.charAt(0).toUpperCase() + participantName.slice(1);
+      })(),
       type: 'dm' as const,
       unread: dm.unreadCount || 0, // Use unread count from API
       isActive: selectedChannel?.id === dm.id,
@@ -475,7 +536,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                   <div className="relative">
                     <div className="w-4 h-4 bg-white border border-[var(--border)] rounded flex items-center justify-center">
                       <span className="text-xs font-medium text-[var(--foreground)]">
-                        {(dm.id === 'me-self-dm' ? (authUser?.name?.charAt(0) || 'M') : dm.name.charAt(0)).toUpperCase()}
+                        {dm.id === 'me-self-dm' ? getInitial(authUser?.name) : getInitial(dm.name)}
                       </span>
                     </div>
                     {dm.status === 'online' && (
@@ -484,12 +545,23 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                   </div>
                   <div className="flex-1 flex items-center gap-2 min-w-0">
                     <span className="text-sm font-medium truncate">{dm.name}</span>
-                    {dm.workspaceName && (
-                      <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap flex items-center gap-1">
-                        <BuildingOfficeIcon className="w-3 h-3" />
-                        {dm.workspaceName === "Notary Everyday" ? "NE" : dm.workspaceName === "Adrata" ? "A" : dm.workspaceName}
-                      </span>
-                    )}
+                    {dm.workspaceName && (() => {
+                      // Check if this is a different workspace from current
+                      const currentWorkspace = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId);
+                      const isDifferentWorkspace = currentWorkspace && dm.workspaceName !== currentWorkspace.name;
+                      
+                      // Use different color for different workspace (purple/gray) vs same workspace (blue)
+                      const pillClass = isDifferentWorkspace 
+                        ? 'bg-purple-100 text-purple-700' 
+                        : 'bg-blue-100 text-blue-700';
+                      
+                      return (
+                        <span className={`px-1.5 py-0.5 ${pillClass} text-xs font-medium rounded-full whitespace-nowrap flex items-center gap-1`}>
+                          <BuildingOfficeIcon className="w-3 h-3" />
+                          {dm.workspaceName === "Notary Everyday" ? "NE" : dm.workspaceName === "Adrata" ? "A" : dm.workspaceName}
+                        </span>
+                      );
+                    })()}
                   </div>
                   {dm.unread > 0 && (
                     <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
@@ -512,7 +584,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         >
           <div className="w-8 h-8 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-[var(--foreground)]">
-              {authUser?.name?.charAt(0)?.toUpperCase() || 'U'}
+              {getInitial(authUser?.name)}
             </span>
           </div>
           <div className="flex-1 text-left">
@@ -520,7 +592,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
               {authUser?.name || 'User'}
             </div>
             <div className="text-xs text-[var(--muted)]">
-              {acquisitionData?.auth?.authUser?.activeWorkspaceName || 'Workspace'}
+              {authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || 'Adrata'}
             </div>
           </div>
         </button>

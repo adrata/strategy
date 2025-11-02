@@ -28,9 +28,9 @@ export default function Index() {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View className="flex-1 justify-center items-center bg-white">
       <ActivityIndicator size="large" />
-      <Text style={{ marginTop: 16 }}>Loading Adrata...</Text>
+      <Text className="mt-4 text-base text-gray-900">Loading Adrata...</Text>
     </View>
   );
 }

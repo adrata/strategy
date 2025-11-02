@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { apiClient } from '../../lib/api-client';
 
@@ -38,13 +38,14 @@ export default function SignInScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Adrata</Text>
-      <Text style={styles.subtitle}>Sign in to continue</Text>
+    <View className="flex-1 justify-center p-6 bg-white">
+      <Text className="text-3xl font-bold mb-2 text-center text-black">Adrata</Text>
+      <Text className="text-base text-gray-600 mb-8 text-center">Sign in to continue</Text>
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded-lg p-4 mb-4 text-base"
         placeholder="Email"
+        placeholderTextColor="#999"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -53,8 +54,9 @@ export default function SignInScreen() {
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded-lg p-4 mb-4 text-base"
         placeholder="Password"
+        placeholderTextColor="#999"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -62,57 +64,15 @@ export default function SignInScreen() {
       />
 
       <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
+        className={`bg-black rounded-lg p-4 items-center mt-2 ${loading ? 'opacity-60' : ''}`}
         onPress={handleSignIn}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Sign In'}</Text>
+        <Text className="text-white text-base font-semibold">
+          {loading ? 'Signing in...' : 'Sign In'}
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 32,
-    textAlign: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
 

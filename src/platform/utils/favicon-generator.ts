@@ -10,13 +10,37 @@ export interface AppTheme {
 }
 
 export const APP_THEMES: Record<string, AppTheme> = {
-  // RevenueOS (pipeline apps)
+  // Revenue-OS (revenue-os grouping: speedrun, leads, partners, companies, etc.)
+  'revenue-os': {
+    letter: 'R',
+    color: '#dbeafe', // blue-100 (light blue background)
+    name: 'Revenue-OS'
+  },
+  // Stacks
+  'stacks': {
+    letter: 'S',
+    color: '#bfdbfe', // blue-200 (light blue variant)
+    name: 'Stacks'
+  },
+  // Oasis
+  'oasis': {
+    letter: 'O',
+    color: '#93c5fd', // blue-300 (light blue variant)
+    name: 'Oasis'
+  },
+  // Workbench (workshop)
+  'workbench': {
+    letter: 'W',
+    color: '#60a5fa', // blue-400 (light blue variant)
+    name: 'Workbench'
+  },
+  // Legacy: RevenueOS (pipeline apps) - keeping for backwards compatibility
   'acquisition': {
     letter: 'A',
     color: '#dbeafe', // blue-100 (light blue background)
     name: 'RevenueOS'
   },
-  // Workshop
+  // Workshop - keeping for backwards compatibility, but workbench takes precedence
   'workshop': {
     letter: 'W', 
     color: '#ede9fe', // violet-100 (light purple background)
@@ -60,6 +84,9 @@ export const APP_THEMES: Record<string, AppTheme> = {
 function getTextColorForBackground(backgroundColor: string): string {
   const colorMap: Record<string, string> = {
     '#dbeafe': '#1e40af', // blue-100 -> blue-800
+    '#bfdbfe': '#1e3a8a', // blue-200 -> blue-900
+    '#93c5fd': '#1e3a8a', // blue-300 -> blue-900
+    '#60a5fa': '#1e3a8a', // blue-400 -> blue-900
     '#ede9fe': '#5b21b6', // violet-100 -> violet-800
     '#d1fae5': '#065f46', // emerald-100 -> emerald-800
     '#fed7aa': '#c2410c', // orange-200 -> orange-800
@@ -188,11 +215,35 @@ export function getAppThemeFromPath(pathname: string): AppTheme {
   // Remove workspace slug from pathname
   const cleanPath = pathname.replace(/^\/[^\/]+/, '') || '/';
   
-  // Check for specific app routes
-  if (cleanPath.includes('/workshop')) {
-    return APP_THEMES.workshop;
+  // Check for Stacks (must check before revenue-os since stacks is in the grouping)
+  if (cleanPath.includes('/stacks')) {
+    return APP_THEMES.stacks;
   }
   
+  // Check for Oasis (must check before revenue-os since oasis is in the grouping)
+  if (cleanPath.includes('/oasis')) {
+    return APP_THEMES.oasis;
+  }
+  
+  // Check for Workbench/Workshop
+  if (cleanPath.includes('/workshop')) {
+    return APP_THEMES.workbench;
+  }
+  
+  // Check for revenue-os grouping (speedrun, leads, partners, companies, etc.)
+  const revenueOsRoutes = [
+    '/speedrun', '/opportunities', '/leads', '/prospects', 
+    '/companies', '/people', '/clients', '/sellers', '/partners',
+    '/chronicle', '/metrics', '/dashboard'
+  ];
+  
+  for (const route of revenueOsRoutes) {
+    if (cleanPath.includes(route)) {
+      return APP_THEMES['revenue-os'];
+    }
+  }
+  
+  // Check for other specific app routes
   if (cleanPath.includes('/database')) {
     return APP_THEMES.database;
   }
@@ -207,19 +258,6 @@ export function getAppThemeFromPath(pathname: string): AppTheme {
   
   if (cleanPath.includes('/tower')) {
     return APP_THEMES.tower;
-  }
-  
-  // Check for pipeline apps (RevenueOS)
-  const pipelineApps = [
-    '/speedrun', '/opportunities', '/leads', '/prospects', 
-    '/companies', '/people', '/clients', '/sellers', 
-    '/chronicle', '/stacks', '/oasis', '/metrics', '/dashboard'
-  ];
-  
-  for (const app of pipelineApps) {
-    if (cleanPath.includes(app)) {
-      return APP_THEMES.acquisition;
-    }
   }
   
   // Default fallback
