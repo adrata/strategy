@@ -23,6 +23,7 @@ import { StacksFilters } from './StacksFilters';
 import { AddStacksModal } from './AddStacksModal';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 // Removed mock data imports
 
 interface BacklogItem {
@@ -128,35 +129,128 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Fetch data from API
   useEffect(() => {
     const fetchItems = async () => {
-      if (!ui.activeWorkspace?.id) {
+      // Resolve workspace ID with fallback logic (same as StacksBoard)
+      let workspaceId = ui.activeWorkspace?.id;
+      
+      // Fallback 1: Get from URL workspace slug if UI workspace is missing
+      if (!workspaceId && workspaceSlug) {
+        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+        if (urlWorkspaceId) {
+          console.log(`🔍 [StacksBacklogTable] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+          workspaceId = urlWorkspaceId;
+        }
+      }
+      
+      // Fallback 2: Use user's active workspace ID
+      if (!workspaceId && authUser?.activeWorkspaceId) {
+        console.log(`🔍 [StacksBacklogTable] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
+        workspaceId = authUser.activeWorkspaceId;
+      }
+      
+      console.log('🔍 [StacksBacklogTable] Starting fetch, workspace:', ui.activeWorkspace);
+      console.log('🔍 [StacksBacklogTable] Workspace ID (resolved):', workspaceId);
+      console.log('🔍 [StacksBacklogTable] URL workspace slug:', workspaceSlug);
+      console.log('🔍 [StacksBacklogTable] User activeWorkspaceId:', authUser?.activeWorkspaceId);
+      
+      if (!workspaceId) {
+        console.warn('⚠️ [StacksBacklogTable] No workspace ID available after all fallbacks, cannot fetch backlog items');
+        console.warn('⚠️ [StacksBacklogTable] activeWorkspace:', ui.activeWorkspace);
         setItems([]);
         setLoading(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`);
+        setLoading(true);
+        const apiUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}`;
+        console.log('🔍 [StacksBacklogTable] Fetching from:', apiUrl);
+        console.log('🔍 [StacksBacklogTable] Request workspace ID:', workspaceId);
+        
+        const response = await fetch(apiUrl, {
+          credentials: 'include', // Include cookies for authentication
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        console.log('🔍 [StacksBacklogTable] Response status:', response.status, response.ok);
+        
         if (response.ok) {
           const data = await response.json();
-          const backlogItems = data.stories?.map((story: any, index: number) => ({
-            id: story.id,
-            title: story.title,
-            description: story.description,
-            priority: story.priority,
-            status: story.status,
-            assignee: story.assignee?.name || story.assignee,
-            dueDate: story.dueDate,
-            tags: story.tags || [],
-            createdAt: story.createdAt,
-            updatedAt: story.updatedAt,
-            rank: index + 1
-          })) || [];
-          setItems(backlogItems);
+          console.log('📊 [StacksBacklogTable] Fetched backlog items from database:', {
+            totalStories: data.stories?.length || 0,
+            stories: data.stories,
+            workspaceId
+          });
+          
+          if (data.stories && Array.isArray(data.stories)) {
+            if (data.stories.length === 0) {
+              console.log('ℹ️ [StacksBacklogTable] No stories found for workspace:', workspaceId);
+            }
+            
+            const backlogItems = data.stories.map((story: any, index: number) => ({
+              id: story.id,
+              title: story.title,
+              description: story.description,
+              priority: story.priority,
+              status: story.status,
+              assignee: story.assignee?.name || story.assignee,
+              dueDate: story.dueDate,
+              tags: story.tags || [],
+              createdAt: story.createdAt,
+              updatedAt: story.updatedAt,
+              rank: index + 1
+            }));
+            
+            console.log('🔄 [StacksBacklogTable] Mapped backlog items:', backlogItems.length, 'items');
+            
+            setItems(backlogItems);
+          } else {
+            console.warn('⚠️ [StacksBacklogTable] Invalid response format - stories is not an array');
+            console.warn('⚠️ [StacksBacklogTable] Response data:', data);
+            setItems([]);
+          }
         } else {
+          let errorData;
+          try {
+            const errorText = await response.text();
+            errorData = errorText;
+            // Try to parse as JSON
+            try {
+              errorData = JSON.parse(errorText);
+            } catch {
+              // Keep as text if not JSON
+            }
+          } catch (parseError) {
+            errorData = { error: 'Failed to parse error response' };
+          }
+          
+          console.error('❌ [StacksBacklogTable] API request failed:', {
+            status: response.status,
+            statusText: response.statusText,
+            workspaceId,
+            error: errorData
+          });
+          
+          if (response.status === 400 && errorData?.code === 'WORKSPACE_REQUIRED') {
+            console.error('❌ [StacksBacklogTable] Workspace ID missing or invalid');
+          } else if (response.status === 401) {
+            console.error('❌ [StacksBacklogTable] Authentication failed');
+          } else if (response.status === 403) {
+            console.error('❌ [StacksBacklogTable] Access denied to workspace');
+          } else {
+            console.error('❌ [StacksBacklogTable] Unexpected error:', response.status);
+          }
+          
           setItems([]);
         }
       } catch (error) {
-        console.error('Error fetching backlog items:', error);
+        console.error('❌ [StacksBacklogTable] Error fetching backlog items:', error);
+        console.error('❌ [StacksBacklogTable] Error details:', {
+          message: error instanceof Error ? error.message : String(error),
+          workspaceId,
+          stack: error instanceof Error ? error.stack : undefined
+        });
         setItems([]);
       } finally {
         setLoading(false);
@@ -164,7 +258,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     };
 
     fetchItems();
-  }, [ui.activeWorkspace?.id]);
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug]);
   const [contextMenu, setContextMenu] = useState<{
     isVisible: boolean;
     position: { x: number; y: number };
@@ -285,11 +379,41 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   };
 
   const handleStacksAdded = (newStack: any) => {
-    // Refresh the backlog items
-    if (!ui.activeWorkspace?.id) return;
+    // Refresh the backlog items with workspace ID resolution
+    let workspaceId = ui.activeWorkspace?.id;
     
-    fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`)
-      .then(response => response.json())
+    // Fallback 1: Get from URL workspace slug if UI workspace is missing
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    
+    // Fallback 2: Use user's active workspace ID
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+    
+    if (!workspaceId) {
+      console.warn('⚠️ [StacksBacklogTable] No workspace ID available for refresh');
+      setShowAddStacksModal(false);
+      return;
+    }
+    
+    fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error(`API returned ${response.status}`);
+        }
+      })
       .then(data => {
         const backlogItems = data.stories?.map((story: any, index: number) => ({
           id: story.id,
@@ -305,9 +429,10 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           rank: index + 1
         })) || [];
         setItems(backlogItems);
+        console.log('🔄 [StacksBacklogTable] Refreshed backlog items:', backlogItems.length, 'items');
       })
       .catch(error => {
-        console.error('Error refreshing backlog items:', error);
+        console.error('❌ [StacksBacklogTable] Error refreshing backlog items:', error);
       });
     
     setShowAddStacksModal(false);
