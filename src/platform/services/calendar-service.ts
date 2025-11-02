@@ -162,9 +162,58 @@ class CalendarServiceClass {
   }
 
   /**
+   * Check if a time range conflicts with existing blocks
+   */
+  checkConflict(
+    date: string,
+    startTime: string,
+    endTime: string,
+    excludeId?: string
+  ): ActionBlock[] {
+    const dateBlocks = this.getBlocksForDate(date);
+    const conflicts: ActionBlock[] = [];
+
+    const startMinutes = this.timeToMinutes(startTime);
+    const endMinutes = this.timeToMinutes(endTime);
+
+    for (const block of dateBlocks) {
+      if (excludeId && block.id === excludeId) continue;
+
+      const blockStartMinutes = this.timeToMinutes(block.startTime);
+      const blockEndMinutes = this.timeToMinutes(block.endTime);
+
+      // Check for overlap
+      if (
+        (startMinutes >= blockStartMinutes && startMinutes < blockEndMinutes) ||
+        (endMinutes > blockStartMinutes && endMinutes <= blockEndMinutes) ||
+        (startMinutes <= blockStartMinutes && endMinutes >= blockEndMinutes)
+      ) {
+        conflicts.push(block);
+      }
+    }
+
+    return conflicts;
+  }
+
+  /**
+   * Helper to convert time string to minutes
+   */
+  private timeToMinutes(time: string): number {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+
+  /**
    * Add a new block
    */
-  addBlock(block: Omit<ActionBlock, "id" | "createdAt" | "status">): void {
+  addBlock(block: Omit<ActionBlock, "id" | "createdAt" | "status">): { success: boolean; conflicts?: ActionBlock[] } {
+    // Check for conflicts
+    const conflicts = this.checkConflict(block.date, block.startTime, block.endTime);
+    
+    if (conflicts.length > 0) {
+      return { success: false, conflicts };
+    }
+
     const newBlock: ActionBlock = {
       ...block,
       id: generateId(),
@@ -175,20 +224,53 @@ class CalendarServiceClass {
     this.blocks = [...this.blocks, newBlock];
     this.saveBlocks();
     this.notifyListeners();
+    return { success: true };
   }
 
   /**
    * Update a block
    */
-  updateBlock(id: string, updates: Partial<ActionBlock>): void {
+  updateBlock(
+    id: string,
+    updates: Partial<ActionBlock>
+  ): { success: boolean; conflicts?: ActionBlock[] } {
+    const existingBlock = this.blocks.find((b) => b.id === id);
+    if (!existingBlock) {
+      return { success: false };
+    }
+
+    const updatedBlock = { ...existingBlock, ...updates };
+
+    // Check for conflicts if time or date changed
+    if (
+      (updates.startTime !== undefined ||
+        updates.endTime !== undefined ||
+        updates.date !== undefined) &&
+      updatedBlock.date &&
+      updatedBlock.startTime &&
+      updatedBlock.endTime
+    ) {
+      const conflicts = this.checkConflict(
+        updatedBlock.date,
+        updatedBlock.startTime,
+        updatedBlock.endTime,
+        id
+      );
+
+      if (conflicts.length > 0) {
+        return { success: false, conflicts };
+      }
+    }
+
     this.blocks = this.blocks.map((block) => {
       if (block.id === id) {
-        return { ...block, ...updates };
+        return updatedBlock;
       }
       return block;
     });
     this.saveBlocks();
     this.notifyListeners();
+    return { success: true };
   }
 
   /**

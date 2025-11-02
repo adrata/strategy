@@ -9,14 +9,12 @@ import {
   ExclamationTriangleIcon,
   XCircleIcon,
   CogIcon,
-  PaperAirplaneIcon,
-  Squares2X2Icon,
-  ListBulletIcon,
-  TableCellsIcon
+  PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
+import { StacksContextMenu } from './StacksContextMenu';
 // Removed mock data imports
 
 interface StackCard {
@@ -169,6 +167,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   const [cards, setCards] = useState<StackCard[]>([]);
   const [loading, setLoading] = useState(false);
   const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; card: StackCard } | null>(null);
   
   // Check if we're in Notary Everyday workspace (check by workspace slug 'ne')
   const workspaceSlug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
@@ -335,7 +334,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       viewType: story.viewType || 'main',
       product: story.product || null,
       section: story.section || null,
-      assignee: story.assignee ? `${story.assignee.firstName} ${story.assignee.lastName}` : undefined,
+      assignee: story.assignee?.name || undefined,
       dueDate: story.dueDate,
       tags: story.tags || [],
       epic: story.epic,
@@ -513,6 +512,165 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  const handleContextMenu = (e: React.MouseEvent, card: StackCard) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      card
+    });
+  };
+
+  const handleMoveToTop = async () => {
+    if (!contextMenu) return;
+    const card = contextMenu.card;
+    const cardsInColumn = cards.filter(c => c.status === card.status);
+    const currentIndex = cardsInColumn.findIndex(c => c.id === card.id);
+    
+    if (currentIndex === 0) {
+      setContextMenu(null);
+      return;
+    }
+
+    // Optimistic update - move card to top of its column
+    setCards(prevCards => {
+      const filtered = prevCards.filter(c => c.id !== card.id);
+      const sameStatus = filtered.filter(c => c.status === card.status);
+      return [card, ...sameStatus, ...filtered.filter(c => c.status !== card.status)];
+    });
+
+    setContextMenu(null);
+    // TODO: Implement API call to persist new order
+  };
+
+  const handleMoveUp = async () => {
+    if (!contextMenu) return;
+    const card = contextMenu.card;
+    const cardsInColumn = cards.filter(c => c.status === card.status);
+    const currentIndex = cardsInColumn.findIndex(c => c.id === card.id);
+    
+    if (currentIndex === 0) {
+      setContextMenu(null);
+      return;
+    }
+
+    // Optimistic update - swap with card above
+    setCards(prevCards => {
+      const newCards = [...prevCards];
+      const sameStatus = newCards.filter(c => c.status === card.status);
+      const otherCards = newCards.filter(c => c.status !== card.status);
+      const cardIndex = sameStatus.findIndex(c => c.id === card.id);
+      
+      if (cardIndex > 0) {
+        [sameStatus[cardIndex - 1], sameStatus[cardIndex]] = [sameStatus[cardIndex], sameStatus[cardIndex - 1]];
+      }
+      
+      return [...sameStatus, ...otherCards];
+    });
+
+    setContextMenu(null);
+    // TODO: Implement API call to persist new order
+  };
+
+  const handleMoveDown = async () => {
+    if (!contextMenu) return;
+    const card = contextMenu.card;
+    const cardsInColumn = cards.filter(c => c.status === card.status);
+    const currentIndex = cardsInColumn.findIndex(c => c.id === card.id);
+    
+    if (currentIndex === cardsInColumn.length - 1) {
+      setContextMenu(null);
+      return;
+    }
+
+    // Optimistic update - swap with card below
+    setCards(prevCards => {
+      const newCards = [...prevCards];
+      const sameStatus = newCards.filter(c => c.status === card.status);
+      const cardIndex = sameStatus.findIndex(c => c.id === card.id);
+      
+      if (cardIndex < sameStatus.length - 1) {
+        [sameStatus[cardIndex], sameStatus[cardIndex + 1]] = [sameStatus[cardIndex + 1], sameStatus[cardIndex]];
+      }
+      
+      const otherCards = newCards.filter(c => c.status !== card.status);
+      return [...sameStatus, ...otherCards];
+    });
+
+    setContextMenu(null);
+    // TODO: Implement API call to persist new order
+  };
+
+  const handleMoveToBottom = async () => {
+    if (!contextMenu) return;
+    const card = contextMenu.card;
+    const cardsInColumn = cards.filter(c => c.status === card.status);
+    const currentIndex = cardsInColumn.findIndex(c => c.id === card.id);
+    
+    if (currentIndex === cardsInColumn.length - 1) {
+      setContextMenu(null);
+      return;
+    }
+
+    // Optimistic update - move card to bottom of its column
+    setCards(prevCards => {
+      const filtered = prevCards.filter(c => c.id !== card.id);
+      const sameStatus = filtered.filter(c => c.status === card.status);
+      const otherCards = filtered.filter(c => c.status !== card.status);
+      return [...sameStatus, card, ...otherCards];
+    });
+
+    setContextMenu(null);
+    // TODO: Implement API call to persist new order
+  };
+
+  const handleDelete = async () => {
+    if (!contextMenu) return;
+    const card = contextMenu.card;
+    
+    if (!window.confirm(`Are you sure you want to delete "${card.title}"?`)) {
+      setContextMenu(null);
+      return;
+    }
+
+    // Optimistic update
+    setCards(prevCards => prevCards.filter(c => c.id !== card.id));
+    setContextMenu(null);
+
+    try {
+      const response = await fetch(`/api/v1/stacks/stories/${card.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        // Revert on failure
+        setCards(prevCards => {
+          const index = prevCards.findIndex(c => c.status === card.status);
+          const newCards = [...prevCards];
+          newCards.splice(index, 0, card);
+          return newCards;
+        });
+        console.error('Failed to delete card:', await response.text());
+      } else {
+        console.log(`Successfully deleted card ${card.title}`);
+      }
+    } catch (error) {
+      // Revert on error
+      setCards(prevCards => {
+        const index = prevCards.findIndex(c => c.status === card.status);
+        const newCards = [...prevCards];
+        newCards.splice(index, 0, card);
+        return newCards;
+      });
+      console.error('Error deleting card:', error);
+    }
+  };
+
   // Always show board structure immediately to prevent loading glitch
 
   return (
@@ -652,19 +810,6 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                       const letterSuffix = getLetterSuffix(index);
                       const displayNumber = `${columnNumber}${letterSuffix}`;
                       
-                      // Get view type icon
-                      const getViewTypeIcon = () => {
-                        const viewType = card.viewType || 'main';
-                        switch (viewType) {
-                          case 'list':
-                            return <ListBulletIcon className="h-3.5 w-3.5" />;
-                          case 'grid':
-                            return <TableCellsIcon className="h-3.5 w-3.5" />;
-                          default:
-                            return <Squares2X2Icon className="h-3.5 w-3.5" />;
-                        }
-                      };
-                      
                       return (
                       <div
                         key={card.id}
@@ -675,18 +820,14 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         onDragStart={(e) => handleDragStart(e, card)}
                         onDragEnd={handleDragEnd}
                         onClick={() => onCardClick?.(card)}
+                        onContextMenu={(e) => handleContextMenu(e, card)}
                       >
                         {/* Rank number in top left */}
                         <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-[12px] flex items-center justify-center text-xs font-bold flex-shrink-0 shrink-0">
                           {displayNumber}
                         </div>
                         
-                        {/* View type icon in top right */}
-                        <div className="absolute top-2 right-2 w-5 h-5 bg-[var(--panel-background)] text-[var(--muted)] rounded flex items-center justify-center flex-shrink-0 shrink-0">
-                          {getViewTypeIcon()}
-                        </div>
-                        
-                        <div className="mb-2 ml-8 mr-8">
+                        <div className="mb-2 ml-8">
                           <h4 className="font-medium text-[var(--foreground)] text-sm leading-tight mb-1">
                             {card.title}
                           </h4>
@@ -708,6 +849,9 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         
                         <div className="flex justify-between items-center text-xs text-[var(--muted)]">
                           <div className="flex items-center gap-2">
+                            <span className="bg-[var(--panel-background)] text-[var(--muted)] px-2 py-1 rounded text-xs">
+                              {card.viewType === 'list' ? 'List' : card.viewType === 'grid' ? 'Grid' : 'Main'}
+                            </span>
                             {card.timeInStatus !== undefined && card.timeInStatus >= 3 && (
                               <span className="bg-[var(--error-bg)] text-[var(--error-text)] px-2 py-1 rounded text-xs font-medium">
                                 {card.timeInStatus === 1 ? '1 Day' : `${card.timeInStatus} Days`}
@@ -757,6 +901,20 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         );
       })}
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <StacksContextMenu
+          isVisible={true}
+          position={{ x: contextMenu.x, y: contextMenu.y }}
+          onClose={() => setContextMenu(null)}
+          onMoveToTop={handleMoveToTop}
+          onMoveUp={handleMoveUp}
+          onMoveDown={handleMoveDown}
+          onMoveToBottom={handleMoveToBottom}
+          onDelete={handleDelete}
+        />
+      )}
     </>
   );
 }

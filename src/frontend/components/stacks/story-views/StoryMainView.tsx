@@ -3,25 +3,49 @@
 /**
  * Story Main View
  * 
- * Standard record view similar to lead records - simple and clean
+ * Standard record view similar to lead records - simple and clean with inline editing
  */
 
-import React from 'react';
-import { 
-  TagIcon, 
-  UserIcon, 
-  CalendarIcon,
-  DocumentTextIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  ExclamationTriangleIcon
-} from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react';
+import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 
 interface StoryMainViewProps {
   story: any;
 }
 
-export function StoryMainView({ story }: StoryMainViewProps) {
+export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
+  const [story, setStory] = useState(initialStory);
+
+  // Update story when prop changes
+  useEffect(() => {
+    setStory(initialStory);
+  }, [initialStory]);
+
+  const handleSave = async (field: string, value: string | any, recordId: string, recordType: string) => {
+    try {
+      const response = await fetch(`/api/v1/stacks/stories/${recordId}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          [field]: value
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStory(data.story);
+      } else {
+        console.error('Failed to update story:', await response.text());
+        throw new Error('Failed to update story');
+      }
+    } catch (error) {
+      console.error('Error updating story:', error);
+      throw error;
+    }
+  };
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Not set';
     return new Date(dateString).toLocaleDateString('en-US', { 
@@ -31,27 +55,6 @@ export function StoryMainView({ story }: StoryMainViewProps) {
     });
   };
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case 'up-next': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'in-progress': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'qa1': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'qa2': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'built': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'shipped': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      default: return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-    }
-  };
-
-  const getPriorityColor = (priority?: string) => {
-    switch (priority) {
-      case 'urgent': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'high': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'medium': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      case 'low': return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-      default: return 'bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]';
-    }
-  };
 
   return (
     <div className="h-full overflow-y-auto p-6">
@@ -65,24 +68,60 @@ export function StoryMainView({ story }: StoryMainViewProps) {
             <div className="space-y-4">
               <div>
                 <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Title</label>
-                <div className="text-sm text-[var(--foreground)] mt-1">{story.title || 'Not provided'}</div>
+                <div className="mt-1">
+                  <InlineEditField
+                    value={story.title || ''}
+                    field="title"
+                    recordId={story.id}
+                    recordType="stacks"
+                    placeholder="Enter title"
+                    onSave={handleSave}
+                    className="text-sm font-medium text-[var(--foreground)]"
+                  />
+                </div>
               </div>
               
               <div>
                 <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Status</label>
                 <div className="mt-1">
-                  <span className={`inline-block px-3 py-1 text-sm font-medium rounded border ${getStatusColor(story.status)}`}>
-                    {story.status || 'Not set'}
-                  </span>
+                  <InlineEditField
+                    value={story.status || ''}
+                    field="status"
+                    recordId={story.id}
+                    recordType="stacks"
+                    inputType="select"
+                    options={[
+                      { value: 'up-next', label: 'Up Next' },
+                      { value: 'in-progress', label: 'In Progress' },
+                      { value: 'built', label: 'Built' },
+                      { value: 'qa1', label: 'QA1' },
+                      { value: 'qa2', label: 'QA2' },
+                      { value: 'shipped', label: 'Shipped' }
+                    ]}
+                    onSave={handleSave}
+                    className="text-sm font-medium"
+                  />
                 </div>
               </div>
               
               <div>
                 <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Priority</label>
                 <div className="mt-1">
-                  <span className={`inline-block px-3 py-1 text-sm font-medium rounded border ${getPriorityColor(story.priority)}`}>
-                    {story.priority || 'Not set'}
-                  </span>
+                  <InlineEditField
+                    value={story.priority || ''}
+                    field="priority"
+                    recordId={story.id}
+                    recordType="stacks"
+                    inputType="select"
+                    options={[
+                      { value: 'low', label: 'Low' },
+                      { value: 'medium', label: 'Medium' },
+                      { value: 'high', label: 'High' },
+                      { value: 'urgent', label: 'Urgent' }
+                    ]}
+                    onSave={handleSave}
+                    className="text-sm font-medium"
+                  />
                 </div>
               </div>
 
@@ -103,16 +142,16 @@ export function StoryMainView({ story }: StoryMainViewProps) {
 
             {/* Right Column */}
             <div className="space-y-4">
-              {story.assignee && (
-                <div>
-                  <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Assignee</label>
-                  <div className="text-sm text-[var(--foreground)] mt-1">
-                    {typeof story.assignee === 'object' 
-                      ? `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || story.assignee.name || story.assignee.email
-                      : story.assignee}
-                  </div>
+              <div>
+                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Assignee</label>
+                <div className="text-sm text-[var(--foreground)] mt-1">
+                  {story.assignee 
+                    ? (typeof story.assignee === 'object' 
+                      ? story.assignee.name || `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || story.assignee.email
+                      : story.assignee)
+                    : 'Unassigned'}
                 </div>
-              )}
+              </div>
               
               <div>
                 <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Created</label>
@@ -146,14 +185,21 @@ export function StoryMainView({ story }: StoryMainViewProps) {
         </div>
 
         {/* Description Section */}
-        {story.description && (
-          <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6">
-            <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2 mb-4">Description</h3>
-            <div className="text-sm text-[var(--foreground)] whitespace-pre-wrap">
-              {story.description}
-            </div>
+        <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6">
+          <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2 mb-4">Description</h3>
+          <div className="mt-1">
+            <InlineEditField
+              value={story.description || ''}
+              field="description"
+              recordId={story.id}
+              recordType="stacks"
+              type="textarea"
+              placeholder="Enter description"
+              onSave={handleSave}
+              className="text-sm text-[var(--foreground)] whitespace-pre-wrap"
+            />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

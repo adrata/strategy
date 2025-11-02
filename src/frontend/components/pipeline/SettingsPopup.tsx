@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
+import { PRESET_TEMPLATES, getPresetTemplate, type PresetTemplateId } from '@/platform/ui/components/daily100Presets';
 import { ThemePicker } from '@/platform/ui/components/ThemePicker';
 import { 
   XMarkIcon, 
@@ -51,7 +52,7 @@ interface WorkspaceContext {
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   const { user } = useUnifiedAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme' | 'daily100'>('profile');
   const [loading, setLoading] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   
@@ -91,6 +92,9 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
     new: false,
     confirm: false
   });
+  
+  // Daily 100 settings
+  const [daily100Preset, setDaily100Preset] = useState<PresetTemplateId>('elite-seller');
   const [passwordMessage, setPasswordMessage] = useState<{
     type: 'success' | 'error' | null;
     text: string;
@@ -148,10 +152,45 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
       } else {
         console.error('❌ SettingsPopup: HTTP error loading settings:', userResponse.status);
       }
+      
+      // Load Daily 100 preset preference
+      if (user?.id) {
+        const workspaceId = user.activeWorkspaceId || '';
+        const presetKey = `daily100-preset-${user.id}-${workspaceId}`;
+        try {
+          const savedPreset = localStorage.getItem(presetKey);
+          if (savedPreset) {
+            const parsed = JSON.parse(savedPreset);
+            if (typeof parsed === 'string' && ['elite-seller', 'pipeline-builder', 'relationship-builder', 'growth-mindset', 'balanced', 'custom-only'].includes(parsed)) {
+              setDaily100Preset(parsed as PresetTemplateId);
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to load Daily 100 preset:', error);
+        }
+      }
     } catch (error) {
       console.error('❌ SettingsPopup: Error loading settings:', error);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const saveDaily100Preset = () => {
+    if (!user?.id) return;
+    
+    const workspaceId = user.activeWorkspaceId || '';
+    const presetKey = `daily100-preset-${user.id}-${workspaceId}`;
+    
+    try {
+      localStorage.setItem(presetKey, JSON.stringify(daily100Preset));
+      console.log('✅ Saved Daily 100 preset:', daily100Preset);
+      // Trigger page reload to apply new preset (or could use a refresh mechanism)
+      // For now, we'll just save and show success
+      alert('Daily 100 preset saved! Changes will take effect on your next visit to the Action List.');
+    } catch (error) {
+      console.error('Failed to save Daily 100 preset:', error);
+      alert('Failed to save preset. Please try again.');
     }
   };
 
@@ -325,6 +364,16 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               >
                 Notifications
               </button>
+              <button
+                onClick={() => setActiveTab('daily100')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'daily100'
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                }`}
+              >
+                Daily 100
+              </button>
             </nav>
           </div>
 
@@ -352,6 +401,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                   {activeTab === 'security' && 'Security'}
                   {activeTab === 'notifications' && 'Notifications'}
                   {activeTab === 'theme' && 'Theme'}
+                  {activeTab === 'daily100' && 'Daily 100'}
                 </span>
               </div>
               <button
@@ -654,6 +704,79 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          ) : activeTab === 'daily100' ? (
+            <div className="space-y-6">
+              {/* Daily 100 Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                  Daily 100 Preset
+                </h3>
+                <p className="text-sm text-[var(--muted)] mb-6">
+                  Choose your daily checklist template. Your preset items reset each day, while custom items persist.
+                </p>
+                
+                <div className="space-y-3">
+                  {PRESET_TEMPLATES.map((preset) => (
+                    <label
+                      key={preset.id}
+                      className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        daily100Preset === preset.id
+                          ? 'border-[var(--accent)] bg-[var(--accent)]/5'
+                          : 'border-[var(--border)] hover:border-[var(--accent)]/50'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="daily100-preset"
+                        value={preset.id}
+                        checked={daily100Preset === preset.id}
+                        onChange={() => setDaily100Preset(preset.id)}
+                        className="mt-1 w-4 h-4 border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)] focus:ring-2"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="text-sm font-semibold text-[var(--foreground)]">
+                            {preset.name}
+                          </h4>
+                          {daily100Preset === preset.id && (
+                            <span className="text-xs px-2 py-0.5 rounded bg-[var(--accent)] text-white">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-[var(--muted)] mb-3">
+                          {preset.description}
+                        </p>
+                        {preset.items.length > 0 && (
+                          <ul className="space-y-1.5 mt-2">
+                            {preset.items.map((item) => (
+                              <li key={item.id} className="text-xs text-[var(--muted)] flex items-start gap-2">
+                                <span className="mt-0.5">•</span>
+                                <span>{item.text}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {preset.items.length === 0 && (
+                          <p className="text-xs text-[var(--muted)] italic">
+                            Create your own daily items
+                          </p>
+                        )}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    onClick={saveDaily100Preset}
+                    className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+                  >
+                    Save Preset
+                  </button>
+                </div>
               </div>
             </div>
           ) : activeTab === 'notifications' ? (

@@ -11,17 +11,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Squares2X2Icon, 
-  ListBulletIcon, 
-  TableCellsIcon,
-  ArrowLeftIcon,
-  XMarkIcon
+  ArrowLeftIcon
 } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { StoryMainView } from './story-views/StoryMainView';
-import { StoryListView } from './story-views/StoryListView';
-import { StoryGridView } from './story-views/StoryGridView';
 import { generateSlug, extractIdFromSlug } from '@/platform/utils/url-utils';
 
 interface StoryDetailViewProps {
@@ -29,13 +23,10 @@ interface StoryDetailViewProps {
   onClose?: () => void;
 }
 
-type ViewType = 'main' | 'list' | 'grid';
-
 export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { ui } = useRevenueOS();
-  const [viewType, setViewType] = useState<ViewType>('main');
   const [story, setStory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [hasRedirected, setHasRedirected] = useState(false);
@@ -62,10 +53,6 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
           if (data.story) {
             console.log('✅ [StoryDetailView] Story loaded:', data.story);
             setStory(data.story);
-            
-            // Initialize view type from story data (default to 'main' if not set)
-            const savedViewType = data.story.viewType || 'main';
-            setViewType(savedViewType as ViewType);
             
             // Redirect to slugged URL if current URL is just an ID
             if (data.story.title && !hasRedirected) {
@@ -115,11 +102,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     }
   };
 
-  const viewButtons = [
-    { type: 'main' as ViewType, label: 'Main', icon: Squares2X2Icon },
-    { type: 'list' as ViewType, label: 'List', icon: ListBulletIcon },
-    { type: 'grid' as ViewType, label: 'Grid', icon: TableCellsIcon },
-  ];
+  // Removed view buttons - always use main view
 
   if (loading) {
     return (
@@ -146,8 +129,8 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
-        <div className="flex items-center justify-between mb-4">
+      <div className="flex-shrink-0 px-6 py-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={handleBack}
@@ -164,60 +147,12 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
               </p>
             </div>
           </div>
-          
-          {/* View Type Selector */}
-          <div className="flex items-center gap-2 bg-[var(--panel-background)] rounded-lg p-1 border border-[var(--border)]">
-            {viewButtons.map(({ type, label, icon: Icon }) => (
-              <button
-                key={type}
-                onClick={async () => {
-                  setViewType(type);
-                  // Save view type preference to database
-                  if (story?.id) {
-                    try {
-                      const response = await fetch(`/api/v1/stacks/stories/${story.id}`, {
-                        method: 'PATCH',
-                        credentials: 'include',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          viewType: type
-                        })
-                      });
-
-                      if (response.ok) {
-                        console.log(`✅ [StoryDetailView] Saved view type preference: ${type}`);
-                        // Update local story state
-                        setStory((prev: any) => ({ ...prev, viewType: type }));
-                      } else {
-                        console.error('Failed to save view type preference:', await response.text());
-                      }
-                    } catch (error) {
-                      console.error('Error saving view type preference:', error);
-                    }
-                  }
-                }}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                  viewType === type
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
-                }`}
-                title={`Switch to ${label} view`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
       {/* Content Area */}
       <div className="flex-1 overflow-hidden">
-        {viewType === 'main' && <StoryMainView story={story} />}
-        {viewType === 'list' && <StoryListView story={story} />}
-        {viewType === 'grid' && <StoryGridView story={story} />}
+        <StoryMainView story={story} />
       </div>
     </div>
   );

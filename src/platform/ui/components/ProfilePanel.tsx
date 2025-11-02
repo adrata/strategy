@@ -11,6 +11,7 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { useSettingsPopup } from "./SettingsPopupContext";
 import { useFeatureAccess } from "@/platform/ui/context/FeatureAccessProvider";
 import { useChecklist, type ChecklistItem } from "./useChecklist";
+import { getPresetTemplate, type PresetTemplateId } from "./daily100Presets";
 import {
   UserIcon,
   CogIcon,
@@ -23,10 +24,9 @@ import {
   ListBulletIcon,
   PlusIcon,
   ArrowRightOnRectangleIcon,
-  LinkIcon,
   DocumentTextIcon,
-  PresentationChartBarIcon,
-  CalendarIcon
+  CalendarIcon,
+  PuzzlePieceIcon
 } from "@heroicons/react/24/outline";
 import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -156,7 +156,7 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
           </div>
         )}
       </div>
-      {!isEditing && (
+      {!isEditing && item.itemType === 'custom' && (
         <div className="flex items-center gap-1">
           <button
             onClick={(e) => {
@@ -204,6 +204,13 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
           >
             <Trash2 className="w-4 h-4" />
           </button>
+        </div>
+      )}
+      {item.itemType === 'preset' && (
+        <div className="flex items-center">
+          <span className="text-xs text-[var(--muted-foreground)] px-2 py-0.5 rounded bg-[var(--hover-bg)]">
+            Daily 100
+          </span>
         </div>
       )}
     </div>
@@ -264,12 +271,16 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   // Action list hook
   const {
     items: checklistItems,
+    presetItems,
+    customItems,
     addItem,
     deleteItem,
     toggleItem,
     editItem,
     isLoading: checklistLoading,
-    error: checklistError
+    error: checklistError,
+    currentPreset,
+    lastResetDate
   } = useChecklist(userId, workspaceId);
 
   // Automatically detect current app from pathname if not provided
@@ -288,7 +299,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const currentApp = getCurrentAppFromPath();
   
   // State for view mode (main, action list, or calendar)
-  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar'>('main');
+  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar'>('calendar');
   const [previousViewMode, setPreviousViewMode] = useState<'main' | 'actionList'>('main');
   
   // State for action list input
@@ -574,37 +585,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => {
-              if (viewMode === 'calendar') {
-                setViewMode(previousViewMode);
-              } else {
-                const newMode = viewMode === 'main' ? 'actionList' : 'main';
-                setPreviousViewMode(newMode);
-                setViewMode(newMode);
-              }
-            }}
-            className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
-            title={viewMode === 'main' ? 'Show action list' : viewMode === 'calendar' ? 'Go back' : 'Go home'}
-          >
-            {viewMode === 'main' ? (
-              <ListBulletIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
-            ) : (
-              <HomeIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
-            )}
-          </button>
-          <button
-            onClick={() => {
-              setPreviousViewMode(viewMode === 'calendar' ? previousViewMode : (viewMode === 'main' ? 'main' : viewMode));
-              setViewMode('calendar');
-            }}
-            className={`p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors ${
-              viewMode === 'calendar' ? 'bg-[var(--hover-bg)]' : ''
-            }`}
-            title="Calendar"
-          >
-            <CalendarIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
-          </button>
-          <button
             onClick={onClose}
             className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
             title="Close panel"
@@ -614,10 +594,43 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         </div>
       </div>
 
+      {/* Calendar/Checklist Toggle */}
+      <div className="px-3 pt-3 pb-2 border-b border-[var(--border)]">
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setViewMode('calendar');
+            }}
+            className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${
+              viewMode === 'calendar'
+                ? 'bg-[var(--accent)] text-white shadow-sm'
+                : 'bg-[var(--hover-bg)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+            }`}
+          >
+            <CalendarIcon className="w-4 h-4 inline mr-2" />
+            Calendar
+          </button>
+          <button
+            onClick={() => {
+              setViewMode('actionList');
+              setTimeout(() => inputRef.current?.focus(), 100);
+            }}
+            className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${
+              viewMode === 'actionList'
+                ? 'bg-[var(--accent)] text-white shadow-sm'
+                : 'bg-[var(--hover-bg)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+            }`}
+          >
+            <ClipboardDocumentCheckIcon className="w-4 h-4 inline mr-2" />
+            Daily 100
+          </button>
+        </div>
+      </div>
+
       {/* App Navigation */}
-      <div className="flex-1 p-3 space-y-4">
+      <div className="flex-1 p-3 space-y-4 overflow-hidden flex flex-col">
         {/* Get Started Section */}
-        {(viewMode === 'main' || viewMode === 'actionList') && (
+        {viewMode === 'main' && (
           <div className="space-y-1">
             <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider px-3">
               Get Started
@@ -688,19 +701,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Stacks</span>
             </button>
 
-            {/* Olympus */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'olympus' 
-                  ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/olympus")}
-            >
-              <PresentationChartBarIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Olympus</span>
-            </button>
-
             {/* Grand Central */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -710,24 +710,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               }`}
               onClick={() => handleNavigation("/grand-central")}
             >
-              <LinkIcon className="w-4 h-4 mr-3" />
+              <PuzzlePieceIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Grand Central</span>
-            </button>
-
-            {/* Calendar */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                viewMode === 'calendar'
-                  ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => {
-                setPreviousViewMode(viewMode === 'calendar' ? previousViewMode : (viewMode === 'actionList' ? 'actionList' : 'main'));
-                setViewMode('calendar');
-              }}
-            >
-              <CalendarIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Calendar</span>
             </button>
 
             {/* Settings */}
@@ -760,40 +744,97 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
         {/* Calendar Section */}
         {viewMode === 'calendar' && (
-          <div className="h-full flex flex-col">
-            <CalendarView onClose={() => setViewMode(previousViewMode)} />
+          <div className="h-full flex flex-col flex-1 min-h-0">
+            <CalendarView onClose={() => setViewMode('actionList')} />
           </div>
         )}
 
         {/* Action List Section */}
         {viewMode === 'actionList' && (
-          <div className="space-y-2 flex flex-col h-full">
+          <div className="space-y-2 flex flex-col flex-1 min-h-0">
             <div className="flex items-center justify-between px-3">
-              <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
-                Action List
-              </h4>
-              <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
-                {completedCount > 0 && (
-                  <button
-                    onClick={() => {
-                      setShowOnlyCompleted(!showOnlyCompleted);
-                      setShowAllItems(false);
-                    }}
-                    className={`font-medium hover:text-[var(--foreground)] cursor-pointer transition-colors ${
-                      showOnlyCompleted ? 'text-[var(--foreground)]' : ''
-                    }`}
-                    title={showOnlyCompleted ? "Show all items" : "Show only completed items"}
-                  >
-                    {completedCount} {showOnlyCompleted ? 'all time completed' : 'completed'}
-                  </button>
-                )}
-                {!showOnlyCompleted && remainingCount > 0 && (
-                  <span>
-                    {remainingCount} remaining
-                  </span>
+              <div className="flex flex-col">
+                <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
+                  Daily 100
+                </h4>
+                {currentPreset !== 'custom-only' && (() => {
+                  const preset = getPresetTemplate(currentPreset);
+                  return preset ? (
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                      {preset.name}
+                    </p>
+                  ) : null;
+                })()}
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+                  {completedCount > 0 && (
+                    <button
+                      onClick={() => {
+                        setShowOnlyCompleted(!showOnlyCompleted);
+                        setShowAllItems(false);
+                      }}
+                      className={`font-medium hover:text-[var(--foreground)] cursor-pointer transition-colors ${
+                        showOnlyCompleted ? 'text-[var(--foreground)]' : ''
+                      }`}
+                      title={showOnlyCompleted ? "Show all items" : "Show only completed items"}
+                    >
+                      {completedCount} {showOnlyCompleted ? 'all time completed' : 'completed'}
+                    </button>
+                  )}
+                  {!showOnlyCompleted && remainingCount > 0 && (
+                    <span>
+                      {remainingCount} remaining
+                    </span>
+                  )}
+                </div>
+                {lastResetDate && (
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    Resets daily
+                  </p>
                 )}
               </div>
             </div>
+
+            {/* Add Item Input - Fixed at top above scrollable area */}
+            {!showOnlyCompleted && (
+              <div className="px-3 pb-3 flex-shrink-0 border-b border-[var(--border)]">
+                <div className="flex gap-2 items-center">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={newItemText}
+                    onChange={(e) => setNewItemText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddItem();
+                      } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        setNewItemText('');
+                        inputRef.current?.blur();
+                      }
+                    }}
+                    placeholder="Add a task..."
+                    className="flex-1 px-4 py-3 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/50 focus:border-[var(--accent)] transition-all shadow-sm hover:shadow-md"
+                    aria-label="Add action list item"
+                    aria-describedby="action-list-input-help"
+                  />
+                  <button
+                    onClick={handleAddItem}
+                    disabled={!newItemText.trim()}
+                    className="p-3 bg-[var(--accent)] text-white rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-sm hover:shadow-md disabled:shadow-none"
+                    aria-label="Add item to action list"
+                    title="Add item (Enter)"
+                  >
+                    <PlusIcon className="w-5 h-5" />
+                  </button>
+                </div>
+                <p id="action-list-input-help" className="sr-only">
+                  Type an item and press Enter or click Add to add it to your action list. Press Escape to clear.
+                </p>
+              </div>
+            )}
 
             {/* Error Message */}
             {checklistError && (
@@ -802,9 +843,9 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               </div>
             )}
 
-            {/* Action List Items */}
+            {/* Action List Items - Scrollable */}
             <div 
-              className="flex-1 overflow-y-auto space-y-1"
+              className="flex-1 overflow-y-auto space-y-1 min-h-0"
               role="list"
               aria-label="Action list items"
               aria-live="polite"
@@ -823,7 +864,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     No action items yet
                   </p>
                   <p className="text-xs text-[var(--muted-foreground)]">
-                    Add your first item below
+                    Type above to add your first item
                   </p>
                 </div>
               ) : showOnlyCompleted && completedItems.length === 0 ? (
@@ -839,54 +880,67 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   </p>
                 </div>
               ) : (
-                (showOnlyCompleted 
-                  ? completedItems 
-                  : showAllItems 
-                    ? checklistItems 
-                    : activeItems
-                ).map((item) => (
-                    <ChecklistItemComponent
-                      key={item.id}
-                      item={item}
-                      onToggle={handleToggleItem}
-                      onDelete={handleDeleteItem}
-                      onEdit={handleEditItem}
-                      isRemoving={removingItemIds.has(item.id)}
-                    />
-                  ))
+                <>
+                  {/* Preset Items Section */}
+                  {!showOnlyCompleted && presetItems.length > 0 && (
+                    <div className="space-y-1">
+                      {presetItems.map((item) => (
+                        <ChecklistItemComponent
+                          key={item.id}
+                          item={item}
+                          onToggle={handleToggleItem}
+                          onDelete={handleDeleteItem}
+                          onEdit={handleEditItem}
+                          isRemoving={removingItemIds.has(item.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Custom Items Section */}
+                  {customItems.length > 0 && (
+                    <div className={`space-y-1 ${presetItems.length > 0 ? 'mt-3 pt-3 border-t border-[var(--border)]' : ''}`}>
+                      {!showOnlyCompleted && (
+                        <p className="px-3 text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
+                          Custom Items
+                        </p>
+                      )}
+                      {(showOnlyCompleted 
+                        ? customItems.filter(item => item.completed)
+                        : showAllItems 
+                          ? customItems 
+                          : customItems.filter(item => !item.completed)
+                      ).map((item) => (
+                        <ChecklistItemComponent
+                          key={item.id}
+                          item={item}
+                          onToggle={handleToggleItem}
+                          onDelete={handleDeleteItem}
+                          onEdit={handleEditItem}
+                          isRemoving={removingItemIds.has(item.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Show completed preset items if showing only completed */}
+                  {showOnlyCompleted && presetItems.length > 0 && (
+                    <div className="space-y-1">
+                      {presetItems.filter(item => item.completed).map((item) => (
+                        <ChecklistItemComponent
+                          key={item.id}
+                          item={item}
+                          onToggle={handleToggleItem}
+                          onDelete={handleDeleteItem}
+                          onEdit={handleEditItem}
+                          isRemoving={removingItemIds.has(item.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
-          </div>
-        )}
-
-        {/* Add Item Input - Positioned above Desktop Download */}
-        {viewMode === 'actionList' && (
-          <div className="px-3 pt-2 pb-3">
-            <div className="flex items-center gap-1">
-              <input
-                ref={inputRef}
-                type="text"
-                value={newItemText}
-                onChange={(e) => setNewItemText(e.target.value)}
-                onKeyDown={handleInputKeyDown}
-                placeholder="Add item..."
-                className="flex-1 px-2 py-1.5 text-sm border border-[var(--border)]/50 rounded-md bg-transparent text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-slate-500/30 focus:border-slate-500/70 transition-all"
-                aria-label="Add action list item"
-                aria-describedby="action-list-input-help"
-              />
-              <button
-                onClick={handleAddItem}
-                disabled={!newItemText.trim()}
-                className="p-1.5 border border-[var(--border)]/50 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]/50 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[32px]"
-                aria-label="Add item to action list"
-                title="Add item (Enter)"
-              >
-                <PlusIcon className="w-4 h-4" />
-              </button>
-            </div>
-            <p id="action-list-input-help" className="sr-only">
-              Type an item and press Enter or click Add to add it to your action list
-            </p>
           </div>
         )}
       </div>

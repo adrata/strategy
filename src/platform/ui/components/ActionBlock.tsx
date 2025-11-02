@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   PlayIcon,
   CheckCircleIcon,
@@ -19,9 +19,10 @@ interface ActionBlockProps {
   onDelete: () => void;
   isDragging?: boolean;
   style?: React.CSSProperties;
+  onResizeStart?: (edge: "top" | "bottom", e: React.MouseEvent) => void;
 }
 
-export function ActionBlockComponent({
+export const ActionBlockComponent = React.memo(function ActionBlockComponent({
   block,
   onExecute,
   onComplete,
@@ -29,6 +30,7 @@ export function ActionBlockComponent({
   onDelete,
   isDragging = false,
   style,
+  onResizeStart,
 }: ActionBlockProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -73,18 +75,61 @@ export function ActionBlockComponent({
     return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
   };
 
+  const handleResizeMouseDown = useCallback(
+    (edge: "top" | "bottom", e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (onResizeStart) {
+        onResizeStart(edge, e);
+      }
+    },
+    [onResizeStart]
+  );
+
   return (
     <div
       style={style}
       className={`
-        relative w-full rounded-lg border-2 p-2 cursor-pointer transition-all
+        relative w-full rounded-lg border-2 p-2 transition-all
         ${getStatusColor()}
-        ${isDragging ? "opacity-50 scale-95" : ""}
-        ${isHovered ? "shadow-lg scale-[1.02]" : "shadow-sm"}
+        ${isDragging ? "opacity-50 scale-95 shadow-lg" : ""}
+        ${isHovered && !isDragging ? "shadow-lg scale-[1.02]" : "shadow-sm"}
+        ${!isDragging ? "cursor-move" : ""}
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      role="button"
+      tabIndex={0}
+      aria-label={`${block.title}, ${block.startTime} to ${block.endTime}`}
     >
+      {/* Resize handles - visible on hover */}
+      {onResizeStart && !isDragging && (
+        <>
+          {/* Top resize handle */}
+          <div
+            className={`absolute top-0 left-0 right-0 h-2 cursor-n-resize rounded-t-lg transition-opacity ${
+              isHovered ? "opacity-100 bg-blue-500/30 hover:bg-blue-500/50" : "opacity-0"
+            }`}
+            onMouseDown={(e) => handleResizeMouseDown("top", e)}
+            role="separator"
+            aria-label="Resize event start time"
+            aria-orientation="horizontal"
+            title="Drag to change start time"
+          />
+          {/* Bottom resize handle */}
+          <div
+            className={`absolute bottom-0 left-0 right-0 h-2 cursor-s-resize rounded-b-lg transition-opacity ${
+              isHovered ? "opacity-100 bg-blue-500/30 hover:bg-blue-500/50" : "opacity-0"
+            }`}
+            onMouseDown={(e) => handleResizeMouseDown("bottom", e)}
+            role="separator"
+            aria-label="Resize event end time"
+            aria-orientation="horizontal"
+            title="Drag to change end time"
+          />
+        </>
+      )}
+
       {/* Status indicator */}
       <div className="flex items-start justify-between mb-1">
         <div className="flex items-center gap-1.5 flex-1 min-w-0">
@@ -105,7 +150,7 @@ export function ActionBlockComponent({
         </div>
 
         {/* Action buttons - shown on hover */}
-        {isHovered && (
+        {isHovered && !isDragging && (
           <div className="flex items-center gap-1 flex-shrink-0">
             {block.status !== "completed" && (
               <>
@@ -117,6 +162,7 @@ export function ActionBlockComponent({
                     }}
                     className="p-1 hover:bg-white/20 rounded transition-colors"
                     title="Execute"
+                    aria-label="Start this event"
                   >
                     <PlayIcon className="w-3.5 h-3.5 text-blue-600" />
                   </button>
@@ -129,6 +175,7 @@ export function ActionBlockComponent({
                     }}
                     className="p-1 hover:bg-white/20 rounded transition-colors"
                     title="Complete"
+                    aria-label="Mark this event as complete"
                   >
                     <CheckCircleIcon className="w-3.5 h-3.5 text-green-600" />
                   </button>
@@ -140,6 +187,7 @@ export function ActionBlockComponent({
                   }}
                   className="p-1 hover:bg-white/20 rounded transition-colors"
                   title="Edit"
+                  aria-label="Edit this event"
                 >
                   <PencilIcon className="w-3.5 h-3.5 text-gray-600" />
                 </button>
@@ -152,6 +200,7 @@ export function ActionBlockComponent({
               }}
               className="p-1 hover:bg-white/20 rounded transition-colors"
               title="Delete"
+              aria-label="Delete this event"
             >
               <TrashIcon className="w-3.5 h-3.5 text-red-600" />
             </button>
@@ -161,11 +210,13 @@ export function ActionBlockComponent({
 
       {/* Time and duration */}
       <div className="flex items-center gap-2 text-xs text-gray-600">
-        <ClockIcon className="w-3 h-3" />
+        <ClockIcon className="w-3 h-3" aria-hidden="true" />
         <span>
           {block.startTime} - {block.endTime}
         </span>
-        <span className="text-gray-400">•</span>
+        <span className="text-gray-400" aria-hidden="true">
+          •
+        </span>
         <span>{formatDuration(durationMinutes)}</span>
       </div>
 
@@ -177,5 +228,4 @@ export function ActionBlockComponent({
       )}
     </div>
   );
-}
-
+});
