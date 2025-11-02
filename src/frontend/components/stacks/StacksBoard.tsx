@@ -246,17 +246,24 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
               stories: sellingStories.map((s: any) => ({ id: s.id, title: s.title, status: s.status }))
             });
             
-            // Filter out backlog items (todo status) - they belong in backlog view, not workstream board
-            // Workstream board should only show items that are actively in progress or beyond
+            // Workstream board should only show items with status 'up-next' in the "UP NEXT" column
+            // All other statuses (todo, in-progress, built, qa1, qa2, shipped, etc.) belong in backlog view
             const workstreamStories = sellingStories.filter((story: any) => {
-              // Exclude 'todo' status items - they belong in backlog
-              return story.status !== 'todo' && story.status !== null && story.status !== undefined;
+              // Only include items with status 'up-next'
+              return story.status === 'up-next';
             });
             
-            console.log('🔍 [StacksBoard] After filtering backlog items (todo):', {
+            console.log('🔍 [StacksBoard] After filtering for workstream (up-next only):', {
               before: sellingStories.length,
               after: workstreamStories.length,
-              removed: sellingStories.length - workstreamStories.length
+              removed: sellingStories.length - workstreamStories.length,
+              removedStatuses: sellingStories
+                .filter((s: any) => s.status !== 'up-next')
+                .reduce((acc: any, story: any) => {
+                  const status = story.status || 'null';
+                  acc[status] = (acc[status] || 0) + 1;
+                  return acc;
+                }, {})
             });
             
             // Log status distribution before conversion
