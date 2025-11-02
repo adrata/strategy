@@ -11,13 +11,34 @@ interface StacksContainerProps {
 }
 
 export function StacksContainer({ storyId }: StacksContainerProps) {
+  let stacksContext;
+  try {
+    stacksContext = useStacks();
+  } catch (error) {
+    console.error('Failed to access Stacks context:', error);
+    // Return error UI if context is not available
+    return (
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+        <div className="text-center">
+          <p className="text-[var(--muted)]">Failed to load Stacks. Please ensure StacksProvider is wrapping this component.</p>
+        </div>
+      </div>
+    );
+  }
+
   const {
     activeSubSection,
     selectedItem,
     isLoading,
     onSubSectionChange,
     onItemClick,
-  } = useStacks();
+  } = stacksContext || {
+    activeSubSection: 'stacks',
+    selectedItem: null,
+    isLoading: false,
+    onSubSectionChange: () => {},
+    onItemClick: () => {},
+  };
 
   const pathname = usePathname();
   const router = useRouter();
@@ -52,7 +73,7 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     }
     
     // New URL structure: /stacks/{category}/{section}
-    if (pathname.includes('/stacks/workstreams')) {
+    if (pathname.includes('/stacks/workstream')) {
       console.log('✅ [StacksContainer] Setting: workstream');
       onSubSectionChange('workstream');
     } else if (pathname.includes('/stacks/metrics')) {

@@ -34,7 +34,7 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   {
     id: 'workstream',
-    label: 'Workstreams',
+    label: 'Workstream',
     icon: QueueListIcon,
     description: 'Visual task management',
     getCount: (stats) => stats.active
@@ -188,7 +188,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     // Map section to URL path
     let urlPath = section;
     if (section === 'workstream') {
-      urlPath = 'workstreams';
+      urlPath = 'workstream';
     } else if (section === 'backlog') {
       urlPath = 'backlog';
     } else if (section === 'metrics') {
@@ -198,10 +198,10 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     router.push(`/${workspaceSlug}/stacks/${urlPath}`);
   };
 
-  // Update activeSubSection based on pathname (for workstreams URL)
+  // Update activeSubSection based on pathname (for workstream URL)
   useEffect(() => {
     // Only update if pathname explicitly includes these paths
-    if (pathname.includes('/stacks/workstreams') || pathname.includes('/workstreams')) {
+    if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
       if (activeSubSection !== 'workstream') {
         onSubSectionChange('workstream');
       }

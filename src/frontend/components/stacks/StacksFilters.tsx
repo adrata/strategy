@@ -50,7 +50,7 @@ const STATUS_OPTIONS = [
 ];
 
 const WORKSTREAM_OPTIONS = [
-  { value: 'all', label: 'All Workstreams' },
+  { value: 'all', label: 'All' },
   { value: 'Video', label: 'Video' },
   { value: 'Cold', label: 'Cold' },
   { value: 'Referral', label: 'Referral' },

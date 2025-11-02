@@ -437,6 +437,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Filter and sort items
   const filteredItems = items
     .filter(item => {
+      // Exclude deep-backlog items from regular backlog view
+      if (item.status === 'deep-backlog') {
+        return false;
+      }
+      
       // Search filter
       const matchesSearch = searchQuery === '' || 
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -838,6 +843,100 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     }
   };
 
+  const handleMoveToDeepBacklog = async () => {
+    if (!contextMenu.itemId) return;
+
+    const item = items.find(i => i.id === contextMenu.itemId);
+    if (!item) return;
+
+    // Change status to 'deep-backlog'
+    const newStatus = 'deep-backlog';
+
+    // Optimistic update
+    setItems(prevItems => 
+      prevItems.map(i => 
+        i.id === contextMenu.itemId ? { ...i, status: newStatus as any } : i
+      )
+    );
+
+    setContextMenu(prev => ({ ...prev, isVisible: false }));
+
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for updating story status');
+      return;
+    }
+
+    // Update via API
+    try {
+      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus
+        })
+      });
+
+      if (!response.ok) {
+        // Revert on failure
+        setItems(prevItems => 
+          prevItems.map(i => 
+            i.id === contextMenu.itemId ? { ...i, status: item.status } : i
+          )
+        );
+        console.error('Failed to update story status:', await response.text());
+      } else {
+        console.log(`Successfully moved ${item.title} to deep backlog`);
+        // Refresh the list to get updated data
+        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          if (data.stories && Array.isArray(data.stories)) {
+            const backlogItems = data.stories.map((story: any, index: number) => ({
+              id: story.id,
+              title: story.title,
+              description: story.description,
+              priority: story.priority,
+              status: story.status,
+              assignee: story.assignee?.name || story.assignee,
+              dueDate: story.dueDate,
+              tags: story.tags || [],
+              createdAt: story.createdAt,
+              updatedAt: story.updatedAt,
+              rank: index + 1
+            }));
+            setItems(backlogItems);
+          }
+        }
+      }
+    } catch (error) {
+      // Revert on error
+      setItems(prevItems => 
+        prevItems.map(i => 
+          i.id === contextMenu.itemId ? { ...i, status: item.status } : i
+        )
+      );
+      console.error('Error updating story status:', error);
+    }
+  };
+
   const closeContextMenu = () => {
     setContextMenu(prev => ({ ...prev, isVisible: false }));
   };
@@ -998,7 +1097,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             {itemsToDisplay.upNextItems.length > 0 && (
               <>
                 <div className="mb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-end gap-2" style={{ paddingBottom: '2px' }}>
                     <h3 className="text-sm font-semibold text-[var(--foreground)]">Up Next</h3>
                     <span className="text-xs text-[var(--muted)]">
                       {itemsToDisplay.upNextItems.length} {itemsToDisplay.upNextItems.length === 1 ? 'item' : 'items'}
@@ -1057,7 +1156,14 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
             {/* Divider Line */}
             {itemsToDisplay.upNextItems.length > 0 && itemsToDisplay.otherItems.length > 0 && (
-              <div className="border-t border-[var(--border)] my-6"></div>
+              <div className="relative my-8">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[var(--border)]"></div>
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-[var(--background)] px-2 text-xs text-[var(--muted)]">Below the Line</span>
+                </div>
+              </div>
             )}
 
             {/* Backlog Section */}
@@ -1131,6 +1237,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         onMoveToBottom={() => moveItem(contextMenu.itemId, 'bottom')}
         onMoveBelowTheLine={handleMoveBelowTheLine}
         showMoveBelowTheLine={contextMenu.isUpNext === true}
+        onMoveToDeepBacklog={handleMoveToDeepBacklog}
+        showMoveToDeepBacklog={contextMenu.isUpNext === false}
         onDelete={() => {
           // TODO: Implement delete functionality
           console.log('Delete item:', contextMenu.itemId);

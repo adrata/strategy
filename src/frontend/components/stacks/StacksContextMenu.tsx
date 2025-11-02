@@ -7,7 +7,8 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
   TrashIcon,
-  ArrowDownCircleIcon
+  ArrowDownCircleIcon,
+  ArchiveBoxIcon
 } from '@heroicons/react/24/outline';
 
 interface StacksContextMenuProps {
@@ -19,8 +20,10 @@ interface StacksContextMenuProps {
   onMoveDown: () => void;
   onMoveToBottom: () => void;
   onMoveBelowTheLine?: () => void;
+  onMoveToDeepBacklog?: () => void;
   onDelete: () => void;
   showMoveBelowTheLine?: boolean;
+  showMoveToDeepBacklog?: boolean;
 }
 
 export function StacksContextMenu({
@@ -32,10 +35,13 @@ export function StacksContextMenu({
   onMoveDown,
   onMoveToBottom,
   onMoveBelowTheLine,
+  onMoveToDeepBacklog,
   onDelete,
-  showMoveBelowTheLine = false
+  showMoveBelowTheLine = false,
+  showMoveToDeepBacklog = false
 }: StacksContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
+  const [adjustedPosition, setAdjustedPosition] = React.useState(position);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -60,6 +66,42 @@ export function StacksContextMenu({
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isVisible, onClose]);
+
+  // Adjust position to prevent menu from being cut off at bottom
+  useEffect(() => {
+    if (!isVisible || !menuRef.current) return;
+
+    const menuHeight = menuRef.current.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const padding = 10; // Padding from viewport edge
+
+    let adjustedY = position.y;
+
+    // Check if menu would be cut off at bottom
+    if (position.y + menuHeight + padding > windowHeight) {
+      // Flip menu upward
+      adjustedY = position.y - menuHeight;
+      
+      // If that would put it above the viewport, position at bottom with padding
+      if (adjustedY < padding) {
+        adjustedY = windowHeight - menuHeight - padding;
+      }
+    }
+
+    // Also check left/right boundaries
+    const menuWidth = menuRef.current.offsetWidth;
+    let adjustedX = position.x;
+    
+    if (position.x + menuWidth > window.innerWidth - padding) {
+      adjustedX = window.innerWidth - menuWidth - padding;
+    }
+    
+    if (adjustedX < padding) {
+      adjustedX = padding;
+    }
+
+    setAdjustedPosition({ x: adjustedX, y: adjustedY });
+  }, [isVisible, position]);
 
   if (!isVisible) return null;
 
@@ -95,6 +137,13 @@ export function StacksContextMenu({
       className: 'text-[var(--foreground)] hover:bg-[var(--hover)]',
       showDivider: true
     }] : []),
+    ...(showMoveToDeepBacklog && onMoveToDeepBacklog ? [{
+      label: 'Deep Backlog',
+      icon: ArchiveBoxIcon,
+      onClick: onMoveToDeepBacklog,
+      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]',
+      showDivider: true
+    }] : []),
     {
       label: 'Delete',
       icon: TrashIcon,
@@ -108,8 +157,8 @@ export function StacksContextMenu({
       ref={menuRef}
       className="fixed z-50 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]"
       style={{
-        left: position.x,
-        top: position.y,
+        left: adjustedPosition.x,
+        top: adjustedPosition.y,
       }}
     >
       {menuItems.map((item, index) => {

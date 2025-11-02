@@ -17,6 +17,11 @@ export function ShipButton() {
   const [shippedItems, setShippedItems] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // Early return if ui is not available
+  if (!ui) {
+    return null;
+  }
 
   useEffect(() => {
     const fetchShippedItems = async () => {

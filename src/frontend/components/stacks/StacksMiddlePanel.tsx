@@ -24,6 +24,7 @@ import { StacksFilters } from './StacksFilters';
 import { ShipButton } from './ShipButton';
 import { AddStacksModal } from './AddStacksModal';
 import { StoryDetailView } from './StoryDetailView';
+import { ErrorBoundary } from '@/frontend/components/ErrorBoundary';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
@@ -427,7 +428,7 @@ export function StacksMiddlePanel({
     switch (activeSubSection) {
       case 'workstream':
         return {
-          title: 'Workstreams',
+          title: 'Workstream',
           description: 'Visual task management board'
         };
       case 'backlog':
@@ -473,7 +474,9 @@ export function StacksMiddlePanel({
                   <PlusIcon className="h-4 w-4" />
                   Add Stacks
                 </button>
-                <ShipButton />
+                <ErrorBoundary>
+                  <ShipButton />
+                </ErrorBoundary>
             </div>
           </div>
 
@@ -508,7 +511,11 @@ export function StacksMiddlePanel({
 
   // Handle backlog section (both sell and build)
   if (activeSubSection === 'backlog' || activeSubSection === 'backlog-build') {
-    return <StacksBacklogTable onItemClick={onItemClick} />;
+    return (
+      <ErrorBoundary>
+        <StacksBacklogTable onItemClick={onItemClick} />
+      </ErrorBoundary>
+    );
   }
 
   // Handle metrics section
