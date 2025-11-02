@@ -12,6 +12,7 @@ import { useSettingsPopup } from "./SettingsPopupContext";
 import { useFeatureAccess } from "@/platform/ui/context/FeatureAccessProvider";
 import { useChecklist, type ChecklistItem } from "./useChecklist";
 import { getPresetTemplate, type PresetTemplateId } from "./daily100Presets";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import {
   UserIcon,
   CogIcon,
@@ -26,11 +27,16 @@ import {
   ArrowRightOnRectangleIcon,
   DocumentTextIcon,
   CalendarIcon,
-  PuzzlePieceIcon
+  PuzzlePieceIcon,
+  Bars3Icon,
+  ClockIcon,
+  CheckIcon,
+  ExclamationTriangleIcon
 } from "@heroicons/react/24/outline";
-import { Check, PanelLeft, Trash2, Pencil, Bars3Icon } from "lucide-react";
+import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 import { CalendarView } from "./CalendarView";
+import { NotesEditor } from "./NotesEditor";
 
 interface ProfilePanelProps {
   user: { name: string; lastName?: string };
@@ -265,6 +271,12 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const { signOut, isDesktop, user: authUser } = useUnifiedAuth();
   const { setIsSettingsOpen } = useSettingsPopup();
   const { hasDesktopDownload } = useFeatureAccess();
+  
+  // Get toggle left panel from context if not provided as prop
+  const revenueOSContext = useRevenueOS();
+  const toggleLeftPanel = onToggleLeftPanel || revenueOSContext?.ui?.toggleLeftPanel || (() => {
+    console.warn('Toggle left panel function not available');
+  });
 
   // Get userId and workspaceId for action list
   const userId = authUser?.id;
@@ -300,8 +312,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   // Use detected app or fallback to prop
   const currentApp = getCurrentAppFromPath();
   
-  // State for view mode (main, action list, or calendar)
-  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar'>('actionList');
+  // State for view mode (main, action list, calendar, or notes)
+  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar' | 'notes'>('actionList');
   const [previousViewMode, setPreviousViewMode] = useState<'main' | 'actionList'>('main');
   
   // State for action list input
@@ -310,6 +322,13 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const [showAllItems, setShowAllItems] = useState(false);
   const [showOnlyCompleted, setShowOnlyCompleted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // State for notes
+  const [notesContent, setNotesContent] = useState<string>('');
+  const [notesSearchQuery, setNotesSearchQuery] = useState<string>('');
+  const [notesSaveStatus, setNotesSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [notesLastSavedAt, setNotesLastSavedAt] = useState<Date | null>(null);
+  const notesEditorRef = useRef<HTMLTextAreaElement>(null);
   
   // State for sign out confirmation
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
@@ -344,16 +363,9 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   };
 
   const handleHomeClick = () => {
-    // Get current workspace from the URL
-    const currentPath = window.location.pathname;
-    const segments = currentPath.split('/').filter(Boolean);
-    const workspaceSlug = segments[0];
-    
-    // Navigate to workspace root
-    const homePath = workspaceSlug ? `/${workspaceSlug}` : '/';
-    console.log(`🏠 ProfilePanel: Navigating home to ${homePath}`);
-    router.push(homePath);
-    onClose();
+    // Show main view instead of navigating
+    console.log(`🏠 ProfilePanel: Showing main view`);
+    setViewMode('main');
   };
 
   const handleSignOutClick = () => {
@@ -437,6 +449,63 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [viewMode, isOpen]);
+
+  // Load notes when component mounts or workspace/user changes
+  useEffect(() => {
+    const loadNotes = async () => {
+      if (!authUser?.id || !workspaceId) return;
+      
+      try {
+        const response = await fetch(`/api/settings/user-notes?workspaceId=${workspaceId}&userId=${authUser.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.notes) {
+            setNotesContent(data.notes.content || '');
+            setNotesLastSavedAt(data.notes.updatedAt ? new Date(data.notes.updatedAt) : null);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load notes:', error);
+      }
+    };
+    
+    if (isOpen && viewMode === 'notes') {
+      loadNotes();
+    }
+  }, [isOpen, viewMode, authUser?.id, workspaceId]);
+
+  // Save notes function
+  const saveNotes = async (content: string) => {
+    if (!authUser?.id || !workspaceId) return;
+    
+    try {
+      setNotesSaveStatus('saving');
+      const response = await fetch('/api/settings/user-notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId,
+          userId: authUser.id,
+          content
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setNotesSaveStatus('saved');
+          setNotesLastSavedAt(new Date());
+        } else {
+          setNotesSaveStatus('error');
+        }
+      } else {
+        setNotesSaveStatus('error');
+      }
+    } catch (error) {
+      console.error('Failed to save notes:', error);
+      setNotesSaveStatus('error');
+    }
+  };
 
   // Resize functionality handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -609,52 +678,67 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           <div className="flex items-center gap-1">
             <button
               onClick={handleHomeClick}
-              className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-[var(--hover-bg)] text-[var(--foreground)] transition-colors"
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'main'
+                  ? 'bg-gray-100 text-[var(--foreground)]'
+                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
+              }`}
               title="Home"
               aria-label="Go to home"
             >
-              <HomeIcon className="w-4 h-4 inline mr-1.5" />
-              Home
+              <HomeIcon className="w-5 h-5" />
             </button>
             <button
               onClick={() => {
                 setViewMode('calendar');
               }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'calendar'
-                  ? 'bg-[var(--accent)] text-white shadow-sm'
-                  : 'hover:bg-[var(--hover-bg)] text-[var(--foreground)]'
+                  ? 'bg-gray-100 text-[var(--foreground)]'
+                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
               }`}
               title="Calendar"
+              aria-label="Calendar view"
             >
-              <CalendarIcon className="w-4 h-4 inline mr-1.5" />
-              Calendar
+              <CalendarIcon className="w-5 h-5" />
             </button>
             <button
               onClick={() => {
                 setViewMode('actionList');
                 setTimeout(() => inputRef.current?.focus(), 100);
               }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'actionList'
-                  ? 'bg-[var(--accent)] text-white shadow-sm'
-                  : 'hover:bg-[var(--hover-bg)] text-[var(--foreground)]'
+                  ? 'bg-gray-100 text-[var(--foreground)]'
+                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
               }`}
               title="Daily 100 Checklist"
+              aria-label="Action list"
             >
-              <ClipboardDocumentCheckIcon className="w-4 h-4 inline mr-1.5" />
-              Checklist
+              <ListBulletIcon className="w-5 h-5" />
             </button>
-            {onToggleLeftPanel && (
-              <button
-                onClick={onToggleLeftPanel}
-                className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-[var(--hover-bg)] text-[var(--foreground)] transition-colors"
-                title="Toggle left panel"
-              >
-                <Bars3Icon className="w-4 h-4 inline mr-1.5" />
-                Left panel
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setViewMode('notes');
+              }}
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'notes'
+                  ? 'bg-gray-100 text-[var(--foreground)]'
+                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
+              }`}
+              title="Notes"
+              aria-label="Notes"
+            >
+              <DocumentTextIcon className="w-5 h-5" />
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-md bg-transparent hover:bg-gray-50 text-[var(--foreground)] transition-colors"
+              title="Hide profile panel"
+              aria-label="Hide profile panel"
+            >
+              <PanelLeft className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
@@ -778,6 +862,65 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         {viewMode === 'calendar' && (
           <div className="h-full flex flex-col flex-1 min-h-0">
             <CalendarView onClose={() => setViewMode('actionList')} />
+          </div>
+        )}
+
+        {/* Notes Section */}
+        {viewMode === 'notes' && (
+          <div className="h-full flex flex-col flex-1 min-h-0">
+            {/* Header with Notes title and status */}
+            <div className="flex items-center justify-between mb-4 px-1 flex-shrink-0">
+              <h2 className="text-xl font-semibold text-[var(--foreground)]" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
+                Notes
+              </h2>
+              <div className="flex items-center gap-2">
+                {notesSaveStatus === 'saving' ? (
+                  <>
+                    <ClockIcon className="w-4 h-4 text-gray-400 animate-spin" />
+                    <span className="text-sm font-medium text-gray-400">Saving...</span>
+                  </>
+                ) : notesSaveStatus === 'saved' && notesLastSavedAt ? (
+                  <>
+                    <CheckIcon className="w-4 h-4 text-green-500" />
+                    <span className="text-sm font-medium text-green-500">Start typing—auto-saved</span>
+                  </>
+                ) : notesSaveStatus === 'error' ? (
+                  <>
+                    <ExclamationTriangleIcon className="w-4 h-4 text-red-500" />
+                    <span className="text-sm font-medium text-red-500">Error saving</span>
+                  </>
+                ) : (
+                  <span className="text-sm font-medium text-gray-400">Start typing—auto-saved</span>
+                )}
+              </div>
+            </div>
+            
+            {/* Search Bar - Below Notes header and status */}
+            <div className="flex-shrink-0 px-1 pb-3 mb-2">
+              <input
+                type="text"
+                value={notesSearchQuery}
+                onChange={(e) => setNotesSearchQuery(e.target.value)}
+                placeholder="Search notes..."
+                className="w-full px-4 py-2 text-sm border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            
+            {/* Notes Editor - Endless scroll without header */}
+            <div className="flex-1 overflow-hidden">
+              <NotesEditor
+                value={notesContent}
+                onChange={setNotesContent}
+                placeholder="Start writing your notes here..."
+                autoSave={true}
+                saveStatus={notesSaveStatus}
+                onSave={saveNotes}
+                debounceMs={1000}
+                lastSavedAt={notesLastSavedAt}
+                className="h-full"
+                showHeader={false}
+              />
+            </div>
           </div>
         )}
 
