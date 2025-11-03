@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth-options';
 import { sampleChronicleReports } from '@/lib/chronicle-sample-data';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 export async function GET(
   request: NextRequest,

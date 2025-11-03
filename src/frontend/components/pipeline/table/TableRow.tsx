@@ -120,6 +120,14 @@ export function TableRow({
   const isCompleted = React.useMemo(() => {
     if (section !== 'speedrun') return false;
     
+    // Check if last action was today (same logic as PipelineTableRefactored)
+    if (record['lastActionDate']) {
+      const lastActionDate = new Date(record['lastActionDate']);
+      const today = new Date();
+      return lastActionDate.toDateString() === today.toDateString();
+    }
+    
+    // Fallback: check localStorage for done contacts
     if (typeof window !== 'undefined') {
       try {
         const today = new Date().toDateString();
@@ -132,7 +140,7 @@ export function TableRow({
       }
     }
     return false;
-  }, [section, record.id]);
+  }, [section, record.id, record['lastActionDate']]);
 
   const handleRowClick = () => {
     // For company leads, navigate to company detail page instead of person detail page
@@ -185,8 +193,10 @@ export function TableRow({
       <>
         <tr 
           key={record.id || index} 
-          className={`cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border ${
-            isCompleted ? 'bg-green-50 border-green-200' : ''
+          className={`cursor-pointer transition-colors h-table-row border-b relative ${
+            isCompleted 
+              ? 'bg-green-100 border-green-300 hover:bg-green-100' 
+              : 'hover:bg-panel-background border-border'
           }`}
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
@@ -217,22 +227,29 @@ export function TableRow({
                 let rankValue;
                 
                 if (section === 'speedrun') {
-                  // For speedrun, use globalRank for editing and display (1-50 per user)
-                  rankValue = record['globalRank'] || record['rank'] || (index + 1);
-                  
-                  // Show actual globalRank (1-50 per user)
-                  displayRank = record['globalRank'] || record['rank'] || (index + 1);
-                  
-                  // Add defensive check to prevent showing record IDs
-                  if (typeof displayRank !== 'number' || displayRank > 1000) {
-                    console.warn(`⚠️ [SPEEDRUN RANK] Suspicious rank value detected:`, {
-                      displayRank,
-                      recordId: record.id,
-                      globalRank: record['globalRank'],
-                      rank: record['rank'],
-                      index
-                    });
-                    displayRank = index + 1; // Force sequential ranking
+                  // Check if item is completed (show checkmark instead of rank)
+                  if (isCompleted) {
+                    // Show checkmark for completed items
+                    displayRank = '✓';
+                    rankValue = record['globalRank'] || record['rank'] || (index + 1);
+                  } else {
+                    // For speedrun, use globalRank for editing and display (1-50 per user)
+                    rankValue = record['globalRank'] || record['rank'] || (index + 1);
+                    
+                    // Show actual globalRank (1-50 per user)
+                    displayRank = record['globalRank'] || record['rank'] || (index + 1);
+                    
+                    // Add defensive check to prevent showing record IDs
+                    if (typeof displayRank !== 'number' || displayRank > 1000) {
+                      console.warn(`⚠️ [SPEEDRUN RANK] Suspicious rank value detected:`, {
+                        displayRank,
+                        recordId: record.id,
+                        globalRank: record['globalRank'],
+                        rank: record['rank'],
+                        index
+                      });
+                      displayRank = index + 1; // Force sequential ranking
+                    }
                   }
                 } else {
                   // For other sections, keep hierarchical ranking if available
@@ -1120,15 +1137,45 @@ export function TableRow({
     );
   }
 
-  // Default rendering for other sections
+  // Default rendering for other sections (including speedrun if not handled above)
     return (
       <>
         <tr
-          className="cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border"
+          className={`cursor-pointer transition-colors h-table-row border-b relative ${
+            section === 'speedrun' && isCompleted 
+              ? 'bg-green-100 border-green-300 hover:bg-green-100' 
+              : 'hover:bg-panel-background border-border'
+          }`}
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
         >
       {headers.map((header, index) => {
+        // Handle rank column specially for speedrun to show checkmark
+        if (section === 'speedrun' && header.toLowerCase() === 'rank') {
+          const isCompleted = (() => {
+            if (record['lastActionDate']) {
+              const lastActionDate = new Date(record['lastActionDate']);
+              const today = new Date();
+              return lastActionDate.toDateString() === today.toDateString();
+            }
+            return false;
+          })();
+          
+          const displayValue = isCompleted ? '✓' : String(record['globalRank'] || record['rank'] || (index + 1));
+          
+          return (
+            <TableCell
+              key={`${record.id}-${header}`}
+              value={displayValue}
+              field="globalRank"
+              recordId={record.id}
+              recordType={section}
+              className={textClasses}
+              onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+            />
+          );
+        }
+        
         const value = String(record[header.toLowerCase()] || record[header] || '-');
         return (
           <TableCell

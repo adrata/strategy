@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * POST /api/v1/auth/setup-account
  * Complete account setup with password using invitation token

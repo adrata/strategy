@@ -6,8 +6,8 @@ import { cache } from '@/platform/services/unified-cache';
 import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 import { isEngagementAction } from '@/platform/utils/actionUtils';
 
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+// Force dynamic rendering for API routes (required for authentication)
+export const dynamic = 'force-dynamic';
 
 const prisma = new PrismaClient();
 
@@ -20,6 +20,19 @@ const prisma = new PrismaClient();
 // GET /api/v1/actions - List actions with search and pagination
 export async function GET(request: NextRequest) {
   try {
+    // Log incoming headers for debugging
+    if (process.env.NODE_ENV === 'development') {
+      const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+      const cookieHeader = request.headers.get('cookie');
+      console.log('🔍 [ACTIONS API GET] Incoming request headers:', {
+        hasAuthorizationHeader: !!authHeader,
+        authorizationHeaderPrefix: authHeader ? authHeader.substring(0, 30) + '...' : 'none',
+        hasCookieHeader: !!cookieHeader,
+        cookieHeaderLength: cookieHeader ? cookieHeader.length : 0,
+        allHeaderNames: Array.from(request.headers.keys())
+      });
+    }
+    
     // Authenticate and authorize user using unified auth system
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
@@ -171,6 +184,20 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     console.log('🔄 [ACTIONS API] POST request received');
+    
+    // Log incoming headers for debugging
+    if (process.env.NODE_ENV === 'development') {
+      const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+      const cookieHeader = request.headers.get('cookie');
+      console.log('🔍 [ACTIONS API] Incoming request headers:', {
+        hasAuthorizationHeader: !!authHeader,
+        authorizationHeaderPrefix: authHeader ? authHeader.substring(0, 30) + '...' : 'none',
+        hasCookieHeader: !!cookieHeader,
+        cookieHeaderLength: cookieHeader ? cookieHeader.length : 0,
+        cookieHeaderPreview: cookieHeader ? cookieHeader.substring(0, 100) + '...' : 'none',
+        allHeaderNames: Array.from(request.headers.keys())
+      });
+    }
     
     // Authenticate and authorize user using unified auth system
     const { context, response } = await getSecureApiContext(request, {

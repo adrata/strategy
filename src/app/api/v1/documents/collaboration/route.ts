@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 
 // WebSocket server instance
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 let wss: WebSocketServer | null = null;
 

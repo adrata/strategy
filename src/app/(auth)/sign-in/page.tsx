@@ -13,6 +13,7 @@ export default function SignInPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
   const { signIn: authSignIn } = useUnifiedAuth();
@@ -20,7 +21,11 @@ export default function SignInPage() {
   // Optimized platform detection and logout cleanup (logging removed for performance)
 
   useEffect(() => {
+    // Set mounted state after component mounts to prevent hydration mismatch
+    setMounted(true);
+  }, []);
 
+  useEffect(() => {
     // CRITICAL: Ensure we're on the correct domain before anything else
     if (typeof window !== "undefined") {
       // 🆕 ENVIRONMENT-AWARE: Allow staging and production domains
@@ -49,26 +54,31 @@ export default function SignInPage() {
       localStorage.removeItem("adrata_logout_active");
       localStorage.removeItem("adrata_logout_session_id");
 
-      // Load remember me preference from cookies
-      const savedRememberMe = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("adrata_remember_me="))
-        ?.split("=")[1] === "true";
-      
-      const savedEmail = localStorage.getItem("adrata_remembered_email");
-      
-      if (savedRememberMe && savedEmail) {
-        // Just populate the email field - no auto-login for security
-        setEmail(savedEmail);
-        setRememberMe(true);
-        console.log("📧 [SIGN-IN PAGE] Populated remembered email");
-      }
-
       console.log(
         "✅ [SIGN-IN PAGE] Logout flags cleared - ready for fresh authentication",
       );
     }
   }, [router, authSignIn]);
+
+  // Initialize email from localStorage only after component mounts to prevent hydration mismatch
+  useEffect(() => {
+    if (!mounted || typeof window === "undefined") return;
+
+    // Load remember me preference from cookies
+    const savedRememberMe = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("adrata_remember_me="))
+      ?.split("=")[1] === "true";
+    
+    const savedEmail = localStorage.getItem("adrata_remembered_email");
+    
+    if (savedRememberMe && savedEmail) {
+      // Just populate the email field - no auto-login for security
+      setEmail(savedEmail);
+      setRememberMe(true);
+      console.log("📧 [SIGN-IN PAGE] Populated remembered email");
+    }
+  }, [mounted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,6 +240,7 @@ export default function SignInPage() {
               required
               disabled={isLoading}
               autoFocus
+              suppressHydrationWarning
             />
           </div>
 
@@ -247,6 +258,7 @@ export default function SignInPage() {
               placeholder="Enter your password"
               required
               disabled={isLoading}
+              suppressHydrationWarning
             />
           </div>
 
@@ -261,6 +273,7 @@ export default function SignInPage() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-black focus:ring-black border-border rounded"
                 disabled={isLoading}
+                suppressHydrationWarning
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                 Remember me
@@ -278,6 +291,7 @@ export default function SignInPage() {
             type="submit"
             disabled={isLoading}
             className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-black disabled:opacity-100"
+            suppressHydrationWarning
           >
             {isLoading ? "Starting..." : "Start"}
           </button>

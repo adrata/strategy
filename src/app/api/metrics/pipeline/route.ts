@@ -4,7 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 // 🚀 PERFORMANCE: Aggressive caching for metrics (rarely changes)
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const METRICS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const metricsCache = new Map<string, { data: any; timestamp: number }>();

@@ -36,7 +36,7 @@ export function useRecordTitle() {
                          pathname.startsWith("/support");
       
       if (isAuthPage) {
-        console.log('🔍 [RECORD TITLE] Skipping auth page:', pathname);
+        // Silently skip auth pages (no logging needed)
         setRecordData(null);
         return;
       }
@@ -46,23 +46,28 @@ export function useRecordTitle() {
       const section = pathParts[pathParts.length - 2];
       const slug = pathParts[pathParts.length - 1];
 
-      console.log('🔍 [RECORD TITLE] Pathname:', pathname);
-      console.log('🔍 [RECORD TITLE] Section:', section);
-      console.log('🔍 [RECORD TITLE] Slug:', slug);
-
       // Import the extractIdFromSlug function
       const { extractIdFromSlug } = await import('@/platform/utils/url-utils');
       const recordId = extractIdFromSlug(slug);
-      
-      console.log('🔍 [RECORD TITLE] Extracted Record ID:', recordId);
 
       // Check if this is a record detail page
       const isRecordPage = ['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'].includes(section);
       
       if (!isRecordPage || !recordId || !user?.activeWorkspaceId) {
-        console.log('🔍 [RECORD TITLE] Not a record page or missing data:', { isRecordPage, recordId, workspaceId: user?.activeWorkspaceId });
+        // Only log if we're actually on a potential record page (not just any non-record page)
+        if (isRecordPage && process.env.NODE_ENV === 'development') {
+          console.log('🔍 [RECORD TITLE] Not a record page or missing data:', { isRecordPage, recordId, workspaceId: user?.activeWorkspaceId });
+        }
         setRecordData(null);
         return;
+      }
+
+      // Only log when actually processing a record page
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 [RECORD TITLE] Pathname:', pathname);
+        console.log('🔍 [RECORD TITLE] Section:', section);
+        console.log('🔍 [RECORD TITLE] Slug:', slug);
+        console.log('🔍 [RECORD TITLE] Extracted Record ID:', recordId);
       }
 
       setIsLoading(true);

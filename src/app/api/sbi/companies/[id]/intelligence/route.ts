@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { CompanyIntelligenceGenerator, CoreSignalCompanyData } from '@/platform/services/company-intelligence-generator';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const prisma = new PrismaClient();
 

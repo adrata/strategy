@@ -211,12 +211,14 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
           current.adjustedScore > best.adjustedScore ? current : best
         );
         
-        console.log('🎯 Speech alternatives with context scoring:', scoredAlternatives.map(alt => ({
-          text: alt.transcript,
-          originalConfidence: alt.confidence,
-          adjustedScore: alt.adjustedScore,
-          selected: alt === bestAlternative
-        })));
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🎯 Speech alternatives with context scoring:', scoredAlternatives.map(alt => ({
+            text: alt.transcript,
+            originalConfidence: alt.confidence,
+            adjustedScore: alt.adjustedScore,
+            selected: alt === bestAlternative
+          })));
+        }
         
         if (result.isFinal) {
           finalTranscript += bestAlternative.transcript;
@@ -229,7 +231,9 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
           if (bestConfidence > confidenceThreshold) {
             finalTranscriptAccumulator += finalTranscript + ' ';
           } else {
-            console.warn(`⚠️ Low confidence result (${bestConfidence.toFixed(2)}) in ${audioQuality} audio - ignored`);
+            if (process.env.NODE_ENV === 'development') {
+              console.warn(`⚠️ Low confidence result (${bestConfidence.toFixed(2)}) in ${audioQuality} audio - ignored`);
+            }
           }
         } else {
           interimTranscript += bestAlternative.transcript;

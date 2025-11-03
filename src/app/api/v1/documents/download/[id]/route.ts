@@ -7,7 +7,7 @@ import { join } from 'path';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/workshop/download/[id]
  * Download a document file

@@ -83,7 +83,7 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
 }
 
 // 🚨 CRITICAL FIX: Force dynamic rendering to prevent caching issues
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 export const revalidate = 0;
 
 export async function GET(request: NextRequest) {

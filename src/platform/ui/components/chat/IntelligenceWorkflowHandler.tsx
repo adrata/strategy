@@ -35,7 +35,9 @@ export function IntelligenceWorkflowHandler({
       throw new Error('User authentication required');
     }
 
-    console.log('🧠 Processing intelligence request:', input);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🧠 Processing intelligence request:', input);
+    }
 
     try {
       // Initialize intelligent signal system
@@ -71,7 +73,9 @@ export function IntelligenceWorkflowHandler({
         workspaceId
       });
 
-      console.log('🎯 Processed request:', processed);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎯 Processed request:', processed);
+      }
 
       // Execute based on intent
       switch (processed.intent) {

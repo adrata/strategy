@@ -23,18 +23,24 @@ export function useWorkspaceSpeedrunSettings() {
     const loadSettings = async (retryAttempt = 0) => {
       // Don't attempt to load if auth is still loading or user is not authenticated
       if (authLoading || !isAuthenticated) {
-        console.log('🔍 [SPEEDRUN SETTINGS HOOK] Auth not ready:', { authLoading, isAuthenticated });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔍 [SPEEDRUN SETTINGS HOOK] Auth not ready:', { authLoading, isAuthenticated });
+        }
         return;
       }
 
       // Don't attempt if no active workspace
       if (!authUser?.activeWorkspaceId) {
-        console.log('🔍 [SPEEDRUN SETTINGS HOOK] No active workspace ID');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔍 [SPEEDRUN SETTINGS HOOK] No active workspace ID');
+        }
         setIsLoading(false);
         return;
       }
 
-      console.log(`🔍 [SPEEDRUN SETTINGS HOOK] Loading settings for workspace: ${authUser.activeWorkspaceId} (attempt ${retryAttempt + 1})`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔍 [SPEEDRUN SETTINGS HOOK] Loading settings for workspace: ${authUser.activeWorkspaceId} (attempt ${retryAttempt + 1})`);
+      }
 
       try {
         const response = await authFetch(
@@ -44,26 +50,44 @@ export function useWorkspaceSpeedrunSettings() {
         );
         
         if (response?.success && response?.data) {
-          console.log('✅ [SPEEDRUN SETTINGS HOOK] Settings loaded successfully:', response.data);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ [SPEEDRUN SETTINGS HOOK] Settings loaded successfully:', response.data);
+          }
           setSettings(response.data);
           setError(null);
           retryCountRef.current = 0; // Reset retry count on success
+        } else if (response?.success === false && response?.data) {
+          // Handle error response format: {success: false, data: {...}}
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [SPEEDRUN SETTINGS HOOK] Received error response with fallback data, using fallback:', response);
+          }
+          setSettings(response.data);
+          setError(null);
+          retryCountRef.current = 0;
         } else {
-          console.warn('⚠️ [SPEEDRUN SETTINGS HOOK] Invalid response format:', response);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [SPEEDRUN SETTINGS HOOK] Invalid response format:', response);
+          }
           setError('Invalid response format');
         }
       } catch (error) {
-        console.error(`❌ [SPEEDRUN SETTINGS HOOK] Failed to load settings (attempt ${retryAttempt + 1}):`, error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`❌ [SPEEDRUN SETTINGS HOOK] Failed to load settings (attempt ${retryAttempt + 1}):`, error);
+        }
         setError(error instanceof Error ? error.message : 'Failed to load settings');
         
         // Retry logic for failed requests
         if (retryAttempt < maxRetries - 1) {
-          console.log(`🔄 [SPEEDRUN SETTINGS HOOK] Retrying in ${retryDelay}ms...`);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`🔄 [SPEEDRUN SETTINGS HOOK] Retrying in ${retryDelay}ms...`);
+          }
           setTimeout(() => {
             loadSettings(retryAttempt + 1);
           }, retryDelay * (retryAttempt + 1)); // Exponential backoff
         } else {
-          console.error('❌ [SPEEDRUN SETTINGS HOOK] Max retries reached, using fallback values');
+          if (process.env.NODE_ENV === 'development') {
+            console.error('❌ [SPEEDRUN SETTINGS HOOK] Max retries reached, using fallback values');
+          }
           retryCountRef.current = 0; // Reset for future attempts
         }
       } finally {
@@ -87,7 +111,9 @@ export function useWorkspaceSpeedrunSettings() {
       retryCountRef.current = 0;
       // Trigger reload by calling loadSettings directly
       const loadSettings = async (retryAttempt = 0) => {
-        console.log(`🔄 [SPEEDRUN SETTINGS HOOK] Manual retry for workspace: ${authUser.activeWorkspaceId} (attempt ${retryAttempt + 1})`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🔄 [SPEEDRUN SETTINGS HOOK] Manual retry for workspace: ${authUser.activeWorkspaceId} (attempt ${retryAttempt + 1})`);
+        }
 
         try {
           const response = await authFetch(
@@ -97,15 +123,28 @@ export function useWorkspaceSpeedrunSettings() {
           );
           
           if (response?.success && response?.data) {
-            console.log('✅ [SPEEDRUN SETTINGS HOOK] Manual retry successful:', response.data);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('✅ [SPEEDRUN SETTINGS HOOK] Manual retry successful:', response.data);
+            }
+            setSettings(response.data);
+            setError(null);
+          } else if (response?.success === false && response?.data) {
+            // Handle error response format: {success: false, data: {...}}
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('⚠️ [SPEEDRUN SETTINGS HOOK] Manual retry - received error response with fallback data, using fallback:', response);
+            }
             setSettings(response.data);
             setError(null);
           } else {
-            console.warn('⚠️ [SPEEDRUN SETTINGS HOOK] Manual retry - invalid response format:', response);
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('⚠️ [SPEEDRUN SETTINGS HOOK] Manual retry - invalid response format:', response);
+            }
             setError('Invalid response format');
           }
         } catch (error) {
-          console.error(`❌ [SPEEDRUN SETTINGS HOOK] Manual retry failed:`, error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error(`❌ [SPEEDRUN SETTINGS HOOK] Manual retry failed:`, error);
+          }
           setError(error instanceof Error ? error.message : 'Failed to load settings');
         } finally {
           setIsLoading(false);

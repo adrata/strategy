@@ -379,60 +379,76 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ stories: transformedStories });
 
   } catch (error) {
-    console.error('❌ [STACKS API] Error fetching stories:', error);
-    console.error('❌ [STACKS API] Error details:', {
+    // Handle specific Prisma errors with detailed logging
+    const prismaError = error as any;
+    
+    // P2022: Column does not exist
+    if (prismaError.code === 'P2022') {
+      const columnName = prismaError.meta?.column_name || 'unknown';
+      console.error('❌ [STACKS STORIES API] P2022 Error - Column does not exist:', {
+        columnName,
+        meta: prismaError.meta,
+        endpoint: 'GET',
+        userId: context?.userId,
+        workspaceId,
+        errorMessage: prismaError.message,
+        stack: prismaError.stack
+      });
+      
+      return createErrorResponse(
+        columnName !== 'unknown' 
+          ? `Database column '${columnName}' does not exist. Please run database migrations.`
+          : 'Database schema mismatch. Please run database migrations.',
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+
+    // P2001: Record not found (shouldn't happen with findMany, but handle anyway)
+    if (prismaError.code === 'P2001') {
+      console.warn('⚠️ [STACKS STORIES API] P2001 Error - No records found (returning empty array):', {
+        userId: context?.userId,
+        workspaceId
+      });
+      return NextResponse.json({ stories: [] });
+    }
+
+    // P1001: Database connection error
+    if (prismaError.code === 'P1001') {
+      console.error('❌ [STACKS STORIES API] P1001 Error - Database connection failed:', {
+        userId: context?.userId,
+        workspaceId,
+        errorMessage: prismaError.message
+      });
+      return createErrorResponse(
+        'Database connection failed. Please try again later.',
+        'DATABASE_CONNECTION_ERROR',
+        503
+      );
+    }
+
+    // General error logging
+    console.error('❌ [STACKS STORIES API] Error fetching stories:', {
+      code: prismaError.code || 'UNKNOWN',
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
       name: error instanceof Error ? error.name : typeof error,
+      userId: context?.userId,
       workspaceId,
+      meta: prismaError.meta,
       errorObject: error
     });
-    
-    // Handle P2022 error (column does not exist)
-    if (error && typeof error === 'object' && 'code' in error) {
-      const prismaError = error as any;
-      
-      if (prismaError.code === 'P2022') {
-        const columnName = prismaError.meta?.column_name;
-        console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
-          columnName,
-          tableName: prismaError.meta?.table_name,
-          modelName: prismaError.meta?.modelName,
-          fullMeta: prismaError.meta
-        });
-        
-        // Return specific error with column name if available
-        if (columnName) {
-          return createErrorResponse(
-            `Database column '${columnName}' does not exist. Please run database migrations.`,
-            'SCHEMA_MISMATCH',
-            500
-          );
-        } else {
-          return createErrorResponse(
-            'Database schema mismatch detected. Please run database migrations.',
-            'SCHEMA_MISMATCH',
-            500
-          );
-        }
-      }
-      
-      // Log other Prisma errors
-      console.error('❌ [STACKS API] Prisma error code:', prismaError.code);
-      if (prismaError.meta) {
-        console.error('❌ [STACKS API] Prisma error meta:', prismaError.meta);
-      }
-    }
     
     // Return detailed error for debugging (in development) or generic error (in production)
     const errorMessage = process.env.NODE_ENV === 'development' 
       ? (error instanceof Error ? error.message : String(error))
-      : 'Internal server error';
+      : 'Failed to fetch stories';
     
-    return NextResponse.json({ 
-      error: errorMessage,
-      code: error && typeof error === 'object' && 'code' in error ? (error as any).code : 'UNKNOWN_ERROR'
-    }, { status: 500 });
+    return createErrorResponse(
+      errorMessage,
+      'STACKS_STORIES_FETCH_ERROR',
+      500
+    );
   }
 }
 

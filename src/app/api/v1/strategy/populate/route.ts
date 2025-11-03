@@ -4,7 +4,7 @@ import { autoStrategyPopulationService } from '@/platform/services/auto-strategy
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * Auto Strategy Population API
  * POST /api/v1/strategy/populate - Populate strategy data for all companies

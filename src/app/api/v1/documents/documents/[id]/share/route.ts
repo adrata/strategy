@@ -6,7 +6,7 @@ import { randomBytes } from 'crypto';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * POST /api/workshop/documents/[id]/share
  * Create a share link for a document

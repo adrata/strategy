@@ -5,7 +5,7 @@ import { prisma } from '@/platform/database/prisma-client';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * V1 Sign-in API
  * POST /api/v1/auth/sign-in - Authenticate user and return JWT token

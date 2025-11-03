@@ -112,11 +112,7 @@ export async function getUnifiedAuthUser(
     const cookieCount = cookieHeader ? cookieHeader.split(";").length : 0;
     const cookieNames = cookieHeader ? cookieHeader.split(";").map(c => c.trim().split("=")[0]).filter(Boolean) : [];
     
-    if (!hasCookies) {
-      logger.api.auth("No cookies found in request");
-      return null;
-    }
-    
+    // Try cookie-based authentication first (but don't block Authorization header check if it fails)
     if (cookieHeader) {
       const cookies = cookieHeader.split(";").reduce(
         (acc, cookie) => {
@@ -136,8 +132,59 @@ export async function getUnifiedAuthUser(
       // Try different cookie names
       const token = cookies["auth-token"] || cookies["adrata_unified_session"];
       
-      if (!token) {
-        // No auth token found - log available cookie names for debugging
+      if (token) {
+        // If it's the unified session cookie, it might be JSON encoded
+        let actualToken = token;
+        try {
+          const sessionData = JSON.parse(token);
+          if (sessionData.accessToken) {
+            actualToken = sessionData.accessToken;
+          }
+        } catch (e) {
+          // Not JSON, use as-is
+        }
+        
+        const decoded = decodeJWT(actualToken);
+        if (decoded) {
+          logger.auth.success(`Valid token for: ${decoded.email}`);
+          // Log JWT workspace fields for debugging
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔍 [API AUTH] Decoded token workspace fields:', {
+              activeWorkspaceId: decoded.activeWorkspaceId,
+              workspaceId: decoded.workspaceId,
+              userId: decoded.userId || decoded.id || decoded.sub,
+              hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
+              email: decoded.email
+            });
+          }
+          // Extract workspace info - prioritize activeWorkspaceId if available
+          const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
+          return {
+            id: decoded.userId || decoded.id || decoded.sub,
+            email: decoded.email,
+            name: decoded.name,
+            workspaceId: workspaceId,
+            activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
+          };
+        } else {
+          logger.auth.error("JWT verification failed");
+          
+          // Enhanced error logging for JWT verification failures
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [API AUTH] JWT verification failed from cookies:', {
+              tokenLength: actualToken.length,
+              tokenPrefix: actualToken.substring(0, 20) + '...',
+              possibleCauses: [
+                'Token expired',
+                'Invalid signature',
+                'Invalid token format',
+                'Missing JWT secret'
+              ]
+            });
+          }
+        }
+      } else {
+        // No auth token found in cookies - log but continue to check Authorization header
         const hasAuthCookie = cookieNames.some(name => 
           name.includes('auth') || name.includes('session') || name.includes('token')
         );
@@ -149,62 +196,11 @@ export async function getUnifiedAuthUser(
             cookieCount,
             cookieNames: cookieNames.slice(0, 10), // First 10 cookie names
             hasAuthCookie,
-            lookingFor: ['auth-token', 'adrata_unified_session']
+            lookingFor: ['auth-token', 'adrata_unified_session'],
+            willCheckAuthHeader: true
           });
         }
-        
-        return null;
-      }
-      
-      // If it's the unified session cookie, it might be JSON encoded
-      let actualToken = token;
-      try {
-        const sessionData = JSON.parse(token);
-        if (sessionData.accessToken) {
-          actualToken = sessionData.accessToken;
-        }
-      } catch (e) {
-        // Not JSON, use as-is
-      }
-      
-      const decoded = decodeJWT(actualToken);
-      if (decoded) {
-        logger.auth.success(`Valid token for: ${decoded.email}`);
-        // Log JWT workspace fields for debugging
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔍 [API AUTH] Decoded token workspace fields:', {
-            activeWorkspaceId: decoded.activeWorkspaceId,
-            workspaceId: decoded.workspaceId,
-            userId: decoded.userId || decoded.id || decoded.sub,
-            hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
-            email: decoded.email
-          });
-        }
-        // Extract workspace info - prioritize activeWorkspaceId if available
-        const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
-        return {
-          id: decoded.userId || decoded.id || decoded.sub,
-          email: decoded.email,
-          name: decoded.name,
-          workspaceId: workspaceId,
-          activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
-        };
-      } else {
-        logger.auth.error("JWT verification failed");
-        
-        // Enhanced error logging for JWT verification failures
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('⚠️ [API AUTH] JWT verification failed:', {
-            tokenLength: actualToken.length,
-            tokenPrefix: actualToken.substring(0, 20) + '...',
-            possibleCauses: [
-              'Token expired',
-              'Invalid signature',
-              'Invalid token format',
-              'Missing JWT secret'
-            ]
-          });
-        }
+        // Don't return null - continue to check Authorization header
       }
     }
 
@@ -369,13 +365,16 @@ export async function getUnifiedAuthUser(
       if (decoded) {
         logger.auth.success(`Valid bearer token for: ${decoded.email}`);
         // Log JWT workspace fields for debugging
-        console.log('🔍 [API AUTH] Decoded bearer token workspace fields:', {
-          activeWorkspaceId: decoded.activeWorkspaceId,
-          workspaceId: decoded.workspaceId,
-          userId: decoded.userId || decoded.id || decoded.sub,
-          hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
-          email: decoded.email
-        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [API AUTH] Successfully authenticated via Authorization header:', {
+            activeWorkspaceId: decoded.activeWorkspaceId,
+            workspaceId: decoded.workspaceId,
+            userId: decoded.userId || decoded.id || decoded.sub,
+            hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
+            email: decoded.email,
+            cookieAuthAttempted: hasCookies
+          });
+        }
         // Extract workspace info - prioritize activeWorkspaceId if available
         const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
         return {
@@ -387,6 +386,13 @@ export async function getUnifiedAuthUser(
         };
       } else {
         logger.auth.error("Bearer token verification failed");
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ [API AUTH] Authorization header Bearer token verification failed:', {
+            tokenLength: token.length,
+            tokenPrefix: token.substring(0, 20) + '...',
+            cookieAuthAttempted: hasCookies
+          });
+        }
       }
     }
 

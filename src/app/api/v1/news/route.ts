@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { newsRankingEngine } from '@/platform/services/NewsRankingEngine';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 export async function GET(request: NextRequest) {
   try {

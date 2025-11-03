@@ -382,16 +382,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                      'Company';
 
   return (
-    <div className="p-6">
+    <div>
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h2 className="text-xl font-semibold text-foreground">Overview</h2>
-        </div>
-
-      {/* Company Summary */}
+      {/* Company Overview */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-foreground">{companyName} Summary</h3>
+        <h3 className="text-lg font-semibold text-foreground">{companyName} Overview</h3>
         <div className="bg-background p-4 rounded-lg border border-border">
           <InlineEditField
             value={(() => {

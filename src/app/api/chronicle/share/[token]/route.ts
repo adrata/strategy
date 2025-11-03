@@ -3,7 +3,7 @@ import { prisma } from '@/platform/prisma';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/chronicle/share/[token]
  * Access a shared Chronicle report

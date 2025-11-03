@@ -116,11 +116,11 @@ model workspaces {
   user_roles                user_roles[]
   users                     users[]
   workspace_users           workspace_users[]
-  
+
   // Workshop relations
-  workshopDocuments           workshopDocument[]
-  workshopFolders            workshopFolder[]
-  api_keys                   api_keys[]
+  workshopDocuments workshopDocument[]
+  workshopFolders   workshopFolder[]
+  api_keys          api_keys[]
 
   @@index([slug])
   @@index([isActive])
@@ -167,15 +167,15 @@ model users {
   workspaces                                                            workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
   workspace_users                                                       workspace_users[]
   api_keys                                                              api_keys[]
-  
+
   // Workshop relations
-  workshopDocumentsOwned                                                 workshopDocument[]            @relation("WorkshopDocumentOwner")
-  workshopDocumentsCreated                                               workshopDocument[]            @relation("WorkshopDocumentCreatedBy")
-  workshopFoldersOwned                                                   workshopFolder[]
-  workshopSharesCreated                                                  workshopShare[]
-  workshopVersionsCreated                                                workshopVersion[]
-  workshopCommentsCreated                                                workshopComment[]
-  workshopActivitiesPerformed                                            workshopActivity[]
+  workshopDocumentsOwned      workshopDocument[] @relation("WorkshopDocumentOwner")
+  workshopDocumentsCreated    workshopDocument[] @relation("WorkshopDocumentCreatedBy")
+  workshopFoldersOwned        workshopFolder[]
+  workshopSharesCreated       workshopShare[]
+  workshopVersionsCreated     workshopVersion[]
+  workshopCommentsCreated     workshopComment[]
+  workshopActivitiesPerformed workshopActivity[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -241,32 +241,32 @@ model reset_tokens {
 
 /// API Keys for external API access
 model api_keys {
-  id                      String           @id @default(ulid())
-  workspaceId             String            @db.VarChar(30)
-  userId                  String            @db.VarChar(30)
-  name                    String            @db.VarChar(255)
-  keyPrefix               String            @db.VarChar(50) // e.g., "adrata_live_"
-  hashedKey               String            @db.VarChar(255) // bcrypt hash of the secret portion
-  lastUsedAt              DateTime?
-  expiresAt               DateTime?
-  createdAt               DateTime          @default(now())
-  updatedAt               DateTime          @updatedAt
-  isActive                Boolean           @default(true)
-  
+  id          String    @id @default(ulid())
+  workspaceId String    @db.VarChar(30)
+  userId      String    @db.VarChar(30)
+  name        String    @db.VarChar(255)
+  keyPrefix   String    @db.VarChar(50) // e.g., "adrata_live_"
+  hashedKey   String    @db.VarChar(255) // bcrypt hash of the secret portion
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isActive    Boolean   @default(true)
+
   // Enhanced security fields
-  scopes                  String[]         @default([]) // e.g., ["buyer-groups:read", "companies:read"]
-  allowedIps              String[]        @default([]) // IP addresses/CIDR blocks allowed
-  deniedIps                String[]         @default([]) // IP addresses/CIDR blocks blocked
-  rateLimitPerHour         Int?             @default(1000) // Requests per hour
-  rateLimitPerDay          Int?             @default(10000) // Requests per day
-  
+  scopes           String[] @default([]) // e.g., ["buyer-groups:read", "companies:read"]
+  allowedIps       String[] @default([]) // IP addresses/CIDR blocks allowed
+  deniedIps        String[] @default([]) // IP addresses/CIDR blocks blocked
+  rateLimitPerHour Int?     @default(1000) // Requests per hour
+  rateLimitPerDay  Int?     @default(10000) // Requests per day
+
   // Key rotation fields
-  lastRotatedAt            DateTime?
-  rotationGracePeriodEndsAt DateTime?      // Grace period after rotation
-  
-  workspace                workspaces        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user                     users            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  usage                    api_key_usage[]
+  lastRotatedAt             DateTime?
+  rotationGracePeriodEndsAt DateTime? // Grace period after rotation
+
+  workspace workspaces      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      users           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage     api_key_usage[]
 
   @@index([workspaceId])
   @@index([userId])
@@ -278,16 +278,16 @@ model api_keys {
 
 /// API Key Usage Tracking
 model api_key_usage {
-  id          String    @id @default(ulid())
-  apiKeyId    String    @db.VarChar(30)
-  endpoint    String    @db.VarChar(255)
-  method      String    @db.VarChar(10)
-  statusCode  Int
-  responseTime Int      // milliseconds
-  ipAddress   String?   @db.VarChar(45) // IPv4 or IPv6
-  userAgent   String?   @db.VarChar(500)
-  createdAt   DateTime  @default(now())
-  apiKey      api_keys  @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  id           String   @id @default(ulid())
+  apiKeyId     String   @db.VarChar(30)
+  endpoint     String   @db.VarChar(255)
+  method       String   @db.VarChar(10)
+  statusCode   Int
+  responseTime Int // milliseconds
+  ipAddress    String?  @db.VarChar(45) // IPv4 or IPv6
+  userAgent    String?  @db.VarChar(500)
+  createdAt    DateTime @default(now())
+  apiKey       api_keys @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
 
   @@index([apiKeyId])
   @@index([createdAt])
@@ -297,39 +297,39 @@ model api_key_usage {
 
 /// Core Companies - Global canonical company data (no workspaceId)
 model core_companies {
-  id                     String           @id @default(ulid()) @db.VarChar(30)
-  name                   String           @unique @db.VarChar(255)
-  normalizedName         String           @unique @db.VarChar(255)
-  legalName              String?          @db.VarChar(255)
-  tradingName            String?          @db.VarChar(255)
-  website                String?          @db.VarChar(500)
-  domain                 String?          @db.VarChar(255)
-  industry               String?          @db.VarChar(100)
-  sector                 String?          @db.VarChar(100)
-  size                   String?          @db.VarChar(100)
-  employeeCount          Int?
-  foundedYear            Int?
-  description            String?
-  city                   String?          @db.VarChar(100)
-  state                  String?          @db.VarChar(100)
-  country                String?          @db.VarChar(100)
-  hqCity                 String?          @db.VarChar(100)
-  hqState                String?          @db.VarChar(100)
-  hqCountryIso2          String?          @db.VarChar(2)
-  hqCountryIso3          String?          @db.VarChar(3)
-  linkedinUrl            String?          @db.VarChar(500)
-  linkedinFollowers      Int?
-  revenue                Decimal?         @db.Decimal(15, 2)
-  currency               String?          @default("USD") @db.VarChar(3)
-  stockSymbol            String?          @db.VarChar(20)
-  logoUrl                String?          @db.VarChar(500)
-  lastVerified           DateTime?
-  dataLastVerified       DateTime?
-  dataQualityScore       Float?           @default(0)
-  dataSources            String[]         @default([])
-  createdAt              DateTime         @default(now())
-  updatedAt              DateTime         @updatedAt
-  companies              companies[]
+  id                String      @id @default(ulid()) @db.VarChar(30)
+  name              String      @unique @db.VarChar(255)
+  normalizedName    String      @unique @db.VarChar(255)
+  legalName         String?     @db.VarChar(255)
+  tradingName       String?     @db.VarChar(255)
+  website           String?     @db.VarChar(500)
+  domain            String?     @db.VarChar(255)
+  industry          String?     @db.VarChar(100)
+  sector            String?     @db.VarChar(100)
+  size              String?     @db.VarChar(100)
+  employeeCount     Int?
+  foundedYear       Int?
+  description       String?
+  city              String?     @db.VarChar(100)
+  state             String?     @db.VarChar(100)
+  country           String?     @db.VarChar(100)
+  hqCity            String?     @db.VarChar(100)
+  hqState           String?     @db.VarChar(100)
+  hqCountryIso2     String?     @db.VarChar(2)
+  hqCountryIso3     String?     @db.VarChar(3)
+  linkedinUrl       String?     @db.VarChar(500)
+  linkedinFollowers Int?
+  revenue           Decimal?    @db.Decimal(15, 2)
+  currency          String?     @default("USD") @db.VarChar(3)
+  stockSymbol       String?     @db.VarChar(20)
+  logoUrl           String?     @db.VarChar(500)
+  lastVerified      DateTime?
+  dataLastVerified  DateTime?
+  dataQualityScore  Float?      @default(0)
+  dataSources       String[]    @default([])
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  companies         companies[]
 
   @@index([normalizedName])
   @@index([domain])
@@ -339,118 +339,118 @@ model core_companies {
 
 /// Company/organization data
 model companies {
-  id                     String           @id @default(ulid()) @db.VarChar(30)
-  workspaceId            String           @db.VarChar(30)
-  coreCompanyId          String?          @db.VarChar(30)
-  name                   String           @db.VarChar(255)
-  nameOverride           String?          @db.VarChar(255)
-  industryOverride       String?          @db.VarChar(100)
-  websiteOverride        String?          @db.VarChar(500)
-  legalName              String?          @db.VarChar(255)
-  tradingName            String?          @db.VarChar(255)
-  localName              String?          @db.VarChar(255)
+  id                     String             @id @default(ulid()) @db.VarChar(30)
+  workspaceId            String             @db.VarChar(30)
+  coreCompanyId          String?            @db.VarChar(30)
+  name                   String             @db.VarChar(255)
+  nameOverride           String?            @db.VarChar(255)
+  industryOverride       String?            @db.VarChar(100)
+  websiteOverride        String?            @db.VarChar(500)
+  legalName              String?            @db.VarChar(255)
+  tradingName            String?            @db.VarChar(255)
+  localName              String?            @db.VarChar(255)
   description            String?
-  website                String?          @db.VarChar(500)
-  email                  String?          @db.VarChar(300)
-  phone                  String?          @db.VarChar(50)
-  fax                    String?          @db.VarChar(50)
+  website                String?            @db.VarChar(500)
+  email                  String?            @db.VarChar(300)
+  phone                  String?            @db.VarChar(50)
+  fax                    String?            @db.VarChar(50)
   address                String?
-  city                   String?          @db.VarChar(100)
-  state                  String?          @db.VarChar(100)
-  country                String?          @db.VarChar(100)
-  postalCode             String?          @db.VarChar(20)
-  industry               String?          @db.VarChar(100)
-  sector                 String?          @db.VarChar(100)
-  size                   String?          @db.VarChar(100)
-  revenue                Decimal?         @db.Decimal(15, 2)
-  currency               String?          @default("USD") @db.VarChar(3)
+  city                   String?            @db.VarChar(100)
+  state                  String?            @db.VarChar(100)
+  country                String?            @db.VarChar(100)
+  postalCode             String?            @db.VarChar(20)
+  industry               String?            @db.VarChar(100)
+  sector                 String?            @db.VarChar(100)
+  size                   String?            @db.VarChar(100)
+  revenue                Decimal?           @db.Decimal(15, 2)
+  currency               String?            @default("USD") @db.VarChar(3)
   employeeCount          Int?
   foundedYear            Int?
-  registrationNumber     String?          @db.VarChar(100)
-  taxId                  String?          @db.VarChar(100)
-  vatNumber              String?          @db.VarChar(100)
-  domain                 String?          @db.VarChar(255)
-  logoUrl                String?          @db.VarChar(500)
-  status                 CompanyStatus?   @default(ACTIVE)
-  priority               CompanyPriority? @default(MEDIUM)
-  tags                   String[]         @default([])
+  registrationNumber     String?            @db.VarChar(100)
+  taxId                  String?            @db.VarChar(100)
+  vatNumber              String?            @db.VarChar(100)
+  domain                 String?            @db.VarChar(255)
+  logoUrl                String?            @db.VarChar(500)
+  status                 CompanyStatus?     @default(ACTIVE)
+  priority               CompanyPriority?   @default(MEDIUM)
+  tags                   String[]           @default([])
   customFields           Json?
   notes                  String?
   lastAction             String?
-  lastActionDate         DateTime?        @db.Timestamp(6)
+  lastActionDate         DateTime?          @db.Timestamp(6)
   nextAction             String?
-  nextActionDate         DateTime?        @db.Timestamp(6)
+  nextActionDate         DateTime?          @db.Timestamp(6)
   actionStatus           String?
-  globalRank             Int?             @default(0)
-  createdAt              DateTime         @default(now())
-  updatedAt              DateTime         @updatedAt
-  entityId               String?          @db.VarChar(30)
+  globalRank             Int?               @default(0)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  entityId               String?            @db.VarChar(30)
   deletedAt              DateTime?
-  mainSellerId           String?          @db.VarChar(30)
+  mainSellerId           String?            @db.VarChar(30)
   actualCloseDate        DateTime?
   expectedCloseDate      DateTime?
-  opportunityAmount      Decimal?         @db.Decimal(15, 2)
+  opportunityAmount      Decimal?           @db.Decimal(15, 2)
   opportunityProbability Float?
-  opportunityStage       String?          @db.VarChar(50)
+  opportunityStage       String?            @db.VarChar(50)
   acquisitionDate        DateTime?
-  activeJobPostings      Int?             @default(0)
-  businessChallenges     String[]         @default([])
-  businessPriorities     String[]         @default([])
+  activeJobPostings      Int?               @default(0)
+  businessChallenges     String[]           @default([])
+  businessPriorities     String[]           @default([])
   companyIntelligence    Json?
   companyUpdates         Json?
-  competitiveAdvantages  String[]         @default([])
-  competitors            String[]         @default([])
-  confidence             Float?           @default(0)
-  decisionTimeline       String?          @db.VarChar(100)
-  digitalMaturity        Int?             @default(0)
-  facebookUrl            String?          @db.VarChar(500)
-  githubUrl              String?          @db.VarChar(500)
-  growthOpportunities    String[]         @default([])
-  hqCity                 String?          @db.VarChar(100)
-  hqCountryIso2          String?          @db.VarChar(2)
-  hqCountryIso3          String?          @db.VarChar(3)
-  hqFullAddress          String?          @db.VarChar(500)
-  hqLocation             String?          @db.VarChar(200)
-  hqRegion               String[]         @default([])
-  hqState                String?          @db.VarChar(100)
-  hqStreet               String?          @db.VarChar(200)
-  hqZipcode              String?          @db.VarChar(20)
-  instagramUrl           String?          @db.VarChar(500)
-  isPublic               Boolean?         @default(false)
-  keyInfluencers         String?          @db.VarChar(200)
+  competitiveAdvantages  String[]           @default([])
+  competitors            String[]           @default([])
+  confidence             Float?             @default(0)
+  decisionTimeline       String?            @db.VarChar(100)
+  digitalMaturity        Int?               @default(0)
+  facebookUrl            String?            @db.VarChar(500)
+  githubUrl              String?            @db.VarChar(500)
+  growthOpportunities    String[]           @default([])
+  hqCity                 String?            @db.VarChar(100)
+  hqCountryIso2          String?            @db.VarChar(2)
+  hqCountryIso3          String?            @db.VarChar(3)
+  hqFullAddress          String?            @db.VarChar(500)
+  hqLocation             String?            @db.VarChar(200)
+  hqRegion               String[]           @default([])
+  hqState                String?            @db.VarChar(100)
+  hqStreet               String?            @db.VarChar(200)
+  hqZipcode              String?            @db.VarChar(20)
+  instagramUrl           String?            @db.VarChar(500)
+  isPublic               Boolean?           @default(false)
+  keyInfluencers         String?            @db.VarChar(200)
   lastFundingAmount      BigInt?
   lastFundingDate        DateTime?
   lastVerified           DateTime?
   linkedinFollowers      Int?
-  linkedinUrl            String?          @db.VarChar(500)
-  marketPosition         String?          @db.VarChar(100)
-  marketThreats          String[]         @default([])
-  naicsCodes             String[]         @default([])
-  numTechnologiesUsed    Int?             @default(0)
-  parentCompanyDomain    String?          @db.VarChar(200)
-  parentCompanyName      String?          @db.VarChar(200)
-  sicCodes               String[]         @default([])
-  sources                String[]         @default([])
-  stockSymbol            String?          @db.VarChar(20)
-  strategicInitiatives   String[]         @default([])
-  successMetrics         String[]         @default([])
-  techStack              String[]         @default([])
-  technologiesUsed       String[]         @default([])
+  linkedinUrl            String?            @db.VarChar(500)
+  marketPosition         String?            @db.VarChar(100)
+  marketThreats          String[]           @default([])
+  naicsCodes             String[]           @default([])
+  numTechnologiesUsed    Int?               @default(0)
+  parentCompanyDomain    String?            @db.VarChar(200)
+  parentCompanyName      String?            @db.VarChar(200)
+  sicCodes               String[]           @default([])
+  sources                String[]           @default([])
+  stockSymbol            String?            @db.VarChar(20)
+  strategicInitiatives   String[]           @default([])
+  successMetrics         String[]           @default([])
+  techStack              String[]           @default([])
+  technologiesUsed       String[]           @default([])
   twitterFollowers       Int?
-  twitterUrl             String?          @db.VarChar(500)
-  youtubeUrl             String?          @db.VarChar(500)
+  twitterUrl             String?            @db.VarChar(500)
+  youtubeUrl             String?            @db.VarChar(500)
   nextActionReasoning    String?
-  nextActionPriority     String?          @db.VarChar(20)
-  nextActionType         String?          @db.VarChar(50)
+  nextActionPriority     String?            @db.VarChar(20)
+  nextActionType         String?            @db.VarChar(50)
   nextActionUpdatedAt    DateTime?
   acquisitionHistory     Json?
-  aiConfidence           Float?           @default(0)
+  aiConfidence           Float?             @default(0)
   aiIntelligence         Json?
   aiLastUpdated          DateTime?
   dataLastVerified       DateTime?
   dataQualityBreakdown   Json?
-  dataQualityScore       Float?           @default(0)
-  dataSources            String[]         @default([])
+  dataQualityScore       Float?             @default(0)
+  dataSources            String[]           @default([])
   employeeCountChange    Json?
   employeeReviewsScore   Json?
   executiveArrivals      Json?
@@ -459,16 +459,16 @@ model companies {
   jobPostingsChange      Json?
   productReviewsScore    Json?
   revenueRange           Json?
-  linkedinnavigatorurl   String?          @db.VarChar(500)
-  linkedinNavigatorUrl   String?          @db.VarChar(500)
+  linkedinnavigatorurl   String?            @db.VarChar(500)
+  linkedinNavigatorUrl   String?            @db.VarChar(500)
   descriptionEnriched    String?
   actions                actions[]
-  mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
-  workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  coreCompany            core_companies?  @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
+  mainSeller             users?             @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
+  workspace              workspaces         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  coreCompany            core_companies?    @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
   emails                 email_messages[]
   people                 people[]
-  workshopDocuments        workshopDocument[]
+  workshopDocuments      workshopDocument[]
 
   @@index([workspaceId])
   @@index([coreCompanyId])
@@ -495,37 +495,37 @@ model companies {
 
 /// Core People - Global canonical person data (no workspaceId)
 model core_people {
-  id                     String              @id @default(ulid()) @db.VarChar(30)
-  firstName              String              @db.VarChar(100)
-  lastName               String              @db.VarChar(100)
-  fullName               String              @db.VarChar(200)
-  normalizedFullName     String              @unique @db.VarChar(200)
-  email                  String?             @unique @db.VarChar(300)
-  workEmail              String?             @unique @db.VarChar(300)
-  personalEmail          String?             @unique @db.VarChar(300)
-  linkedinUrl            String?             @unique @db.VarChar(500)
-  jobTitle               String?             @db.VarChar(300)
-  department             String?             @db.VarChar(200)
-  companyName            String?             @db.VarChar(200)
-  currentCompany         String?             @db.VarChar(200)
-  currentRole            String?             @db.VarChar(200)
-  phone                  String?             @db.VarChar(50)
-  mobilePhone            String?             @db.VarChar(50)
-  workPhone              String?             @db.VarChar(50)
-  linkedinConnections    Int?
-  linkedinFollowers      Int?
-  profilePictureUrl      String?             @db.VarChar(500)
-  bio                    String?
-  city                   String?             @db.VarChar(100)
-  state                  String?             @db.VarChar(100)
-  country                String?             @db.VarChar(100)
-  lastVerified           DateTime?
-  dataLastVerified       DateTime?
-  dataQualityScore       Float?              @default(0)
-  dataSources            String[]             @default([])
-  createdAt              DateTime             @default(now())
-  updatedAt              DateTime             @updatedAt
-  people                 people[]
+  id                  String    @id @default(ulid()) @db.VarChar(30)
+  firstName           String    @db.VarChar(100)
+  lastName            String    @db.VarChar(100)
+  fullName            String    @db.VarChar(200)
+  normalizedFullName  String    @unique @db.VarChar(200)
+  email               String?   @unique @db.VarChar(300)
+  workEmail           String?   @unique @db.VarChar(300)
+  personalEmail       String?   @unique @db.VarChar(300)
+  linkedinUrl         String?   @unique @db.VarChar(500)
+  jobTitle            String?   @db.VarChar(300)
+  department          String?   @db.VarChar(200)
+  companyName         String?   @db.VarChar(200)
+  currentCompany      String?   @db.VarChar(200)
+  currentRole         String?   @db.VarChar(200)
+  phone               String?   @db.VarChar(50)
+  mobilePhone         String?   @db.VarChar(50)
+  workPhone           String?   @db.VarChar(50)
+  linkedinConnections Int?
+  linkedinFollowers   Int?
+  profilePictureUrl   String?   @db.VarChar(500)
+  bio                 String?
+  city                String?   @db.VarChar(100)
+  state               String?   @db.VarChar(100)
+  country             String?   @db.VarChar(100)
+  lastVerified        DateTime?
+  dataLastVerified    DateTime?
+  dataQualityScore    Float?    @default(0)
+  dataSources         String[]  @default([])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  people              people[]
 
   @@index([normalizedFullName])
   @@index([email])
@@ -1002,7 +1002,8 @@ model StacksProject {
   description String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  epochs      StacksEpoch[]
+  epochs      StacksEpoch[] @relation("StacksEpochProject")
+  epics       StacksEpic[]  @relation("StacksEpicProject")
   workspace   workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
   tasks       StacksTask[]
@@ -1011,6 +1012,30 @@ model StacksProject {
   @@index([workspaceId, name])
 }
 
+model StacksEpic {
+  id          String        @id @default(cuid())
+  projectId   String
+  epochId      String? // Epics belong to Epoch (bigger items)
+  title       String        @db.VarChar(200)
+  description String?
+  status      String        @default("todo") @db.VarChar(20)
+  priority    String        @default("medium") @db.VarChar(20)
+  product     String?       @db.VarChar(50)
+  section     String?       @db.VarChar(50)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  project     StacksProject @relation("StacksEpicProject", fields: [projectId], references: [id], onDelete: Cascade)
+  epoch       StacksEpoch?  @relation("StacksEpochEpics", fields: [epochId], references: [id], onDelete: SetNull)
+  stories     StacksStory[] @relation("StacksEpicStories")
+
+  @@map("StacksEpic") // Maps to existing database table
+  @@index([projectId])
+  @@index([epochId])
+  @@index([projectId, status])
+}
+
+// StacksEpoch - bigger/higher-level items (separate table)
+// Epochs contain epics, which contain stories
 model StacksEpoch {
   id          String        @id @default(cuid())
   projectId   String
@@ -1022,33 +1047,38 @@ model StacksEpoch {
   section     String?       @db.VarChar(50)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  stories     StacksStory[]
+  project     StacksProject @relation("StacksEpochProject", fields: [projectId], references: [id], onDelete: Cascade)
+  epics       StacksEpic[]  @relation("StacksEpochEpics")
+  stories     StacksStory[] @relation("StacksEpochStories")
 
+  @@map("StacksEpoch") // Separate table for bigger items
   @@index([projectId])
   @@index([projectId, status])
 }
 
 model StacksStory {
-  id             String        @id @default(cuid())
-  epochId        String?
-  projectId      String
-  title          String        @db.VarChar(200)
-  description    String?
-  status         String        @default("todo") @db.VarChar(20)
-  priority       String        @default("medium") @db.VarChar(20)
-  assigneeId     String?       @db.VarChar(30)
-  viewType       String?       @db.VarChar(20)
-  product        String?       @db.VarChar(50)
-  section        String?       @db.VarChar(50)
+  id              String        @id @default(cuid())
+  epicId          String? // Stories belong to Epic (existing column in database)
+  epochId         String? // Stories can also belong to Epoch (bigger items)
+  projectId       String
+  title           String        @db.VarChar(200)
+  description     String?
+  status          String        @default("todo") @db.VarChar(20)
+  priority        String        @default("medium") @db.VarChar(20)
+  assigneeId      String?       @db.VarChar(30)
+  viewType        String?       @db.VarChar(20)
+  product         String?       @db.VarChar(50)
+  section         String?       @db.VarChar(50)
   statusChangedAt DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  assignee       users?        @relation(fields: [assigneeId], references: [id])
-  epoch          StacksEpoch?  @relation(fields: [epochId], references: [id])
-  project        StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tasks          StacksTask[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  assignee        users?        @relation(fields: [assigneeId], references: [id])
+  epic            StacksEpic?   @relation("StacksEpicStories", fields: [epicId], references: [id])
+  epoch           StacksEpoch?  @relation("StacksEpochStories", fields: [epochId], references: [id])
+  project         StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks           StacksTask[]
 
+  @@index([epicId])
   @@index([epochId])
   @@index([projectId])
   @@index([assigneeId])
@@ -1266,63 +1296,63 @@ model OasisExternalConnection {
 
 /// Workshop Document Management System
 model workshopDocument {
-  id                String   @id @default(ulid())
-  title             String   @db.VarChar(500)
-  description       String?
-  content           Json?
-  fileUrl           String?  @db.VarChar(1000)
-  fileType          String   @default("text/plain") @db.VarChar(100)
-  fileSize          Int?
-  documentType      String   @default("paper") @db.VarChar(20) // paper, pitch, grid, code, matrix
-  status            String   @default("draft") @db.VarChar(20) // draft, published, archived, deleted
-  version           String   @default("1.0") @db.VarChar(20)
-  
+  id           String  @id @default(ulid())
+  title        String  @db.VarChar(500)
+  description  String?
+  content      Json?
+  fileUrl      String? @db.VarChar(1000)
+  fileType     String  @default("text/plain") @db.VarChar(100)
+  fileSize     Int?
+  documentType String  @default("paper") @db.VarChar(20) // paper, pitch, grid, code, matrix
+  status       String  @default("draft") @db.VarChar(20) // draft, published, archived, deleted
+  version      String  @default("1.0") @db.VarChar(20)
+
   // Security & Classification
-  isEncrypted       Boolean  @default(false)
-  classification    String   @default("internal") @db.VarChar(50)
-  requiresAuth      Boolean  @default(true)
-  
+  isEncrypted    Boolean @default(false)
+  classification String  @default("internal") @db.VarChar(50)
+  requiresAuth   Boolean @default(true)
+
   // Organization
-  folderId          String?  @db.VarChar(30)
-  tags              String[] @default([])
-  isStarred         Boolean  @default(false)
-  isTemplate        Boolean  @default(false)
-  
+  folderId   String?  @db.VarChar(30)
+  tags       String[] @default([])
+  isStarred  Boolean  @default(false)
+  isTemplate Boolean  @default(false)
+
   // Ownership & Workspace
-  ownerId           String   @db.VarChar(30)
-  workspaceId       String   @db.VarChar(30)
-  companyId         String?  @db.VarChar(30)
-  
+  ownerId     String  @db.VarChar(30)
+  workspaceId String  @db.VarChar(30)
+  companyId   String? @db.VarChar(30)
+
   // Analytics
-  viewCount         Int      @default(0)
-  downloadCount     Int      @default(0)
-  lastAccessedAt    DateTime?
-  
+  viewCount      Int       @default(0)
+  downloadCount  Int       @default(0)
+  lastAccessedAt DateTime?
+
   // Timestamps
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  publishedAt       DateTime?
-  archivedAt        DateTime?
-  deletedAt         DateTime?
-  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+  archivedAt  DateTime?
+  deletedAt   DateTime?
+
   // Report-specific fields (for Chronicle integration)
-  reportType        String?  @db.VarChar(50)
-  sourceRecordId    String?  @db.VarChar(30)
-  sourceRecordType  String?  @db.VarChar(50)
-  generatedByAI     Boolean  @default(false)
-  metadata          Json     @default("{}")
-  createdById       String   @db.VarChar(30)
-  
+  reportType       String? @db.VarChar(50)
+  sourceRecordId   String? @db.VarChar(30)
+  sourceRecordType String? @db.VarChar(50)
+  generatedByAI    Boolean @default(false)
+  metadata         Json    @default("{}")
+  createdById      String  @db.VarChar(30)
+
   // Relations
-  owner             users    @relation("WorkshopDocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  workspace         workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  company           companies? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy         users    @relation("WorkshopDocumentCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
-  folder            workshopFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
-  shares            workshopShare[]
-  versions          workshopVersion[]
-  comments          workshopComment[]
-  activities        workshopActivity[]
+  owner      users              @relation("WorkshopDocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  workspace  workspaces         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  company    companies?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy  users              @relation("WorkshopDocumentCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  folder     workshopFolder?    @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  shares     workshopShare[]
+  versions   workshopVersion[]
+  comments   workshopComment[]
+  activities workshopActivity[]
 
   @@index([workspaceId])
   @@index([ownerId])
@@ -1339,23 +1369,23 @@ model workshopDocument {
 }
 
 model workshopFolder {
-  id          String   @id @default(ulid())
-  name        String   @db.VarChar(255)
+  id          String    @id @default(ulid())
+  name        String    @db.VarChar(255)
   description String?
-  parentId    String?  @db.VarChar(30)
-  workspaceId String   @db.VarChar(30)
-  ownerId     String   @db.VarChar(30)
-  isPublic    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  parentId    String?   @db.VarChar(30)
+  workspaceId String    @db.VarChar(30)
+  ownerId     String    @db.VarChar(30)
+  isPublic    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  
+
   // Relations
-  parent      workshopFolder? @relation("WorkshopFolderParent", fields: [parentId], references: [id], onDelete: Cascade)
-  children    workshopFolder[] @relation("WorkshopFolderParent")
-  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  owner       users    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  documents   workshopDocument[]
+  parent    workshopFolder?    @relation("WorkshopFolderParent", fields: [parentId], references: [id], onDelete: Cascade)
+  children  workshopFolder[]   @relation("WorkshopFolderParent")
+  workspace workspaces         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner     users              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  documents workshopDocument[]
 
   @@index([workspaceId])
   @@index([parentId])
@@ -1375,10 +1405,10 @@ model workshopShare {
   createdById String    @db.VarChar(30)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
+
   // Relations
-  document    workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  createdBy   users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  document  workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy users            @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@index([documentId])
   @@index([shareToken])
@@ -1395,10 +1425,10 @@ model workshopVersion {
   changeDescription String?  @db.VarChar(500)
   createdById       String   @db.VarChar(30)
   createdAt         DateTime @default(now())
-  
+
   // Relations
-  document          workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  createdBy         users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  document  workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy users            @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@unique([documentId, versionNumber])
   @@index([documentId])
@@ -1406,20 +1436,20 @@ model workshopVersion {
 }
 
 model workshopComment {
-  id          String   @id @default(ulid())
-  documentId  String   @db.VarChar(30)
-  parentId    String?  @db.VarChar(30)
-  content     String   @db.Text
-  createdById String   @db.VarChar(30)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String    @id @default(ulid())
+  documentId  String    @db.VarChar(30)
+  parentId    String?   @db.VarChar(30)
+  content     String    @db.Text
+  createdById String    @db.VarChar(30)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  
+
   // Relations
-  document    workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  parent      workshopComment? @relation("WorkshopCommentParent", fields: [parentId], references: [id], onDelete: Cascade)
-  replies     workshopComment[] @relation("WorkshopCommentParent")
-  createdBy   users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  document  workshopDocument  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  parent    workshopComment?  @relation("WorkshopCommentParent", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   workshopComment[] @relation("WorkshopCommentParent")
+  createdBy users             @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@index([documentId])
   @@index([parentId])
@@ -1435,10 +1465,10 @@ model workshopActivity {
   metadata      Json?    @default("{}")
   performedById String   @db.VarChar(30)
   createdAt     DateTime @default(now())
-  
+
   // Relations
-  document      workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  performedBy   users    @relation(fields: [performedById], references: [id], onDelete: Cascade)
+  document    workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  performedBy users            @relation(fields: [performedById], references: [id], onDelete: Cascade)
 
   @@index([documentId])
   @@index([activityType])

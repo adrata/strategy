@@ -4,10 +4,10 @@ import { rankContacts } from '@/products/speedrun/ranking';
 import { getDefaultUserSettings } from '@/products/speedrun/state';
 import { StateRankingService } from '@/products/speedrun/state-ranking';
 
-/**
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+// Force dynamic rendering for API routes (required for authentication)
+export const dynamic = 'force-dynamic';
 
+/**
  * Calculate next action date based on global rank
  * This matches the logic from /api/v1/next-action/regenerate/route.ts
  */
@@ -166,26 +166,25 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔄 [RE-RANK] Found ${allCompanies.length} companies and ${allPeople.length} people to rank`);
 
-    // Step 1: Rank companies first (1-N per user)
-    console.log(`🏢 [RE-RANK] Ranking ${allCompanies.length} companies...`);
+    // 🎯 UNIFIED RANKING: Combine companies and people into a single ranked list
+    // This ensures no duplicate ranks across entity types
+    console.log(`🔄 [RE-RANK] Creating unified ranking (people first, then companies)...`);
     
-    // Create company ranking data
-    const companyRankingData = allCompanies.map(company => ({
-      id: company.id,
-      name: company.name,
-      industry: company.industry,
-      size: company.size,
-      location: company.location,
-      peopleCount: company._count.people,
-      status: company.status,
-      // Add any existing ranking data
-      globalRank: company.globalRank || 999999
-    }));
-
-    // Sort companies by priority (industry, size, people count, etc.)
-    const sortedCompanies = companyRankingData.sort((a, b) => {
-      // Priority 1: Industry (title/real estate companies first)
-      const industryScore = (company) => {
+    // Step 1: Prepare companies without people for ranking
+    const companiesWithoutPeople = allCompanies.filter(company => 
+      company._count.people === 0 || 
+      !allPeople.some(person => person.companyId === company.id)
+    );
+    
+    // Step 2: Prepare people from companies that have people
+    const peopleFromCompaniesWithPeople = allPeople.filter(person => 
+      person.companyId !== null &&
+      allCompanies.some(company => company.id === person.companyId)
+    );
+    
+    // Step 3: Sort companies by priority (same logic as before)
+    const sortedCompanies = companiesWithoutPeople.sort((a, b) => {
+      const industryScore = (company: any) => {
         const industry = (company.industry || '').toLowerCase();
         if (industry.includes('title') || industry.includes('real estate') || industry.includes('escrow')) return 3;
         if (industry.includes('insurance') || industry.includes('legal')) return 2;
@@ -195,8 +194,7 @@ export async function POST(request: NextRequest) {
       const industryDiff = industryScore(b) - industryScore(a);
       if (industryDiff !== 0) return industryDiff;
       
-      // Priority 2: Company size (larger companies first)
-      const sizeScore = (company) => {
+      const sizeScore = (company: any) => {
         const size = (company.size || '').toLowerCase();
         if (size.includes('large') || size.includes('enterprise')) return 3;
         if (size.includes('medium') || size.includes('mid')) return 2;
@@ -206,63 +204,41 @@ export async function POST(request: NextRequest) {
       const sizeDiff = sizeScore(b) - sizeScore(a);
       if (sizeDiff !== 0) return sizeDiff;
       
-      // Priority 3: People count (more people = higher priority)
-      return (b.peopleCount || 0) - (a.peopleCount || 0);
+      return (b._count.people || 0) - (a._count.people || 0);
     });
-
-    // Update company global ranks in database
-    console.log(`🏢 [RE-RANK] Updating company global ranks...`);
-    for (let i = 0; i < sortedCompanies.length; i++) {
-      const company = sortedCompanies[i];
-      await prisma.companies.update({
-        where: { id: company.id },
-        data: { globalRank: i + 1 }
-      });
-    }
-
-    console.log(`✅ [RE-RANK] Updated ${sortedCompanies.length} company ranks (1-${sortedCompanies.length})`);
-
-    // Step 2: Rank people with company hierarchy
-    console.log(`👥 [RE-RANK] Ranking ${allPeople.length} people with company hierarchy...`);
     
-    // Create a map of company ranks for quick lookup
+    // Step 4: Sort people by company priority, then within company
     const companyRankMap = new Map();
     sortedCompanies.forEach((company, index) => {
-      companyRankMap.set(company.name, index + 1);
+      companyRankMap.set(company.id, index + 1);
     });
-
-    // Group people by company and sort by company rank
+    
+    // Group people by company
     const peopleByCompany = new Map();
-    allPeople.forEach(person => {
-      const companyName = person.company?.name || 'Unknown Company';
-      if (!peopleByCompany.has(companyName)) {
-        peopleByCompany.set(companyName, []);
+    peopleFromCompaniesWithPeople.forEach(person => {
+      const companyId = person.companyId || 'unknown';
+      if (!peopleByCompany.has(companyId)) {
+        peopleByCompany.set(companyId, []);
       }
-      peopleByCompany.get(companyName).push(person);
+      peopleByCompany.get(companyId)!.push(person);
     });
-
-    // Sort companies by their rank and then people within each company
+    
+    // Sort people within each company
     const sortedPeopleByCompany = Array.from(peopleByCompany.entries())
-      .sort(([companyA], [companyB]) => {
-        const rankA = companyRankMap.get(companyA) || 999999;
-        const rankB = companyRankMap.get(companyB) || 999999;
+      .sort(([companyIdA], [companyIdB]) => {
+        const rankA = companyRankMap.get(companyIdA) || 999999;
+        const rankB = companyRankMap.get(companyIdB) || 999999;
         return rankA - rankB;
       });
-
-    // Rank people sequentially across all companies
-    let globalPersonRank = 1;
-    const rankedPeople = [];
-
-    for (const [companyName, companyPeople] of sortedPeopleByCompany) {
-      // Sort people within each company by priority
-      const sortedCompanyPeople = companyPeople.sort((a, b) => {
-        // Priority 1: Status (LEAD > PROSPECT > etc.)
-        const statusPriority = { 'LEAD': 3, 'PROSPECT': 2, 'OPPORTUNITY': 4, 'CUSTOMER': 5 };
+    
+    // Sort people within each company
+    for (const [companyId, companyPeople] of sortedPeopleByCompany) {
+      companyPeople.sort((a, b) => {
+        const statusPriority: Record<string, number> = { 'LEAD': 3, 'PROSPECT': 2, 'OPPORTUNITY': 4, 'CUSTOMER': 5 };
         const statusDiff = (statusPriority[b.status] || 1) - (statusPriority[a.status] || 1);
         if (statusDiff !== 0) return statusDiff;
         
-        // Priority 2: Job title seniority
-        const titleScore = (title) => {
+        const titleScore = (title: string | null) => {
           const t = (title || '').toLowerCase();
           if (t.includes('ceo') || t.includes('president') || t.includes('owner')) return 5;
           if (t.includes('vp') || t.includes('vice president') || t.includes('director')) return 4;
@@ -274,25 +250,30 @@ export async function POST(request: NextRequest) {
         const titleDiff = titleScore(b.jobTitle) - titleScore(a.jobTitle);
         if (titleDiff !== 0) return titleDiff;
         
-        // Priority 3: Last contact date (more recent = higher priority)
         const lastContactA = a.lastActionDate || new Date(0);
         const lastContactB = b.lastActionDate || new Date(0);
         return lastContactB.getTime() - lastContactA.getTime();
       });
-
-      // Assign sequential ranks to people in this company
-      for (const person of sortedCompanyPeople) {
+    }
+    
+    // Step 5: Create unified ranked list (people first, then companies)
+    const rankedPeople: Array<any> = [];
+    let unifiedRank = 1;
+    
+    // Add people first (higher priority)
+    for (const [companyId, companyPeople] of sortedPeopleByCompany) {
+      for (const person of companyPeople) {
         rankedPeople.push({
           ...person,
-          globalRank: globalPersonRank,
-          companyRank: companyRankMap.get(companyName) || 999999
+          globalRank: unifiedRank,
+          companyRank: companyRankMap.get(companyId) || 999999
         });
-        globalPersonRank++;
+        unifiedRank++;
       }
     }
-
-    // Update people global ranks and nextActionDate in database
-    console.log(`👥 [RE-RANK] Updating people global ranks and nextActionDate...`);
+    
+    // Step 6: Update people ranks in database
+    console.log(`👥 [RE-RANK] Updating ${rankedPeople.length} people with unified ranks...`);
     for (const person of rankedPeople) {
       const nextActionDate = calculateRankBasedDate(person.globalRank, person.lastActionDate);
       
@@ -304,11 +285,49 @@ export async function POST(request: NextRequest) {
         }
       });
     }
+    
+    // Step 7: Add companies after people (lower priority, but still sequential)
+    const rankedCompanies: Array<any> = [];
+    for (const company of sortedCompanies) {
+      rankedCompanies.push({
+        ...company,
+        globalRank: unifiedRank,
+        companyRank: unifiedRank
+      });
+      unifiedRank++;
+    }
+    
+    // Step 8: Update company ranks in database (only assign ranks 1-50 if people didn't fill all slots)
+    console.log(`🏢 [RE-RANK] Updating company ranks (only top 50 total)...`);
+    const remainingSlots = Math.max(0, 50 - rankedPeople.length);
+    const companiesToRank = rankedCompanies.slice(0, remainingSlots);
+    
+    for (const company of companiesToRank) {
+      await prisma.companies.update({
+        where: { id: company.id },
+        data: { globalRank: company.globalRank }
+      });
+    }
+    
+    // Clear ranks for companies beyond top 50
+    if (rankedCompanies.length > remainingSlots) {
+      const companiesToClear = rankedCompanies.slice(remainingSlots);
+      await prisma.companies.updateMany({
+        where: {
+          id: { in: companiesToClear.map(c => c.id) }
+        },
+        data: { globalRank: null }
+      });
+      console.log(`🧹 [RE-RANK] Cleared ranks for ${companiesToClear.length} companies beyond top 50`);
+    }
+    
+    console.log(`✅ [RE-RANK] Updated ${rankedPeople.length} people ranks (1-${rankedPeople.length})`);
+    console.log(`✅ [RE-RANK] Updated ${companiesToRank.length} company ranks (${rankedPeople.length + 1}-${rankedPeople.length + companiesToRank.length})`);
+    console.log(`✅ [RE-RANK] Total unified ranks: ${rankedPeople.length + companiesToRank.length}`);
 
-    console.log(`✅ [RE-RANK] Updated ${rankedPeople.length} people ranks (1-${rankedPeople.length}) with nextActionDate`);
-
-    // Take the top 50 for the new batch
-    const newBatch = rankedPeople.slice(0, 50);
+    // Step 9: Take the top 50 for the new batch
+    const allRankedRecords = [...rankedPeople, ...companiesToRank];
+    const newBatch = allRankedRecords.slice(0, 50);
 
     // 🎯 DEBUG: Log ranking changes for recently contacted people
     console.log(`🔄 [RE-RANK] Top 10 after re-ranking:`, 

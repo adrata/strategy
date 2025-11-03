@@ -448,23 +448,16 @@ export function UniversalRecordTemplate({
           event.stopImmediatePropagation();
           
           if (recordType === 'speedrun') {
-            // Check if we're on a speedrun sprint page (Add Action) or individual record page (Start Speedrun)
+            // Check if we're on a speedrun sprint page (Add Action) or individual record page (both Add Action and Start Speedrun)
             const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
             
             if (isOnSprintPage) {
               console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered');
               setIsAddActionModalOpen(true);
             } else {
-              console.log('⌨️ [UniversalRecordTemplate] Start Speedrun keyboard shortcut triggered');
-              // Navigate to speedrun/sprint page
-              const currentPath = window.location.pathname;
-              const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-              if (workspaceMatch) {
-                const workspaceSlug = workspaceMatch[1];
-                router.push(`/${workspaceSlug}/speedrun/sprint`);
-              } else {
-                router.push('/speedrun/sprint');
-              }
+              // On individual record page: Open Add Action modal (same as for other record types)
+              console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered for speedrun record');
+              setIsAddActionModalOpen(true);
             }
           } else {
             // For all other record types (leads, prospects, etc.), trigger Add Action
@@ -2083,7 +2076,13 @@ export function UniversalRecordTemplate({
       
       setLocalRecord((prev: any) => {
         // Use the actual value from API response if available, otherwise use the input value
-        const actualValue = result.data && result.data[apiField] !== undefined ? result.data[apiField] : value;
+        let actualValue = result.data && result.data[apiField] !== undefined ? result.data[apiField] : value;
+        
+        // IMPORTANT: For linkedinNavigatorUrl, always preserve the saved value if API response is null/undefined
+        if (field === 'linkedinNavigatorUrl' && (actualValue === null || actualValue === undefined)) {
+          actualValue = value; // Use the value we just saved
+          console.log(`🔄 [LINKEDIN NAVIGATOR LOCAL STATE] Preserving saved value in local state:`, value);
+        }
         
         const updatedRecord = {
           ...prev,
@@ -2148,7 +2147,24 @@ export function UniversalRecordTemplate({
         const actualValue = result.data[apiField] !== undefined ? result.data[apiField] : value;
         mappedResponseData[field] = actualValue;
         
-        const updatedRecord = { ...record, ...mappedResponseData };
+        // IMPORTANT: Preserve fields that might not be in the API response
+        // For linkedinNavigatorUrl and other nullable fields, ensure they're always included
+        const preservedFields: Record<string, any> = {};
+        if (field === 'linkedinNavigatorUrl') {
+          // Always preserve linkedinNavigatorUrl value - use saved value if response doesn't have it
+          const navigatorValue = result.data[apiField] !== undefined && result.data[apiField] !== null 
+            ? result.data[apiField] 
+            : value; // Use the value we just saved if API response is missing/null
+          preservedFields[field] = navigatorValue;
+          preservedFields[apiField] = navigatorValue;
+          console.log(`🔄 [LINKEDIN NAVIGATOR PRESERVE] Ensuring linkedinNavigatorUrl is preserved:`, {
+            savedValue: value,
+            apiResponseValue: result.data[apiField],
+            preservedValue: navigatorValue
+          });
+        }
+        
+        const updatedRecord = { ...record, ...mappedResponseData, ...preservedFields };
         console.log(`🔍 [INLINE EDIT AUDIT] Calling onRecordUpdate with mapped result.data:`, {
           originalField: field,
           apiField: apiField,
@@ -2179,6 +2195,8 @@ export function UniversalRecordTemplate({
         const updatedRecord = {
           ...record,
           [field]: value,
+          // Also update the API field name if different
+          ...(apiField !== field ? { [apiField]: value } : {}),
           // Update related fields if name was changed
           ...(field === 'name' || field === 'fullName' ? {
             firstName: updateData['firstName'],
@@ -2979,19 +2997,40 @@ export function UniversalRecordTemplate({
         setIsAddActionModalOpen(false);
         
         // 🎯 SPEEDRUN RECORD MOVEMENT: Move current record to bottom and gray out
-        if (recordType === 'speedrun' && onNavigateNext) {
-          console.log('🎯 [SPEEDRUN] Action logged - moving to next record');
-          
-          // Dispatch custom event to trigger record movement in left panel
-          document.dispatchEvent(new CustomEvent('speedrunActionLogged', {
-            detail: {
-              currentRecord: record,
-              actionData: actionData,
-              timestamp: new Date().toISOString()
-            }
-          }));
-          
-          // Navigate to next record
+        // Always dispatch event for speedrun sprint views, regardless of recordType
+        // The event listener will handle filtering based on the record's context
+        console.log('🎯 [SPEEDRUN] Action logged - dispatching event for record:', {
+          recordId: record.id,
+          recordType: recordType,
+          recordName: record.name || record.fullName,
+          hasOnNavigateNext: !!onNavigateNext
+        });
+        
+        // Dispatch custom event to trigger record movement in left panel
+        // This works for both speedrun table view and sprint view
+        const eventDetail = {
+          currentRecord: record,
+          actionData: actionData,
+          timestamp: new Date().toISOString()
+        };
+        
+        console.log('🎯 [SPEEDRUN] Dispatching speedrunActionLogged event:', {
+          recordId: record.id,
+          recordName: record.name || record.fullName,
+          recordType: recordType,
+          eventDetail: eventDetail,
+          timestamp: eventDetail.timestamp
+        });
+        
+        document.dispatchEvent(new CustomEvent('speedrunActionLogged', {
+          detail: eventDetail
+        }));
+        
+        console.log('✅ [SPEEDRUN] Event dispatched successfully');
+        
+        // Navigate to next record if available (for sprint view)
+        if (onNavigateNext) {
+          console.log('🎯 [SPEEDRUN] Navigating to next record');
           onNavigateNext();
         }
         
@@ -3014,6 +3053,7 @@ export function UniversalRecordTemplate({
               recordId: record.id,
               recordType: recordType,
               actionId: result.data?.id,
+              actionData: result.data, // Include full action data for matching by personId/companyId
               timestamp: new Date().toISOString()
             }
           }));
@@ -3491,7 +3531,7 @@ export function UniversalRecordTemplate({
       const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
       
       if (isOnSprintPage) {
-        // On sprint page: Show "Add Action with the shortcut" with green styling and keyboard shortcut - Responsive for 15-inch laptops
+        // On sprint page: Show "Add Action" button with green styling and keyboard shortcut - Always show shortcut
         buttons.push(
           <button
             key="add-action"
@@ -3499,11 +3539,35 @@ export function UniversalRecordTemplate({
             className="px-3 py-1.5 text-sm bg-success-bg text-success-text border border-success-border rounded-md hover:bg-success hover:text-button-text transition-colors flex items-center gap-1"
           >
             <span className="hidden xs:inline">Add Action ({getCommonShortcut('SUBMIT')})</span>
-            <span className="xs:hidden">Add Action</span>
+            <span className="xs:hidden">Add Action ({getCommonShortcut('SUBMIT')})</span>
           </button>
         );
       } else {
-        // On individual record page: Show "Start Speedrun" with blue styling - Responsive for 15-inch laptops
+        // On individual record page: Show "Add Action" button first (no shortcut), then "Start Speedrun" with shortcut
+        // Add Action button - CATEGORY COLORED BUTTON (matching section colors)
+        const categoryColors = getCategoryColors(recordType);
+        buttons.push(
+          <button
+            key="add-action"
+            onClick={() => setIsAddActionModalOpen(true)}
+            className="px-3 py-1.5 text-sm rounded-md transition-colors"
+            style={{
+              backgroundColor: categoryColors.bg,
+              color: categoryColors.primary,
+              border: `1px solid ${categoryColors.border}`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = categoryColors.bgHover;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = categoryColors.bg;
+            }}
+          >
+            Add Action
+          </button>
+        );
+        
+        // Start Speedrun button - blue styling
         buttons.push(
           <button
             key="start-speedrun"
@@ -3642,6 +3706,21 @@ export function UniversalRecordTemplate({
     if (activeTabConfig?.component) {
       try {
         const TabComponent = activeTabConfig.component;
+        // NotesTab requires additional props for pending saves tracking
+        if (activeTab === 'notes') {
+          return (
+            <TabComponent 
+              key={activeTab} 
+              record={record} 
+              recordType={recordType} 
+              onSave={handleInlineFieldSave}
+              setPendingSaves={setPendingSaves}
+              setLocalRecord={setLocalRecord}
+              localRecord={localRecord}
+              onRecordUpdate={onRecordUpdate}
+            />
+          );
+        }
         return <TabComponent key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />;
       } catch (error) {
         console.error(`🚨 [UNIVERSAL] Error rendering custom tab component:`, error);
@@ -4001,32 +4080,47 @@ export function UniversalRecordTemplate({
                 nextDisabledResult: !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords
               });
               
+              // For speedrun (descending order), update titles to reflect that right arrow goes to lower numbers
+              const isDescending = recordType === 'speedrun';
+              const leftHandler = onNavigatePrevious;
+              const rightHandler = onNavigateNext;
+              
+              const leftDisabled = !safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords;
+              const rightDisabled = !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords;
+              
+              const leftTitle = isDescending 
+                ? (!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Previous record (higher rank)")
+                : (!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Previous record");
+              const rightTitle = isDescending
+                ? (!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Next record (lower rank)")
+                : (!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Next record");
+              
               return (
                 <>
                   <button
                     onClick={() => {
-                      console.log(`🔍 [UNIVERSAL] Previous button clicked!`, {
-                        hasOnNavigatePrevious: !!onNavigatePrevious,
+                      console.log(`🔍 [UNIVERSAL] Left arrow clicked!`, {
+                        isDescending,
+                        hasHandler: !!leftHandler,
                         recordIndex,
                         totalRecords,
-                        canNavigate: !(!recordIndex || recordIndex <= 1),
                         recordId: record?.id,
                         recordName: record?.name || record?.fullName
                       });
-                      if (onNavigatePrevious && safeRecordIndex && safeRecordIndex > 1) {
-                        console.log(`✅ [UNIVERSAL] Navigating to previous record`);
-                        onNavigatePrevious();
+                      if (leftHandler && !leftDisabled) {
+                        console.log(`✅ [UNIVERSAL] Navigating ${isDescending ? 'to next record (lower rank)' : 'to previous record'}`);
+                        leftHandler();
                       } else {
-                        console.warn(`❌ [UNIVERSAL] Cannot navigate previous - safeRecordIndex: ${safeRecordIndex}, safeTotalRecords: ${safeTotalRecords}`);
+                        console.warn(`❌ [UNIVERSAL] Cannot navigate - leftDisabled: ${leftDisabled}`);
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords
+                      leftDisabled
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-foreground hover:text-blue-600 hover:bg-panel-background'
                     }`}
-                    disabled={!safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords}
-                    title={!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Previous record"}
+                    disabled={leftDisabled}
+                    title={leftTitle}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -4034,28 +4128,28 @@ export function UniversalRecordTemplate({
                   </button>
                   <button
                     onClick={() => {
-                      console.log(`🔍 [UNIVERSAL] Next button clicked!`, {
-                        hasOnNavigateNext: !!onNavigateNext,
+                      console.log(`🔍 [UNIVERSAL] Right arrow clicked!`, {
+                        isDescending,
+                        hasHandler: !!rightHandler,
                         recordIndex,
                         totalRecords,
-                        canNavigate: !(!recordIndex || !totalRecords || recordIndex >= totalRecords),
                         recordId: record?.id,
                         recordName: record?.name || record?.fullName
                       });
-                      if (onNavigateNext && safeRecordIndex && safeTotalRecords && safeRecordIndex < safeTotalRecords) {
-                        console.log(`✅ [UNIVERSAL] Navigating to next record`);
-                        onNavigateNext();
+                      if (rightHandler && !rightDisabled) {
+                        console.log(`✅ [UNIVERSAL] Navigating ${isDescending ? 'to previous record (higher rank)' : 'to next record'}`);
+                        rightHandler();
                       } else {
-                        console.warn(`❌ [UNIVERSAL] Cannot navigate next - safeRecordIndex: ${safeRecordIndex}, safeTotalRecords: ${safeTotalRecords}`);
+                        console.warn(`❌ [UNIVERSAL] Cannot navigate - rightDisabled: ${rightDisabled}`);
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords
+                      rightDisabled
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-foreground hover:text-blue-600 hover:bg-panel-background'
                     }`}
-                    disabled={!safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords}
-                    title={!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Next record"}
+                    disabled={rightDisabled}
+                    title={rightTitle}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -4159,7 +4253,7 @@ export function UniversalRecordTemplate({
             <Loader size="lg" />
           </div>
         ) : (
-          <div key={record?.id} className="px-1 min-h-[400px]">
+          <div key={record?.id} className="px-6 py-6 min-h-[400px]">
             {renderTabContent}
           </div>
         )}
@@ -5754,19 +5848,53 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   
   // Track if initial mount is complete to prevent refresh during active editing
   const isInitialMountRef = React.useRef(true);
+  const previousRecordIdRef = React.useRef<string | undefined>(record?.id);
+  const notesRef = React.useRef<string>(getInitialNotes);
+  const isTypingRef = React.useRef(false); // Track if user is actively typing
+  const typingTimeoutRef = React.useRef<NodeJS.Timeout | null>(null); // Track typing timeout
 
-  // Sync notes state when record.notes prop changes
+  // Update ref whenever notes change
+  React.useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
+
+  // Reset state when record ID changes (user navigates to different record)
+  React.useEffect(() => {
+    if (record?.id !== previousRecordIdRef.current) {
+      console.log('🔄 [NOTES] Record ID changed, resetting notes state:', { 
+        previousId: previousRecordIdRef.current, 
+        newId: record?.id,
+        initialNotes: getInitialNotes 
+      });
+      previousRecordIdRef.current = record?.id;
+      isInitialMountRef.current = true;
+      setNotes(getInitialNotes);
+      setLastSavedNotes(getInitialNotes);
+      notesRef.current = getInitialNotes;
+      setHasUnsavedChanges(false);
+      setSaveStatus('idle');
+      if (record?.updatedAt && getInitialNotes.trim().length > 0) {
+        setLastSavedAt(new Date(record.updatedAt));
+      } else {
+        setLastSavedAt(null);
+      }
+    }
+  }, [record?.id, getInitialNotes]);
+
+  // Sync notes state when record.notes prop changes (after initial mount)
   React.useEffect(() => {
     const newNotes = getInitialNotes;
     // Only sync if:
     // 1. Notes have actually changed from what's currently displayed
     // 2. User is not currently focused on the textarea
-    // 3. Not currently saving
-    // 4. No unsaved changes
-    // 5. Notes from prop are different from our last saved version (prevents stale cache overwrites)
+    // 3. User is not actively typing (wait 2 seconds after last keystroke)
+    // 4. Not currently saving
+    // 5. No unsaved changes
+    // 6. Notes from prop are different from our last saved version (prevents stale cache overwrites)
     if (newNotes !== notes && 
         newNotes !== lastSavedNotes &&
         !isFocused && 
+        !isTypingRef.current &&
         saveStatus !== 'saving' && 
         !hasUnsavedChanges &&
         !isInitialMountRef.current) {
@@ -5781,8 +5909,26 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
     const refreshNotes = async () => {
       if (!record?.id) return;
 
+      const isInitialMount = isInitialMountRef.current;
+      
+      // Wait a bit to ensure user is not actively typing
+      if (!isInitialMount) {
+        // Wait 3 seconds after component mount to ensure user has finished typing
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Double-check that user is still not typing
+        if (isTypingRef.current || isFocused) {
+          console.log('⏭️ [NOTES] Skipping refresh - user is typing');
+          return;
+        }
+      }
+      
       try {
-        console.log('🔄 [NOTES] Silently refreshing notes for:', { recordId: record.id, recordType });
+        console.log('🔄 [NOTES] Silently refreshing notes for:', { 
+          recordId: record.id, 
+          recordType,
+          isInitialMount 
+        });
 
         // Map record types to v1 API endpoints
         const apiEndpoint = recordType === 'companies' 
@@ -5798,20 +5944,51 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
 
         if (response.ok) {
           const result = await response.json();
-          if (result.success && result.data?.notes) {
+          if (result.success && result.data?.notes !== undefined) {
             const freshNotes = typeof result.data.notes === 'string' 
               ? result.data.notes 
-              : result.data.notes.content || result.data.notes.text || '';
+              : result.data.notes?.content || result.data.notes?.text || '';
             
-            // Only update if the notes are different and we're not currently editing or saving
-            // This prevents overwriting user changes during active editing
-            if (freshNotes !== notes && saveStatus !== 'saving' && !isFocused && !hasUnsavedChanges) {
+            // On initial mount, always update notes from API (they're the source of truth)
+            // After initial mount, only update if conditions are met to prevent overwriting user edits
+            const currentNotes = notesRef.current;
+            const shouldUpdate = isInitialMount 
+              ? freshNotes !== currentNotes  // Always update on initial mount if different
+              : (freshNotes !== currentNotes && saveStatus !== 'saving' && !isFocused && !isTypingRef.current && !hasUnsavedChanges);
+            
+            if (shouldUpdate) {
+              console.log('✅ [NOTES] Updating notes from API:', { 
+                length: freshNotes.length, 
+                isInitialMount,
+                currentNotes: currentNotes,
+                freshNotes 
+              });
               setNotes(freshNotes);
               setLastSavedNotes(freshNotes);
+              notesRef.current = freshNotes;
               if (result.data.updatedAt) {
                 setLastSavedAt(new Date(result.data.updatedAt));
               }
-              console.log('✅ [NOTES] Silently updated notes:', { length: freshNotes.length });
+            } else {
+              console.log('⏭️ [NOTES] Skipping update:', { 
+                freshNotes,
+                currentNotes: currentNotes,
+                isInitialMount,
+                saveStatus,
+                isFocused,
+                isTyping: isTypingRef.current,
+                hasUnsavedChanges
+              });
+            }
+          } else if (result.success && result.data?.notes === null) {
+            // API returned null/empty notes - update state to reflect this ONLY if user is not typing
+            console.log('📝 [NOTES] API returned empty notes, checking if safe to clear');
+            if (isInitialMount || (!isFocused && !isTypingRef.current && saveStatus !== 'saving' && !hasUnsavedChanges)) {
+              setNotes('');
+              setLastSavedNotes('');
+              notesRef.current = '';
+            } else {
+              console.log('⏭️ [NOTES] Not clearing notes - user is typing or has unsaved changes');
             }
           }
         }
@@ -5880,6 +6057,13 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
       setSaveStatus('saved');
       setLastSavedAt(new Date());
       setLastSavedNotes(notesContent);
+      
+      // Reset typing state after successful save
+      isTypingRef.current = false;
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
       
       // Update sessionStorage cache to prevent stale data on navigation
       if (typeof window !== 'undefined' && record?.id) {
@@ -5955,6 +6139,20 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
 
   // Handle notes change to track user editing
   const handleNotesChange = React.useCallback((newNotes: string) => {
+    // Mark user as typing
+    isTypingRef.current = true;
+    
+    // Clear any existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    // Set timeout to mark user as not typing after 2 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      isTypingRef.current = false;
+      typingTimeoutRef.current = null;
+    }, 2000);
+    
     setNotes(newNotes);
     setHasUnsavedChanges(newNotes !== lastSavedNotes);
   }, [lastSavedNotes]);
@@ -5962,16 +6160,31 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   // Handle focus/blur to track editing state
   const handleFocus = React.useCallback(() => {
     setIsFocused(true);
+    isTypingRef.current = true; // Mark as typing when focused
   }, []);
 
   const handleBlur = React.useCallback(() => {
     setIsFocused(false);
+    // Mark as not typing after a short delay to allow for save operations
+    setTimeout(() => {
+      isTypingRef.current = false;
+    }, 500);
+  }, []);
+  
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
   }, []);
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1">
         <NotesEditor
+          key={`notes-${record?.id || 'unknown'}`}
           value={notes}
           onChange={handleNotesChange}
           onFocus={handleFocus}

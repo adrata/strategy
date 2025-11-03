@@ -101,7 +101,10 @@ export class ThemeApplier2025 {
         this.isTransitioning = false;
       }
 
-      console.log(`🎨 Successfully applied theme: ${theme.displayName}`, theme.colors);
+      // Only log in development mode
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🎨 Successfully applied theme: ${theme.displayName}`, theme.colors);
+      }
       return true;
 
     } catch (error) {

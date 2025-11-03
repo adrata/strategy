@@ -3,7 +3,7 @@ import { getSecureApiContext, createErrorResponse } from '@/platform/services/se
 import { prisma } from '@/platform/database/prisma-client';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 export async function POST(request: NextRequest) {
   try {

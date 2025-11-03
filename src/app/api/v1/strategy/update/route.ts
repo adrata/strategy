@@ -4,7 +4,7 @@ import { prisma } from '@/platform/database/prisma-client';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * PATCH /api/v1/strategy/update
  * Update individual strategy field for a person

@@ -7,7 +7,7 @@ import { sendInvitationEmail } from '@/platform/services/InvitationEmailService'
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * POST /api/v1/admin/invite-user
  * Invite a user to join a workspace
