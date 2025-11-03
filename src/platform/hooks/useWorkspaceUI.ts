@@ -289,12 +289,19 @@ export function useUI(): UseUIReturn {
     debug("SETTING_INITIAL_PANEL_VISIBILITY", { activeSubApp, activeSection });
 
     // Configure Pipeline panels: 
+    // - Speedrun routes: always show left panel (both /aos/speedrun and /speedrun)
     // - Embedded pipeline (/aos/pipeline): hide left panel for clean UI
     // - Standalone pipeline routes: show left panel for navigation
     // ALWAYS check URL path first, not activeSubApp
     if (isClient) {
-      if (window.location.pathname.includes('/aos/dashboard') || window.location.pathname.includes('/aos/leads') || window.location.pathname.includes('/aos/opportunities') || window.location.pathname.includes('/aos/companies') || window.location.pathname.includes('/aos/people') || window.location.pathname.includes('/aos/partners') || window.location.pathname.includes('/aos/prospects') || window.location.pathname.includes('/aos/sellers') || window.location.pathname.includes('/aos/clients') || window.location.pathname.includes('/aos/metrics') || window.location.pathname.includes('/aos/speedrun')) {
-        // Embedded pipeline - hide left panel for clean UI
+      // Speedrun routes should always show the left panel
+      if (window.location.pathname.includes('/speedrun')) {
+        debug("ENSURING_SPEEDRUN_PANELS_BY_URL", {});
+        setIsLeftPanelVisible(true);
+        setIsRightPanelVisible(true);
+      }
+      // Other embedded pipeline routes - hide left panel for clean UI
+      else if (window.location.pathname.includes('/aos/dashboard') || window.location.pathname.includes('/aos/leads') || window.location.pathname.includes('/aos/opportunities') || window.location.pathname.includes('/aos/companies') || window.location.pathname.includes('/aos/people') || window.location.pathname.includes('/aos/partners') || window.location.pathname.includes('/aos/prospects') || window.location.pathname.includes('/aos/sellers') || window.location.pathname.includes('/aos/clients') || window.location.pathname.includes('/aos/metrics')) {
         debug("CONFIGURING_EMBEDDED_PIPELINE_PANELS_BY_URL", {});
         setIsLeftPanelVisible(false);
         setIsRightPanelVisible(true);
