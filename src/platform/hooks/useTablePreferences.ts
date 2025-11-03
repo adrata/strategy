@@ -219,21 +219,63 @@ export function useTablePreferences(
            preferences.sortDirection !== defaultSortDirection;
   }, [preferences.sortField, preferences.sortDirection, defaultSortField, defaultSortDirection]);
 
-  // Check if columns differ from default
+  // Check if columns are non-default
   const hasNonDefaultColumns = useMemo(() => {
-    if (preferences.visibleColumns.length !== defaultColumns.length) {
+    if (preferences.visibleColumns.length === 0) {
+      return false; // Empty means using defaults
+    }
+    // Check if visible columns differ from default columns
+    const defaultColumnsSet = new Set(defaultColumns);
+    const visibleColumnsSet = new Set(preferences.visibleColumns);
+    
+    // If lengths differ, columns are non-default
+    if (defaultColumnsSet.size !== visibleColumnsSet.size) {
       return true;
     }
     
-    // Check if all default columns are present (order-independent)
-    const currentSet = new Set(preferences.visibleColumns);
-    const defaultSet = new Set(defaultColumns);
+    // Check if all default columns are present in visible columns
+    for (const col of defaultColumns) {
+      if (!visibleColumnsSet.has(col)) {
+        return true;
+      }
+    }
     
-    return !(
-      defaultColumns.every(col => currentSet.has(col)) &&
-      preferences.visibleColumns.every(col => defaultSet.has(col))
-    );
+    return false;
   }, [preferences.visibleColumns, defaultColumns]);
+
+  // Clear search query when section changes or component unmounts
+  useEffect(() => {
+    // Clear search query when section changes (but keep other preferences)
+    setPreferences(prev => {
+      if (prev.searchQuery) {
+        const updated = { ...prev, searchQuery: '' };
+        savePreferences(updated);
+        return updated;
+      }
+      return prev;
+    });
+  }, [section, savePreferences]); // Clear search when section changes
+
+  // Clear search query on unmount (navigation away from page)
+  useEffect(() => {
+    return () => {
+      // On unmount, clear search query from localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.searchQuery) {
+              parsed.searchQuery = '';
+              localStorage.setItem(storageKey, JSON.stringify(parsed));
+            }
+          }
+        } catch (error) {
+          // Ignore errors on cleanup
+        }
+      }
+    };
+  }, [storageKey]);
 
   return {
     preferences,
