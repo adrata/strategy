@@ -3,7 +3,7 @@ import { UnifiedEmailSyncService } from '@/platform/services/UnifiedEmailSyncSer
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 export async function POST(request: NextRequest) {
   try {

@@ -3,7 +3,7 @@ import { prisma } from '@/platform/database/prisma-client';
 import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 // Required for static export compatibility
-export const dynamic = "force-static";
+export const dynamic = 'force-dynamic';;
 
 // GET: Retrieve partnerships or other related data
 export async function GET(request: NextRequest) {

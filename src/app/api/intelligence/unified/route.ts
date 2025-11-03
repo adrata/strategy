@@ -1,6 +1,6 @@
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * 🚀 UNIFIED INTELLIGENCE API - ENTERPRISE GRADE
  * 

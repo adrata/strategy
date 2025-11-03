@@ -248,14 +248,15 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     let activityEvents: ActionEvent[] = [];
     let noteEvents: ActionEvent[] = [];
     
-    // Skip cache if force refresh is requested
+    // Skip cache if force refresh is requested OR if cache is older than 500ms (very short cache for immediate updates)
     if (!forceRefresh && cachedData) {
       try {
         const parsed = JSON.parse(cachedData);
-        if (parsed.timestamp && Date.now() - parsed.timestamp < 1000 && parsed.version === currentCacheVersion) { // 1 second cache + version check
+        // Reduced cache TTL to 500ms to ensure new actions appear quickly
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 500 && parsed.version === currentCacheVersion) {
           activityEvents = parsed.activities || [];
           noteEvents = parsed.notes || [];
-          console.log('⚡ [ACTIONS] Using cached actions data');
+          console.log('⚡ [ACTIONS] Using cached actions data (cache age:', Date.now() - parsed.timestamp, 'ms)');
           
           // Set cached data immediately and return - NO LOADING STATE
           const combined = [...activityEvents, ...noteEvents];
@@ -276,6 +277,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           setActionEvents(sortedEvents);
           setLoading(false);
           return; // Skip loading entirely when cache exists
+        } else {
+          console.log('🔄 [ACTIONS] Cache expired or invalid, fetching fresh data', {
+            cacheAge: parsed.timestamp ? Date.now() - parsed.timestamp : 'unknown',
+            versionMatch: parsed.version === currentCacheVersion
+          });
         }
       } catch (e) {
         console.log('Actions cache parse error, fetching fresh data');
@@ -290,7 +296,9 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       
       // Build the correct query parameters based on record type
       let actionsQuery = '';
+      
       if (recordType === 'leads' || recordType === 'people' || recordType === 'prospects' || recordType === 'speedrun' || recordType === 'actions') {
+        // For person records, query by personId (actions linked to this person will be returned)
         actionsQuery = `personId=${record.id}`;
       } else if (recordType === 'companies') {
         actionsQuery = `companyId=${record.id}`;
@@ -489,35 +497,68 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   // Listen for action creation and update events to refresh actions
   useEffect(() => {
     const handleActionCreated = (event: CustomEvent) => {
-      const { recordId, actionId } = event.detail || {};
+      const { recordId, actionId, actionData } = event.detail || {};
+      const recordCompanyId = record?.companyId || record?.company?.id;
+      
       console.log('🔍 [ACTIONS] actionCreated event received:', {
         eventRecordId: recordId,
         currentRecordId: record?.id,
         actionId: actionId,
-        matches: recordId === record?.id
+        recordCompanyId: recordCompanyId,
+        actionPersonId: actionData?.personId,
+        actionCompanyId: actionData?.companyId,
+        matchesRecordId: recordId === record?.id,
+        matchesPersonId: actionData?.personId === record?.id,
+        matchesCompanyId: actionData?.companyId === recordCompanyId
       });
       
-      // Match by recordId only - don't check recordType to avoid mismatches
-      if (recordId === record?.id) {
-        console.log('🔄 [ACTIONS] Action created event matches current record, refreshing actions');
+      // Match by recordId, or by personId/companyId from action data
+      const matchesRecordId = recordId === record?.id;
+      const matchesPersonId = actionData?.personId === record?.id;
+      const matchesCompanyId = recordCompanyId && actionData?.companyId === recordCompanyId;
+      
+      if (matchesRecordId || matchesPersonId || matchesCompanyId) {
+        console.log('🔄 [ACTIONS] Action created event matches current record, refreshing actions', {
+          reason: matchesRecordId ? 'recordId' : matchesPersonId ? 'personId' : 'companyId'
+        });
         // Clear cache and reload
         const cacheKey = `actions-${record.id}`;
         localStorage.removeItem(cacheKey);
+        // Also clear company cache if applicable
+        if (recordCompanyId) {
+          const companyCacheKey = `actions-${recordCompanyId}`;
+          localStorage.removeItem(companyCacheKey);
+        }
         loadActionsFromAPI(true); // Force refresh
       }
     };
 
     const handleActionCreatedWithData = (event: CustomEvent) => {
       const { recordId, actionData } = event.detail || {};
+      const recordCompanyId = record?.companyId || record?.company?.id;
+      
       console.log('🔍 [ACTIONS] actionCreatedWithData event received:', {
         eventRecordId: recordId,
         currentRecordId: record?.id,
+        recordCompanyId: recordCompanyId,
         hasActionData: !!actionData,
-        actionData: actionData
+        actionPersonId: actionData?.personId,
+        actionCompanyId: actionData?.companyId,
+        matchesRecordId: recordId === record?.id,
+        matchesPersonId: actionData?.personId === record?.id,
+        matchesCompanyId: recordCompanyId && actionData?.companyId === recordCompanyId
       });
       
-      if (recordId === record?.id && actionData) {
-        console.log('⚡ [ACTIONS] Optimistically adding new action immediately:', actionData);
+      // Match by recordId, or by personId/companyId from action data
+      const matchesRecordId = recordId === record?.id;
+      const matchesPersonId = actionData?.personId === record?.id;
+      const matchesCompanyId = recordCompanyId && actionData?.companyId === recordCompanyId;
+      
+      if ((matchesRecordId || matchesPersonId || matchesCompanyId) && actionData) {
+        console.log('⚡ [ACTIONS] Optimistically adding new action immediately:', {
+          actionData,
+          matchReason: matchesRecordId ? 'recordId' : matchesPersonId ? 'personId' : 'companyId'
+        });
         
         // Optimistically add the new action to the list immediately
         const newEvent: ActionEvent = {

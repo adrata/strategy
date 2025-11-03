@@ -50,19 +50,63 @@ export function NotesEditor({
   const [timeSinceSave, setTimeSinceSave] = useState<number>(0);
   const [saveStartTime, setSaveStartTime] = useState<Date | null>(null);
 
+  // Track if this is the initial mount or if value changed significantly
+  const isInitialMountRef = useRef(true);
+  const previousValueRef = useRef<string>(value);
+  
   // Sync with external value changes - only when not actively editing
   useEffect(() => {
-    // Only sync if the external value is different AND we're not currently editing
-    // AND it's different from what we last saved (prevents stale cache overwrites)
-    if (value !== localValue && 
-        value !== lastSavedValue &&
-        !isFocused && 
-        saveStatus !== 'saving' && 
-        !isSavingRef.current) {
-      console.log('🔄 [NotesEditor] Syncing external value:', { value, localValue, lastSavedValue });
+    const isInitialMount = isInitialMountRef.current;
+    const valueChanged = previousValueRef.current !== value;
+    const isSignificantChange = valueChanged && (
+      // Value went from empty to non-empty (likely switching records)
+      (previousValueRef.current === '' && value !== '') ||
+      // Value went from non-empty to empty (likely switching records)
+      (previousValueRef.current !== '' && value === '') ||
+      // Value changed significantly (more than just a character or two)
+      Math.abs(value.length - previousValueRef.current.length) > 2
+    );
+    
+    // Reset initial mount flag if value changed significantly (likely a new record)
+    if (isSignificantChange && !isInitialMount) {
+      console.log('🔄 [NotesEditor] Significant value change detected, treating as initial mount');
+      isInitialMountRef.current = true;
+    }
+    
+    // On initial mount or significant change, always sync with the value prop (it's the source of truth)
+    // After initial mount, only sync if conditions are met to prevent overwriting user edits
+    const shouldSync = (isInitialMount || isSignificantChange)
+      ? value !== localValue  // Always sync on initial mount/significant change if different
+      : (value !== localValue && 
+         value !== lastSavedValue &&
+         !isFocused && 
+         saveStatus !== 'saving' && 
+         !isSavingRef.current);
+    
+    if (shouldSync) {
+      console.log('🔄 [NotesEditor] Syncing external value:', { 
+        value, 
+        localValue, 
+        lastSavedValue, 
+        isInitialMount: isInitialMount || isSignificantChange,
+        length: value?.length || 0,
+        previousLength: previousValueRef.current?.length || 0
+      });
       setLocalValue(value);
       setLastSavedValue(value);
       pendingValueRef.current = value;
+    } else if ((isInitialMount || isSignificantChange) && value === localValue) {
+      // Even if values match, update lastSavedValue to match on initial mount
+      setLastSavedValue(value);
+      pendingValueRef.current = value;
+    }
+    
+    // Update refs
+    previousValueRef.current = value;
+    
+    // Mark initial mount as complete after first sync attempt
+    if (isInitialMount || isSignificantChange) {
+      isInitialMountRef.current = false;
     }
   }, [value, isFocused, saveStatus, localValue, lastSavedValue]);
 

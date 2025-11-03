@@ -3,7 +3,7 @@ import { prisma } from '@/platform/database/prisma-client';
 import { Nango } from '@nangohq/node';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const nango = new Nango({
   secretKey: process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY!,

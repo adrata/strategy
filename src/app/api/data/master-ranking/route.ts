@@ -3,7 +3,7 @@ import { RankingSystem } from '@/platform/services/ranking-system';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 export const runtime = 'nodejs';
 
 /**

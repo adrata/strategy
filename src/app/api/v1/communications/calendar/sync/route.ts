@@ -3,7 +3,7 @@ import { CalendarSyncService } from '@/platform/services/calendar-sync-service';
 import { PrismaClient } from '@prisma/client';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const prisma = new PrismaClient();
 

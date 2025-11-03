@@ -423,8 +423,10 @@ export function PipelineTable({
               return (
                   <tr
                     key={record.id}
-                    className={`cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border relative ${
-                      isCompleted ? 'bg-success/10 border-success' : ''
+                    className={`cursor-pointer transition-colors h-table-row border-b relative ${
+                      isCompleted 
+                        ? 'bg-green-100 border-green-300 hover:bg-green-100' 
+                        : 'hover:bg-panel-background border-border'
                     }`}
                     onClick={() => onRecordClick(record)}
                   >

@@ -229,7 +229,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       updateSystemTheme: true
     }).then(success => {
       if (success) {
-        console.log(`🎨 Theme applied successfully: ${currentTheme}`);
+        // Only log in development mode (theme-applier already logs)
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🎨 Theme applied successfully: ${currentTheme}`);
+        }
         
         // CRITICAL: Ensure Tailwind dark mode is synced
         const root = document.documentElement;

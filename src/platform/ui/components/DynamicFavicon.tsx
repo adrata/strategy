@@ -73,7 +73,10 @@ export function DynamicFavicon({ isWebsite = false, defaultColor = '#6366f1' }: 
       // Update the favicon in the document
       updateFavicon(faviconDataUrl);
       
-      console.log(`🎨 [DYNAMIC FAVICON] Updated to ${appTheme.name} (${faviconText}) with color ${color}`);
+      // Only log in development mode
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🎨 [DYNAMIC FAVICON] Updated to ${appTheme.name} (${faviconText}) with color ${color}`);
+      }
     } catch (error) {
       console.error('Failed to update favicon:', error);
     }

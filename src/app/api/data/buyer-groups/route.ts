@@ -4,7 +4,7 @@ import { prisma } from '@/platform/database/prisma-client';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // Required for static export compatibility
-export const dynamic = "force-static";
+export const dynamic = 'force-dynamic';;
 
 // GET: Retrieve buyer groups or buyer group members
 export async function GET(request: NextRequest) {

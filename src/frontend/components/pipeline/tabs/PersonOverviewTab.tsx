@@ -63,9 +63,20 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
         setActionsError('Failed to fetch actions');
       }
     } catch (error) {
-      console.error('Error fetching actions:', error);
-      setActions([]);
-      setActionsError('Error loading actions');
+      // Handle 401 errors gracefully - user may not be authenticated
+      if (error instanceof Error && error.message.includes('401') || error instanceof Error && error.message.includes('Unauthorized')) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ [OVERVIEW] Authentication required for actions, skipping fetch');
+        }
+        setActions([]);
+        setActionsError(null); // Don't show error for auth issues
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching actions:', error);
+        }
+        setActions([]);
+        setActionsError('Error loading actions');
+      }
     } finally {
       setActionsLoading(false);
     }
@@ -343,7 +354,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   const lastActions = generateLastActions();
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold text-foreground">Overview</h2>

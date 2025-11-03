@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { createSuccessResponse, createErrorResponse } from '@/platform/api/response';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 interface ChronicleReportData {
   title: string;

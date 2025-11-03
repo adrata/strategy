@@ -51,6 +51,31 @@ export function SpeedrunSprintLeftPanel({
   const dataLoading = fastSectionData.loading || false;
   const error = fastSectionData.error || null;
 
+  // Fallback: Load completed records from localStorage on mount if prop is empty
+  const [localCompletedRecords, setLocalCompletedRecords] = React.useState<string[]>([]);
+  
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedCompleted = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+      if (storedCompleted.length > 0) {
+        console.log('📦 [SPEEDRUN SPRINT LEFT PANEL] Loaded completed records from localStorage:', storedCompleted);
+        setLocalCompletedRecords(storedCompleted);
+      }
+    }
+  }, []);
+  
+  // Use completedRecords prop if available, otherwise fall back to localStorage
+  const effectiveCompletedRecords = completedRecords.length > 0 ? completedRecords : localCompletedRecords;
+  
+  console.log('🔍 [SPEEDRUN SPRINT LEFT PANEL] Completed records state:', {
+    propCompletedRecords: completedRecords,
+    localCompletedRecords: localCompletedRecords,
+    effectiveCompletedRecords: effectiveCompletedRecords,
+    propLength: completedRecords.length,
+    localLength: localCompletedRecords.length,
+    effectiveLength: effectiveCompletedRecords.length
+  });
+
   // 🏆 USE DATABASE RANKING: Keep the same order as speedrun table (database globalRank)
   const allData = React.useMemo(() => {
     if (!rawData || rawData.length === 0) return [];
@@ -95,21 +120,21 @@ export function SpeedrunSprintLeftPanel({
       return true;
     });
 
-    // Separate completed and active records
-    const active = activeRecords.filter(record => !completedRecords.includes(record.id));
-    const completed = activeRecords.filter(record => completedRecords.includes(record.id));
+    // Separate completed and active records using effectiveCompletedRecords
+    const active = activeRecords.filter(record => !effectiveCompletedRecords.includes(record.id));
+    const completed = activeRecords.filter(record => effectiveCompletedRecords.includes(record.id));
     
     // Return active records first, then completed records at the bottom
     return [...active, ...completed];
-  }, [allData, completedRecords]);
+  }, [allData, effectiveCompletedRecords]);
   
   // 🏃‍♂️ SPRINT LOGIC: Show 10 total items per sprint with completed ones at bottom
   const data = React.useMemo(() => {
     if (!filteredData || filteredData.length === 0) return [];
     
-    // Separate active and completed records
-    const activeRecords = filteredData.filter(record => !completedRecords.includes(record.id));
-    const completedRecordsInSprint = filteredData.filter(record => completedRecords.includes(record.id));
+    // Separate active and completed records using effectiveCompletedRecords
+    const activeRecords = filteredData.filter(record => !effectiveCompletedRecords.includes(record.id));
+    const completedRecordsInSprint = filteredData.filter(record => effectiveCompletedRecords.includes(record.id));
     
     // Calculate sprint boundaries based on strategic rank, not array position
     const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
@@ -151,7 +176,7 @@ export function SpeedrunSprintLeftPanel({
     });
     
     return sprintData;
-  }, [filteredData, currentSprintIndex, completedRecords]);
+  }, [filteredData, currentSprintIndex, effectiveCompletedRecords]);
   
   const totalSprints = Math.ceil(data.length / SPRINT_SIZE); // Calculate based on actual data
   const hasNextSprint = currentSprintIndex < totalSprints - 1;
@@ -166,13 +191,13 @@ export function SpeedrunSprintLeftPanel({
             <div className="flex items-center gap-3">
               <h2 className="text-lg font-bold text-foreground">Sprint {currentSprintNumber}</h2>
             </div>
-            <span className="text-xs font-medium text-muted bg-hover px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
+            <span className="text-xs font-medium text-muted bg-hover px-2 py-1 rounded-full">{effectiveCompletedRecords.length}/{SPRINT_SIZE}</span>
           </div>
           <div className="text-xs text-muted">
             {currentSprintNumber} of {totalSprints} sprints • {data.length} total people in speedrun
           </div>
           <div className="text-xs text-blue-600 font-medium">
-            Batch {Math.floor(completedRecords.length / 50) + 1} • {completedRecords.length} completed today
+            Batch {Math.floor(effectiveCompletedRecords.length / 50) + 1} • {effectiveCompletedRecords.length} completed today
           </div>
         </div>
       </div>
@@ -191,7 +216,7 @@ export function SpeedrunSprintLeftPanel({
         
         {data.map((record: any, index: number) => {
           const isSelected = selectedRecord?.id === record.id;
-          const isCompleted = completedRecords.includes(record.id);
+          const isCompleted = effectiveCompletedRecords.includes(record.id);
           const displayName = record.fullName || 
                              (record['firstName'] && record.lastName ? `${record.firstName} ${record.lastName}` : '') ||
                              record.name || 
@@ -208,22 +233,13 @@ export function SpeedrunSprintLeftPanel({
               onClick={() => onRecordSelect(record)}
               className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border relative ${
                 isCompleted
-                  ? 'bg-panel-background text-muted border-border opacity-60'
+                  ? 'bg-green-100 text-foreground border-green-300 hover:bg-green-100'
                   : isSelected 
                     ? 'bg-hover text-foreground border-border shadow-sm' 
                     : 'bg-background hover:bg-panel-background border-gray-100 hover:border-border hover:shadow-sm'
               }`}
             >
-              {/* Completion overlay */}
-              {isCompleted && (
-                <div className="absolute inset-0 bg-green-50 bg-opacity-80 rounded-lg flex items-center justify-center">
-                  <div className="bg-green-500 text-white rounded-full p-2 shadow-lg animate-pulse">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
-              )}
+              {/* Completion indicator - removed overlay for cleaner look, green background is enough */}
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -238,27 +254,22 @@ export function SpeedrunSprintLeftPanel({
                     </span>
                     <h3 className={`text-sm font-semibold truncate ${
                       isCompleted 
-                        ? 'text-muted' 
+                        ? 'text-green-900' 
                         : isSelected ? 'text-foreground' : 'text-foreground'
                     }`}>
                       {displayName}
                     </h3>
-                    {isCompleted && (
-                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                        SUCCESS
-                      </span>
-                    )}
                   </div>
                   <p className={`text-xs truncate mb-1 ${
                     isCompleted 
-                      ? 'text-muted' 
+                      ? 'text-green-800' 
                       : isSelected ? 'text-muted' : 'text-muted'
                   }`}>
                     {record.title || record.jobTitle || 'No Title'}
                   </p>
                   <p className={`text-xs truncate ${
                     isCompleted 
-                      ? 'text-muted' 
+                      ? 'text-green-700' 
                       : isSelected ? 'text-muted' : 'text-muted'
                   }`}>
                     {getCompanyName(record.company)}

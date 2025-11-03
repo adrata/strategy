@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { documentAnalyzer } from '@/app/[workspace]/workshop/lib/ai/document-analyzer';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 export async function POST(request: NextRequest) {
   try {

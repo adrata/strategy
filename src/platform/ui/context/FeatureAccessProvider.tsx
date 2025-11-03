@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 import { type SimpleFeatureName } from '@/platform/services/simple-feature-service';
+import { generateWorkspaceSlug } from '@/platform/auth/workspace-slugs';
 
 interface FeatureAccessContextType {
   // Individual feature checks
@@ -54,7 +55,7 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
 
   const loadFeatureAccess = async () => {
     if (!user?.id || !user?.activeWorkspaceId) {
-      console.log('🔍 [FEATURE ACCESS] No user or workspace ID, skipping feature access check');
+      // Silently skip feature access check when no user (expected on auth pages)
       setLoading(false);
       return;
     }
@@ -63,11 +64,35 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
       setLoading(true);
       setError(null);
 
-      // Get workspace slug from the current URL or user data
-      const pathSegments = window.location.pathname.split('/').filter(Boolean);
-      const workspaceSlug = pathSegments[0] || 'adrata';
+      // Get workspace slug from user's workspace data, not URL (URL may be wrong during redirects)
+      let workspaceSlug = 'adrata'; // Default fallback
       
-      console.log('🔍 [FEATURE ACCESS] Detected workspace slug:', workspaceSlug, 'from path:', window.location.pathname);
+      if (user?.workspaces && user?.activeWorkspaceId) {
+        // Find the active workspace and generate its slug
+        const activeWorkspace = user.workspaces.find(ws => ws.id === user.activeWorkspaceId);
+        if (activeWorkspace) {
+          workspaceSlug = generateWorkspaceSlug(activeWorkspace.name);
+        } else {
+          // Fallback: try to get from URL if workspace not found in user data
+          const pathSegments = window.location.pathname.split('/').filter(Boolean);
+          const urlSlug = pathSegments[0];
+          // Only use URL slug if it's not an auth route
+          if (urlSlug && !['sign-in', 'sign-up', 'reset-password', 'demo'].includes(urlSlug)) {
+            workspaceSlug = urlSlug;
+          }
+        }
+      } else {
+        // Fallback to URL parsing if user data is incomplete
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const urlSlug = pathSegments[0];
+        if (urlSlug && !['sign-in', 'sign-up', 'reset-password', 'demo'].includes(urlSlug)) {
+          workspaceSlug = urlSlug;
+        }
+      }
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 [FEATURE ACCESS] Using workspace slug:', workspaceSlug, 'for workspace ID:', user?.activeWorkspaceId);
+      }
       
       // For now, assume all users have WORKSPACE_ADMIN role
       // In a real implementation, you'd get this from the user's role data
@@ -82,7 +107,9 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
       });
 
       if (!response.ok) {
-        console.warn(`⚠️ [FEATURE ACCESS] API request failed: ${response.status} ${response.statusText}, using fallback access`);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`⚠️ [FEATURE ACCESS] API request failed: ${response.status} ${response.statusText}, using fallback access`);
+        }
         // Instead of throwing an error, use fallback access
         setFeatureAccess({
           OASIS: true,
@@ -101,7 +128,9 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
       const result = await response.json();
       
       if (!result.success) {
-        console.warn(`⚠️ [FEATURE ACCESS] API returned error: ${result.error}, using fallback access`);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`⚠️ [FEATURE ACCESS] API returned error: ${result.error}, using fallback access`);
+        }
         // Instead of throwing an error, use fallback access
         setFeatureAccess({
           OASIS: true,
@@ -140,8 +169,8 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
 
   const hasFeature = (feature: SimpleFeatureName): boolean => {
     // If there's an error or we're still loading, be permissive to prevent blocking
+    // Don't log here - this function is called frequently and would create noise
     if (error || loading) {
-      console.log(`🔍 [FEATURE ACCESS] Allowing access to ${feature} due to error or loading state`);
       return true;
     }
     return featureAccess[feature] || false;

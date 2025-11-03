@@ -492,7 +492,9 @@ export function EnhancedDataIntegrationPopup({
                         } else if (option['action'] === 'recent') {
                           // Show recent files
                         } else if (option['action'] === 'cloud') {
-                          console.log('Cloud storage coming soon');
+                          if (process.env.NODE_ENV === 'development') {
+                            console.log('Cloud storage coming soon');
+                          }
                         }
                       }}
                       className="w-full px-4 py-3 text-left text-sm text-foreground dark:text-foreground hover:bg-panel-background flex items-center space-x-3 rounded-lg border border-border dark:border-border transition-colors"

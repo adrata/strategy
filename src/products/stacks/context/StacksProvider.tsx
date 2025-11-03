@@ -72,21 +72,31 @@ export function StacksProvider({ children }: StacksProviderProps) {
       
       setLoading(true);
       try {
-        await Promise.all([
+        // Use Promise.allSettled to continue loading even if some endpoints fail
+        const results = await Promise.allSettled([
           fetchProjects(),
           fetchEpics(),
           fetchStories(),
           fetchTasks(),
         ]);
+
+        // Log any failures but don't block the UI
+        results.forEach((result, index) => {
+          const endpointNames = ['projects', 'epics', 'stories', 'tasks'];
+          if (result.status === 'rejected') {
+            console.warn(`⚠️ [STACKS PROVIDER] Failed to load ${endpointNames[index]}:`, result.reason);
+          }
+        });
       } catch (error) {
-        console.error('Failed to load Stacks data:', error);
+        console.warn('⚠️ [STACKS PROVIDER] Error loading Stacks data:', error);
+        // Don't throw - allow the provider to continue with empty data
       } finally {
         setLoading(false);
       }
     };
 
     loadData();
-  }, [user?.activeWorkspaceId]);
+  }, [user?.activeWorkspaceId, fetchProjects, fetchEpics, fetchStories, fetchTasks]);
 
   // Action handlers
   const onSubSectionChange = (section: string) => {

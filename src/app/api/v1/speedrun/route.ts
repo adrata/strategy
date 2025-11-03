@@ -182,6 +182,7 @@ export async function GET(request: NextRequest) {
             workspaceId: true,
             createdAt: true,
             updatedAt: true,
+            notes: true,
             company: {
               select: {
                 id: true,
@@ -458,6 +459,7 @@ export async function GET(request: NextRequest) {
           workspaceId: record.workspaceId,
           createdAt: record.createdAt,
           updatedAt: record.updatedAt,
+          notes: record.notes || null, // Include notes field for persistence
           // Add state fields at top level for table display
           state: record.company?.hqState || record.company?.state || '',
           hqState: record.company?.hqState || '',

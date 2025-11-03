@@ -46,8 +46,6 @@ export function PanelLayout({
   
   // Visual enhancement state
   const [isAnimating, setIsAnimating] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [currentWidthPercent, setCurrentWidthPercent] = useState(35);
   const [currentLeftWidth, setCurrentLeftWidth] = useState(209);
   
@@ -350,10 +348,9 @@ export function PanelLayout({
           rightPanelRef.current.style.flex = currentFlex.toString();
         }
         
-        // Update tooltip position and percentage
+        // Update width percentage
         const percent = Math.round((1 - rightPanelRatio) * 100);
         setCurrentWidthPercent(percent);
-        setTooltipPosition({ x: e.clientX, y: e.clientY - 30 });
       });
     };
 
@@ -636,21 +633,14 @@ export function PanelLayout({
               }} // Reset to default ratio on double-click with animation
               onMouseEnter={() => {
                 setHovering(true);
-                setShowTooltip(true);
                 // Immediate cursor feedback
                 document.body.style.cursor = "col-resize";
               }}
               onMouseLeave={() => {
                 setHovering(false);
-                setShowTooltip(false);
                 // Reset cursor if not dragging
                 if (!dragging) {
                   document.body.style.cursor = "";
-                }
-              }}
-              onMouseMove={(e) => {
-                if (hovering && !dragging) {
-                  setTooltipPosition({ x: e.clientX, y: e.clientY - 30 });
                 }
               }}
               role="separator"
@@ -666,29 +656,6 @@ export function PanelLayout({
                   background: dividerLineColor,
                 }}
               />
-            </div>
-          )}
-          
-          {/* Tooltip */}
-          {showTooltip && !dragging && (
-            <div
-              style={{
-                position: "fixed",
-                left: tooltipPosition.x,
-                top: tooltipPosition.y,
-                zIndex: 9999,
-                background: "rgba(0, 0, 0, 0.8)",
-                color: "white",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                fontSize: "12px",
-                fontFamily: "system-ui, -apple-system, sans-serif",
-                pointerEvents: "none",
-                transform: "translateX(-50%)",
-                transition: "opacity 0.15s ease",
-              }}
-            >
-              {currentWidthPercent}% width
             </div>
           )}
         </div>

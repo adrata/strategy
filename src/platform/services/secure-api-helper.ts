@@ -52,30 +52,25 @@ export async function getSecureApiContext(
     }
 
     // 2. Authenticate user
-    if (process.env.NODE_ENV === 'development') {
-      const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
-      const allAuthHeaders = Array.from(request.headers.entries())
-        .filter(([key]) => key.toLowerCase() === 'authorization');
-      console.log('🔍 [SECURE API] Before getUnifiedAuthUser:', {
-        hasAuthHeader: !!authHeader,
-        authHeaderCount: allAuthHeaders.length,
-        cookieHeader: request.headers.get('cookie') ? 'present' : 'missing'
-      });
-    }
-    
     const authUser = await getUnifiedAuthUser(request);
     
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 [SECURE API] After getUnifiedAuthUser:', {
+      console.log('🔍 [SECURE API] getUnifiedAuthUser result:', {
         hasAuthUser: !!authUser,
         userId: authUser?.id,
         email: authUser?.email,
-        workspaceId: authUser?.workspaceId
+        workspaceId: authUser?.workspaceId,
+        activeWorkspaceId: (authUser as any)?.activeWorkspaceId,
+        requireAuth,
+        requireWorkspaceAccess
       });
     }
     
     if (!authUser) {
       if (requireAuth) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('❌ [SECURE API] No authUser returned, returning 401');
+        }
         return {
           context: null,
           response: NextResponse.json(
@@ -95,6 +90,15 @@ export async function getSecureApiContext(
     // 3. Build context
     // Prioritize activeWorkspaceId over workspaceId if available
     const workspaceId = (authUser as any).activeWorkspaceId || authUser.workspaceId;
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 [SECURE API] Workspace ID extraction:', {
+        activeWorkspaceId: (authUser as any).activeWorkspaceId,
+        workspaceId: authUser.workspaceId,
+        resolvedWorkspaceId: workspaceId,
+        requireWorkspaceAccess
+      });
+    }
     
     // Validate that we have a workspaceId if workspace access is required
     if (requireWorkspaceAccess && !workspaceId) {
@@ -121,13 +125,32 @@ export async function getSecureApiContext(
     // 4. Validate workspace access if required
     if (requireWorkspaceAccess && workspaceId) {
       try {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔍 [SECURE API] Validating workspace access:', {
+            userId: authUser.id,
+            workspaceId,
+            requiredRole
+          });
+        }
+        
         const workspaceAccess = await validateWorkspaceAccess(
           authUser.id,
           workspaceId,
           requiredRole
         );
 
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔍 [SECURE API] Workspace access validation result:', {
+            hasAccess: workspaceAccess.hasAccess,
+            role: workspaceAccess.role,
+            error: workspaceAccess.error
+          });
+        }
+
         if (!workspaceAccess.hasAccess) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('❌ [SECURE API] Workspace access denied:', workspaceAccess.error);
+          }
           return {
             context: null,
             response: NextResponse.json(
@@ -202,16 +225,38 @@ export async function getSecureApiContext(
       };
     }
     
-    console.error('❌ [SECURE API] Error creating secure context:', error);
+    // Enhanced error logging
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    const errorName = error instanceof Error ? error.name : typeof error;
+    
+    console.error('❌ [SECURE API] Error creating secure context:', {
+      error: errorMessage,
+      name: errorName,
+      stack: process.env.NODE_ENV === 'development' ? errorStack : undefined,
+      requireAuth,
+      requireWorkspaceAccess,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Check if it's an authentication-related error
+    const isAuthError = error instanceof Error && (
+      error.message.includes('Authentication') ||
+      error.message.includes('Unauthorized') ||
+      error.message.includes('token') ||
+      error.message.includes('JWT')
+    );
+    
     return {
       context: null,
       response: NextResponse.json(
         { 
           success: false, 
-          error: 'Authentication failed',
-          code: 'AUTH_ERROR'
+          error: isAuthError ? 'Authentication failed' : 'Request failed',
+          code: isAuthError ? 'AUTH_ERROR' : 'REQUEST_ERROR',
+          details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
         },
-        { status: 401 }
+        { status: isAuthError ? 401 : 500 }
       )
     };
   }

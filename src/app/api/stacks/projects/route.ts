@@ -31,41 +31,91 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Workspace ID is required', 'WORKSPACE_REQUIRED', 400);
     }
 
-    const projects = await prisma.stacksProject.findMany({
-      where: { workspaceId },
-      include: {
-        _count: {
-          select: {
-            epics: true,
-            stories: true,
-            tasks: true
+    // Wrap Prisma query in try-catch for better error handling
+    let projects;
+    try {
+      projects = await prisma.stacksProject.findMany({
+        where: { workspaceId },
+        include: {
+          _count: {
+            select: {
+              epics: true,
+              stories: true,
+              tasks: true
+            }
           }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+    } catch (dbError) {
+      // Handle specific Prisma errors
+      const prismaError = dbError as any;
+      
+      // P2022: Column does not exist
+      if (prismaError.code === 'P2022') {
+        const columnName = prismaError.meta?.column_name || 'unknown';
+        console.error('❌ [STACKS PROJECTS API] P2022 Error - Column does not exist:', {
+          columnName,
+          meta: prismaError.meta,
+          endpoint: 'GET',
+          userId: context.userId,
+          workspaceId: context.workspaceId,
+          errorMessage: prismaError.message,
+          stack: prismaError.stack
+        });
+        
+        return createErrorResponse(
+          columnName !== 'unknown' 
+            ? `Database column '${columnName}' does not exist. Please run database migrations.`
+            : 'Database schema mismatch. Please run database migrations.',
+          'SCHEMA_MISMATCH',
+          500
+        );
+      }
 
-    return NextResponse.json({ projects });
-  } catch (error) {
-    // Handle P2022 error (column does not exist)
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
-      const prismaError = error as any;
-      const columnName = prismaError.meta?.column_name || 'unknown';
-      console.error('❌ [STACKS PROJECTS API] P2022 Error - Column does not exist:', {
-        columnName,
+      // P2001: Record not found (shouldn't happen with findMany, but handle anyway)
+      if (prismaError.code === 'P2001') {
+        console.warn('⚠️ [STACKS PROJECTS API] P2001 Error - No records found (returning empty array):', {
+          userId: context.userId,
+          workspaceId: context.workspaceId
+        });
+        return NextResponse.json({ projects: [] });
+      }
+
+      // P1001: Database connection error
+      if (prismaError.code === 'P1001') {
+        console.error('❌ [STACKS PROJECTS API] P1001 Error - Database connection failed:', {
+          userId: context.userId,
+          workspaceId: context.workspaceId,
+          errorMessage: prismaError.message
+        });
+        return createErrorResponse(
+          'Database connection failed. Please try again later.',
+          'DATABASE_CONNECTION_ERROR',
+          503
+        );
+      }
+
+      // Unknown Prisma error
+      console.error('❌ [STACKS PROJECTS API] Prisma error:', {
+        code: prismaError.code,
+        message: prismaError.message,
         meta: prismaError.meta,
-        endpoint: 'GET'
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        stack: prismaError.stack
       });
       
       return createErrorResponse(
-        columnName !== 'unknown' 
-          ? `Database column '${columnName}' does not exist. Please run database migrations.`
-          : 'Database schema mismatch. Please run database migrations.',
-        'SCHEMA_MISMATCH',
+        `Database query failed: ${prismaError.message || 'Unknown error'}`,
+        'DATABASE_QUERY_ERROR',
         500
       );
     }
 
+    return NextResponse.json({ projects });
+  } catch (error) {
+    // Handle non-database errors
     return logAndCreateErrorResponse(
       error,
       {

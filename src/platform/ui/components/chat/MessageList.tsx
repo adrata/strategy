@@ -162,7 +162,9 @@ export function MessageList({
       onRecordSearch(recordName);
     } else {
       // Fallback: try to navigate to a search or find the record
-      console.log(`Searching for record: ${recordName}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Searching for record: ${recordName}`);
+      }
       // You could implement a generic search here
     }
   };
@@ -210,7 +212,9 @@ export function MessageList({
               todos={message.todos || []} 
               autoProgress={true}
               onTaskComplete={(taskIndex) => {
-                console.log(`✅ Task ${taskIndex} completed:`, message.todos?.[taskIndex]);
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`✅ Task ${taskIndex} completed:`, message.todos?.[taskIndex]);
+                }
               }}
             />
           ) : message['content'] === 'typing' ? (

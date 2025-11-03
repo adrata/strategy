@@ -91,21 +91,31 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
         
         if (response.ok) {
           const data = await response.json();
-          console.log('🔍 PipelineContext: User profile data fetched:', {
-            success: data.success,
-            firstName: data.settings?.firstName,
-            lastName: data.settings?.lastName,
-            name: authUser?.name
-          });
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔍 PipelineContext: User profile data fetched:', {
+              success: data.success,
+              firstName: data.settings?.firstName,
+              lastName: data.settings?.lastName,
+              name: authUser?.name
+            });
+          }
           if (data.success && data.settings) {
             setUserProfile({
               firstName: data.settings.firstName,
               lastName: data.settings.lastName
             });
           }
+        } else if (response.status === 404) {
+          // 404 is acceptable - user profile endpoint may not exist yet
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔍 PipelineContext: User profile endpoint not found (404), using parsed name');
+          }
         }
       } catch (error) {
-        console.error('Failed to fetch user profile:', error);
+        // Silently handle errors - user profile is optional
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch user profile:', error);
+        }
       }
     };
     

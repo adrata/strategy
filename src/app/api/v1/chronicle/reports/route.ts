@@ -1,36 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { sampleChronicleReports } from '@/lib/chronicle-sample-data';
 
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+// Force dynamic rendering for API routes (required for authentication)
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    // Use unified auth system instead of NextAuth
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId') || session.user.activeWorkspaceId;
+    const workspaceId = searchParams.get('workspaceId') || context.workspaceId;
     const limit = parseInt(searchParams.get('limit') || '20');
     
-    console.log('🔍 [Chronicle API] Request from user:', session.user.id);
-    console.log('🔍 [Chronicle API] Workspace ID:', workspaceId);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 [Chronicle API] Request from user:', context.userId);
+      console.log('🔍 [Chronicle API] Workspace ID:', workspaceId);
+    }
     
     if (!workspaceId) {
-      return NextResponse.json({ success: false, error: 'Workspace ID required' }, { status: 400 });
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_ID_REQUIRED', 400);
     }
-
-    // Check if this is Notary Everyday workspace
-    const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
-    console.log('🔍 [Chronicle API] Is Notary Everyday:', isNotaryEveryday);
-    
-    // Temporarily allow all workspaces for debugging
-    console.log('🔍 [Chronicle API] Allowing all workspaces for debugging');
 
     // Query actual reports from database with read status
     const reports = await prisma.chronicleReport.findMany({
@@ -45,29 +48,30 @@ export async function GET(request: NextRequest) {
         ChronicleShare: true,
         ChronicleReadStatus: {
           where: {
-            userId: session.user.id
+            userId: context.userId
           }
         }
       }
     });
 
-    console.log('🔍 [Chronicle API] Found reports in database:', reports.length);
-    console.log('🔍 [Chronicle API] Reports:', reports.map(r => ({ id: r.id, title: r.title, type: r.reportType })));
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 [Chronicle API] Found reports in database:', reports.length);
+      console.log('🔍 [Chronicle API] Reports:', reports.map(r => ({ id: r.id, title: r.title, type: r.reportType })));
+    }
 
     // If no reports in database, fall back to sample data
     if (reports.length === 0) {
-      console.log('No reports in database, using sample data');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No reports in database, using sample data');
+      }
       const sampleReports = sampleChronicleReports.map(report => ({
         ...report,
         shares: [] // Mock shares for now
       }));
 
-      return NextResponse.json({
-        success: true,
-        data: {
-          reports: sampleReports.slice(0, limit),
-          total: sampleReports.length
-        }
+      return createSuccessResponse({
+        reports: sampleReports.slice(0, limit),
+        total: sampleReports.length
       });
     }
 
@@ -95,61 +99,67 @@ export async function GET(request: NextRequest) {
 
     const unreadCount = mappedReports.filter(r => !r.isRead).length;
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        reports: mappedReports,
-        total: reports.length,
-        unreadCount
-      }
+    return createSuccessResponse({
+      reports: mappedReports,
+      total: reports.length,
+      unreadCount
     });
 
   } catch (error) {
-    console.error('Error fetching chronicle reports:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch chronicle reports' },
-      { status: 500 }
+    console.error('❌ [Chronicle API] Error fetching reports:', error);
+    return createErrorResponse(
+      'Failed to fetch chronicle reports',
+      'CHRONICLE_FETCH_ERROR',
+      500
     );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    // Use unified auth system instead of NextAuth
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
     const { title, reportDate, reportType, content } = body;
-    const workspaceId = session.user.activeWorkspaceId;
+    const workspaceId = context.workspaceId;
 
     if (!workspaceId) {
-      return NextResponse.json({ success: false, error: 'Workspace ID required' }, { status: 400 });
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_ID_REQUIRED', 400);
     }
 
     // Create new chronicle report
-    const report = await prisma.chronicle_reports.create({
+    const report = await prisma.chronicleReport.create({
       data: {
         workspaceId,
         title,
-        reportDate: new Date(reportDate),
-        reportType,
+        weekStart: new Date(reportDate),
+        weekEnd: new Date(reportDate),
+        reportType: reportType === 'WEEKLY' ? 'FRIDAY_RECAP' : 'DAILY',
         content,
-        createdBy: session.user.id,
+        userId: context.userId,
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: report
-    });
+    return createSuccessResponse(report);
 
   } catch (error) {
-    console.error('Error creating chronicle report:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create chronicle report' },
-      { status: 500 }
+    console.error('❌ [Chronicle API] Error creating report:', error);
+    return createErrorResponse(
+      'Failed to create chronicle report',
+      'CHRONICLE_CREATE_ERROR',
+      500
     );
   }
 }

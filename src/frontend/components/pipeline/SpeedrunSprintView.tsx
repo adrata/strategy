@@ -107,6 +107,74 @@ export function SpeedrunSprintView() {
     }
   }, []);
 
+  // Listen for speedrun action completion events to update completed records
+  useEffect(() => {
+    const handleSpeedrunActionLogged = (event: CustomEvent) => {
+      const { currentRecord } = event.detail || {};
+      
+      console.log('🎯 [SPEEDRUN SPRINT VIEW] speedrunActionLogged event received:', {
+        eventType: event.type,
+        eventDetail: event.detail,
+        currentRecordId: currentRecord?.id,
+        currentRecordName: currentRecord?.name || currentRecord?.fullName,
+        hasCurrentRecord: !!currentRecord,
+        currentCompletedRecords: completedRecords,
+        currentRecordInCompleted: currentRecord?.id ? completedRecords.includes(currentRecord.id) : false
+      });
+      
+      if (!currentRecord?.id) {
+        console.warn('⚠️ [SPEEDRUN SPRINT VIEW] Event received but currentRecord.id is missing:', event.detail);
+        return;
+      }
+
+      console.log('🎯 [SPEEDRUN SPRINT VIEW] Action logged for:', currentRecord.name || currentRecord.fullName);
+
+      // Add to completed records if not already there
+      setCompletedRecords(prev => {
+        console.log('🔄 [SPEEDRUN SPRINT VIEW] Updating completedRecords state:', {
+          previousCompletedRecords: prev,
+          recordIdToAdd: currentRecord.id,
+          recordName: currentRecord.name || currentRecord.fullName,
+          alreadyCompleted: prev.includes(currentRecord.id)
+        });
+        
+        if (prev.includes(currentRecord.id)) {
+          console.log('✅ [SPEEDRUN SPRINT VIEW] Record already in completed list');
+          return prev;
+        }
+        
+        const updated = [...prev, currentRecord.id];
+        
+        // Save to localStorage for persistence
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('speedrunCompletedRecords', JSON.stringify(updated));
+          console.log('💾 [SPEEDRUN SPRINT VIEW] Saved completed records to localStorage:', updated);
+        }
+        
+        console.log('✅ [SPEEDRUN SPRINT VIEW] Added record to completed list:', {
+          recordId: currentRecord.id,
+          recordName: currentRecord.name || currentRecord.fullName,
+          totalCompleted: updated.length,
+          updatedList: updated
+        });
+        
+        return updated;
+      });
+
+      // Refresh data to ensure UI updates, but preserve completedRecords
+      console.log('🔄 [SPEEDRUN SPRINT VIEW] Calling refresh() to update data');
+      refresh();
+    };
+
+    console.log('👂 [SPEEDRUN SPRINT VIEW] Attaching speedrunActionLogged event listener');
+    document.addEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    
+    return () => {
+      console.log('🧹 [SPEEDRUN SPRINT VIEW] Removing speedrunActionLogged event listener');
+      document.removeEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    };
+  }, [refresh, setCompletedRecords, completedRecords]);
+
   // Clean up expired snoozes on mount and when allData changes
   useEffect(() => {
     if (typeof window !== 'undefined' && allData) {
@@ -608,15 +676,18 @@ export function SpeedrunSprintView() {
         recordType="speedrun"
         recordIndex={(() => {
           const index = data.findIndex(r => r['id'] === selectedRecord.id);
-          const dbRank = selectedRecord?.rank || (index + 1);
+          // Use globalRank first (same logic as left panel), then fall back to rank, then index
+          const dbRank = selectedRecord?.globalRank || selectedRecord?.rank || (index + 1);
           console.log('🔍 [SPRINT VIEW] RecordIndex calculation:', {
             selectedRecordId: selectedRecord.id,
             selectedRecordName: selectedRecord.name || selectedRecord.fullName,
             dataLength: data.length,
             foundIndex: index,
             dbRank: dbRank,
-            usingDatabaseRank: !!selectedRecord?.rank,
-            dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName, rank: r.rank })),
+            globalRank: selectedRecord?.globalRank,
+            rank: selectedRecord?.rank,
+            usingDatabaseRank: !!(selectedRecord?.globalRank || selectedRecord?.rank),
+            dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName, globalRank: r.globalRank, rank: r.rank })),
             // Debug navigation state
             canGoPrevious: index > 0,
             canGoNext: index < data.length - 1,
@@ -731,12 +802,16 @@ export function SpeedrunSprintView() {
           shouldRender
         });
         if (shouldRender) {
-          console.log('✅ SpeedrunSprintView ProfileBox SHOULD render - all conditions met');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ SpeedrunSprintView ProfileBox SHOULD render - all conditions met');
+          }
         } else {
-          console.log('❌ SpeedrunSprintView ProfileBox will NOT render:', {
-            missingProfileOpen: !isProfileOpen,
-            missingProfileAnchor: !profileAnchor
-          });
+          if (process.env.NODE_ENV === 'development') {
+            console.log('❌ SpeedrunSprintView ProfileBox will NOT render:', {
+              missingProfileOpen: !isProfileOpen,
+              missingProfileAnchor: !profileAnchor
+            });
+          }
         }
         return shouldRender;
       })() && profileAnchor && (

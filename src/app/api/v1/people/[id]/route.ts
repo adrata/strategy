@@ -5,15 +5,15 @@ import { findOrCreateCompany } from '@/platform/services/company-linking-service
 import { mergeCorePersonWithWorkspace } from '@/platform/services/core-entity-service';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
-
  * Individual Person CRUD API v1
  * GET /api/v1/people/[id] - Get a specific person
  * PUT /api/v1/people/[id] - Update a person (full replacement)
  * PATCH /api/v1/people/[id] - Partially update a person
  * DELETE /api/v1/people/[id] - Delete a person (soft delete by default, hard delete with ?mode=hard)
  */
+
+// Force dynamic rendering for API routes (required for authentication and database queries)
+export const dynamic = 'force-dynamic';
 
 // GET /api/v1/people/[id] - Get a specific person
 export async function GET(
@@ -159,7 +159,9 @@ export async function GET(
         ? new Date(transformedPerson.updatedAt).toISOString() 
         : transformedPerson.createdAt 
           ? new Date(transformedPerson.createdAt).toISOString()
-          : null
+          : null,
+      // IMPORTANT: Explicitly include notes to ensure it's always in response (even if null)
+      notes: transformedPerson.notes ?? null
     };
 
     console.log(`🔍 [DATE SERIALIZATION] Final response data dates:`, {
@@ -638,7 +640,11 @@ export async function PATCH(
                 ? `${updatedPerson.mainSeller.firstName} ${updatedPerson.mainSeller.lastName}`.trim()                                                                    
                 : updatedPerson.mainSeller.name || updatedPerson.mainSeller.email || '-')
           : '-',
-        mainSellerData: updatedPerson.mainSeller
+        mainSellerData: updatedPerson.mainSeller,
+        // IMPORTANT: Explicitly include linkedinNavigatorUrl to ensure it's always in response (even if null)
+        linkedinNavigatorUrl: updatedPerson.linkedinNavigatorUrl ?? null,
+        // IMPORTANT: Explicitly include notes to ensure it's always in response (even if null)
+        notes: updatedPerson.notes ?? null
       },
       meta: {
         message: 'Person updated successfully',

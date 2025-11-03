@@ -497,8 +497,7 @@ export function CompleteActionModal({
           </div>
 
           <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-4">
-            {/* Person - Auto-filled or Search (hidden for company records) */}
-            {personName && (
+            {/* Person - Always show, allow search if not provided */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Person * {!formData.person && <span className="text-xs font-normal text-muted">(Search and select a person to continue)</span>}
@@ -583,10 +582,9 @@ export function CompleteActionModal({
                 </div>
               )}
             </div>
-            )}
 
             {/* Create Person Form */}
-            {personName && showCreatePersonForm && (
+            {showCreatePersonForm && (
               <div className="border border-border rounded-lg p-4 bg-panel-background">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-medium text-foreground">Create New Person</h3>
@@ -679,23 +677,41 @@ export function CompleteActionModal({
               </div>
             )}
 
-            {/* Company - Auto-filled if provided */}
-            {formData.company && (
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Company
-                </label>
+            {/* Company - Always show, allow selection/search if not provided */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Company {formData.company && <span className="text-xs font-normal text-muted">(Click to change)</span>}
+              </label>
+              {formData.company ? (
+                // Show selected company with option to change
                 <div 
-                  className="px-3 py-2 border rounded-lg text-foreground text-sm"
+                  className="px-3 py-2 border rounded-lg text-foreground text-sm cursor-pointer hover:bg-panel-background transition-colors"
                   style={{ 
                     backgroundColor: categoryColors.bg,
                     borderColor: categoryColors.border
                   }}
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, company: '', companyId: '' }));
+                  }}
+                  title="Click to change company"
                 >
                   {formData.company}
                 </div>
-              </div>
-            )}
+              ) : (
+                // Show search/input field for company
+                <input
+                  type="text"
+                  value={formData.company || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+                  placeholder="Enter company name (optional)..."
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:border-transparent text-sm"
+                  style={{
+                    '--tw-ring-color': categoryColors.primary
+                  } as React.CSSProperties}
+                  disabled={isLoading}
+                />
+              )}
+            </div>
 
             {/* Type */}
             <div>
