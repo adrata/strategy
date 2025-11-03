@@ -11,11 +11,11 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Close Strategy</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Decision Process</h4>
-            <div className="space-y-2 text-sm text-gray-700">
+            <div className="space-y-2 text-sm text-foreground">
               {record?.decisionProcess ? (
-                <div className="text-gray-700">{JSON.stringify(record.decisionProcess)}</div>
+                <div className="text-foreground">{JSON.stringify(record.decisionProcess)}</div>
               ) : (
                 <div>
                   <p>• Identify all decision makers and influencers</p>
@@ -27,7 +27,7 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
             </div>
           </div>
 
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Key Players</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -96,8 +96,8 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
             <div className="space-y-2">
               {record?.riskFactors?.length > 0 ? (
                 record.riskFactors.map((risk: string, index: number) => (
-                  <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-red-800 text-sm">{risk}</p>
+                  <div key={index} className="bg-error/10 border border-error rounded-lg p-3">
+                    <p className="text-error text-sm">{risk}</p>
                   </div>
                 ))
               ) : (

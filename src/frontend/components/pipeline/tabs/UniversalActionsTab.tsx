@@ -307,14 +307,17 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       console.log('🔍 [ACTIONS] Actions query:', actionsQuery);
       
       // 🚀 OPTIMIZED API CALLS: Only fetch what we need based on record type
+      // Add fallback response to prevent 401 errors from crashing the UI
+      const emptyActionsFallback = { success: true, data: [] };
       const apiCalls: Promise<any>[] = [
-        authFetch(`/api/v1/actions?${actionsQuery}`)
+        authFetch(`/api/v1/actions?${actionsQuery}`, {}, emptyActionsFallback)
       ];
       
       // Only fetch people for company records
       if (recordType === 'companies') {
         const peopleQuery = `companyId=${record.id}${forceRefresh ? `&t=${Date.now()}` : ''}`;
-        apiCalls.push(authFetch(`/api/v1/people?${peopleQuery}`));
+        const emptyPeopleFallback = { success: true, data: [] };
+        apiCalls.push(authFetch(`/api/v1/people?${peopleQuery}`, {}, emptyPeopleFallback));
       }
       
       const responses = await Promise.allSettled(apiCalls);
@@ -325,7 +328,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       console.log('🔍 [ACTIONS] API responses received:', {
         actionsStatus: actionsResponse.status,
         peopleStatus: peopleResponse?.status,
-        actionsData: actionsResponse.status === 'fulfilled' ? actionsResponse.value : null
+        actionsData: actionsResponse.status === 'fulfilled' ? actionsResponse.value : null,
+        actionsRejected: actionsResponse.status === 'rejected' ? actionsResponse.reason : null
       });
       
       const allActivities: any[] = [];
@@ -339,10 +343,27 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           timestamp: action.completedAt || action.createdAt || action.scheduledAt
         })));
       } else {
-        console.log('📅 [ACTIONS] No actions found or API error:', {
-          status: actionsResponse.status,
-          reason: actionsResponse.status === 'rejected' ? actionsResponse.reason : 'No data'
-        });
+        // Enhanced error handling for authentication and other errors
+        if (actionsResponse.status === 'rejected') {
+          const error = actionsResponse.reason;
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          
+          // Check if it's an authentication error
+          if (errorMessage.includes('401') || errorMessage.includes('Authentication')) {
+            console.warn('🔐 [ACTIONS] Authentication failed, using empty fallback:', errorMessage);
+            // Fallback response was already used by apiFetch, but log the issue
+            handleError('Authentication required. Please refresh the page or log in again.');
+          } else {
+            console.error('❌ [ACTIONS] API error:', errorMessage);
+            handleError('Failed to load actions. Please try again.');
+          }
+        } else {
+          console.log('📅 [ACTIONS] No actions found:', {
+            status: actionsResponse.status,
+            hasValue: !!actionsResponse.value,
+            valueStructure: actionsResponse.status === 'fulfilled' ? Object.keys(actionsResponse.value || {}) : 'N/A'
+          });
+        }
       }
       
       // Process people (if this is a company record and call succeeded)
@@ -722,24 +743,24 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                         <div className="flex items-center gap-2 mb-1">
                           {/* Action type badge - now first and bold */}
                           {event.metadata?.type === 'LinkedIn Connection' || event.type === 'LinkedIn Connection' ? (
-                            <span className="text-base font-bold text-gray-800">
+                            <span className="text-base font-bold text-foreground">
                               {event.metadata?.type || event.type || 'Action'}
                             </span>
                           ) : (
-                            <span className="px-2 py-1 text-sm rounded-full bg-gray-100 text-gray-700 font-semibold">
+                            <span className="px-2 py-1 text-sm rounded-full bg-hover text-foreground font-semibold">
                               {event.metadata?.type || event.type || 'Action'}
                             </span>
                           )}
                           {!isPastEvent(event.date) && event.metadata?.status?.toUpperCase() !== 'COMPLETED' && (
-                            <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
+                            <span className="px-4 py-1 bg-error/10 text-error text-xs rounded-full whitespace-nowrap">
                               Scheduled
                             </span>
                           )}
                           {event.metadata?.status && (
                             <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
-                              event.metadata.status.toUpperCase() === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                              event.metadata.status.toUpperCase() === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                              'bg-hover text-gray-800'
+                              event.metadata.status.toUpperCase() === 'COMPLETED' ? 'bg-success/10 text-success' :
+                              event.metadata.status.toUpperCase() === 'IN_PROGRESS' ? 'bg-primary/10 text-primary' :
+                              'bg-hover text-foreground'
                             }`}>
                               {event.metadata.status.toUpperCase()}
                             </span>
@@ -774,7 +795,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                         
                         {expandedEvents.has(event.id) && (
                           <div className="mt-2 p-3 bg-panel-background rounded-lg border">
-                            <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                            <div className="text-sm text-foreground whitespace-pre-wrap">
                               {event.content}
                             </div>
                           </div>
@@ -788,11 +809,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                         <div className="grid grid-cols-2 gap-4 text-xs">
                           {event.metadata.priority && (
                             <div>
-                              <span className="font-medium text-gray-700">Priority:</span>
+                              <span className="font-medium text-foreground">Priority:</span>
                               <span className={`ml-1 px-1 py-0.5 rounded text-xs ${
-                                event.metadata.priority === 'high' ? 'bg-red-100 text-red-800' :
-                                event.metadata.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-green-100 text-green-800'
+                                event.metadata.priority === 'high' ? 'bg-error/10 text-error' :
+                                event.metadata.priority === 'medium' ? 'bg-warning/10 text-warning' :
+                                'bg-success/10 text-success'
                               }`}>
                                 {event.metadata.priority}
                               </span>
@@ -830,7 +851,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                       <span>•</span>
                       <button
                         onClick={() => handleDeleteClick(event.id)}
-                        className="flex items-center gap-1 text-red-600 hover:text-red-800 transition-colors"
+                        className="flex items-center gap-1 text-error hover:text-error/80 transition-colors"
                       >
                         <TrashIcon className="w-3 h-3" />
                         <span>Delete</span>
@@ -851,24 +872,24 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
       {/* Success Message */}
       {showSuccessMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-success/10 border border-success rounded-lg shadow-lg px-4 py-3 max-w-sm">
           <div className="flex items-center">
-            <svg className="h-5 w-5 text-green-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="h-5 w-5 text-success mr-3" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <p className="text-sm text-green-700 font-medium">{successMessage}</p>
+            <p className="text-sm text-success font-medium">{successMessage}</p>
           </div>
         </div>
       )}
 
       {/* Error Message */}
       {showErrorMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-error/10 border border-error rounded-lg shadow-lg px-4 py-3 max-w-sm">
           <div className="flex items-center">
-            <svg className="h-5 w-5 text-red-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="h-5 w-5 text-error mr-3" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <p className="text-sm text-red-700 font-medium">{errorMessage}</p>
+            <p className="text-sm text-error font-medium">{errorMessage}</p>
           </div>
         </div>
       )}
@@ -876,14 +897,14 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="bg-background rounded-lg p-6 max-w-md w-full mx-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <TrashIcon className="w-5 h-5 text-red-600" />
+              <div className="w-10 h-10 bg-error/10 rounded-full flex items-center justify-center">
+                <TrashIcon className="w-5 h-5 text-error" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Delete Action</h3>
-                <p className="text-sm text-gray-600">This action cannot be undone.</p>
+                <h3 className="text-lg font-semibold text-foreground">Delete Action</h3>
+                <p className="text-sm text-muted">This action cannot be undone.</p>
               </div>
             </div>
             

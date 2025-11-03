@@ -20,17 +20,17 @@ export function UniversalDealIntelTab({ record, recordType, onSave }: UniversalD
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Deal Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Deal Value</h4>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-primary">
               {record?.amount ? `$${record.amount.toLocaleString()}` : '-'}
             </div>
             <p className="text-sm text-muted mt-1">{record?.currency || 'USD'}</p>
           </div>
           
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Probability</h4>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success">
               {record?.probability ? `${Math.round(record.probability * 100)}%` : '-'}
             </div>
             <p className="text-sm text-muted mt-1">Close probability</p>

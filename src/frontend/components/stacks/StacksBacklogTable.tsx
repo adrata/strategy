@@ -277,87 +277,115 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
       try {
         setLoading(true);
-        const apiUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}`;
-        console.log('🔍 [StacksBacklogTable] Fetching from:', apiUrl);
+        const cacheBuster = `&_t=${Date.now()}`;
+        
+        // Fetch both stories and tasks to match left panel counting
+        const storiesUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}${cacheBuster}`;
+        const tasksUrl = `/api/stacks/tasks?workspaceId=${workspaceId}${cacheBuster}`;
+        
+        console.log('🔍 [StacksBacklogTable] Fetching from:', storiesUrl, tasksUrl);
         console.log('🔍 [StacksBacklogTable] Request workspace ID:', workspaceId);
         
-        const response = await fetch(apiUrl, {
-          credentials: 'include', // Include cookies for authentication
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        const [storiesResponse, tasksResponse] = await Promise.all([
+          fetch(storiesUrl, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+            },
+            cache: 'no-store' as RequestCache,
+          }),
+          fetch(tasksUrl, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+            },
+            cache: 'no-store' as RequestCache,
+          })
+        ]);
+        
+        console.log('🔍 [StacksBacklogTable] Stories response status:', storiesResponse.status, storiesResponse.ok);
+        console.log('🔍 [StacksBacklogTable] Tasks response status:', tasksResponse.status, tasksResponse.ok);
+        
+        let stories: any[] = [];
+        let tasks: any[] = [];
+        
+        if (storiesResponse.ok) {
+          const storiesData = await storiesResponse.json();
+          stories = storiesData.stories || [];
+          console.log('📊 [StacksBacklogTable] Fetched stories:', stories.length);
+        } else {
+          console.warn('⚠️ [StacksBacklogTable] Stories API returned:', storiesResponse.status);
+        }
+        
+        if (tasksResponse.ok) {
+          const tasksData = await tasksResponse.json();
+          tasks = tasksData.tasks || [];
+          console.log('📊 [StacksBacklogTable] Fetched tasks:', tasks.length);
+        } else {
+          console.warn('⚠️ [StacksBacklogTable] Tasks API returned:', tasksResponse.status);
+        }
+        
+        // Combine stories and tasks, matching left panel logic
+        const allItems = [...stories, ...tasks];
+        
+        console.log('📊 [StacksBacklogTable] Combined items:', {
+          totalStories: stories.length,
+          totalTasks: tasks.length,
+          totalItems: allItems.length,
+          workspaceId
         });
         
-        console.log('🔍 [StacksBacklogTable] Response status:', response.status, response.ok);
+        if (allItems.length === 0) {
+          console.log('ℹ️ [StacksBacklogTable] No items found for workspace:', workspaceId);
+        }
         
-        if (response.ok) {
-          const data = await response.json();
-          console.log('📊 [StacksBacklogTable] Fetched backlog items from database:', {
-            totalStories: data.stories?.length || 0,
-            stories: data.stories,
-            workspaceId
-          });
-          
-          if (data.stories && Array.isArray(data.stories)) {
-            if (data.stories.length === 0) {
-              console.log('ℹ️ [StacksBacklogTable] No stories found for workspace:', workspaceId);
-            }
-            
-            const backlogItems = data.stories.map((story: any, index: number) => ({
-              id: story.id,
-              title: story.title,
-              description: story.description,
-              priority: story.priority,
-              status: story.status,
-              assignee: story.assignee?.name || story.assignee,
-              dueDate: story.dueDate,
-              tags: story.tags || [],
-              createdAt: story.createdAt,
-              updatedAt: story.updatedAt,
-              rank: index + 1
-            }));
-            
-            console.log('🔄 [StacksBacklogTable] Mapped backlog items:', backlogItems.length, 'items');
-            
-            setItems(backlogItems);
-          } else {
-            console.warn('⚠️ [StacksBacklogTable] Invalid response format - stories is not an array');
-            console.warn('⚠️ [StacksBacklogTable] Response data:', data);
-            setItems([]);
-          }
-        } else {
-          let errorData;
-          try {
-            const errorText = await response.text();
-            errorData = errorText;
-            // Try to parse as JSON
-            try {
-              errorData = JSON.parse(errorText);
-            } catch {
-              // Keep as text if not JSON
-            }
-          } catch (parseError) {
-            errorData = { error: 'Failed to parse error response' };
+        // Map both stories and tasks to backlog item format
+        const backlogItems = allItems.map((item: any, index: number) => {
+          // Add 'bug' tag if it's a task with type='bug'
+          const tags = item.tags || [];
+          if (item.type === 'bug') {
+            tags.push('bug');
           }
           
-          console.error('❌ [StacksBacklogTable] API request failed:', {
-            status: response.status,
-            statusText: response.statusText,
-            workspaceId,
-            error: errorData
-          });
-          
-          if (response.status === 400 && errorData?.code === 'WORKSPACE_REQUIRED') {
+          return {
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            priority: item.priority,
+            status: item.status,
+            assignee: item.assignee?.name || item.assignee || null,
+            dueDate: item.dueDate || null,
+            tags: tags,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            rank: index + 1
+          };
+        });
+        
+        console.log('🔄 [StacksBacklogTable] Mapped backlog items:', backlogItems.length, 'items');
+        
+        setItems(backlogItems);
+        
+        // If either request failed critically, log the error but still try to show what we have
+        if (!storiesResponse.ok && !tasksResponse.ok) {
+          if (storiesResponse.status === 400 || tasksResponse.status === 400) {
             console.error('❌ [StacksBacklogTable] Workspace ID missing or invalid');
-          } else if (response.status === 401) {
+          } else if (storiesResponse.status === 401 || tasksResponse.status === 401) {
             console.error('❌ [StacksBacklogTable] Authentication failed');
-          } else if (response.status === 403) {
+          } else if (storiesResponse.status === 403 || tasksResponse.status === 403) {
             console.error('❌ [StacksBacklogTable] Access denied to workspace');
           } else {
-            console.error('❌ [StacksBacklogTable] Unexpected error:', response.status);
+            console.error('❌ [StacksBacklogTable] Unexpected error:', storiesResponse.status, tasksResponse.status);
           }
           
-          setItems([]);
+          // If both failed completely, set empty items
+          if (allItems.length === 0) {
+            setItems([]);
+          }
         }
       } catch (error) {
         console.error('❌ [StacksBacklogTable] Error fetching backlog items:', error);

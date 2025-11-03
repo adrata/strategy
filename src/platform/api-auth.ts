@@ -7,6 +7,14 @@ type AuthUser = {
   name?: string;
   workspaceId?: string;
   activeWorkspaceId?: string;
+  _apiKey?: {
+    id: string;
+    scopes: string[];
+    rateLimitInfo: {
+      remaining: number;
+      resetAt: number;
+    };
+  };
 };
 
 /**
@@ -208,7 +216,155 @@ export async function getUnifiedAuthUser(
         console.warn("⚠️ API Auth: No token found in Bearer header");
         return null;
       }
+
+      // First, try API key authentication (if token starts with adrata_)
+      if (token.startsWith("adrata_")) {
+        try {
+          const { prisma } = await import('@/platform/database/prisma-client');
+          const bcrypt = await import('bcryptjs');
+          const { getClientIp, checkIpAccess, checkRateLimit } = await import('@/platform/api-rate-limiter');
+          
+          // SECURITY: Validate token format before database lookup
+          // This prevents potential timing attacks and invalid queries
+          
+          await prisma.$connect();
+          
+          // Extract prefix and secret
+          // Format is: adrata_live_<secret>
+          const prefix = "adrata_live_";
+          
+          if (!token.startsWith(prefix) || token.length <= prefix.length) {
+            // Invalid format - don't proceed (prevents timing attacks)
+            return null;
+          }
+          
+          const secret = token.substring(prefix.length);
+          
+          // Find ALL API keys with this prefix (to prevent enumeration)
+          // We'll verify against all of them to prevent timing attacks
+          const now = new Date();
+          // Find all active keys with this prefix
+          // Include keys that haven't expired AND are still in grace period (if rotated)
+          const apiKeys = await prisma.api_keys.findMany({
+            where: {
+              keyPrefix: prefix,
+              isActive: true,
+              AND: [
+                {
+                  expiresAt: {
+                    OR: [
+                      { equals: null },
+                      { gt: now }
+                    ]
+                  }
+                },
+                {
+                  // Either no rotation grace period (never rotated) OR grace period hasn't expired
+                  OR: [
+                    { rotationGracePeriodEndsAt: null },
+                    { rotationGracePeriodEndsAt: { gt: now } }
+                  ]
+                }
+              ]
+            },
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  name: true,
+                  activeWorkspaceId: true
+                }
+              },
+              workspace: {
+                select: {
+                  id: true
+                }
+              }
+            }
+          });
+
+          // Verify against all keys with this prefix (prevents timing attacks)
+          // Always perform bcrypt comparison to prevent enumeration
+          let apiKey: typeof apiKeys[0] | null = null;
+          
+          for (const key of apiKeys) {
+            // Use bcrypt.compare which is constant-time
+            const isValid = await bcrypt.default.compare(secret, key.hashedKey);
+            if (isValid) {
+              apiKey = key;
+              break;
+            }
+          }
+          
+          if (apiKey) {
+              // Check IP restrictions
+              const clientIp = getClientIp(req as any);
+              const ipCheck = checkIpAccess(
+                clientIp,
+                apiKey.allowedIps || [],
+                apiKey.deniedIps || []
+              );
+              
+              if (!ipCheck.allowed) {
+                // Log without revealing which key was attempted (security)
+                logger.auth.error(`API key IP blocked: ${ipCheck.reason}`);
+                return null;
+              }
+              
+              // Check rate limiting
+              const rateLimitResult = await checkRateLimit(apiKey.id, {
+                perHour: apiKey.rateLimitPerHour || undefined,
+                perDay: apiKey.rateLimitPerDay || undefined
+              });
+              
+              if (!rateLimitResult.allowed) {
+                // Log without revealing key ID (security)
+                logger.auth.error(`API key rate limit exceeded`);
+                // Throw a special error that can be caught for 429 response
+                throw new Error(`RATE_LIMIT_EXCEEDED:${rateLimitResult.retryAfter}`);
+              }
+
+              // Update lastUsedAt
+              await prisma.api_keys.update({
+                where: { id: apiKey.id },
+                data: { lastUsedAt: new Date() }
+              });
+
+              logger.auth.success(`Valid API key for workspace: ${apiKey.workspaceId}`);
+              
+              // Return with API key metadata for scope checking
+              return {
+                id: apiKey.user.id,
+                email: apiKey.user.email,
+                name: apiKey.user.name || '',
+                workspaceId: apiKey.workspaceId,
+                activeWorkspaceId: apiKey.user.activeWorkspaceId || apiKey.workspaceId,
+                // Store API key info for scope checking
+                _apiKey: {
+                  id: apiKey.id,
+                  scopes: apiKey.scopes || [],
+                  rateLimitInfo: {
+                    remaining: rateLimitResult.remaining,
+                    resetAt: rateLimitResult.resetAt
+                  }
+                }
+              };
+            }
+        } catch (error: any) {
+          // Check if it's a rate limit error
+          if (error?.message?.startsWith('RATE_LIMIT_EXCEEDED:')) {
+            // Rate limit errors should propagate - don't catch them here
+            // They'll be caught by the outer try/catch and should be handled by the caller
+            throw error;
+          }
+          // Log other errors but continue to JWT fallback
+          console.error('❌ [API AUTH] API key verification error:', error);
+          // Fall through to JWT check
+        }
+      }
       
+      // Fall back to JWT token verification
       const decoded = decodeJWT(token);
       if (decoded) {
         logger.auth.success(`Valid bearer token for: ${decoded.email}`);
@@ -247,6 +403,11 @@ export async function getUnifiedAuthUser(
     
     return null;
   } catch (error) {
+    // Check if it's a rate limit error - these should be re-thrown to be handled by caller
+    if (error instanceof Error && error.message?.startsWith('RATE_LIMIT_EXCEEDED:')) {
+      throw error; // Re-throw rate limit errors so caller can return 429
+    }
+    
     logger.auth.error("Error during authentication check:", error);
     
     // Enhanced error logging
@@ -258,6 +419,7 @@ export async function getUnifiedAuthUser(
       });
     }
     
+    // For all other errors, return null (authentication failed)
     return null;
   }
 }

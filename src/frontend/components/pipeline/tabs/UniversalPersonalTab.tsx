@@ -26,7 +26,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Personal Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Personal Details</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -75,7 +75,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
             </div>
           </div>
 
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Professional Background</h4>
             <div className="space-y-2 text-sm">
               <div className="flex items-center">
@@ -140,12 +140,12 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
         <h3 className="text-lg font-semibold text-foreground mb-4">Interests & Hobbies</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Personal Interests</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Personal Interests</label>
             <div className="space-y-2">
               {record?.interests?.length > 0 ? (
                 record.interests.map((interest: string, index: number) => (
-                  <div key={index} className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-                    <p className="text-purple-800 text-sm">{interest}</p>
+                  <div key={index} className="bg-info/10 border border-info rounded-lg p-3">
+                    <p className="text-info text-sm">{interest}</p>
                   </div>
                 ))
               ) : (
@@ -264,8 +264,8 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium text-yellow-800">Birthday</p>
-                <p className="text-yellow-600 text-sm">
+                <p className="font-medium text-warning">Birthday</p>
+                <p className="text-warning text-sm">
                   {record?.dateOfBirth ? 
                     new Date(record.dateOfBirth).toLocaleDateString('en-US', { 
                       month: 'long', 
@@ -276,37 +276,37 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                   }
                 </p>
               </div>
-              <span className="text-yellow-600 text-sm">Annual</span>
+              <span className="text-warning text-sm">Annual</span>
             </div>
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium text-blue-800">Work Anniversary</p>
-                <p className="text-blue-600 text-sm">
+                <p className="font-medium text-primary">Work Anniversary</p>
+                <p className="text-primary text-sm">
                   {record?.workAnniversary ? 
                     new Date(record.workAnniversary).toLocaleDateString() : 
                     'Track when they joined current company'
                   }
                 </p>
               </div>
-              <span className="text-blue-600 text-sm">Annual</span>
+              <span className="text-primary text-sm">Annual</span>
             </div>
           </div>
 
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium text-green-800">Client Anniversary</p>
-                <p className="text-green-600 text-sm">
+                <p className="font-medium text-success">Client Anniversary</p>
+                <p className="text-success text-sm">
                   {record?.clientAnniversary || record?.createdAt ? 
                     new Date(record.clientAnniversary || record.createdAt).toLocaleDateString() : 
                     'When they became a client'
                   }
                 </p>
               </div>
-              <span className="text-green-600 text-sm">Annual</span>
+              <span className="text-success text-sm">Annual</span>
             </div>
           </div>
         </div>

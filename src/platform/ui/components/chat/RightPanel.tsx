@@ -1605,6 +1605,22 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     // Build breadcrumb
     breadcrumb = pathSegments.join(' > ');
     
+    // Add API-specific context
+    let apiContext = null;
+    if (secondarySection === 'api') {
+      apiContext = {
+        area: 'API Keys',
+        section: detailView || 'keys',
+        page: detailView === 'keys' ? 'API Key Management' :
+              detailView === 'documentation' ? 'API Documentation' :
+              detailView === 'usage' ? 'API Usage' :
+              detailView === 'webhooks' ? 'Webhooks' :
+              detailView === 'settings' ? 'API Settings' :
+              'API',
+        description: 'The API area allows users to manage API keys, view documentation, monitor usage, configure webhooks, and access API settings. Users can generate API keys to authenticate requests and access buyer groups and other data via the Adrata API.'
+      };
+    }
+    
     return {
       primaryApp,
       secondarySection,
@@ -1615,7 +1631,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       itemId: itemId || undefined,
       itemName: itemName || undefined,
       viewType,
-      filters: Object.keys(filters).length > 0 ? filters : undefined
+      filters: Object.keys(filters).length > 0 ? filters : undefined,
+      apiContext
     };
   };
 

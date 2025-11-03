@@ -132,17 +132,17 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'Decision Maker':
-        return 'bg-hover text-gray-800 border-border';
+        return 'bg-hover text-foreground border-border';
       case 'Champion':
-        return 'bg-hover text-gray-800 border-border';
+        return 'bg-hover text-foreground border-border';
       case 'Stakeholder':
-        return 'bg-hover text-gray-800 border-border';
+        return 'bg-hover text-foreground border-border';
       case 'Blocker':
-        return 'bg-hover text-gray-800 border-border';
+        return 'bg-hover text-foreground border-border';
       case 'Opener':
-        return 'bg-hover text-gray-800 border-border';
+        return 'bg-hover text-foreground border-border';
       default:
-        return 'bg-hover text-gray-800 border-border';
+        return 'bg-hover text-foreground border-border';
     }
   };
 
@@ -330,7 +330,7 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
               <h4 className="font-medium text-foreground mb-3">Recommended Approach</h4>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
                   <div>
                     <div className="text-sm font-medium text-foreground">Focus on Champions</div>
                     <div className="text-sm text-muted">Leverage Sarah Rodriguez and Kevin Zhang to build internal support</div>

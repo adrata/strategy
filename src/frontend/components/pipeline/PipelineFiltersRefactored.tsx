@@ -192,14 +192,14 @@ export function PipelineFiltersRefactored({
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center space-x-1.5 sm:space-x-2 px-3 py-2.5 sm:py-2 rounded-lg border transition-colors min-h-[2.5rem] sm:min-h-0 ${
                 showFilters || activeFilterCount > 0
-                  ? 'bg-gray-50 border-gray-200 text-gray-700'
-                  : 'bg-background border-border text-gray-700 hover:bg-panel-background'
+                  ? 'bg-hover border-border text-foreground'
+                  : 'bg-background border-border text-foreground hover:bg-panel-background'
               }`}
             >
               <FunnelIcon className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm font-medium hidden xs:inline">Filters</span>
               {activeFilterCount > 0 && (
-                <span className="bg-gray-100 text-gray-600 text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
+                <span className="bg-muted-light text-muted text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
                   {activeFilterCount}
                 </span>
               )}

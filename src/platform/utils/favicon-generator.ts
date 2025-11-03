@@ -71,6 +71,12 @@ export const APP_THEMES: Record<string, AppTheme> = {
     color: '#fce7f3', // pink-100 (light pink background)
     name: 'Tower'
   },
+  // API - API keys and integrations - Gray for technical/neutral
+  'api': {
+    letter: 'A',
+    color: '#f3f4f6', // gray-100 (light gray background)
+    name: 'API'
+  },
   // Adrata - Main platform dashboard - Indigo for premium/main platform
   'default': {
     letter: 'A',
@@ -90,6 +96,7 @@ function getTextColorForBackground(backgroundColor: string): string {
     '#ede9fe': '#5b21b6', // violet-100 -> violet-800 (Workbench)
     '#fef3c7': '#92400e', // amber-100 -> amber-800 (Grand Central)
     '#e0e7ff': '#3730a3', // indigo-100 -> indigo-800 (Adrata)
+    '#f3f4f6': '#374151', // gray-100 -> gray-700 (API Area)
     '#bfdbfe': '#1e3a8a', // blue-200 -> blue-900 (legacy)
     '#93c5fd': '#1e3a8a', // blue-300 -> blue-900 (legacy)
     '#60a5fa': '#1e3a8a', // blue-400 -> blue-900 (legacy)
@@ -300,6 +307,10 @@ export function getAppThemeFromPath(pathname: string): AppTheme {
   
   if (cleanPath.includes('/tower')) {
     return APP_THEMES.tower;
+  }
+  
+  if (cleanPath.includes('/api')) {
+    return APP_THEMES.api;
   }
   
   // Default fallback

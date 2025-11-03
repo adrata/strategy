@@ -336,7 +336,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                       key={opportunity.id}
                       className={`bg-background border rounded-sm p-3 hover:bg-hover hover:border-[var(--primary)] transition-colors cursor-pointer relative ${
                         opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' 
-                          ? 'border-red-200 bg-red-50' 
+                          ? 'border-error/20 bg-error/10' 
                           : 'border-border'
                       }`}
                       draggable={true}
@@ -346,7 +346,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                     >
                       {/* Rank Display */}
                       <div className="absolute top-2 right-2">
-                        <span className="bg-hover text-gray-800 text-xs font-medium px-2 py-1 rounded-full">
+                        <span className="bg-hover text-foreground text-xs font-medium px-2 py-1 rounded-full">
                           #{getPersonMasterRank(opportunity, index)}
                         </span>
                       </div>

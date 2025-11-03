@@ -78,11 +78,11 @@ export function Pagination({
       {/* Page size selector */}
       {onPageSizeChange && (
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-700">Show:</span>
+          <span className="text-sm text-foreground">Show:</span>
           <select
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="border border-border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>
@@ -95,11 +95,11 @@ export function Pagination({
       
       {/* Page info - Show filtered count with optional total */}
       <div className="flex items-center space-x-2">
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-foreground">
           {hasActiveFilters && apiTotalCount && apiTotalCount !== totalItems ? (
             <>
               Showing {startItem.toLocaleString()} to {endItem.toLocaleString()} of {totalItems.toLocaleString()} results
-              <span className="text-gray-500 ml-1">
+              <span className="text-muted ml-1">
                 (filtered from {apiTotalCount.toLocaleString()} total)
               </span>
             </>

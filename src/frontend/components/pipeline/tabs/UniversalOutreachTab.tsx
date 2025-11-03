@@ -11,9 +11,9 @@ export function UniversalOutreachTab({ record, recordType, onSave }: UniversalOu
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Contact Strategy</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Recommended Approach</h4>
-            <div className="space-y-2 text-sm text-gray-700">
+            <div className="space-y-2 text-sm text-foreground">
               <p><strong>Primary Channel:</strong> {record?.email ? 'Email' : record?.linkedinUrl ? 'LinkedIn' : 'Phone'}</p>
               <p><strong>Best Time:</strong> {record?.timezone ? 'Business hours in ' + record.timezone : 'Business hours'}</p>
               <p><strong>Tone:</strong> Professional, {record?.seniority === 'executive' ? 'executive-level' : 'collaborative'}</p>
@@ -21,26 +21,26 @@ export function UniversalOutreachTab({ record, recordType, onSave }: UniversalOu
             </div>
           </div>
 
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Contact Information</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted">Email:</span>
-                <span className={`font-medium ${record?.emailVerified ? 'text-green-700' : 'text-foreground'}`}>
+                <span className={`font-medium ${record?.emailVerified ? 'text-success' : 'text-foreground'}`}>
                   {record?.email || record?.workEmail || '-'}
-                  {record?.emailVerified && <span className="ml-1 text-green-600">✓</span>}
+                  {record?.emailVerified && <span className="ml-1 text-success">✓</span>}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted">Phone:</span>
                 <span className={`font-medium ${record?.phoneVerified ? 'text-green-700' : 'text-foreground'}`}>
                   {record?.phone || record?.mobilePhone || '-'}
-                  {record?.phoneVerified && <span className="ml-1 text-green-600">✓</span>}
+                  {record?.phoneVerified && <span className="ml-1 text-success">✓</span>}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted">LinkedIn:</span>
-                <span className="font-medium text-blue-600">
+                <span className="font-medium text-primary">
                   {record?.linkedinUrl ? (
                     <a href={record.linkedinUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
                       Profile

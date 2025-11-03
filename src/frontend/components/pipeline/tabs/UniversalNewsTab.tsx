@@ -137,7 +137,7 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
             <div className="text-red-600">Error loading news: {error}</div>
             <button 
               onClick={fetchCompanyNews}
-              className="mt-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100"
+              className="mt-2 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20"
             >
               Try Again
             </button>
@@ -173,14 +173,14 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
             <span className="text-sm text-muted">Data Source:</span>
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
               dataSource === 'database_companyUpdates' 
-                ? 'bg-green-100 text-green-800' 
+                ? 'bg-success/10 text-success' 
                 : dataSource === 'perplexity_api'
-                ? 'bg-blue-100 text-blue-800'
+                ? 'bg-primary/10 text-primary'
                 : dataSource === 'external_api' 
-                ? 'bg-green-100 text-green-800' 
+                ? 'bg-success/10 text-success' 
                 : dataSource === 'no_news_available'
-                ? 'bg-gray-100 text-gray-800'
-                : 'bg-gray-100 text-gray-800'
+                ? 'bg-muted-light text-muted'
+                : 'bg-muted-light text-muted'
             }`}>
               {dataSource === 'database_companyUpdates' ? 'Database' : 
                dataSource === 'perplexity_api' ? 'Perplexity' :

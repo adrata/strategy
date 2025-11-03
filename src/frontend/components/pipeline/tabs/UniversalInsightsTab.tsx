@@ -311,16 +311,16 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
         
         {/* Company Record Message */}
         {isCompanyRecord && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-6">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-blue-800">Strategy Not Available for Company Records</h4>
-                <p className="text-sm text-blue-600 mt-1">
+                <h4 className="text-sm font-medium text-primary">Strategy Not Available for Company Records</h4>
+                <p className="text-sm text-primary mt-1">
                   Strategy summaries are generated for individual people, not companies. 
                   To see strategy insights, navigate to specific people within this company.
                 </p>
@@ -357,13 +357,13 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
             
             {/* Show error if generation failed */}
             {strategyError && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="text-sm text-red-600 mb-2">
+              <div className="mt-4 p-4 bg-error/10 border border-error rounded-lg">
+                <div className="text-sm text-error mb-2">
                   Strategy generation failed: {strategyError}
                 </div>
                 <button
                   onClick={handleGenerateStrategy}
-                  className="px-4 py-2 bg-red-100 text-red-700 border border-red-200 rounded-lg hover:bg-red-200 text-sm font-medium"
+                  className="px-4 py-2 bg-error/10 text-error border border-error rounded-lg hover:bg-error/20 text-sm font-medium"
                 >
                   Retry Generation
                 </button>

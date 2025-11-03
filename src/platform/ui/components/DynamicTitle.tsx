@@ -211,6 +211,8 @@ export function DynamicTitle() {
             } else {
               title = 'Oasis • Channels';
             }
+          } else if (pathname.includes('/api')) {
+            title = 'API Keys • Integrations';
           }
           
           console.log('🔍 [DYNAMIC TITLE] Setting document title to:', title);

@@ -79,8 +79,8 @@ export class AIContextService {
     // Build document context
     const documentContextString = this.buildDocumentContext(documentContext);
     
-    // Build system context
-    const systemContext = this.buildSystemContext(conversationHistory);
+    // Build system context (fetch user timezone for accurate date/time)
+    const systemContext = await this.buildSystemContext(conversationHistory, userId);
 
     return {
       userContext,
@@ -631,24 +631,43 @@ DOCUMENT CONTENT ANALYSIS:`;
   /**
    * Build system and conversation context
    */
-  private static buildSystemContext(conversationHistory: any[]): string {
+  private static async buildSystemContext(conversationHistory: any[], userId?: string): Promise<string> {
     const recentHistory = Array.isArray(conversationHistory) ? conversationHistory.slice(-5) : [];
     const conversationContext = recentHistory.length > 0 
       ? `\n\nRECENT CONVERSATION CONTEXT (last 5 messages):\n${recentHistory.map(msg => `${msg.type}: ${msg.content}`).join('\n')}\n`
       : '';
 
-    const currentDateTime = new Date().toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZoneName: 'short'
-    });
+    // Get user timezone preference, default to browser/system timezone
+    let userTimezone: string | null = null;
+    if (userId) {
+      try {
+        const { PrismaClient } = await import('@prisma/client');
+        const prisma = new PrismaClient();
+        const user = await prisma.users.findUnique({
+          where: { id: userId },
+          select: { timezone: true }
+        });
+        userTimezone = user?.timezone || null;
+      } catch (error) {
+        console.warn('⚠️ [AI CONTEXT] Failed to load user timezone:', error);
+      }
+    }
+    
+    // Use user timezone if available, otherwise fallback to system timezone
+    const timezone = userTimezone || (typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/New_York');
+    
+    const now = new Date();
+    const { formatDateTimeInTimezone } = await import('@/platform/utils/timezone-helper');
+    const dateTimeInfo = formatDateTimeInTimezone(now, timezone);
 
     return `SYSTEM CONTEXT:
-CURRENT DATE AND TIME: ${currentDateTime}
+CURRENT DATE AND TIME:
+Today is ${dateTimeInfo.dayOfWeek}, ${dateTimeInfo.month} ${dateTimeInfo.day}, ${dateTimeInfo.year}
+Current time: ${dateTimeInfo.time}
+Timezone: ${dateTimeInfo.timezoneName}
+ISO DateTime: ${dateTimeInfo.isoDateTime}
+
+This is the exact current date, time, and year in the user's timezone. Always use this information when answering questions about dates, times, schedules, deadlines, or temporal context.
 
 CONVERSATION CONTEXT MANAGEMENT:
 - Maintain conversation thread context within the same application

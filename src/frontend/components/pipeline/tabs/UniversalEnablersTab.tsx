@@ -127,17 +127,17 @@ export function UniversalEnablersTab({ recordType, record: recordProp, onSave }:
           <div className="bg-background p-4 rounded-lg border border-border">
             <h4 className="font-medium text-foreground mb-3">Email Templates</h4>
             <div className="space-y-2">
-              <button className="w-full text-left p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors">
-                <div className="text-sm font-medium text-blue-900">Initial Outreach Template</div>
-                <div className="text-xs text-blue-600 mt-1">Professional introduction and value proposition</div>
+              <button className="w-full text-left p-3 bg-primary/10 rounded-md hover:bg-primary/20 transition-colors">
+                <div className="text-sm font-medium text-primary">Initial Outreach Template</div>
+                <div className="text-xs text-primary/80 mt-1">Professional introduction and value proposition</div>
               </button>
-              <button className="w-full text-left p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors">
-                <div className="text-sm font-medium text-blue-900">Follow-up Template</div>
-                <div className="text-xs text-blue-600 mt-1">Nurture relationship and provide value</div>
+              <button className="w-full text-left p-3 bg-primary/10 rounded-md hover:bg-primary/20 transition-colors">
+                <div className="text-sm font-medium text-primary">Follow-up Template</div>
+                <div className="text-xs text-primary/80 mt-1">Nurture relationship and provide value</div>
               </button>
-              <button className="w-full text-left p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors">
-                <div className="text-sm font-medium text-blue-900">Meeting Request Template</div>
-                <div className="text-xs text-blue-600 mt-1">Schedule discovery or demo calls</div>
+              <button className="w-full text-left p-3 bg-primary/10 rounded-md hover:bg-primary/20 transition-colors">
+                <div className="text-sm font-medium text-primary">Meeting Request Template</div>
+                <div className="text-xs text-primary/80 mt-1">Schedule discovery or demo calls</div>
               </button>
             </div>
           </div>

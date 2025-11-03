@@ -52,15 +52,37 @@ export async function apiFetch<T = any>(
         // Enhanced diagnostics for 401 errors
         const cookieHeader = typeof window !== 'undefined' ? document.cookie : 'N/A (server-side)';
         const hasAuthCookie = cookieHeader.includes('auth-token') || cookieHeader.includes('next-auth.session-token');
+        const cookieNames = typeof window !== 'undefined' 
+          ? document.cookie.split(';').map(c => c.split('=')[0].trim()).filter(Boolean)
+          : [];
+        
+        // Try to get response body for more context
+        let responseBody = null;
+        try {
+          const responseText = await response.clone().text();
+          if (responseText) {
+            try {
+              responseBody = JSON.parse(responseText);
+            } catch {
+              responseBody = { raw: responseText.substring(0, 200) };
+            }
+          }
+        } catch {
+          // Ignore errors reading response body
+        }
         
         console.warn('🔐 Authentication required for API call:', {
           url,
           status: response.status,
           statusText: response.statusText,
           hasCookies: typeof window !== 'undefined' && document.cookie.length > 0,
+          cookieCount: cookieNames.length,
+          cookieNames: process.env.NODE_ENV === 'development' ? cookieNames : 'hidden',
           hasAuthCookie,
           cookieHeader: process.env.NODE_ENV === 'development' ? cookieHeader.substring(0, 100) : 'hidden',
-          fallbackAvailable: finalFallback !== undefined
+          fallbackAvailable: finalFallback !== undefined,
+          responseBody,
+          timestamp: new Date().toISOString()
         });
         
         if (finalFallback !== undefined) {

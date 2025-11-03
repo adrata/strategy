@@ -24,7 +24,7 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Success Metrics</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Health Score</h4>
             <InlineEditField
               value={record?.healthScore ? `${Math.round(record.healthScore)}/100` : ''}
@@ -34,12 +34,12 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter health score"
-              className="text-2xl font-bold text-green-600"
+              className="text-2xl font-bold text-success"
             />
             <p className="text-sm text-muted mt-1">Overall account health</p>
           </div>
           
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">ROI Achieved</h4>
             <InlineEditField
               value={record?.roiAchieved ? `${Math.round(record.roiAchieved)}%` : ''}
@@ -49,12 +49,12 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter ROI achieved"
-              className="text-2xl font-bold text-blue-600"
+              className="text-2xl font-bold text-primary"
             />
             <p className="text-sm text-muted mt-1">Return on investment</p>
           </div>
           
-          <div className="bg-purple-50 rounded-lg p-4">
+          <div className="bg-info/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Time to Value</h4>
             <InlineEditField
               value={record?.timeToValue ? `${record.timeToValue} days` : ''}
@@ -102,17 +102,17 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted">Cost Savings:</span>
-                <span className="font-medium text-green-600">
+                <span className="font-medium text-success">
                   {record?.costSavings ? `$${record.costSavings.toLocaleString()}` : '$125,000'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted">Efficiency Gain:</span>
-                <span className="font-medium text-blue-600">{record?.efficiencyGain ? `${Math.round(record.efficiencyGain)}%` : '35%'}</span>
+                <span className="font-medium text-primary">{record?.efficiencyGain ? `${Math.round(record.efficiencyGain)}%` : '35%'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted">Revenue Impact:</span>
-                <span className="font-medium text-green-600">
+                <span className="font-medium text-success">
                   {record?.revenueImpact ? `$${record.revenueImpact.toLocaleString()}` : '$450,000'}
                 </span>
               </div>
@@ -132,10 +132,10 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-medium text-green-800">Initial Implementation Complete</p>
-                <p className="text-green-600 text-sm">Successfully deployed and configured</p>
+                <p className="font-medium text-success">Initial Implementation Complete</p>
+                <p className="text-success text-sm">Successfully deployed and configured</p>
               </div>
-              <span className="text-green-600 text-sm">
+              <span className="text-success text-sm">
                 {record?.implementationDate ? new Date(record.implementationDate).toLocaleDateString() : 'Q1 2024'}
               </span>
             </div>
@@ -144,10 +144,10 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-medium text-blue-800">First Value Realization</p>
-                <p className="text-blue-600 text-sm">Achieved measurable business impact</p>
+                <p className="font-medium text-primary">First Value Realization</p>
+                <p className="text-primary text-sm">Achieved measurable business impact</p>
               </div>
-              <span className="text-blue-600 text-sm">
+              <span className="text-primary text-sm">
                 {record?.firstValueDate ? new Date(record.firstValueDate).toLocaleDateString() : 'Q2 2024'}
               </span>
             </div>
@@ -230,8 +230,8 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
             <div className="space-y-2">
               {record?.successRisks?.length > 0 ? (
                 record.successRisks.map((risk: string, index: number) => (
-                  <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-red-800 text-sm">{risk}</p>
+                  <div key={index} className="bg-error/10 border border-error rounded-lg p-3">
+                    <p className="text-error text-sm">{risk}</p>
                   </div>
                 ))
               ) : (
@@ -246,17 +246,17 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Mitigation Strategies</label>
             <div className="space-y-2">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-green-800 text-sm">Regular check-ins and training</p>
-                <p className="text-green-600 text-xs">Proactive support and guidance</p>
+              <div className="bg-success/10 border border-success rounded-lg p-3">
+                <p className="text-success text-sm">Regular check-ins and training</p>
+                <p className="text-success/80 text-xs">Proactive support and guidance</p>
               </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-green-800 text-sm">Success metrics monitoring</p>
-                <p className="text-green-600 text-xs">Track KPIs and intervene early</p>
+              <div className="bg-success/10 border border-success rounded-lg p-3">
+                <p className="text-success text-sm">Success metrics monitoring</p>
+                <p className="text-success/80 text-xs">Track KPIs and intervene early</p>
               </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-green-800 text-sm">Executive relationship building</p>
-                <p className="text-green-600 text-xs">Maintain C-level engagement</p>
+              <div className="bg-success/10 border border-success rounded-lg p-3">
+                <p className="text-success text-sm">Executive relationship building</p>
+                <p className="text-success/80 text-xs">Maintain C-level engagement</p>
               </div>
             </div>
           </div>
@@ -279,7 +279,7 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted">Renewal Probability:</span>
-                  <span className="font-medium text-green-600">
+                  <span className="font-medium text-success">
                     {record?.renewalProbability ? `${Math.round(record.renewalProbability)}%` : '95%'}
                   </span>
                 </div>

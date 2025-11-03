@@ -227,7 +227,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             {/* Summary Card */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
                   <span className="text-2xl">🧠</span>
                 </div>
                 <div className="flex-1">
@@ -238,7 +238,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                   {/* Archetype Badge */}
                   {strategyData.archetypeName && (
                     <div className="flex items-center gap-3 flex-wrap">
-                      <span className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                      <span className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
                         {strategyData.archetypeName}
                       </span>
                       <span className="text-sm text-muted">
@@ -251,8 +251,8 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                       )}
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         strategyData.strategyGeneratedBy === 'claude-3-sonnet' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-orange-100 text-orange-800'
+                          ? 'bg-success/10 text-success' 
+                          : 'bg-warning/10 text-warning'
                       }`}>
                         {strategyData.strategyGeneratedBy === 'claude-3-sonnet' ? '🤖 AI-Powered' : '📊 Data-Driven'}
                       </span>

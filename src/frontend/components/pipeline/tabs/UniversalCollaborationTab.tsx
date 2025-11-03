@@ -24,7 +24,7 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Active Collaborations</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Joint Opportunities</h4>
             <InlineEditField
               value={record?.activeOpportunities}
@@ -34,12 +34,12 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter active opportunities"
-              className="text-2xl font-bold text-blue-600"
+              className="text-2xl font-bold text-primary"
             />
             <p className="text-sm text-muted mt-1">In pipeline</p>
           </div>
           
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Joint Revenue</h4>
             <InlineEditField
               value={record?.jointRevenue ? `$${record.jointRevenue.toLocaleString()}` : ''}
@@ -49,7 +49,7 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter joint revenue"
-              className="text-lg font-bold text-green-600"
+              className="text-lg font-bold text-success"
             />
             <p className="text-sm text-muted mt-1">This year</p>
           </div>
@@ -120,9 +120,9 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-medium text-green-800">Q4 Enterprise Campaign</p>
-                <p className="text-green-600 text-sm">Joint outreach to Fortune 500 accounts</p>
-                <p className="text-green-500 text-xs mt-1">Target: $5M pipeline</p>
+                <p className="font-medium text-success">Q4 Enterprise Campaign</p>
+                <p className="text-success text-sm">Joint outreach to Fortune 500 accounts</p>
+                <p className="text-success/80 text-xs mt-1">Target: $5M pipeline</p>
               </div>
               <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                 Active
@@ -133,9 +133,9 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-medium text-blue-800">Product Integration Project</p>
-                <p className="text-blue-600 text-sm">Native API integration development</p>
-                <p className="text-blue-500 text-xs mt-1">Timeline: 6 months</p>
+                <p className="font-medium text-primary">Product Integration Project</p>
+                <p className="text-primary text-sm">Native API integration development</p>
+                <p className="text-primary/80 text-xs mt-1">Timeline: 6 months</p>
               </div>
               <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
                 In Progress
@@ -216,16 +216,16 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
             <label className="block text-sm font-medium text-gray-700 mb-2">Marketing Assets</label>
             <div className="space-y-2">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-blue-800 text-sm">Joint Solution Briefs</p>
-                <p className="text-blue-600 text-xs">Co-branded marketing materials</p>
+                <p className="text-primary text-sm">Joint Solution Briefs</p>
+                <p className="text-primary/80 text-xs">Co-branded marketing materials</p>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-blue-800 text-sm">Case Studies & References</p>
-                <p className="text-blue-600 text-xs">Shared customer success stories</p>
+              <div className="bg-primary/10 border border-primary rounded-lg p-3">
+                <p className="text-primary text-sm">Case Studies & References</p>
+                <p className="text-primary/80 text-xs">Shared customer success stories</p>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-blue-800 text-sm">Demo Environments</p>
-                <p className="text-blue-600 text-xs">Joint solution demonstrations</p>
+              <div className="bg-primary/10 border border-primary rounded-lg p-3">
+                <p className="text-primary text-sm">Demo Environments</p>
+                <p className="text-primary/80 text-xs">Joint solution demonstrations</p>
               </div>
             </div>
           </div>
@@ -234,16 +234,16 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
             <label className="block text-sm font-medium text-gray-700 mb-2">Sales Resources</label>
             <div className="space-y-2">
               <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-green-800 text-sm">Joint Playbooks</p>
-                <p className="text-green-600 text-xs">Shared sales methodologies</p>
+                <p className="text-success text-sm">Joint Playbooks</p>
+                <p className="text-success/80 text-xs">Shared sales methodologies</p>
               </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-green-800 text-sm">Competitive Battle Cards</p>
-                <p className="text-green-600 text-xs">Combined competitive intelligence</p>
+              <div className="bg-success/10 border border-success rounded-lg p-3">
+                <p className="text-success text-sm">Competitive Battle Cards</p>
+                <p className="text-success/80 text-xs">Combined competitive intelligence</p>
               </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-green-800 text-sm">Pricing & Packaging</p>
-                <p className="text-green-600 text-xs">Joint offering structures</p>
+              <div className="bg-success/10 border border-success rounded-lg p-3">
+                <p className="text-success text-sm">Pricing & Packaging</p>
+                <p className="text-success/80 text-xs">Joint offering structures</p>
               </div>
             </div>
           </div>
@@ -260,21 +260,21 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted">Joint Pipeline:</span>
-                  <span className="font-medium text-green-600">
+                  <span className="font-medium text-success">
                     {record?.jointPipeline ? `$${record.jointPipeline.toLocaleString()}` : '$8.5M'}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted">Win Rate:</span>
-                  <span className="font-medium text-green-600">{record?.jointWinRate || '45%'}</span>
+                  <span className="font-medium text-success">{record?.jointWinRate || '45%'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted">Deal Velocity:</span>
-                  <span className="font-medium text-blue-600">{record?.dealVelocity || '15% faster'}</span>
+                  <span className="font-medium text-primary">{record?.dealVelocity || '15% faster'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted">Customer Satisfaction:</span>
-                  <span className="font-medium text-blue-600">{record?.jointCsat || '4.7/5'}</span>
+                  <span className="font-medium text-primary">{record?.jointCsat || '4.7/5'}</span>
                 </div>
               </div>
             </div>
