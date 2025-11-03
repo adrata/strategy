@@ -5,7 +5,7 @@ import { Nango } from '@nangohq/node';
 
 // Initialize Nango with error handling
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 let nango: Nango | null = null;
 try {

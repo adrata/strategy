@@ -4,7 +4,7 @@ import { Nango } from '@nangohq/node';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/grand-central/nango/config
  * Check Nango configuration status

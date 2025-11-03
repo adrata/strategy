@@ -4,7 +4,7 @@ import { getUnifiedAuthUser } from '@/platform/api-auth';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/grand-central/workflows
  * Get all workflows for a workspace

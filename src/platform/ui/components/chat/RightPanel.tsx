@@ -248,7 +248,9 @@ export function RightPanel() {
 
     recognition.onstart = () => {
       setIsBackgroundListening(true);
-      console.log('🎤 Background voice recognition started');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎤 Background voice recognition started');
+      }
     };
 
     recognition.onresult = (event) => {
@@ -312,7 +314,9 @@ export function RightPanel() {
               .trim();
             
             // Send directly to chat
-            console.log('🎤 Background voice input:', fixedTranscript);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('🎤 Background voice input:', fixedTranscript);
+            }
             processMessageWithQueue(fixedTranscript);
             
             finalTranscriptAccumulator = '';
@@ -397,7 +401,9 @@ export function RightPanel() {
       );
       
       if (isWakeWord) {
-        console.log('Wake word detected:', transcript, 'Confidence:', bestAlternative.confidence);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Wake word detected:', transcript, 'Confidence:', bestAlternative.confidence);
+        }
         
         // Trigger voice mode modal
         setShowVoiceModal(true);
@@ -616,7 +622,9 @@ export function RightPanel() {
       try {
         const storageKey = `adrata-conversations-${workspaceId}`;
         localStorage.setItem(storageKey, JSON.stringify(conversations));
-        console.log('💾 [CHAT] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('💾 [CHAT] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
+        }
       } catch (error) {
         console.warn('Failed to save conversations to localStorage:', error);
       }
@@ -657,9 +665,11 @@ export function RightPanel() {
             }))
           }));
           setConversations(restoredConversations);
-          console.log('📂 [CHAT] Loaded conversations from localStorage:', restoredConversations.length, 'for workspace:', workspaceId);
-          if (parsed.length > filteredConversations.length) {
-            console.log('🗑️ [CHAT] Filtered out', parsed.length - filteredConversations.length, 'deleted conversations');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('📂 [CHAT] Loaded conversations from localStorage:', restoredConversations.length, 'for workspace:', workspaceId);
+            if (parsed.length > filteredConversations.length) {
+              console.log('🗑️ [CHAT] Filtered out', parsed.length - filteredConversations.length, 'deleted conversations');
+            }
           }
           conversationsLoadedRef.current = true;
         }
@@ -675,7 +685,9 @@ export function RightPanel() {
     
     setIsSyncing(true);
     try {
-      console.log('🔄 [CHAT] Syncing conversations from API...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔄 [CHAT] Syncing conversations from API...');
+      }
       const response = await fetch('/api/v1/conversations?includeMessages=true');
       const result = await response.json();
       
@@ -708,7 +720,9 @@ export function RightPanel() {
         });
         
         setLastSyncTime(new Date());
-        console.log('✅ [CHAT] Synced conversations from API:', apiConversations.length);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] Synced conversations from API:', apiConversations.length);
+        }
       }
     } catch (error) {
       console.warn('⚠️ [CHAT] Failed to sync conversations from API:', error);
@@ -733,7 +747,9 @@ export function RightPanel() {
       
       const result = await response.json();
       if (result.success) {
-        console.log('✅ [CHAT] Saved conversation to API:', result.data.conversation.id);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] Saved conversation to API:', result.data.conversation.id);
+        }
         return result.data.conversation.id;
       }
     } catch (error) {
@@ -768,7 +784,9 @@ export function RightPanel() {
       
       const result = await response.json();
       if (result.success) {
-        console.log('✅ [CHAT] Saved message to API:', result.data.message.id);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] Saved message to API:', result.data.message.id);
+        }
         return result.data.message.id;
       }
     } catch (error) {
@@ -787,7 +805,9 @@ export function RightPanel() {
       
       const result = await response.json();
       if (result.success) {
-        console.log('✅ [CHAT] Deleted conversation from API:', conversationId);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] Deleted conversation from API:', conversationId);
+        }
       }
     } catch (error) {
       console.warn('⚠️ [CHAT] Failed to delete conversation from API:', error);
@@ -820,29 +840,33 @@ export function RightPanel() {
   // Update page context when pathname changes
   useEffect(() => {
     const newContext = getPageContext();
-    if (newContext) {
-      setCurrentPageContext(newContext);
-      setContextLastUpdated(new Date());
-      console.log('🧭 [AI CONTEXT] Page context updated:', {
-        section: newContext.secondarySection,
-        detailView: newContext.detailView,
-        isDetailPage: newContext.isDetailPage,
-        itemId: newContext.itemId,
-        itemName: newContext.itemName,
-        viewType: newContext.viewType
-      });
-    }
+      if (newContext) {
+        setCurrentPageContext(newContext);
+        setContextLastUpdated(new Date());
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🧭 [AI CONTEXT] Page context updated:', {
+            section: newContext.secondarySection,
+            detailView: newContext.detailView,
+            isDetailPage: newContext.isDetailPage,
+            itemId: newContext.itemId,
+            itemName: newContext.itemName,
+            viewType: newContext.viewType
+          });
+        }
+      }
   }, [pathname]);
 
   // Update context when current record changes
   useEffect(() => {
     if (currentRecord) {
       setContextLastUpdated(new Date());
-      console.log('📝 [AI CONTEXT] Record context updated:', {
-        recordType,
-        recordId: currentRecord.id,
-        recordName: currentRecord.name || currentRecord.fullName
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📝 [AI CONTEXT] Record context updated:', {
+          recordType,
+          recordId: currentRecord.id,
+          recordName: currentRecord.name || currentRecord.fullName
+        });
+      }
     }
   }, [currentRecord, recordType]);
 
@@ -858,14 +882,18 @@ export function RightPanel() {
   
   // Generate contextual quick actions based on current record
   const generateContextualActions = (record: any, recordType: string): string[] => {
-    console.log('🤖 [AI RIGHT PANEL] generateContextualActions called with:', { 
-      record: record ? { id: record.id, name: record.name || record.fullName } : null, 
-      recordType,
-      activeSubApp 
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🤖 [AI RIGHT PANEL] generateContextualActions called with:', { 
+        record: record ? { id: record.id, name: record.name || record.fullName } : null, 
+        recordType,
+        activeSubApp 
+      });
+    }
     
     if (!record) {
-      console.log('🤖 [AI RIGHT PANEL] No record, returning generic actions');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🤖 [AI RIGHT PANEL] No record, returning generic actions');
+      }
       return QUICK_ACTIONS[activeSubApp] || QUICK_ACTIONS["Speedrun"] || [];
     }
     
@@ -1065,11 +1093,13 @@ export function RightPanel() {
   };
 
   const getWelcomeMessage = (app: string): string => {
-    console.log('🤖 [AI RIGHT PANEL] getWelcomeMessage called with:', { 
-      app, 
-      currentRecord: currentRecord ? { id: currentRecord.id, name: currentRecord.name || currentRecord.fullName } : null, 
-      recordType 
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🤖 [AI RIGHT PANEL] getWelcomeMessage called with:', { 
+        app, 
+        currentRecord: currentRecord ? { id: currentRecord.id, name: currentRecord.name || currentRecord.fullName } : null, 
+        recordType 
+      });
+    }
     
     if (currentRecord && recordType) {
       const recordName = currentRecord.name || currentRecord.fullName || 
@@ -1397,7 +1427,9 @@ You can also try uploading the file again or use a different format.`,
           ocrImages: false
         });
         
-        console.log(`📄 [FILE HANDLER] Parsed ${file.name}:`, parsedDoc);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📄 [FILE HANDLER] Parsed ${file.name}:`, parsedDoc);
+        }
         
         // Store document data in chat context for later processing
         chat.storeDocumentData(file.name, parsedDoc, activeSubApp);
@@ -1742,7 +1774,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                              input.toLowerCase().includes('generate a deep value report');
       
       if (isReportRequest && currentRecord) {
-        console.log('📊 [AI CHAT] Deep value report request detected for record:', currentRecord.id);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📊 [AI CHAT] Deep value report request detected for record:', currentRecord.id);
+        }
         
         // Trigger report generation
         try {
@@ -1775,7 +1809,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
           // TODO: Trigger report view in middle panel
           // This would be handled by the parent component or context
-          console.log('📊 [AI CHAT] Report generation triggered:', report);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('📊 [AI CHAT] Report generation triggered:', report);
+          }
           
           setIsProcessing(false);
           return; // Exit early, don't process as regular chat
@@ -1786,7 +1822,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
 
       // Enhanced AI API call with OpenRouter integration
-      console.log('🤖 [AI CHAT] Making optimized API call to /api/ai-chat with OpenRouter');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🤖 [AI CHAT] Making optimized API call to /api/ai-chat with OpenRouter');
+      }
       const startTime = performance.now();
       
       const response = await fetch('/api/ai-chat', {
@@ -1824,13 +1862,15 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       const endTime = performance.now();
       const responseTime = endTime - startTime;
       
-      console.log('🤖 [AI CHAT] Response received:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        responseTime: `${responseTime.toFixed(2)}ms`,
-        headers: Object.fromEntries(response.headers.entries())
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🤖 [AI CHAT] Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok,
+          responseTime: `${responseTime.toFixed(2)}ms`,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+      }
 
       // Validate response before parsing JSON
       if (!response.ok) {
@@ -1883,7 +1923,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         };
 
         // Log routing information for monitoring
-        if (data.metadata?.routingInfo) {
+        if (data.metadata?.routingInfo && process.env.NODE_ENV === 'development') {
           console.log('🎯 [AI CHAT] Routing info:', {
             model: data.metadata.model,
             provider: data.metadata.provider,
@@ -1928,12 +1968,16 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
         // Handle navigation response
         if (data.navigation) {
-          console.log('🧭 Navigation response received:', data.navigation);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🧭 Navigation response received:', data.navigation);
+          }
           
           // Navigate after speaking (if voice is enabled) - use in-app navigation
           const navigationDelay = data['voice'] && data.voice.shouldSpeak ? 2000 : 1000;
           setTimeout(() => {
-            console.log('🚀 Navigating to:', data.navigation.route);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('🚀 Navigating to:', data.navigation.route);
+            }
             // Use in-app navigation instead of router.push to prevent new tab opening
             window['location']['href'] = data.navigation.route;
           }, navigationDelay);
@@ -1998,7 +2042,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
   // Enhanced record search with smart navigation
   const handleRecordSearch = async (recordName: string) => {
-    console.log(`🔍 Smart search for record: ${recordName}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔍 Smart search for record: ${recordName}`);
+    }
     
     // Add a search message to the chat
     const searchMessage = `Searching for "${recordName}"...`;

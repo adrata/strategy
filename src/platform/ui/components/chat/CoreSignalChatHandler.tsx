@@ -180,31 +180,43 @@ export class CoreSignalChatHandler {
     switch (action.type) {
       case 'update_crm':
         // Update CRM record with enriched data
-        console.log('Updating CRM record:', action.data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Updating CRM record:', action.data);
+        }
         break;
         
       case 'add_to_speedrun':
         // Add contact to Speedrun queue
-        console.log('Adding to Speedrun:', action.data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Adding to Speedrun:', action.data);
+        }
         break;
         
       case 'add_to_pipeline':
         // Add to sales pipeline
-        console.log('Adding to pipeline:', action.data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Adding to pipeline:', action.data);
+        }
         break;
         
       case 'map_buying_committee':
         // Generate buyer committee mapping
-        console.log('Mapping buying committee:', action.data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Mapping buying committee:', action.data);
+        }
         break;
         
       case 'find_people':
         // Search for additional contacts
-        console.log('Finding contacts:', action.data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Finding contacts:', action.data);
+        }
         break;
         
       default:
-        console.log('Unknown action type:', action.type);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Unknown action type:', action.type);
+        }
     }
   }
 

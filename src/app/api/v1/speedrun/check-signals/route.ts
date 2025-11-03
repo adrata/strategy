@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getV1AuthUser } from '@/app/api/v1/auth';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/platform/database/prisma-client';
 
 // 🚀 PERFORMANCE: Optimized speedrun signals check with caching
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+// Force dynamic rendering for API routes (required for authentication)
+export const dynamic = 'force-dynamic';
 
 const signalsCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 30 * 1000; // 30 seconds cache
@@ -13,7 +13,7 @@ const CACHE_TTL = 30 * 1000; // 30 seconds cache
  * 🚨 SPEEDRUN SIGNALS API v1 - LIGHTNING FAST
  * 
  * Dedicated optimized endpoint for checking speedrun signals
- * - Uses v1 authentication (NextAuth, cookies, Bearer tokens)
+ * - Uses unified authentication system (JWT tokens from cookies)
  * - Extracts workspaceId from authenticated user context
  * - Implements 30-second caching for performance
  * - Returns standardized v1 response format
@@ -25,8 +25,8 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
   try {
-    // 1. Authenticate user using v1 auth system
-    const authUser = await getV1AuthUser(request);
+    // 1. Authenticate user using unified auth system
+    const authUser = await getUnifiedAuthUser(request);
     
     if (!authUser) {
       return NextResponse.json(
@@ -43,16 +43,20 @@ export async function GET(request: NextRequest) {
     const since = searchParams.get('since'); // ISO timestamp for incremental checks
     
     // 2. Extract workspaceId from authenticated user context
-    const workspaceId = authUser.workspaceId || 'local-workspace';
+    const workspaceId = (authUser as any).activeWorkspaceId || authUser.workspaceId || 'local-workspace';
     
-    console.log(`🚨 [SPEEDRUN SIGNALS v1] Checking signals for workspace: ${workspaceId}, user: ${authUser.id}, since: ${since || 'beginning'}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🚨 [SPEEDRUN SIGNALS v1] Checking signals for workspace: ${workspaceId}, user: ${authUser.id}, since: ${since || 'beginning'}`);
+    }
 
     // 🚀 PERFORMANCE: Check cache first
     const cacheKey = `signals-v1:${workspaceId}:${authUser.id}`;
     const cached = signalsCache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-      console.log(`⚡ [SPEEDRUN SIGNALS v1] Cache hit - returning cached data`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`⚡ [SPEEDRUN SIGNALS v1] Cache hit - returning cached data`);
+      }
       return NextResponse.json({
         success: true,
         data: cached.data,
@@ -95,7 +99,9 @@ export async function GET(request: NextRequest) {
     });
 
     const responseTime = Date.now() - startTime;
-    console.log(`✅ [SPEEDRUN SIGNALS v1] Checked signals in ${responseTime}ms`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`✅ [SPEEDRUN SIGNALS v1] Checked signals in ${responseTime}ms`);
+    }
 
     return NextResponse.json({
       success: true,
@@ -125,7 +131,7 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/speedrun/check-signals - Invalidate cache when signals change
 export async function POST(request: NextRequest) {
   try {
-    const authUser = await getV1AuthUser(request);
+    const authUser = await getUnifiedAuthUser(request);
     
     if (!authUser) {
       return NextResponse.json(
@@ -138,13 +144,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const workspaceId = authUser.workspaceId || 'local-workspace';
+    const workspaceId = (authUser as any).activeWorkspaceId || authUser.workspaceId || 'local-workspace';
     
     // 🚀 CACHE INVALIDATION: Clear signals cache when data changes
     const cacheKey = `signals-v1:${workspaceId}:${authUser.id}`;
     signalsCache.delete(cacheKey);
     
-    console.log(`🗑️ [SPEEDRUN SIGNALS v1] Invalidated cache for: ${cacheKey}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🗑️ [SPEEDRUN SIGNALS v1] Invalidated cache for: ${cacheKey}`);
+    }
 
     return NextResponse.json({
       success: true,

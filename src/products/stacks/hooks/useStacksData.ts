@@ -62,7 +62,8 @@ export function useStacksData() {
   // Fetch functions
   const fetchProjects = useCallback(async (): Promise<Project[]> => {
     if (!user?.activeWorkspaceId) {
-      throw new Error('No workspace ID available');
+      console.warn('⚠️ [STACKS DATA] No workspace ID available for fetching projects');
+      return [];
     }
 
     setIsLoading(true);
@@ -75,15 +76,27 @@ export function useStacksData() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch projects: ${response.statusText}`);
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+        
+        console.warn(`⚠️ [STACKS DATA] Failed to fetch projects: ${response.status} ${response.statusText}`, errorData);
+        // Return empty array instead of throwing to allow app to continue
+        return [];
       }
 
       const data = await response.json();
-      setProjects(data.projects || []);
-      return data.projects || [];
+      const projects = data.projects || [];
+      setProjects(projects);
+      return projects;
     } catch (error) {
-      console.error('Error fetching projects:', error);
-      throw error;
+      console.warn('⚠️ [STACKS DATA] Error fetching projects:', error);
+      // Return empty array instead of throwing to allow app to continue
+      return [];
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +104,8 @@ export function useStacksData() {
 
   const fetchEpochs = useCallback(async (): Promise<Epoch[]> => {
     if (!user?.activeWorkspaceId) {
-      throw new Error('No workspace ID available');
+      console.warn('⚠️ [STACKS DATA] No workspace ID available for fetching epochs');
+      return [];
     }
 
     try {
@@ -103,7 +117,17 @@ export function useStacksData() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch epics: ${response.statusText}`);
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+        
+        console.warn(`⚠️ [STACKS DATA] Failed to fetch epics: ${response.status} ${response.statusText}`, errorData);
+        // Return empty array instead of throwing to allow app to continue
+        return [];
       }
 
       const data = await response.json();
@@ -112,14 +136,16 @@ export function useStacksData() {
       setEpochs(epochsList);
       return epochsList;
     } catch (error) {
-      console.error('Error fetching epochs:', error);
-      throw error;
+      console.warn('⚠️ [STACKS DATA] Error fetching epochs:', error);
+      // Return empty array instead of throwing to allow app to continue
+      return [];
     }
   }, [user?.activeWorkspaceId]);
 
   const fetchStories = useCallback(async (): Promise<Story[]> => {
     if (!user?.activeWorkspaceId) {
-      throw new Error('No workspace ID available');
+      console.warn('⚠️ [STACKS DATA] No workspace ID available for fetching stories');
+      return [];
     }
 
     try {
@@ -131,15 +157,27 @@ export function useStacksData() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch stories: ${response.statusText}`);
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+        
+        console.warn(`⚠️ [STACKS DATA] Failed to fetch stories: ${response.status} ${response.statusText}`, errorData);
+        // Return empty array instead of throwing to allow app to continue
+        return [];
       }
 
       const data = await response.json();
-      setStories(data.stories || []);
-      return data.stories || [];
+      const stories = data.stories || [];
+      setStories(stories);
+      return stories;
     } catch (error) {
-      console.error('Error fetching stories:', error);
-      throw error;
+      console.warn('⚠️ [STACKS DATA] Error fetching stories:', error);
+      // Return empty array instead of throwing to allow app to continue
+      return [];
     }
   }, [user?.activeWorkspaceId]);
 

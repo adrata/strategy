@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 // Simple in-memory rate limiting (in production, use Redis)
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const webhookAttempts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute

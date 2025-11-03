@@ -4,7 +4,7 @@ import { prisma } from '@/platform/database/prisma-client';
 
 // 🚀 PERFORMANCE: Request deduplication to prevent multiple calls
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const pendingRequests = new Map<string, Promise<any>>();
 

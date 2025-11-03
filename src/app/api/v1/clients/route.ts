@@ -8,7 +8,7 @@ import { addBusinessDays } from '@/platform/utils/actionUtils';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const CLIENTS_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for clients
 

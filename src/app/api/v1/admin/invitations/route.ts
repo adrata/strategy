@@ -4,7 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/v1/admin/invitations
  * List all pending and recent invitations

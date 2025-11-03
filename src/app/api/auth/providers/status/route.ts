@@ -3,7 +3,7 @@ import { prisma } from '@/platform/database/prisma-client';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * Get Provider Token Status
  * Returns the status of all connected providers for a workspace

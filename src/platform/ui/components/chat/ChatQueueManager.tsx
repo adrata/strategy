@@ -84,14 +84,18 @@ export function ChatQueueManager({
     setQueue(prev => [...prev, newItem]);
     setIsVisible(true);
     
-    console.log('📋 [QUEUE] Added item:', query);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📋 [QUEUE] Added item:', query);
+    }
     return newItem.id;
   };
 
   // Remove item from queue
   const removeFromQueue = (itemId: string) => {
     setQueue(prev => prev.filter(item => item.id !== itemId));
-    console.log('🗑️ [QUEUE] Removed item:', itemId);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🗑️ [QUEUE] Removed item:', itemId);
+    }
   };
 
   // Reorder queue items

@@ -9,7 +9,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 import { trackQueryPerformance } from '@/platform/services/database/performance-monitor';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const prisma = new PrismaClient();
 

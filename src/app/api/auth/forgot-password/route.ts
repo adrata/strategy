@@ -4,7 +4,7 @@ import { sendEmail } from "@/platform/services/ResendService";
 import crypto from "crypto";
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 export async function POST(request: NextRequest) {
   try {

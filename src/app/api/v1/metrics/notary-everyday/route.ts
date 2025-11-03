@@ -3,7 +3,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 import { prisma } from '@/lib/prisma';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 interface NotaryEverydayMetrics {
   currentPeriod: string;

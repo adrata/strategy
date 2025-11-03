@@ -4,7 +4,7 @@ import { createErrorResponse, createSuccessResponse } from '@/platform/services/
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/v1/auth/validate-invitation-token
  * Validate an invitation token and return user details for pre-filling form

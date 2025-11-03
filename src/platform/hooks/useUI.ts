@@ -107,9 +107,11 @@ export function useUI(): UseUIReturn {
   // Check if we're on client side
   const isClient = typeof window !== "undefined";
 
-  // Debug helper
+  // Debug helper (development only)
   const debug = (phase: string, details: any) => {
-    console.log(`[UI HOOK] ${phase}:`, details);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[UI HOOK] ${phase}:`, details);
+    }
   };
 
   // App & Section State
@@ -122,7 +124,9 @@ export function useUI(): UseUIReturn {
   
   // PERFORMANCE: Optimized setActiveSection with immediate feedback
   const setActiveSectionOptimized = useCallback((section: string) => {
-    console.log(`[UI HOOK] Immediate section change: ${activeSection} -> ${section}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[UI HOOK] Immediate section change: ${activeSection} -> ${section}`);
+    }
     
     // Set immediate visual feedback
     setIsSectionChanging(true);

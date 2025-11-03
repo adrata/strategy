@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth-options';
 import { getStreamlinedModels } from '@/app/[workspace]/database/utils/schemaParser';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 /**
  * GET /api/database/stats

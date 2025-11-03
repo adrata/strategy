@@ -24,9 +24,11 @@ export class AIProcessor {
 
   async processNaturalLanguage(input: string): Promise<ProcessingResult> {
     try {
-      console.log(
-        `🤖 [AI_PROCESSOR] Processing input with ${this.selectedModel} model for ${this.activeSubApp}`,
-      );
+      if (process.env.NODE_ENV === 'development') {
+        console.log(
+          `🤖 [AI_PROCESSOR] Processing input with ${this.selectedModel} model for ${this.activeSubApp}`,
+        );
+      }
 
       // Enhanced natural language processing with context awareness
       const contextualPrompt = this.buildContextualPrompt(input);
@@ -52,9 +54,11 @@ export class AIProcessor {
 
   async processAdrataAIResponse(prompt: string): Promise<string> {
     try {
-      console.log(
-        "🤖 [ADRATA-AI] Processing AI response with enhanced context",
-      );
+      if (process.env.NODE_ENV === 'development') {
+        console.log(
+          "🤖 [ADRATA-AI] Processing AI response with enhanced context",
+        );
+      }
 
       // Use enhanced AI processing for Adrata AI responses
       const response = await this.generateAIResponse(prompt);

@@ -109,27 +109,29 @@ export function useData(
       }));
     };
 
-    // Debug: Log the transformation results
+    // Debug: Log the transformation results (development only)
     const transformedLeads = transformPersonData(apiData.leads || []);
     const transformedProspects = transformPersonData(apiData.prospects || []);
     
-    console.log('[DATA TRANSFORMATION DEBUG] Transformed leads sample:', transformedLeads.slice(0, 2).map(item => ({
-      id: item.id,
-      fullName: item.fullName,
-      firstName: item.firstName,
-      lastName: item.lastName,
-      name: item.name,
-      company: item.company
-    })));
-    
-    console.log('[DATA TRANSFORMATION DEBUG] Transformed prospects sample:', transformedProspects.slice(0, 2).map(item => ({
-      id: item.id,
-      fullName: item.fullName,
-      firstName: item.firstName,
-      lastName: item.lastName,
-      name: item.name,
-      company: item.company
-    })));
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[DATA TRANSFORMATION DEBUG] Transformed leads sample:', transformedLeads.slice(0, 2).map(item => ({
+        id: item.id,
+        fullName: item.fullName,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        name: item.name,
+        company: item.company
+      })));
+      
+      console.log('[DATA TRANSFORMATION DEBUG] Transformed prospects sample:', transformedProspects.slice(0, 2).map(item => ({
+        id: item.id,
+        fullName: item.fullName,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        name: item.name,
+        company: item.company
+      })));
+    }
 
     return {
       leads: transformedLeads,
@@ -153,10 +155,12 @@ export function useData(
 
   // Fetch function for unified data
   const fetchPlatformData = useCallback(async () => {
-    console.log('[DATA] fetchPlatformData called with:', {
-      authUserId: authUser?.id,
-      activeWorkspaceId: activeWorkspace?.id
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[DATA] fetchPlatformData called with:', {
+        authUserId: authUser?.id,
+        activeWorkspaceId: activeWorkspace?.id
+      });
+    }
     
     // Check if we're in demo mode
     const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
@@ -181,7 +185,9 @@ export function useData(
     const requestKey = `acquisition-data:${activeWorkspace.id}:${authUser?.id || 'demo'}`;
     const existingRequest = pendingRequests.get(requestKey);
     if (existingRequest) {
-      console.log('[DEDUP] Waiting for existing data request:', requestKey);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[DEDUP] Waiting for existing data request:', requestKey);
+      }
       return await existingRequest;
     }
 
@@ -193,7 +199,9 @@ export function useData(
     
     // IMPROVED AUTHENTICATION HANDLING: Better error handling for missing/invalid tokens
     if (!session?.accessToken) {
-      console.warn('[AUTH] No authentication token available, using v1 APIs');
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[AUTH] No authentication token available, using v1 APIs');
+      }
       
       // NEW: Use v1 APIs instead of old unified API
       const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse, speedrunResponse] = await Promise.all([
@@ -242,23 +250,31 @@ export function useData(
       
       // Check if token is expired
       if (tokenExp && Date.now() >= tokenExp * 1000) {
-        console.warn('[JWT] Token is expired, falling back to unauthenticated request');
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[JWT] Token is expired, falling back to unauthenticated request');
+        }
         useAuthenticatedRequest = false;
       }
       
       // Check workspace mismatch
       if (tokenWorkspaceId !== activeWorkspace.id) {
-        console.warn(`[WORKSPACE MISMATCH] JWT token workspace (${tokenWorkspaceId}) doesn't match active workspace (${activeWorkspace.id})`);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`[WORKSPACE MISMATCH] JWT token workspace (${tokenWorkspaceId}) doesn't match active workspace (${activeWorkspace.id})`);
+        }
         useAuthenticatedRequest = false;
       }
     } catch (error) {
       console.error('[JWT VERIFICATION] Failed to verify JWT token:', error);
-      console.log('[JWT FIX] Falling back to unauthenticated request');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[JWT FIX] Falling back to unauthenticated request');
+      }
       useAuthenticatedRequest = false;
     }
 
     // NEW: Use v1 APIs for all data fetching
-    console.log('[DATA] Loading data using v1 APIs');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[DATA] Loading data using v1 APIs');
+    }
     
     // Fetch all data using v1 APIs
     const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse, speedrunResponse] = await Promise.all([
@@ -295,27 +311,31 @@ export function useData(
       speedrunItems: speedrunResult.data || []
     };
 
-    console.log('[DATA] API response received:', {
-      success: true,
-      hasData: !!apiData,
-      dataKeys: apiData ? Object.keys(apiData) : [],
-      prospectsCount: apiData.prospects?.length || 0,
-      leadsCount: apiData.leads?.length || 0,
-      speedrunItemsCount: apiData.speedrunItems?.length || 0,
-      counts: apiData.counts,
-      speedrunCount: apiData.counts?.speedrun
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[DATA] API response received:', {
+        success: true,
+        hasData: !!apiData,
+        dataKeys: apiData ? Object.keys(apiData) : [],
+        prospectsCount: apiData.prospects?.length || 0,
+        leadsCount: apiData.leads?.length || 0,
+        speedrunItemsCount: apiData.speedrunItems?.length || 0,
+        counts: apiData.counts,
+        speedrunCount: apiData.counts?.speedrun
+      });
+    }
 
     // Map the API response to the expected structure
     const mappedData = mapApiDataToPlatformFormat(apiData);
 
-    console.log('[DATA] Mapped data:', {
-      prospectsLength: mappedData.prospects.length,
-      leadsLength: mappedData.leads.length,
-      speedrunItemsLength: mappedData.speedrunItems.length,
-      counts: mappedData.counts,
-      speedrunCount: mappedData.counts?.speedrun
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[DATA] Mapped data:', {
+        prospectsLength: mappedData.prospects.length,
+        leadsLength: mappedData.leads.length,
+        speedrunItemsLength: mappedData.speedrunItems.length,
+        counts: mappedData.counts,
+        speedrunCount: mappedData.counts?.speedrun
+      });
+    }
 
     return mappedData;
     })();
@@ -333,15 +353,17 @@ export function useData(
 
   // Debug the enabled condition
   const enabled = isAuthenticated && !isAuthLoading && !!authUser?.id && !!activeWorkspace?.id;
-  console.log('[DATA] Enabled condition check:', {
-    isAuthenticated,
-    isAuthLoading,
-    hasAuthUserId: !!authUser?.id,
-    hasActiveWorkspaceId: !!activeWorkspace?.id,
-    enabled,
-    authUserId: authUser?.id,
-    activeWorkspaceId: activeWorkspace?.id
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[DATA] Enabled condition check:', {
+      isAuthenticated,
+      isAuthLoading,
+      hasAuthUserId: !!authUser?.id,
+      hasActiveWorkspaceId: !!activeWorkspace?.id,
+      enabled,
+      authUserId: authUser?.id,
+      activeWorkspaceId: activeWorkspace?.id
+    });
+  }
 
   // Use unified data hook
   const { 
@@ -368,7 +390,9 @@ export function useData(
   useEffect(() => {
     // Only clear cache and refresh when workspace actually changes (not on initial load)
     if (activeWorkspace?.id && activeWorkspace.id !== lastWorkspaceId && lastWorkspaceId !== null) {
-      console.log(`[WORKSPACE SWITCH] Detected workspace change from ${lastWorkspaceId} to ${activeWorkspace.id}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[WORKSPACE SWITCH] Detected workspace change from ${lastWorkspaceId} to ${activeWorkspace.id}`);
+      }
       
       // CRITICAL: Set switching flag to prevent premature data fetching
       setIsWorkspaceSwitching(true);
@@ -381,7 +405,9 @@ export function useData(
       setTimeout(() => {
         setIsWorkspaceSwitching(false);
         setLastWorkspaceId(activeWorkspace.id);
-        console.log(`[WORKSPACE SWITCH] Workspace switch completed for: ${activeWorkspace.id}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[WORKSPACE SWITCH] Workspace switch completed for: ${activeWorkspace.id}`);
+        }
       }, 150); // Small delay to ensure cache clearing is complete
       
     } else if (activeWorkspace?.id && lastWorkspaceId === null) {
@@ -395,7 +421,9 @@ export function useData(
     const handleWorkspaceSwitch = (event: CustomEvent) => {
       const { workspaceId } = event.detail;
       if (workspaceId && workspaceId !== lastWorkspaceId) {
-        console.log(`[WORKSPACE SWITCH EVENT] Received workspace switch event for: ${workspaceId}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[WORKSPACE SWITCH EVENT] Received workspace switch event for: ${workspaceId}`);
+        }
         clearCache();
         refresh();
         setLastWorkspaceId(workspaceId);

@@ -4,7 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * Individual Conversation API v1
  * GET /api/v1/conversations/{id} - Get conversation with messages

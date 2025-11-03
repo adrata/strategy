@@ -4,7 +4,7 @@ import { getV1AuthUser } from '../../../auth';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * Company Intelligence API v1
  * GET /api/v1/companies/[id]/intelligence - Get company intelligence

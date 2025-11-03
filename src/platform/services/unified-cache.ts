@@ -242,16 +242,22 @@ export class UnifiedCache {
         try {
           const { data, timestamp } = JSON.parse(cached);
           if (Date.now() - timestamp < ttl) {
-            console.log(`⚡ [CLIENT CACHE HIT] ${key}`);
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`⚡ [CLIENT CACHE HIT] ${key}`);
+            }
             return data;
           }
         } catch (error) {
-          console.warn('Failed to parse cached data:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('Failed to parse cached data:', error);
+          }
         }
       }
       
       // Fetch fresh data and cache it
-      console.log(`🔄 [CLIENT CACHE MISS] ${key} - fetching fresh data`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔄 [CLIENT CACHE MISS] ${key} - fetching fresh data`);
+      }
       const data = await fetchFn();
       
       try {
@@ -259,9 +265,67 @@ export class UnifiedCache {
           data,
           timestamp: Date.now()
         }));
-        console.log(`💾 [CLIENT CACHE SET] ${key}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`💾 [CLIENT CACHE SET] ${key}`);
+        }
       } catch (error) {
-        console.warn('Failed to cache data:', error);
+        // Handle QuotaExceededError by clearing old cache entries
+        if (error instanceof Error && error.name === 'QuotaExceededError') {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [CLIENT CACHE] localStorage quota exceeded, clearing old cache entries');
+          }
+          
+          // Clear old cache entries (keep only the last 100 keys)
+          try {
+            const keys: string[] = [];
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i);
+              if (key && key.startsWith('adrata-cache-')) {
+                keys.push(key);
+              }
+            }
+            
+            // Sort by timestamp (oldest first) and remove oldest entries
+            const entriesWithTimestamps = keys.map(key => {
+              try {
+                const value = localStorage.getItem(key);
+                if (value) {
+                  const parsed = JSON.parse(value);
+                  return { key, timestamp: parsed.timestamp || 0 };
+                }
+              } catch {
+                return { key, timestamp: 0 };
+              }
+              return { key, timestamp: 0 };
+            }).sort((a, b) => a.timestamp - b.timestamp);
+            
+            // Remove oldest 50% of entries
+            const entriesToRemove = Math.ceil(entriesWithTimestamps.length * 0.5);
+            for (let i = 0; i < entriesToRemove; i++) {
+              localStorage.removeItem(entriesWithTimestamps[i].key);
+            }
+            
+            // Try setting again after cleanup
+            try {
+              localStorage.setItem(cacheKey, JSON.stringify({
+                data,
+                timestamp: Date.now()
+              }));
+            } catch (retryError) {
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('⚠️ [CLIENT CACHE] Still failed to cache after cleanup:', retryError);
+              }
+            }
+          } catch (cleanupError) {
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('⚠️ [CLIENT CACHE] Failed to cleanup cache:', cleanupError);
+            }
+          }
+        } else {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [CLIENT CACHE] Failed to cache data:', error);
+          }
+        }
       }
       
       return data;

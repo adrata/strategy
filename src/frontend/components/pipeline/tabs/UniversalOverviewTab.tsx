@@ -35,6 +35,10 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const [linkedinUrl, setLinkedinUrl] = useState<string | null>(null);
   const [linkedinNavigatorUrl, setLinkedinNavigatorUrl] = useState<string | null>(null);
   
+  // Track when user just saved linkedinNavigatorUrl to prevent immediate overwrite
+  const [justSavedNavigatorUrl, setJustSavedNavigatorUrl] = useState<string | null>(null);
+  const [justSavedNavigatorUrlTimestamp, setJustSavedNavigatorUrlTimestamp] = useState<number>(0);
+
   // Initialize LinkedIn fields from record data and sync with record updates
   useEffect(() => {
     if (record) {
@@ -48,21 +52,42 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         newLinkedinNavigatorUrl,
         currentLinkedinNavigatorUrl: linkedinNavigatorUrl,
         recordLinkedinNavigatorUrl: record?.linkedinNavigatorUrl,
+        justSavedNavigatorUrl,
+        justSavedNavigatorUrlTimestamp,
+        timeSinceSave: Date.now() - justSavedNavigatorUrlTimestamp,
         willUpdateLinkedin: newLinkedinUrl !== linkedinUrl,
         willUpdateNavigator: newLinkedinNavigatorUrl !== linkedinNavigatorUrl
       });
       
       // Only update state if values have changed to avoid unnecessary re-renders
+      // IMPORTANT: For linkedinNavigatorUrl, preserve existing value if new value is null/undefined
+      // OR if user just saved a value (within last 5 seconds) - don't overwrite it
+      const timeSinceSave = Date.now() - justSavedNavigatorUrlTimestamp;
+      const recentlySaved = justSavedNavigatorUrl && timeSinceSave < 5000; // 5 second window
+      
       if (newLinkedinUrl !== linkedinUrl) {
         console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn URL state: ${linkedinUrl} -> ${newLinkedinUrl}`);
         setLinkedinUrl(newLinkedinUrl);
       }
-      if (newLinkedinNavigatorUrl !== linkedinNavigatorUrl) {
+      
+      if (newLinkedinNavigatorUrl !== linkedinNavigatorUrl && newLinkedinNavigatorUrl !== null && newLinkedinNavigatorUrl !== undefined) {
+        // Only update if the new value is not null/undefined (preserve existing value if record refresh doesn't include it)
         console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn Navigator URL state: ${linkedinNavigatorUrl} -> ${newLinkedinNavigatorUrl}`);
         setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
+        // Clear the just-saved flag if we got a valid value from the record
+        if (recentlySaved && newLinkedinNavigatorUrl === justSavedNavigatorUrl) {
+          setJustSavedNavigatorUrl(null);
+          setJustSavedNavigatorUrlTimestamp(0);
+        }
+      } else if ((newLinkedinNavigatorUrl === null || newLinkedinNavigatorUrl === undefined) && !recentlySaved) {
+        // If record doesn't have the field AND user didn't just save, preserve existing state (don't clear it)
+        console.log(`🔄 [LINKEDIN STATE SYNC] Preserving existing LinkedIn Navigator URL state (record refresh doesn't include field):`, linkedinNavigatorUrl);
+      } else if (recentlySaved) {
+        // User just saved - preserve the saved value even if record refresh returns null
+        console.log(`🔄 [LINKEDIN STATE SYNC] Preserving recently saved LinkedIn Navigator URL (saved ${timeSinceSave}ms ago):`, justSavedNavigatorUrl);
       }
     }
-  }, [record]);
+  }, [record, linkedinUrl, linkedinNavigatorUrl, justSavedNavigatorUrl, justSavedNavigatorUrlTimestamp]);
 
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
@@ -119,6 +144,10 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     if (field === 'linkedinNavigatorUrl') {
       console.log(`🔄 [LINKEDIN NAVIGATOR SAVE] Updating local state immediately: ${linkedinNavigatorUrl} -> ${value}`);
       setLinkedinNavigatorUrl(value);
+      // Track that user just saved this value to prevent immediate overwrite
+      setJustSavedNavigatorUrl(value);
+      setJustSavedNavigatorUrlTimestamp(Date.now());
+      console.log(`🔄 [LINKEDIN NAVIGATOR SAVE] Marked as just saved (will preserve for 5 seconds)`);
     }
   };
 
@@ -144,7 +173,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         actionsQuery = `personId=${record.id}&companyId=${record.id}`;
       }
 
-      const response = await authFetch(`/api/v1/actions?${actionsQuery}&limit=5&sortBy=createdAt&sortOrder=desc`);
+      // Add fallback response to prevent 401 errors from crashing the UI
+      const response = await authFetch(
+        `/api/v1/actions?${actionsQuery}&limit=5&sortBy=createdAt&sortOrder=desc`,
+        {},
+        { success: true, data: [] }
+      );
       
       if (response && response.success && Array.isArray(response.data)) {
         setActions(response.data);
@@ -650,7 +684,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   }, [actions, actionsLoading, actionsError, timestampRefresh]);
 
         return (
-          <div className="p-6 space-y-6">
+          <div className="space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold text-foreground">Overview</h2>

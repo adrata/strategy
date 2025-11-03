@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 const handler = NextAuth(authOptions);
 

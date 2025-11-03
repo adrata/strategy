@@ -5,7 +5,7 @@ import { createErrorResponse } from '@/platform/services/secure-api-helper';
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/workshop/folders
  * Get all folders for the current workspace

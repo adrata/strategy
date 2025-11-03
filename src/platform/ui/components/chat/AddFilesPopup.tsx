@@ -289,7 +289,9 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
   const handleRecentFileSelect = (file: any) => {
     // For recent files, we'd need to implement file retrieval
     // For now, show a message
-    console.log('Recent file selected:', file);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Recent file selected:', file);
+    }
     onClose();
   };
 

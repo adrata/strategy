@@ -5,7 +5,7 @@ import { companyStrategyService, CompanyStrategyRequest } from '@/platform/servi
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * Company Strategy API
  * GET /api/v1/strategy/company/[id] - Load existing company strategy

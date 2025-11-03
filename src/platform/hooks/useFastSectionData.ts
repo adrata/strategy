@@ -154,7 +154,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     let url: string = '';
     
     try {
-      console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
+      }
       
       // Add refresh parameter to bypass backend cache when force refreshing
       const refreshParam = shouldForceRefresh ? '&refresh=true' : '';
@@ -195,14 +197,16 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           break;
       }
       
-      console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
-      console.log(`🔍 [FAST SECTION DATA] Request context:`, {
-        section,
-        url,
-        workspaceId,
-        userId,
-        hasCredentials: typeof window !== 'undefined' && document.cookie.length > 0
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
+        console.log(`🔍 [FAST SECTION DATA] Request context:`, {
+          section,
+          url,
+          workspaceId,
+          userId,
+          hasCredentials: typeof window !== 'undefined' && document.cookie.length > 0
+        });
+      }
       
       // Use direct fetch with credentials instead of authFetch with problematic fallback
       const response = await fetch(url, { credentials: 'include' });

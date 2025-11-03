@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { UnifiedEmailSyncService } from '@/platform/services/UnifiedEmailSyncService';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
 // Required for static export with dynamic routes
 export async function generateStaticParams() {

@@ -82,16 +82,9 @@ export function ChatInput({
   // Get current user from auth system
   const { user } = useUnifiedAuth();
   
-  // Debug logging
-  console.log('🔍 [VOICE MODE DEBUG] User object:', user);
-  console.log('🔍 [VOICE MODE DEBUG] Workspace ID:', workspaceId);
-  console.log('🔍 [VOICE MODE DEBUG] User name:', user?.name);
-  console.log('🔍 [VOICE MODE DEBUG] User email:', user?.email);
-  
   // Get the active workspace name for proper Adrata workspace detection
   const activeWorkspace = user?.workspaces?.find(w => w.id === user?.activeWorkspaceId);
   const workspaceName = activeWorkspace?.name?.toLowerCase();
-  console.log('🔍 [VOICE MODE DEBUG] Active workspace name:', workspaceName);
   
   // Access control: Only show voice mode for Adrata workspace and user Ross
   // Check both email and name for compatibility
@@ -100,7 +93,15 @@ export function ChatInput({
     user?.name?.toLowerCase() === 'ross'
   );
   
-  console.log('🔍 [VOICE MODE DEBUG] Is voice mode allowed:', isVoiceModeAllowed);
+  // Debug logging (development only)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 [VOICE MODE DEBUG] User object:', user);
+    console.log('🔍 [VOICE MODE DEBUG] Workspace ID:', workspaceId);
+    console.log('🔍 [VOICE MODE DEBUG] User name:', user?.name);
+    console.log('🔍 [VOICE MODE DEBUG] User email:', user?.email);
+    console.log('🔍 [VOICE MODE DEBUG] Active workspace name:', workspaceName);
+    console.log('🔍 [VOICE MODE DEBUG] Is voice mode allowed:', isVoiceModeAllowed);
+  }
   
   // Terminal-like command history navigation
   const [historyIndex, setHistoryIndex] = React.useState(-1);

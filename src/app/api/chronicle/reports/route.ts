@@ -4,7 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 /**
 // Required for static export (desktop build)
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';;
 
  * GET /api/chronicle/reports
  * Fetch Chronicle reports for the current user's workspace
