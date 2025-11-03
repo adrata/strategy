@@ -920,7 +920,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 </button>
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'theme' ? (
             <div className="space-y-6">
               {/* Theme Section */}
               <div>
