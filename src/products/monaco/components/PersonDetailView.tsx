@@ -372,7 +372,7 @@ const generatePersonalNeeds = (person: Person): string => {
 
 // Get role color
 const getRoleColor = (role: string) => {
-  return "bg-hover text-gray-800 border-border";
+  return "bg-hover text-foreground border-border";
 };
 
 // Generate concise pain intelligence similar to directional intelligence format
@@ -475,17 +475,17 @@ const EmailInteractionItem: React.FC<EmailInteractionItemProps> = ({
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'opened': return 'bg-green-100 text-green-800';
-      case 'sent': return 'bg-blue-100 text-blue-800';
-      case 'replied': return 'bg-purple-100 text-purple-800';
-      case 'bounced': return 'bg-red-100 text-red-800';
-      default: return 'bg-hover text-gray-800';
+      case 'opened': return 'bg-success/10 text-success';
+      case 'sent': return 'bg-primary/10 text-primary';
+      case 'replied': return 'bg-info/10 text-info';
+      case 'bounced': return 'bg-error/10 text-error';
+      default: return 'bg-hover text-foreground';
     }
   };
 
   return (
     <div className="flex items-start gap-4 p-3 bg-hover rounded-lg">
-      <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
         <EnvelopeIcon className="w-5 h-5 text-white" />
       </div>
       <div className="flex-1">
@@ -1315,7 +1315,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       <span className="text-sm font-bold text-foreground">78/100</span>
                     </div>
                     <div className="w-full bg-loading-bg rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: "78%" }}></div>
+                      <div className="bg-primary h-2 rounded-full" style={{ width: "78%" }}></div>
                     </div>
                     <p className="text-xs text-muted">Engaging Relationship-Builder</p>
                   </div>
@@ -1563,13 +1563,13 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                           </p>
                         </div>
                         <div className="text-right">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-foreground">
                             {stakeholder.status}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-hover text-gray-800">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-hover text-foreground">
                           {stakeholder.role}
                         </span>
                         <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1693,7 +1693,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       <label className="text-sm font-medium text-muted block mb-1">
                         Buyer Group Role
                       </label>
-                      <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
+                      <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-hover text-foreground">
                         {enhancedPerson.buyerGroupRole || "Stakeholder"}
                       </span>
                     </div>

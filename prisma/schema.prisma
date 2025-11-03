@@ -821,7 +821,7 @@ model StacksProject {
   description String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  epics       StacksEpic[]
+  epochs      StacksEpoch[]
   workspace   workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
   tasks       StacksTask[]
@@ -830,7 +830,7 @@ model StacksProject {
   @@index([workspaceId, name])
 }
 
-model StacksEpic {
+model StacksEpoch {
   id          String        @id @default(cuid())
   projectId   String
   title       String        @db.VarChar(200)
@@ -849,25 +849,26 @@ model StacksEpic {
 }
 
 model StacksStory {
-  id          String        @id @default(cuid())
-  epicId      String?
-  projectId   String
-  title       String        @db.VarChar(200)
-  description String?
-  status      String        @default("todo") @db.VarChar(20)
-  priority    String        @default("medium") @db.VarChar(20)
-  assigneeId  String?       @db.VarChar(30)
-  viewType    String?       @db.VarChar(20)
-  product     String?       @db.VarChar(50)
-  section     String?       @db.VarChar(50)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  assignee    users?        @relation(fields: [assigneeId], references: [id])
-  epic        StacksEpic?   @relation(fields: [epicId], references: [id])
-  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tasks       StacksTask[]
+  id             String        @id @default(cuid())
+  epochId        String?
+  projectId      String
+  title          String        @db.VarChar(200)
+  description    String?
+  status         String        @default("todo") @db.VarChar(20)
+  priority       String        @default("medium") @db.VarChar(20)
+  assigneeId     String?       @db.VarChar(30)
+  viewType       String?       @db.VarChar(20)
+  product        String?       @db.VarChar(50)
+  section        String?       @db.VarChar(50)
+  statusChangedAt DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  assignee       users?        @relation(fields: [assigneeId], references: [id])
+  epoch          StacksEpoch?  @relation(fields: [epochId], references: [id])
+  project        StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks          StacksTask[]
 
-  @@index([epicId])
+  @@index([epochId])
   @@index([projectId])
   @@index([assigneeId])
   @@index([projectId, status])

@@ -13,13 +13,13 @@ export class LeadDetailsUtilities {
   static getRoleColor(role: string): string {
     switch (role) {
       case "Champion":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-success/10 text-success border-success";
       case "Decision Maker":
-        return "bg-blue-100 text-blue-800 border-blue-200";
+        return "bg-primary/10 text-primary border-primary";
       case "Stakeholder":
-        return "bg-purple-100 text-purple-800 border-purple-200";
+        return "bg-info/10 text-info border-info";
       default:
-        return "bg-hover text-gray-800 border-border";
+        return "bg-hover text-foreground border-border";
     }
   }
 
@@ -219,16 +219,16 @@ export class LeadDetailsUtilities {
       case "medium":
         return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "low":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-success/10 text-success border-success";
       default:
-        return "bg-hover text-gray-800 border-border";
+        return "bg-hover text-foreground border-border";
     }
   }
 
   static getRelationshipColor(relationship: string): string {
     switch (relationship?.toLowerCase()) {
       case "champion":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-success/10 text-success border-success";
       case "decision maker":
         return "bg-blue-100 text-blue-800 border-blue-200";
       case "stakeholder":
@@ -236,7 +236,7 @@ export class LeadDetailsUtilities {
       case "influencer":
         return "bg-orange-100 text-orange-800 border-orange-200";
       default:
-        return "bg-hover text-gray-800 border-border";
+        return "bg-hover text-foreground border-border";
     }
   }
 }

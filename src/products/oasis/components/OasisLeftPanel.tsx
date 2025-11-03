@@ -466,7 +466,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white border border-border rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center">
             <span className="text-lg font-bold text-foreground">
               {(() => {
                 // Get workspace from auth user
@@ -525,8 +525,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                   onClick={() => handleConversationClick(channel)}
                   className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
                     selectedChannel?.id === channel.id
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'hover:bg-gray-100 text-gray-700'
+                      ? 'bg-hover text-foreground'
+                      : 'hover:bg-hover text-foreground'
                   }`}
                 >
                   <HashtagIcon className="w-3 h-3 text-muted" />
@@ -535,7 +535,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                      <LockClosedIcon className="w-3 h-3 text-muted" />
                     )}
                     {channel.unread > 0 && !channel.isActive && (
-                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
+                    <span className="ml-auto px-2 py-1 bg-muted-light text-foreground text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
                       {channel.unread}
                     </span>
                   )}
@@ -574,18 +574,18 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                   onClick={() => handleConversationClick(dm)}
                   className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
                     selectedChannel?.id === dm.id
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'hover:bg-gray-100 text-gray-700'
+                      ? 'bg-hover text-foreground'
+                      : 'hover:bg-hover text-foreground'
                   }`}
                 >
                   <div className="relative">
-                    <div className="w-4 h-4 bg-white border border-border rounded flex items-center justify-center">
+                    <div className="w-4 h-4 bg-background border border-border rounded flex items-center justify-center">
                       <span className="text-xs font-medium text-foreground">
                         {dm.id === 'me-self-dm' ? getInitial(authUser?.name) : getInitial(dm.name)}
                       </span>
                     </div>
                     {dm.status === 'online' && (
-                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-white"></div>
+                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-success rounded-full border border-border"></div>
                     )}
                   </div>
                   <div className="flex-1 flex items-center gap-2 min-w-0">
@@ -597,8 +597,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                       
                       // Use different color for different workspace (purple/gray) vs same workspace (blue)
                       const pillClass = isDifferentWorkspace 
-                        ? 'bg-purple-100 text-purple-700' 
-                        : 'bg-blue-100 text-blue-700';
+                        ? 'bg-muted-light text-foreground' 
+                        : 'bg-primary/10 text-primary';
                       
                       return (
                         <span className={`px-1.5 py-0.5 ${pillClass} text-xs font-medium rounded-full whitespace-nowrap flex items-center gap-1`}>
@@ -609,7 +609,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                     })()}
                   </div>
                   {dm.unread > 0 && (
-                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
+                    <span className="ml-auto px-2 py-1 bg-muted-light text-foreground text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
                       {dm.unread}
                     </span>
                   )}
@@ -627,7 +627,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
           className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-white border border-border rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-background border border-border rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-foreground">
               {getInitial(authUser?.name)}
             </span>

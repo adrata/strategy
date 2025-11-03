@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     const category = searchParams.get('category'); // 'build' or 'sell'
     const status = searchParams.get('status');
-    const epicId = searchParams.get('epicId');
+    const epochId = searchParams.get('epochId');
     const assigneeId = searchParams.get('assigneeId');
 
     if (!workspaceId) {
@@ -83,9 +83,9 @@ export async function GET(request: NextRequest) {
       console.log('🔍 [STACKS API] Filtering by status:', status);
     }
 
-    if (epicId) {
-      where.epicId = epicId;
-      console.log('🔍 [STACKS API] Filtering by epicId:', epicId);
+    if (epochId) {
+      where.epochId = epochId;
+      console.log('🔍 [STACKS API] Filtering by epochId:', epochId);
     }
 
     if (assigneeId) {
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
         where,
         select: {
           id: true,
-          epicId: true,
+          epochId: true,
           projectId: true,
           title: true,
           description: true,
@@ -130,10 +130,11 @@ export async function GET(request: NextRequest) {
           assigneeId: true,
           product: true,
           section: true,
+          viewType: true,
+          statusChangedAt: true,
           createdAt: true,
           updatedAt: true,
-          // Don't select viewType - handle it separately if it exists
-          epic: {
+          epoch: {
             select: {
               id: true,
               title: true,
@@ -175,17 +176,18 @@ export async function GET(request: NextRequest) {
             where,
             select: {
               id: true,
-              epicId: true,
+              epochId: true,
               projectId: true,
               title: true,
               description: true,
               status: true,
               priority: true,
               assigneeId: true,
+              statusChangedAt: true,
               // product and section omitted - they don't exist in database
               createdAt: true,
               updatedAt: true,
-              epic: {
+              epoch: {
                 select: {
                   id: true,
                   title: true,
@@ -230,7 +232,7 @@ export async function GET(request: NextRequest) {
             const simplifiedWhere = {
               projectId: { in: projectIds },
               ...(status && { status }),
-              ...(epicId && { epicId }),
+              ...(epochId && { epochId }),
               ...(assigneeId && { assigneeId })
             };
             
@@ -238,17 +240,18 @@ export async function GET(request: NextRequest) {
               where: simplifiedWhere,
               select: {
                 id: true,
-                epicId: true,
+                epochId: true,
                 projectId: true,
                 title: true,
                 description: true,
                 status: true,
                 priority: true,
                 assigneeId: true,
+                statusChangedAt: true,
                 // product and section omitted - they don't exist in database
                 createdAt: true,
                 updatedAt: true,
-                epic: {
+                epoch: {
                   select: {
                     id: true,
                     title: true,
@@ -310,13 +313,13 @@ export async function GET(request: NextRequest) {
           };
         }
 
-        // Safely handle epic with null checks
-        let epic = null;
-        if (story.epic) {
-          epic = {
-            id: story.epic.id,
-            title: story.epic.title || '',
-            description: story.epic.description || ''
+        // Safely handle epoch with null checks
+        let epoch = null;
+        if (story.epoch) {
+          epoch = {
+            id: story.epoch.id,
+            title: story.epoch.title || '',
+            description: story.epoch.description || ''
           };
         }
 
@@ -335,18 +338,18 @@ export async function GET(request: NextRequest) {
           description: story.description || '',
           status: story.status || 'todo',
           priority: story.priority || 'medium',
-          viewType: 'main', // Always use 'main' as default - viewType column removed from queries
+          viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
           product: story.product || null,
           section: story.section || null,
           assignee,
-          epic,
+          epoch,
           project,
           dueDate: null, // dueDate field doesn't exist in schema yet
           tags: [], // tags field doesn't exist in schema yet
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
           updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
-          // Calculate time in current status (in days)
-          timeInStatus: story.updatedAt ? Math.floor((Date.now() - new Date(story.updatedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0
+          // Calculate time in current status (in days) using statusChangedAt
+          timeInStatus: story.statusChangedAt ? Math.floor((Date.now() - new Date(story.statusChangedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0
         };
       } catch (transformError) {
         console.error(`❌ [STACKS API] Error transforming story ${story.id}:`, transformError);
@@ -357,11 +360,11 @@ export async function GET(request: NextRequest) {
           description: story.description || '',
           status: story.status || 'todo',
           priority: story.priority || 'medium',
-          viewType: 'main', // Always use 'main' as default
+          viewType: 'detail', // Default to 'detail'
           product: null,
           section: null,
           assignee: null,
-          epic: null,
+          epoch: null,
           project: null,
           dueDate: null,
           tags: [],
@@ -458,7 +461,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ [STACKS API] Error parsing request body:', parseError);
       return createErrorResponse('Invalid request body', 'INVALID_BODY', 400);
     }
-    const { title, description, status, priority, assigneeId, epicId, projectId, product, section } = body;
+    const { title, description, status, priority, assigneeId, epochId, projectId, product, section, viewType } = body;
 
     if (!title) {
       return createErrorResponse('Title is required', 'MISSING_REQUIRED_FIELDS', 400);
@@ -493,17 +496,21 @@ export async function POST(request: NextRequest) {
     };
     
     // Only include optional fields if they are provided and not undefined
+    // Default assigneeId to current user if not provided
     if (assigneeId !== undefined && assigneeId !== null) {
       createData.assigneeId = assigneeId;
     } else {
-      createData.assigneeId = null;
+      createData.assigneeId = context.userId; // Default to current user
     }
     
-    if (epicId !== undefined && epicId !== null) {
-      createData.epicId = epicId;
+    if (epochId !== undefined && epochId !== null) {
+      createData.epochId = epochId;
     } else {
-      createData.epicId = null;
+      createData.epochId = null;
     }
+    
+    // Set statusChangedAt when creating story
+    createData.statusChangedAt = new Date();
     
     if (product !== undefined && product !== null) {
       createData.product = product;
@@ -517,13 +524,17 @@ export async function POST(request: NextRequest) {
       createData.section = null;
     }
     
-    // viewType is not included - always defaults to 'main' in response
+    if (viewType !== undefined && viewType !== null) {
+      createData.viewType = viewType;
+    } else {
+      createData.viewType = 'detail'; // Default to 'detail' instead of 'main'
+    }
 
     const story = await prisma.stacksStory.create({
       data: createData,
       select: {
         id: true,
-        epicId: true,
+        epochId: true,
         projectId: true,
         title: true,
         description: true,
@@ -532,9 +543,11 @@ export async function POST(request: NextRequest) {
         assigneeId: true,
         product: true,
         section: true,
+        viewType: true,
+        statusChangedAt: true,
         createdAt: true,
         updatedAt: true,
-        epic: {
+        epoch: {
           select: {
             id: true,
             title: true,
@@ -561,16 +574,16 @@ export async function POST(request: NextRequest) {
     // Transform the story to include viewType and ensure consistent format
     const transformedStory = {
       ...story,
-      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
+      viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
       assignee: story.assignee ? {
         id: story.assignee.id,
         name: `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || 'Unknown',
         email: story.assignee.email || ''
       } : null,
-      epic: story.epic ? {
-        id: story.epic.id,
-        title: story.epic.title || '',
-        description: story.epic.description || ''
+      epoch: story.epoch ? {
+        id: story.epoch.id,
+        title: story.epoch.title || '',
+        description: story.epoch.description || ''
       } : null,
       project: story.project ? {
         id: story.project.id,
@@ -635,31 +648,53 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, title, description, status, priority, assigneeId, epicId, product, section } = body;
+    const { id, title, description, status, priority, assigneeId, epochId, product, section } = body;
 
     if (!id) {
       return createErrorResponse('Story ID is required', 'MISSING_STORY_ID', 400);
+    }
+
+    // Get existing story to check if status is changing
+    const existingStory = await prisma.stacksStory.findFirst({
+      where: {
+        id,
+        project: {
+          workspaceId: context.workspaceId
+        }
+      },
+      select: { status: true }
+    });
+
+    if (!existingStory) {
+      return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
     }
 
     // Build update data
     const updateData: any = {
       ...(title && { title }),
       ...(description !== undefined && { description }),
-      ...(status && { status }),
       ...(priority && { priority }),
       ...(assigneeId !== undefined && { assigneeId }),
-      ...(epicId !== undefined && { epicId }),
+      ...(epochId !== undefined && { epochId }),
       ...(product !== undefined && { product }),
       ...(section !== undefined && { section }),
       updatedAt: new Date()
     };
+
+    // Update status and statusChangedAt if status is changing
+    if (status && status !== existingStory.status) {
+      updateData.status = status;
+      updateData.statusChangedAt = new Date();
+    } else if (status) {
+      updateData.status = status;
+    }
 
     const story = await prisma.stacksStory.update({
       where: { id },
       data: updateData,
       select: {
         id: true,
-        epicId: true,
+        epochId: true,
         projectId: true,
         title: true,
         description: true,
@@ -668,9 +703,10 @@ export async function PUT(request: NextRequest) {
         assigneeId: true,
         product: true,
         section: true,
+        statusChangedAt: true,
         createdAt: true,
         updatedAt: true,
-        epic: {
+        epoch: {
           select: {
             id: true,
             title: true,
@@ -697,16 +733,16 @@ export async function PUT(request: NextRequest) {
     // Transform the story to include viewType and ensure consistent format
     const transformedStory = {
       ...story,
-      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
+      viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
       assignee: story.assignee ? {
         id: story.assignee.id,
         name: `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || 'Unknown',
         email: story.assignee.email || ''
       } : null,
-      epic: story.epic ? {
-        id: story.epic.id,
-        title: story.epic.title || '',
-        description: story.epic.description || ''
+      epoch: story.epoch ? {
+        id: story.epoch.id,
+        title: story.epoch.title || '',
+        description: story.epoch.description || ''
       } : null,
       project: story.project ? {
         id: story.project.id,

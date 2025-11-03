@@ -175,11 +175,11 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
                 <div className="text-sm text-foreground mt-1">{formatDate(story.updatedAt)}</div>
               </div>
 
-              {story.epic && (
+              {story.epoch && (
                 <div>
-                  <label className="text-xs text-muted uppercase tracking-wide">Epic</label>
+                  <label className="text-xs text-muted uppercase tracking-wide">Epoch</label>
                   <div className="text-sm text-foreground mt-1">
-                    {typeof story.epic === 'object' ? story.epic.title : story.epic}
+                    {typeof story.epoch === 'object' ? story.epoch.title : story.epoch}
                   </div>
                 </div>
               )}

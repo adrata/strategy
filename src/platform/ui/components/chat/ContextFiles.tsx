@@ -96,7 +96,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
       <div className={`flex items-center gap-2 ${className}`}>
         <button
           onClick={onAddFiles}
-          className="relative flex items-center gap-2 bg-background text-muted rounded-lg px-3 py-1.5 text-sm border border-border hover:border-border hover:bg-panel-background transition-colors cursor-pointer"
+          className="relative flex items-center gap-2 bg-panel-background text-foreground rounded-lg px-3 py-1.5 text-sm border border-border hover:border-border hover:bg-hover transition-colors cursor-pointer"
         >
           {/* File icon */}
           <DocumentIcon className="w-4 h-4" />
@@ -118,8 +118,8 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
             key={file.id}
             className={`relative flex items-center gap-2 rounded-xl px-2 py-0.5 text-sm ${
               isData 
-                ? 'bg-foreground text-white border border-border' 
-                : 'bg-background text-black border border-border'
+                ? 'bg-foreground text-background border border-border' 
+                : 'bg-background text-foreground border border-border'
             }`}
             style={{
               borderRadius: '12px', // Squircle-like rounded corners
@@ -128,8 +128,8 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
             {/* Context indicator */}
             <div className={`flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium ${
               isData 
-                ? 'bg-red-600 text-white' 
-                : 'bg-gray-300 text-muted'
+                ? 'bg-error text-white' 
+                : 'bg-muted-light text-muted'
             }`}>
               {isData ? '@' : (index + 1)}
             </div>
@@ -140,7 +140,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
             
             {/* Data context name */}
             {isData && (
-              <span className="text-xs text-gray-300 max-w-24 truncate">
+              <span className="text-xs text-muted max-w-24 truncate">
                 {file.name}
               </span>
             )}
@@ -150,7 +150,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
               onClick={() => onRemoveFile(file.id)}
               className={`ml-1 p-0.5 rounded-full transition-colors ${
                 isData 
-                  ? 'hover:bg-gray-800' 
+                  ? 'hover:bg-foreground/20' 
                   : 'hover:bg-hover'
               }`}
               aria-label={`Remove ${file.name}`}

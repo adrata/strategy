@@ -114,10 +114,10 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'online': return 'bg-green-400';
-      case 'away': return 'bg-yellow-400';
-      case 'offline': return 'bg-gray-400';
-      default: return 'bg-gray-400';
+      case 'online': return 'bg-success';
+      case 'away': return 'bg-warning';
+      case 'offline': return 'bg-muted';
+      default: return 'bg-muted';
     }
   };
 
@@ -236,17 +236,17 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
                 <div className="space-y-3">
                   <div>
                     <label className="text-xs font-medium text-muted uppercase tracking-wide">Purpose</label>
-                    <p className="text-sm text-gray-700 mt-1">
+                    <p className="text-sm text-foreground mt-1">
                       General team communication and project updates
                     </p>
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted uppercase tracking-wide">Created</label>
-                    <p className="text-sm text-gray-700 mt-1">January 15, 2024</p>
+                    <p className="text-sm text-foreground mt-1">January 15, 2024</p>
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted uppercase tracking-wide">Topic</label>
-                    <p className="text-sm text-gray-700 mt-1">
+                    <p className="text-sm text-foreground mt-1">
                       🚀 Building the future of team collaboration
                     </p>
                   </div>
@@ -274,7 +274,7 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
 
               {/* Settings */}
               <div>
-                <button className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-panel-background rounded-lg transition-colors">
+                <button className="w-full flex items-center gap-3 p-3 text-left text-foreground hover:bg-panel-background rounded-lg transition-colors">
                   <Cog6ToothIcon className="w-5 h-5 text-muted" />
                   <span className="font-medium">Channel Settings</span>
                 </button>

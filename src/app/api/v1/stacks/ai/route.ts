@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function createStory(data: any, workspaceId: string, userId: string) {
-  const { title, description, epicId, priority = 'medium', assigneeId } = data;
+  const { title, description, epochId, priority = 'medium', assigneeId } = data;
 
   if (!title) {
     return NextResponse.json({ error: 'Title is required' }, { status: 400 });
@@ -89,17 +89,18 @@ async function createStory(data: any, workspaceId: string, userId: string) {
   const story = await prisma.stacksStory.create({
     data: {
       projectId: project.id,
-      epicId: epicId || null,
+      epochId: epochId || null,
+      statusChangedAt: new Date(),
+      assigneeId: assigneeId || userId, // Default to current user
       title,
       description: description || '',
       status: 'todo',
       priority,
-      assigneeId: assigneeId || userId,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     include: {
-      epic: true,
+      epoch: true,
       assignee: {
         select: {
           id: true,
@@ -128,7 +129,7 @@ async function updateStoryStatus(data: any, workspaceId: string, userId: string)
       updatedAt: new Date()
     },
     include: {
-      epic: true,
+      epoch: true,
       assignee: {
         select: {
           id: true,
@@ -157,7 +158,7 @@ async function assignStory(data: any, workspaceId: string, userId: string) {
       updatedAt: new Date()
     },
     include: {
-      epic: true,
+      epoch: true,
       assignee: {
         select: {
           id: true,
@@ -186,7 +187,7 @@ async function moveStory(data: any, workspaceId: string, userId: string) {
       updatedAt: new Date()
     },
     include: {
-      epic: true,
+      epoch: true,
       assignee: {
         select: {
           id: true,
@@ -247,7 +248,7 @@ async function createEpic(data: any, workspaceId: string, userId: string) {
     });
   }
 
-  const epic = await prisma.stacksEpic.create({
+  const epoch = await prisma.stacksEpoch.create({
     data: {
       projectId: project.id,
       title,
@@ -257,7 +258,7 @@ async function createEpic(data: any, workspaceId: string, userId: string) {
     }
   });
 
-  return NextResponse.json({ success: true, epic });
+  return NextResponse.json({ success: true, epic: epoch, epoch });
 }
 
 async function getStories(workspaceId: string, filters: any = {}) {
@@ -271,8 +272,8 @@ async function getStories(workspaceId: string, filters: any = {}) {
     where.status = filters.status;
   }
 
-  if (filters.epicId) {
-    where.epicId = filters.epicId;
+  if (filters.epochId) {
+    where.epochId = filters.epochId;
   }
 
   if (filters.assigneeId) {
@@ -282,7 +283,7 @@ async function getStories(workspaceId: string, filters: any = {}) {
   const stories = await prisma.stacksStory.findMany({
     where,
     include: {
-      epic: true,
+      epoch: true,
       assignee: {
         select: {
           id: true,
@@ -303,7 +304,7 @@ async function getStories(workspaceId: string, filters: any = {}) {
 }
 
 async function getEpics(workspaceId: string) {
-  const epics = await prisma.stacksEpic.findMany({
+  const epochs = await prisma.stacksEpoch.findMany({
     where: {
       project: {
         workspaceId

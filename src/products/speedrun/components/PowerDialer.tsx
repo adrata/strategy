@@ -35,8 +35,8 @@ function PowerDialerHeader({
   return (
     <div className="flex items-center justify-between p-6 border-b border-border">
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center">
-          <PhoneIcon className="w-6 h-6 text-blue-600" />
+        <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+          <PhoneIcon className="w-6 h-6 text-primary" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-foreground">
@@ -48,12 +48,12 @@ function PowerDialerHeader({
           {forwardingStatus && (
             <div
               className={`text-xs mt-1 flex items-center gap-1 ${
-                forwardingStatus.enabled ? "text-green-600" : "text-yellow-600"
+                forwardingStatus.enabled ? "text-success" : "text-warning"
               }`}
             >
               <div
                 className={`w-2 h-2 rounded-full ${
-                  forwardingStatus.enabled ? "bg-green-500" : "bg-yellow-500"
+                  forwardingStatus.enabled ? "bg-success" : "bg-warning"
                 }`}
               ></div>
               {forwardingStatus.message}
@@ -176,7 +176,7 @@ function PowerDialerCallStatus({
           <button
             onClick={startCall}
             disabled={callState.isPaused}
-            className="flex items-center gap-3 px-8 py-4 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors shadow-lg"
+            className="flex items-center gap-3 px-8 py-4 bg-success hover:bg-success/90 disabled:bg-muted text-white rounded-xl font-medium transition-colors shadow-lg"
           >
             <PhoneIcon className="w-6 h-6" />
             Call {currentContact.name}

@@ -174,20 +174,20 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           item.status === 'up-next' || item.status === 'todo'
         ).length;
 
-        // Workstream = items with status 'up-next' only
-        // The workstream board only displays items with status 'up-next' in the UP NEXT column
-        // All other statuses are shown in the backlog view
+        // Workstream = items with any workstream board column status
+        // The workstream board displays items across all columns: UP NEXT, WORKING ON, BUILT, QA1, QA2, SHIPPED
+        // Cards appear in the column matching their status
+        const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped'];
         const workstreamCount = allItems.filter((item: any) => 
-          item.status === 'up-next'
+          workstreamBoardStatuses.includes(item.status)
         ).length;
 
-        // Backlog = items with other statuses (excluding 'done', 'shipped', 'up-next', and 'todo')
+        // Backlog = items with statuses not shown on workstream board (excluding workstream board statuses, 'done', and 'todo')
         const backlogCount = allItems.filter((item: any) => 
           item.status && 
           item.status !== 'done' && 
-          item.status !== 'shipped' && 
-          item.status !== 'up-next' && 
-          item.status !== 'todo'
+          item.status !== 'todo' &&
+          !workstreamBoardStatuses.includes(item.status)
         ).length;
 
         console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, upNextCount, workstreamCount, backlogCount, stories: stories.length, tasks: tasks.length });

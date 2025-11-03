@@ -22,16 +22,16 @@ interface OverviewTabProps {
   onInlineFieldSave?: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
 }
 
-const getRoleColor = (role: string) => {
+  const getRoleColor = (role: string) => {
   switch (role) {
     case "Champion":
-      return "bg-green-100 text-green-800 border-green-200";
+      return "bg-success/10 text-success border-success";
     case "Decision Maker":
-      return "bg-blue-100 text-blue-800 border-blue-200";
+      return "bg-primary/10 text-primary border-primary";
     case "Stakeholder":
-      return "bg-purple-100 text-purple-800 border-purple-200";
+      return "bg-info/10 text-info border-info";
     default:
-      return "bg-hover text-gray-800 border-border";
+      return "bg-hover text-foreground border-border";
   }
 };
 
@@ -164,9 +164,9 @@ export function OverviewTab({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                activityContext?.priority === 'high' ? 'bg-red-100 text-red-800' :
-                activityContext?.priority === 'medium' ? 'bg-orange-100 text-orange-800' :
-                'bg-hover text-gray-800'
+                activityContext?.priority === 'high' ? 'bg-error/10 text-error' :
+                activityContext?.priority === 'medium' ? 'bg-warning/10 text-warning' :
+                'bg-hover text-foreground'
               }`}>
                 {activityContext?.activityType === 'email' ? '📧' : 
                  activityContext?.activityType === 'call' ? '📞' : 
@@ -542,7 +542,7 @@ export function OverviewTab({
                         ? "bg-[#EFF6FF] text-[#1E40AF] border border-[#93C5FD]"
                         : person['status'] === "New" || person['status'] === "Lead"
                           ? "bg-[#FFF7ED] text-[#9A3412] border border-[#FDBA74]"
-                          : "bg-hover text-gray-800"
+                          : "bg-hover text-foreground"
                 }`}
               >
                 {person.status || "Lead"}
