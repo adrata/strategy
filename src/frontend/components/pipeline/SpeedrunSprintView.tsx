@@ -347,17 +347,37 @@ export function SpeedrunSprintView() {
     setSelectedRecord(null);
   }, [currentSprintIndex]);
 
-  // Sync selectedRecord with data array when data changes, preserving linkedinNavigatorUrl
+  // Sync selectedRecord with data array when data changes, preserving linkedinNavigatorUrl and notes
   useEffect(() => {
     if (!selectedRecord || !data || data.length === 0) return;
     
     const matchingRecord = data.find((r: any) => r.id === selectedRecord.id);
     if (matchingRecord && matchingRecord !== selectedRecord) {
-      // Merge preserving linkedinNavigatorUrl from selectedRecord if new record doesn't have it
+      // Merge preserving linkedinNavigatorUrl and notes from selectedRecord if new record doesn't have them
+      // Helper function to check if notes have content (handles both string and object formats)
+      const hasNotesContent = (notes: any): boolean => {
+        if (!notes) return false;
+        if (typeof notes === 'string') {
+          return notes.trim().length > 0;
+        }
+        if (typeof notes === 'object' && notes !== null) {
+          const content = notes.content || notes.text || '';
+          return content.trim().length > 0;
+        }
+        return false;
+      };
+      
+      const matchingHasNotes = hasNotesContent(matchingRecord.notes);
+      const selectedHasNotes = hasNotesContent(selectedRecord.notes);
+      
       const mergedRecord = {
         ...matchingRecord,
         // Preserve linkedinNavigatorUrl from selectedRecord if it exists and new record doesn't have it
-        linkedinNavigatorUrl: matchingRecord.linkedinNavigatorUrl ?? selectedRecord.linkedinNavigatorUrl ?? null
+        linkedinNavigatorUrl: matchingRecord.linkedinNavigatorUrl ?? selectedRecord.linkedinNavigatorUrl ?? null,
+        // CRITICAL: Preserve notes from selectedRecord if new record's notes are empty/null/undefined
+        // This prevents notes from disappearing when data array refreshes after a save
+        // Preserve the original format (string or object) from selectedRecord if matchingRecord doesn't have notes
+        notes: matchingHasNotes ? matchingRecord.notes : (selectedHasNotes ? selectedRecord.notes : null)
       };
       
       // Only update if something actually changed (avoid infinite loops)
@@ -366,7 +386,13 @@ export function SpeedrunSprintView() {
           recordId: selectedRecord.id,
           preservedLinkedinNavigatorUrl: mergedRecord.linkedinNavigatorUrl,
           dataArrayLinkedinNavigatorUrl: matchingRecord.linkedinNavigatorUrl,
-          selectedRecordLinkedinNavigatorUrl: selectedRecord.linkedinNavigatorUrl
+          selectedRecordLinkedinNavigatorUrl: selectedRecord.linkedinNavigatorUrl,
+          preservedNotes: mergedRecord.notes,
+          dataArrayNotes: matchingRecord.notes,
+          selectedRecordNotes: selectedRecord.notes,
+          matchingHasNotes,
+          selectedHasNotes,
+          usingSelectedNotes: !matchingHasNotes && selectedHasNotes
         });
         setSelectedRecord(mergedRecord);
       }
@@ -785,7 +811,11 @@ export function SpeedrunSprintView() {
               prevRecordFields: Object.keys(prevRecord),
               updatedRecordFields: Object.keys(updatedRecord),
               mergedRecordFields: Object.keys(mergedRecord),
-              preservedFields: Object.keys(prevRecord).filter(k => updatedRecord[k] === undefined)
+              preservedFields: Object.keys(prevRecord).filter(k => updatedRecord[k] === undefined),
+              notesUpdated: updatedRecord.notes !== undefined,
+              prevNotes: prevRecord.notes,
+              updatedNotes: updatedRecord.notes,
+              mergedNotes: mergedRecord.notes
             });
             
             return mergedRecord;
