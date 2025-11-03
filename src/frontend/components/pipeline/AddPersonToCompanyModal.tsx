@@ -194,7 +194,9 @@ export function AddPersonToCompanyModal({
       });
 
       if (response.ok) {
-        const newPerson = await response.json();
+        const result = await response.json();
+        // Handle both direct person object and wrapped response format
+        const newPerson = result.data || result;
         
         // Dispatch refresh events for immediate table update
         window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
@@ -215,11 +217,25 @@ export function AddPersonToCompanyModal({
         onPersonAdded(newPerson);
         onClose();
       } else {
-        throw new Error('Failed to create person');
+        // Try to get detailed error message from API response
+        let errorMessage = 'Failed to create person. Please try again.';
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (parseError) {
+          // If response is not JSON, use default message
+          console.error('Failed to parse error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error('Error creating person:', error);
-      alert('Failed to create person. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create person. Please try again.';
+      alert(errorMessage);
     } finally {
       setIsCreating(false);
     }

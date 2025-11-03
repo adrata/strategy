@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';;
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   let context: SecureApiContext | null = null;
   
@@ -19,7 +19,7 @@ export async function POST(
     }
     context = authContext;
 
-    const companyId = params.id;
+    const { id: companyId } = await params;
     const body = await request.json();
     
     // Verify the company exists and user has access
