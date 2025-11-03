@@ -142,8 +142,20 @@ function PipelineLayoutInner({
 
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
-    if (pathname.includes('/adrata')) {
-      // Adrata route - minimal or null left panel since chat is in middle
+    // Check if this is a pipeline route (speedrun, leads, prospects, etc.)
+    const isPipelineRoute = pathname.includes('/speedrun') || 
+                            pathname.includes('/leads') || 
+                            pathname.includes('/prospects') || 
+                            pathname.includes('/opportunities') ||
+                            pathname.includes('/people') ||
+                            pathname.includes('/companies') ||
+                            pathname.includes('/partners') ||
+                            pathname.includes('/sellers') ||
+                            pathname.includes('/customers');
+    
+    // Only hide left panel for base /adrata chat route, not pipeline routes
+    if (pathname.includes('/adrata') && !isPipelineRoute) {
+      // Base Adrata chat route - minimal or null left panel since chat is in middle
       return null;
     } else if (pathname.includes('/oasis')) {
       return <OasisLeftPanel key="oasis-left-panel" />;

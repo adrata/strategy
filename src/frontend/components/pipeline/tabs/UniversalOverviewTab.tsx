@@ -387,7 +387,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     status: record.status || 'active',
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.seniority ?? record.customFields?.seniority ?? 'Mid-level'
-  }), [record, coresignalData, actions]);
+  }), [record, coresignalData, actions, linkedinUrl, linkedinNavigatorUrl]);
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
     console.log('🔍 [FORMAT DEBUG] formatRelativeDate called with:', {

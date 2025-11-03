@@ -167,6 +167,7 @@ export async function GET(request: NextRequest) {
             jobTitle: true,
             phone: true,
             linkedinUrl: true,
+            linkedinNavigatorUrl: true,
             status: true,
             globalRank: true,
             lastAction: true,
@@ -447,6 +448,8 @@ export async function GET(request: NextRequest) {
           email: record.email || '',
           phone: record.phone || '',
           linkedin: record.linkedinUrl || '',
+          linkedinUrl: record.linkedinUrl || '',
+          linkedinNavigatorUrl: record.linkedinNavigatorUrl || null, // Include linkedinNavigatorUrl field
           status: record.status || 'Unknown',
           globalRank: record.globalRank, // Keep for metadata, but table won't use for display
           lastAction: lastAction || null,
