@@ -144,7 +144,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         actionsQuery = `personId=${record.id}&companyId=${record.id}`;
       }
 
-      const response = await authFetch(`/api/v1/actions?${actionsQuery}&limit=5&sortBy=createdAt&sortOrder=desc`);
+      // Add fallback response to prevent 401 errors from crashing the UI
+      const response = await authFetch(
+        `/api/v1/actions?${actionsQuery}&limit=5&sortBy=createdAt&sortOrder=desc`,
+        {},
+        { success: true, data: [] }
+      );
       
       if (response && response.success && Array.isArray(response.data)) {
         setActions(response.data);
