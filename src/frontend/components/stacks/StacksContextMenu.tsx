@@ -38,9 +38,11 @@ export function StacksContextMenu({
   onMoveDown,
   onMoveToBottom,
   onMoveBelowTheLine,
+  onMoveToUpNext,
   onMoveToDeepBacklog,
   onDelete,
   showMoveBelowTheLine = false,
+  showMoveToUpNext = false,
   showMoveToDeepBacklog = false
 }: StacksContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -137,6 +139,13 @@ export function StacksContextMenu({
       label: 'Move Below the Line',
       icon: ArrowDownCircleIcon,
       onClick: onMoveBelowTheLine,
+      className: 'text-foreground hover:bg-hover',
+      showDivider: true
+    }] : []),
+    ...(showMoveToUpNext && onMoveToUpNext ? [{
+      label: 'Move to Up Next',
+      icon: ArrowUpCircleIcon,
+      onClick: onMoveToUpNext,
       className: 'text-foreground hover:bg-hover',
       showDivider: true
     }] : []),

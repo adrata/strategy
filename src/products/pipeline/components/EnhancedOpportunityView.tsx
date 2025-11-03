@@ -411,7 +411,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                           <label className="block text-xs font-medium text-muted mb-1">
                             NOTES
                           </label>
-                          <p className="text-sm text-gray-700">
+                          <p className="text-sm text-foreground">
                             {stakeholder.notes}
                           </p>
                         </div>
