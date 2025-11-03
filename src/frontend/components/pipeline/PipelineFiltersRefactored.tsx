@@ -70,6 +70,19 @@ export function PipelineFiltersRefactored({
   const [showFilters, setShowFilters] = useState(false);
   const [showColumnSelector, setShowColumnSelector] = useState(false);
 
+  // Clear search query when section changes or component unmounts
+  useEffect(() => {
+    // Clear search when section changes
+    setSearchQuery('');
+  }, [section]); // Clear search when section changes
+
+  // Clear search on unmount (navigation away from page)
+  useEffect(() => {
+    return () => {
+      setSearchQuery('');
+    };
+  }, []);
+
   // Update parent components when filters change
   useEffect(() => {
     onSearchChange(searchQuery);
