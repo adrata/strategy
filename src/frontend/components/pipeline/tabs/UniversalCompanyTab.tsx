@@ -215,22 +215,37 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
   };
 
   // Merge record data with fetched company data
+  // CRITICAL: Prioritize company fields over person fields to ensure company data is displayed
   const mergedRecord = useMemo(() => {
     if (!record) return null;
     
     // If we have full company data, merge it with the record
     if (fullCompanyData) {
       return {
-        ...record,
-        ...fullCompanyData,
+        ...record, // Start with record (for ID, recordType, etc.)
+        ...fullCompanyData, // Company fields override person fields
+        // Ensure company-specific fields come from company data
+        email: fullCompanyData.email ?? null,
+        phone: fullCompanyData.phone ?? null,
+        linkedinUrl: fullCompanyData.linkedinUrl ?? null,
+        linkedinNavigatorUrl: fullCompanyData.linkedinNavigatorUrl ?? null,
         // Ensure we use the original record's ID and type
         id: record.id,
         recordType: record.recordType || recordType
       };
     }
     
+    // If no full company data, prioritize company fields from record.company if available
+    if (record?.company && typeof record.company === 'object') {
+      return {
+        ...record.company, // Start with company fields
+        id: companyId || record.company.id,
+        recordType: record.recordType || recordType
+      };
+    }
+    
     return record;
-  }, [record, fullCompanyData, recordType]);
+  }, [record, fullCompanyData, recordType, companyId]);
 
   // Show skeleton loader while data is loading
   if (!record) {

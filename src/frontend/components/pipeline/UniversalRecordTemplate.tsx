@@ -214,6 +214,23 @@ export function UniversalRecordTemplate({
     
     // Only sync if there are no pending saves for any field
     if (pendingSaves.size === 0) {
+      // CRITICAL: Check if incoming record prop is incomplete (has fewer fields than localRecord)
+      // This prevents flashing when record prop is updated with only partial data from API response
+      const recordFieldCount = record ? Object.keys(record).filter(k => record[k] !== undefined).length : 0;
+      const localRecordFieldCount = localRecord ? Object.keys(localRecord).filter(k => localRecord[k] !== undefined).length : 0;
+      const isIncompleteUpdate = recordFieldCount > 0 && localRecordFieldCount > 0 && recordFieldCount < localRecordFieldCount * 0.8; // Less than 80% of fields
+      
+      if (isIncompleteUpdate && record?.id === localRecord?.id) {
+        console.log(`⏸️ [UNIVERSAL] Skipping sync - record prop appears incomplete:`, {
+          recordId: record?.id,
+          recordFields: recordFieldCount,
+          localRecordFields: localRecordFieldCount,
+          recordKeys: Object.keys(record || {}),
+          localRecordKeys: Object.keys(localRecord || {})
+        });
+        return; // Don't sync with incomplete record
+      }
+      
       console.log(`🔄 [UNIVERSAL] Syncing localRecord with record prop:`, {
         recordId: record?.id,
         recordName: record?.name || record?.fullName,
@@ -225,16 +242,31 @@ export function UniversalRecordTemplate({
         createdAt: record?.createdAt,
         updatedAt: record?.updatedAt,
         tradingName: record?.tradingName,
-        description: record?.description
+        description: record?.description,
+        recordFieldCount,
+        localRecordFieldCount
       });
       
       // If there are recently updated fields, merge carefully to avoid overwriting local changes
       if (recentlyUpdatedFields.size > 0) {
         console.log(`🔄 [UNIVERSAL] Merging record prop with local changes, preserving recently updated fields:`, Array.from(recentlyUpdatedFields));
-        setLocalRecord(prevLocalRecord => {
-          const mergedRecord = { ...record };
+        setLocalRecord((prevLocalRecord: any) => {
+          // CRITICAL: Start with prevLocalRecord to preserve ALL existing fields
+          // Then apply updates from record prop
+          // IMPORTANT: Don't overwrite non-null values with null from record prop
+          const mergedRecord = {
+            ...prevLocalRecord, // Start with all existing fields
+            ...Object.keys(record).reduce((acc, key) => {
+              // Only include fields that are not null/undefined in the record prop
+              // This prevents overwriting existing values with null
+              if (record[key] !== null && record[key] !== undefined) {
+                acc[key] = record[key];
+              }
+              return acc;
+            }, {} as Record<string, any>) // Apply updates from record prop (only non-null values)
+          };
           
-          // Preserve recently updated fields from local record
+          // Preserve recently updated fields from local record (override record prop)
           recentlyUpdatedFields.forEach(field => {
             if (prevLocalRecord && prevLocalRecord[field] !== undefined) {
               mergedRecord[field] = prevLocalRecord[field];
@@ -242,23 +274,83 @@ export function UniversalRecordTemplate({
             }
           });
           
+          // CRITICAL: Always preserve linkedinNavigatorUrl from localRecord if it exists and record prop doesn't have it
+          // This handles the case where the API response might not include it or returns null
+          if (prevLocalRecord?.linkedinNavigatorUrl !== undefined && 
+              prevLocalRecord?.linkedinNavigatorUrl !== null &&
+              (!record?.linkedinNavigatorUrl || record?.linkedinNavigatorUrl === null)) {
+            mergedRecord.linkedinNavigatorUrl = prevLocalRecord.linkedinNavigatorUrl;
+            console.log(`🔄 [UNIVERSAL] Preserving linkedinNavigatorUrl from localRecord (always preserve): ${prevLocalRecord.linkedinNavigatorUrl}`);
+          }
+          
+          // Also preserve if it was recently updated
+          if (prevLocalRecord?.linkedinNavigatorUrl !== undefined && 
+              (recentlyUpdatedFields.has('linkedinNavigatorUrl') || 
+               (!record?.linkedinNavigatorUrl && prevLocalRecord?.linkedinNavigatorUrl))) {
+            mergedRecord.linkedinNavigatorUrl = prevLocalRecord.linkedinNavigatorUrl;
+            console.log(`🔄 [UNIVERSAL] Preserving linkedinNavigatorUrl from localRecord (recently updated): ${prevLocalRecord.linkedinNavigatorUrl}`);
+          }
+          
           console.log(`🔄 [UNIVERSAL] Final merged record:`, {
             id: mergedRecord.id,
             tradingName: mergedRecord.tradingName,
             description: mergedRecord.description,
-            updatedAt: mergedRecord.updatedAt
+            linkedinNavigatorUrl: mergedRecord.linkedinNavigatorUrl,
+            email: mergedRecord.email,
+            phone: mergedRecord.phone,
+            linkedinUrl: mergedRecord.linkedinUrl,
+            updatedAt: mergedRecord.updatedAt,
+            totalFields: Object.keys(mergedRecord).length
           });
           return mergedRecord;
         });
       } else {
         // No recently updated fields, safe to sync completely
-        console.log(`🔄 [UNIVERSAL] Setting localRecord directly from record prop (no recently updated fields):`, {
+        // BUT: CRITICAL - Always merge with prevLocalRecord to preserve all existing fields
+        // The record prop might be incomplete (e.g., only contains updated field from API response)
+        console.log(`🔄 [UNIVERSAL] Merging record prop with prevLocalRecord (preserving all fields):`, {
           id: record.id,
           tradingName: record.tradingName,
           description: record.description,
+          linkedinNavigatorUrl: record.linkedinNavigatorUrl,
           updatedAt: record.updatedAt
         });
-        setLocalRecord(record);
+        
+        setLocalRecord((prevLocalRecord: any) => {
+          if (!prevLocalRecord) return record;
+          
+          // CRITICAL: Merge record prop with prevLocalRecord, preserving ALL existing fields
+          // Start with prevLocalRecord (has all fields), then apply updates from record prop
+          // IMPORTANT: Don't overwrite non-null values with null from record prop
+          const mergedRecord = {
+            ...prevLocalRecord, // Start with all existing fields from prevLocalRecord
+            ...Object.keys(record).reduce((acc, key) => {
+              // Only include fields that are not null/undefined in the record prop
+              // This prevents overwriting existing values with null
+              if (record[key] !== null && record[key] !== undefined) {
+                acc[key] = record[key];
+              }
+              return acc;
+            }, {} as Record<string, any>) // Apply updates from record prop (only non-null values)
+          };
+          
+          // Ensure linkedinNavigatorUrl is preserved if it exists in prevLocalRecord
+          if (prevLocalRecord?.linkedinNavigatorUrl !== undefined && 
+              prevLocalRecord?.linkedinNavigatorUrl !== null &&
+              (!record?.linkedinNavigatorUrl || record?.linkedinNavigatorUrl === null)) {
+            mergedRecord.linkedinNavigatorUrl = prevLocalRecord.linkedinNavigatorUrl;
+            console.log(`🔄 [UNIVERSAL] Preserving linkedinNavigatorUrl from prevLocalRecord (no recent updates): ${prevLocalRecord.linkedinNavigatorUrl}`);
+          }
+          
+          console.log(`🔄 [UNIVERSAL] Merged record fields:`, {
+            prevFields: Object.keys(prevLocalRecord).length,
+            recordFields: Object.keys(record).length,
+            mergedFields: Object.keys(mergedRecord).length,
+            preservedFields: Object.keys(prevLocalRecord).filter(k => record[k] === undefined || record[k] === null).length
+          });
+          
+          return mergedRecord;
+        });
       }
     } else {
       console.log(`⏸️ [UNIVERSAL] Skipping record sync due to pending saves:`, Array.from(pendingSaves));
@@ -2164,14 +2256,61 @@ export function UniversalRecordTemplate({
           });
         }
         
-        const updatedRecord = { ...record, ...mappedResponseData, ...preservedFields };
-        console.log(`🔍 [INLINE EDIT AUDIT] Calling onRecordUpdate with mapped result.data:`, {
+        // CRITICAL: Ensure all existing record fields are preserved
+        // The API response might only include the updated field, so we need to preserve all other fields
+        // Start with all existing record fields, then apply API response updates, then preserved fields
+        // IMPORTANT: Don't overwrite existing non-null values with null from API response
+        // CRITICAL: Preserve existing values if API response has null/undefined for those fields
+        const fullyMergedRecord = {
+          ...record, // Start with ALL existing fields (preserves everything)
+          ...Object.keys(mappedResponseData).reduce((acc, key) => {
+            const apiValue = mappedResponseData[key];
+            const currentValue = record[key];
+            
+            // Only update if API has a non-null value AND it's different from current value
+            // This prevents overwriting existing values with null
+            if (apiValue !== null && apiValue !== undefined && apiValue !== currentValue) {
+              acc[key] = apiValue;
+              console.log(`🔄 [MERGE] Updating ${key} from API response:`, { current: currentValue, api: apiValue });
+            } else if (apiValue === null || apiValue === undefined) {
+              // API value is null/undefined - preserve current value (don't include in acc)
+              if (currentValue !== null && currentValue !== undefined) {
+                console.log(`🔄 [MERGE] Preserving ${key} from record (API returned null/undefined):`, currentValue);
+              }
+            } else {
+              // API value is same as current value - no change needed
+              console.log(`🔄 [MERGE] Skipping ${key} (API value same as current):`, apiValue);
+            }
+            return acc;
+          }, {} as Record<string, any>), // Apply API response updates (only non-null values that differ)
+          ...preservedFields // Apply preserved fields (like linkedinNavigatorUrl)
+        };
+        
+        // Log comprehensive field preservation audit
+        const fieldsPreserved = Object.keys(record).filter(key => fullyMergedRecord[key] === record[key]);
+        const fieldsUpdated = Object.keys(mappedResponseData).filter(key => 
+          mappedResponseData[key] !== null && 
+          mappedResponseData[key] !== undefined && 
+          fullyMergedRecord[key] !== record[key]
+        );
+        const fieldsMissing = Object.keys(record).filter(key => 
+          record[key] !== null && 
+          record[key] !== undefined && 
+          !mappedResponseData.hasOwnProperty(key) &&
+          !preservedFields.hasOwnProperty(key)
+        );
+        
+        console.log(`🔍 [FIELD PRESERVATION AUDIT] Comprehensive merge analysis:`, {
+          totalFieldsInRecord: Object.keys(record).length,
+          totalFieldsInMerged: Object.keys(fullyMergedRecord).length,
+          fieldsPreserved: fieldsPreserved.length,
+          fieldsUpdated: fieldsUpdated.length,
+          fieldsMissing: fieldsMissing.length,
+          fieldsPreservedList: fieldsPreserved.slice(0, 10), // Limit to first 10 for readability
+          fieldsUpdatedList: fieldsUpdated,
+          fieldsMissingList: fieldsMissing.slice(0, 10), // Limit to first 10 for readability
           originalField: field,
-          apiField: apiField,
-          resultData: result.data,
-          mappedResponseData: mappedResponseData,
-          updatedRecord: updatedRecord,
-          actualValue
+          apiField: apiField
         });
 
         // Special logging for linkedinNavigatorUrl onRecordUpdate
@@ -2183,13 +2322,14 @@ export function UniversalRecordTemplate({
             actualValue,
             resultData: result.data,
             mappedResponseData,
-            updatedRecordLinkedinNavigatorUrl: updatedRecord.linkedinNavigatorUrl,
-            originalRecordLinkedinNavigatorUrl: record.linkedinNavigatorUrl
+            updatedRecordLinkedinNavigatorUrl: fullyMergedRecord.linkedinNavigatorUrl,
+            originalRecordLinkedinNavigatorUrl: record.linkedinNavigatorUrl,
+            allFieldsPreserved: Object.keys(record).filter(k => fullyMergedRecord[k] !== undefined)
           });
         }
 
-        onRecordUpdate(updatedRecord);
-        console.log(`🔄 [UNIVERSAL] Updated parent record state:`, updatedRecord);
+        onRecordUpdate(fullyMergedRecord);
+        console.log(`🔄 [UNIVERSAL] Updated parent record state:`, fullyMergedRecord);
       } else if (onRecordUpdate) {
         // Fallback: update local state with the new field value
         const updatedRecord = {
@@ -5814,7 +5954,19 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   const { updateCurrentRecord } = useRecordContext();
   
   // Initialize notes instantly from record prop - memoized to prevent unnecessary recalculations
+  // CRITICAL: Prioritize localRecord.notes if available, as it's updated immediately after save
   const getInitialNotes = React.useMemo(() => {
+    // First check localRecord (updated immediately after save)
+    const localNotes = localRecord?.notes;
+    if (localNotes) {
+      if (typeof localNotes === 'string') {
+        return localNotes;
+      } else if (typeof localNotes === 'object' && localNotes !== null) {
+        return localNotes.content || localNotes.text || '';
+      }
+    }
+    
+    // Fallback to record prop
     if (record?.notes) {
       if (typeof record.notes === 'string') {
         return record.notes;
@@ -5823,7 +5975,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
       }
     }
     return '';
-  }, [record?.notes]);
+  }, [record?.notes, localRecord?.notes]);
 
   // Utility functions for notes statistics
   const getWordCount = (text: string) => {
@@ -5852,6 +6004,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   const notesRef = React.useRef<string>(getInitialNotes);
   const isTypingRef = React.useRef(false); // Track if user is actively typing
   const typingTimeoutRef = React.useRef<NodeJS.Timeout | null>(null); // Track typing timeout
+  const lastSavedTimestampRef = React.useRef<number>(0); // Track when notes were last saved
 
   // Update ref whenever notes change
   React.useEffect(() => {
@@ -5873,6 +6026,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
       notesRef.current = getInitialNotes;
       setHasUnsavedChanges(false);
       setSaveStatus('idle');
+      lastSavedTimestampRef.current = 0; // Reset timestamp on record change
       if (record?.updatedAt && getInitialNotes.trim().length > 0) {
         setLastSavedAt(new Date(record.updatedAt));
       } else {
@@ -5884,6 +6038,9 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   // Sync notes state when record.notes prop changes (after initial mount)
   React.useEffect(() => {
     const newNotes = getInitialNotes;
+    const timeSinceLastSave = Date.now() - lastSavedTimestampRef.current;
+    const wasJustSaved = timeSinceLastSave < 5000; // Prevent syncing for 5 seconds after save
+    
     // Only sync if:
     // 1. Notes have actually changed from what's currently displayed
     // 2. User is not currently focused on the textarea
@@ -5891,16 +6048,22 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
     // 4. Not currently saving
     // 5. No unsaved changes
     // 6. Notes from prop are different from our last saved version (prevents stale cache overwrites)
+    // 7. CRITICAL: Notes were not just saved (prevent overwriting recently saved notes)
+    // 8. CRITICAL: Don't overwrite saved notes with empty/null from prop unless prop actually has content
     if (newNotes !== notes && 
         newNotes !== lastSavedNotes &&
         !isFocused && 
         !isTypingRef.current &&
         saveStatus !== 'saving' && 
         !hasUnsavedChanges &&
-        !isInitialMountRef.current) {
-      console.log('🔄 [NOTES] Syncing notes from prop:', { newNotes, currentNotes: notes, lastSavedNotes });
+        !isInitialMountRef.current &&
+        !wasJustSaved && // Prevent syncing immediately after save
+        (newNotes.trim().length > 0 || notes.trim().length === 0)) { // Don't overwrite saved notes with empty prop unless local is also empty
+      console.log('🔄 [NOTES] Syncing notes from prop:', { newNotes, currentNotes: notes, lastSavedNotes, timeSinceLastSave });
       setNotes(newNotes);
       setLastSavedNotes(newNotes);
+    } else if (wasJustSaved && newNotes !== notes) {
+      console.log('⏭️ [NOTES] Skipping sync - notes were just saved:', { timeSinceLastSave, newNotes, currentNotes: notes });
     }
   }, [getInitialNotes, notes, lastSavedNotes, isFocused, saveStatus, hasUnsavedChanges]);
 
@@ -5927,7 +6090,9 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
         console.log('🔄 [NOTES] Silently refreshing notes for:', { 
           recordId: record.id, 
           recordType,
-          isInitialMount 
+          isInitialMount,
+          currentNotes: notesRef.current,
+          lastSavedNotes: lastSavedNotes
         });
 
         // Map record types to v1 API endpoints
@@ -5949,46 +6114,84 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
               ? result.data.notes 
               : result.data.notes?.content || result.data.notes?.text || '';
             
-            // On initial mount, always update notes from API (they're the source of truth)
-            // After initial mount, only update if conditions are met to prevent overwriting user edits
+            // CRITICAL: On initial mount, always use notes from API if they exist
+            // If API has notes but we don't have any, use API notes
+            // If we have notes but API doesn't, preserve our notes (might be unsaved)
             const currentNotes = notesRef.current;
-            const shouldUpdate = isInitialMount 
-              ? freshNotes !== currentNotes  // Always update on initial mount if different
-              : (freshNotes !== currentNotes && saveStatus !== 'saving' && !isFocused && !isTypingRef.current && !hasUnsavedChanges);
+            const hasCurrentNotes = currentNotes && currentNotes.trim().length > 0;
+            const hasFreshNotes = freshNotes && freshNotes.trim().length > 0;
             
-            if (shouldUpdate) {
-              console.log('✅ [NOTES] Updating notes from API:', { 
-                length: freshNotes.length, 
-                isInitialMount,
-                currentNotes: currentNotes,
-                freshNotes 
-              });
-              setNotes(freshNotes);
-              setLastSavedNotes(freshNotes);
-              notesRef.current = freshNotes;
-              if (result.data.updatedAt) {
-                setLastSavedAt(new Date(result.data.updatedAt));
+            if (isInitialMount) {
+              // On initial mount, prefer API notes if available, otherwise keep current
+              if (hasFreshNotes) {
+                console.log('✅ [NOTES] Initial mount - using API notes:', { length: freshNotes.length });
+                setNotes(freshNotes);
+                setLastSavedNotes(freshNotes);
+                notesRef.current = freshNotes;
+                if (result.data.updatedAt) {
+                  setLastSavedAt(new Date(result.data.updatedAt));
+                }
+              } else if (hasCurrentNotes) {
+                // We have notes but API doesn't - preserve them (might be unsaved)
+                console.log('💾 [NOTES] Initial mount - preserving local notes (API empty):', { length: currentNotes.length });
               }
             } else {
-              console.log('⏭️ [NOTES] Skipping update:', { 
-                freshNotes,
-                currentNotes: currentNotes,
-                isInitialMount,
-                saveStatus,
-                isFocused,
-                isTyping: isTypingRef.current,
-                hasUnsavedChanges
-              });
+              // After initial mount, only update if conditions are met to prevent overwriting user edits
+              const shouldUpdate = hasFreshNotes && 
+                freshNotes !== currentNotes && 
+                saveStatus !== 'saving' && 
+                !isFocused && 
+                !isTypingRef.current && 
+                !hasUnsavedChanges;
+              
+              if (shouldUpdate) {
+                console.log('✅ [NOTES] Updating notes from API:', { 
+                  length: freshNotes.length, 
+                  isInitialMount,
+                  currentNotes: currentNotes,
+                  freshNotes 
+                });
+                setNotes(freshNotes);
+                setLastSavedNotes(freshNotes);
+                notesRef.current = freshNotes;
+                if (result.data.updatedAt) {
+                  setLastSavedAt(new Date(result.data.updatedAt));
+                }
+              } else {
+                console.log('⏭️ [NOTES] Skipping update:', { 
+                  freshNotes,
+                  currentNotes: currentNotes,
+                  isInitialMount,
+                  saveStatus,
+                  isFocused,
+                  isTyping: isTypingRef.current,
+                  hasUnsavedChanges,
+                  hasFreshNotes,
+                  hasCurrentNotes
+                });
+              }
             }
           } else if (result.success && result.data?.notes === null) {
-            // API returned null/empty notes - update state to reflect this ONLY if user is not typing
+            // API returned null/empty notes
+            // CRITICAL: Only clear if we don't have any saved notes AND user is not typing
+            // This prevents clearing notes that were just saved but API hasn't synced yet
             console.log('📝 [NOTES] API returned empty notes, checking if safe to clear');
-            if (isInitialMount || (!isFocused && !isTypingRef.current && saveStatus !== 'saving' && !hasUnsavedChanges)) {
+            const hasSavedNotes = lastSavedNotes && lastSavedNotes.trim().length > 0;
+            const isSafeToClear = (isInitialMount && !hasSavedNotes) || 
+              (!isFocused && !isTypingRef.current && saveStatus !== 'saving' && !hasUnsavedChanges && !hasSavedNotes);
+            
+            if (isSafeToClear) {
+              console.log('🧹 [NOTES] Clearing notes (API empty and no saved notes)');
               setNotes('');
               setLastSavedNotes('');
               notesRef.current = '';
             } else {
-              console.log('⏭️ [NOTES] Not clearing notes - user is typing or has unsaved changes');
+              console.log('⏭️ [NOTES] Not clearing notes - has saved notes or user is typing:', {
+                hasSavedNotes,
+                isFocused,
+                isTyping: isTypingRef.current,
+                hasUnsavedChanges
+              });
             }
           }
         }
@@ -6057,6 +6260,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
       setSaveStatus('saved');
       setLastSavedAt(new Date());
       setLastSavedNotes(notesContent);
+      lastSavedTimestampRef.current = Date.now(); // Track when notes were saved
       
       // Reset typing state after successful save
       isTypingRef.current = false;

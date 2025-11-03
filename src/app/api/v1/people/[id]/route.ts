@@ -149,7 +149,7 @@ export async function GET(
       }
     });
 
-    // 🔧 DATE SERIALIZATION FIX: Ensure dates are properly serialized
+    // 🔧 DATE SERIALIZATION FIX: Ensure dates are properly formatted for JSON serialization
     const responseData = {
       ...transformedPerson,
       // Explicitly ensure dates are properly formatted for JSON serialization
@@ -160,7 +160,34 @@ export async function GET(
         : transformedPerson.createdAt 
           ? new Date(transformedPerson.createdAt).toISOString()
           : null,
-      // IMPORTANT: Explicitly include notes to ensure it's always in response (even if null)
+      // IMPORTANT: Explicitly include all editable fields to ensure they're always in response (even if null)
+      // This ensures fields are present on initial load and prevents disappearing
+      // Basic Information
+      status: transformedPerson.status ?? null,
+      fullName: transformedPerson.fullName ?? null,
+      firstName: transformedPerson.firstName ?? null,
+      lastName: transformedPerson.lastName ?? null,
+      jobTitle: transformedPerson.jobTitle ?? null,
+      department: transformedPerson.department ?? null,
+      state: transformedPerson.state ?? null,
+      bio: transformedPerson.bio ?? null,
+      // Intelligence Snapshot
+      isBuyerGroupMember: transformedPerson.isBuyerGroupMember ?? null,
+      buyerGroupRole: transformedPerson.buyerGroupRole ?? null,
+      influenceLevel: transformedPerson.influenceLevel ?? null,
+      decisionPower: transformedPerson.decisionPower ?? (transformedPerson.customFields as any)?.decisionPower ?? null,
+      engagementLevel: transformedPerson.engagementLevel ?? (transformedPerson.customFields as any)?.engagementLevel ?? null,
+      // Contact Information
+      email: transformedPerson.email ?? null,
+      workEmail: transformedPerson.workEmail ?? null,
+      phone: transformedPerson.phone ?? null,
+      linkedinUrl: transformedPerson.linkedinUrl ?? null,
+      linkedinNavigatorUrl: transformedPerson.linkedinNavigatorUrl ?? null,
+      linkedinConnectionDate: transformedPerson.linkedinConnectionDate ?? null,
+      // Engagement History
+      lastAction: transformedPerson.lastAction ?? null,
+      nextAction: transformedPerson.nextAction ?? null,
+      // Notes
       notes: transformedPerson.notes ?? null
     };
 
@@ -641,9 +668,34 @@ export async function PATCH(
                 : updatedPerson.mainSeller.name || updatedPerson.mainSeller.email || '-')
           : '-',
         mainSellerData: updatedPerson.mainSeller,
-        // IMPORTANT: Explicitly include linkedinNavigatorUrl to ensure it's always in response (even if null)
+        // IMPORTANT: Explicitly include all editable fields to ensure they're always in response (even if null)
+        // This prevents fields from disappearing when API response doesn't include them
+        // Basic Information
+        status: updatedPerson.status ?? null,
+        fullName: updatedPerson.fullName ?? null,
+        firstName: updatedPerson.firstName ?? null,
+        lastName: updatedPerson.lastName ?? null,
+        jobTitle: updatedPerson.jobTitle ?? null,
+        department: updatedPerson.department ?? null,
+        state: updatedPerson.state ?? null,
+        bio: updatedPerson.bio ?? null,
+        // Intelligence Snapshot
+        isBuyerGroupMember: updatedPerson.isBuyerGroupMember ?? null,
+        buyerGroupRole: updatedPerson.buyerGroupRole ?? null,
+        influenceLevel: updatedPerson.influenceLevel ?? null,
+        decisionPower: updatedPerson.decisionPower ?? (updatedPerson.customFields as any)?.decisionPower ?? null,
+        engagementLevel: updatedPerson.engagementLevel ?? (updatedPerson.customFields as any)?.engagementLevel ?? null,
+        // Contact Information
+        email: updatedPerson.email ?? null,
+        workEmail: updatedPerson.workEmail ?? null,
+        phone: updatedPerson.phone ?? null,
+        linkedinUrl: updatedPerson.linkedinUrl ?? null,
         linkedinNavigatorUrl: updatedPerson.linkedinNavigatorUrl ?? null,
-        // IMPORTANT: Explicitly include notes to ensure it's always in response (even if null)
+        linkedinConnectionDate: updatedPerson.linkedinConnectionDate ?? null,
+        // Engagement History
+        lastAction: updatedPerson.lastAction ?? null,
+        nextAction: updatedPerson.nextAction ?? null,
+        // Notes
         notes: updatedPerson.notes ?? null
       },
       meta: {

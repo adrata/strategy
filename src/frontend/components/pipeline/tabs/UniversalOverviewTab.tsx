@@ -39,6 +39,18 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const [justSavedNavigatorUrl, setJustSavedNavigatorUrl] = useState<string | null>(null);
   const [justSavedNavigatorUrlTimestamp, setJustSavedNavigatorUrlTimestamp] = useState<number>(0);
 
+  // Load linkedinNavigatorUrl from localStorage on mount (persist across remounts)
+  useEffect(() => {
+    if (record?.id && typeof window !== 'undefined') {
+      const storageKey = `linkedinNavigatorUrl-${record.id}`;
+      const storedValue = localStorage.getItem(storageKey);
+      if (storedValue && storedValue !== 'null' && storedValue !== '') {
+        console.log(`💾 [LINKEDIN NAVIGATOR] Loaded from localStorage:`, storedValue);
+        setLinkedinNavigatorUrl(storedValue);
+      }
+    }
+  }, [record?.id]); // Only depend on record.id, not the whole record
+
   // Initialize LinkedIn fields from record data and sync with record updates
   useEffect(() => {
     if (record) {
@@ -60,31 +72,60 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       });
       
       // Only update state if values have changed to avoid unnecessary re-renders
-      // IMPORTANT: For linkedinNavigatorUrl, preserve existing value if new value is null/undefined
-      // OR if user just saved a value (within last 5 seconds) - don't overwrite it
+      // CRITICAL: For linkedinNavigatorUrl, NEVER overwrite a non-null local value with null from record prop
+      // This prevents the saved value from being cleared by a refresh that doesn't include the field
       const timeSinceSave = Date.now() - justSavedNavigatorUrlTimestamp;
-      const recentlySaved = justSavedNavigatorUrl && timeSinceSave < 5000; // 5 second window
+      const recentlySaved = justSavedNavigatorUrl && timeSinceSave < 10000; // 10 second window (increased from 5)
       
       if (newLinkedinUrl !== linkedinUrl) {
         console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn URL state: ${linkedinUrl} -> ${newLinkedinUrl}`);
         setLinkedinUrl(newLinkedinUrl);
       }
       
-      if (newLinkedinNavigatorUrl !== linkedinNavigatorUrl && newLinkedinNavigatorUrl !== null && newLinkedinNavigatorUrl !== undefined) {
-        // Only update if the new value is not null/undefined (preserve existing value if record refresh doesn't include it)
-        console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn Navigator URL state: ${linkedinNavigatorUrl} -> ${newLinkedinNavigatorUrl}`);
-        setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
-        // Clear the just-saved flag if we got a valid value from the record
-        if (recentlySaved && newLinkedinNavigatorUrl === justSavedNavigatorUrl) {
-          setJustSavedNavigatorUrl(null);
-          setJustSavedNavigatorUrlTimestamp(0);
+      // CRITICAL: For linkedinNavigatorUrl, use a stronger preservation strategy
+      // Only update if:
+      // 1. The new value is different AND not null/undefined (valid update from API)
+      // 2. OR if current value is null/undefined and new value is valid (initial load)
+      // NEVER update if current value exists and new value is null/undefined (preserve saved value)
+      // Also check localStorage as a fallback
+      const storageKey = record?.id ? `linkedinNavigatorUrl-${record.id}` : null;
+      const storedValue = storageKey && typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+      const effectiveCurrentValue = linkedinNavigatorUrl || (storedValue && storedValue !== 'null' && storedValue !== '' ? storedValue : null);
+      
+      if (effectiveCurrentValue === null || effectiveCurrentValue === undefined) {
+        // Current value is null/undefined - safe to update with any new value
+        if (newLinkedinNavigatorUrl !== effectiveCurrentValue) {
+          console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn Navigator URL state (was null): ${effectiveCurrentValue} -> ${newLinkedinNavigatorUrl}`);
+          setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
+          // Also update localStorage if we got a valid value
+          if (newLinkedinNavigatorUrl && storageKey && typeof window !== 'undefined') {
+            localStorage.setItem(storageKey, newLinkedinNavigatorUrl);
+          }
         }
-      } else if ((newLinkedinNavigatorUrl === null || newLinkedinNavigatorUrl === undefined) && !recentlySaved) {
-        // If record doesn't have the field AND user didn't just save, preserve existing state (don't clear it)
-        console.log(`🔄 [LINKEDIN STATE SYNC] Preserving existing LinkedIn Navigator URL state (record refresh doesn't include field):`, linkedinNavigatorUrl);
-      } else if (recentlySaved) {
-        // User just saved - preserve the saved value even if record refresh returns null
-        console.log(`🔄 [LINKEDIN STATE SYNC] Preserving recently saved LinkedIn Navigator URL (saved ${timeSinceSave}ms ago):`, justSavedNavigatorUrl);
+      } else {
+        // Current value exists - only update if new value is also non-null/undefined
+        if (newLinkedinNavigatorUrl !== null && 
+            newLinkedinNavigatorUrl !== undefined && 
+            newLinkedinNavigatorUrl !== effectiveCurrentValue) {
+          console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn Navigator URL state (both non-null): ${effectiveCurrentValue} -> ${newLinkedinNavigatorUrl}`);
+          setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
+          // Update localStorage with new value
+          if (storageKey && typeof window !== 'undefined') {
+            localStorage.setItem(storageKey, newLinkedinNavigatorUrl);
+          }
+          // Clear the just-saved flag if we got a valid value from the record
+          if (recentlySaved && newLinkedinNavigatorUrl === justSavedNavigatorUrl) {
+            setJustSavedNavigatorUrl(null);
+            setJustSavedNavigatorUrlTimestamp(0);
+          }
+        } else {
+          // New value is null/undefined but current value exists - preserve current value
+          console.log(`🔄 [LINKEDIN STATE SYNC] Preserving existing LinkedIn Navigator URL state (preventing null overwrite):`, effectiveCurrentValue);
+          // Ensure localStorage is also preserved
+          if (effectiveCurrentValue && storageKey && typeof window !== 'undefined' && !localStorage.getItem(storageKey)) {
+            localStorage.setItem(storageKey, effectiveCurrentValue);
+          }
+        }
       }
     }
   }, [record, linkedinUrl, linkedinNavigatorUrl, justSavedNavigatorUrl, justSavedNavigatorUrlTimestamp]);
@@ -144,10 +185,23 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     if (field === 'linkedinNavigatorUrl') {
       console.log(`🔄 [LINKEDIN NAVIGATOR SAVE] Updating local state immediately: ${linkedinNavigatorUrl} -> ${value}`);
       setLinkedinNavigatorUrl(value);
-      // Track that user just saved this value to prevent immediate overwrite
+      // Track that user just saved this value to prevent immediate overwrite (increased to 10 seconds)
       setJustSavedNavigatorUrl(value);
       setJustSavedNavigatorUrlTimestamp(Date.now());
-      console.log(`🔄 [LINKEDIN NAVIGATOR SAVE] Marked as just saved (will preserve for 5 seconds)`);
+      console.log(`🔄 [LINKEDIN NAVIGATOR SAVE] Marked as just saved (will preserve for 10 seconds)`);
+      
+      // Save to localStorage for persistence across remounts
+      if (recordId && typeof window !== 'undefined') {
+        const storageKey = `linkedinNavigatorUrl-${recordId}`;
+        if (value && value !== 'null' && value !== '') {
+          localStorage.setItem(storageKey, value);
+          console.log(`💾 [LINKEDIN NAVIGATOR] Saved to localStorage:`, value);
+        } else {
+          // Only clear if explicitly set to null/empty
+          localStorage.removeItem(storageKey);
+          console.log(`🗑️ [LINKEDIN NAVIGATOR] Removed from localStorage`);
+        }
+      }
     }
   };
 
@@ -324,10 +378,17 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       return linkedinValue;
     })(),
     linkedinNavigatorUrl: (() => {
-      const navigatorValue = linkedinNavigatorUrl || record?.linkedinNavigatorUrl || null;
+      // Prioritize local state, then localStorage, then record prop
+      const storageKey = record?.id ? `linkedinNavigatorUrl-${record.id}` : null;
+      const storedValue = storageKey && typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+      const navigatorValue = linkedinNavigatorUrl || 
+                            (storedValue && storedValue !== 'null' && storedValue !== '' ? storedValue : null) ||
+                            record?.linkedinNavigatorUrl || 
+                            null;
       console.log(`🔍 [LINKEDIN NAVIGATOR COMPUTATION] Computing linkedinNavigatorUrl value:`, {
         recordId: record?.id,
         linkedinNavigatorUrl,
+        storedValue,
         recordLinkedinNavigatorUrl: record?.linkedinNavigatorUrl,
         finalValue: navigatorValue
       });

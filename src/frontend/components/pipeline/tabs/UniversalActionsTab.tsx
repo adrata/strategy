@@ -4,7 +4,6 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
 import { InlineEditField } from '../InlineEditField';
-import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 interface ActionEvent {
   id: string;
@@ -418,44 +417,12 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         }
       }));
 
-      // Filter to meaningful action types only (matches Last Action column filtering)
-      console.log('🔍 [ACTIONS] Before filtering:', {
+      // Show all actions - no filtering by action type
+      // (The meaningful filter is only used for Last Action column, not the Actions tab)
+      console.log('🔍 [ACTIONS] Showing all actions:', {
         totalEvents: activityEvents.length,
         eventTypes: activityEvents.map(e => e.metadata?.type),
         sampleEvent: activityEvents[0]
-      });
-      
-      // Debug: Log each event's type checking
-      activityEvents.forEach((event, index) => {
-        const eventType = event.metadata?.type || event.type;
-        const isMeaningful = isMeaningfulAction(eventType);
-        console.log(`🔍 [ACTIONS] Event ${index}:`, {
-          id: event.id,
-          eventType,
-          metadataType: event.metadata?.type,
-          directType: event.type,
-          isMeaningful,
-          title: event.title
-        });
-      });
-
-      activityEvents = activityEvents.filter(event => {
-        // Check both metadata.type and direct type field
-        const eventType = event.metadata?.type || event.type;
-        const matches = eventType && isMeaningfulAction(eventType);
-        console.log('🔍 [ACTIONS] Filtering event:', {
-          eventType: eventType,
-          metadataType: event.metadata?.type,
-          directType: event.type,
-          matches,
-          title: event.title
-        });
-        return matches;
-      });
-
-      console.log('🔍 [ACTIONS] After filtering:', {
-        filteredEvents: activityEvents.length,
-        filteredTypes: activityEvents.map(e => e.metadata?.type)
       });
       
       // Cache the data

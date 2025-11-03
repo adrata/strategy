@@ -131,23 +131,38 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   }, [fetchFullCompanyData]);
 
   // Create merged record data that uses full company data when available
+  // CRITICAL: Prioritize company fields over person fields to ensure company data is displayed
   const mergedRecord = useMemo(() => {
     if (!fullCompanyData) {
+      // If no full company data, use record but prioritize company fields
+      // If this is a person record viewing their company, extract company fields
+      if (record?.company && typeof record.company === 'object') {
+        return {
+          ...record.company, // Start with company fields
+          id: companyId || record.company.id, // Ensure we use company ID
+          // Don't include person fields like email, phone, linkedinUrl from person record
+        };
+      }
       return record; // Use original record if no full company data
     }
 
-    // Merge the full company data with the existing record
-    // This ensures we have all the company fields available for rendering
+    // CRITICAL: Prioritize company fields - spread fullCompanyData AFTER record
+    // This ensures company email/phone/LinkedIn override any person fields
     return {
-      ...record,
-      ...fullCompanyData,
+      ...record, // Start with record (for ID, recordType, etc.)
+      ...fullCompanyData, // Company fields override person fields
+      // Ensure company-specific fields come from company data
+      email: fullCompanyData.email ?? null,
+      phone: fullCompanyData.phone ?? null,
+      linkedinUrl: fullCompanyData.linkedinUrl ?? null,
+      linkedinNavigatorUrl: fullCompanyData.linkedinNavigatorUrl ?? null,
       // Preserve the original company object structure if it exists
       company: record?.company ? {
         ...record.company,
         ...fullCompanyData
       } : fullCompanyData
     };
-  }, [record, fullCompanyData]);
+  }, [record, fullCompanyData, companyId]);
 
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);

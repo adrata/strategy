@@ -133,9 +133,49 @@ export async function GET(
     // Merge core company data with workspace data
     const mergedCompany = mergeCoreCompanyWithWorkspace(company, company.coreCompany || null);
 
+    // IMPORTANT: Explicitly include all editable fields to ensure they're always in response (even if null)
+    // This ensures fields are present on initial load and prevents disappearing
+    const responseData = {
+      ...mergedCompany,
+      // Basic Information
+      name: mergedCompany.name ?? null,
+      legalName: mergedCompany.legalName ?? null,
+      tradingName: mergedCompany.tradingName ?? null,
+      description: mergedCompany.description ?? null,
+      website: mergedCompany.website ?? null,
+      // Contact Information
+      email: mergedCompany.email ?? null,
+      phone: mergedCompany.phone ?? null,
+      fax: mergedCompany.fax ?? null,
+      linkedinUrl: mergedCompany.linkedinUrl ?? null,
+      linkedinNavigatorUrl: mergedCompany.linkedinNavigatorUrl ?? null,
+      linkedinFollowers: mergedCompany.linkedinFollowers ?? null,
+      // Location
+      address: mergedCompany.address ?? null,
+      city: mergedCompany.city ?? null,
+      state: mergedCompany.state ?? null,
+      country: mergedCompany.country ?? null,
+      postalCode: mergedCompany.postalCode ?? null,
+      hqLocation: mergedCompany.hqLocation ?? null,
+      hqFullAddress: mergedCompany.hqFullAddress ?? null,
+      hqCity: mergedCompany.hqCity ?? null,
+      hqState: mergedCompany.hqState ?? null,
+      // Business Information
+      industry: mergedCompany.industry ?? null,
+      sector: mergedCompany.sector ?? null,
+      employeeCount: mergedCompany.employeeCount ?? null,
+      revenue: mergedCompany.revenue ?? null,
+      foundedYear: mergedCompany.foundedYear ?? null,
+      // Engagement
+      lastAction: mergedCompany.lastAction ?? null,
+      nextAction: mergedCompany.nextAction ?? null,
+      // Notes
+      notes: mergedCompany.notes ?? null
+    };
+
     return NextResponse.json({
       success: true,
-      data: mergedCompany,
+      data: responseData,
     });
 
   } catch (error) {
@@ -591,13 +631,53 @@ export async function PATCH(
       }
     });
 
-    return NextResponse.json({
+    // IMPORTANT: Explicitly include all editable fields to ensure they're always in response (even if null)
+    // This prevents fields from disappearing when API response doesn't include them
+    const responseData = {
       success: true,
-      data: updatedCompany,
+      data: {
+        ...updatedCompany,
+        // Basic Information
+        name: updatedCompany.name ?? null,
+        legalName: updatedCompany.legalName ?? null,
+        tradingName: updatedCompany.tradingName ?? null,
+        description: updatedCompany.description ?? null,
+        website: updatedCompany.website ?? null,
+        // Contact Information
+        email: updatedCompany.email ?? null,
+        phone: updatedCompany.phone ?? null,
+        fax: updatedCompany.fax ?? null,
+        linkedinUrl: updatedCompany.linkedinUrl ?? null,
+        linkedinNavigatorUrl: updatedCompany.linkedinNavigatorUrl ?? null,
+        linkedinFollowers: updatedCompany.linkedinFollowers ?? null,
+        // Location
+        address: updatedCompany.address ?? null,
+        city: updatedCompany.city ?? null,
+        state: updatedCompany.state ?? null,
+        country: updatedCompany.country ?? null,
+        postalCode: updatedCompany.postalCode ?? null,
+        hqLocation: updatedCompany.hqLocation ?? null,
+        hqFullAddress: updatedCompany.hqFullAddress ?? null,
+        hqCity: updatedCompany.hqCity ?? null,
+        hqState: updatedCompany.hqState ?? null,
+        // Business Information
+        industry: updatedCompany.industry ?? null,
+        sector: updatedCompany.sector ?? null,
+        employeeCount: updatedCompany.employeeCount ?? null,
+        revenue: updatedCompany.revenue ?? null,
+        foundedYear: updatedCompany.foundedYear ?? null,
+        // Engagement
+        lastAction: updatedCompany.lastAction ?? null,
+        nextAction: updatedCompany.nextAction ?? null,
+        // Notes
+        notes: updatedCompany.notes ?? null
+      },
       meta: {
         message: 'Company updated successfully',
       },
-    });
+    };
+
+    return NextResponse.json(responseData);
 
   } catch (error) {
     // Log the full error with stack trace
@@ -679,6 +759,86 @@ export async function DELETE(
             people: {
               where: {
                 deletedAt: null
+              }
+            },
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
+          },
+        },
+      },
+    });
+
+    if (!existingCompany) {
+      return NextResponse.json(
+        { success: false, error: 'Company not found' },
+        { status: 404 }
+      );
+    }
+
+    // For hard delete, check if company has related data
+    if (mode === 'hard' && (existingCompany._count.people > 0 || existingCompany._count.actions > 0)) {
+      return NextResponse.json(
+        { success: false, error: 'Cannot hard delete company with associated people or actions. Please remove or reassign them first.' },
+        { status: 409 }
+      );
+    }
+
+    if (mode === 'hard') {
+      // Hard delete - permanently remove from database
+      await prisma.companies.delete({
+        where: { id },
+      });
+    } else {
+      // Soft delete - set deletedAt timestamp
+      await prisma.companies.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: null,
+      meta: {
+        message: `Company ${mode === 'hard' ? 'permanently deleted' : 'deleted'} successfully`,
+        mode,
+      },
+    });
+
+  } catch (error) {
+    console.error('❌ [COMPANIES API] Error deleting company:', {
+      companyId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+    });
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete company' },
+      { status: 500 }
+    );
+  }
+}
+
+// OPTIONS /api/v1/companies/[id] - Handle CORS preflight requests
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Allow': 'GET, PUT, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, PUT, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
               }
             },
             actions: {

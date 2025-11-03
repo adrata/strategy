@@ -83,6 +83,29 @@ export function SpeedrunSprintView() {
     
     return rawData;
   }, [rawData]);
+
+  // Track optimistic updates to preserve linkedinNavigatorUrl during refreshes
+  const optimisticUpdatesRef = React.useRef<Map<string, any>>(new Map());
+  const [optimisticUpdateVersion, setOptimisticUpdateVersion] = React.useState(0);
+
+  // Apply optimistic updates to rawData
+  const enrichedData = React.useMemo(() => {
+    if (!allData || allData.length === 0) return [];
+    
+    return allData.map((record: any) => {
+      const optimisticUpdate = optimisticUpdatesRef.current.get(record.id);
+      if (optimisticUpdate) {
+        // Merge optimistic update, preserving linkedinNavigatorUrl even if null
+        const merged = { ...record, ...optimisticUpdate };
+        // Explicitly preserve linkedinNavigatorUrl if it exists in optimistic update
+        if (optimisticUpdate.linkedinNavigatorUrl !== undefined) {
+          merged.linkedinNavigatorUrl = optimisticUpdate.linkedinNavigatorUrl;
+        }
+        return merged;
+      }
+      return record;
+    });
+  }, [allData, optimisticUpdateVersion]); // Include optimisticUpdateVersion to trigger recompute
   
   // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
   useEffect(() => {
@@ -196,13 +219,16 @@ export function SpeedrunSprintView() {
   
   // Filter out snoozed records and organize completed records (without modifying localStorage in render)
   const filteredData = useMemo(() => {
-    if (!allData || typeof window === 'undefined') return allData || [];
+    // Use enrichedData instead of allData to include optimistic updates
+    const dataSource = enrichedData.length > 0 ? enrichedData : (allData || []);
+    
+    if (!dataSource || typeof window === 'undefined') return dataSource || [];
     
     const snoozedRecords = JSON.parse(localStorage.getItem('snoozedRecords') || '[]');
     const now = new Date();
     
     // First filter out snoozed records
-    const activeRecords = allData.filter(record => {
+    const activeRecords = dataSource.filter((record: any) => {
       const snoozedRecord = snoozedRecords.find((snooze: any) => snooze['recordId'] === record.id);
       
       if (snoozedRecord) {
@@ -215,14 +241,14 @@ export function SpeedrunSprintView() {
     });
 
     // Separate completed and active records
-    const active = activeRecords.filter(record => !completedRecords.includes(record.id));
-    const completed = activeRecords.filter(record => completedRecords.includes(record.id));
+    const active = activeRecords.filter((record: any) => !completedRecords.includes(record.id));
+    const completed = activeRecords.filter((record: any) => completedRecords.includes(record.id));
     
     // Debug: Log completed records found
     if (completedRecords.length > 0) {
       console.log('🔍 [FILTERED DATA] Completed records debug:', {
         completedRecordsIds: completedRecords,
-        completedRecordsFound: completed.map(r => ({ id: r.id, name: r.name, rank: r.rank })),
+        completedRecordsFound: completed.map((r: any) => ({ id: r.id, name: r.name, rank: r.rank })),
         totalActiveRecords: active.length,
         totalCompletedRecords: completed.length
       });
@@ -230,7 +256,7 @@ export function SpeedrunSprintView() {
     
     // Return active records first, then completed records at the bottom
     return [...active, ...completed];
-  }, [allData, completedRecords]);
+  }, [enrichedData, allData, completedRecords]);
   
   // Log fixed sprint configuration
   useEffect(() => {
@@ -244,8 +270,8 @@ export function SpeedrunSprintView() {
     if (!filteredData || filteredData.length === 0) return [];
     
     // Separate active and completed records
-    const activeRecords = filteredData.filter(record => !completedRecords.includes(record.id));
-    const completedRecordsInSprint = filteredData.filter(record => completedRecords.includes(record.id));
+    const activeRecords = filteredData.filter((record: any) => !completedRecords.includes(record.id));
+    const completedRecordsInSprint = filteredData.filter((record: any) => completedRecords.includes(record.id));
     
     // Calculate sprint boundaries based on strategic rank, not array position
     const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
@@ -253,7 +279,7 @@ export function SpeedrunSprintView() {
     
     // Get active records for this sprint based on their strategic rank
     // Sort active records by their globalRank to ensure proper order
-    const sortedActiveRecords = activeRecords.sort((a, b) => {
+    const sortedActiveRecords = activeRecords.sort((a: any, b: any) => {
       const rankA = a.globalRank || a.rank || 999999;
       const rankB = b.globalRank || b.rank || 999999;
       return rankA - rankB;
@@ -275,12 +301,12 @@ export function SpeedrunSprintView() {
       completedInSprint: completedInSprint.length,
       totalInSprint: sprintData.length,
       maxActiveSlots,
-      activeRecords: finalActiveInSprint.map(r => ({ 
+      activeRecords: finalActiveInSprint.map((r: any) => ({ 
         name: r.name, 
         rank: r.rank,
         displayRank: r.rank
       })),
-      completedRecords: completedInSprint.map(r => ({ 
+      completedRecords: completedInSprint.map((r: any) => ({ 
         name: r.name, 
         rank: r.rank 
       }))
@@ -321,12 +347,31 @@ export function SpeedrunSprintView() {
     setSelectedRecord(null);
   }, [currentSprintIndex]);
 
-  // Auto-select first record if none selected (only when data changes, not when selectedRecord changes)
+  // Sync selectedRecord with data array when data changes, preserving linkedinNavigatorUrl
   useEffect(() => {
-    if (data && data.length > 0 && !selectedRecord) {
-      setSelectedRecord(data[0]);
+    if (!selectedRecord || !data || data.length === 0) return;
+    
+    const matchingRecord = data.find((r: any) => r.id === selectedRecord.id);
+    if (matchingRecord && matchingRecord !== selectedRecord) {
+      // Merge preserving linkedinNavigatorUrl from selectedRecord if new record doesn't have it
+      const mergedRecord = {
+        ...matchingRecord,
+        // Preserve linkedinNavigatorUrl from selectedRecord if it exists and new record doesn't have it
+        linkedinNavigatorUrl: matchingRecord.linkedinNavigatorUrl ?? selectedRecord.linkedinNavigatorUrl ?? null
+      };
+      
+      // Only update if something actually changed (avoid infinite loops)
+      if (JSON.stringify(mergedRecord) !== JSON.stringify(selectedRecord)) {
+        console.log('🔄 [SPEEDRUN SPRINT] Syncing selectedRecord with data array:', {
+          recordId: selectedRecord.id,
+          preservedLinkedinNavigatorUrl: mergedRecord.linkedinNavigatorUrl,
+          dataArrayLinkedinNavigatorUrl: matchingRecord.linkedinNavigatorUrl,
+          selectedRecordLinkedinNavigatorUrl: selectedRecord.linkedinNavigatorUrl
+        });
+        setSelectedRecord(mergedRecord);
+      }
     }
-  }, [data]); // Remove selectedRecord from dependencies to prevent infinite loop
+  }, [data, selectedRecord?.id]); // Only depend on data and selectedRecord.id, not the whole selectedRecord object
 
   // Generate slug for a record
   const generateRecordSlug = (record: any) => {
@@ -497,7 +542,8 @@ export function SpeedrunSprintView() {
     
     try {
       // Save action log to backend using v1 API
-      const response = await authFetch('/api/v1/actions', {
+      // authFetch returns parsed JSON directly and throws errors for failed requests
+      const result = await authFetch('/api/v1/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -512,29 +558,11 @@ export function SpeedrunSprintView() {
           status: 'COMPLETED',
           priority: 'NORMAL',
           personId: selectedRecord.id,
+          // Conditionally include companyId only if it exists and is valid (not empty string or undefined)
+          ...(actionData.companyId && typeof actionData.companyId === 'string' && actionData.companyId.trim() !== '' && { companyId: actionData.companyId }),
         }),
       });
 
-      if (!response.ok) {
-        let errorMessage = 'Failed to save action log';
-        try {
-          // Check if response has json method and is a proper Response object
-          if (response && typeof response.json === 'function') {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-          } else {
-            // Fallback for non-JSON responses
-            errorMessage = `HTTP ${response.status}: ${response.statusText || 'Unknown error'}`;
-          }
-        } catch (jsonError) {
-          // If JSON parsing fails, use status text or fallback message
-          console.error('Failed to parse error response as JSON:', jsonError);
-          errorMessage = `HTTP ${response.status}: ${response.statusText || 'Unknown error'}`;
-        }
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json();
       console.log(`✅ Action log saved for ${selectedRecord.name || selectedRecord.fullName}:`, result);
 
       // Mark the current record as completed
@@ -739,6 +767,54 @@ export function SpeedrunSprintView() {
         }}
         onComplete={() => setShowCompleteModal(true)}
         onSnooze={handleSnooze}
+        onRecordUpdate={async (updatedRecord) => {
+          console.log('🔄 [SPEEDRUN SPRINT] Updating selectedRecord:', updatedRecord);
+          
+          // CRITICAL: Merge updatedRecord with existing selectedRecord to preserve all fields
+          // The updatedRecord might only contain the field that was updated, so we need to preserve other fields
+          setSelectedRecord((prevRecord: any) => {
+            if (!prevRecord) return updatedRecord;
+            
+            // Merge: preserve all existing fields, update with new values from updatedRecord
+            const mergedRecord = {
+              ...prevRecord, // Start with all existing fields
+              ...updatedRecord // Apply updates (this will include the updated field)
+            };
+            
+            console.log('🔄 [SPEEDRUN SPRINT] Merged record update:', {
+              prevRecordFields: Object.keys(prevRecord),
+              updatedRecordFields: Object.keys(updatedRecord),
+              mergedRecordFields: Object.keys(mergedRecord),
+              preservedFields: Object.keys(prevRecord).filter(k => updatedRecord[k] === undefined)
+            });
+            
+            return mergedRecord;
+          });
+          
+          // Store optimistic update for this record
+          if (updatedRecord?.id) {
+            optimisticUpdatesRef.current.set(updatedRecord.id, updatedRecord);
+            setOptimisticUpdateVersion(prev => prev + 1); // Trigger enrichedData recompute
+            console.log('💾 [SPEEDRUN SPRINT] Stored optimistic update:', {
+              recordId: updatedRecord.id,
+              linkedinNavigatorUrl: updatedRecord.linkedinNavigatorUrl
+            });
+            
+            // Clear optimistic update after 10 seconds (enough time for refresh to complete)
+            setTimeout(() => {
+              optimisticUpdatesRef.current.delete(updatedRecord.id);
+              setOptimisticUpdateVersion(prev => prev + 1); // Trigger enrichedData recompute
+              console.log('🗑️ [SPEEDRUN SPRINT] Cleared optimistic update for:', updatedRecord.id);
+            }, 10000);
+          }
+          
+          // Schedule a delayed refresh to ensure eventual consistency (after 2 seconds)
+          // This allows the UI to update immediately while ensuring data consistency
+          setTimeout(() => {
+            console.log('🔄 [SPEEDRUN SPRINT] Performing delayed refresh for consistency');
+            refresh();
+          }, 2000);
+        }}
       />
     </div>
   ) : (
@@ -766,6 +842,99 @@ export function SpeedrunSprintView() {
 
   return (
     <>
+      {sprintDetailView}
+
+      {/* Complete Action Modal */}
+      <CompleteActionModal
+        isOpen={showCompleteModal}
+        onClose={() => setShowCompleteModal(false)}
+        onSubmit={handleActionLogSubmit}
+        personName={selectedRecord?.fullName || selectedRecord?.name || 'Unknown'}
+        section="speedrun"
+        isLoading={isSubmittingAction}
+      />
+
+      {/* Add Action Modal */}
+      <CompleteActionModal
+        isOpen={showAddActionModal}
+        onClose={() => setShowAddActionModal(false)}
+        onSubmit={handleAddAction}
+        personName={selectedRecord?.name || selectedRecord?.fullName}
+        companyName={typeof selectedRecord?.company === 'object' ? selectedRecord?.company?.name : selectedRecord?.company}
+        isLoading={isSubmittingAction}
+        section="speedrun"
+      />
+
+      {/* Profile Popup - SpeedrunSprintView Implementation */}
+      {(() => {
+        const shouldRender = isProfileOpen && profileAnchor;
+        console.log('🔍 SpeedrunSprintView Profile popup render check:', { 
+          isProfileOpen, 
+          profileAnchor: !!profileAnchor,
+          profileAnchorElement: profileAnchor,
+          user: !!pipelineUser,
+          company,
+          workspace,
+          shouldRender
+        });
+        if (shouldRender) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ SpeedrunSprintView ProfileBox SHOULD render - all conditions met');
+          }
+        } else {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('❌ SpeedrunSprintView ProfileBox will NOT render:', {
+              missingProfileOpen: !isProfileOpen,
+              missingProfileAnchor: !profileAnchor
+            });
+          }
+        }
+        return shouldRender;
+      })() && profileAnchor && (
+        <div
+          ref={profilePopupRef}
+          style={{
+            position: "fixed",
+            left: profileAnchor.getBoundingClientRect().left,
+            bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
+            zIndex: 9999,
+          }}
+        >
+          <ProfileBox
+            user={pipelineUser}
+            company={company}
+            workspace={workspace}
+            isProfileOpen={isProfileOpen}
+            setIsProfileOpen={setIsProfileOpen}
+            userId={user?.id}
+            userEmail={user?.email}
+            isSellersVisible={true}
+            setIsSellersVisible={() => {}}
+            isRtpVisible={true}
+            setIsRtpVisible={() => {}}
+            isProspectsVisible={true}
+            setIsProspectsVisible={() => {}}
+            isLeadsVisible={true}
+            setIsLeadsVisible={() => {}}
+            isOpportunitiesVisible={true}
+            setIsOpportunitiesVisible={() => {}}
+            isCustomersVisible={false}
+            setIsCustomersVisible={() => {}}
+            isPartnersVisible={true}
+            setIsPartnersVisible={() => {}}
+            onThemesClick={() => {
+              console.log('🎨 Themes clicked in SpeedrunSprintView');
+            }}
+            onSignOut={() => {
+              console.log('🚪 Sign out clicked in SpeedrunSprintView');
+            }}
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
       {sprintDetailView}
 
       {/* Complete Action Modal */}
