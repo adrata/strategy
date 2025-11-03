@@ -204,7 +204,11 @@ export function TableRow({
         {(() => {
           // Use workspace-specific column order for leads/prospects
           const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
-          const logicalOrder = sectionConfig.columnOrder || ['rank', 'person', 'state', 'title', 'lastAction', 'nextAction'];
+          // Default fallback - exclude rank for leads
+          const defaultOrder = section === 'leads' 
+            ? ['name', 'company', 'state', 'title', 'email', 'lastAction', 'nextAction']
+            : ['rank', 'person', 'state', 'title', 'lastAction', 'nextAction'];
+          const logicalOrder = sectionConfig.columnOrder || defaultOrder;
           const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
           
           console.log(`🔍 [TableRow] Column configuration for ${section}:`, {

@@ -146,7 +146,7 @@ export const PipelineContent = React.memo(function PipelineContent({
           columns = ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
           break;
         case 'leads':
-          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
+          columns = ['company', 'name', 'state', 'title', 'email', 'actions', 'lastAction', 'nextAction'];
           break;
         case 'prospects':
           columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
@@ -174,8 +174,12 @@ export const PipelineContent = React.memo(function PipelineContent({
       columns = ['name', 'company', ...columns.filter(col => col !== 'name')];
     }
     
-    console.log(`✅ [COLUMN CONFIG] Final columns for ${section}:`, columns);
-    return columns;
+    // Filter out hidden columns for this workspace and section
+    const hiddenColumns = sectionConfig.hiddenColumns || [];
+    const filteredColumns = columns.filter(col => !hiddenColumns.includes(col));
+    
+    console.log(`✅ [COLUMN CONFIG] Final columns for ${section}:`, filteredColumns);
+    return filteredColumns;
   };
   
   const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));
