@@ -240,14 +240,28 @@ export function PipelineTable({
   const workspaceId = authUser?.activeWorkspaceId || '';
   const workspaceName = authUser?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
   
-  // Get table headers and filter out STATUS for speedrun
+  // Get table headers and filter out STATUS for speedrun and RANK for leads
   const headers = useMemo(() => {
     const baseHeaders = getTableHeaders(visibleColumns, section);
+    let filteredHeaders = baseHeaders;
+    
     if (section === 'speedrun') {
-      return baseHeaders.filter(h => h.toLowerCase() !== 'status');
+      filteredHeaders = filteredHeaders.filter(h => h.toLowerCase() !== 'status');
     }
-    return baseHeaders;
-  }, [visibleColumns, section]);
+    
+    // Always filter out 'Rank' for leads section (using both direct check and isColumnHidden)
+    if (section === 'leads') {
+      filteredHeaders = filteredHeaders.filter(h => {
+        const colLower = h.toLowerCase();
+        return colLower !== 'rank' && !isColumnHidden(workspaceId, section, colLower, workspaceName);
+      });
+    } else {
+      // For other sections, use isColumnHidden to filter
+      filteredHeaders = filteredHeaders.filter(h => !isColumnHidden(workspaceId, section, h.toLowerCase(), workspaceName));
+    }
+    
+    return filteredHeaders;
+  }, [visibleColumns, section, workspaceId, workspaceName]);
   
   const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 180 : 500;
   

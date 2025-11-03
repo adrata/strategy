@@ -202,6 +202,14 @@ export const PipelineContent = React.memo(function PipelineContent({
       setSortDirection('desc'); // Highest rank first (largest to smallest)
     }
   }, [section]);
+
+  // CRITICAL: Always filter out 'rank' from visibleColumns for leads section
+  useEffect(() => {
+    if (section === 'leads' && visibleColumns.includes('rank')) {
+      console.log('🔧 [COLUMN FIX] Removing rank column from leads visibleColumns');
+      setVisibleColumns(prev => prev.filter(col => col !== 'rank'));
+    }
+  }, [section, visibleColumns, setVisibleColumns]);
   
   // Load saved sort preferences from localStorage for speedrun section
   useEffect(() => {
@@ -1008,8 +1016,12 @@ export const PipelineContent = React.memo(function PipelineContent({
   }, [handleSortChange, section]);
 
   const handleColumnVisibilityChange = useCallback((columns: string[]) => {
-    setVisibleColumns(columns);
-  }, []);
+    // Always filter out 'rank' for leads section
+    const filteredColumns = section === 'leads' 
+      ? columns.filter(col => col !== 'rank')
+      : columns;
+    setVisibleColumns(filteredColumns);
+  }, [section]);
 
   // 🚀 CACHE ERROR FIX: Only show error state for persistent errors, not during loading
   if (finalError && !finalLoading && finalData.length === 0) {
