@@ -305,7 +305,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
                       <p className="text-xs font-medium text-muted mb-1">Company Focus:</p>
                       <div className="flex flex-wrap gap-1">
                         {exp.company_categories_and_keywords.slice(0, 8).map((keyword: string, keyIndex: number) => (
-                          <span key={keyIndex} className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-hover text-gray-700">
+                          <span key={keyIndex} className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-hover text-foreground">
                             {keyword}
                           </span>
                         ))}
@@ -333,7 +333,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
           <div className="bg-background p-4 rounded-lg border border-border">
             <div className="flex flex-wrap gap-2">
               {careerData.skills.map((skill: string, index: number) => (
-                <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                   {skill}
                 </span>
               ))}

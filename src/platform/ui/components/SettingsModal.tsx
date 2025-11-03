@@ -20,6 +20,7 @@ import { ACTION_PLATFORM_APPS } from "@/platform/config";
 import type { ActionPlatformApp } from "../types";
 import { ThemePicker } from "./ThemePicker";
 import { useUnifiedAuth } from "@/platform/auth";
+import { getTimezoneOptionsGrouped } from "@/platform/utils/timezone-helper";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -612,11 +613,19 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                           Time Zone
                         </label>
                         <select className="w-full p-2 border border-border dark:border-border rounded-lg bg-background text-foreground dark:text-white">
-                          <option>Pacific Time (PT)</option>
-                          <option>Mountain Time (MT)</option>
-                          <option>Central Time (CT)</option>
-                          <option>Eastern Time (ET)</option>
+                          {Object.entries(getTimezoneOptionsGrouped()).map(([group, options]) => (
+                            <optgroup key={group} label={group}>
+                              {options.map(option => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
                         </select>
+                        <p className="text-xs text-muted mt-1">
+                          This timezone will be used for AI date/time awareness
+                        </p>
                       </div>
                       
                       <div className="pt-4 border-t border-border dark:border-border">

@@ -533,18 +533,18 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
                       {riskAssessment.level}
                     </span>
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      person.role === 'Decision Maker' ? 'bg-red-100 text-red-800' :
-                      person.role === 'Champion' ? 'bg-green-100 text-green-800' :
-                      person.role === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                      person.role === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                      'bg-hover text-gray-800'
+                      person.role === 'Decision Maker' ? 'bg-error/10 text-error' :
+                      person.role === 'Champion' ? 'bg-success/10 text-success' :
+                      person.role === 'Blocker' ? 'bg-warning/10 text-warning' :
+                      person.role === 'Stakeholder' ? 'bg-primary/10 text-primary' :
+                      'bg-hover text-foreground'
                     }`}>
                       {person.role}
                     </span>
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      person.influence === 'high' ? 'bg-purple-100 text-purple-800' :
-                      person.influence === 'medium' ? 'bg-orange-100 text-orange-800' :
-                      'bg-hover text-gray-800'
+                      person.influence === 'high' ? 'bg-error/10 text-error' :
+                      person.influence === 'medium' ? 'bg-warning/10 text-warning' :
+                      'bg-hover text-foreground'
                     }`}>
                       {person.influence} influence
                     </span>

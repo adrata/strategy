@@ -52,7 +52,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
           <h3 className="text-lg font-medium text-foreground mb-2">No stakeholders yet</h3>
           <p className="text-muted">Add stakeholders to track who's involved in this opportunity</p>
           
-          <button className="mt-4 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+          <button className="mt-4 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors">
             Add Stakeholder
           </button>
         </div>
@@ -61,8 +61,8 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
           {stakeholders.map((stakeholder: any, index: number) => (
             <div key={stakeholder.id || index} className="bg-background border border-border rounded-lg p-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-semibold">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-primary font-semibold">
                     {(stakeholder.name || stakeholder.firstName || 'U').charAt(0).toUpperCase()}
                   </span>
                 </div>

@@ -1188,7 +1188,7 @@ export function PipelineHeader({
                 <div key={index} className="text-center">
                   <div className={`font-semibold ${metric.isHighlight ? 'text-lg' : 'text-base'} flex items-center justify-center gap-1`}>
                     {metric['isLive'] && (
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
                     )}
                     {metric.isProgress ? (
                       <>
@@ -1251,7 +1251,7 @@ export function PipelineHeader({
                     
                     {/* Copy feedback notification */}
                     {copyFeedback && (
-                      <div className="absolute top-full right-0 mt-1 px-3 py-2 bg-green-100 text-green-700 text-sm rounded-md shadow-lg z-50 whitespace-nowrap border border-green-200">
+                      <div className="absolute top-full right-0 mt-1 px-3 py-2 bg-success/10 text-success text-sm rounded-md shadow-lg z-50 whitespace-nowrap border border-success">
                         URL copied to clipboard!
                       </div>
                     )}

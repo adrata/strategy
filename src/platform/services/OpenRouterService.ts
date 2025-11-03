@@ -550,7 +550,7 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
     }
 
     // Build messages array
-    const messages = this.buildMessages(request, complexity);
+    const messages = await this.buildMessages(request, complexity);
     
     // Calculate max tokens based on model and complexity
     const maxTokens = this.calculateMaxTokens(model, complexity);
@@ -605,11 +605,11 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
   /**
    * Build messages array for API call
    */
-  private buildMessages(request: OpenRouterRequest, complexity: any): any[] {
+  private async buildMessages(request: OpenRouterRequest, complexity: any): Promise<any[]> {
     const messages: any[] = [];
     
     // System prompt based on complexity and context
-    const systemPrompt = this.buildSystemPrompt(request, complexity);
+    const systemPrompt = await this.buildSystemPrompt(request, complexity);
     messages.push({ role: 'system', content: systemPrompt });
 
     // Add conversation history
@@ -629,12 +629,51 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
   }
 
   /**
+   * Get current date/time string for system prompts
+   */
+  private async getCurrentDateTimeString(userId?: string): Promise<string> {
+    // Get user timezone preference, default to system timezone
+    let userTimezone: string | null = null;
+    if (userId) {
+      try {
+        const { PrismaClient } = await import('@prisma/client');
+        const prisma = new PrismaClient();
+        const user = await prisma.users.findUnique({
+          where: { id: userId },
+          select: { timezone: true }
+        });
+        userTimezone = user?.timezone || null;
+      } catch (error) {
+        console.warn('⚠️ [OPENROUTER] Failed to load user timezone:', error);
+      }
+    }
+    
+    const timezone = userTimezone || (typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/New_York');
+    const now = new Date();
+    const { formatDateTimeInTimezone } = await import('@/platform/utils/timezone-helper');
+    const dateTimeInfo = formatDateTimeInTimezone(now, timezone);
+    
+    return `CURRENT DATE AND TIME:
+Today is ${dateTimeInfo.dayOfWeek}, ${dateTimeInfo.month} ${dateTimeInfo.day}, ${dateTimeInfo.year}
+Current time: ${dateTimeInfo.time}
+Timezone: ${dateTimeInfo.timezoneName}
+ISO DateTime: ${dateTimeInfo.isoDateTime}
+
+This is the exact current date, time, and year in the user's timezone. Always use this information when answering questions about dates, times, schedules, deadlines, or temporal context.`;
+  }
+
+  /**
    * Build system prompt based on context and complexity
    */
-  private buildSystemPrompt(request: OpenRouterRequest, complexity: any): string {
+  private async buildSystemPrompt(request: OpenRouterRequest, complexity: any): Promise<string> {
     const { appType, currentRecord, recordType, pageContext, workspaceContext } = request;
     
-    let basePrompt = `You are Adrata's AI assistant, specialized in sales intelligence and pipeline optimization. `;
+    // Start with explicit date/time at the top (using user's timezone)
+    const dateTimeString = await this.getCurrentDateTimeString(request.userId);
+    
+    let basePrompt = `${dateTimeString}
+
+You are Adrata's AI assistant, specialized in sales intelligence and pipeline optimization. `;
     
     // Add comprehensive workspace context if available
     if (workspaceContext) {
@@ -673,60 +712,60 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
     if (pageContext) {
       const contextInfo = ApplicationContextService.getPageContextInfo(pageContext);
       
-      prompt += `\n\nCURRENT PAGE CONTEXT:`;
-      prompt += `\n${contextInfo.contextString}`;
+      basePrompt += `\n\nCURRENT PAGE CONTEXT:`;
+      basePrompt += `\n${contextInfo.contextString}`;
       
       if (contextInfo.sectionInfo) {
-        prompt += `\n\nSECTION CAPABILITIES:`;
+        basePrompt += `\n\nSECTION CAPABILITIES:`;
         contextInfo.sectionInfo.capabilities.forEach(cap => {
-          prompt += `\n- ${cap}`;
+          basePrompt += `\n- ${cap}`;
         });
         
-        prompt += `\n\nCOMMON TASKS:`;
+        basePrompt += `\n\nCOMMON TASKS:`;
         contextInfo.sectionInfo.commonTasks.forEach(task => {
-          prompt += `\n- ${task}`;
+          basePrompt += `\n- ${task}`;
         });
         
-        prompt += `\n\nAI GUIDANCE:`;
-        prompt += `\n${contextInfo.guidance}`;
+        basePrompt += `\n\nAI GUIDANCE:`;
+        basePrompt += `\n${contextInfo.guidance}`;
         
         if (contextInfo.examples.length > 0) {
-          prompt += `\n\nEXAMPLE QUESTIONS I CAN HELP WITH:`;
+          basePrompt += `\n\nEXAMPLE QUESTIONS I CAN HELP WITH:`;
           contextInfo.examples.forEach(example => {
-            prompt += `\n- "${example}"`;
+            basePrompt += `\n- "${example}"`;
           });
         }
       }
       
       // Add specific item context if viewing a detail page
       if (pageContext.isDetailPage) {
-        prompt += `\n\nDETAIL VIEW CONTEXT:`;
-        prompt += `\n- Viewing specific item: ${pageContext.itemName || pageContext.itemId || 'Unknown'}`;
-        prompt += `\n- View type: ${pageContext.viewType}`;
-        prompt += `\n- Item ID: ${pageContext.itemId || 'N/A'}`;
+        basePrompt += `\n\nDETAIL VIEW CONTEXT:`;
+        basePrompt += `\n- Viewing specific item: ${pageContext.itemName || pageContext.itemId || 'Unknown'}`;
+        basePrompt += `\n- View type: ${pageContext.viewType}`;
+        basePrompt += `\n- Item ID: ${pageContext.itemId || 'N/A'}`;
         
         if (pageContext.filters && Object.keys(pageContext.filters).length > 0) {
-          prompt += `\n- Applied filters: ${Object.entries(pageContext.filters).map(([key, value]) => `${key}: ${value}`).join(', ')}`;
+          basePrompt += `\n- Applied filters: ${Object.entries(pageContext.filters).map(([key, value]) => `${key}: ${value}`).join(', ')}`;
         }
       }
     }
     
     // Add context-specific instructions
     if (currentRecord) {
-      prompt += `\n\nCurrent context: You're working with a ${recordType || 'record'} (${currentRecord.name || currentRecord.fullName || 'unnamed'}). `;
+      basePrompt += `\n\nCurrent context: You're working with a ${recordType || 'record'} (${currentRecord.name || currentRecord.fullName || 'unnamed'}). `;
     }
     
     if (appType) {
-      prompt += `\n\nYou're in the ${appType} application. `;
+      basePrompt += `\n\nYou're in the ${appType} application. `;
     }
 
     // Add complexity-specific instructions
     if (complexity.category === 'research') {
-      prompt += `\n\nThis appears to be a research query. Provide comprehensive, up-to-date information with sources when possible.`;
+      basePrompt += `\n\nThis appears to be a research query. Provide comprehensive, up-to-date information with sources when possible.`;
     } else if (complexity.category === 'complex') {
-      prompt += `\n\nThis is a complex query requiring strategic analysis. Provide detailed, actionable insights.`;
+      basePrompt += `\n\nThis is a complex query requiring strategic analysis. Provide detailed, actionable insights.`;
     } else if (complexity.category === 'simple') {
-      prompt += `\n\nThis is a simple query. Provide a concise, direct answer.`;
+      basePrompt += `\n\nThis is a simple query. Provide a concise, direct answer.`;
     }
 
     basePrompt += `\n\nAlways be helpful, accurate, and focused on sales intelligence and business outcomes.`;

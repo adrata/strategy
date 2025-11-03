@@ -11,13 +11,13 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
         <h3 className="text-lg font-semibold text-foreground mb-4">Competitive Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Known Competitors</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Known Competitors</label>
             <div className="space-y-2">
               {record?.competitorMentions?.length > 0 ? (
                 record.competitorMentions.map((competitor: string, index: number) => (
-                  <div key={index} className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-yellow-800 text-sm font-medium">{competitor}</p>
-                    <p className="text-yellow-600 text-xs">Mentioned in conversations</p>
+                  <div key={index} className="bg-warning/10 border border-warning rounded-lg p-3">
+                    <p className="text-warning text-sm font-medium">{competitor}</p>
+                    <p className="text-warning/80 text-xs">Mentioned in conversations</p>
                   </div>
                 ))
               ) : (
@@ -30,25 +30,25 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Competitive Threats</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Competitive Threats</label>
             <div className="space-y-2">
               {record?.competitiveThreats ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <div className="text-sm text-red-800">{JSON.stringify(record.competitiveThreats)}</div>
+                <div className="bg-error/10 border border-error rounded-lg p-3">
+                  <div className="text-sm text-error">{JSON.stringify(record.competitiveThreats)}</div>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-red-800 text-sm font-medium">Incumbent Solutions</p>
-                    <p className="text-red-600 text-xs">Existing vendor relationships</p>
+                  <div className="bg-error/10 border border-error rounded-lg p-3">
+                    <p className="text-error text-sm font-medium">Incumbent Solutions</p>
+                    <p className="text-error/80 text-xs">Existing vendor relationships</p>
                   </div>
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-red-800 text-sm font-medium">Status Quo Bias</p>
-                    <p className="text-red-600 text-xs">Resistance to change</p>
+                  <div className="bg-error/10 border border-error rounded-lg p-3">
+                    <p className="text-error text-sm font-medium">Status Quo Bias</p>
+                    <p className="text-error/80 text-xs">Resistance to change</p>
                   </div>
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-red-800 text-sm font-medium">Budget Constraints</p>
-                    <p className="text-red-600 text-xs">Competing priorities</p>
+                  <div className="bg-error/10 border border-error rounded-lg p-3">
+                    <p className="text-error text-sm font-medium">Budget Constraints</p>
+                    <p className="text-error/80 text-xs">Competing priorities</p>
                   </div>
                 </div>
               )}
@@ -71,7 +71,7 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
             </div>
           </div>
           
-          <div className="bg-yellow-50 rounded-lg p-4">
+          <div className="bg-warning/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Competitive Gaps</h4>
             <div className="space-y-1 text-sm text-yellow-700">
               <p>• Market presence in {record?.industry || 'industry'}</p>

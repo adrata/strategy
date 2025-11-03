@@ -120,6 +120,7 @@ model workspaces {
   // Workshop relations
   workshopDocuments           workshopDocument[]
   workshopFolders            workshopFolder[]
+  api_keys                   api_keys[]
 
   @@index([slug])
   @@index([isActive])
@@ -165,6 +166,7 @@ model users {
   user_roles                                                            user_roles[]
   workspaces                                                            workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
   workspace_users                                                       workspace_users[]
+  api_keys                                                              api_keys[]
   
   // Workshop relations
   workshopDocumentsOwned                                                 workshopDocument[]            @relation("WorkshopDocumentOwner")
@@ -235,6 +237,62 @@ model reset_tokens {
   @@index([token])
   @@index([used])
   @@index([userId])
+}
+
+/// API Keys for external API access
+model api_keys {
+  id                      String           @id @default(ulid())
+  workspaceId             String            @db.VarChar(30)
+  userId                  String            @db.VarChar(30)
+  name                    String            @db.VarChar(255)
+  keyPrefix               String            @db.VarChar(50) // e.g., "adrata_live_"
+  hashedKey               String            @db.VarChar(255) // bcrypt hash of the secret portion
+  lastUsedAt              DateTime?
+  expiresAt               DateTime?
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+  isActive                Boolean           @default(true)
+  
+  // Enhanced security fields
+  scopes                  String[]         @default([]) // e.g., ["buyer-groups:read", "companies:read"]
+  allowedIps              String[]        @default([]) // IP addresses/CIDR blocks allowed
+  deniedIps                String[]         @default([]) // IP addresses/CIDR blocks blocked
+  rateLimitPerHour         Int?             @default(1000) // Requests per hour
+  rateLimitPerDay          Int?             @default(10000) // Requests per day
+  
+  // Key rotation fields
+  lastRotatedAt            DateTime?
+  rotationGracePeriodEndsAt DateTime?      // Grace period after rotation
+  
+  workspace                workspaces        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user                     users            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage                    api_key_usage[]
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([keyPrefix])
+  @@index([isActive])
+  @@index([expiresAt])
+  @@index([lastUsedAt])
+}
+
+/// API Key Usage Tracking
+model api_key_usage {
+  id          String    @id @default(ulid())
+  apiKeyId    String    @db.VarChar(30)
+  endpoint    String    @db.VarChar(255)
+  method      String    @db.VarChar(10)
+  statusCode  Int
+  responseTime Int      // milliseconds
+  ipAddress   String?   @db.VarChar(45) // IPv4 or IPv6
+  userAgent   String?   @db.VarChar(500)
+  createdAt   DateTime  @default(now())
+  apiKey      api_keys  @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId])
+  @@index([createdAt])
+  @@index([endpoint])
+  @@index([statusCode])
 }
 
 /// Core Companies - Global canonical company data (no workspaceId)

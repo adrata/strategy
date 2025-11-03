@@ -180,7 +180,7 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
           {/* Action Button */}
           <button
             onClick={onAddRecord}
-            className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 border border-blue-200 px-6 py-3 rounded-lg font-medium hover:bg-blue-100 transition-colors"
+            className="inline-flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-6 py-3 rounded-lg font-medium hover:bg-primary/20 transition-colors"
           >
             <PlusIcon className="w-5 h-5" />
             Add Your First {section.slice(0, -1)}
@@ -192,7 +192,7 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
             <ul className="space-y-2">
               {sectionInfo.suggestions.map((suggestion, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-muted">
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-1.5 h-1.5 bg-muted rounded-full mt-2 flex-shrink-0"></div>
                   {suggestion}
                 </li>
               ))}

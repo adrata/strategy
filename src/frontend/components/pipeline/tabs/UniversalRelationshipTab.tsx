@@ -11,25 +11,25 @@ export function UniversalRelationshipTab({ record, recordType, onSave }: Univers
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Relationship Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Relationship Strength</h4>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-primary">
               {record?.relationshipStrength || '-'}
             </div>
             <p className="text-sm text-muted mt-1">Current relationship level</p>
           </div>
           
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Client Since</h4>
-            <div className="text-lg font-bold text-green-600">
+            <div className="text-lg font-bold text-success">
               {record?.clientSince ? new Date(record.clientSince).toLocaleDateString() : record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : '-'}
             </div>
             <p className="text-sm text-muted mt-1">Relationship duration</p>
           </div>
           
-          <div className="bg-purple-50 rounded-lg p-4">
+          <div className="bg-info/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Satisfaction Score</h4>
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold text-info">
               {record?.satisfactionScore ? `${Math.round(record.satisfactionScore)}/10` : '-'}
             </div>
             <p className="text-sm text-muted mt-1">Overall satisfaction</p>

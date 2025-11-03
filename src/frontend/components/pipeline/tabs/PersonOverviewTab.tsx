@@ -587,7 +587,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
+              <h5 className="text-sm font-medium text-foreground mb-2">Wants</h5>
               <ul className="space-y-1">
                 {wants.map((want, index) => (
                   <li key={index} className="text-sm text-muted flex items-start">
@@ -598,7 +598,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               </ul>
             </div>
             <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
+              <h5 className="text-sm font-medium text-foreground mb-2">Needs</h5>
               <ul className="space-y-1">
                 {needs.map((need, index) => (
                   <li key={index} className="text-sm text-muted flex items-start">

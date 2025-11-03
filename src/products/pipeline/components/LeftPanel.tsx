@@ -716,7 +716,7 @@ function PipelineSections({
         if (speedrunReadyCount > 0) {
           console.log('✅ [SPEEDRUN COUNT] Showing Ready pill - speedrunReadyCount:', speedrunReadyCount);
           return (
-            <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+            <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
               <span className="text-xs font-semibold">Ready</span>
             </div>
           );
@@ -731,7 +731,7 @@ function PipelineSections({
         // If people exist but speedrun is 0, show Done
         if (totalPeople > 0 && speedrunCount === 0) {
           return (
-            <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+            <div className="flex items-center gap-1 bg-success/10 text-success px-2 py-0.5 rounded-full">
               <CheckIcon className="w-3 h-3" />
               <span className="text-xs font-semibold">Done</span>
             </div>
@@ -827,7 +827,7 @@ function PipelineSections({
       description: "Business Intelligence Reports",
       count: isNotaryEveryday ? (
         chronicleUnreadCount > 0 ? (
-          <span className="bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full">
+          <span className="bg-warning/10 text-warning text-xs px-2 py-0.5 rounded-full">
             New
           </span>
         ) : (
@@ -945,7 +945,7 @@ function PipelineSections({
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                 activeSection === section.id
                   ? 'bg-hover text-foreground'
-                  : 'hover:bg-panel-background text-gray-700'
+                  : 'hover:bg-panel-background text-foreground'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -967,7 +967,7 @@ function PipelineSections({
         <>
           <button
             onClick={() => setIsMoreExpanded(!isMoreExpanded)}
-            className={`w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-panel-background text-gray-700`}
+            className={`w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-panel-background text-foreground`}
           >
             <div className="flex items-center justify-between">
               <span className="font-medium text-sm">More</span>

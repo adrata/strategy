@@ -250,12 +250,12 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   if (companyError) {
     return (
       <div className="p-8 text-center">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-error/10 border border-error text-error px-4 py-3 rounded mb-4">
           <h3 className="text-lg font-semibold mb-2">Error Loading Company Data</h3>
           <p className="text-sm">{companyError}</p>
           <button 
             onClick={fetchFullCompanyData}
-            className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="mt-3 px-4 py-2 bg-error text-white rounded hover:bg-error/90"
           >
             Retry
           </button>

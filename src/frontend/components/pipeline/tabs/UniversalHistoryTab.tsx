@@ -46,11 +46,11 @@ export function UniversalHistoryTab({ recordType, record: recordProp }: Universa
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'scheduled': return 'bg-blue-100 text-blue-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-hover text-gray-800';
+      case 'completed': return 'bg-success/10 text-success';
+      case 'scheduled': return 'bg-primary/10 text-primary';
+      case 'pending': return 'bg-warning/10 text-warning';
+      case 'cancelled': return 'bg-error/10 text-error';
+      default: return 'bg-hover text-foreground';
     }
   };
 
@@ -95,7 +95,7 @@ export function UniversalHistoryTab({ recordType, record: recordProp }: Universa
                   
                   {activity.outcome && (
                     <div className="mb-2">
-                      <span className="text-sm font-medium text-gray-700">Outcome: </span>
+                      <span className="text-sm font-medium text-foreground">Outcome: </span>
                       <span className="text-sm text-muted">{activity.outcome}</span>
                     </div>
                   )}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
-import { authFetch } from '@/platform/api-fetch';
+import { authFetch, apiPost } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
@@ -2943,46 +2943,9 @@ export function UniversalRecordTemplate({
           requestBody: requestBody
         });
       
-      // Make API call to log the action
+      // Make API call to log the action using apiPost for better error handling
       console.log('🌐 [UNIVERSAL] Making API call to:', apiEndpoint);
-      let response;
-      try {
-        response = await fetch(apiEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies for authentication
-          body: JSON.stringify(requestBody),
-        });
-      } catch (networkError) {
-        console.error('❌ [UNIVERSAL] Network error during API call:', networkError);
-        throw new Error(`Network error: ${networkError instanceof Error ? networkError.message : 'Unknown network error'}`);
-      }
-
-      console.log('📡 [UNIVERSAL] API response received:', {
-        ok: response.ok,
-        status: response.status,
-        statusText: response.statusText,
-        url: response.url
-      });
-
-      if (!response.ok) {
-        // Try to get error details from response body
-        let errorDetails = '';
-        try {
-          const errorBody = await response.json();
-          errorDetails = errorBody.error || errorBody.message || 'Unknown error';
-          console.error('❌ [UNIVERSAL] API error response:', errorBody);
-        } catch (e) {
-          errorDetails = response.statusText || `HTTP ${response.status}`;
-          console.error('❌ [UNIVERSAL] Could not parse error response:', e);
-        }
-        
-        throw new Error(`Failed to log action: ${errorDetails} (Status: ${response.status})`);
-        }
-
-        const result = await response.json();
+      const result = await apiPost(apiEndpoint, requestBody);
         
         console.log('📡 [UNIVERSAL] Full API response result:', {
           success: result.success,
@@ -3078,7 +3041,15 @@ export function UniversalRecordTemplate({
       
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error logging action:', error);
-      showMessage(`Error: ${error instanceof Error ? error.message : 'Failed to log action'}`, 'error');
+      
+      // Handle authentication errors specifically
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('401') || errorMessage.includes('Authentication') || errorMessage.includes('Unauthorized')) {
+        showMessage('Authentication required. Please refresh the page or log in again.', 'error');
+        console.warn('🔐 [UNIVERSAL] Authentication error detected - user may need to re-authenticate');
+      } else {
+        showMessage(`Error: ${errorMessage}`, 'error');
+      }
     } finally {
       setLoading(false);
     }

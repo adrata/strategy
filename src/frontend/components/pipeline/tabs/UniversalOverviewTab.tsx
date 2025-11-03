@@ -690,12 +690,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     { value: 'SUPERFAN', label: 'Superfan' }
                   ]}
                   className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    (recordData.status || recordData.stage) === 'LEAD' ? 'bg-blue-100 text-blue-800' :
-                    (recordData.status || recordData.stage) === 'PROSPECT' ? 'bg-purple-100 text-purple-800' :
-                    (recordData.status || recordData.stage) === 'OPPORTUNITY' ? 'bg-yellow-100 text-yellow-800' :
-                    (recordData.status || recordData.stage) === 'CLIENT' ? 'bg-green-100 text-green-800' :
-                    (recordData.status || recordData.stage) === 'SUPERFAN' ? 'bg-pink-100 text-pink-800' :
-                    'bg-gray-100 text-gray-800'
+                    (recordData.status || recordData.stage) === 'LEAD' ? 'bg-warning/10 text-warning' :
+                    (recordData.status || recordData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary' :
+                    (recordData.status || recordData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info' :
+                    (recordData.status || recordData.stage) === 'CLIENT' ? 'bg-success/10 text-success' :
+                    (recordData.status || recordData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info' :
+                    'bg-hover text-foreground'
                   }`}
                 />
               </div>
@@ -937,7 +937,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Last Action:</span>
                 <div className="flex items-center gap-2">
-                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-gray-800">
+                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-foreground">
                     {getTimingLabel(recordData.lastContact)}
                   </span>
                   <InlineEditField
@@ -954,7 +954,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Next Action:</span>
                 <div className="flex items-center gap-2">
-                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-gray-800">
+                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-foreground">
                     {getTimingLabel(recordData.nextActionDate)}
                   </span>
                   <InlineEditField

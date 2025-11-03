@@ -76,6 +76,21 @@ export async function getSecureApiContext(
     // Prioritize activeWorkspaceId over workspaceId if available
     const workspaceId = (authUser as any).activeWorkspaceId || authUser.workspaceId;
     
+    // Validate that we have a workspaceId if workspace access is required
+    if (requireWorkspaceAccess && !workspaceId) {
+      return {
+        context: null,
+        response: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Workspace ID is required for this request',
+            code: 'WORKSPACE_ID_REQUIRED'
+          },
+          { status: 400 }
+        )
+      };
+    }
+    
     const context: SecureApiContext = {
       userId: authUser.id,
       userEmail: authUser.email,
@@ -84,30 +99,45 @@ export async function getSecureApiContext(
     };
 
     // 4. Validate workspace access if required
-    if (requireWorkspaceAccess && authUser.workspaceId) {
-      const workspaceAccess = await validateWorkspaceAccess(
-        authUser.id,
-        authUser.workspaceId,
-        requiredRole
-      );
+    if (requireWorkspaceAccess && workspaceId) {
+      try {
+        const workspaceAccess = await validateWorkspaceAccess(
+          authUser.id,
+          workspaceId,
+          requiredRole
+        );
 
-      if (!workspaceAccess.hasAccess) {
+        if (!workspaceAccess.hasAccess) {
+          return {
+            context: null,
+            response: NextResponse.json(
+              { 
+                success: false, 
+                error: workspaceAccess.error || 'Workspace access denied',
+                code: 'WORKSPACE_ACCESS_DENIED'
+              },
+              { status: 403 }
+            )
+          };
+        }
+
+        // Add role and permissions to context
+        context.role = workspaceAccess.role;
+        context.permissions = workspaceAccess.permissions;
+      } catch (workspaceError) {
+        console.error('❌ [SECURE API] Error validating workspace access:', workspaceError);
         return {
           context: null,
           response: NextResponse.json(
             { 
               success: false, 
-              error: workspaceAccess.error || 'Workspace access denied',
-              code: 'WORKSPACE_ACCESS_DENIED'
+              error: 'Failed to validate workspace access',
+              code: 'WORKSPACE_VALIDATION_ERROR'
             },
-            { status: 403 }
+            { status: 500 }
           )
         };
       }
-
-      // Add role and permissions to context
-      context.role = workspaceAccess.role;
-      context.permissions = workspaceAccess.permissions;
     }
 
     // 5. Check specific permission if required
@@ -130,6 +160,28 @@ export async function getSecureApiContext(
     return { context };
 
   } catch (error) {
+    // Handle rate limit errors specially
+    if (error instanceof Error && error.message?.startsWith('RATE_LIMIT_EXCEEDED:')) {
+      const retryAfter = error.message.split(':')[1] || '60';
+      return {
+        context: null,
+        response: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Rate limit exceeded',
+            code: 'RATE_LIMIT_EXCEEDED',
+            retryAfter: parseInt(retryAfter, 10)
+          },
+          { 
+            status: 429,
+            headers: {
+              'Retry-After': retryAfter
+            }
+          }
+        )
+      };
+    }
+    
     console.error('❌ [SECURE API] Error creating secure context:', error);
     return {
       context: null,

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 import { PRESET_TEMPLATES, getPresetTemplate, type PresetTemplateId } from '@/platform/ui/components/daily100Presets';
 import { ThemePicker } from '@/platform/ui/components/ThemePicker';
+import { getTimezoneOptionsGrouped } from '@/platform/utils/timezone-helper';
 import { 
   XMarkIcon, 
   CogIcon, 
@@ -495,6 +496,29 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       className="w-full p-3 border border-border rounded-md bg-panel-background text-muted"
                     />
                     <p className="text-xs text-muted mt-1">Email cannot be changed</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Time Zone
+                    </label>
+                    <select
+                      value={userSettings.timezone}
+                      onChange={(e) => setUserSettings(prev => ({ ...prev, timezone: e.target.value }))}
+                      className="w-full p-3 border border-border rounded-md bg-background text-foreground"
+                    >
+                      {Object.entries(getTimezoneOptionsGrouped()).map(([group, options]) => (
+                        <optgroup key={group} label={group}>
+                          {options.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                    <p className="text-xs text-muted mt-1">
+                      This timezone will be used for AI date/time awareness and scheduling
+                    </p>
                   </div>
                 </div>
               </div>

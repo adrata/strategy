@@ -15,10 +15,10 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, trend, trendValue, color = 'default' }: MetricCardProps) {
   const colorClasses = {
-    default: 'border-border bg-white',
-    success: 'border-green-500 bg-green-100',
-    warning: 'border-border bg-white',
-    danger: 'border-red-500 bg-red-100'
+    default: 'border-border bg-background',
+    success: 'border-success bg-success/10',
+    warning: 'border-border bg-background',
+    danger: 'border-error bg-error/10'
   };
 
   const trendIcons = {

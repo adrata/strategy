@@ -130,7 +130,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter job title"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -142,7 +142,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter department"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -154,7 +154,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter seniority level"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -166,7 +166,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter buyer group role"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -178,7 +178,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter influence level"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -190,7 +190,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter engagement priority"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter decision making authority"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -221,7 +221,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter budget authority"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -233,7 +233,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter technical influence"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -245,7 +245,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter procurement role"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
         </div>
@@ -264,7 +264,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter reporting structure"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -276,7 +276,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter team size"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -288,7 +288,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter years in role"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
           <div>
@@ -300,7 +300,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
               recordType={recordType}
               placeholder="Enter years at company"
               onSave={handleInlineSave}
-              className="text-sm text-gray-800 font-medium"
+              className="text-sm text-foreground font-medium"
             />
           </div>
         </div>

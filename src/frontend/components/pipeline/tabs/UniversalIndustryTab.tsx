@@ -24,19 +24,19 @@ export function UniversalIndustryTab({ record, recordType }: UniversalIndustryTa
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-muted mb-1">Industry</label>
-            <p className="text-sm text-gray-800 font-medium">{industry}</p>
+            <p className="text-sm text-foreground font-medium">{industry}</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-muted mb-1">Company Size</label>
-            <p className="text-sm text-gray-800 font-medium">{companySize}</p>
+            <p className="text-sm text-foreground font-medium">{companySize}</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-muted mb-1">Sector</label>
-            <p className="text-sm text-gray-800 font-medium">{sector}</p>
+            <p className="text-sm text-foreground font-medium">{sector}</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-muted mb-1">Vertical</label>
-            <p className="text-sm text-gray-800 font-medium">{vertical}</p>
+            <p className="text-sm text-foreground font-medium">{vertical}</p>
           </div>
         </div>
       </div>

@@ -19,12 +19,12 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
         <h3 className="text-lg font-semibold text-foreground mb-4">Pain Points & Buying Signals</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Identified Pain Points</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Identified Pain Points</label>
             <div className="space-y-2">
               {record?.painPoints?.length > 0 ? (
                 record.painPoints.slice(0, 3).map((pain: string, index: number) => (
-                  <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-red-800 text-sm">{pain}</p>
+                  <div key={index} className="bg-error/10 border border-error rounded-lg p-3">
+                    <p className="text-error text-sm">{pain}</p>
                   </div>
                 ))
               ) : (
@@ -37,12 +37,12 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Buying Signals</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Buying Signals</label>
             <div className="space-y-2">
               {record?.buyingSignals?.length > 0 ? (
                 record.buyingSignals.slice(0, 3).map((signal: string, index: number) => (
-                  <div key={index} className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-green-800 text-sm">{signal}</p>
+                  <div key={index} className="bg-success/10 border border-success rounded-lg p-3">
+                    <p className="text-success text-sm">{signal}</p>
                   </div>
                 ))
               ) : (

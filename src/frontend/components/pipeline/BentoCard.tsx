@@ -27,9 +27,9 @@ export function BentoCard({
 
   const colorClasses = {
     default: 'border-border bg-background',
-    success: 'border-green-500 bg-green-100',
-    warning: 'border-border bg-white',
-    danger: 'border-red-500 bg-red-100'
+    success: 'border-success bg-success/10',
+    warning: 'border-border bg-background',
+    danger: 'border-error bg-error/10'
   };
   
   return (

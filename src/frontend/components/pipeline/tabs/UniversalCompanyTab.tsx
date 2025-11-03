@@ -246,12 +246,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
   if (companyError) {
     return (
       <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 className="text-red-800 font-medium mb-2">Error Loading Company Data</h3>
-          <p className="text-red-600 text-sm mb-2">{companyError}</p>
+        <div className="bg-error/10 border border-error rounded-lg p-4">
+          <h3 className="text-error font-medium mb-2">Error Loading Company Data</h3>
+          <p className="text-error text-sm mb-2">{companyError}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="px-3 py-1 bg-red-100 text-red-700 border border-red-300 text-xs rounded hover:bg-red-200"
+            className="px-3 py-1 bg-error/10 text-error border border-error text-xs rounded hover:bg-error/20"
           >
             Retry
           </button>
@@ -1442,10 +1442,10 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
             {recentActivity.map((activity: any, index: number) => (
               <div key={index} className="flex items-start space-x-3">
                 <div className={`w-3 h-3 rounded-full mt-1 ${
-                  activity.color === 'blue' ? 'bg-blue-500' :
-                  activity.color === 'green' ? 'bg-green-500' :
-                  activity.color === 'purple' ? 'bg-purple-500' :
-                  'bg-orange-500'
+                  activity.color === 'blue' ? 'bg-primary' :
+                  activity.color === 'green' ? 'bg-success' :
+                  activity.color === 'purple' ? 'bg-info' :
+                  'bg-warning'
                 }`}></div>
                 <div className="flex-1">
                   <div className="text-sm font-medium text-foreground">

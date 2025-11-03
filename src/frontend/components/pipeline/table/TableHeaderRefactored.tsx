@@ -72,7 +72,7 @@ export function TableHeaderRefactored({
         return <ChevronDownIcon className="h-4 w-4 text-muted" />;
       } else {
         // Unsorted state - show neutral icon
-        return <ChevronUpIcon className="h-4 w-4 text-gray-300" />;
+        return <ChevronUpIcon className="h-4 w-4 text-muted" />;
       }
     }
     
