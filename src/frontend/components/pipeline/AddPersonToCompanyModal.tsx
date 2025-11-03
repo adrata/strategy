@@ -185,7 +185,7 @@ export function AddPersonToCompanyModal({
         source: "Manual Entry"
       };
 
-      const response = await authFetch(`/api/companies/${companyId}/people`, {
+      const result = await authFetch(`/api/companies/${companyId}/people`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -193,45 +193,39 @@ export function AddPersonToCompanyModal({
         body: JSON.stringify(personData)
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        // Handle both direct person object and wrapped response format
-        const newPerson = result.data || result;
-        
-        // Dispatch refresh events for immediate table update
-        window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
-          detail: { 
-            section: 'leads',
-            type: 'record-created',
-            recordId: newPerson.id 
-          }
-        }));
-        
-        window.dispatchEvent(new CustomEvent('refresh-counts', {
-          detail: { 
-            section: 'leads',
-            type: 'record-created'
-          }
-        }));
-        
-        onPersonAdded(newPerson);
-        onClose();
-      } else {
-        // Try to get detailed error message from API response
-        let errorMessage = 'Failed to create person. Please try again.';
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          } else if (errorData.error) {
-            errorMessage = errorData.error;
-          }
-        } catch (parseError) {
-          // If response is not JSON, use default message
-          console.error('Failed to parse error response:', parseError);
-        }
+      // authFetch returns parsed JSON data, not a Response object
+      // Check for success indicator in the response
+      if (result.success === false) {
+        const errorMessage = result.message || result.error || 'Failed to create person. Please try again.';
         throw new Error(errorMessage);
       }
+
+      // Handle both wrapped response format ({ success: true, data: ... }) and direct person object
+      const newPerson = result.data || result;
+      
+      // Validate we got a person object with an id
+      if (!newPerson || !newPerson.id) {
+        throw new Error('Invalid response: person data missing');
+      }
+      
+      // Dispatch refresh events for immediate table update
+      window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+        detail: { 
+          section: 'leads',
+          type: 'record-created',
+          recordId: newPerson.id 
+        }
+      }));
+      
+      window.dispatchEvent(new CustomEvent('refresh-counts', {
+        detail: { 
+          section: 'leads',
+          type: 'record-created'
+        }
+      }));
+      
+      onPersonAdded(newPerson);
+      onClose();
     } catch (error) {
       console.error('Error creating person:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create person. Please try again.';
