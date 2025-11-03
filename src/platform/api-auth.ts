@@ -31,6 +31,18 @@ function decodeJWT(token: string): any | null {
       return null;
     }
     
+    // Enhanced token validation logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 [JWT] Attempting to decode token:', {
+        tokenLength: token.length,
+        tokenPrefix: token.substring(0, 50) + '...',
+        tokenParts: token.split('.').length,
+        hasSecret: !!secret,
+        secretLength: secret.length,
+        secretPrefix: secret.substring(0, 10) + '...'
+      });
+    }
+    
     // Verify the JWT signature and decode the payload
     const decoded = jwt.verify(token, secret);
     
@@ -39,10 +51,19 @@ function decodeJWT(token: string): any | null {
       if (process.env.NODE_ENV === 'development') {
         console.warn("⚠️ [JWT] Token expired:", {
           expiredAt: new Date((decoded.exp as number) * 1000).toISOString(),
-          currentTime: new Date().toISOString()
+          currentTime: new Date().toISOString(),
+          expiredSecondsAgo: Math.floor((Date.now() / 1000) - (decoded.exp as number))
         });
       }
       return null;
+    }
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ [JWT] Token decoded successfully:', {
+        userId: (decoded as any).userId || (decoded as any).id || (decoded as any).sub,
+        email: (decoded as any).email,
+        workspaceId: (decoded as any).workspaceId || (decoded as any).activeWorkspaceId
+      });
     }
     
     return decoded;
@@ -51,14 +72,19 @@ function decodeJWT(token: string): any | null {
     if (process.env.NODE_ENV === 'development') {
       const errorDetails = error instanceof Error ? {
         message: error.message,
-        name: error.name
+        name: error.name,
+        stack: error.stack?.split('\n').slice(0, 3).join('\n')
       } : { message: String(error) };
       
       console.warn("⚠️ [JWT] Verification failed:", {
         ...errorDetails,
         tokenLength: token.length,
-        tokenPrefix: token.substring(0, 30) + '...',
-        hasSecret: !!process.env.NEXTAUTH_SECRET || !!process.env.JWT_SECRET
+        tokenPrefix: token.substring(0, 50) + '...',
+        tokenParts: token.split('.').length,
+        isJWTFormat: token.split('.').length === 3,
+        hasSecret: !!process.env.NEXTAUTH_SECRET || !!process.env.JWT_SECRET,
+        secretExists: !!secret,
+        secretLength: secret?.length || 0
       });
     } else {
       // Production: minimal logging
@@ -114,7 +140,8 @@ export async function getUnifiedAuthUser(
     
     if (!hasCookies) {
       logger.api.auth("No cookies found in request");
-      return null;
+      // Don't return null immediately - check Authorization header as fallback
+      // Continue to Authorization header check below
     }
     
     if (cookieHeader) {
@@ -153,68 +180,113 @@ export async function getUnifiedAuthUser(
           });
         }
         
-        return null;
-      }
-      
-      // If it's the unified session cookie, it might be JSON encoded
-      let actualToken = token;
-      try {
-        const sessionData = JSON.parse(token);
-        if (sessionData.accessToken) {
-          actualToken = sessionData.accessToken;
-        }
-      } catch (e) {
-        // Not JSON, use as-is
-      }
-      
-      const decoded = decodeJWT(actualToken);
-      if (decoded) {
-        logger.auth.success(`Valid token for: ${decoded.email}`);
-        // Log JWT workspace fields for debugging
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔍 [API AUTH] Decoded token workspace fields:', {
-            activeWorkspaceId: decoded.activeWorkspaceId,
-            workspaceId: decoded.workspaceId,
-            userId: decoded.userId || decoded.id || decoded.sub,
-            hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
-            email: decoded.email
-          });
-        }
-        // Extract workspace info - prioritize activeWorkspaceId if available
-        const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
-        return {
-          id: decoded.userId || decoded.id || decoded.sub,
-          email: decoded.email,
-          name: decoded.name,
-          workspaceId: workspaceId,
-          activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
-        };
+        // Don't return null - continue to check Authorization header as fallback
+        // Fall through to Authorization header check below
       } else {
-        logger.auth.error("JWT verification failed");
+        // If it's the unified session cookie, it might be JSON encoded
+        let actualToken = token;
+        try {
+          const sessionData = JSON.parse(token);
+          if (sessionData.accessToken) {
+            actualToken = sessionData.accessToken;
+          }
+        } catch (e) {
+          // Not JSON, use as-is
+        }
         
-        // Enhanced error logging for JWT verification failures
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('⚠️ [API AUTH] JWT verification failed:', {
-            tokenLength: actualToken.length,
-            tokenPrefix: actualToken.substring(0, 20) + '...',
-            possibleCauses: [
-              'Token expired',
-              'Invalid signature',
-              'Invalid token format',
-              'Missing JWT secret'
-            ]
-          });
+        const decoded = decodeJWT(actualToken);
+        if (decoded) {
+          logger.auth.success(`Valid token for: ${decoded.email}`);
+          // Log JWT workspace fields for debugging
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔍 [API AUTH] Decoded token workspace fields:', {
+              activeWorkspaceId: decoded.activeWorkspaceId,
+              workspaceId: decoded.workspaceId,
+              userId: decoded.userId || decoded.id || decoded.sub,
+              hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
+              email: decoded.email
+            });
+          }
+          // Extract workspace info - prioritize activeWorkspaceId if available
+          const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
+          return {
+            id: decoded.userId || decoded.id || decoded.sub,
+            email: decoded.email,
+            name: decoded.name,
+            workspaceId: workspaceId,
+            activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
+          };
+        } else {
+          logger.auth.error("JWT verification failed");
+          
+          // Enhanced error logging for JWT verification failures
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [API AUTH] JWT verification failed:', {
+              tokenLength: actualToken.length,
+              tokenPrefix: actualToken.substring(0, 20) + '...',
+              possibleCauses: [
+                'Token expired',
+                'Invalid signature',
+                'Invalid token format',
+                'Missing JWT secret'
+              ]
+            });
+          }
+          // Token found but invalid - continue to check Authorization header as fallback
         }
       }
     }
 
-    // 2. Try Authorization header (Bearer token)
-    const authHeader = req.headers.get("authorization");
+    // 2. Try Authorization header (Bearer token) - FALLBACK if cookies missing
+    // HTTP headers are case-insensitive - check all possible cases
+    let authHeader: string | null = null;
+    for (const [key, value] of req.headers.entries()) {
+      if (key.toLowerCase() === 'authorization') {
+        authHeader = value;
+        break;
+      }
+    }
+    
+    // Also try the standard get() method as fallback (Next.js may normalize)
+    if (!authHeader) {
+      authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
+    }
+    
+    // Log header presence for debugging
+    if (process.env.NODE_ENV === 'development') {
+      const allAuthHeaders = Array.from(req.headers.entries())
+        .filter(([key]) => key.toLowerCase() === 'authorization')
+        .map(([key, value]) => ({ key, valueLength: value.length, valuePrefix: value.substring(0, 30) + '...' }));
+      if (allAuthHeaders.length > 0) {
+        console.log('🔍 [API AUTH] Authorization header(s) found:', {
+          headerCount: allAuthHeaders.length,
+          headers: allAuthHeaders,
+          foundValue: authHeader ? { length: authHeader.length, prefix: authHeader.substring(0, 30) + '...' } : null
+        });
+      } else {
+        console.log('🔍 [API AUTH] No Authorization header found in request - checking all headers:', {
+          allHeaderKeys: Array.from(req.headers.keys()).slice(0, 20)
+        });
+      }
+    }
+    
     if (authHeader?.startsWith("Bearer ")) {
       const token = authHeader.split(" ")[1] || "";
       if (!token) {
-        console.warn("⚠️ API Auth: No token found in Bearer header");
+        if (process.env.NODE_ENV === 'development') {
+          console.warn("⚠️ [API AUTH] No token found in Bearer header");
+        }
         return null;
+      }
+      
+      // Log that we're using Authorization header fallback
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔄 [API AUTH] Using Authorization header fallback (cookies not found or invalid):', {
+          tokenLength: token.length,
+          tokenPrefix: token.substring(0, 20) + '...',
+          hasCookies: !!cookieHeader,
+          cookieCount: cookieHeader ? cookieHeader.split(';').length : 0
+        });
       }
 
       // First, try API key authentication (if token starts with adrata_)
@@ -387,6 +459,21 @@ export async function getUnifiedAuthUser(
         };
       } else {
         logger.auth.error("Bearer token verification failed");
+        // Enhanced error logging for JWT verification failures from Authorization header
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ [API AUTH] Authorization header token verification failed:', {
+            tokenLength: token.length,
+            tokenPrefix: token.substring(0, 30) + '...',
+            possibleCauses: [
+              'Token expired',
+              'Invalid signature',
+              'Invalid token format',
+              'Missing or incorrect JWT secret',
+              'Token not from localStorage session'
+            ],
+            hasJWTSecret: !!(process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET)
+          });
+        }
       }
     }
 

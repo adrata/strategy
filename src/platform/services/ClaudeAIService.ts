@@ -190,7 +190,7 @@ export class ClaudeAIService {
       }
       
       // SECURITY: Build protected system prompt with injection resistance
-      const baseSystemPrompt = this.buildEnhancedSystemPrompt(sanitizedRequest, dataContext);
+      const baseSystemPrompt = await this.buildEnhancedSystemPrompt(sanitizedRequest, dataContext);
       const protectedPrompt = systemPromptProtector.protectPrompt(
         baseSystemPrompt,
         sanitizedRequest.conversationHistory || [],
@@ -601,7 +601,7 @@ export class ClaudeAIService {
   /**
    * Build enhanced system prompt with sales context and data access
    */
-  private buildEnhancedSystemPrompt(request: ClaudeChatRequest, dataContext: any): string {
+  private async buildEnhancedSystemPrompt(request: ClaudeChatRequest, dataContext: any): Promise<string> {
     const currentRecord = request.currentRecord;
     const recordType = request.recordType;
     const listViewContext = request.listViewContext;
