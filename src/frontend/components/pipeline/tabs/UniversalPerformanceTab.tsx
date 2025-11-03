@@ -24,7 +24,7 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Performance Dashboard</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Overall Score</h4>
             <InlineEditField
               value={record?.performanceScore ? `${Math.round(record.performanceScore)}/100` : ''}
@@ -34,12 +34,12 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter performance score"
-              className="text-2xl font-bold text-blue-600"
+              className="text-2xl font-bold text-primary"
             />
             <p className="text-sm text-muted mt-1">Partnership performance</p>
           </div>
           
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Revenue</h4>
             <InlineEditField
               value={record?.partnerRevenue ? `$${record.partnerRevenue.toLocaleString()}` : ''}
@@ -49,12 +49,12 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter partner revenue"
-              className="text-lg font-bold text-green-600"
+              className="text-lg font-bold text-success"
             />
             <p className="text-sm text-muted mt-1">This year</p>
           </div>
           
-          <div className="bg-purple-50 rounded-lg p-4">
+          <div className="bg-info/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Growth</h4>
             <InlineEditField
               value={record?.revenueGrowth ? `${Math.round(record.revenueGrowth)}%` : ''}
@@ -150,22 +150,22 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
               <div className="text-center">
                 <p className="text-muted">Q1</p>
                 <p className="font-medium text-foreground">$580K</p>
-                <p className="text-green-600 text-xs">+12%</p>
+                <p className="text-success text-xs">+12%</p>
               </div>
               <div className="text-center">
                 <p className="text-muted">Q2</p>
                 <p className="font-medium text-foreground">$720K</p>
-                <p className="text-green-600 text-xs">+24%</p>
+                <p className="text-success text-xs">+24%</p>
               </div>
               <div className="text-center">
                 <p className="text-muted">Q3</p>
                 <p className="font-medium text-foreground">$890K</p>
-                <p className="text-green-600 text-xs">+23%</p>
+                <p className="text-success text-xs">+23%</p>
               </div>
               <div className="text-center">
                 <p className="text-muted">Q4</p>
                 <p className="font-medium text-foreground">$610K</p>
-                <p className="text-blue-600 text-xs">Projected</p>
+                <p className="text-primary text-xs">Projected</p>
               </div>
             </div>
           </div>
@@ -175,13 +175,13 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted">Revenue Attainment:</span>
-                <span className="ml-2 font-medium text-green-600">
+                  <span className="ml-2 font-medium text-success">
                   {record?.revenueAttainment || '112%'} of target
                 </span>
               </div>
               <div>
                 <span className="text-muted">Deal Velocity:</span>
-                <span className="ml-2 font-medium text-blue-600">
+                  <span className="ml-2 font-medium text-primary">
                   {record?.dealVelocityTrend || '15%'} improvement
                 </span>
               </div>
@@ -219,15 +219,15 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
                 <div className="space-y-2">
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                     <p className="text-green-800 text-sm">Strong Customer Relationships</p>
-                    <p className="text-green-600 text-xs">High trust and repeat business</p>
+                    <p className="text-success text-xs">High trust and repeat business</p>
                   </div>
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                     <p className="text-green-800 text-sm">Technical Expertise</p>
-                    <p className="text-green-600 text-xs">Deep product knowledge and skills</p>
+                    <p className="text-success text-xs">Deep product knowledge and skills</p>
                   </div>
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                     <p className="text-green-800 text-sm">Market Penetration</p>
-                    <p className="text-green-600 text-xs">Strong presence in target segments</p>
+                    <p className="text-success text-xs">Strong presence in target segments</p>
                   </div>
                 </div>
               )}
@@ -246,16 +246,16 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
               ) : (
                 <div className="space-y-2">
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-yellow-800 text-sm">Expand Service Offerings</p>
-                    <p className="text-yellow-600 text-xs">Add consulting and managed services</p>
+                    <p className="text-warning text-sm">Expand Service Offerings</p>
+                    <p className="text-warning/80 text-xs">Add consulting and managed services</p>
                   </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-yellow-800 text-sm">New Market Segments</p>
-                    <p className="text-yellow-600 text-xs">Target mid-market and SMB</p>
+                  <div className="bg-warning/10 border border-warning rounded-lg p-3">
+                    <p className="text-warning text-sm">New Market Segments</p>
+                    <p className="text-warning/80 text-xs">Target mid-market and SMB</p>
                   </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-yellow-800 text-sm">Digital Marketing</p>
-                    <p className="text-yellow-600 text-xs">Enhance online presence and lead gen</p>
+                  <div className="bg-warning/10 border border-warning rounded-lg p-3">
+                    <p className="text-warning text-sm">Digital Marketing</p>
+                    <p className="text-warning/80 text-xs">Enhance online presence and lead gen</p>
                   </div>
                 </div>
               )}
@@ -339,7 +339,7 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted">Progress to Goal:</span>
-                  <span className="font-medium text-green-600">{record?.progressToGoal || '87%'}</span>
+                  <span className="font-medium text-success">{record?.progressToGoal || '87%'}</span>
                 </div>
               </div>
             </div>

@@ -56,7 +56,7 @@ export function TableRowRefactored({
   const getRowClasses = () => {
     const baseClasses = 'border-b border-border';
     const hoverClasses = isHoverable ? 'hover:bg-panel-background' : '';
-    const selectedClasses = isSelected ? 'bg-blue-50' : '';
+    const selectedClasses = isSelected ? 'bg-primary/10' : '';
     const clickableClasses = onClick ? 'cursor-pointer' : '';
     
     return `${baseClasses} ${hoverClasses} ${selectedClasses} ${clickableClasses} ${className}`.trim();

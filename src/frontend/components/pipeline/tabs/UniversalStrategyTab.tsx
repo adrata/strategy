@@ -73,7 +73,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'gatekeeper', label: 'Gatekeeper' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -92,7 +92,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'low', label: 'Low' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -111,7 +111,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'long', label: 'Long (6+ months)' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -129,7 +129,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'high', label: 'High' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
               </div>
@@ -148,7 +148,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     recordType={recordType}
                     placeholder="Enter budget"
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -160,7 +160,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     recordType={recordType}
                     placeholder="Enter estimated value"
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -178,7 +178,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'CAD', label: 'CAD' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -233,7 +233,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'Friendly', label: 'Friendly' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -251,7 +251,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'Directive', label: 'Directive' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
                 <div>
@@ -270,7 +270,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       { value: 'champion', label: 'Champion' }
                     ]}
                     onSave={handleInlineSave}
-                    className="text-sm text-gray-800 font-medium"
+                    className="text-sm text-foreground font-medium"
                   />
                 </div>
               </div>

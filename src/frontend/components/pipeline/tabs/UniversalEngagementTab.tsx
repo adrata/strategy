@@ -11,12 +11,12 @@ export function UniversalEngagementTab({ record, recordType, onSave }: Universal
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Engagement Overview</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Engagement Level</h4>
             <div className={`text-2xl font-bold ${
-              record?.engagementLevel === 'high' ? 'text-green-600' :
-              record?.engagementLevel === 'medium' ? 'text-yellow-600' :
-              record?.engagementLevel === 'low' ? 'text-red-600' :
+              record?.engagementLevel === 'high' ? 'text-success' :
+              record?.engagementLevel === 'medium' ? 'text-warning' :
+              record?.engagementLevel === 'low' ? 'text-error' :
               'text-muted'
             }`}>
               {record?.engagementLevel || '-'}
@@ -24,9 +24,9 @@ export function UniversalEngagementTab({ record, recordType, onSave }: Universal
             <p className="text-sm text-muted mt-1">Current engagement status</p>
           </div>
           
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Response Rate</h4>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success">
               {record?.responseRate ? `${Math.round(record.responseRate * 100)}%` : '-'}
             </div>
             <p className="text-sm text-muted mt-1">Email/call response rate</p>
@@ -129,8 +129,8 @@ export function UniversalEngagementTab({ record, recordType, onSave }: Universal
             <div className="space-y-2">
               {record?.painPoints?.length > 0 ? (
                 record.painPoints.slice(0, 4).map((pain: string, index: number) => (
-                  <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-red-800 text-sm">{pain}</p>
+                  <div key={index} className="bg-error/10 border border-error rounded-lg p-3">
+                    <p className="text-error text-sm">{pain}</p>
                   </div>
                 ))
               ) : (

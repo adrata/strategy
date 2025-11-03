@@ -197,7 +197,7 @@ export function CompanySelector({
     
     return parts.map((part, index) => 
       regex.test(part) ? (
-        <mark key={index} className="bg-blue-100 text-blue-900 font-semibold px-1 rounded">
+        <mark key={index} className="bg-primary/10 text-primary font-semibold px-1 rounded">
           {part}
         </mark>
       ) : part
@@ -428,15 +428,15 @@ export function CompanySelector({
                   key={company.id}
                   type="button"
                   onClick={() => handleCompanySelect(company)}
-                  className={`w-full px-4 py-2.5 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors ${
-                    selectedIndex === index ? 'bg-blue-50' : ''
+                  className={`w-full px-4 py-2.5 text-left hover:bg-primary/10 focus:bg-primary/10 focus:outline-none transition-colors ${
+                    selectedIndex === index ? 'bg-primary/10' : ''
                   }`}
                 >
-                  <div className="font-medium text-gray-900">
+                  <div className="font-medium text-foreground">
                     {highlightText(company.name, searchQuery)}
                   </div>
                   {company.domain && (
-                    <div className="text-sm text-gray-500 mt-0.5">
+                    <div className="text-sm text-muted mt-0.5">
                       {highlightText(company.domain, searchQuery)}
                     </div>
                   )}

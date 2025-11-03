@@ -105,7 +105,7 @@ function ActivityMetric({
   
   // Determine performance status for progress bar color only (minimal design)
   const getProgressBarColor = () => {
-    if (!target) return 'bg-gray-400';
+    if (!target) return 'bg-muted';
     
     // Smart progress indication based on day of week
     const now = new Date();
@@ -116,19 +116,19 @@ function ActivityMetric({
     // More lenient thresholds early in the week
     if (daysIntoWeek <= 1) {
       // Monday/Tuesday - very lenient
-      if (progress >= 20) return 'bg-green-500';      // On track
-      if (progress >= 10) return 'bg-yellow-500';     // Behind but recoverable  
-      return 'bg-gray-400';                           // Too early to judge
+      if (progress >= 20) return 'bg-success';      // On track
+      if (progress >= 10) return 'bg-warning';     // Behind but recoverable  
+      return 'bg-muted';                           // Too early to judge
     } else if (daysIntoWeek <= 3) {
       // Wednesday/Thursday - moderate
-      if (progress >= 60) return 'bg-green-500';      // On track
-      if (progress >= 30) return 'bg-yellow-500';     // Behind but recoverable  
-      return 'bg-red-500';                            // Needs attention
+      if (progress >= 60) return 'bg-success';      // On track
+      if (progress >= 30) return 'bg-warning';     // Behind but recoverable  
+      return 'bg-error';                            // Needs attention
     } else {
       // Friday+ - strict
-      if (progress >= 80) return 'bg-green-500';      // On track
-      if (progress >= 50) return 'bg-yellow-500';     // Behind but recoverable  
-      return 'bg-red-500';                            // Needs attention
+      if (progress >= 80) return 'bg-success';      // On track
+      if (progress >= 50) return 'bg-warning';     // Behind but recoverable  
+      return 'bg-error';                            // Needs attention
     }
   };
   

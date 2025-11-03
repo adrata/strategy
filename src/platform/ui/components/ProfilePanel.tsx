@@ -31,7 +31,8 @@ import {
   Bars3Icon,
   ClockIcon,
   CheckIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  KeyIcon
 } from "@heroicons/react/24/outline";
 import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -316,6 +317,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     if (pathname.includes('/adrata')) return 'adrata';
     if (pathname.includes('/stacks')) return 'stacks';
     if (pathname.includes('/olympus')) return 'olympus';
+    if (pathname.includes('/api')) return 'api-keys';
     if (pathname.includes('/grand-central')) return 'grand-central';
     if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
     return propCurrentApp; // Fallback to prop or default
@@ -860,6 +862,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <ChatBubbleLeftRightIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Oasis</span>
+            </button>
+
+            {/* API Keys */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'api-keys' || pathname?.includes('/api')
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-foreground hover:bg-hover'
+              }`}
+              onClick={() => handleNavigation("/api/keys")}
+            >
+              <KeyIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">API Keys</span>
             </button>
 
             {/* Grand Central */}

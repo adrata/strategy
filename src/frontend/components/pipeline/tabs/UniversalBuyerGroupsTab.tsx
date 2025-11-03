@@ -705,21 +705,21 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                       {riskAssessment.level}
                     </span>
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      member.role === 'Decision Maker' ? 'bg-red-100 text-red-800' :
-                      member.role === 'Champion' ? 'bg-green-100 text-green-800' :
-                      member.role === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                      member.role === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                      'bg-hover text-gray-800'
+                      member.role === 'Decision Maker' ? 'bg-error/10 text-error' :
+                      member.role === 'Champion' ? 'bg-success/10 text-success' :
+                      member.role === 'Blocker' ? 'bg-warning/10 text-warning' :
+                      member.role === 'Stakeholder' ? 'bg-primary/10 text-primary' :
+                      'bg-hover text-foreground'
                     }`}>
                       {member.role}
                     </span>
                     {/* ADD THIS - Buyer Group Status Badge */}
                     {member.buyerGroupStatus && (
                       <span className={`px-2 py-1 text-xs rounded-full ${
-                        member.buyerGroupStatus === 'in' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
-                        member.buyerGroupStatus === 'out' ? 'bg-gray-100 text-gray-600 border border-gray-200' :
-                        member.buyerGroupStatus === 'pending' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                        'bg-gray-100 text-gray-600'
+                        member.buyerGroupStatus === 'in' ? 'bg-success/10 text-success border border-success' :
+                        member.buyerGroupStatus === 'out' ? 'bg-muted-light text-muted border border-border' :
+                        member.buyerGroupStatus === 'pending' ? 'bg-warning/10 text-warning border border-warning' :
+                        'bg-muted-light text-muted'
                       }`}>
                         {member.buyerGroupStatus === 'in' ? '✓ In Group' :
                          member.buyerGroupStatus === 'out' ? 'Out' :

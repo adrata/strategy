@@ -207,12 +207,12 @@ export function UpdateModalRefactored({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              {recordType === 'people' && <UserIcon className="h-6 w-6 text-blue-600" />}
-              {recordType === 'companies' && <BuildingOfficeIcon className="h-6 w-6 text-blue-600" />}
-              {recordType === 'leads' && <TagIcon className="h-6 w-6 text-blue-600" />}
-              {recordType === 'prospects' && <TagIcon className="h-6 w-6 text-blue-600" />}
-              {recordType === 'opportunities' && <BriefcaseIcon className="h-6 w-6 text-blue-600" />}
+            <div className="p-2 bg-primary/10 rounded-lg">
+              {recordType === 'people' && <UserIcon className="h-6 w-6 text-primary" />}
+              {recordType === 'companies' && <BuildingOfficeIcon className="h-6 w-6 text-primary" />}
+              {recordType === 'leads' && <TagIcon className="h-6 w-6 text-primary" />}
+              {recordType === 'prospects' && <TagIcon className="h-6 w-6 text-primary" />}
+              {recordType === 'opportunities' && <BriefcaseIcon className="h-6 w-6 text-primary" />}
             </div>
             <div>
               <h2 className="text-xl font-semibold text-foreground">
@@ -242,8 +242,8 @@ export function UpdateModalRefactored({
                 onClick={() => setActiveTab(tab.id)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-muted hover:text-gray-700 hover:border-border'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted hover:text-foreground hover:border-border'
                 }`}
               >
                 <span className="flex items-center space-x-2">

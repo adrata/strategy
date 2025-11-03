@@ -24,7 +24,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Business Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Account Value</h4>
             <InlineEditField
               value={record?.accountValue ? `$${record.accountValue.toLocaleString()}` : record?.revenue ? `$${record.revenue.toLocaleString()}` : ''}
@@ -34,12 +34,12 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter account value"
-              className="text-2xl font-bold text-blue-600"
+              className="text-2xl font-bold text-primary"
             />
             <p className="text-sm text-muted mt-1">Annual contract value</p>
           </div>
           
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Growth Rate</h4>
             <InlineEditField
               value={record?.growthRate ? `${Math.round(record.growthRate)}%` : ''}
@@ -49,12 +49,12 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter growth rate"
-              className="text-2xl font-bold text-green-600"
+              className="text-2xl font-bold text-success"
             />
             <p className="text-sm text-muted mt-1">Year over year</p>
           </div>
           
-          <div className="bg-purple-50 rounded-lg p-4">
+          <div className="bg-info/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Expansion Potential</h4>
             <InlineEditField
               value={record?.expansionPotential}
@@ -64,7 +64,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
               recordType={recordType}
               onSuccess={handleSuccess}
               placeholder="Enter expansion potential"
-              className="text-lg font-bold text-purple-600"
+              className="text-lg font-bold text-info"
             />
             <p className="text-sm text-muted mt-1">Upsell opportunity</p>
           </div>
@@ -104,27 +104,27 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Business Priorities</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Business Priorities</label>
             <div className="space-y-2">
               {record?.businessPriorities?.length > 0 ? (
                 record.businessPriorities.map((priority: string, index: number) => (
-                  <div key={index} className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-green-800 text-sm">{priority}</p>
+                  <div key={index} className="bg-success/10 border border-success rounded-lg p-3">
+                    <p className="text-success text-sm">{priority}</p>
                   </div>
                 ))
               ) : (
                 <div className="space-y-2">
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-green-800 text-sm">Revenue Growth</p>
-                    <p className="text-green-600 text-xs">Expanding market share and customer base</p>
+                  <div className="bg-success/10 border border-success rounded-lg p-3">
+                    <p className="text-success text-sm">Revenue Growth</p>
+                    <p className="text-success/80 text-xs">Expanding market share and customer base</p>
                   </div>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-green-800 text-sm">Customer Experience</p>
-                    <p className="text-green-600 text-xs">Improving customer satisfaction and retention</p>
+                  <div className="bg-success/10 border border-success rounded-lg p-3">
+                    <p className="text-success text-sm">Customer Experience</p>
+                    <p className="text-success/80 text-xs">Improving customer satisfaction and retention</p>
                   </div>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-green-800 text-sm">Innovation</p>
-                    <p className="text-green-600 text-xs">Developing new products and services</p>
+                  <div className="bg-success/10 border border-success rounded-lg p-3">
+                    <p className="text-success text-sm">Innovation</p>
+                    <p className="text-success/80 text-xs">Developing new products and services</p>
                   </div>
                 </div>
               )}
@@ -233,9 +233,9 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Competitive Position</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Competitive Advantages</h4>
-            <div className="space-y-1 text-sm text-green-700">
+            <div className="space-y-1 text-sm text-success">
               <p>• {record?.competitiveAdvantages?.[0] || 'Market leadership'}</p>
               <p>• {record?.competitiveAdvantages?.[1] || 'Innovation capability'}</p>
               <p>• {record?.competitiveAdvantages?.[2] || 'Customer relationships'}</p>
@@ -251,9 +251,9 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
             </div>
           </div>
           
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Growth Opportunities</h4>
-            <div className="space-y-1 text-sm text-blue-700">
+            <div className="space-y-1 text-sm text-primary">
               <p>• {record?.growthOpportunities?.[0] || 'Market expansion'}</p>
               <p>• {record?.growthOpportunities?.[1] || 'Product innovation'}</p>
               <p>• {record?.growthOpportunities?.[2] || 'Strategic partnerships'}</p>

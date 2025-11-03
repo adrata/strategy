@@ -11,7 +11,7 @@ export function UniversalIndustryIntelTab({ record, recordType, onSave }: Univer
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">Industry Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-primary/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Industry Profile</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -33,7 +33,7 @@ export function UniversalIndustryIntelTab({ record, recordType, onSave }: Univer
             </div>
           </div>
 
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-success/10 rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-3">Market Position</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">

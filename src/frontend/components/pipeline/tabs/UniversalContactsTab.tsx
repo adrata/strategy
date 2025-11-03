@@ -88,7 +88,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
         <button
           onClick={handleAddContact}
           disabled={!newContact.name.trim()}
-          className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-medium"
+          className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 disabled:bg-muted disabled:cursor-not-allowed text-sm font-medium"
         >
           Add Contact
         </button>
@@ -111,7 +111,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       recordType={recordType}
                       placeholder="Enter contact name"
                       onSave={handleInlineSave}
-                      className="text-sm text-gray-800 font-medium"
+                      className="text-sm text-foreground font-medium"
                     />
                   </div>
                   <div>
@@ -124,7 +124,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       inputType="email"
                       placeholder="Enter email address"
                       onSave={handleInlineSave}
-                      className="text-sm text-gray-800 font-medium"
+                      className="text-sm text-foreground font-medium"
                     />
                   </div>
                   <div>
@@ -136,7 +136,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       recordType={recordType}
                       placeholder="Enter job title"
                       onSave={handleInlineSave}
-                      className="text-sm text-gray-800 font-medium"
+                      className="text-sm text-foreground font-medium"
                     />
                   </div>
                   <div>
@@ -149,7 +149,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       inputType="tel"
                       placeholder="Enter phone number"
                       onSave={handleInlineSave}
-                      className="text-sm text-gray-800 font-medium"
+                      className="text-sm text-foreground font-medium"
                     />
                   </div>
                 </div>

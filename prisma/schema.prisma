@@ -106,6 +106,7 @@ model workspaces {
   ai_conversations           ai_conversations[]
   api_cost_tracking          api_cost_tracking[]
   audit_logs                 audit_logs[]
+  api_keys                   api_keys[]
   auth_sessions              auth_sessions[]
   companies                  companies[]
   email_messages             email_messages[]
@@ -159,6 +160,7 @@ model users {
   assigned_actions                    actions[]                   @relation("AssignedActions")
   ai_conversations                    ai_conversations[]
   api_cost_tracking                   api_cost_tracking[]
+  api_keys                            api_keys[]
   audit_logs                          audit_logs[]
   auth_sessions                       auth_sessions[]
   main_seller_companies               companies[]                 @relation("MainSellerCompanies")
@@ -214,6 +216,29 @@ model auth_sessions {
   @@index([token])
   @@index([userId])
   @@index([workspaceId])
+}
+
+/// API Key management for external integrations
+model api_keys {
+  id          String     @id @default(ulid())
+  workspaceId String     @db.VarChar(30)
+  userId      String     @db.VarChar(30)
+  name        String     @db.VarChar(255)
+  keyPrefix   String     @db.VarChar(50) // e.g., "adrata_live_"
+  hashedKey   String     @db.VarChar(255) // bcrypt hash of the secret portion
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  isActive    Boolean    @default(true)
+  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([keyPrefix])
+  @@index([isActive])
+  @@index([expiresAt])
 }
 
 /// Password reset and invitation functionality
@@ -849,24 +874,24 @@ model StacksEpoch {
 }
 
 model StacksStory {
-  id             String        @id @default(cuid())
-  epochId        String?
-  projectId      String
-  title          String        @db.VarChar(200)
-  description    String?
-  status         String        @default("todo") @db.VarChar(20)
-  priority       String        @default("medium") @db.VarChar(20)
-  assigneeId     String?       @db.VarChar(30)
-  viewType       String?       @db.VarChar(20)
-  product        String?       @db.VarChar(50)
-  section        String?       @db.VarChar(50)
+  id              String        @id @default(cuid())
+  epochId         String?
+  projectId       String
+  title           String        @db.VarChar(200)
+  description     String?
+  status          String        @default("todo") @db.VarChar(20)
+  priority        String        @default("medium") @db.VarChar(20)
+  assigneeId      String?       @db.VarChar(30)
+  viewType        String?       @db.VarChar(20)
+  product         String?       @db.VarChar(50)
+  section         String?       @db.VarChar(50)
   statusChangedAt DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  assignee       users?        @relation(fields: [assigneeId], references: [id])
-  epoch          StacksEpoch?  @relation(fields: [epochId], references: [id])
-  project        StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tasks          StacksTask[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  assignee        users?        @relation(fields: [assigneeId], references: [id])
+  epoch           StacksEpoch?  @relation(fields: [epochId], references: [id])
+  project         StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks           StacksTask[]
 
   @@index([epochId])
   @@index([projectId])

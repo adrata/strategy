@@ -16,6 +16,7 @@ import { StacksLeftPanel } from './StacksLeftPanel';
 import { StacksMiddlePanel } from './StacksMiddlePanel';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { ProfilePopupProvider } from '@/platform/ui/components/ProfilePopupContext';
+import { SettingsPopupProvider } from '@/platform/ui/components/SettingsPopupContext';
 import { ProfilePanel } from '@/platform/ui/components/ProfilePanel';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
 
@@ -114,34 +115,36 @@ export function StacksContent({ section }: StacksContentProps) {
 
   return (
     <ProfilePopupProvider>
-      <div className="h-full w-full">
-        <PanelLayout
-          thinLeftPanel={null}
-          leftPanel={leftPanel}
-          middlePanel={middlePanel}
-          rightPanel={rightPanel}
-          profilePanel={
-            <ProfilePanel
-              user={stacksUser}
-              company={company}
-              workspace={workspaceName}
-              isOpen={isProfilePanelVisible}
-              onClose={() => setIsProfilePanelVisible(false)}
-              username={username}
-              currentApp={currentApp}
-              userId={user?.id}
-              userEmail={user?.email}
-              onToggleLeftPanel={ui.toggleLeftPanel}
-            />
-          }
-          isProfilePanelVisible={isProfilePanelVisible}
-          zoom={100}
-          isLeftPanelVisible={ui.isLeftPanelVisible}
-          isRightPanelVisible={ui.isRightPanelVisible}
-          onToggleLeftPanel={ui.toggleLeftPanel}
-          onToggleRightPanel={ui.toggleRightPanel}
-        />
-      </div>
+      <SettingsPopupProvider>
+        <div className="h-full w-full">
+          <PanelLayout
+            thinLeftPanel={null}
+            leftPanel={leftPanel}
+            middlePanel={middlePanel}
+            rightPanel={rightPanel}
+            profilePanel={
+              <ProfilePanel
+                user={stacksUser}
+                company={company}
+                workspace={workspaceName}
+                isOpen={isProfilePanelVisible}
+                onClose={() => setIsProfilePanelVisible(false)}
+                username={username}
+                currentApp={currentApp}
+                userId={user?.id}
+                userEmail={user?.email}
+                onToggleLeftPanel={ui.toggleLeftPanel}
+              />
+            }
+            isProfilePanelVisible={isProfilePanelVisible}
+            zoom={100}
+            isLeftPanelVisible={ui.isLeftPanelVisible}
+            isRightPanelVisible={ui.isRightPanelVisible}
+            onToggleLeftPanel={ui.toggleLeftPanel}
+            onToggleRightPanel={ui.toggleRightPanel}
+          />
+        </div>
+      </SettingsPopupProvider>
     </ProfilePopupProvider>
   );
 }

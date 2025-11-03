@@ -151,7 +151,7 @@ export function RecordDetailModal({ record, recordType, isOpen, onClose }: Recor
             <div className="flex items-center gap-6 pt-4 border-t border-border">
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-foreground">Stage</span>
-                <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800`}>
+                <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary`}>
                   {record.status || 'Unknown'}
                 </span>
               </div>
@@ -180,17 +180,17 @@ export function RecordDetailModal({ record, recordType, isOpen, onClose }: Recor
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Amount</label>
+                  <label className="block text-sm font-medium text-foreground">Amount</label>
                   <span className="text-lg font-semibold text-foreground">{record.amount ? formatCurrency(record.amount) : 'Not set'}</span>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Stage</label>
-                  <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800`}>
+                  <label className="block text-sm font-medium text-foreground">Stage</label>
+                  <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success`}>
                     {record.stage || 'Unknown'}
                   </span>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Probability</label>
+                  <label className="block text-sm font-medium text-foreground">Probability</label>
                   <span className="text-sm text-foreground">{record.probability || 0}%</span>
                 </div>
                 <div>

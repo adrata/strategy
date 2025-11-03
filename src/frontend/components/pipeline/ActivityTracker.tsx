@@ -37,10 +37,10 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
   }, []);
 
   const quickActions = [
-    { type: 'emails' as const, label: 'Email Sent', icon: '✉️', color: 'bg-blue-500 hover:bg-blue-600' },
-    { type: 'calls' as const, label: 'Call Made', icon: '📞', color: 'bg-green-500 hover:bg-green-600' },
-    { type: 'meetings' as const, label: 'Meeting', icon: '🤝', color: 'bg-purple-500 hover:bg-purple-600' },
-    { type: 'tasks' as const, label: 'Task Done', icon: '✅', color: 'bg-orange-500 hover:bg-orange-600' }
+    { type: 'emails' as const, label: 'Email Sent', icon: '✉️', color: 'bg-primary hover:bg-primary/90' },
+    { type: 'calls' as const, label: 'Call Made', icon: '📞', color: 'bg-success hover:bg-success/90' },
+    { type: 'meetings' as const, label: 'Meeting', icon: '🤝', color: 'bg-info hover:bg-info/90' },
+    { type: 'tasks' as const, label: 'Task Done', icon: '✅', color: 'bg-warning hover:bg-warning/90' }
   ];
 
   return (
@@ -157,7 +157,7 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
                 setTimeData(getTimeTrackingData());
                 onActivityUpdate?.();
               }}
-              className="w-full text-xs bg-red-50 text-red-600 px-2 py-1 rounded hover:bg-red-100"
+              className="w-full text-xs bg-error/10 text-error px-2 py-1 rounded hover:bg-error/20"
             >
               Reset Today's Count
             </button>

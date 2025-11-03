@@ -220,7 +220,7 @@ export function ProfileImageUploadModal({
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-6 py-2 border border-border rounded-lg text-sm font-medium text-gray-700 hover:bg-panel-background transition-colors"
+            className="px-6 py-2 border border-border rounded-lg text-sm font-medium text-foreground hover:bg-panel-background transition-colors"
           >
             {selectedFile ? 'Choose Different Photo' : 'Choose Photo'}
           </button>
@@ -231,7 +231,7 @@ export function ProfileImageUploadModal({
           <div className="mb-4">
             <button
               onClick={handleRemoveImage}
-              className="w-full py-2 px-4 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+              className="w-full py-2 px-4 text-sm font-medium text-error hover:bg-error/10 transition-colors"
             >
               Remove Photo
             </button>
