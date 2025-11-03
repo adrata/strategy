@@ -9,7 +9,10 @@ import {
   ExclamationTriangleIcon,
   XCircleIcon,
   CogIcon,
-  PaperAirplaneIcon
+  PaperAirplaneIcon,
+  RectangleStackIcon,
+  ListBulletIcon,
+  TableCellsIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
@@ -23,13 +26,13 @@ interface StackCard {
   description?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'up-next' | 'in-progress' | 'shipped' | 'qa1' | 'qa2' | 'built';
-  viewType?: 'main' | 'list' | 'grid';
+  viewType?: 'detail' | 'list' | 'grid';
   product?: string | null;
   section?: string | null;
   assignee?: string;
   dueDate?: string;
   tags?: string[];
-  epic?: {
+  epoch?: {
     id: string;
     title: string;
     description?: string;
@@ -246,19 +249,21 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
               stories: sellingStories.map((s: any) => ({ id: s.id, title: s.title, status: s.status }))
             });
             
-            // Workstream board should only show items with status 'up-next' in the "UP NEXT" column
-            // All other statuses (todo, in-progress, built, qa1, qa2, shipped, etc.) belong in backlog view
+            // Workstream board shows items with any workstream board column status
+            // Allowed statuses: up-next, in-progress, built, qa1, qa2, shipped
+            // Cards can appear in any column based on their status
+            const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped'];
             const workstreamStories = sellingStories.filter((story: any) => {
-              // Only include items with status 'up-next'
-              return story.status === 'up-next';
+              // Include items with any workstream board column status
+              return workstreamBoardStatuses.includes(story.status);
             });
             
-            console.log('🔍 [StacksBoard] After filtering for workstream (up-next only):', {
+            console.log('🔍 [StacksBoard] After filtering for workstream (all board statuses):', {
               before: sellingStories.length,
               after: workstreamStories.length,
               removed: sellingStories.length - workstreamStories.length,
               removedStatuses: sellingStories
-                .filter((s: any) => s.status !== 'up-next')
+                .filter((s: any) => !workstreamBoardStatuses.includes(s.status))
                 .reduce((acc: any, story: any) => {
                   const status = story.status || 'null';
                   acc[status] = (acc[status] || 0) + 1;
@@ -383,13 +388,13 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       description: story.description,
       priority: story.priority || 'medium',
       status: mappedStatus as StackCard['status'],
-      viewType: story.viewType || 'main',
+      viewType: story.viewType || 'detail',
       product: story.product || null,
       section: story.section || null,
       assignee: story.assignee?.name || undefined,
       dueDate: story.dueDate,
       tags: story.tags || [],
-      epic: story.epic,
+      epoch: story.epoch,
       timeInStatus: story.timeInStatus,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt
@@ -863,19 +868,25 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                           )}
                         </div>
                         
-                        {/* Epic Tag */}
-                        {card.epic && (
+                        {/* Epoch Tag */}
+                        {card.epoch && (
                           <div className="mb-2 ml-8">
                             <span className="bg-panel-background text-foreground px-2 py-1 rounded text-xs font-medium">
-                              Ep: {card.epic.title.replace(' Workstream', '')}
+                              Ep: {card.epoch.title.replace(' Workstream', '')}
                             </span>
                           </div>
                         )}
                         
                         <div className="flex justify-between items-center text-xs text-muted">
                           <div className="flex items-center gap-2">
-                            <span className="bg-panel-background text-muted px-2 py-1 rounded text-xs">
-                              {card.viewType === 'list' ? 'List' : card.viewType === 'grid' ? 'Grid' : 'Main'}
+                            <span className="bg-panel-background text-muted px-2 py-1 rounded text-xs flex items-center">
+                              {card.viewType === 'list' ? (
+                                <ListBulletIcon className="h-3 w-3" />
+                              ) : card.viewType === 'grid' ? (
+                                <TableCellsIcon className="h-3 w-3" />
+                              ) : (
+                                <RectangleStackIcon className="h-3 w-3" />
+                              )}
                             </span>
                             {card.timeInStatus !== undefined && card.timeInStatus >= 3 && (
                               <span className="bg-error-bg text-error-text px-2 py-1 rounded text-xs font-medium">

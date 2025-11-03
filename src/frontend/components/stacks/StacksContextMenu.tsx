@@ -8,7 +8,8 @@ import {
   ArrowDownIcon,
   TrashIcon,
   ArrowDownCircleIcon,
-  ArchiveBoxIcon
+  ArchiveBoxIcon,
+  ArrowUpCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface StacksContextMenuProps {
@@ -20,9 +21,11 @@ interface StacksContextMenuProps {
   onMoveDown: () => void;
   onMoveToBottom: () => void;
   onMoveBelowTheLine?: () => void;
+  onMoveToUpNext?: () => void;
   onMoveToDeepBacklog?: () => void;
   onDelete: () => void;
   showMoveBelowTheLine?: boolean;
+  showMoveToUpNext?: boolean;
   showMoveToDeepBacklog?: boolean;
 }
 
@@ -35,9 +38,11 @@ export function StacksContextMenu({
   onMoveDown,
   onMoveToBottom,
   onMoveBelowTheLine,
+  onMoveToUpNext,
   onMoveToDeepBacklog,
   onDelete,
   showMoveBelowTheLine = false,
+  showMoveToUpNext = false,
   showMoveToDeepBacklog = false
 }: StacksContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -134,6 +139,13 @@ export function StacksContextMenu({
       label: 'Move Below the Line',
       icon: ArrowDownCircleIcon,
       onClick: onMoveBelowTheLine,
+      className: 'text-foreground hover:bg-hover',
+      showDivider: true
+    }] : []),
+    ...(showMoveToUpNext && onMoveToUpNext ? [{
+      label: 'Move to Up Next',
+      icon: ArrowUpCircleIcon,
+      onClick: onMoveToUpNext,
       className: 'text-foreground hover:bg-hover',
       showDivider: true
     }] : []),

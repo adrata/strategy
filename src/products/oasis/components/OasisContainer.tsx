@@ -178,7 +178,7 @@ export function OasisContainer() {
     setShowRightPanel(false);
   };
 
-  const dividerLineColor = dragging ? "#3B82F6" : hovering ? "#6B7280" : "var(--border)";
+  const dividerLineColor = dragging ? "var(--accent)" : hovering ? "var(--muted)" : "var(--border)";
 
   return (
     <div ref={containerRef} className="flex h-full relative">

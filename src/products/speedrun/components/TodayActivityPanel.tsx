@@ -95,7 +95,7 @@ export function TodayActivityPanel({ onActivityRecorded }: TodayActivityPanelPro
         <div className="flex gap-2">
           <button
             onClick={() => setShowMarkForm(!showMarkForm)}
-            className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100"
+            className="text-xs bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20"
           >
             {showMarkForm ? "Cancel" : "Mark Activity"}
           </button>
@@ -133,7 +133,7 @@ export function TodayActivityPanel({ onActivityRecorded }: TodayActivityPanelPro
       {/* Manual Mark Form */}
       {showMarkForm && (
         <div className="bg-panel-background p-3 rounded border mb-3">
-          <div className="text-xs font-medium text-gray-700 mb-2">
+          <div className="text-xs font-medium text-foreground mb-2">
             Mark External Outreach (Email sent outside Speedrun, calls, etc.)
           </div>
           <div className="grid grid-cols-2 gap-2 mb-2">
@@ -176,7 +176,7 @@ export function TodayActivityPanel({ onActivityRecorded }: TodayActivityPanelPro
       {/* Companies Contacted Today */}
       {companiesContacted.size > 0 && (
         <div>
-          <div className="text-xs font-medium text-gray-700 mb-1">
+          <div className="text-xs font-medium text-foreground mb-1">
             Companies Contacted Today (Filtered from Speedrun):
           </div>
           <div className="flex flex-wrap gap-1">

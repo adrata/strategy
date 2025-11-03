@@ -120,14 +120,14 @@ export function NotesTab({
             </span>
           )}
           {saveStatus === 'saved' && lastSavedAt && (
-            <span className={`text-xs flex items-center gap-1 ${timeSinceSave < 2 ? 'text-green-600' : 'text-gray-600'}`}>
-              <span className={`w-2 h-2 rounded-full ${timeSinceSave < 2 ? 'bg-green-500' : 'bg-gray-500'}`}></span>
+            <span className={`text-xs flex items-center gap-1 ${timeSinceSave < 2 ? 'text-success' : 'text-muted'}`}>
+              <span className={`w-2 h-2 rounded-full ${timeSinceSave < 2 ? 'bg-success' : 'bg-muted'}`}></span>
               Last saved {formatTimeAgo(lastSavedAt)}
             </span>
           )}
           {saveStatus === 'error' && (
-            <span className="text-xs text-red-600 flex items-center gap-1">
-              <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+            <span className="text-xs text-error flex items-center gap-1">
+              <span className="w-2 h-2 bg-error rounded-full"></span>
               Save failed
             </span>
           )}

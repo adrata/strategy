@@ -40,13 +40,13 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div className="relative bg-background rounded-lg shadow-xl w-full max-w-md mx-4 border border-border">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Create Channel</h3>
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">Create Channel</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-muted hover:text-foreground transition-colors"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -56,11 +56,11 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
             <div>
-              <label htmlFor="channel-name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="channel-name" className="block text-sm font-medium text-foreground mb-2">
                 Channel Name
               </label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-border bg-muted-light text-muted text-sm">
                   #
                 </span>
                 <input
@@ -69,14 +69,14 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="general"
-                  className="flex-1 rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  className="flex-1 rounded-r-md border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
                   autoFocus
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="channel-description" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="channel-description" className="block text-sm font-medium text-foreground mb-2">
                 Description (optional)
               </label>
               <input
@@ -85,12 +85,12 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="What's this channel about?"
-                className="w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-md border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Channel Visibility
               </label>
               <div className="space-y-2">
@@ -101,9 +101,9 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
                     value="public"
                     checked={!isPrivate}
                     onChange={() => setIsPrivate(false)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    className="h-4 w-4 text-primary focus:ring-primary border-border"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Public - Anyone in the workspace can view</span>
+                  <span className="ml-2 text-sm text-foreground">Public - Anyone in the workspace can view</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -112,9 +112,9 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
                     value="private"
                     checked={isPrivate}
                     onChange={() => setIsPrivate(true)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    className="h-4 w-4 text-primary focus:ring-primary border-border"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Private - Only invited members can view</span>
+                  <span className="ml-2 text-sm text-foreground">Private - Only invited members can view</span>
                 </label>
               </div>
             </div>
@@ -125,14 +125,14 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-md hover:bg-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!name.trim()}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create Channel
             </button>

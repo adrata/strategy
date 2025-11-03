@@ -177,10 +177,10 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   // Get status color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'online': return 'bg-green-400';
-      case 'away': return 'bg-yellow-400';
-      case 'offline': return 'bg-gray-400';
-      default: return 'bg-gray-400';
+      case 'online': return 'bg-success';
+      case 'away': return 'bg-warning';
+      case 'offline': return 'bg-muted';
+      default: return 'bg-muted';
     }
   };
 
@@ -238,7 +238,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
               <HashtagIcon className="w-5 h-5 text-muted" />
             )}
             {selectedChannel.type === 'dm' && (
-              <div className="w-8 h-8 bg-white border border-border rounded flex items-center justify-center">
+              <div className="w-8 h-8 bg-background border border-border rounded flex items-center justify-center">
                 <span className="text-sm font-medium text-foreground">
                   {selectedChannel.name.charAt(0).toUpperCase()}
                 </span>
@@ -271,7 +271,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             {/* Video Call Button */}
             <button
               onClick={handleVideoCall}
-              className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-md transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 bg-warning/10 hover:bg-warning/20 text-warning rounded-md transition-colors"
             >
               <VideoCameraIcon className="w-4 h-4" />
               <span className="text-sm font-medium">Video Call</span>
@@ -314,13 +314,13 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
           realMessages.map((message) => (
           <div 
             key={message.id} 
-            className="flex gap-3 group hover:bg-gray-50 rounded-lg p-2 -m-2 cursor-pointer transition-colors"
+            className="flex gap-3 group hover:bg-hover rounded-lg p-2 -m-2 cursor-pointer transition-colors"
             onMouseEnter={() => setHoveredMessage(message.id)}
             onMouseLeave={() => setHoveredMessage(null)}
             onClick={() => onShowThread?.()}
           >
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-white border border-border rounded flex items-center justify-center">
+              <div className="w-10 h-10 bg-background border border-border rounded flex items-center justify-center">
                 <span className="text-base font-medium text-foreground">
                   {message.senderName && message.senderName.length > 0 
                     ? message.senderName.charAt(0).toUpperCase() 
@@ -335,7 +335,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
                 <span className="text-sm text-muted">{new Date(message.createdAt).toLocaleTimeString()}</span>
               </div>
               
-              <p className="text-sm text-gray-700 mb-2">{message.content}</p>
+              <p className="text-sm text-foreground mb-2">{message.content}</p>
               
               {/* Reactions */}
               {message.reactions && message.reactions.length > 0 && (
@@ -402,13 +402,13 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             }}
             onBlur={() => stopTyping()}
             placeholder={`Message ${selectedChannel.type === 'channel' ? `#${selectedChannel.name}` : selectedChannel.name}...`}
-            className="w-full px-4 py-8 pr-20 border border-border rounded-lg focus:outline-none focus:border-muted text-sm bg-white"
+            className="w-full px-4 py-8 pr-20 border border-border rounded-lg focus:outline-none focus:border-muted text-sm bg-panel-background"
           />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
             <button
               type="submit"
               disabled={!messageInput.trim()}
-              className="px-2 py-1.5 bg-white border border-border rounded-md hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className="px-2 py-1.5 bg-background border border-border rounded-md hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
               <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />

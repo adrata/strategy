@@ -256,8 +256,8 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                             className={clsx(
                               "w-2 h-2 rounded-full",
                               isUserOnline(message.sender.id)
-                                ? "bg-green-500"
-                                : "bg-gray-400",
+                                ? "bg-success"
+                                : "bg-muted",
                             )}
                           />
                         )}

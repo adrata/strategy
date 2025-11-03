@@ -33,8 +33,8 @@ export function StoryGridView({ story }: StoryGridViewProps) {
           ? `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || story.assignee.name || story.assignee.email
           : story.assignee)
         : 'Unassigned',
-      epic: story.epic 
-        ? (typeof story.epic === 'object' ? story.epic.title : story.epic)
+      epoch: story.epoch 
+        ? (typeof story.epoch === 'object' ? story.epoch.title : story.epoch)
         : '',
       project: story.project 
         ? (typeof story.project === 'object' ? story.project.name : story.project)

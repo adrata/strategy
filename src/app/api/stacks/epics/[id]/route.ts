@@ -19,7 +19,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    const epic = await prisma.stacksEpic.update({
+    const epoch = await prisma.stacksEpoch.update({
       where: { id },
       data: {
         ...(title && { title }),
@@ -34,10 +34,10 @@ export async function PATCH(
       }
     });
 
-    return NextResponse.json({ epic });
+    return NextResponse.json({ epic: epoch, epoch });
   } catch (error) {
-    console.error('Error updating epic:', error);
-    return NextResponse.json({ error: 'Failed to update epic' }, { status: 500 });
+    console.error('Error updating epoch:', error);
+    return NextResponse.json({ error: 'Failed to update epoch' }, { status: 500 });
   }
 }
 
@@ -54,13 +54,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    await prisma.stacksEpic.delete({
+    await prisma.stacksEpoch.delete({
       where: { id }
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting epic:', error);
-    return NextResponse.json({ error: 'Failed to delete epic' }, { status: 500 });
+    console.error('Error deleting epoch:', error);
+    return NextResponse.json({ error: 'Failed to delete epoch' }, { status: 500 });
   }
 }

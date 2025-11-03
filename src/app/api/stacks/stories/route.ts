@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const workspaceId = context.workspaceId;
     const { searchParams } = new URL(request.url);
     const projectId = searchParams.get('projectId');
-    const epicId = searchParams.get('epicId');
+    const epochId = searchParams.get('epochId');
 
     if (!workspaceId) {
       return createErrorResponse('Workspace ID is required', 'WORKSPACE_REQUIRED', 400);
@@ -43,8 +43,8 @@ export async function GET(request: NextRequest) {
       where.projectId = projectId;
     }
 
-    if (epicId) {
-      where.epicId = epicId;
+    if (epochId) {
+      where.epochId = epochId;
     }
 
     // Use explicit select to avoid selecting viewType column that may not exist in database
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       where,
       select: {
         id: true,
-        epicId: true,
+        epochId: true,
         projectId: true,
         title: true,
         description: true,
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
         project: {
           select: { id: true, name: true }
         },
-        epic: {
+        epoch: {
           select: { id: true, title: true }
         },
         assignee: {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     const workspaceId = context.workspaceId;
     const userId = context.userId;
     const body = await request.json();
-    const { projectId, epicId, title, description, status, priority, assigneeId } = body;
+    const { projectId, epochId, title, description, status, priority, assigneeId } = body;
 
     if (!workspaceId || !userId || !projectId || !title) {
       return createErrorResponse('Workspace ID, user ID, project ID, and title are required', 'MISSING_REQUIRED_FIELDS', 400);
@@ -129,16 +129,17 @@ export async function POST(request: NextRequest) {
     const story = await prisma.stacksStory.create({
       data: {
         projectId,
-        epicId: epicId || null,
+        epochId: epochId || null,
+        statusChangedAt: new Date(),
+        assigneeId: assigneeId || userId, // Default to current user
         title,
         description,
         status: status || 'todo',
-        priority: priority || 'medium',
-        assigneeId: assigneeId || null
+        priority: priority || 'medium'
       },
       select: {
         id: true,
-        epicId: true,
+        epochId: true,
         projectId: true,
         title: true,
         description: true,
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest) {
         project: {
           select: { id: true, name: true }
         },
-        epic: {
+        epoch: {
           select: { id: true, title: true }
         },
         assignee: {

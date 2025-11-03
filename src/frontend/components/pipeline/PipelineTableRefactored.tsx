@@ -59,19 +59,19 @@ function getLastActionTiming(record: PipelineRecord) {
   if (lastActionTime) {
     // All timing pills now use light gray color
     if (lastActionTime === 'Never') {
-      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-foreground' };
     } else if (lastActionTime === 'Today') {
-      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-foreground' };
     } else if (lastActionTime === 'Yesterday') {
-      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-foreground' };
     } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 3) {
-      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-foreground' };
     } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 7) {
-      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-foreground' };
     } else if (lastActionTime.includes('weeks ago') || lastActionTime.includes('months ago')) {
-      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-foreground' };
     } else {
-      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-foreground' };
     }
   }
   
@@ -88,27 +88,27 @@ function getNextActionTiming(record: PipelineRecord) {
   if (nextActionTiming) {
     // All timing pills now use light gray color
     if (nextActionTiming === 'Now') {
-      return { text: nextActionTiming, color: 'bg-blue-100 text-blue-800' }; // Highlight "Now" differently
+      return { text: nextActionTiming, color: 'bg-primary/10 text-primary' }; // Highlight "Now" differently
     } else if (nextActionTiming === 'Overdue') {
-      return { text: nextActionTiming, color: 'bg-red-100 text-red-800' };
+      return { text: nextActionTiming, color: 'bg-error/10 text-error' };
     } else if (nextActionTiming === 'Due soon') {
-      return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
+      return { text: nextActionTiming, color: 'bg-warning/10 text-warning' };
     } else if (nextActionTiming === 'Today') {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else if (nextActionTiming === 'Tomorrow') {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else if (nextActionTiming === 'This week') {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else if (nextActionTiming === 'Next week') {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else if (nextActionTiming === 'This month') {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else if (nextActionTiming === 'Future') {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else if (nextActionTiming === 'No date set') {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else {
-      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     }
   }
   
@@ -424,7 +424,7 @@ export function PipelineTable({
                   <tr
                     key={record.id}
                     className={`cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border relative ${
-                      isCompleted ? 'bg-green-50 border-green-200' : ''
+                      isCompleted ? 'bg-success/10 border-success' : ''
                     }`}
                     onClick={() => onRecordClick(record)}
                   >
@@ -634,14 +634,14 @@ export function PipelineTable({
                         if (stageValue !== '-' && section === 'speedrun') {
                           // Speedrun: Show stage with colored pills
                           const stageColors: Record<string, string> = {
-                            'LEAD': 'bg-orange-100 text-orange-800 border-orange-200',
-                            'PROSPECT': 'bg-blue-100 text-blue-800 border-blue-200',
-                            'OPPORTUNITY': 'bg-indigo-100 text-indigo-800 border-indigo-200',
-                            'CUSTOMER': 'bg-green-100 text-green-800 border-green-200',
-                            'CLIENT': 'bg-green-100 text-green-800 border-green-200',
-                            'SUPERFAN': 'bg-purple-100 text-purple-800 border-purple-200'
+                            'LEAD': 'bg-warning/10 text-warning border-warning',
+                            'PROSPECT': 'bg-primary/10 text-primary border-primary',
+                            'OPPORTUNITY': 'bg-info/10 text-info border-info',
+                            'CUSTOMER': 'bg-success/10 text-success border-success',
+                            'CLIENT': 'bg-success/10 text-success border-success',
+                            'SUPERFAN': 'bg-info/10 text-info border-info'
                           };
-                          const colorClass = stageColors[stageValue.toUpperCase()] || 'bg-gray-100 text-gray-800 border-gray-200';
+                          const colorClass = stageColors[stageValue.toUpperCase()] || 'bg-hover text-foreground border-border';
                           cellContent = <span className={`inline-flex items-center rounded-full px-4 py-1 text-xs font-medium ${colorClass} border`}>{stageValue}</span>;
                         } else {
                           // Other sections: Plain text
@@ -739,17 +739,17 @@ export function PipelineTable({
                                 // Apply theme colors for lead pipeline status
                                 const statusLower = personStatus.toLowerCase();
                                 if (statusLower === 'lead' || statusLower === 'new') {
-                                  statusColor = 'bg-orange-100 text-orange-800 border border-orange-200'; // Orange theme (leads)
+                                  statusColor = 'bg-warning/10 text-warning border border-warning'; // Orange theme (leads)
                                 } else                                 if (statusLower === 'prospect' || statusLower === 'contacted' || statusLower === 'qualified') {
-                                  statusColor = 'bg-blue-100 text-blue-800 border border-blue-200'; // Blue theme (prospects)
+                                  statusColor = 'bg-primary/10 text-primary border border-primary'; // Blue theme (prospects)
                                 } else if (statusLower === 'opportunity') {
-                                  statusColor = 'bg-indigo-100 text-indigo-800 border border-indigo-200'; // Indigo theme (opportunities)
+                                  statusColor = 'bg-info/10 text-info border border-info'; // Indigo theme (opportunities)
                                 } else if (statusLower === 'customer' || statusLower === 'client') {
-                                  statusColor = 'bg-green-50 text-green-700 border border-green-200'; // Green theme (customers)
+                                  statusColor = 'bg-success/10 text-success border border-success'; // Green theme (customers)
                                 } else if (statusLower === 'person' || statusLower === 'people') {
-                                  statusColor = 'bg-violet-50 text-violet-700 border border-violet-200'; // Violet theme (people)
+                                  statusColor = 'bg-info/10 text-info border border-info'; // Violet theme (people)
                                 } else if (statusLower === 'company' || statusLower === 'companies') {
-                                  statusColor = 'bg-slate-50 text-slate-700 border border-slate-200'; // Slate theme (companies)
+                                  statusColor = 'bg-muted-light text-foreground border border-border'; // Slate theme (companies)
                                 }
                                 statusIcon = '●';
                               } else {

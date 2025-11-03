@@ -12,7 +12,7 @@ interface Project {
   updatedAt: string;
 }
 
-interface Epic {
+interface Epoch {
   id: string;
   projectId: string;
   title: string;
@@ -25,7 +25,7 @@ interface Epic {
 
 interface Story {
   id: string;
-  epicId?: string;
+  epochId?: string;
   projectId: string;
   title: string;
   description?: string;
@@ -53,7 +53,7 @@ interface Task {
 export function useStacksData() {
   const { user } = useUnifiedAuth();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [epics, setEpics] = useState<Epic[]>([]);
+  const [epochs, setEpochs] = useState<Epoch[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [bugs, setBugs] = useState<Task[]>([]);
@@ -89,7 +89,7 @@ export function useStacksData() {
     }
   }, [user?.activeWorkspaceId]);
 
-  const fetchEpics = useCallback(async (): Promise<Epic[]> => {
+  const fetchEpochs = useCallback(async (): Promise<Epoch[]> => {
     if (!user?.activeWorkspaceId) {
       throw new Error('No workspace ID available');
     }
@@ -107,10 +107,12 @@ export function useStacksData() {
       }
 
       const data = await response.json();
-      setEpics(data.epics || []);
-      return data.epics || [];
+      // Support both epics (backwards compatibility) and epochs
+      const epochsList = data.epochs || data.epics || [];
+      setEpochs(epochsList);
+      return epochsList;
     } catch (error) {
-      console.error('Error fetching epics:', error);
+      console.error('Error fetching epochs:', error);
       throw error;
     }
   }, [user?.activeWorkspaceId]);
@@ -201,7 +203,7 @@ export function useStacksData() {
     }
   }, [user?.activeWorkspaceId, user?.id]);
 
-  const createEpic = useCallback(async (data: any): Promise<void> => {
+  const createEpoch = useCallback(async (data: any): Promise<void> => {
     if (!user?.activeWorkspaceId || !user?.id) {
       throw new Error('User not authenticated');
     }
@@ -220,10 +222,10 @@ export function useStacksData() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to create epic: ${response.statusText}`);
+        throw new Error(`Failed to create epoch: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error creating epic:', error);
+      console.error('Error creating epoch:', error);
       throw error;
     }
   }, [user?.activeWorkspaceId, user?.id]);
@@ -309,7 +311,7 @@ export function useStacksData() {
     }
   }, [user?.id]);
 
-  const updateEpic = useCallback(async (id: string, data: any): Promise<void> => {
+  const updateEpoch = useCallback(async (id: string, data: any): Promise<void> => {
     if (!user?.id) {
       throw new Error('User not authenticated');
     }
@@ -327,10 +329,10 @@ export function useStacksData() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to update epic: ${response.statusText}`);
+        throw new Error(`Failed to update epoch: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error updating epic:', error);
+      console.error('Error updating epoch:', error);
       throw error;
     }
   }, [user?.id]);
@@ -413,7 +415,7 @@ export function useStacksData() {
     }
   }, [user?.id]);
 
-  const deleteEpic = useCallback(async (id: string): Promise<void> => {
+  const deleteEpoch = useCallback(async (id: string): Promise<void> => {
     if (!user?.id) {
       throw new Error('User not authenticated');
     }
@@ -430,10 +432,10 @@ export function useStacksData() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to delete epic: ${response.statusText}`);
+        throw new Error(`Failed to delete epoch: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error deleting epic:', error);
+      console.error('Error deleting epoch:', error);
       throw error;
     }
   }, [user?.id]);
@@ -490,25 +492,30 @@ export function useStacksData() {
 
   return {
     projects,
-    epics,
+    epochs,
+    epics: epochs, // Backwards compatibility alias
     stories,
     tasks,
     bugs,
     isLoading,
     fetchProjects,
-    fetchEpics,
+    fetchEpochs,
+    fetchEpics: fetchEpochs, // Backwards compatibility alias
     fetchStories,
     fetchTasks,
     createProject,
-    createEpic,
+    createEpoch,
+    createEpic: createEpoch, // Backwards compatibility alias
     createStory,
     createTask,
     updateProject,
-    updateEpic,
+    updateEpoch,
+    updateEpic: updateEpoch, // Backwards compatibility alias
     updateStory,
     updateTask,
     deleteProject,
-    deleteEpic,
+    deleteEpoch,
+    deleteEpic: deleteEpoch, // Backwards compatibility alias
     deleteStory,
     deleteTask,
   };

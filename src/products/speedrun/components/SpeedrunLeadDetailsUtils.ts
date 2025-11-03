@@ -12,13 +12,13 @@ export const getInitials = (name: string): string => {
 export const getRoleColor = (role: string): string => {
   switch (role) {
     case "Champion":
-      return "bg-green-100 text-green-800 border-green-200";
+      return "bg-success/10 text-success border-success";
     case "Decision Maker":
-      return "bg-blue-100 text-blue-800 border-blue-200";
+      return "bg-primary/10 text-primary border-primary";
     case "Stakeholder":
-      return "bg-purple-100 text-purple-800 border-purple-200";
+      return "bg-info/10 text-info border-info";
     default:
-      return "bg-hover text-gray-800 border-border";
+      return "bg-hover text-foreground border-border";
   }
 };
 

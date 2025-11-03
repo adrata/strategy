@@ -63,7 +63,7 @@ export async function GET(
       },
       select: {
         id: true,
-        epicId: true,
+        epochId: true,
         projectId: true,
         title: true,
         description: true,
@@ -72,9 +72,10 @@ export async function GET(
         assigneeId: true,
         product: true,
         section: true,
+        viewType: true,
         createdAt: true,
         updatedAt: true,
-        epic: {
+        epoch: {
           select: {
             id: true,
             title: true,
@@ -110,7 +111,7 @@ export async function GET(
       description: story.description,
       status: story.status,
       priority: story.priority,
-      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
+      viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
       product: story.product || null,
       section: story.section || null,
       assignee: story.assignee ? {
@@ -118,10 +119,10 @@ export async function GET(
         name: `${story.assignee.firstName} ${story.assignee.lastName}`,
         email: story.assignee.email
       } : null,
-      epic: story.epic ? {
-        id: story.epic.id,
-        title: story.epic.title,
-        description: story.epic.description
+      epoch: story.epoch ? {
+        id: story.epoch.id,
+        title: story.epoch.title,
+        description: story.epoch.description
       } : null,
       project: story.project ? {
         id: story.project.id,
@@ -131,8 +132,8 @@ export async function GET(
       tags: [], // tags field doesn't exist in schema yet
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
-      // Calculate time in current status (in days)
-      timeInStatus: story.updatedAt ? Math.floor((Date.now() - new Date(story.updatedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0
+      // Calculate time in current status (in days) using statusChangedAt
+      timeInStatus: story.statusChangedAt ? Math.floor((Date.now() - new Date(story.statusChangedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0
     };
 
     console.log('✅ [STACKS API] Story found and transformed');
@@ -205,7 +206,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { title, description, priority, status, product, section } = body;
+    const { title, description, priority, status, product, section, viewType } = body;
 
     // Verify story belongs to workspace
     const existingStory = await prisma.stacksStory.findFirst({
@@ -239,6 +240,10 @@ export async function PATCH(
     }
     if (status !== undefined) {
       updateData.status = status;
+      // Update statusChangedAt when status changes
+      if (status !== existingStory.status) {
+        updateData.statusChangedAt = new Date();
+      }
     }
     if (product !== undefined) {
       updateData.product = product;
@@ -246,13 +251,16 @@ export async function PATCH(
     if (section !== undefined) {
       updateData.section = section;
     }
+    if (viewType !== undefined) {
+      updateData.viewType = viewType;
+    }
 
     const story = await prisma.stacksStory.update({
       where: { id: storyId },
       data: updateData,
       select: {
         id: true,
-        epicId: true,
+        epochId: true,
         projectId: true,
         title: true,
         description: true,
@@ -261,9 +269,10 @@ export async function PATCH(
         assigneeId: true,
         product: true,
         section: true,
+        viewType: true,
         createdAt: true,
         updatedAt: true,
-        epic: {
+        epoch: {
           select: {
             id: true,
             title: true,
@@ -294,7 +303,7 @@ export async function PATCH(
       description: story.description,
       status: story.status,
       priority: story.priority,
-      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
+      viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
       product: story.product || null,
       section: story.section || null,
       assignee: story.assignee ? {
@@ -302,10 +311,10 @@ export async function PATCH(
         name: `${story.assignee.firstName} ${story.assignee.lastName}`,
         email: story.assignee.email
       } : null,
-      epic: story.epic ? {
-        id: story.epic.id,
-        title: story.epic.title,
-        description: story.epic.description
+      epoch: story.epoch ? {
+        id: story.epoch.id,
+        title: story.epoch.title,
+        description: story.epoch.description
       } : null,
       project: story.project ? {
         id: story.project.id,

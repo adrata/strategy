@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const epics = await prisma.stacksEpic.findMany({
+    const epochs = await prisma.stacksEpoch.findMany({
       where,
       include: {
         project: {
@@ -64,18 +64,18 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json({ epics });
+    return NextResponse.json({ epics: epochs, epochs });
   } catch (error) {
     return logAndCreateErrorResponse(
       error,
       {
-        endpoint: 'STACKS_EPICS_API_GET',
+        endpoint: 'STACKS_EPOCHS_API_GET',
         userId: context?.userId,
         workspaceId: context?.workspaceId,
         requestId: request.headers.get('x-request-id') || undefined
       },
-      'Failed to fetch epics',
-      'STACKS_EPICS_FETCH_ERROR',
+      'Failed to fetch epochs',
+      'STACKS_EPOCHS_FETCH_ERROR',
       500
     );
   }
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       finalProjectId = project.id;
     }
 
-    const epic = await prisma.stacksEpic.create({
+    const epoch = await prisma.stacksEpoch.create({
       data: {
         projectId: finalProjectId,
         title,
@@ -147,18 +147,18 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ epic });
+    return NextResponse.json({ epic: epoch, epoch });
   } catch (error) {
     return logAndCreateErrorResponse(
       error,
       {
-        endpoint: 'STACKS_EPICS_API_POST',
+        endpoint: 'STACKS_EPOCHS_API_POST',
         userId: context?.userId,
         workspaceId: context?.workspaceId,
         requestId: request.headers.get('x-request-id') || undefined
       },
-      'Failed to create epic',
-      'STACKS_EPICS_CREATE_ERROR',
+      'Failed to create epoch',
+      'STACKS_EPOCHS_CREATE_ERROR',
       500
     );
   }
