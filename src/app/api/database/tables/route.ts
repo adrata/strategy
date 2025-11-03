@@ -65,7 +65,7 @@ async function getDatabaseTables(workspaceId: string) {
     core: ['users', 'workspaces', 'companies', 'people'],
     auth: ['auth_sessions', 'roles', 'permissions', 'role_permissions', 'user_roles', 'workspace_users', 'reset_tokens'],
     activity: ['actions', 'audit_logs'],
-    products: ['OasisChannel', 'OasisChannelMember', 'OasisDirectMessage', 'OasisDMParticipant', 'OasisMessage', 'OasisReaction', 'StacksProject', 'StacksEpic', 'StacksStory', 'StacksTask', 'BuyerGroups', 'BuyerGroupMembers', 'grand_central_connections', 'grand_central_workflows', 'grand_central_executions']
+    products: ['OasisChannel', 'OasisChannelMember', 'OasisDirectMessage', 'OasisDMParticipant', 'OasisMessage', 'OasisReaction', 'StacksProject', 'StacksEpoch', 'StacksStory', 'StacksTask', 'BuyerGroups', 'BuyerGroupMembers', 'grand_central_connections', 'grand_central_workflows', 'grand_central_executions']
   };
 
   const tables = [];

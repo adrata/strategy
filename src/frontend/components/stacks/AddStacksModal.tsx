@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, PlusIcon, RectangleStackIcon, ListBulletIcon, TableCellsIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 import { Select } from '@/platform/ui/components/Select';
@@ -31,13 +31,12 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    product: '' as '' | 'Place' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
+    product: '' as '' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
     section: '',
     status: 'up-next' as 'up-next' | 'todo' | 'in-progress' | 'built' | 'qa1' | 'qa2' | 'shipped',
     // Story-specific
-    epicId: '',
-    // Epic-specific
     epochId: '',
+    viewType: 'detail' as 'detail' | 'list' | 'grid',
     // Epoch-specific
     goal: '',
     timeframe: ''
@@ -128,8 +127,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         product: '',
         section: '',
         status: 'up-next',
-        epicId: '',
         epochId: '',
+        viewType: 'detail',
         goal: '',
         timeframe: ''
       });
@@ -245,7 +244,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
   const handleEpicSelect = (epic: any) => {
     setSelectedEpic(epic);
-    setFormData(prev => ({ ...prev, epicId: epic.id }));
+    setFormData(prev => ({ ...prev, epochId: epic.id }));
     setEpicSearchQuery(epic.title);
     setEpicSearchResults([]);
     setShowEpicDropdown(false);
@@ -253,7 +252,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
   const handleEpicRemove = () => {
     setSelectedEpic(null);
-    setFormData(prev => ({ ...prev, epicId: '' }));
+    setFormData(prev => ({ ...prev, epochId: '' }));
     setEpicSearchQuery('');
     setEpicSearchResults([]);
   };
@@ -386,7 +385,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         const storyData: any = {
           title: formData.title,
           description: formData.description || undefined,
-          status: formData.status
+          status: formData.status,
+          viewType: formData.viewType || 'detail'
         };
 
         if (formData.product) {
@@ -395,8 +395,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         if (formData.section) {
           storyData.section = formData.section;
         }
-        if (formData.epicId) {
-          storyData.epicId = formData.epicId;
+        if (formData.epochId) {
+          storyData.epochId = formData.epochId;
         }
         // Note: projectId is auto-created by API if not provided
 
@@ -428,7 +428,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         const bugData: any = {
           title: formData.title,
           description: formData.description || undefined,
-          status: formData.status,
+          status: 'up-next', // Bugs always default to 'up-next'
           type: 'bug',
           storyId: null
         };
@@ -603,17 +603,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             <div className="flex gap-2 border-b border-border">
               <button
                 type="button"
-                onClick={() => setActiveWorkType('epic')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  activeWorkType === 'epic'
-                    ? 'text-foreground border-b-2 border-primary'
-                    : 'text-muted hover:text-foreground'
-                }`}
-              >
-                Epic
-              </button>
-              <button
-                type="button"
                 onClick={() => setActiveWorkType('story')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'story'
@@ -632,7 +621,18 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                     : 'text-muted hover:text-foreground'
                 }`}
               >
-                Bugs
+                Bug
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveWorkType('epic')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeWorkType === 'epic'
+                    ? 'text-foreground border-b-2 border-primary'
+                    : 'text-muted hover:text-foreground'
+                }`}
+              >
+                Epic
               </button>
               <button
                 type="button"
@@ -647,6 +647,115 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               </button>
             </div>
           </div>
+
+          {/* Story-specific fields - Epoch Selector at top */}
+          {activeWorkType === 'story' && (
+            <>
+              {/* Epoch Selector */}
+              <div className="relative epic-search-container">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Epoch
+                </label>
+              {selectedEpic ? (
+                <div className="flex items-center gap-2 p-2 bg-panel-background border border-border rounded-lg">
+                  <span className="flex-1 text-sm text-foreground">{selectedEpic.title}</span>
+                  <button
+                    type="button"
+                    onClick={handleEpicRemove}
+                    className="p-1 hover:bg-hover rounded transition-colors"
+                  >
+                    <XMarkIcon className="h-4 w-4 text-muted" />
+                  </button>
+                </div>
+              ) : (
+                <div className="relative">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={epicSearchQuery}
+                      onChange={(e) => {
+                        setEpicSearchQuery(e.target.value);
+                        setShowEpicDropdown(true);
+                      }}
+                      onFocus={() => {
+                        if (epicSearchQuery) {
+                          searchEpics(epicSearchQuery);
+                        }
+                      }}
+                      placeholder="Search or create epoch..."
+                      className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-primary outline-none"
+                      style={{ paddingRight: '1rem' }}
+                    />
+                  </div>
+                  {showEpicDropdown && (epicSearchResults.length > 0 || epicSearchQuery.trim() || showCreateEpicForm) && (
+                    <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {isSearchingEpics ? (
+                        <div className="p-3 text-sm text-muted">Searching...</div>
+                      ) : (
+                        <>
+                          {epicSearchResults.map((epic) => (
+                            <button
+                              key={epic.id}
+                              type="button"
+                              onClick={() => handleEpicSelect(epic)}
+                              className="w-full text-left px-4 py-2 hover:bg-hover text-sm text-foreground"
+                            >
+                              {epic.title}
+                            </button>
+                          ))}
+                          {epicSearchResults.length === 0 && epicSearchQuery.trim() && !showCreateEpicForm && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowCreateEpicForm(true);
+                                setNewEpicTitle(epicSearchQuery);
+                              }}
+                              className="w-full text-left px-4 py-2 hover:bg-hover text-sm text-blue-600 flex items-center gap-2"
+                            >
+                              <PlusIcon className="h-4 w-4" />
+                              Create "{epicSearchQuery}"
+                            </button>
+                          )}
+                          {showCreateEpicForm && (
+                            <div className="p-3 border-t border-gray-200">
+                              <input
+                                type="text"
+                                value={newEpicTitle}
+                                onChange={(e) => setNewEpicTitle(e.target.value)}
+                                placeholder="Epoch title"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2"
+                                autoFocus
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={handleCreateEpic}
+                                  className="flex-1 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
+                                >
+                                  Create Epoch
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setShowCreateEpicForm(false);
+                                    setNewEpicTitle('');
+                                  }}
+                                  className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+              </div>
+            </>
+          )}
 
           {/* Product Dropdown */}
           <div>
@@ -664,7 +773,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               }}
               options={[
                 { value: '', label: 'Select a product...' },
-                { value: 'Place', label: 'Place' },
                 { value: 'RevenueOS', label: 'RevenueOS' },
                 { value: 'Workshop', label: 'Workshop' },
                 { value: 'Adrata', label: 'Adrata' },
@@ -676,32 +784,34 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             />
           </div>
 
-          {/* Status/Column Dropdown */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Status
-            </label>
-            <Select
-              value={formData.status}
-              onChange={(newStatus) => {
-                setFormData(prev => ({ 
-                  ...prev, 
-                  status: newStatus as typeof formData.status
-                }));
-              }}
-              options={[
-                { value: 'up-next', label: 'Up Next' },
-                { value: 'todo', label: 'Todo/Backlog' },
-                { value: 'in-progress', label: 'In Progress' },
-                { value: 'built', label: 'Built' },
-                { value: 'qa1', label: 'QA1' },
-                { value: 'qa2', label: 'QA2' },
-                { value: 'shipped', label: 'Shipped' }
-              ]}
-              placeholder="Select status..."
-              className="w-full"
-            />
-          </div>
+          {/* Workstream/Column Dropdown */}
+          {activeWorkType !== 'bug' && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Workstream
+              </label>
+              <Select
+                value={formData.status}
+                onChange={(newStatus) => {
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    status: newStatus as typeof formData.status
+                  }));
+                }}
+                options={[
+                  { value: 'up-next', label: 'Up Next' },
+                  { value: 'todo', label: 'Todo/Backlog' },
+                  { value: 'in-progress', label: 'In Progress' },
+                  { value: 'built', label: 'Built' },
+                  { value: 'qa1', label: 'QA1' },
+                  { value: 'qa2', label: 'QA2' },
+                  { value: 'shipped', label: 'Shipped' }
+                ]}
+                placeholder="Select workstream..."
+                className="w-full"
+              />
+            </div>
+          )}
 
           {/* Features Dropdown - Only show when RevenueOS is selected */}
           {formData.product === 'RevenueOS' && (
@@ -757,108 +867,52 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
           {/* Story-specific fields */}
           {activeWorkType === 'story' && (
-            <div className="relative epic-search-container">
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Epic
-              </label>
-              {selectedEpic ? (
-                <div className="flex items-center gap-2 p-2 bg-panel-background border border-border rounded-lg">
-                  <span className="flex-1 text-sm text-foreground">{selectedEpic.title}</span>
+            <>
+              {/* View Type Selector with Icons */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  View Type
+                </label>
+                <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={handleEpicRemove}
-                    className="p-1 hover:bg-hover rounded transition-colors"
+                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'detail' }))}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                      formData.viewType === 'detail'
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border bg-background text-foreground hover:bg-hover'
+                    }`}
+                    title="Detail"
                   >
-                    <XMarkIcon className="h-4 w-4 text-muted" />
+                    <RectangleStackIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'list' }))}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                      formData.viewType === 'list'
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border bg-background text-foreground hover:bg-hover'
+                    }`}
+                    title="List"
+                  >
+                    <ListBulletIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'grid' }))}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                      formData.viewType === 'grid'
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border bg-background text-foreground hover:bg-hover'
+                    }`}
+                    title="Grid"
+                  >
+                    <TableCellsIcon className="h-5 w-5" />
                   </button>
                 </div>
-              ) : (
-                <div className="relative">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={epicSearchQuery}
-                      onChange={(e) => {
-                        setEpicSearchQuery(e.target.value);
-                        setShowEpicDropdown(true);
-                      }}
-                      onFocus={() => {
-                        if (epicSearchQuery) {
-                          searchEpics(epicSearchQuery);
-                        }
-                      }}
-                      placeholder="Search or create epic..."
-                      className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-primary outline-none"
-                      style={{ paddingRight: '1rem' }}
-                    />
-                  </div>
-                  {showEpicDropdown && (epicSearchResults.length > 0 || epicSearchQuery.trim() || showCreateEpicForm) && (
-                    <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                      {isSearchingEpics ? (
-                        <div className="p-3 text-sm text-muted">Searching...</div>
-                      ) : (
-                        <>
-                          {epicSearchResults.map((epic) => (
-                            <button
-                              key={epic.id}
-                              type="button"
-                              onClick={() => handleEpicSelect(epic)}
-                              className="w-full text-left px-4 py-2 hover:bg-hover text-sm text-foreground"
-                            >
-                              {epic.title}
-                            </button>
-                          ))}
-                          {epicSearchResults.length === 0 && epicSearchQuery.trim() && !showCreateEpicForm && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowCreateEpicForm(true);
-                                setNewEpicTitle(epicSearchQuery);
-                              }}
-                              className="w-full text-left px-4 py-2 hover:bg-hover text-sm text-blue-600 flex items-center gap-2"
-                            >
-                              <PlusIcon className="h-4 w-4" />
-                              Create "{epicSearchQuery}"
-                            </button>
-                          )}
-                          {showCreateEpicForm && (
-                            <div className="p-3 border-t border-gray-200">
-                              <input
-                                type="text"
-                                value={newEpicTitle}
-                                onChange={(e) => setNewEpicTitle(e.target.value)}
-                                placeholder="Epic title"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2"
-                                autoFocus
-                              />
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={handleCreateEpic}
-                                  className="flex-1 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
-                                >
-                                  Create Epic
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setShowCreateEpicForm(false);
-                                    setNewEpicTitle('');
-                                  }}
-                                  className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+              </div>
+            </>
           )}
 
           {/* Epic-specific fields */}

@@ -8,7 +8,8 @@ import {
   ArrowDownIcon,
   TrashIcon,
   ArrowDownCircleIcon,
-  ArchiveBoxIcon
+  ArchiveBoxIcon,
+  ArrowUpCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface StacksContextMenuProps {
@@ -20,9 +21,11 @@ interface StacksContextMenuProps {
   onMoveDown: () => void;
   onMoveToBottom: () => void;
   onMoveBelowTheLine?: () => void;
+  onMoveToUpNext?: () => void;
   onMoveToDeepBacklog?: () => void;
   onDelete: () => void;
   showMoveBelowTheLine?: boolean;
+  showMoveToUpNext?: boolean;
   showMoveToDeepBacklog?: boolean;
 }
 

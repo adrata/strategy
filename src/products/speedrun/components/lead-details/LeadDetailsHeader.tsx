@@ -64,14 +64,14 @@ export function LeadDetailsHeader({
       <div className="flex items-center gap-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-3 py-2 bg-hover text-gray-700 rounded-lg hover:bg-loading-bg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 bg-hover text-foreground rounded-lg hover:bg-loading-bg transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Back
         </button>
-        <div className="w-8 h-8 bg-blue-100 text-blue-800 rounded-xl flex items-center justify-center font-semibold text-sm">
+        <div className="w-8 h-8 bg-primary/10 text-primary rounded-xl flex items-center justify-center font-semibold text-sm">
           {(person as any).globalRank || (person as any).winningScore?.rank || personIndex}
         </div>
         <div>
@@ -94,13 +94,13 @@ export function LeadDetailsHeader({
         <div className="flex items-center gap-4 text-sm text-muted mr-4">
           <div className="text-center">
             <div className="font-semibold">
-              <span className="text-red-600">{accurateTargets.completedToday}</span>
-              <span className="text-black">/{accurateTargets.dailyTarget}</span>
+              <span className="text-error">{accurateTargets.completedToday}</span>
+              <span className="text-foreground">/{accurateTargets.dailyTarget}</span>
             </div>
             <div className="text-xs">Daily Target</div>
           </div>
           <div className="text-center">
-            <div className="font-semibold text-black">{accurateTargets.people}</div>
+            <div className="font-semibold text-foreground">{accurateTargets.people}</div>
             <div className="text-xs">People</div>
           </div>
         </div>

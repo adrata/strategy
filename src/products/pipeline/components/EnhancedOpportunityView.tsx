@@ -92,66 +92,66 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
   const getStageColor = (stage: string) => {
     switch (stage.toLowerCase()) {
       case "discovery":
-        return "bg-loading-bg text-gray-800";
+        return "bg-loading-bg text-foreground";
       case "qualification":
-        return "bg-gray-300 text-gray-800";
+        return "bg-info/10 text-info";
       case "proposal":
-        return "bg-gray-400 text-gray-800";
+        return "bg-primary/10 text-primary";
       case "negotiation":
-        return "bg-panel-background0 text-white";
+        return "bg-warning/10 text-warning";
       case "closed-won":
-        return "bg-gray-800 text-white";
+        return "bg-success text-white";
       case "closed-lost":
-        return "bg-gray-600 text-white";
+        return "bg-error text-white";
       default:
-        return "bg-hover text-gray-800";
+        return "bg-hover text-foreground";
     }
   };
 
   const getPacingColor = (pacing: string) => {
     switch (pacing) {
       case "ahead":
-        return "bg-gray-800 text-white";
+        return "bg-success text-white";
       case "on-pace":
-        return "bg-panel-background0 text-white";
+        return "bg-primary text-white";
       case "behind":
-        return "bg-gray-300 text-gray-800";
+        return "bg-warning/10 text-warning";
       default:
-        return "bg-hover text-gray-800";
+        return "bg-hover text-foreground";
     }
   };
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {
       case "champion":
-        return "bg-gray-800 text-white";
+        return "bg-success text-white";
       case "supportive":
-        return "bg-gray-600 text-white";
+        return "bg-primary text-white";
       case "neutral":
-        return "bg-gray-400 text-gray-800";
+        return "bg-muted-light text-foreground";
       case "skeptical":
-        return "bg-gray-300 text-gray-800";
+        return "bg-warning/10 text-warning";
       case "blocker":
-        return "bg-loading-bg text-gray-800";
+        return "bg-error text-white";
       default:
-        return "bg-hover text-gray-800";
+        return "bg-hover text-foreground";
     }
   };
 
   const getLandmineColor = (category: string) => {
     switch (category) {
       case "people":
-        return "bg-gray-600 text-white";
+        return "bg-error/10 text-error";
       case "value":
-        return "bg-gray-700 text-white";
+        return "bg-error text-white";
       case "budget":
-        return "bg-gray-400 text-gray-800";
+        return "bg-warning/10 text-warning";
       case "timing":
-        return "bg-panel-background0 text-white";
+        return "bg-warning text-white";
       case "company":
-        return "bg-gray-300 text-gray-800";
+        return "bg-muted-light text-foreground";
       default:
-        return "bg-hover text-gray-800";
+        return "bg-hover text-foreground";
     }
   };
 
@@ -184,7 +184,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
             <div className="flex items-center space-x-6 mt-3">
               <div>
                 <span className="text-sm text-muted">Value:</span>
-                <span className="ml-2 text-xl font-bold text-green-600">
+                <span className="ml-2 text-xl font-bold text-success">
                   ${opportunity.value.toLocaleString()}
                 </span>
               </div>
@@ -215,13 +215,13 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
       <div className="px-8 py-6 bg-panel-background border-b border-border">
         <div className="grid grid-cols-4 gap-8">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-primary">
               {opportunity.buyerGroup.stakeholders.length}
             </div>
             <div className="text-sm text-muted">Stakeholders</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success">
               {
                 opportunity.buyerGroup.stakeholders.filter(
                   (s: any) =>
@@ -232,13 +232,13 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
             <div className="text-sm text-muted">Supporters</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-error">
               {opportunity.landmines.length}
             </div>
             <div className="text-sm text-muted">Landmines</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold text-info">
               {opportunity.competitorAnalysis.length}
             </div>
             <div className="text-sm text-muted">Competitors</div>
@@ -255,8 +255,8 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
               onClick={() => setActiveTab(tab.id as any)}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.id
-                  ? "border-gray-400 text-gray-700"
-                  : "border-transparent text-muted hover:text-gray-700 hover:border-border"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted hover:text-foreground hover:border-border"
               }`}
             >
               {tab.label}
@@ -276,19 +276,19 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Type
                     </label>
                     <p className="text-foreground">{opportunity.type}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Source
                     </label>
                     <p className="text-foreground">{opportunity.source}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Next Steps
                     </label>
                     <p className="text-foreground">{opportunity.nextSteps}</p>
@@ -296,13 +296,13 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Last Activity
                     </label>
                     <p className="text-foreground">{opportunity.lastActivity}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Business Case
                     </label>
                     <div className="bg-blue-50 rounded-lg p-4">
@@ -316,7 +316,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Notes
               </label>
               <div className="bg-panel-background rounded-lg p-4">

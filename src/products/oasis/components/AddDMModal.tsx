@@ -86,13 +86,13 @@ export function AddDMModal({ isOpen, onClose, onConfirm }: AddDMModalProps) {
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div className="relative bg-background rounded-lg shadow-xl w-full max-w-md mx-4 border border-border">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Start a Direct Message</h3>
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">Start a Direct Message</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-muted hover:text-foreground transition-colors"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -102,7 +102,7 @@ export function AddDMModal({ isOpen, onClose, onConfirm }: AddDMModalProps) {
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
             <div>
-              <label htmlFor="user-search" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="user-search" className="block text-sm font-medium text-foreground mb-2">
                 Search for people
               </label>
               <input
@@ -111,38 +111,38 @@ export function AddDMModal({ isOpen, onClose, onConfirm }: AddDMModalProps) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search by name or email..."
-                className="w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-md border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
                 autoFocus
               />
             </div>
 
             {/* User List */}
-            <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-md">
+            <div className="max-h-60 overflow-y-auto border border-border rounded-md">
               {loading ? (
-                <div className="p-4 text-center text-gray-500">Loading users...</div>
+                <div className="p-4 text-center text-muted">Loading users...</div>
               ) : filteredUsers.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">No users found</div>
+                <div className="p-4 text-center text-muted">No users found</div>
               ) : (
                 filteredUsers.map((user) => (
                   <div
                     key={user.id}
-                    className={`flex items-center p-3 hover:bg-gray-50 cursor-pointer ${
-                      selectedUsers.includes(user.id) ? 'bg-blue-50' : ''
+                    className={`flex items-center p-3 hover:bg-hover cursor-pointer ${
+                      selectedUsers.includes(user.id) ? 'bg-primary/10' : ''
                     }`}
                     onClick={() => handleUserToggle(user.id)}
                   >
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                        <UserIcon className="w-5 h-5 text-gray-500" />
+                      <div className="w-8 h-8 bg-muted-light rounded-full flex items-center justify-center">
+                        <UserIcon className="w-5 h-5 text-muted" />
                       </div>
                     </div>
                     <div className="ml-3 flex-1">
-                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="text-sm font-medium text-foreground">{user.name}</div>
+                      <div className="text-sm text-muted">{user.email}</div>
                     </div>
                     {selectedUsers.includes(user.id) && (
                       <div className="flex-shrink-0">
-                        <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                        <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                           <span className="text-white text-xs">✓</span>
                         </div>
                       </div>
@@ -153,7 +153,7 @@ export function AddDMModal({ isOpen, onClose, onConfirm }: AddDMModalProps) {
             </div>
 
             {selectedUsers.length > 0 && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted">
                 {selectedUsers.length} user{selectedUsers.length > 1 ? 's' : ''} selected
               </div>
             )}
@@ -164,14 +164,14 @@ export function AddDMModal({ isOpen, onClose, onConfirm }: AddDMModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-md hover:bg-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={selectedUsers.length === 0}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Start Conversation
             </button>

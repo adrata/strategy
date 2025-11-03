@@ -281,8 +281,8 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
             onClick={() => setActiveTab('files')}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'files'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-muted hover:text-gray-700'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted hover:text-foreground'
             }`}
           >
             <DocumentIcon className="w-4 h-4 inline mr-2" />
@@ -292,8 +292,8 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
             onClick={() => setActiveTab('data')}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'data'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-muted hover:text-gray-700'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted hover:text-foreground'
             }`}
           >
             <BuildingOfficeIcon className="w-4 h-4 inline mr-2" />

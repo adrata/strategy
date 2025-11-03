@@ -352,7 +352,7 @@ export function OasisMiddlePanel({
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 placeholder={`Message #${selectedChannel.name}`}
-                className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-panel-background focus:ring-2 focus:ring-primary focus:border-transparent"
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
                 <button

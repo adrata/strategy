@@ -54,10 +54,10 @@ export function StoryListView({ story }: StoryListViewProps) {
     });
   }
 
-  if (story.epic) {
+  if (story.epoch) {
     fields.push({
-      label: 'Epic',
-      value: typeof story.epic === 'object' ? story.epic.title : story.epic,
+      label: 'Epoch',
+      value: typeof story.epoch === 'object' ? story.epoch.title : story.epoch,
       icon: TagIcon
     });
   }

@@ -144,7 +144,7 @@ export function UpdatePersonPopup({
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Full Name *
           </label>
           <input
@@ -157,7 +157,7 @@ export function UpdatePersonPopup({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Job Title
           </label>
           <input
@@ -172,7 +172,7 @@ export function UpdatePersonPopup({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Email Address
           </label>
           <input
@@ -184,7 +184,7 @@ export function UpdatePersonPopup({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Phone Number
           </label>
           <input
@@ -198,7 +198,7 @@ export function UpdatePersonPopup({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           Company
         </label>
         <CompanySelector
@@ -223,7 +223,7 @@ export function UpdatePersonPopup({
         <h3 className="text-lg font-medium text-foreground">Action Settings</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Status
             </label>
             <select
@@ -240,7 +240,7 @@ export function UpdatePersonPopup({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Priority
             </label>
             <select
@@ -257,7 +257,7 @@ export function UpdatePersonPopup({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Next Action
           </label>
           <input
@@ -292,7 +292,7 @@ export function UpdatePersonPopup({
   const renderIntelligenceTab = () => (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           Relationship
         </label>
         <input
@@ -317,7 +317,7 @@ export function UpdatePersonPopup({
   const renderNotesTab = () => (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           Bio URL
         </label>
         <input
@@ -330,7 +330,7 @@ export function UpdatePersonPopup({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           LinkedIn Navigator URL
         </label>
         <input
@@ -343,7 +343,7 @@ export function UpdatePersonPopup({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           LinkedIn Connection Date
         </label>
         <input
@@ -438,7 +438,7 @@ export function UpdatePersonPopup({
         </div>
 
         <div>
-          <label htmlFor="delete-confirm" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="delete-confirm" className="block text-sm font-medium text-foreground mb-2">
             Type the name to confirm deletion
           </label>
           <input
@@ -455,7 +455,7 @@ export function UpdatePersonPopup({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 text-foreground bg-hover rounded-lg hover:bg-panel-background transition-colors"
           >
             Cancel
           </button>
@@ -539,7 +539,7 @@ export function UpdatePersonPopup({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-hover dark:bg-gray-600 rounded-lg hover:bg-loading-bg dark:hover:bg-panel-background transition-colors"
+              className="px-4 py-2 text-foreground bg-hover rounded-lg hover:bg-loading-bg transition-colors"
             >
               Cancel
             </button>

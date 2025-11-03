@@ -91,7 +91,7 @@ export function LeadDetailsTabContent({
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <div className="w-3 h-3 bg-gray-300 rounded-full mt-1 mr-3 flex-shrink-0"></div>
+                    <div className="w-3 h-3 bg-muted-light rounded-full mt-1 mr-3 flex-shrink-0"></div>
                     <div>
                       <div className="font-semibold text-foreground text-sm">
                         Next Action

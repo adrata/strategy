@@ -571,25 +571,37 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     
     let itemsWithNewRanks: BacklogItem[];
     
-    // If dropping an item from another section, add it to target section
+    // If dropping an item from another section, only move that item
     if (isCrossSectionMove) {
-      // Remove item from source section
-      const sourceSectionItems = items.filter(item => 
-        sourceSection === 'upNext'
+      // Remove the dragged item from its current position
+      const itemsWithoutDragged = items.filter(item => item.id !== activeIdStr);
+      
+      // Find where in the target section to insert (based on drop position)
+      // Get items in target section from itemsWithoutDragged
+      const targetSectionItemsWithoutDragged = itemsWithoutDragged.filter(item => 
+        targetSection === 'upNext'
           ? (item.status === 'up-next' || item.status === 'todo')
           : (item.status !== 'up-next' && item.status !== 'todo')
-      ).filter(item => item.id !== activeIdStr);
+      );
       
-      // Insert item into target section at the drop position
-      const updatedTargetItems = [...targetSectionItems];
-      updatedTargetItems.splice(dropIndex, 0, { ...activeItem, status: newStatus as BacklogItem['status'] });
+      // Insert the dragged item at the drop position in the target section
+      const updatedTargetItems = [...targetSectionItemsWithoutDragged];
+      const insertIndex = Math.min(dropIndex, updatedTargetItems.length);
+      updatedTargetItems.splice(insertIndex, 0, { ...activeItem, status: newStatus as BacklogItem['status'] });
       
-      // Merge sections back together
+      // Get items from the source section (items not in target section)
+      const sourceSectionItemsWithoutDragged = itemsWithoutDragged.filter(item => 
+        targetSection === 'upNext'
+          ? (item.status !== 'up-next' && item.status !== 'todo')
+          : (item.status === 'up-next' || item.status === 'todo')
+      );
+      
+      // Merge sections: target section items first, then source section items
       const allReorderedItems = targetSection === 'upNext' 
-        ? [...updatedTargetItems, ...sourceSectionItems]
-        : [...sourceSectionItems, ...updatedTargetItems];
+        ? [...updatedTargetItems, ...sourceSectionItemsWithoutDragged]
+        : [...sourceSectionItemsWithoutDragged, ...updatedTargetItems];
       
-      // Update ranks
+      // Update ranks only for positioning, don't reorder other items
       itemsWithNewRanks = allReorderedItems.map((item, index) => ({
         ...item,
         rank: index + 1
@@ -811,6 +823,100 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         console.error('Failed to update story status:', await response.text());
       } else {
         console.log(`Successfully moved ${item.title} below the line`);
+        // Refresh the list to get updated data
+        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          if (data.stories && Array.isArray(data.stories)) {
+            const backlogItems = data.stories.map((story: any, index: number) => ({
+              id: story.id,
+              title: story.title,
+              description: story.description,
+              priority: story.priority,
+              status: story.status,
+              assignee: story.assignee?.name || story.assignee,
+              dueDate: story.dueDate,
+              tags: story.tags || [],
+              createdAt: story.createdAt,
+              updatedAt: story.updatedAt,
+              rank: index + 1
+            }));
+            setItems(backlogItems);
+          }
+        }
+      }
+    } catch (error) {
+      // Revert on error
+      setItems(prevItems => 
+        prevItems.map(i => 
+          i.id === contextMenu.itemId ? { ...i, status: item.status } : i
+        )
+      );
+      console.error('Error updating story status:', error);
+    }
+  };
+
+  const handleMoveToUpNext = async () => {
+    if (!contextMenu.itemId) return;
+
+    const item = items.find(i => i.id === contextMenu.itemId);
+    if (!item) return;
+
+    // Change status to 'up-next'
+    const newStatus = 'up-next';
+
+    // Optimistic update
+    setItems(prevItems => 
+      prevItems.map(i => 
+        i.id === contextMenu.itemId ? { ...i, status: newStatus as any } : i
+      )
+    );
+
+    setContextMenu(prev => ({ ...prev, isVisible: false }));
+
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for updating story status');
+      return;
+    }
+
+    // Update via API
+    try {
+      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus
+        })
+      });
+
+      if (!response.ok) {
+        // Revert on failure
+        setItems(prevItems => 
+          prevItems.map(i => 
+            i.id === contextMenu.itemId ? { ...i, status: item.status } : i
+          )
+        );
+        console.error('Failed to update story status:', await response.text());
+      } else {
+        console.log(`Successfully moved ${item.title} to Up Next`);
         // Refresh the list to get updated data
         const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
           credentials: 'include',
@@ -1356,6 +1462,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         onMoveToBottom={() => moveItem(contextMenu.itemId, 'bottom')}
         onMoveBelowTheLine={handleMoveBelowTheLine}
         showMoveBelowTheLine={contextMenu.isUpNext === true}
+        onMoveToUpNext={handleMoveToUpNext}
+        showMoveToUpNext={contextMenu.isUpNext === false}
         onMoveToDeepBacklog={handleMoveToDeepBacklog}
         showMoveToDeepBacklog={contextMenu.isUpNext === false}
         onDelete={handleDelete}

@@ -72,17 +72,17 @@ export function ProfileAvatar({
     const isCurrentUser = showAsMe && currentUserId && userId && currentUserId === userId;
     
     if (isCurrentUser) {
-      return 'bg-blue-500'; // Blue for current user
+      return 'bg-primary'; // Primary color for current user
     }
     
-    // Light gray for others
-    return 'bg-gray-300';
+    // Muted background for others
+    return 'bg-muted-light';
   };
 
   return (
     <div className={`${config.container} ${className} relative`}>
       {profilePictureUrl && profilePictureUrl !== '' ? (
-        <div className={`${config.container} rounded-full overflow-hidden bg-gray-200`}>
+        <div className={`${config.container} rounded-full overflow-hidden bg-muted-light`}>
           <Image
             src={profilePictureUrl}
             alt={name || 'Profile'}
@@ -95,8 +95,10 @@ export function ProfileAvatar({
               target.style.display = 'none';
               const parent = target.parentElement;
               if (parent) {
+                const bgColor = isCurrentUser ? 'bg-primary' : 'bg-muted-light';
+                const textColor = isCurrentUser ? 'text-white' : 'text-foreground';
                 parent.innerHTML = `
-                  <div class="${config.container} ${getBackgroundColor()} rounded-full flex items-center justify-center text-white ${config.text} font-semibold">
+                  <div class="${config.container} ${bgColor} rounded-full flex items-center justify-center ${textColor} ${config.text} font-semibold">
                     ${initials}
                   </div>
                 `;
@@ -105,7 +107,7 @@ export function ProfileAvatar({
           />
         </div>
       ) : (
-        <div className={`${config.container} ${getBackgroundColor()} rounded-full flex items-center justify-center ${showAsMe && currentUserId && userId && currentUserId === userId ? 'text-white' : 'text-gray-700'} ${config.text} font-semibold`}>
+        <div className={`${config.container} ${getBackgroundColor()} rounded-full flex items-center justify-center ${showAsMe && currentUserId && userId && currentUserId === userId ? 'text-white' : 'text-foreground'} ${config.text} font-semibold`}>
           {initials}
         </div>
       )}
@@ -153,7 +155,7 @@ export function ProfileAvatarGroup({
               email={user.email}
               profilePictureUrl={user.profilePictureUrl}
               size={size}
-              className="ring-2 ring-white"
+              className="ring-2 ring-border"
               showAsMe={showAsMe}
               currentUserId={currentUserId}
               userId={user.userId}
@@ -162,7 +164,7 @@ export function ProfileAvatarGroup({
         ))}
       </div>
       {remainingCount > 0 && (
-        <div className={`ml-2 text-xs text-gray-500 font-medium`}>
+        <div className={`ml-2 text-xs text-muted font-medium`}>
           +{remainingCount}
         </div>
       )}

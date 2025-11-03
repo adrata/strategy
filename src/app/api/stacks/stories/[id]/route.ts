@@ -19,20 +19,35 @@ export async function PATCH(
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
+    // Check if status is changing
+    const existingStory = await prisma.stacksStory.findUnique({
+      where: { id },
+      select: { status: true }
+    });
+
+    const updateData: any = {
+      ...(title && { title }),
+      ...(description !== undefined && { description }),
+      ...(priority && { priority }),
+      ...(assigneeId !== undefined && { assigneeId })
+    };
+
+    // Update status and statusChangedAt if status is changing
+    if (status && existingStory && status !== existingStory.status) {
+      updateData.status = status;
+      updateData.statusChangedAt = new Date();
+    } else if (status) {
+      updateData.status = status;
+    }
+
     const story = await prisma.stacksStory.update({
       where: { id },
-      data: {
-        ...(title && { title }),
-        ...(description !== undefined && { description }),
-        ...(status && { status }),
-        ...(priority && { priority }),
-        ...(assigneeId !== undefined && { assigneeId })
-      },
+      data: updateData,
       include: {
         project: {
           select: { id: true, name: true }
         },
-        epic: {
+        epoch: {
           select: { id: true, title: true }
         },
         assignee: {

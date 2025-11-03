@@ -559,40 +559,40 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-loading-bg text-foreground border border-border";
-      case "medium": return "bg-hover text-gray-800 border border-border";
-      case "low": return "bg-background text-gray-700 border border-border";
-      default: return "bg-hover text-gray-800 border border-border";
+      case "high": return "bg-error/10 text-error border border-border";
+      case "medium": return "bg-warning/10 text-warning border border-border";
+      case "low": return "bg-success/10 text-success border border-border";
+      default: return "bg-hover text-foreground border border-border";
     }
   };
 
   const getStatusColor = (status: string) => {
     const statusLower = status?.toLowerCase() || '';
     
-    // Match theme colors from color-palette.ts
+    // Use theme-aware colors that work in both light and dark mode
     if (statusLower === 'lead' || statusLower === 'new') {
-      return "bg-[#FFF7ED] text-[#9A3412] border border-[#FDBA74]"; // Orange theme (leads)
+      return "bg-warning/10 text-warning border border-warning"; // Orange theme (leads)
     }
     if (statusLower === 'prospect' || statusLower === 'contacted' || statusLower === 'qualified') {
-      return "bg-[#EFF6FF] text-[#1E40AF] border border-[#93C5FD]"; // Blue theme (prospects)
+      return "bg-primary/10 text-primary border border-primary"; // Blue theme (prospects)
     }
     if (statusLower === 'opportunity') {
-      return "bg-[#EEF2FF] text-[#3730A3] border border-[#A5B4FC]"; // Indigo theme (opportunities)
+      return "bg-info/10 text-info border border-info"; // Indigo theme (opportunities)
     }
     if (statusLower === 'person' || statusLower === 'people') {
-      return "bg-[#F5F3FF] text-[#5B21B6] border border-[#C4B5FD]"; // Violet theme (people)
+      return "bg-info/10 text-info border border-info"; // Violet theme (people)
     }
     if (statusLower === 'company' || statusLower === 'companies') {
-      return "bg-[#F8FAFC] text-[#0F172A] border border-[#CBD5E1]"; // Slate theme (companies)
+      return "bg-muted-light text-foreground border border-border"; // Slate theme (companies)
     }
     
     // Default fallback
-    return "bg-hover text-gray-800 border border-border";
+    return "bg-hover text-foreground border border-border";
   };
 
   const getStateColor = (state: string) => {
-    if (!state) return 'bg-hover text-gray-800';
-    return 'bg-purple-100 text-purple-800 border border-purple-200';
+    if (!state) return 'bg-hover text-foreground';
+    return 'bg-info/10 text-info border border-info';
   };
 
   return (
@@ -729,12 +729,12 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             {/* Progress Bar for Speedrun Goal */}
             <div className="mb-4 p-3 bg-panel-background rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-700">Daily Progress</span>
+                <span className="text-xs font-medium text-foreground">Daily Progress</span>
                 <span className="text-xs text-muted">{doneContacts.length}/{workspaceSettings.dailyTarget}</span>
               </div>
               <div className="w-full bg-loading-bg rounded-full h-2">
                 <div 
-                  className="bg-red-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-error h-2 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, (doneContacts.length / workspaceSettings.dailyTarget) * 100)}%` }}
                 ></div>
               </div>
@@ -754,12 +754,12 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 onClick={() => handleContactClick(contact)}
                 className={`p-3 rounded-lg border transition-all cursor-pointer ${
                   selectedPerson?.id === contact.id 
-                    ? "border-gray-400 bg-hover shadow-sm" 
+                    ? "border-primary bg-hover shadow-sm" 
                     : "border-border bg-background hover:bg-panel-background hover:border-border"
                 }`}
               >
                 <div className="flex items-start justify-between mb-1">
-                  <div className="w-6 h-6 bg-blue-100 text-blue-800 rounded-lg flex items-center justify-center font-semibold text-xs">
+                  <div className="w-6 h-6 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-semibold text-xs">
                     {contact.rank}
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getPriorityColor(contact.priority)}`}>
@@ -776,7 +776,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(contact.status || 'prospect')}`}>
                       {contact.status || 'prospect'}
                     </span>
-                    <span className="text-xs font-medium text-gray-700">{contact.score}</span>
+                    <span className="text-xs font-medium text-foreground">{contact.score}</span>
                   </div>
                 </div>
               </div>
@@ -804,7 +804,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               <>
                 {/* Daily Goals Summary */}
                 <div className="mb-4 p-3 bg-panel-background rounded-lg">
-                  <h4 className="text-xs font-medium text-gray-700 mb-2">Today's Goals</h4>
+                  <h4 className="text-xs font-medium text-foreground mb-2">Today's Goals</h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="text-center">
                       <div className="font-bold text-foreground">{workspaceSettings.dailyTarget}</div>
@@ -840,8 +840,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           onClick={() => handleActionComplete(action.id)}
                           className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                             action.isCompleted
-                              ? "border-green-500 bg-green-500"
-                              : "border-border hover:border-gray-400"
+                              ? "border-success bg-success"
+                              : "border-border hover:border-primary"
                           }`}
                         >
                           {action['isCompleted'] && (
@@ -849,10 +849,10 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           )}
                         </button>
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          action['priority'] === 'critical' ? 'bg-red-100 text-red-800' :
-                          action['priority'] === 'high' ? 'bg-orange-100 text-orange-800' :
-                          action['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-hover text-gray-800'
+                          action['priority'] === 'critical' ? 'bg-error/10 text-error' :
+                          action['priority'] === 'high' ? 'bg-error/10 text-error' :
+                          action['priority'] === 'medium' ? 'bg-warning/10 text-warning' :
+                          'bg-hover text-foreground'
                         }`}>
                           {action.priority}
                         </span>
@@ -903,7 +903,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               <>
                 {/* Schedule Summary */}
                 <div className="bg-background border border-border rounded-lg p-4 mb-4">
-                  <h4 className="text-xs font-medium text-gray-700 mb-2">Today's Schedule</h4>
+                  <h4 className="text-xs font-medium text-foreground mb-2">Today's Schedule</h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="text-center">
                       <div className="font-semibold text-foreground">{dailySchedule.events.length}</div>
@@ -919,7 +919,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 {/* Events */}
                 {dailySchedule.events.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-xs font-medium text-gray-700 mb-2">Meetings</h4>
+                    <h4 className="text-xs font-medium text-foreground mb-2">Meetings</h4>
                     <div className="space-y-1">
                       {dailySchedule.events.map((event) => (
                         <div
@@ -935,14 +935,14 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                               {event.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                              event['type'] === 'demo' ? 'bg-purple-100 text-purple-800' :
-                              event['type'] === 'call' ? 'bg-green-100 text-green-800' :
-                              'bg-hover text-gray-800'
+                              event['type'] === 'demo' ? 'bg-info/10 text-info' :
+                              event['type'] === 'call' ? 'bg-success/10 text-success' :
+                              'bg-hover text-foreground'
                             }`}>
                               {event.type}
                             </span>
                           </div>
-                          <div className="text-gray-700">{event.title}</div>
+                          <div className="text-foreground">{event.title}</div>
                           {event['relatedCompany'] && (
                             <div className="text-muted mt-1">{event.relatedCompany}</div>
                           )}

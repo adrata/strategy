@@ -31,11 +31,11 @@ export function CompletionBonusModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative w-full max-w-md mx-4 bg-white rounded-lg shadow-xl">
+      <div className="relative w-full max-w-md mx-4 bg-background rounded-lg shadow-xl border border-border">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-muted hover:text-foreground transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -46,27 +46,27 @@ export function CompletionBonusModal({
           <div className="text-6xl mb-4">🎉</div>
           
           {/* Title */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             Congratulations!
           </h2>
           
           {/* Subtitle */}
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-lg text-muted mb-6">
             You completed your Speedrun!
           </p>
           
           {/* Stats */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-            <p className="text-green-800 font-semibold">
+          <div className="bg-success/10 border border-success rounded-lg p-4 mb-6">
+            <p className="text-success font-semibold">
               You contacted {completedCount} people today!
             </p>
-            <p className="text-green-600 text-sm mt-1">
+            <p className="text-success/80 text-sm mt-1">
               That's an amazing achievement! 🚀
             </p>
           </div>
           
           {/* Question */}
-          <p className="text-gray-700 mb-6">
+          <p className="text-foreground mb-6">
             Want to keep the momentum going with 10 more?
           </p>
           
@@ -81,14 +81,14 @@ export function CompletionBonusModal({
             </Button>
             <Button
               onClick={handleAccept}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white"
+              className="px-6 py-2 bg-success hover:bg-success/90 text-white"
             >
               Yes, load 10 more!
             </Button>
           </div>
           
           {/* Bonus round info */}
-          <p className="text-xs text-gray-500 mt-4">
+          <p className="text-xs text-muted mt-4">
             Bonus round will load your next 10 highest priority people
           </p>
         </div>

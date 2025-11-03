@@ -70,30 +70,30 @@ export function EnhancedContactView({ contact }: ContactProps) {
   const getBuyingInfluenceColor = (influence: string) => {
     switch (influence) {
       case "high":
-        return "bg-red-100 text-red-800";
+        return "bg-error/10 text-error";
       case "medium":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-warning/10 text-warning";
       case "low":
-        return "bg-green-100 text-green-800";
+        return "bg-success/10 text-success";
       default:
-        return "bg-hover text-gray-800";
+        return "bg-hover text-foreground";
     }
   };
 
   const getContactTypeColor = (type: string) => {
     switch (type) {
       case "champion":
-        return "bg-purple-100 text-purple-800";
+        return "bg-success/10 text-success";
       case "decision-maker":
-        return "bg-blue-100 text-blue-800";
+        return "bg-primary/10 text-primary";
       case "influencer":
-        return "bg-indigo-100 text-indigo-800";
+        return "bg-info/10 text-info";
       case "gatekeeper":
-        return "bg-orange-100 text-orange-800";
+        return "bg-warning/10 text-warning";
       case "end-user":
-        return "bg-hover text-gray-800";
+        return "bg-hover text-foreground";
       default:
-        return "bg-hover text-gray-800";
+        return "bg-hover text-foreground";
     }
   };
 
@@ -103,7 +103,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
       <div className="px-8 py-6 border-b border-border">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
+            <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl">
               {contact.name
                 .split(" ")
                 .map((n) => n[0])
@@ -131,7 +131,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
           </div>
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
             {isEditing ? "Save" : "Edit"}
           </button>
@@ -139,11 +139,11 @@ export function EnhancedContactView({ contact }: ContactProps) {
       </div>
 
       {/* Directional Intelligence - Prominent */}
-      <div className="px-8 py-6 bg-blue-50 border-b border-blue-100">
-        <h3 className="text-sm font-semibold text-blue-800 mb-2">
+      <div className="px-8 py-6 bg-primary/10 border-b border-primary/20">
+        <h3 className="text-sm font-semibold text-primary mb-2">
           🧠 Directional Intelligence
         </h3>
-        <p className="text-blue-900 leading-relaxed">
+        <p className="text-primary leading-relaxed">
           {contact.directionalIntelligence}
         </p>
       </div>
@@ -161,19 +161,19 @@ export function EnhancedContactView({ contact }: ContactProps) {
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Phone
               </label>
               <p className="text-foreground">{contact.phone}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Email
               </label>
               <p className="text-foreground">{contact.email}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Role
               </label>
               <p className="text-foreground">{contact.role}</p>
@@ -181,7 +181,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 LinkedIn
               </label>
               {contact.linkedinUrl ? (
@@ -198,36 +198,36 @@ export function EnhancedContactView({ contact }: ContactProps) {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Relationship Strength
               </label>
               <span
                 className={`px-2 py-1 rounded-full text-xs font-medium ${
                   contact['relationshipStrength'] === "strong"
-                    ? "bg-green-100 text-green-800"
+                    ? "bg-success/10 text-success"
                     : contact['relationshipStrength'] === "medium"
-                      ? "bg-yellow-100 text-yellow-800"
+                      ? "bg-warning/10 text-warning"
                       : contact['relationshipStrength'] === "weak"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-hover text-gray-800"
+                      ? "bg-error/10 text-error"
+                      : "bg-hover text-foreground"
                 }`}
               >
                 {contact.relationshipStrength.toUpperCase()}
               </span>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Status
               </label>
               <span
                 className={`px-2 py-1 rounded-full text-xs font-medium ${
                   contact['status'] === "active"
-                    ? "bg-green-100 text-green-800"
+                    ? "bg-success/10 text-success"
                     : contact['status'] === "inactive"
-                      ? "bg-hover text-gray-800"
+                      ? "bg-hover text-foreground"
                       : contact['status'] === "bounced"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-yellow-100 text-yellow-800"
+                        ? "bg-error/10 text-error"
+                        : "bg-warning/10 text-warning"
                 }`}
               >
                 {contact.status.toUpperCase()}
@@ -239,7 +239,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
 
       {/* Notes */}
       <div className="px-8 py-6 border-b border-border">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           Notes
         </label>
         <div className="bg-panel-background rounded-lg p-4">
@@ -256,8 +256,8 @@ export function EnhancedContactView({ contact }: ContactProps) {
               onClick={() => setActiveTab(tab.id as any)}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.id
-                  ? "border-gray-400 text-gray-700"
-                  : "border-transparent text-muted hover:text-gray-700 hover:border-border"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted hover:text-foreground hover:border-border"
               }`}
             >
               {tab.label}
