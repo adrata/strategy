@@ -107,7 +107,18 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   }
   
   // Get selectedChannel from OasisLayoutContext, not OasisProvider
-  const { selectedChannel, setSelectedChannel } = useOasisLayout();
+  // Add error handling for layout context
+  let selectedChannel: Conversation | null = null;
+  let setSelectedChannel: (channel: Conversation | null) => void = () => {};
+  
+  try {
+    const layoutContext = useOasisLayout();
+    selectedChannel = layoutContext.selectedChannel;
+    setSelectedChannel = layoutContext.setSelectedChannel;
+  } catch (error) {
+    console.error('Failed to get OasisLayout context:', error);
+    // Continue rendering with empty state - context will be available after provider mounts
+  }
   const { setIsProfilePanelVisible } = useProfilePanel();
   const params = useParams();
   
@@ -119,10 +130,14 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   console.log('🔍 [OASIS LEFT PANEL] URL params:', params);
   console.log('🔍 [OASIS LEFT PANEL] Workspace ID:', workspaceId);
   
-  // Real data hooks
-  const { channels, loading: channelsLoading, createChannel } = useOasisChannels(workspaceId);
-  const { dms, loading: dmsLoading, createDM } = useOasisDMs(workspaceId);
-  const { userCount, isConnected } = useOasisPresence(workspaceId);
+  // CRITICAL FIX: Validate workspaceId before calling hooks
+  // If workspaceId is empty, hooks will fail or return empty data
+  const safeWorkspaceId = workspaceId && workspaceId !== 'default' && workspaceId.trim() !== '' ? workspaceId : '';
+  
+  // Real data hooks - only call if we have a valid workspaceId
+  const { channels, loading: channelsLoading, createChannel } = useOasisChannels(safeWorkspaceId);
+  const { dms, loading: dmsLoading, createDM } = useOasisDMs(safeWorkspaceId);
+  const { userCount, isConnected } = useOasisPresence(safeWorkspaceId);
   const { autoCreateRossDMs } = useAutoCreateRossDMs();
 
   // Ref to track if initial channel selection has been made
@@ -131,10 +146,10 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
 
   // Auto-create DMs with Ross when component loads (only once per workspace)
   useEffect(() => {
-    if (workspaceId && !hasAutoCreatedRossDMs.current) {
+    if (safeWorkspaceId && !hasAutoCreatedRossDMs.current) {
       hasAutoCreatedRossDMs.current = true;
-      console.log('🤖 [OASIS LEFT PANEL] Auto-creating Ross DMs for workspace:', workspaceId);
-      autoCreateRossDMs(workspaceId)
+      console.log('🤖 [OASIS LEFT PANEL] Auto-creating Ross DMs for workspace:', safeWorkspaceId);
+      autoCreateRossDMs(safeWorkspaceId)
         .then(result => {
           console.log('✅ [OASIS LEFT PANEL] Auto-creation completed:', result);
         })
@@ -142,7 +157,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
           console.error('❌ [OASIS LEFT PANEL] Failed to auto-create Ross DMs:', error);
         });
     }
-  }, [workspaceId, autoCreateRossDMs]);
+  }, [safeWorkspaceId, autoCreateRossDMs]);
 
   // Auto-select channel when channels load and no channel is selected
   useEffect(() => {
@@ -248,10 +263,10 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     };
     
     // Handle "Me" self-DM - create or find existing self-DM
-    if (conversation.id === 'me-self-dm' && workspaceId && authUser?.id) {
+    if (conversation.id === 'me-self-dm' && safeWorkspaceId && authUser?.id) {
       try {
         // First check if self-DM already exists
-        const response = await fetch(`/api/v1/oasis/oasis/dms?workspaceId=${workspaceId}`, {
+        const response = await fetch(`/api/v1/oasis/oasis/dms?workspaceId=${safeWorkspaceId}`, {
           credentials: 'include'
         });
         
@@ -274,7 +289,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
-            workspaceId: workspaceId,
+            workspaceId: safeWorkspaceId,
             participantIds: [] // Empty array creates a self-DM
           })
         });
@@ -292,9 +307,9 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     }
     
     // Save last conversation to localStorage
-    if (workspaceId && conversation.id !== 'me-self-dm') {
+    if (safeWorkspaceId && conversation.id !== 'me-self-dm') {
       saveLastConversation(
-        workspaceId,
+        safeWorkspaceId,
         conversation.id,
         conversation.type as 'channel' | 'dm' | 'external',
         conversation.name
@@ -456,6 +471,24 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
         <div className="p-4 text-center">
           <div className="text-sm text-muted">Loading Oasis...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  // CRITICAL FIX: Show error state if workspaceId is missing after auth loads
+  if (!safeWorkspaceId && !authLoading) {
+    console.warn('⚠️ [OASIS LEFT PANEL] No workspace ID available:', {
+      authUser: !!authUser,
+      authUserActiveWorkspaceId: authUser?.activeWorkspaceId,
+      acquisitionDataExists: !!acquisitionData,
+      acquisitionDataActiveWorkspaceId: acquisitionData?.auth?.authUser?.activeWorkspaceId
+    });
+    return (
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
+        <div className="p-4 text-center">
+          <div className="text-sm text-red-500">Invalid workspace</div>
+          <div className="text-xs text-muted mt-1">Please refresh the page</div>
         </div>
       </div>
     );
@@ -656,7 +689,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         isOpen={showAddDMModal}
         onClose={() => setShowAddDMModal(false)}
         onConfirm={handleDMConfirm}
-        workspaceId={workspaceId}
+        workspaceId={safeWorkspaceId}
       />
     </div>
   );

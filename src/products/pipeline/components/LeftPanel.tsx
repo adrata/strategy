@@ -232,7 +232,12 @@ function PipelineSections({
   
   
   // 🚀 PERFORMANCE: Use fast counts loading state for instant feedback
-  const loading = fastCountsLoading || authLoading || false;
+  // CRITICAL FIX: Only show loading if we have no data at all (not even cached or zeros)
+  // This prevents the panel from being stuck in loading when data is available
+  const hasAnyCounts = fastCounts && Object.keys(fastCounts).length > 0 && 
+                       Object.values(fastCounts).some(count => count !== 0 && count !== '0');
+  const hasCachedData = actualCounts && Object.keys(actualCounts).length > 0;
+  const loading = (fastCountsLoading && !hasAnyCounts && !hasCachedData) || authLoading;
   
   // Use acquisitionData counts that were working before
   const leadsData = {
@@ -884,7 +889,9 @@ function PipelineSections({
 
   // 🛡️ VALIDATION: Ensure we have valid workspace and user IDs before proceeding
   // This must come AFTER all hooks are declared to prevent React hooks errors
-  if (!safeWorkspaceId || !safeUserId) {
+  // CRITICAL FIX: Allow rendering even if userId is missing initially to prevent blank panel
+  // The component will still render sections, they just won't have user-specific data
+  if (!safeWorkspaceId) {
     // Debug logging to understand the issue
     console.log('🔍 [DEBUG] Validation check:', {
       safeWorkspaceId,
@@ -908,7 +915,7 @@ function PipelineSections({
       );
     }
     
-    console.error('❌ [VALIDATION] Missing workspace or user ID after loading:', { 
+    console.error('❌ [VALIDATION] Missing workspace ID after loading:', { 
       workspaceId, 
       userId, 
       safeWorkspaceId,
@@ -925,6 +932,16 @@ function PipelineSections({
         </div>
       </div>
     );
+  }
+  
+  // CRITICAL FIX: Log warning if userId is missing but continue rendering
+  // This prevents blank panel when userId is temporarily unavailable
+  if (!safeUserId) {
+    console.warn('⚠️ [LEFT PANEL] User ID not available, rendering with limited functionality:', {
+      workspaceId: safeWorkspaceId,
+      authUserId: authUser?.id,
+      authLoading
+    });
   }
 
   

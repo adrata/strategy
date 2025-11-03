@@ -103,11 +103,28 @@ export function useFastCounts(): UseFastCountsReturn {
       return;
     }
 
-    // Only set loading to true if we don't have data yet or forcing refresh
-    if (Object.keys(counts).length === 0 || forceRefresh) {
-      setLoading(true);
-    }
+    // Set loading to true only if we're forcing refresh or don't have cached data
+    // Use functional update to access current counts state
+    setLoading(prevLoading => {
+      // Only set to true if we're forcing refresh or currently not loading
+      if (forceRefresh || !prevLoading) {
+        return true;
+      }
+      return prevLoading;
+    });
     setError(null);
+
+    // Add timeout to prevent infinite loading state
+    const timeoutId = setTimeout(() => {
+      console.warn('⏰ [FAST COUNTS] Fetch timeout - setting loading to false');
+      setLoading(false);
+    }, 10000); // 10 second timeout
+
+    // Create AbortController for timeout handling
+    const abortController = new AbortController();
+    const abortTimeoutId = setTimeout(() => {
+      abortController.abort();
+    }, 8000); // 8 second timeout for fetch
 
     try {
       // Debug authentication context in development
@@ -124,8 +141,12 @@ export function useFastCounts(): UseFastCountsReturn {
       
       // 🚀 PERFORMANCE: Use the unified counts API for all counts including speedrun
       const countsResponse = await fetch(`/api/data/counts${forceRefresh ? `?t=${Date.now()}` : ''}`, {
-        credentials: 'include'
+        credentials: 'include',
+        signal: abortController.signal
       });
+
+      clearTimeout(timeoutId); // Clear timeout if request succeeds
+      clearTimeout(abortTimeoutId); // Clear abort timeout
 
       if (!countsResponse.ok) {
         throw new Error(`Counts API returned ${countsResponse.status}: ${countsResponse.statusText}`);
@@ -176,9 +197,11 @@ export function useFastCounts(): UseFastCountsReturn {
       } catch (e) {
         // ignore storage failures
       }
-      // console.log('✅ [FAST COUNTS] Loaded counts:', newCounts);
+      console.log('✅ [FAST COUNTS] Loaded counts:', newCounts);
 
     } catch (err) {
+      clearTimeout(timeoutId); // Clear timeout on error
+      clearTimeout(abortTimeoutId); // Clear abort timeout on error
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch counts';
       
       // Check if this is an authentication error
@@ -200,12 +223,18 @@ export function useFastCounts(): UseFastCountsReturn {
         });
         setError('Authentication required - please sign in');
         console.warn('🔐 [FAST COUNTS] Authentication required');
+      } else if (errorMessage.includes('timeout') || errorMessage.includes('aborted')) {
+        // Network timeout - keep existing counts, log warning
+        console.warn('⏰ [FAST COUNTS] Request timeout - keeping existing counts');
+        setError('Request timeout - please try again');
       } else {
         // Other errors - log but don't clear data
         console.error('❌ [FAST COUNTS] Error:', errorMessage);
         setError(errorMessage);
       }
     } finally {
+      clearTimeout(timeoutId); // Ensure timeout is cleared
+      clearTimeout(abortTimeoutId); // Ensure abort timeout is cleared
       setLoading(false);
     }
   }, [workspaceId, userId, authLoading, authUser]);

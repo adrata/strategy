@@ -98,6 +98,7 @@ model workspaces {
   newsIndustries            String[]                    @default([])
   newsSources               String[]                    @default([])
   enabledFeatures           String[]                    @default([])
+  customFields              Json?
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
   OasisExternalConnection   OasisExternalConnection[]
@@ -1015,7 +1016,7 @@ model StacksProject {
 model StacksEpic {
   id          String        @id @default(cuid())
   projectId   String
-  epochId      String? // Epics belong to Epoch (bigger items)
+  epochId     String? // Epics belong to Epoch (bigger items)
   title       String        @db.VarChar(200)
   description String?
   status      String        @default("todo") @db.VarChar(20)
@@ -1028,10 +1029,10 @@ model StacksEpic {
   epoch       StacksEpoch?  @relation("StacksEpochEpics", fields: [epochId], references: [id], onDelete: SetNull)
   stories     StacksStory[] @relation("StacksEpicStories")
 
-  @@map("StacksEpic") // Maps to existing database table
   @@index([projectId])
   @@index([epochId])
   @@index([projectId, status])
+  @@map("StacksEpic") // Maps to existing database table
 }
 
 // StacksEpoch - bigger/higher-level items (separate table)
@@ -1051,9 +1052,9 @@ model StacksEpoch {
   epics       StacksEpic[]  @relation("StacksEpochEpics")
   stories     StacksStory[] @relation("StacksEpochStories")
 
-  @@map("StacksEpoch") // Separate table for bigger items
   @@index([projectId])
   @@index([projectId, status])
+  @@map("StacksEpoch") // Separate table for bigger items
 }
 
 model StacksStory {

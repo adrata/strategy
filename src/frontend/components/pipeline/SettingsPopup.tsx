@@ -17,7 +17,8 @@ import {
   ExclamationTriangleIcon,
   SparklesIcon,
   BellIcon,
-  PaintBrushIcon
+  PaintBrushIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 
 interface SettingsPopupProps {
@@ -53,7 +54,7 @@ interface WorkspaceContext {
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   const { user } = useUnifiedAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme' | 'daily100'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme' | 'daily100' | 'buyerGroup'>('profile');
   const [loading, setLoading] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   
@@ -97,6 +98,27 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   // Daily 100 settings
   const [daily100Preset, setDaily100Preset] = useState<PresetTemplateId>('elite-seller');
   const [passwordMessage, setPasswordMessage] = useState<{
+    type: 'success' | 'error' | null;
+    text: string;
+  }>({ type: null, text: '' });
+
+  // Buyer Group settings
+  const [buyerGroupConfig, setBuyerGroupConfig] = useState<{
+    usaOnly?: boolean;
+    dealSizeRange?: number;
+    productCategory?: string;
+    productName?: string;
+    departmentFiltering?: {
+      primaryDepartments?: string[];
+      secondaryDepartments?: string[];
+      excludedDepartments?: string[];
+    };
+    titleFiltering?: {
+      primaryTitles?: string[];
+      secondaryTitles?: string[];
+    };
+  } | null>(null);
+  const [buyerGroupSaveMessage, setBuyerGroupSaveMessage] = useState<{
     type: 'success' | 'error' | null;
     text: string;
   }>({ type: null, text: '' });
@@ -170,6 +192,44 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
           console.warn('Failed to load Daily 100 preset:', error);
         }
       }
+
+      // Load buyer group configuration
+      try {
+        const bgResponse = await fetch('/api/settings/buyer-group');
+        if (bgResponse.ok) {
+          const bgData = await bgResponse.json();
+          if (bgData.success && bgData.config) {
+            console.log('✅ SettingsPopup: Loaded buyer group config:', bgData.config);
+            setBuyerGroupConfig(bgData.config);
+          } else {
+            // Initialize with defaults if no config exists
+            setBuyerGroupConfig({
+              usaOnly: false,
+              dealSizeRange: 100000,
+              productCategory: 'sales',
+              productName: '',
+              departmentFiltering: {
+                primaryDepartments: [],
+                secondaryDepartments: [],
+                excludedDepartments: []
+              },
+              titleFiltering: {
+                primaryTitles: [],
+                secondaryTitles: []
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load buyer group config:', error);
+        // Initialize with defaults
+        setBuyerGroupConfig({
+          usaOnly: false,
+          dealSizeRange: 100000,
+          productCategory: 'sales',
+          productName: ''
+        });
+      }
     } catch (error) {
       console.error('❌ SettingsPopup: Error loading settings:', error);
     } finally {
@@ -192,6 +252,41 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
     } catch (error) {
       console.error('Failed to save Daily 100 preset:', error);
       alert('Failed to save preset. Please try again.');
+    }
+  };
+
+  const handleSaveBuyerGroupConfig = async () => {
+    if (!buyerGroupConfig) return;
+    
+    setLoading(true);
+    setBuyerGroupSaveMessage({ type: null, text: '' });
+    
+    try {
+      console.log('💾 SettingsPopup: Saving buyer group config:', buyerGroupConfig);
+      const response = await fetch('/api/settings/buyer-group', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buyerGroupConfig)
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log('✅ SettingsPopup: Buyer group config saved successfully:', data.config);
+        // Update local state with the saved config (including metadata like updatedAt)
+        if (data.config) {
+          setBuyerGroupConfig(data.config);
+        }
+        setBuyerGroupSaveMessage({ type: 'success', text: 'Buyer group settings saved successfully!' });
+        setTimeout(() => setBuyerGroupSaveMessage({ type: null, text: '' }), 5000);
+      } else {
+        console.error('❌ SettingsPopup: Failed to save buyer group config:', data.error);
+        setBuyerGroupSaveMessage({ type: 'error', text: `Failed to save: ${data.error}` });
+      }
+    } catch (error) {
+      console.error('❌ SettingsPopup: Error saving buyer group config:', error);
+      setBuyerGroupSaveMessage({ type: 'error', text: `Failed to save buyer group settings: ${error instanceof Error ? error.message : 'Unknown error'}` });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -375,6 +470,16 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               >
                 Daily 100
               </button>
+              <button
+                onClick={() => setActiveTab('buyerGroup')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'buyerGroup'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
+                }`}
+              >
+                Buyer Group
+              </button>
             </nav>
           </div>
 
@@ -403,6 +508,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                   {activeTab === 'notifications' && 'Notifications'}
                   {activeTab === 'theme' && 'Theme'}
                   {activeTab === 'daily100' && 'Daily 100'}
+                  {activeTab === 'buyerGroup' && 'Buyer Group'}
                 </span>
               </div>
               <button
@@ -878,7 +984,130 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 </div>
               </div>
             </div>
-          )}
+          ) : activeTab === 'buyerGroup' ? (
+            <div className="space-y-6">
+              {buyerGroupConfig && (
+                <>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <UserGroupIcon className="w-5 h-5" />
+                      Buyer Group Discovery Settings
+                    </h3>
+                    <p className="text-sm text-muted mb-6">
+                      Configure your buyer group discovery preferences. These settings will be used automatically when discovering buyer groups for companies.
+                    </p>
+
+                    {/* USA Only Filter */}
+                    <div className="mb-6">
+                      <label className="flex items-center gap-3 p-4 border border-border rounded-lg cursor-pointer hover:bg-hover transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={buyerGroupConfig.usaOnly || false}
+                          onChange={(e) => setBuyerGroupConfig(prev => prev ? { ...prev, usaOnly: e.target.checked } : { usaOnly: e.target.checked })}
+                          className="w-4 h-4 border-border text-primary focus:ring-primary focus:ring-2 rounded"
+                        />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-foreground">
+                            USA-Only Location Filter
+                          </div>
+                          <div className="text-xs text-muted mt-1">
+                            Only include USA-based employees in buyer group discovery. This helps focus on decision makers in your primary market.
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    {/* Deal Size */}
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Typical Deal Size (USD)
+                      </label>
+                      <input
+                        type="number"
+                        value={buyerGroupConfig.dealSizeRange || 100000}
+                        onChange={(e) => setBuyerGroupConfig(prev => prev ? { ...prev, dealSizeRange: parseInt(e.target.value) || 100000 } : { dealSizeRange: parseInt(e.target.value) || 100000 })}
+                        className="w-full p-3 border border-border rounded-md bg-background text-foreground"
+                        placeholder="100000"
+                        min="0"
+                      />
+                      <p className="text-xs text-muted mt-1">
+                        Used to determine appropriate buyer group size and seniority levels
+                      </p>
+                    </div>
+
+                    {/* Product Category */}
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Product Category
+                      </label>
+                      <select
+                        value={buyerGroupConfig.productCategory || 'sales'}
+                        onChange={(e) => setBuyerGroupConfig(prev => prev ? { ...prev, productCategory: e.target.value } : { productCategory: e.target.value })}
+                        className="w-full p-3 border border-border rounded-md bg-background text-foreground"
+                      >
+                        <option value="sales">Sales</option>
+                        <option value="engineering-services">Engineering Services</option>
+                        <option value="consulting">Consulting</option>
+                        <option value="technology">Technology</option>
+                        <option value="operations">Operations</option>
+                        <option value="finance">Finance</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="infrastructure">Infrastructure</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                      <p className="text-xs text-muted mt-1">
+                        Helps target relevant departments and roles for your product type
+                      </p>
+                    </div>
+
+                    {/* Product Name */}
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Product/Service Name
+                      </label>
+                      <input
+                        type="text"
+                        value={buyerGroupConfig.productName || ''}
+                        onChange={(e) => setBuyerGroupConfig(prev => prev ? { ...prev, productName: e.target.value } : { productName: e.target.value })}
+                        className="w-full p-3 border border-border rounded-md bg-background text-foreground"
+                        placeholder="e.g., Sales Intelligence Platform"
+                      />
+                      <p className="text-xs text-muted mt-1">
+                        Optional: Helps personalize buyer group discovery
+                      </p>
+                    </div>
+
+                    {/* Save Message */}
+                    {buyerGroupSaveMessage.type && (
+                      <div className={`p-3 rounded-lg flex items-center gap-2 ${
+                        buyerGroupSaveMessage.type === 'success'
+                          ? 'bg-success-bg border border-success-border text-success-text'
+                          : 'bg-error-bg border border-error-border text-error-text'
+                      }`}>
+                        {buyerGroupSaveMessage.type === 'success' ? (
+                          <CheckCircleIcon className="w-5 h-5" />
+                        ) : (
+                          <ExclamationTriangleIcon className="w-5 h-5" />
+                        )}
+                        {buyerGroupSaveMessage.text}
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3 justify-end">
+                      <button
+                        onClick={handleSaveBuyerGroupConfig}
+                        disabled={loading}
+                        className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {loading ? 'Saving...' : 'Save Settings'}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : null}
             </div>
           </div>
         </div>
