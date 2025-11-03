@@ -84,6 +84,9 @@ Generate a detailed JSON configuration that includes:
    - dealSizeThresholds: Custom thresholds for different deal sizes (if applicable)
    - industrySpecific: Any industry-specific adjustments or notes
 
+7. LOCATION FILTERING:
+   - usaOnly: Boolean - Set to true if interview response is "Yes - Only include USA-based employees", false otherwise.
+
 Be specific and optimize for finding the right buyer group. Consider the industries mentioned and decision maker types.
 
 Return ONLY valid JSON, no markdown formatting. Structure should be:
@@ -117,7 +120,8 @@ Return ONLY valid JSON, no markdown formatting. Structure should be:
     "alwaysInclude": [...],
     "dealSizeThresholds": {},
     "industrySpecific": "..."
-  }
+  },
+  "usaOnly": boolean
 }`;
   }
 
@@ -261,7 +265,8 @@ Return ONLY valid JSON, no markdown formatting. Structure should be:
         alwaysInclude: responses.criticalRoles ? [responses.criticalRoles] : [],
         dealSizeThresholds: {},
         industrySpecific: responses.targetIndustries?.join(', ') || ''
-      }
+      },
+      usaOnly: responses.usaOnly === 'Yes - Only include USA-based employees' || false
     };
   }
 }

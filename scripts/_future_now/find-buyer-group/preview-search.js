@@ -20,11 +20,15 @@ class PreviewSearch {
    * @param {string} filteringLevel - Filtering level: 'none', 'light', 'moderate', 'strict'
    * @param {string} productCategory - Product category for filtering
    * @param {object} customFiltering - Custom filtering configuration (optional)
+   * @param {boolean} usaOnly - Filter to USA-based employees only (optional)
    * @returns {Array} Array of employee previews
    */
-  async discoverAllStakeholders(companyData, maxPages = 5, filteringLevel = 'moderate', productCategory = 'sales', customFiltering = null) {
+  async discoverAllStakeholders(companyData, maxPages = 5, filteringLevel = 'moderate', productCategory = 'sales', customFiltering = null, usaOnly = false) {
     console.log(`🔍 Discovering stakeholders for: ${companyData.companyName || companyData.website}`);
     console.log(`📊 Filtering level: ${filteringLevel}, Product: ${productCategory}`);
+    if (usaOnly) {
+      console.log(`🇺🇸 Location filter: USA-only enabled`);
+    }
     
     // Build query based on available identifiers
     const query = this.buildCoresignalQuery(companyData);
@@ -77,6 +81,13 @@ class PreviewSearch {
       }
       relevantEmployees = allEmployeesRaw.filter(emp => this.isRelevantEmployee(emp, filterConfig));
       console.log(`📊 Filtered to ${relevantEmployees.length} relevant employees (${customFiltering ? 'personalized' : filteringLevel} filtering)`);
+    }
+    
+    // Apply location filtering if USA-only is enabled
+    if (usaOnly) {
+      const beforeLocationFilter = relevantEmployees.length;
+      relevantEmployees = relevantEmployees.filter(emp => this.isUSAEmployee(emp));
+      console.log(`🇺🇸 Location filter: ${beforeLocationFilter} → ${relevantEmployees.length} employees (filtered out ${beforeLocationFilter - relevantEmployees.length} non-USA)`);
     }
     
     // Deduplicate and return
@@ -335,6 +346,11 @@ class PreviewSearch {
               email: emp.email || '',
               phone: emp.phone || '',
               linkedinUrl: emp.linkedin_url || '',
+              // Location fields
+              location: emp.location_full || emp.location || '',
+              country: emp.location_country || emp.country || '',
+              state: emp.location_state || emp.state || '',
+              city: emp.location_city || emp.city || '',
               source: 'coresignal_preview'
             }));
           } else if (data.hits?.hits) {
@@ -355,6 +371,11 @@ class PreviewSearch {
                 email: source.email || '',
                 phone: source.phone || '',
                 linkedinUrl: source.linkedin_url || '',
+                // Location fields
+                location: source.location_full || source.location || '',
+                country: source.location_country || source.country || '',
+                state: source.location_state || source.state || '',
+                city: source.location_city || source.city || '',
                 source: 'coresignal_preview'
               };
             });
@@ -441,6 +462,73 @@ class PreviewSearch {
       }
     };
     return await this.executeSearch(query);
+  }
+
+  /**
+   * Check if employee is based in USA
+   * @param {object} employee - Employee data object
+   * @returns {boolean} True if employee is USA-based
+   */
+  isUSAEmployee(employee) {
+    if (!employee) return false;
+    
+    // Check country field (most reliable)
+    const country = (employee.country || '').toLowerCase().trim();
+    if (country) {
+      const usaVariations = ['united states', 'usa', 'us', 'united states of america', 'u.s.', 'u.s.a.'];
+      if (usaVariations.some(variation => country.includes(variation))) {
+        return true;
+      }
+      // If we have a country that's not USA, exclude it
+      if (country && !country.includes('united states') && !country.includes('usa') && !country.includes('us ')) {
+        return false;
+      }
+    }
+    
+    // Check location field (full location string)
+    const location = (employee.location || '').toLowerCase().trim();
+    if (location) {
+      // Check for USA indicators
+      const hasUSA = location.includes('united states') || 
+                     location.includes(', usa') || 
+                     location.includes(', us') ||
+                     location.includes('usa') ||
+                     (location.includes('new york') || location.includes('california') || location.includes('texas') || location.includes('florida') || location.includes('illinois') || location.includes('massachusetts') || location.includes('washington') || location.includes('georgia') || location.includes('north carolina') || location.includes('virginia'));
+      
+      // Check for non-USA indicators
+      const nonUSAIndicators = ['india', 'tokyo', 'japan', 'netherlands', 'germany', 'uk', 'united kingdom', 'canada', 'australia', 'france', 'spain', 'italy', 'brazil', 'mexico', 'china', 'singapore', 'south korea'];
+      const hasNonUSA = nonUSAIndicators.some(indicator => location.includes(indicator));
+      
+      if (hasNonUSA && !hasUSA) {
+        return false;
+      }
+      if (hasUSA) {
+        return true;
+      }
+    }
+    
+    // Check state field (USA states)
+    const state = (employee.state || '').toLowerCase().trim();
+    if (state) {
+      const usaStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 'in', 'ia', 'ks', 'ky', 'la', 'me', 'md', 'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 'nj', 'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc', 'sd', 'tn', 'tx', 'ut', 'vt', 'va', 'wa', 'wv', 'wi', 'wy',
+                        'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland', 'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey', 'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina', 'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'];
+      if (usaStates.some(usaState => state === usaState || state.includes(usaState))) {
+        return true;
+      }
+      // If state exists but doesn't match USA states, likely not USA
+      if (state && !usaStates.some(usaState => state.includes(usaState))) {
+        return false;
+      }
+    }
+    
+    // If no location data available, include by default (to avoid false negatives)
+    // This allows the system to still work if location data is missing
+    if (!country && !location && !state) {
+      return true; // Include if no location data (conservative approach)
+    }
+    
+    // Default to exclude if we have some location data but it doesn't match USA
+    return false;
   }
 
   /**

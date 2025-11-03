@@ -73,13 +73,22 @@ class ProductionBuyerGroupPipeline {
         };
         pipelineOptions.buyerGroupSize = config.buyerGroupSizing;
         pipelineOptions.rolePriorities = config.rolePriorities;
+        pipelineOptions.usaOnly = config.usaOnly || false; // Add USA-only filter from config
         
         console.log(`💰 Deal Size: $${pipelineOptions.dealSize.toLocaleString()}`);
         console.log(`🏷️  Product: ${pipelineOptions.productName || 'N/A'}`);
         console.log(`📊 Category: ${pipelineOptions.productCategory}`);
+        if (pipelineOptions.usaOnly) {
+          console.log(`🇺🇸 Location Filter: USA-only enabled`);
+        }
       } else {
         console.log(`💰 Deal Size: $${this.dealSize.toLocaleString()}`);
         console.log(`📄 Max Pages: ${this.maxPages}`);
+        // Allow usaOnly from command line even without config
+        if (this.options.usaOnly) {
+          pipelineOptions.usaOnly = true;
+          console.log(`🇺🇸 Location Filter: USA-only enabled`);
+        }
       }
       
       // Initialize the smart pipeline with personalized config
@@ -351,6 +360,10 @@ async function main() {
         options.exportJson = true;
         i--; // No value for boolean flags
         break;
+      case 'usa-only':
+        options.usaOnly = true;
+        i--; // No value for boolean flags
+        break;
       case 'json-output':
         options.jsonOutput = value;
         break;
@@ -367,6 +380,8 @@ async function main() {
     console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..."');
     console.log('\n  Skip interview (use saved config):');
     console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --skip-interview');
+    console.log('\n  USA-only filter:');
+    console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --usa-only');
     console.log('\n  Export JSON (for TOP):');
     console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --export-json --json-output "./config.json"');
     process.exit(1);

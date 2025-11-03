@@ -95,6 +95,16 @@ class BuyerGroupInterview {
         { optional: true }
       );
 
+      // Question 8: USA-only filter
+      await this.askSingleChoice(
+        '8. Do you want to limit buyer group discovery to USA-based employees only?\n   1. Yes - Only include USA-based employees\n   2. No - Include employees from all locations\n   > ',
+        [
+          'Yes - Only include USA-based employees',
+          'No - Include employees from all locations'
+        ],
+        'usaOnly'
+      );
+
       console.log('\n✅ Interview complete! Analyzing your responses...\n');
       return this.responses;
 

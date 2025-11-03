@@ -74,7 +74,8 @@ class SmartBuyerGroupPipeline {
           params.maxPreviewPages,
           params.filteringLevel,
           this.productCategory,
-          this.options.customFiltering || null
+          this.options.customFiltering || null,
+          this.options.usaOnly || false
         );
       });
       

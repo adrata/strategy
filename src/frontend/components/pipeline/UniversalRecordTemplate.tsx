@@ -923,33 +923,67 @@ export function UniversalRecordTemplate({
       
       // Map common fields to streamlined schema - using bracket notation for TypeScript strict mode
       if ('name' in updatedData && updatedData['name'] !== undefined) {
-        if (recordType === 'companies') {
-          // For companies, 'name' is the company name
-          updatePayload['name'] = updatedData['name'].trim();
-        } else {
-          // For people, split name into firstName/lastName with validation
-          const { firstName, lastName } = parseFullName(updatedData['name']);
-          updatePayload['firstName'] = firstName || 'Unknown';
-          updatePayload['lastName'] = lastName || 'User';
-          updatePayload['fullName'] = updatedData['name'].trim();
+        const nameValue = updatedData['name'];
+        // Only process name if it's not empty - preserve existing values if name is empty
+        if (typeof nameValue === 'string' && nameValue.trim() !== '') {
+          if (recordType === 'companies') {
+            // For companies, 'name' is the company name
+            updatePayload['name'] = nameValue.trim();
+          } else {
+            // For people, split name into firstName/lastName with validation
+            const { firstName, lastName } = parseFullName(nameValue);
+            // Only update firstName/lastName if we got valid values from parsing
+            // Don't default to "Unknown User" - preserve existing values if name parsing fails
+            if (firstName || lastName) {
+              updatePayload['firstName'] = firstName;
+              updatePayload['lastName'] = lastName;
+            }
+            updatePayload['fullName'] = nameValue.trim();
+          }
         }
+        // If name is empty, skip processing to preserve existing firstName/lastName values
       }
       if ('firstName' in updatedData && updatedData['firstName'] !== undefined) {
-        updatePayload['firstName'] = updatedData['firstName'] || 'Unknown';
+        // Only update if value is not empty - preserve existing value if empty
+        const firstNameValue = updatedData['firstName'];
+        if (typeof firstNameValue === 'string' && firstNameValue.trim() !== '') {
+          updatePayload['firstName'] = firstNameValue.trim();
+        }
       }
       if ('lastName' in updatedData && updatedData['lastName'] !== undefined) {
-        updatePayload['lastName'] = updatedData['lastName'] || 'User';
+        // Only update if value is not empty - preserve existing value if empty
+        const lastNameValue = updatedData['lastName'];
+        if (typeof lastNameValue === 'string' && lastNameValue.trim() !== '') {
+          updatePayload['lastName'] = lastNameValue.trim();
+        }
       }
       if ('fullName' in updatedData && updatedData['fullName'] !== undefined) {
-        updatePayload['fullName'] = updatedData['fullName'];
+        // Only update fullName if it's not empty
+        const fullNameValue = updatedData['fullName'];
+        if (typeof fullNameValue === 'string' && fullNameValue.trim() !== '') {
+          updatePayload['fullName'] = fullNameValue.trim();
+        }
       }
       
       // Sync fullName when firstName or lastName are updated individually
       if (('firstName' in updatedData || 'lastName' in updatedData) && 
           (updatedData['firstName'] !== undefined || updatedData['lastName'] !== undefined)) {
-        const firstName = updatedData['firstName'] !== undefined ? updatedData['firstName'] : (localRecord?.firstName || '');
-        const lastName = updatedData['lastName'] !== undefined ? updatedData['lastName'] : (localRecord?.lastName || '');
-        updatePayload['fullName'] = `${firstName} ${lastName}`.trim();
+        // Use updated values if they're non-empty, otherwise fall back to existing values
+        const firstName = (updatedData['firstName'] !== undefined && 
+                          typeof updatedData['firstName'] === 'string' && 
+                          updatedData['firstName'].trim() !== '')
+                          ? updatedData['firstName'].trim()
+                          : (localRecord?.firstName || '');
+        const lastName = (updatedData['lastName'] !== undefined && 
+                         typeof updatedData['lastName'] === 'string' && 
+                         updatedData['lastName'].trim() !== '')
+                         ? updatedData['lastName'].trim()
+                         : (localRecord?.lastName || '');
+        const computedFullName = `${firstName} ${lastName}`.trim();
+        // Only update fullName if we have at least one name component
+        if (computedFullName) {
+          updatePayload['fullName'] = computedFullName;
+        }
       }
       
       // Basic contact fields
