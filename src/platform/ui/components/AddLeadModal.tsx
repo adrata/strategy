@@ -69,7 +69,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
     selectedCompany: null as any,
     state: null as USState | null,
     notes: "",
-    status: "LEAD" as "LEAD" | "PROSPECT" | "OPPORTUNITY" | "CLIENT" | "PARTNER" | "SUPERFAN"
+    status: "PROSPECT" as "LEAD" | "PROSPECT" | "OPPORTUNITY" | "CLIENT" | "PARTNER" | "SUPERFAN"
   });
 
   // Company form data
@@ -78,7 +78,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
     website: "",
     linkedin: "",
     notes: "",
-    state: ""
+    state: null as USState | null
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -187,7 +187,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             selectedCompany: null,
             state: null,
             notes: "",
-            status: "LEAD"
+            status: "PROSPECT"
           });
           
           // Call callback
@@ -231,8 +231,9 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
           setCompanyFormData({
             name: "",
             website: "",
+            linkedin: "",
             notes: "",
-            state: ""
+            state: null
           });
           
           // Call callback
@@ -438,32 +439,12 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   onChange={(e) => setPersonFormData(prev => ({ ...prev, status: e.target.value as any }))}
                   className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 >
-                  <option value="LEAD">Lead</option>
                   <option value="PROSPECT">Prospect</option>
                   <option value="OPPORTUNITY">Opportunity</option>
                   <option value="CLIENT">Client</option>
                   <option value="PARTNER">Partner</option>
                   <option value="SUPERFAN">Superfan</option>
                 </select>
-              </div>
-
-              {/* Company */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Company
-                </label>
-                <CompanySelector
-                  value={personFormData.selectedCompany}
-                  onChange={(company) => {
-                    console.log('🏢 [AddLeadModal] Company selected/changed:', company);
-                    setPersonFormData(prev => ({ 
-                      ...prev, 
-                      selectedCompany: company 
-                    }));
-                    console.log('🏢 [AddLeadModal] Form data updated with company:', company);
-                  }}
-                  placeholder="Search or add company..."
-                />
               </div>
 
               {/* State Field - Only for Notary Everyday workspace */}
@@ -486,6 +467,25 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   />
                 </div>
               )}
+
+              {/* Company */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Company
+                </label>
+                <CompanySelector
+                  value={personFormData.selectedCompany}
+                  onChange={(company) => {
+                    console.log('🏢 [AddLeadModal] Company selected/changed:', company);
+                    setPersonFormData(prev => ({ 
+                      ...prev, 
+                      selectedCompany: company 
+                    }));
+                    console.log('🏢 [AddLeadModal] Form data updated with company:', company);
+                  }}
+                  placeholder="Search or add company..."
+                />
+              </div>
 
               {/* Notes */}
               <div>
@@ -526,6 +526,27 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                 />
               </div>
 
+              {/* State field - only for Notary Everyday workspace */}
+              {isNotaryEveryday && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    State
+                  </label>
+                  <StateSelector
+                    value={companyFormData.state}
+                    onChange={(state) => {
+                      console.log('🗺️ [AddLeadModal] Company state selected/changed:', state);
+                      setCompanyFormData(prev => ({ 
+                        ...prev, 
+                        state: state 
+                      }));
+                      console.log('🗺️ [AddLeadModal] Company form data updated with state:', state);
+                    }}
+                    placeholder="Search or select state..."
+                  />
+                </div>
+              )}
+
               {/* LinkedIn */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -553,22 +574,6 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
               </div>
-
-              {/* State field - only for Notary Everyday workspace */}
-              {isNotaryEveryday && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    State
-                  </label>
-                  <input
-                    type="text"
-                    value={companyFormData.state}
-                    onChange={(e) => setCompanyFormData(prev => ({ ...prev, state: e.target.value }))}
-                    placeholder="e.g., California, TX"
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
-                  />
-                </div>
-              )}
 
               {/* Notes */}
               <div>

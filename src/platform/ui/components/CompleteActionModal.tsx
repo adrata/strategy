@@ -112,15 +112,53 @@ export function CompleteActionModal({
         company: companyName || initialData.company // Use provided company or keep existing
       });
     } else {
+      // When updating from props (not undo), only update person/company fields
+      // Do NOT preserve action field - let the reset useEffect handle that
       setFormData(prev => ({
         ...prev,
         person: personName || prev.person,
         personId: personId || prev.personId,
         company: companyName || prev.company,
         companyId: companyId || prev.companyId
+        // Note: action field is NOT updated here - it's handled by the reset useEffect
       }));
     }
   }, [initialData, personName, companyName, personId, companyId]);
+
+  // Reset form when modal opens (unless it's an undo action with initialData)
+  // Use a ref to track previous isOpen state to detect when modal opens
+  const prevIsOpenRef = useRef(false);
+  useEffect(() => {
+    // Check if modal just opened (transitioned from closed to open)
+    const justOpened = isOpen && !prevIsOpenRef.current;
+    prevIsOpenRef.current = isOpen;
+    
+    if (justOpened && !initialData) {
+      // Reset form to defaults when modal opens, preserving person/company from props
+      setFormData({
+        person: personName || '',
+        personId: personId || '',
+        company: companyName || '',
+        companyId: companyId || '',
+        type: 'LinkedIn Connection',
+        time: 'Now',
+        action: '', // CRITICAL: Clear action field when modal opens
+        actionPerformedBy: currentUser?.id || ''
+      });
+      
+      // Also reset search states
+      setPersonSearchQuery('');
+      setPersonSearchResults([]);
+      setShowCreatePersonForm(false);
+      setNewPersonData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        jobTitle: ''
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialData]); // Only reset on isOpen transition, props are captured from closure
 
   // Auto-focus notes field when modal opens (only if person is already selected)
   useEffect(() => {

@@ -866,25 +866,103 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         onRecordUpdate={async (updatedRecord) => {
           console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
           console.log('🔍 [PIPELINE DEBUG] onRecordUpdate called for section:', section, 'recordType:', updatedRecord?.recordType || 'unknown');
+          
+          // Check if status changed and determine new section
+          const newStatus = updatedRecord?.status || updatedRecord?.stage;
+          const oldStatus = selectedRecord?.status || selectedRecord?.stage;
+          
+          // Determine target section based on status
+          const getSectionFromStatus = (status: string): string => {
+            if (!status) return section; // Default to current section
+            const statusUpper = status.toUpperCase();
+            if (statusUpper === 'LEAD') return 'leads';
+            if (statusUpper === 'PROSPECT') return 'prospects';
+            if (statusUpper === 'OPPORTUNITY') return 'opportunities';
+            if (statusUpper === 'CLIENT' || statusUpper === 'CUSTOMER' || statusUpper === 'SUPERFAN') return 'clients';
+            return section; // Default to current section
+          };
+          
+          const newSection = getSectionFromStatus(newStatus);
+          const statusChanged = newStatus && oldStatus && newStatus.toUpperCase() !== oldStatus.toUpperCase();
+          const sectionChanged = newSection !== section;
+          
+          console.log('🔍 [PIPELINE] Status change detection:', {
+            oldStatus,
+            newStatus,
+            oldSection: section,
+            newSection,
+            statusChanged,
+            sectionChanged
+          });
+          
+          // Update selected record
           setSelectedRecord(updatedRecord);
           
-          // Trigger refresh of data hooks to ensure parent components get updated data
-          // Since records can move between sections (e.g., lead → prospect), refresh multiple hooks
-          try {
-            const refreshPromises = [];
+          // If status changed and section changed, navigate to new section
+          if (statusChanged && sectionChanged) {
+            console.log(`🔄 [PIPELINE] Status changed from ${oldStatus} to ${newStatus}, navigating from ${section} to ${newSection}`);
             
-            // Always refresh the current section
-            refreshPromises.push(currentSectionHook.refresh());
+            // Generate record name for navigation
+            const recordName = updatedRecord?.fullName || updatedRecord?.name || updatedRecord?.firstName || 'record';
             
-            // Note: With the performance optimization, we only load the current section's data
-            // Cross-section refreshes are handled by the parent layout's data providers
-            // This reduces the number of API calls and improves performance
+            // Navigate to the new section with the same record
+            navigateToPipelineItem(newSection, updatedRecord.id, recordName);
             
-            // Wait for all refreshes to complete
-            await Promise.all(refreshPromises);
-            console.log('🔄 [PIPELINE] Refreshed all relevant data hooks');
-          } catch (error) {
-            console.error('⚠️ [PIPELINE] Error refreshing data after update:', error);
+            // Refresh counts for both old and new sections
+            window.dispatchEvent(new CustomEvent('refresh-counts', {
+              detail: { 
+                section: newSection,
+                type: 'status-change',
+                oldSection: section,
+                oldStatus,
+                newStatus,
+                recordId: updatedRecord.id
+              }
+            }));
+            
+            // Also refresh old section counts
+            window.dispatchEvent(new CustomEvent('refresh-counts', {
+              detail: { 
+                section: section,
+                type: 'status-change',
+                oldSection: section,
+                oldStatus,
+                newStatus,
+                recordId: updatedRecord.id
+              }
+            }));
+          } else {
+            // Trigger refresh of data hooks to ensure parent components get updated data
+            // Since records can move between sections (e.g., lead → prospect), refresh multiple hooks
+            try {
+              const refreshPromises = [];
+              
+              // Always refresh the current section
+              refreshPromises.push(currentSectionHook.refresh());
+              
+              // If status changed but section didn't change, refresh counts
+              if (statusChanged) {
+                window.dispatchEvent(new CustomEvent('refresh-counts', {
+                  detail: { 
+                    section: section,
+                    type: 'status-update',
+                    oldStatus,
+                    newStatus,
+                    recordId: updatedRecord.id
+                  }
+                }));
+              }
+              
+              // Note: With the performance optimization, we only load the current section's data
+              // Cross-section refreshes are handled by the parent layout's data providers
+              // This reduces the number of API calls and improves performance
+              
+              // Wait for all refreshes to complete
+              await Promise.all(refreshPromises);
+              console.log('🔄 [PIPELINE] Refreshed all relevant data hooks');
+            } catch (error) {
+              console.error('⚠️ [PIPELINE] Error refreshing data after update:', error);
+            }
           }
           
           console.log('✅ [PIPELINE] Record updated in UI and data refreshed');

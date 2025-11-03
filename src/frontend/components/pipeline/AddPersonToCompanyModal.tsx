@@ -44,6 +44,7 @@ export function AddPersonToCompanyModal({
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
   // Get section-specific colors
   const colors = getCategoryColors('people');
@@ -101,6 +102,7 @@ export function AddPersonToCompanyModal({
       setSearchResults([]);
       setShowCreateForm(false);
       setSelectedPerson(null);
+      setSuccessMessage(null);
       setFormData({
         firstName: '',
         lastName: '',
@@ -140,7 +142,7 @@ export function AddPersonToCompanyModal({
 
     setIsCreating(true);
     try {
-      const response = await authFetch(`/api/companies/${companyId}/people`, {
+      const result = await authFetch(`/api/companies/${companyId}/people`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -150,16 +152,33 @@ export function AddPersonToCompanyModal({
         })
       });
 
-      if (response.ok) {
-        const updatedPerson = await response.json();
+      // authFetch returns parsed JSON data, not a Response object
+      if (result.success === false) {
+        const errorMessage = result.message || result.error || 'Failed to link person to company';
+        throw new Error(errorMessage);
+      }
+
+      // Handle both wrapped response format ({ success: true, data: ... }) and direct person object
+      const updatedPerson = result.data || result;
+      
+      // Validate we got a person object
+      if (!updatedPerson || !updatedPerson.id) {
+        throw new Error('Invalid response: person data missing');
+      }
+
+      // Show success message
+      const personName = updatedPerson.fullName || `${updatedPerson.firstName} ${updatedPerson.lastName}`;
+      setSuccessMessage(`Successfully linked person: ${personName}`);
+      
+      // Close modal after a short delay to show the success message
+      setTimeout(() => {
         onPersonAdded(updatedPerson);
         onClose();
-      } else {
-        throw new Error('Failed to link person to company');
-      }
+      }, 1500);
     } catch (error) {
       console.error('Error linking person to company:', error);
-      alert('Failed to link person to company. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to link person to company. Please try again.';
+      alert(errorMessage);
     } finally {
       setIsCreating(false);
     }
@@ -224,8 +243,15 @@ export function AddPersonToCompanyModal({
         }
       }));
       
-      onPersonAdded(newPerson);
-      onClose();
+      // Show success message
+      const personName = newPerson.fullName || `${newPerson.firstName} ${newPerson.lastName}`;
+      setSuccessMessage(`Successfully created person: ${personName}`);
+      
+      // Close modal after a short delay to show the success message
+      setTimeout(() => {
+        onPersonAdded(newPerson);
+        onClose();
+      }, 1500);
     } catch (error) {
       console.error('Error creating person:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create person. Please try again.';
@@ -246,6 +272,21 @@ export function AddPersonToCompanyModal({
   if (!isOpen) return null;
 
   return (
+    <>
+      {/* Success Message Toast */}
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[10001]">
+          <div className="bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-3">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium text-green-700">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-background rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -545,5 +586,6 @@ export function AddPersonToCompanyModal({
         </div>
       </div>
     </div>
+    </>
   );
 }
