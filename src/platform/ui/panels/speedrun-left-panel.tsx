@@ -44,6 +44,26 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
   const { navigateToPipeline } = useWorkspaceNavigation();
   const pathname = usePathname();
   const { settings: workspaceSettings } = useWorkspaceSpeedrunSettings();
+  const [hasCompletedRecords, setHasCompletedRecords] = React.useState(false);
+  
+  // Check if user has started speedrun (has completed records)
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const completedRecords = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+      setHasCompletedRecords(completedRecords.length > 0);
+      
+      // Listen for speedrun action completion events
+      const handleSpeedrunActionLogged = () => {
+        const updated = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+        setHasCompletedRecords(updated.length > 0);
+      };
+      
+      document.addEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+      return () => {
+        document.removeEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+      };
+    }
+  }, []);
   
   // Use RevenueOS context for proper sync with middle panel
   const {
@@ -640,9 +660,21 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               )}
             </div>
             
-            {/* Start Button */}
-            <button className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
-              Start Speedrun
+            {/* Start/Continue Button */}
+            <button 
+              className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
+              onClick={() => {
+                const currentPath = window.location.pathname;
+                const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+                if (workspaceMatch) {
+                  const workspaceSlug = workspaceMatch[1];
+                  router.push(`/${workspaceSlug}/speedrun/sprint`);
+                } else {
+                  router.push('/speedrun/sprint');
+                }
+              }}
+            >
+              {hasCompletedRecords ? 'Continue Speedrun' : 'Start Speedrun'}
             </button>
           </div>
         </div>

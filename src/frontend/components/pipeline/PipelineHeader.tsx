@@ -93,10 +93,30 @@ export function PipelineHeader({
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
+  const [hasCompletedRecords, setHasCompletedRecords] = useState(false);
   const successMessageTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  
+  // Check if user has started speedrun (has completed records)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const completedRecords = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+      setHasCompletedRecords(completedRecords.length > 0);
+      
+      // Listen for speedrun action completion events
+      const handleSpeedrunActionLogged = () => {
+        const updated = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+        setHasCompletedRecords(updated.length > 0);
+      };
+      
+      document.addEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+      return () => {
+        document.removeEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+      };
+    }
+  }, []);
 
   // Debug: Track component mount/unmount
   useEffect(() => {
@@ -763,7 +783,7 @@ export function PipelineHeader({
           title: 'Speedrun',
           subtitle: 'Win more, faster',
           actionButton: 'Add Action',
-          secondaryActionButton: 'Start Speedrun',
+          secondaryActionButton: 'Start Speedrun', // This will be dynamically updated based on hasCompletedRecords
           showStartSpeedrun: true
         };
       case 'dashboard':
@@ -1321,10 +1341,14 @@ export function PipelineHeader({
                           }`}
                         >
                           <span className="hidden xs:inline">
-                            {section === 'speedrun' ? `Start Speedrun (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
+                            {section === 'speedrun' 
+                              ? `${hasCompletedRecords ? 'Continue Speedrun' : 'Start Speedrun'} (${getCommonShortcut('SUBMIT')})` 
+                              : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                           </span>
                           <span className="xs:hidden">
-                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
+                            {section === 'speedrun' 
+                              ? `${hasCompletedRecords ? 'Continue' : 'Start'} (${getCommonShortcut('SUBMIT')})` 
+                              : `Add Action (${getCommonShortcut('SUBMIT')})`}
                           </span>
                         </button>
                       )}

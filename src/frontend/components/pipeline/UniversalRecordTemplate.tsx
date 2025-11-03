@@ -188,6 +188,28 @@ export function UniversalRecordTemplate({
   } = usePipeline();
   const [pendingSaves, setPendingSaves] = useState<Set<string>>(new Set());
   const [recentlyUpdatedFields, setRecentlyUpdatedFields] = useState<Set<string>>(new Set());
+  const [hasCompletedRecords, setHasCompletedRecords] = useState(false);
+  
+  // Check if user has started speedrun (has completed records)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const completedRecords = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+      setHasCompletedRecords(completedRecords.length > 0);
+    }
+    
+    // Listen for speedrun action completion events to update the button text
+    const handleSpeedrunActionLogged = () => {
+      if (typeof window !== 'undefined') {
+        const completedRecords = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+        setHasCompletedRecords(completedRecords.length > 0);
+      }
+    };
+    
+    document.addEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    return () => {
+      document.removeEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    };
+  }, []);
   
   // 🚀 CRITICAL FIX: Clear recentlyUpdatedFields when navigating to a different record
   // This prevents stale local state from overriding fresh API data
@@ -3707,7 +3729,9 @@ export function UniversalRecordTemplate({
           </button>
         );
         
-        // Start Speedrun button - blue styling
+        // Start/Continue Speedrun button - blue styling
+        const buttonText = hasCompletedRecords ? 'Continue Speedrun' : 'Start Speedrun';
+        const buttonTextShort = hasCompletedRecords ? 'Continue' : 'Start';
         buttons.push(
           <button
             key="start-speedrun"
@@ -3724,8 +3748,8 @@ export function UniversalRecordTemplate({
             }}
             className="px-3 py-1.5 text-sm bg-info-bg text-info-text border border-info-border rounded-md hover:bg-info hover:text-button-text transition-colors flex items-center gap-1"
           >
-            <span className="hidden xs:inline">Start Speedrun ({getCommonShortcut('SUBMIT')})</span>
-            <span className="xs:hidden">Start ({getCommonShortcut('SUBMIT')})</span>
+            <span className="hidden xs:inline">{buttonText} ({getCommonShortcut('SUBMIT')})</span>
+            <span className="xs:hidden">{buttonTextShort} ({getCommonShortcut('SUBMIT')})</span>
           </button>
         );
       }

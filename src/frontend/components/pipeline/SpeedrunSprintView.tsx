@@ -347,6 +347,30 @@ export function SpeedrunSprintView() {
     setSelectedRecord(null);
   }, [currentSprintIndex]);
 
+  // Auto-select first record when data loads and no record is selected
+  useEffect(() => {
+    // Only auto-select if:
+    // 1. Data is available
+    // 2. No record is currently selected
+    // 3. We're not in a loading state
+    if (data && data.length > 0 && !selectedRecord && !loading) {
+      // Prefer first non-completed record, otherwise first record overall
+      const firstNonCompleted = data.find((record: any) => !completedRecords.includes(record.id));
+      const recordToSelect = firstNonCompleted || data[0];
+      
+      if (recordToSelect) {
+        console.log('🚀 [SPEEDRUN SPRINT] Auto-selecting first record:', {
+          recordId: recordToSelect.id,
+          recordName: recordToSelect.name || recordToSelect.fullName,
+          isNonCompleted: !completedRecords.includes(recordToSelect.id),
+          totalRecords: data.length,
+          completedCount: completedRecords.length
+        });
+        setSelectedRecord(recordToSelect);
+      }
+    }
+  }, [data, selectedRecord, loading, completedRecords, setSelectedRecord]);
+
   // Sync selectedRecord with data array when data changes, preserving linkedinNavigatorUrl and notes
   useEffect(() => {
     if (!selectedRecord || !data || data.length === 0) return;
