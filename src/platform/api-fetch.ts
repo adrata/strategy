@@ -32,15 +32,62 @@ export async function apiFetch<T = any>(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
+  // 🔍 COMPREHENSIVE COOKIE DIAGNOSTICS & AUTH HEADER FALLBACK
+  let authHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...fetchOptions.headers,
+  };
+
+  // 🔐 ALWAYS try Authorization header from localStorage as backup (even if cookies exist)
+  // This handles cases where cookies exist but are invalid/expired
+  if (typeof window !== 'undefined') {
+    const cookieHeader = document.cookie;
+    const hasAuthCookie = cookieHeader.includes('auth-token') || cookieHeader.includes('adrata_unified_session');
+    
+    // ALWAYS try to get token from localStorage and send as Authorization header
+    // This provides robust authentication even if cookies are invalid
+    try {
+      const sessionStr = localStorage.getItem('adrata_unified_session_v3');
+      if (sessionStr) {
+        const session = JSON.parse(sessionStr);
+        if (session?.accessToken) {
+          authHeaders['Authorization'] = `Bearer ${session.accessToken}`;
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔄 [API-FETCH] Using Authorization header (from localStorage):', {
+              hasCookie: hasAuthCookie,
+              tokenLength: session.accessToken.length
+            });
+          }
+        }
+      }
+    } catch (error) {
+      // Silent fail - continue without auth header
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ [API-FETCH] Failed to read token from localStorage:', error);
+      }
+    }
+    
+    // Enhanced cookie diagnostics in development
+    if (process.env.NODE_ENV === 'development') {
+      const cookieNames = cookieHeader ? cookieHeader.split(';').map(c => c.split('=')[0].trim()).filter(Boolean) : [];
+      console.log('🔍 [API-FETCH] Pre-request diagnostics:', {
+        url: url.toString(),
+        hasCookies: cookieHeader.length > 0,
+        cookieCount: cookieNames.length,
+        cookieNames: cookieNames.slice(0, 10),
+        hasAuthCookie,
+        usingAuthHeader: !!authHeaders['Authorization'],
+        authHeaderPresent: authHeaders['Authorization'] ? 'Yes' : 'No'
+      });
+    }
+  }
+
   try {
     const response = await fetch(url, {
       ...fetchOptions,
       signal: controller.signal,
       credentials: 'include', // Include cookies for authentication
-      headers: {
-        'Content-Type': 'application/json',
-        ...fetchOptions.headers,
-      },
+      headers: authHeaders,
     });
 
     clearTimeout(timeoutId);
@@ -71,6 +118,17 @@ export async function apiFetch<T = any>(
           // Ignore errors reading response body
         }
         
+        // Check if we tried to send Authorization header
+        const triedAuthHeader = typeof window !== 'undefined' && 
+          (authHeaders['Authorization'] || fetchOptions.headers?.['Authorization']);
+        
+        // Get the actual Authorization header value for debugging (truncated)
+        const actualAuthHeader = typeof window !== 'undefined' && 
+          (authHeaders['Authorization'] || fetchOptions.headers?.['Authorization'] || '');
+        const authHeaderPreview = actualAuthHeader 
+          ? `${actualAuthHeader.substring(0, 50)}...` 
+          : 'NOT SET';
+        
         console.warn('🔐 Authentication required for API call:', {
           url,
           status: response.status,
@@ -80,9 +138,19 @@ export async function apiFetch<T = any>(
           cookieNames: process.env.NODE_ENV === 'development' ? cookieNames : 'hidden',
           hasAuthCookie,
           cookieHeader: process.env.NODE_ENV === 'development' ? cookieHeader.substring(0, 100) : 'hidden',
+          triedAuthHeader,
+          authHeaderSent: triedAuthHeader ? 'Yes' : 'No',
+          authHeaderPreview: process.env.NODE_ENV === 'development' ? authHeaderPreview : 'hidden',
+          authHeaderLength: actualAuthHeader ? actualAuthHeader.length : 0,
           fallbackAvailable: finalFallback !== undefined,
           responseBody,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          // Include diagnostic message for debugging
+          diagnostic: triedAuthHeader 
+            ? 'Authorization header was sent but server rejected it - token may be invalid/expired'
+            : 'No Authorization header was sent - localStorage token may be missing',
+          // Check if localStorage has token
+          localStorageTokenExists: typeof window !== 'undefined' ? !!localStorage.getItem('adrata_unified_session_v3') : 'N/A'
         });
         
         if (finalFallback !== undefined) {

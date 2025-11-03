@@ -52,7 +52,27 @@ export async function getSecureApiContext(
     }
 
     // 2. Authenticate user
+    if (process.env.NODE_ENV === 'development') {
+      const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+      const allAuthHeaders = Array.from(request.headers.entries())
+        .filter(([key]) => key.toLowerCase() === 'authorization');
+      console.log('🔍 [SECURE API] Before getUnifiedAuthUser:', {
+        hasAuthHeader: !!authHeader,
+        authHeaderCount: allAuthHeaders.length,
+        cookieHeader: request.headers.get('cookie') ? 'present' : 'missing'
+      });
+    }
+    
     const authUser = await getUnifiedAuthUser(request);
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 [SECURE API] After getUnifiedAuthUser:', {
+        hasAuthUser: !!authUser,
+        userId: authUser?.id,
+        email: authUser?.email,
+        workspaceId: authUser?.workspaceId
+      });
+    }
     
     if (!authUser) {
       if (requireAuth) {
