@@ -255,7 +255,15 @@ export async function GET(request: NextRequest) {
 
       // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE)
       if (status) {
-        where.status = status;
+        // For CLIENT status, also check additionalStatuses array
+        if (status === 'CLIENT') {
+          where.OR = [
+            { status: 'CLIENT' },
+            { additionalStatuses: { has: 'CLIENT' } }
+          ];
+        } else {
+          where.status = status;
+        }
       }
 
       // Priority filtering (LOW, MEDIUM, HIGH)

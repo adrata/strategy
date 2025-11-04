@@ -115,7 +115,7 @@ export function initializeWebSocketServer(server: any) {
 
   wss = new WebSocketServer({ 
     server,
-    path: '/api/workshop/collaboration',
+    path: '/api/v1/documents/collaboration',
   });
 
   wss.on('connection', async (ws: any, request: IncomingMessage) => {

@@ -5,11 +5,11 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { randomBytes } from 'crypto';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * POST /api/workshop/documents/[id]/share
- * Create a share link for a document
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * POST /api/v1/documents/documents/[id]/share
+ * Create a share link for a document (used by Workbench)
  */
 export async function POST(
   request: NextRequest,
@@ -104,8 +104,8 @@ export async function POST(
 }
 
 /**
- * GET /api/workshop/documents/[id]/share
- * Get all shares for a document
+ * GET /api/v1/documents/documents/[id]/share
+ * Get all shares for a document (used by Workbench)
  */
 export async function GET(
   request: NextRequest,
@@ -160,8 +160,8 @@ export async function GET(
 }
 
 /**
- * DELETE /api/workshop/documents/[id]/share
- * Revoke a share link
+ * DELETE /api/v1/documents/documents/[id]/share
+ * Revoke a share link (used by Workbench)
  */
 export async function DELETE(
   request: NextRequest,

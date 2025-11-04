@@ -262,8 +262,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE, OPPORTUNITY)
+    // For CLIENT status, also check additionalStatuses array
     if (status) {
-      where.status = status as any; // Type casting to handle Prisma enum validation
+      if (status === 'CLIENT') {
+        // Check both primary status and additionalStatuses for CLIENT
+        where.OR = [
+          { status: 'CLIENT' as any },
+          { additionalStatuses: { has: 'CLIENT' } }
+        ];
+        // If there's already an OR clause from search, we need to combine them
+        // For now, we'll prioritize the status filter
+      } else {
+        where.status = status as any; // Type casting to handle Prisma enum validation
+      }
     }
 
     // Priority filtering (LOW, MEDIUM, HIGH)

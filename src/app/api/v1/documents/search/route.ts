@@ -4,11 +4,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * POST /api/workshop/search
- * Search documents across the workspace
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * POST /api/v1/documents/search
+ * Search documents across the workspace (used by Workbench)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -186,8 +186,8 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/workshop/search/suggestions
- * Get search suggestions based on partial query
+ * GET /api/v1/documents/search/suggestions
+ * Get search suggestions based on partial query (used by Workbench)
  */
 export async function GET(request: NextRequest) {
   try {

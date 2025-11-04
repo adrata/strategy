@@ -4,11 +4,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * GET /api/workshop/documents/[id]/versions
- * Get version history for a document
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * GET /api/v1/documents/documents/[id]/versions
+ * Get version history for a document (used by Workbench)
  */
 export async function GET(
   request: NextRequest,
@@ -90,8 +90,8 @@ export async function GET(
 }
 
 /**
- * POST /api/workshop/documents/[id]/versions
- * Create a new version of a document
+ * POST /api/v1/documents/documents/[id]/versions
+ * Create a new version of a document (used by Workbench)
  */
 export async function POST(
   request: NextRequest,
@@ -173,8 +173,8 @@ export async function POST(
 }
 
 /**
- * PUT /api/workshop/documents/[id]/versions/restore
- * Restore a document to a specific version
+ * PUT /api/v1/documents/documents/[id]/versions/restore
+ * Restore a document to a specific version (used by Workbench)
  */
 export async function PUT(
   request: NextRequest,

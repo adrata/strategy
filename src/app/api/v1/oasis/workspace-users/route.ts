@@ -1,11 +1,10 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Oasis Workspace Users API
  * 
  * Fetches all active users in a workspace for DM creation
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

@@ -4,11 +4,11 @@ import { getSecureApiContext } from '@/platform/services/secure-api-helper';
 import { createErrorResponse } from '@/platform/services/secure-api-helper';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * GET /api/workshop/folders
- * Get all folders for the current workspace
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * GET /api/v1/documents/folders
+ * Get all folders for the current workspace (used by Workbench)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const where: any = {
       workspaceId,
+      deletedAt: null, // Exclude deleted folders
     };
 
     if (parentId) {
@@ -93,8 +94,8 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST /api/workshop/folders
- * Create a new folder
+ * POST /api/v1/documents/folders
+ * Create a new folder (used by Workbench)
  */
 export async function POST(request: NextRequest) {
   try {

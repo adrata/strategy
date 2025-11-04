@@ -6,11 +6,11 @@ import { join } from 'path';
 import { randomBytes } from 'crypto';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * POST /api/workshop/upload
- * Upload a file to Workshop
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * POST /api/v1/documents/upload
+ * Upload a file to Workbench
  */
 export async function POST(request: NextRequest) {
   try {

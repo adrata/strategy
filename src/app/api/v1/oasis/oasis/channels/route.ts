@@ -1,11 +1,10 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Oasis Channels API
  * 
  * Handles channel creation and listing for workspaces
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
@@ -78,11 +77,6 @@ export async function GET(request: NextRequest) {
       isMember: channel.members.some(member => member.userId === userId)
     }));
 
-    console.log(`📊 [OASIS CHANNELS API] Found ${channelsWithStats.length} channels for workspace ${workspaceId}`);
-    channelsWithStats.forEach(ch => {
-      console.log(`  - #${ch.name} (${ch.id}): ${ch.memberCount} members, user isMember: ${ch.isMember}`);
-    });
-
     // Custom sort order: general, sell, build, random, wins
     const customOrder = ['general', 'sell', 'build', 'random', 'wins'];
     const sortedChannels = channelsWithStats.sort((a, b) => {
@@ -101,8 +95,6 @@ export async function GET(request: NextRequest) {
 
     // Auto-create default channels if none exist
     if (sortedChannels.length === 0) {
-      console.warn(`⚠️ [OASIS CHANNELS API] No channels found for workspace ${workspaceId} - auto-creating default channels`);
-      
       const DEFAULT_CHANNELS = [
         { name: 'general', description: 'General discussion and announcements' },
         { name: 'sell', description: 'Sales strategies and customer conversations' },
@@ -129,8 +121,6 @@ export async function GET(request: NextRequest) {
             userId: userId
           }
         });
-
-        console.log(`✅ [OASIS CHANNELS API] Auto-created channel: #${channelData.name}`);
       }
 
       // Re-fetch channels after creation
@@ -183,8 +173,48 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ channels: sortedChannels });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [OASIS CHANNELS] GET error:', error);
+    
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'OasisChannel table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to fetch channels' },
       { status: 500 }
@@ -287,8 +317,48 @@ export async function POST(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [OASIS CHANNELS] POST error:', error);
+    
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'OasisChannel table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to create channel' },
       { status: 500 }

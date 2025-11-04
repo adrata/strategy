@@ -6,11 +6,11 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * GET /api/workshop/download/[id]
- * Download a document file
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * GET /api/v1/documents/download/[id]
+ * Download a document file (used by Workbench)
  */
 export async function GET(
   request: NextRequest,

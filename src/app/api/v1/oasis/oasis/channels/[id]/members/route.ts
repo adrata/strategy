@@ -1,11 +1,10 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Oasis Channel Members API
  * 
  * Handles adding and removing members from channels
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

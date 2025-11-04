@@ -13,11 +13,8 @@ import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service
 
 // GET /api/oasis/messages - Get messages for channel or DM
 export async function GET(request: NextRequest) {
-  // Step 1: Early error logging - log that request was received
-  console.log('📥 [OASIS MESSAGES] GET request received:', request.url);
-  
   try {
-    // Step 1: Parse parameters with error handling
+    // Parse parameters with error handling
     let channelId: string | null = null;
     let dmId: string | null = null;
     let workspaceId: string | null = null;
@@ -32,14 +29,6 @@ export async function GET(request: NextRequest) {
       workspaceId = searchParams.get('workspaceId');
       limit = parseInt(searchParams.get('limit') || '50', 10);
       offset = parseInt(searchParams.get('offset') || '0', 10);
-      
-      console.log('📋 [OASIS MESSAGES] Parsed parameters:', {
-        channelId,
-        dmId,
-        workspaceId,
-        limit,
-        offset
-      });
     } catch (urlError) {
       console.error('❌ [OASIS MESSAGES] URL parsing error:', urlError);
       return NextResponse.json(
@@ -62,9 +51,7 @@ export async function GET(request: NextRequest) {
     }
 
     const userId = authUser.id;
-    const userEmail = authUser.email || undefined; // Safe email access
-    
-    console.log('✅ [OASIS MESSAGES] User authenticated:', { userId, userEmail });
+    const userEmail = authUser.email || undefined;
 
     // Check if this is Ross (special user who sees all DMs)
     const ROSS_USER_ID = '01K1VBYZG41K9QA0D9CF06KNRG';
@@ -111,8 +98,6 @@ export async function GET(request: NextRequest) {
     }
 
     if (dmId) {
-      console.log('🔍 [OASIS MESSAGES] Looking up DM:', { dmId, userId, workspaceId, isRoss });
-      
       const dmWhereClause: any = {
         id: dmId,
         participants: {
@@ -143,14 +128,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Access denied or DM not found' }, { status: 403 });
       }
 
-      console.log('✅ [OASIS MESSAGES] DM found:', { 
-        dmId: dm.id, 
-        dmWorkspaceId: dm.workspaceId, 
-        requestedWorkspaceId: workspaceId,
-        isRoss,
-        workspaceMatch: dm.workspaceId === workspaceId
-      });
-
       // For non-Ross users: Verify the workspaceId parameter matches the DM's actual workspaceId
       if (!isRoss && dm.workspaceId !== workspaceId) {
         console.error('❌ [OASIS MESSAGES] Workspace mismatch for non-Ross user:', {
@@ -164,21 +141,11 @@ export async function GET(request: NextRequest) {
           { status: 403 }
         );
       }
-
-      // For Ross: Allow cross-workspace access (workspaceId parameter can differ from DM's workspaceId)
-      if (isRoss && dm.workspaceId !== workspaceId) {
-        console.log('🌐 [OASIS MESSAGES] Ross viewing cross-workspace DM:', {
-          dmId: dm.id,
-          dmWorkspaceId: dm.workspaceId,
-          requestedWorkspaceId: workspaceId
-        });
-      }
     }
 
-    // Step 2: Validate dmId or channelId exists before querying (with try-catch)
+    // Validate dmId or channelId exists before querying (with try-catch)
     if (dmId && !channelId) {
       try {
-        console.log('🔍 [OASIS MESSAGES] Verifying DM exists before query:', { dmId });
         const dmExists = await prisma.oasisDirectMessage.findUnique({
           where: { id: dmId },
           select: { id: true }
@@ -195,9 +162,20 @@ export async function GET(request: NextRequest) {
             { status: 404 }
           );
         }
-        console.log('✅ [OASIS MESSAGES] DM verified:', { dmId });
-      } catch (dmCheckError) {
+      } catch (dmCheckError: any) {
         console.error('❌ [OASIS MESSAGES] Error checking DM existence:', dmCheckError);
+        
+        // Handle Prisma errors
+        if (dmCheckError.code === 'P2021') {
+          return NextResponse.json(
+            { 
+              error: 'Database migration required',
+              code: 'MIGRATION_REQUIRED',
+              details: 'OasisDirectMessage table does not exist'
+            },
+            { status: 503 }
+          );
+        }
         if (dmCheckError instanceof Error) {
           console.error('❌ [OASIS MESSAGES] DM check error details:', {
             message: dmCheckError.message,
@@ -220,7 +198,6 @@ export async function GET(request: NextRequest) {
 
     if (channelId && !dmId) {
       try {
-        console.log('🔍 [OASIS MESSAGES] Verifying channel exists before query:', { channelId });
         const channelExists = await prisma.oasisChannel.findUnique({
           where: { id: channelId },
           select: { id: true }
@@ -237,9 +214,20 @@ export async function GET(request: NextRequest) {
             { status: 404 }
           );
         }
-        console.log('✅ [OASIS MESSAGES] Channel verified:', { channelId });
-      } catch (channelCheckError) {
+      } catch (channelCheckError: any) {
         console.error('❌ [OASIS MESSAGES] Error checking channel existence:', channelCheckError);
+        
+        // Handle Prisma errors
+        if (channelCheckError.code === 'P2021') {
+          return NextResponse.json(
+            { 
+              error: 'Database migration required',
+              code: 'MIGRATION_REQUIRED',
+              details: 'OasisChannel table does not exist'
+            },
+            { status: 503 }
+          );
+        }
         if (channelCheckError instanceof Error) {
           console.error('❌ [OASIS MESSAGES] Channel check error details:', {
             message: channelCheckError.message,
@@ -260,19 +248,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Step 4 & 5: Get messages with comprehensive error handling and validation
+    // Get messages with comprehensive error handling and validation
     let messages: any[] = [];
     try {
-      console.log('📡 [OASIS MESSAGES] Fetching messages from DB:', { 
-        channelId, 
-        dmId, 
-        workspaceId, 
-        userId, 
-        isRoss,
-        limit, 
-        offset 
-      });
-      
       // Build where clause explicitly to avoid Prisma validation errors
       const whereClause: any = {
         parentMessageId: null // Only top-level messages, not thread replies
@@ -285,8 +263,6 @@ export async function GET(request: NextRequest) {
       if (dmId) {
         whereClause.dmId = dmId;
       }
-      
-      console.log('🔍 [OASIS MESSAGES] Prisma where clause:', JSON.stringify(whereClause, null, 2));
       
       const queryResult = await prisma.oasisMessage.findMany({
         where: whereClause,
@@ -317,51 +293,40 @@ export async function GET(request: NextRequest) {
         skip: offset
       });
       
-      // Step 4: Validate query results
+      // Validate query results
       if (!Array.isArray(queryResult)) {
         console.error('❌ [OASIS MESSAGES] Query returned non-array result:', typeof queryResult, queryResult);
         messages = [];
       } else {
         messages = queryResult;
       }
-      
-      console.log('✅ [OASIS MESSAGES] Fetched messages from DB:', { 
-        count: messages.length,
-        channelId,
-        dmId,
-        workspaceId,
-        isArray: Array.isArray(messages)
-      });
-    } catch (dbError) {
+    } catch (dbError: any) {
       console.error('❌ [OASIS MESSAGES] Database query error:', dbError);
-      if (dbError instanceof Error) {
-        console.error('❌ [OASIS MESSAGES] DB Error details:', {
-          message: dbError.message,
-          stack: dbError.stack,
-          name: dbError.name,
-          channelId,
-          dmId,
-          workspaceId,
-          userId,
-          isRoss
-        });
-      } else {
-        console.error('❌ [OASIS MESSAGES] Unknown DB error type:', typeof dbError, dbError);
+      
+      // Handle Prisma errors
+      if (dbError.code === 'P2021') {
+        return NextResponse.json(
+          { 
+            error: 'Database migration required',
+            code: 'MIGRATION_REQUIRED',
+            details: 'OasisMessage table does not exist'
+          },
+          { status: 503 }
+        );
       }
+      
       // Initialize messages as empty array if query fails
       messages = [];
       // Re-throw to be caught by outer catch for proper error response
       throw dbError;
     }
 
-    // Step 4: Validate messages array before formatting
+    // Validate messages array before formatting
     if (!Array.isArray(messages)) {
       console.error('❌ [OASIS MESSAGES] Messages is not an array:', typeof messages);
       messages = [];
     }
 
-    console.log('🔄 [OASIS MESSAGES] Formatting messages:', { messageCount: messages.length });
-    
     // Format messages with defensive null checks
     const formattedMessages = messages.map(message => {
       // Safely access sender
@@ -410,93 +375,63 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    console.log('✅ [OASIS MESSAGES] Formatting complete, returning response:', {
-      formattedCount: formattedMessages.length,
-      hasMore: messages.length === limit,
-      channelId,
-      dmId,
-      workspaceId
-    });
-
     return NextResponse.json({ 
       messages: formattedMessages.reverse(), // Reverse to show oldest first
       hasMore: messages.length === limit
     });
 
-  } catch (error) {
-    // Step 3 & 5: Comprehensive error logging with full context
-    console.error('❌ [OASIS MESSAGES] GET error caught in outer catch:', error);
+  } catch (error: any) {
+    console.error('❌ [OASIS MESSAGES] GET error:', error);
     
-    // Get request context for better error logging
-    let authUser: any = null;
-    let channelId: string | null = null;
-    let dmId: string | null = null;
-    let workspaceId: string | null = null;
-    
-    try {
-      authUser = await getUnifiedAuthUser(request);
-    } catch (authError) {
-      console.error('❌ [OASIS MESSAGES] Failed to get auth user for error logging:', authError);
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'Oasis table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
     }
     
-    try {
-      const url = new URL(request.url);
-      channelId = url.searchParams.get('channelId');
-      dmId = url.searchParams.get('dmId');
-      workspaceId = url.searchParams.get('workspaceId');
-    } catch (urlError) {
-      console.error('❌ [OASIS MESSAGES] Failed to parse URL for error logging:', urlError);
-    }
-
-    console.error('❌ [OASIS MESSAGES] Request context:', {
-      channelId,
-      dmId,
-      workspaceId,
-      userId: authUser?.id,
-      userEmail: authUser?.email,
-      url: request.url
-    });
-
-    // Log full error details for debugging
-    if (error instanceof Error) {
-      console.error('❌ [OASIS MESSAGES] Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-        cause: error.cause
-      });
-    } else {
-      console.error('❌ [OASIS MESSAGES] Unknown error type:', typeof error, error);
-    }
-    
-    // Step 3: Return more descriptive error with full context
+    // Generic error fallback
     const isDevelopment = process.env.NODE_ENV === 'development';
     const errorResponse: any = {
       error: 'Failed to fetch messages',
-      context: {
-        channelId,
-        dmId,
-        workspaceId,
-        userId: authUser?.id
-      }
+      details: error instanceof Error ? error.message : String(error)
     };
     
-    if (isDevelopment && error instanceof Error) {
-      errorResponse.details = error.message;
-      errorResponse.type = error.name;
-      if (error.stack) {
-        errorResponse.stack = error.stack.split('\n').slice(0, 10).join('\n'); // First 10 lines of stack
-      }
-    } else if (error instanceof Error) {
-      errorResponse.details = 'Internal server error';
-      // Still include error type even in production for debugging
-      errorResponse.type = error.name;
-    } else {
-      errorResponse.details = String(error);
-      errorResponse.errorType = typeof error;
+    if (isDevelopment && error instanceof Error && error.stack) {
+      errorResponse.stack = error.stack.split('\n').slice(0, 5).join('\n');
     }
-    
-    console.error('❌ [OASIS MESSAGES] Returning error response:', JSON.stringify(errorResponse, null, 2));
     
     return NextResponse.json(errorResponse, { status: 500 });
   }
@@ -604,8 +539,48 @@ export async function POST(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [OASIS MESSAGES] POST error:', error);
+    
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'Oasis table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to send message' },
       { status: 500 }

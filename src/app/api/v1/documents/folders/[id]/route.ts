@@ -4,11 +4,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * GET /api/workshop/folders/[id]
- * Get a specific folder by ID
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * GET /api/v1/documents/folders/[id]
+ * Get a specific folder by ID (used by Workbench)
  */
 export async function GET(
   request: NextRequest,
@@ -112,8 +112,8 @@ export async function GET(
 }
 
 /**
- * PATCH /api/workshop/folders/[id]
- * Update a folder
+ * PATCH /api/v1/documents/folders/[id]
+ * Update a folder (used by Workbench)
  */
 export async function PATCH(
   request: NextRequest,
@@ -242,8 +242,8 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/workshop/folders/[id]
- * Delete a folder (only if empty)
+ * DELETE /api/v1/documents/folders/[id]
+ * Delete a folder (only if empty, used by Workbench)
  */
 export async function DELETE(
   request: NextRequest,

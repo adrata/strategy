@@ -56,11 +56,6 @@ export function DocumentExplorer() {
   }, [workspaceId]);
 
   const ensureStandardFolders = async (existingFolders: WorkbenchFolder[]) => {
-    // If folders already exist, no need to create defaults
-    if (existingFolders.length > 0) {
-      return existingFolders;
-    }
-
     // Check if user is authenticated before attempting to create folders
     if (!authUser?.id || !workspaceId) {
       console.log('Skipping folder creation - user not authenticated or workspaceId missing', {
@@ -70,43 +65,81 @@ export function DocumentExplorer() {
       return existingFolders;
     }
 
-    // Get workspace name for the top-level folder
-    const workspaceName = ui.activeWorkspace?.name || workspace?.name || 'Workspace';
-    
-    try {
-      // Create the workspace folder (top-level container)
-      const workspaceFolder = await apiPost<WorkbenchFolder>(
-        '/api/v1/documents/folders',
-        {
-          name: workspaceName,
-          workspaceId,
-          description: 'Main workspace folder',
-        },
-        null
+    // Check if we already have root-level folders (don't create duplicates)
+    const rootFolders = existingFolders.filter(f => !f.parentId);
+    if (rootFolders.length > 0) {
+      // Check if we have any of the standard folders
+      const standardFolderNames = ['Projects', 'Templates', 'Archive', 'Personal'];
+      const hasStandardFolders = rootFolders.some(f => 
+        standardFolderNames.includes(f.name)
       );
-
-      if (!workspaceFolder) {
-        console.error('Failed to create workspace folder - check authentication and network', {
-          workspaceId,
-          workspaceName,
-          hasAuthUser: !!authUser?.id
-        });
-        return existingFolders;
-      }
-
-      const workspaceFolderId = workspaceFolder.id;
       
-      // Create standard subfolders
+      // If we already have folders but not the standard ones, create them at root level
+      if (!hasStandardFolders) {
+        try {
+          const standardFolders = [
+            { name: 'Projects', description: 'Project and client documents' },
+            { name: 'Templates', description: 'Reusable document templates' },
+            { name: 'Archive', description: 'Archived documents' },
+            { name: 'Personal', description: 'Personal notes and documents' },
+          ];
+
+          const createdFolders: WorkbenchFolder[] = [...existingFolders];
+
+          // Create standard folders at root level (no parent)
+          for (const folder of standardFolders) {
+            try {
+              // Check if folder already exists to avoid duplicates
+              const exists = existingFolders.some(f => 
+                f.name === folder.name && !f.parentId
+              );
+              
+              if (!exists) {
+                const subfolder = await apiPost<WorkbenchFolder>(
+                  '/api/v1/documents/folders',
+                  {
+                    name: folder.name,
+                    description: folder.description,
+                    parentId: null,
+                    workspaceId,
+                  },
+                  null
+                );
+                
+                if (subfolder) {
+                  createdFolders.push(subfolder);
+                }
+              }
+            } catch (err) {
+              // If folder already exists (409), that's fine
+              if ((err as any)?.status !== 409) {
+                console.error(`Failed to create folder ${folder.name}:`, err);
+              }
+            }
+          }
+
+          return createdFolders;
+        } catch (error) {
+          console.error('Error creating standard folders:', error);
+          return existingFolders;
+        }
+      }
+      
+      return existingFolders;
+    }
+
+    // No folders exist, create standard root-level folders
+    try {
       const standardFolders = [
-        { name: 'Clients', description: 'Client-specific documents' },
-        { name: 'Prospects', description: 'Prospect and lead materials' },
+        { name: 'Projects', description: 'Project and client documents' },
         { name: 'Templates', description: 'Reusable document templates' },
         { name: 'Archive', description: 'Archived documents' },
+        { name: 'Personal', description: 'Personal notes and documents' },
       ];
 
-      const createdFolders: WorkbenchFolder[] = [workspaceFolder];
+      const createdFolders: WorkbenchFolder[] = [];
 
-      // Create subfolders under the workspace folder
+      // Create standard folders at root level (no parent)
       for (const folder of standardFolders) {
         try {
           const subfolder = await apiPost<WorkbenchFolder>(
@@ -114,7 +147,7 @@ export function DocumentExplorer() {
             {
               name: folder.name,
               description: folder.description,
-              parentId: workspaceFolderId,
+              parentId: null,
               workspaceId,
             },
             null
@@ -124,7 +157,10 @@ export function DocumentExplorer() {
             createdFolders.push(subfolder);
           }
         } catch (err) {
-          console.error(`Failed to create folder ${folder.name}:`, err);
+          // If folder already exists (409), that's fine
+          if ((err as any)?.status !== 409) {
+            console.error(`Failed to create folder ${folder.name}:`, err);
+          }
         }
       }
 
@@ -189,9 +225,21 @@ export function DocumentExplorer() {
   const buildTree = useMemo(() => {
     const nodeMap = new Map<string, ExplorerNode>();
     const rootNodes: ExplorerNode[] = [];
-
-    // Build folder nodes
+    
+    // Deduplicate folders by name and parentId (keep the first one found)
+    const seenFolders = new Map<string, WorkbenchFolder>();
+    const uniqueFolders: WorkbenchFolder[] = [];
+    
     folders.forEach(folder => {
+      const key = `${folder.name}-${folder.parentId || 'root'}`;
+      if (!seenFolders.has(key)) {
+        seenFolders.set(key, folder);
+        uniqueFolders.push(folder);
+      }
+    });
+
+    // Build folder nodes from unique folders only
+    uniqueFolders.forEach(folder => {
       const node: ExplorerNode = {
         id: `folder-${folder.id}`,
         name: folder.name,
@@ -219,13 +267,13 @@ export function DocumentExplorer() {
         rootNodes.push(node);
       });
 
-    // Build folder hierarchy
-    folders.forEach(folder => {
+    // Build folder hierarchy using unique folders
+    uniqueFolders.forEach(folder => {
       const node = nodeMap.get(`folder-${folder.id}`);
       if (!node) return;
 
       // Add child folders
-      const childFolders = folders.filter(f => f.parentId === folder.id);
+      const childFolders = uniqueFolders.filter(f => f.parentId === folder.id);
       childFolders.forEach(childFolder => {
         const childNode = nodeMap.get(`folder-${childFolder.id}`);
         if (childNode) {
@@ -266,7 +314,7 @@ export function DocumentExplorer() {
       }
     });
 
-    // Sort root nodes
+    // Sort root nodes: folders first, then documents, alphabetically
     rootNodes.sort((a, b) => {
       if (a.type !== b.type) {
         return a.type === 'folder' ? -1 : 1;
@@ -317,56 +365,67 @@ export function DocumentExplorer() {
     const isSelected = node.type === 'folder' && node.folder?.id === currentFolderId;
     const hasChildren = node.children.length > 0;
     const isFolder = node.type === 'folder';
+    const isRootLevel = node.level === 0;
 
     return (
       <div key={node.id}>
         <div
           onClick={() => handleNodeClick(node)}
-          className={`flex items-center gap-0.5 px-1 py-0.5 text-xs cursor-pointer hover:bg-hover transition-colors ${
-            isSelected ? 'bg-hover' : ''
+          className={`flex items-center gap-1.5 px-2 py-1.5 text-xs cursor-pointer transition-colors rounded-md ${
+            isSelected 
+              ? 'bg-slate-100 text-slate-900' 
+              : 'hover:bg-slate-50 text-slate-700'
           }`}
-          style={{ paddingLeft: `${node.level * 12 + 4}px` }}
+          style={{ paddingLeft: `${node.level * 16 + 8}px` }}
         >
           {/* Expand/Collapse Button */}
           {isFolder && hasChildren ? (
             <button
-              className="p-0.5 hover:bg-panel-background rounded flex-shrink-0"
+              className="p-0.5 hover:bg-slate-200 rounded flex-shrink-0 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleNode(node.id);
               }}
+              aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
             >
               {isExpanded ? (
-                <ChevronDownIcon className="w-3 h-3 text-muted" />
+                <ChevronDownIcon className="w-3.5 h-3.5 text-slate-500" />
               ) : (
-                <ChevronRightIcon className="w-3 h-3 text-muted" />
+                <ChevronRightIcon className="w-3.5 h-3.5 text-slate-500" />
               )}
             </button>
           ) : (
-            <div className="w-3.5 flex-shrink-0" />
+            <div className="w-4 flex-shrink-0" />
           )}
 
           {/* Icon */}
-          <div className="flex-shrink-0 mr-1">
+          <div className="flex-shrink-0">
             {isFolder ? (
-              <FolderIcon className="w-3.5 h-3.5 text-muted" />
+              <FolderIcon className={`w-4 h-4 ${isRootLevel ? 'text-slate-600' : 'text-slate-500'}`} />
             ) : (
               (() => {
                 const Icon = getDocumentIcon(node.document?.documentType || 'paper');
-                return <Icon className="w-3.5 h-3.5 text-muted" />;
+                return <Icon className="w-4 h-4 text-slate-500" />;
               })()
             )}
           </div>
 
           {/* Name */}
-          <span className="text-xs text-foreground truncate flex-1">
+          <span className={`text-xs truncate flex-1 ${isRootLevel && isFolder ? 'font-medium' : ''}`}>
             {node.name}
           </span>
+          
+          {/* Document count badge for folders */}
+          {isFolder && hasChildren && (
+            <span className="text-xs text-slate-400 flex-shrink-0">
+              {node.children.length}
+            </span>
+          )}
         </div>
 
         {/* Children */}
         {isFolder && isExpanded && (
-          <div>
+          <div className="ml-2">
             {node.children.map(child => renderNode(child))}
           </div>
         )}
@@ -378,12 +437,11 @@ export function DocumentExplorer() {
     return (
       <div className="py-1">
         {Array.from({ length: 6 }).map((_, i) => {
-          const width = 60 + (i % 3) * 20;
+          const width = 70 + (i % 2) * 15;
           return (
-            <div key={i} className="flex items-center gap-0.5 px-1 py-0.5" style={{ paddingLeft: `${(i % 3) * 12 + 4}px` }}>
-              <div className="w-3.5 h-3.5 bg-loading-bg rounded animate-pulse flex-shrink-0"></div>
-              <div className="w-3.5 h-3.5 bg-loading-bg rounded animate-pulse flex-shrink-0"></div>
-              <div className="h-3 bg-loading-bg rounded animate-pulse" style={{ width: `${width}%` }}></div>
+            <div key={i} className="flex items-center gap-2 px-2 py-1.5 mb-1">
+              <div className="w-4 h-4 bg-loading-bg rounded animate-pulse flex-shrink-0" />
+              <div className="h-3 bg-loading-bg rounded animate-pulse flex-1" style={{ maxWidth: `${width}%` }} />
             </div>
           );
         })}

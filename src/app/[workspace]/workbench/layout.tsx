@@ -180,6 +180,24 @@ function WorkbenchLayoutContent({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const workspaceSlug = params.workspace as string;
 
+  // Preserve profile panel state when navigating to workbench
+  // Check sessionStorage to see if profile panel should stay open after navigation
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const shouldStayOpen = sessionStorage.getItem('profilePanelShouldStayOpen') === 'true';
+      if (shouldStayOpen) {
+        // Restore profile panel visibility after navigation
+        if (!isProfilePanelVisible) {
+          setIsProfilePanelVisible(true);
+        }
+        // Clear the flag after restoring (with a small delay to ensure state is set)
+        setTimeout(() => {
+          sessionStorage.removeItem('profilePanelShouldStayOpen');
+        }, 100);
+      }
+    }
+  }, [isProfilePanelVisible, setIsProfilePanelVisible]);
+
   // Prepare user data for ProfilePanel
   const profileUser = {
     name: authUser?.name || 'User',
@@ -205,7 +223,13 @@ function WorkbenchLayoutContent({ children }: { children: React.ReactNode }) {
           company={company}
           workspace={workspace}
           isOpen={isProfilePanelVisible}
-          onClose={() => setIsProfilePanelVisible(false)}
+          onClose={() => {
+            // Clear sessionStorage flag when user manually closes the panel
+            if (typeof window !== 'undefined') {
+              sessionStorage.removeItem('profilePanelShouldStayOpen');
+            }
+            setIsProfilePanelVisible(false);
+          }}
           username={username}
           currentApp="workbench"
           onToggleLeftPanel={ui.toggleLeftPanel}

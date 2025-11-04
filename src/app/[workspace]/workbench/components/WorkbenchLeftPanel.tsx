@@ -151,10 +151,10 @@ export function WorkbenchLeftPanel() {
             <div className="h-3 bg-loading-bg rounded w-20 animate-pulse mb-2" />
           </div>
           <div className="py-1 px-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center gap-1 px-1 py-0.5 mb-1" style={{ paddingLeft: `${(i % 2) * 12 + 4}px` }}>
-                <div className="w-3.5 h-3.5 bg-loading-bg rounded animate-pulse flex-shrink-0 mr-1" />
-                <div className="h-3 bg-loading-bg rounded animate-pulse" style={{ width: `${60 + (i % 3) * 15}%` }} />
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex items-center gap-2 px-2 py-1.5 mb-1">
+                <div className="w-4 h-4 bg-loading-bg rounded animate-pulse flex-shrink-0" />
+                <div className="h-3 bg-loading-bg rounded animate-pulse flex-1" style={{ maxWidth: `${80 + (i % 2) * 10}%` }} />
               </div>
             ))}
           </div>

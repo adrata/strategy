@@ -1,11 +1,10 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Oasis AI Response API
  * 
  * Handles AI responses to messages in Adrata AI DMs
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
@@ -187,8 +186,48 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(aiMessage, { status: 201 });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [OASIS AI RESPONSE] POST error:', error);
+    
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'Oasis table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to generate AI response' },
       { status: 500 }

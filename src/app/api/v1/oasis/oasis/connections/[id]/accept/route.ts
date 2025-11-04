@@ -1,11 +1,10 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Oasis External Connection Acceptance API
  * 
  * Handles accepting external connection invitations
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

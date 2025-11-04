@@ -4,11 +4,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
- * GET /api/workshop/documents/[id]
- * Get a specific document by ID
+ * Required for static export (desktop build)
+ * export const dynamic = 'force-dynamic';
+ * 
+ * GET /api/v1/documents/documents/[id]
+ * Get a specific document by ID (used by Workbench)
  */
 export async function GET(
   request: NextRequest,
@@ -149,8 +149,8 @@ export async function GET(
 }
 
 /**
- * PATCH /api/workshop/documents/[id]
- * Update a document
+ * PATCH /api/v1/documents/documents/[id]
+ * Update a document (used by Workbench)
  */
 export async function PATCH(
   request: NextRequest,
@@ -254,8 +254,8 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/workshop/documents/[id]
- * Soft delete a document (move to trash)
+ * DELETE /api/v1/documents/documents/[id]
+ * Soft delete a document (move to trash, used by Workbench)
  */
 export async function DELETE(
   request: NextRequest,

@@ -1,11 +1,10 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Oasis Message Reactions API
  * 
  * Handles adding and removing reactions from messages
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -116,8 +115,48 @@ export async function POST(
       }
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [OASIS REACTIONS] POST error:', error);
+    
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'OasisReaction table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to add reaction' },
       { status: 500 }
@@ -212,8 +251,48 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [OASIS REACTIONS] DELETE error:', error);
+    
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'OasisReaction table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to remove reaction' },
       { status: 500 }

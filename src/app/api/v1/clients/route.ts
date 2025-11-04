@@ -93,25 +93,39 @@ export async function GET(request: NextRequest) {
     
     // Define the fetch function for cache
     const fetchClientsData = async () => {
-      // Enhanced where clause for clients (status = 'CLIENT')
+      // Enhanced where clause for clients (status = 'CLIENT' OR 'CLIENT' IN additionalStatuses)
       console.log('🔍 [V1 CLIENTS API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
-        status: 'CLIENT', // Filter for clients only
-        OR: [
-          { mainSellerId: context.userId },
-          { mainSellerId: null }
+        AND: [
+          // Client status filter: check both primary status and additionalStatuses
+          {
+            OR: [
+              { status: 'CLIENT' }, // Primary status
+              { additionalStatuses: { has: 'CLIENT' } } // Additional statuses
+            ]
+          },
+          // Assignment filter
+          {
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ]
+          }
         ]
       };
 
-      // 🔍 DIAGNOSTIC: Check what data actually exists
+      // 🔍 DIAGNOSTIC: Check what data actually exists (including additionalStatuses)
       const [totalClients, clientsByStatus] = await Promise.all([
         prisma.people.count({
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            status: 'CLIENT'
+            OR: [
+              { status: 'CLIENT' },
+              { additionalStatuses: { has: 'CLIENT' } }
+            ]
           }
         }),
         prisma.people.groupBy({
@@ -119,7 +133,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            status: 'CLIENT'
+            OR: [
+              { status: 'CLIENT' },
+              { additionalStatuses: { has: 'CLIENT' } }
+            ]
           },
           _count: { id: true }
         })
@@ -189,7 +206,10 @@ export async function GET(request: NextRequest) {
             );
           }
           
-          where.OR = searchConditions;
+          // Add search conditions as another AND clause
+          where.AND.push({
+            OR: searchConditions
+          });
         }
       }
 

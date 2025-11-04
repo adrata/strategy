@@ -1,12 +1,11 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Auto-Create Ross DMs API
  * 
  * Automatically creates DMs with Ross for all users in a workspace
  * This ensures Ross is connected to everyone as requested
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getUnifiedAuthUser } from '@/platform/api-auth';
@@ -53,8 +52,6 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    console.log(`🔍 [AUTO-CREATE ROSS DMS] Found ${workspaceUsers.length} users in workspace ${workspaceId}:`, 
-      workspaceUsers.map(u => ({ id: u.user.id, name: u.user.name, email: u.user.email })));
 
     const createdDMs = [];
 
@@ -92,7 +89,6 @@ export async function POST(request: NextRequest) {
 
         if ((existingDM && existingDM.participants.length === 2) || 
             (existingDMAnywhere && existingDMAnywhere.participants.length === 2)) {
-          console.log(`DM already exists between Ross and ${workspaceUser.user.name}`);
           continue;
         }
 
@@ -117,7 +113,6 @@ export async function POST(request: NextRequest) {
           participantEmail: workspaceUser.user.email
         });
 
-        console.log(`Created DM between Ross and ${workspaceUser.user.name}`);
       } catch (error) {
         console.error(`Failed to create DM with ${workspaceUser.user.name}:`, error);
         // Continue with other users even if one fails
@@ -129,8 +124,48 @@ export async function POST(request: NextRequest) {
       createdDMs 
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [AUTO-CREATE ROSS DMS] Error:', error);
+    
+    // Handle Prisma errors
+    if (error.code === 'P2021') {
+      return NextResponse.json(
+        { 
+          error: 'Database migration required',
+          code: 'MIGRATION_REQUIRED',
+          details: 'OasisDirectMessage table does not exist'
+        },
+        { status: 503 }
+      );
+    } else if (error.code === 'P2002') {
+      return NextResponse.json(
+        { 
+          error: 'Unique constraint violation',
+          code: 'DUPLICATE_ENTRY',
+          details: error.message
+        },
+        { status: 409 }
+      );
+    } else if (error.code === 'P2003') {
+      return NextResponse.json(
+        { 
+          error: 'Foreign key constraint violation',
+          code: 'INVALID_REFERENCE',
+          details: error.message
+        },
+        { status: 400 }
+      );
+    } else if (error.code === 'P2025') {
+      return NextResponse.json(
+        { 
+          error: 'Record not found',
+          code: 'NOT_FOUND',
+          details: error.message
+        },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to auto-create Ross DMs' },
       { status: 500 }

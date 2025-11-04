@@ -400,7 +400,7 @@ export function NotesEditor({
           placeholder={placeholder}
           disabled={disabled}
           className={`
-            w-full h-full min-h-[200px] p-4
+            w-full h-full min-h-[400px] p-4
             bg-transparent
             text-base
             text-foreground

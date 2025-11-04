@@ -1,11 +1,10 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Oasis Typing Indicators API
  * 
  * Handles typing indicators (ephemeral, no DB storage)
  */
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getUnifiedAuthUser } from '@/platform/api-auth';
@@ -50,8 +49,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ [OASIS TYPING] POST error:', error);
+    
+    // Note: Typing doesn't use database, but handle errors gracefully
     return NextResponse.json(
       { error: 'Failed to broadcast typing indicator' },
       { status: 500 }

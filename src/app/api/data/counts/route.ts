@@ -301,6 +301,50 @@ export async function GET(request: NextRequest) {
       totalNoActions: speedrunPeopleNoActionsCount + speedrunCompaniesNoActionsCount
     });
 
+    // 🚀 CLIENTS: Count people with CLIENT status (primary or additionalStatuses)
+    let clientsWithAdditionalStatusCount = 0;
+    try {
+      clientsWithAdditionalStatusCount = await prisma.people.count({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ],
+          AND: [
+            { additionalStatuses: { has: 'CLIENT' } },
+            { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
+          ]
+        }
+      });
+    } catch (error) {
+      console.error('❌ [COUNTS API] Error fetching clients with additionalStatuses count:', error);
+      clientsWithAdditionalStatusCount = 0;
+    }
+
+    // Also count companies with CLIENT in additionalStatuses
+    let companiesClientsWithAdditionalStatusCount = 0;
+    try {
+      companiesClientsWithAdditionalStatusCount = await prisma.companies.count({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ],
+          AND: [
+            { additionalStatuses: { has: 'CLIENT' } },
+            { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
+          ]
+        }
+      });
+    } catch (error) {
+      console.error('❌ [COUNTS API] Error fetching companies with CLIENT in additionalStatuses count:', error);
+      companiesClientsWithAdditionalStatusCount = 0;
+    }
+
     // Map counts to our expected format
     // Note: PersonStatus enum doesn't have PARTNER - only LEAD, PROSPECT, OPPORTUNITY, CLIENT, SUPERFAN
     const leadsCount = (peopleCountsMap['LEAD'] || 0) + companiesWithNoPeopleCount;
@@ -308,7 +352,8 @@ export async function GET(request: NextRequest) {
     const opportunitiesCount = peopleCountsMap['OPPORTUNITY'] || 0;
     const companiesCount = Object.values(companiesCountsMap).reduce((sum: number, count: any) => sum + count, 0);
     const peopleCount = Object.values(peopleCountsMap).reduce((sum: number, count: any) => sum + count, 0);
-    const clientsCount = peopleCountsMap['CLIENT'] || 0;
+    // Include clients from both primary status and additionalStatuses
+    const clientsCount = (peopleCountsMap['CLIENT'] || 0) + clientsWithAdditionalStatusCount;
     // PARTNER is not in PersonStatus enum - set to 0 (or get from companies if needed)
     const partnersCount = 0;
     // Note: sellers table doesn't exist yet - set to 0 for now
