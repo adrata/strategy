@@ -118,12 +118,17 @@ function PipelineSections({
   // Check if we're in TOP workspace
   const isTopWorkspace = workspaceName?.toLowerCase().includes('top') || false;
   
+  // Check if we're in CloudCaddie workspace
+  const isCloudCaddieWorkspace = workspaceName?.toLowerCase().includes('cloudcaddie') || 
+                                  workspaceSlug?.toLowerCase() === 'cloudcaddie' ||
+                                  workspaceId === '01K7DSWP8ZBA75K5VSWVXPEMAH';
+  
   // Override feature access hooks with user restrictions (synchronous check)
   const shouldShowChronicle = hasChronicle && (!userRestrictions.hasRestrictions || 
     !userRestrictions.disabledFeatures.includes('CHRONICLE'));
   const shouldShowMetrics = hasMetrics && (!userRestrictions.hasRestrictions || 
     !userRestrictions.disabledFeatures.includes('METRICS'));
-  const shouldShowPartners = !isPinpointWorkspace && !isTopWorkspace && (!userRestrictions.hasRestrictions || 
+  const shouldShowPartners = !isPinpointWorkspace && !isTopWorkspace && !isCloudCaddieWorkspace && (!userRestrictions.hasRestrictions || 
     (userRestrictions.allowedSections['pipeline']?.includes('partners') ?? false));
   const shouldShowClients = !userRestrictions.hasRestrictions || 
     (userRestrictions.allowedSections['pipeline']?.includes('clients') ?? false);

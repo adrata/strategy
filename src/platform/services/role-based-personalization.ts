@@ -7,6 +7,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import { SALES_ROLES, RolePermissionService, type DataAccessLevel, type AIPersonalizationConfig } from './user-role-system';
+import { getActiveRoleDetails } from './role-switching-service';
 
 const prisma = new PrismaClient();
 
@@ -63,9 +64,13 @@ export class RoleBasedPersonalizationService {
   
   /**
    * Get comprehensive user context including role and profile information
+   * Uses active role from role switching service
    */
   static async getUserContext(userId: string, workspaceId: string): Promise<UserContext | null> {
     try {
+      // Get active role (supports role switching)
+      const activeRole = await getActiveRoleDetails(userId, workspaceId);
+      
       const user = await prisma.users.findUnique({
         where: { id: userId },
         include: {
@@ -101,13 +106,15 @@ export class RoleBasedPersonalizationService {
 
       const profile = user['profiles'][0];
       const membership = user['memberships'][0];
-      const role = membership?.assignedRole;
+      
+      // Use active role if available, otherwise fall back to membership role
+      const roleName = activeRole?.roleName || membership?.assignedRole?.name;
 
       return {
         userId,
         workspaceId,
-        roleId: role?.id,
-        roleName: role?.name,
+        roleId: activeRole?.roleId || membership?.assignedRole?.id,
+        roleName: roleName,
         title: profile?.title || user.title,
         department: profile?.department || user.department,
         seniorityLevel: profile?.seniorityLevel || user.seniorityLevel,
@@ -121,12 +128,45 @@ export class RoleBasedPersonalizationService {
   }
 
   /**
-   * Get data access level for a user based on their role
+   * Get data access level for a user based on their active role
+   * Leader role provides 'all' scope for all data access
    */
   static async getDataAccessLevel(userId: string, workspaceId: string): Promise<DataAccessLevel | null> {
     const context = await this.getUserContext(userId, workspaceId);
     if (!context?.roleName) return null;
 
+    // Check if user is in leader mode
+    const activeRole = await getActiveRoleDetails(userId, workspaceId);
+    const isLeaderMode = activeRole?.roleName.toLowerCase() === 'leader';
+
+    if (isLeaderMode) {
+      // Leader role: full access to all data
+      return {
+        accounts: {
+          scope: 'all'
+        },
+        contacts: {
+          scope: 'all'
+        },
+        opportunities: {
+          scope: 'all',
+          forecastAccess: true
+        },
+        intelligence: {
+          buyerGroupAccess: true,
+          competitiveIntel: true,
+          marketResearch: true,
+          advancedAnalytics: true
+        },
+        coreSignalAccess: {
+          enabled: true,
+          searchTypes: ['person', 'company', 'bulk'],
+          enrichmentLevel: 'premium'
+        }
+      };
+    }
+
+    // Use standard role-based data access
     return RolePermissionService.getDataAccessLevel(context.roleName);
   }
 
@@ -189,33 +229,37 @@ export class RoleBasedPersonalizationService {
 
     // Apply account filters
     if (query.accounts || query.include?.accounts) {
-      switch (dataAccess.accounts.scope) {
-        case 'assigned':
-          filteredQuery['where'] = {
-            ...filteredQuery.where,
-            assignedUserId: userId
-          };
-          break;
-        case 'team':
-          if (context?.managerId) {
+      // Leader role with 'all' scope: skip filtering
+      if (dataAccess.accounts.scope === 'all') {
+        // No filters applied - user sees all accounts
+      } else {
+        switch (dataAccess.accounts.scope) {
+          case 'assigned':
             filteredQuery['where'] = {
               ...filteredQuery.where,
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: context.managerId }
-              ]
+              assignedUserId: userId
             };
-          }
-          break;
-        case 'territory':
-          if (context?.territory) {
-            filteredQuery['where'] = {
-              ...filteredQuery.where,
-              territory: context.territory
-            };
-          }
-          break;
-        // 'all' scope - no additional filters
+            break;
+          case 'team':
+            if (context?.managerId) {
+              filteredQuery['where'] = {
+                ...filteredQuery.where,
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: context.managerId }
+                ]
+              };
+            }
+            break;
+          case 'territory':
+            if (context?.territory) {
+              filteredQuery['where'] = {
+                ...filteredQuery.where,
+                territory: context.territory
+              };
+            }
+            break;
+        }
       }
 
       // Apply deal size limits
@@ -235,7 +279,10 @@ export class RoleBasedPersonalizationService {
 
     // Apply contact filters
     if (query.contacts || query.include?.contacts) {
-      if (dataAccess.contacts.seniorityLimit) {
+      // Leader role with 'all' scope: skip filtering
+      if (dataAccess.contacts.scope === 'all') {
+        // No filters applied - user sees all contacts
+      } else if (dataAccess.contacts.seniorityLimit) {
         const seniorityHierarchy = ['ic', 'manager', 'director', 'vp', 'c_level'];
         const maxIndex = seniorityHierarchy.indexOf(dataAccess.contacts.seniorityLimit);
         const allowedLevels = seniorityHierarchy.slice(0, maxIndex + 1);

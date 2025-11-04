@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { getActiveRoleDetails } from './role-switching-service';
 
 const prisma = new PrismaClient();
 
@@ -77,11 +78,21 @@ export async function hasFeatureAccess(
       return result;
     }
 
-    // Check if user has the appropriate permission via their role
+    // Get active role for user (supports role switching)
+    const activeRole = await getActiveRoleDetails(userId, workspaceId);
+    
+    if (!activeRole) {
+      const result = { hasAccess: false, reason: 'No active role found for user in workspace' };
+      setCached(cacheKey, result);
+      return result;
+    }
+
+    // Get user role with permissions for the active role
     const userRole = await prisma.user_roles.findFirst({
       where: {
         userId,
         workspaceId,
+        roleId: activeRole.roleId,
         isActive: true
       },
       include: {
@@ -98,12 +109,12 @@ export async function hasFeatureAccess(
     });
 
     if (!userRole) {
-      const result = { hasAccess: false, reason: 'No active role found for user in workspace' };
+      const result = { hasAccess: false, reason: 'Active role not found for user in workspace' };
       setCached(cacheKey, result);
       return result;
     }
 
-    // Check if user's role has the required permission
+    // Check if user's active role has the required permission
     const hasPermission = userRole.role.role_permissions.some(
       rp => rp.permission.name === `${feature}_ACCESS`
     );
@@ -169,11 +180,19 @@ export async function getUserFeatures(userId: string, workspaceId: string): Prom
     // Get workspace features
     const workspaceFeatures = await getWorkspaceFeatures(workspaceId);
     
-    // Get user permissions
+    // Get active role for user (supports role switching)
+    const activeRole = await getActiveRoleDetails(userId, workspaceId);
+    
+    if (!activeRole) {
+      return { enabledFeatures: [], permissions: [] };
+    }
+
+    // Get user permissions for the active role
     const userRole = await prisma.user_roles.findFirst({
       where: {
         userId,
         workspaceId,
+        roleId: activeRole.roleId,
         isActive: true
       },
       include: {

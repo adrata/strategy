@@ -1191,18 +1191,12 @@ class SmartBuyerGroupPipeline {
               lastEnriched: new Date(),
               // Phone data from Coresignal
               phone: coresignalPhone || member.phone,
-              // Phone data from Lusha
-              phone1: member.phone1,
-              phone1Type: member.phone1Type,
-              phone1Verified: member.phone1Verified,
-              phone2: member.phone2,
-              phone2Type: member.phone2Type,
-              directDialPhone: member.directDialPhone,
+              // Phone data (streamlined schema - only basic phone fields)
               mobilePhone: member.mobilePhone,
               workPhone: member.workPhone,
-              phoneEnrichmentSource: member.phoneEnrichmentSource,
-              phoneEnrichmentDate: member.phoneEnrichmentDate,
-              phoneDataQuality: member.phoneDataQuality,
+              phoneVerified: member.phone1Verified || false,
+              phoneConfidence: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
+              phoneQualityScore: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
               // Intelligence fields for person record tabs
               influenceLevel: influenceLevel,
               engagementLevel: engagementLevel,
@@ -1261,18 +1255,12 @@ class SmartBuyerGroupPipeline {
               decisionPower: decisionPower,
               engagementScore: engagementScore,
               lastEnriched: new Date(),
-              // Phone data from Lusha
-              phone1: member.phone1,
-              phone1Type: member.phone1Type,
-              phone1Verified: member.phone1Verified,
-              phone2: member.phone2,
-              phone2Type: member.phone2Type,
-              directDialPhone: member.directDialPhone,
+              // Phone data (streamlined schema - only basic phone fields)
               mobilePhone: member.mobilePhone,
               workPhone: member.workPhone,
-              phoneEnrichmentSource: member.phoneEnrichmentSource,
-              phoneEnrichmentDate: member.phoneEnrichmentDate,
-              phoneDataQuality: member.phoneDataQuality,
+              phoneVerified: member.phone1Verified || false,
+              phoneConfidence: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
+              phoneQualityScore: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
               // Intelligence fields for person record tabs
               influenceLevel: influenceLevel,
               engagementLevel: engagementLevel,

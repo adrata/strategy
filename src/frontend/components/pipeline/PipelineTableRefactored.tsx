@@ -623,11 +623,11 @@ export function PipelineTable({
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
-                            cellContent = 'Record created';
+                            cellContent = 'Record just created';
                           } else {
-                            // If no createdAt, but timing is Never, still show Record created for records that exist
+                            // If no createdAt, but timing is Never, still show Record just created for records that exist
                             // (records in the table must exist, so if they have no actions, they were created)
-                            cellContent = 'Record created';
+                            cellContent = 'Record just created';
                           }
                         } else {
                           cellContent = lastActionText;

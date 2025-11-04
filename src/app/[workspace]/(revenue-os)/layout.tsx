@@ -285,11 +285,23 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   // Extract the current section from the pathname
   const getCurrentSection = () => {
     const segments = pathname.split('/').filter(Boolean);
-    // Find the section after the workspace slug
-    const workspaceIndex = segments.findIndex(segment => segment !== 'workspaces');
-    if (workspaceIndex >= 0 && segments[workspaceIndex + 1]) {
-      return segments[workspaceIndex + 1];
+    
+    // Handle routes like /[workspace]/speedrun, /[workspace]/leads, etc.
+    // The first segment is the workspace slug, the second is the section
+    if (segments.length >= 2) {
+      const section = segments[1];
+      // Validate it's a known section
+      const validSections = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'metrics', 'dashboard', 'chronicle', 'oasis', 'stacks', 'workshop', 'olympus', 'grand-central', 'tower', 'database', 'atrium', 'encode', 'particle', 'docs'];
+      if (validSections.includes(section)) {
+        return section;
+      }
     }
+    
+    // Handle root workspace route - default to dashboard
+    if (segments.length === 1) {
+      return 'dashboard';
+    }
+    
     return 'dashboard'; // Default section
   };
 

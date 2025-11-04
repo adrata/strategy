@@ -5,7 +5,7 @@
  * Follows 2025 best practices for React components and user interface patterns.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { getWorkspaceUrl, getWorkspaceBySlug, parseWorkspaceFromUrl } from "@/platform/auth/workspace-slugs";
@@ -129,6 +129,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   // const [isDemoSwitcherOpen, setIsDemoSwitcherOpen] = useState(false); // Removed - no longer using demo scenarios popup
   const [isGrandCentralOpen, setIsGrandCentralOpen] = useState(false);
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+  const [activeRole, setActiveRole] = useState<string | null>(null);
+  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
+  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
 
   const initial = user.name?.charAt(0).toUpperCase() || "?";
 
@@ -147,6 +150,70 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   
   // Use the actual workspace name from auth context for restrictions
   const actualWorkspaceName = currentWorkspace?.name || workspace;
+  
+  // Check if user is in Notary Everyday workspace
+  const isNotaryEveryday = actualWorkspaceName?.toLowerCase().includes('notary everyday') || 
+                           actualWorkspaceName?.toLowerCase().includes('notaryeveryday');
+  
+  // Fetch active role and available roles for Notary Everyday users
+  useEffect(() => {
+    if (isNotaryEveryday && currentWorkspaceId && userId) {
+      const fetchActiveRole = async () => {
+        try {
+          const response = await fetch(`/api/user/active-role?workspaceId=${currentWorkspaceId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+              setActiveRole(data.activeRole);
+              setAvailableRoles(data.availableRoles || []);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching active role:', error);
+        }
+      };
+      fetchActiveRole();
+    }
+  }, [isNotaryEveryday, currentWorkspaceId, userId]);
+  
+  // Check if user has multiple roles (seller and leader)
+  const hasMultipleRoles = availableRoles.length > 1 && 
+                           availableRoles.some(r => r.toLowerCase().includes('seller')) &&
+                           availableRoles.some(r => r.toLowerCase().includes('leader'));
+  
+  // Handle role switching
+  const handleRoleSwitch = async (newRole: string) => {
+    if (!currentWorkspaceId || !userId || isSwitchingRole) return;
+    
+    setIsSwitchingRole(true);
+    try {
+      const response = await fetch('/api/user/active-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          workspaceId: currentWorkspaceId,
+          roleName: newRole
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setActiveRole(data.activeRole);
+          // Reload page to apply new role permissions
+          window.location.reload();
+        }
+      } else {
+        console.error('Failed to switch role');
+      }
+    } catch (error) {
+      console.error('Error switching role:', error);
+    } finally {
+      setIsSwitchingRole(false);
+    }
+  };
   
   // Check user restrictions
   const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
@@ -1004,6 +1071,49 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         >
           Settings
         </div>
+
+        {/* Role Switcher - Only for Notary Everyday users with multiple roles */}
+        {isNotaryEveryday && hasMultipleRoles && (
+          <div className="border-t border-border my-1">
+            <div className="px-2 py-2">
+              <div className="text-xs text-muted-foreground mb-2">Switch Mode</div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const sellerRole = availableRoles.find(r => r.toLowerCase().includes('seller'));
+                    if (sellerRole) {
+                      handleRoleSwitch(sellerRole);
+                    }
+                  }}
+                  disabled={isSwitchingRole || activeRole?.toLowerCase().includes('seller')}
+                  className={`flex-1 px-2 py-1.5 text-xs rounded-lg transition-colors ${
+                    activeRole?.toLowerCase().includes('seller')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted hover:bg-hover text-foreground'
+                  } ${isSwitchingRole ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  Seller Mode
+                </button>
+                <button
+                  onClick={() => {
+                    const leaderRole = availableRoles.find(r => r.toLowerCase().includes('leader'));
+                    if (leaderRole) {
+                      handleRoleSwitch(leaderRole);
+                    }
+                  }}
+                  disabled={isSwitchingRole || activeRole?.toLowerCase().includes('leader')}
+                  className={`flex-1 px-2 py-1.5 text-xs rounded-lg transition-colors ${
+                    activeRole?.toLowerCase().includes('leader')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted hover:bg-hover text-foreground'
+                  } ${isSwitchingRole ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  Leader Mode
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 4. Admin Panel - Show only for admin users and not restricted users */}
         {isAdminUser && !isRestrictedUser && (

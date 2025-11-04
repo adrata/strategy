@@ -456,7 +456,7 @@ export function TableRow({
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
-                            displayText = 'Record created';
+                            displayText = 'Record just created';
                           }
                         } else {
                           displayText = actionText;
@@ -739,7 +739,7 @@ export function TableRow({
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
-                            displayText = 'Record created';
+                            displayText = 'Record just created';
                           }
                         } else {
                           displayText = actionText;
@@ -932,7 +932,7 @@ export function TableRow({
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
-                            displayText = 'Record created';
+                            displayText = 'Record just created';
                           }
                         } else {
                           displayText = actionText;
@@ -1106,7 +1106,7 @@ export function TableRow({
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
-                            displayText = 'Record created';
+                            displayText = 'Record just created';
                           }
                         } else {
                           displayText = actionText;

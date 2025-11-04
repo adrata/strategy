@@ -1,0 +1,1967 @@
+{
+  "totalRows": 166,
+  "companies": {
+    "found": [
+      {
+        "csv": "Clear Edge Title",
+        "found": "ClearEdge Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Coogan Law Office",
+        "found": "Prosperity Abstract",
+        "matchType": "phone"
+      },
+      {
+        "csv": "DHI Title",
+        "found": "DHI Title",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Driggs Title",
+        "found": "Driggs Title",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Driggs Title - Arrowhead",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Arrowhead",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Arrowhead",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Avondale",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Ciane Miller",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Metro Center",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Metro Center",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Metro Center",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Westgate",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Westgate",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title - Westgate",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs title Agency",
+        "found": "Driggs Title Agency",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Driggs Title Agency",
+        "found": "Driggs Title Agency",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Driggs Title Agency- Central Phoenix",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title Agency-Metro-Paola Farinas",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title Arrowhead- Angel Nuñez",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title Goodyear",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title Goodyear",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title Goodyear",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title Tempe - Liza Romero",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title- Arrowhead - Vickie",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Driggs Title-Nevada",
+        "found": "Driggs Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Empire Title",
+        "found": "Empire Title",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Empire Title",
+        "found": "Empire Title",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "First Integrity Title - Glendale",
+        "found": "First Integrity Title Company",
+        "matchType": "phone"
+      },
+      {
+        "csv": "First Integrity Title - Yvette Predovich",
+        "found": "First Integrity Title Company",
+        "matchType": "phone"
+      },
+      {
+        "csv": "First Integrity Title-Scottsdale",
+        "found": "First Integrity Title Company",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Gabriel Thorne Title Agency",
+        "found": "Prosperity Abstract",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Great American Title - Glendale",
+        "found": "Great American Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Great American Title - Glendale",
+        "found": "Great American Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Great American Title - Glendale",
+        "found": "Great American Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Great American Title Agency",
+        "found": "Great American Title Agency",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Great American Title Agency",
+        "found": "Great American Title Agency",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Great American Title Agency",
+        "found": "Great American Title Agency",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Great American Title Agency (Bell-7055)",
+        "found": "Great American Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Great American Title Agency (Bell-7055)",
+        "found": "Great American Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Great American Title Agency- Gilbert",
+        "found": "Great American Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Great American Title Agency- Gilbert",
+        "found": "Great American Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Iron Title - Chelsea Eaton",
+        "found": "Iron Title Insurance Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Lotus Escrow",
+        "found": "LOTUS ESCROW",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Lotus Escrow",
+        "found": "LOTUS ESCROW",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Magnus Title - Arrowhead",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title - Arrowhead",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title - Arrowhead",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title - Arrowhead",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title - Buckeye",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title - Buckeye",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title- Gilbert",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title- Metro Center",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title- Metro Center",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title- Metro Center",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title-Glendale",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Magnus Title-Tolleson",
+        "found": "Magnus Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Navi Title-Goodyear",
+        "found": "Navi Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Navi Title-Goodyear",
+        "found": "Navi Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Goodyear",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Jody Hay",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Summit Branch",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Summit Branch",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Westgate",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Westgate",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Westgate",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title - Westgate",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Pioneer Title Agency Prescott",
+        "found": "Pioneer Title Agency",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title",
+        "found": "ROC Title",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Roc Title - Arrowhead",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Arrowhead",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Chandler",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Goodyear",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Lake Havasu -Shaver",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Paradise Valley",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Paradise Valley",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Paradise Valley",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Surprise Christine Tellez",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Surprise Christine Tellez",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title - Surprise Christine Tellez",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title Lake Havasu",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title Lake Havasu",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title Lake Havasu",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Roc Title Lake Havasu",
+        "found": "ROC Title Agency West",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Tile - Teem Kelsey",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Tile - Teem Kelsey",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Tile - Teem Kelsey",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Tile - Teem Kelsey",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title - Chandler",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title - Teem Arlene",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title - Teem Julio",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title - Teem Maggie",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title - Teem Maria Barboa",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title - Teem Maria Rodriguez",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title- Goodyear",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title- Goodyear",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title- Teem Amber Diaz",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Teema Title- Teem Amber Diaz",
+        "found": "Tee Ma Title",
+        "matchType": "phone"
+      },
+      {
+        "csv": "Title Services of The Valley Agency",
+        "found": "Title Services of the Valley Agency",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Tucson Tiques Collectibles",
+        "found": "Prosperity Abstract",
+        "matchType": "phone"
+      },
+      {
+        "csv": "WFG National Title Insurance Company",
+        "found": "WFG National Title Insurance Company",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "WFG National Title Insurance Company",
+        "found": "WFG National Title Insurance Company",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "WFG National Title Insurance Company",
+        "found": "WFG National Title Insurance Company",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "WFG National Title Insurance Company",
+        "found": "WFG National Title Insurance Company",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "WFG National Title Insurance Company",
+        "found": "WFG National Title Insurance Company",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "WFG National Title Insurance Company",
+        "found": "WFG National Title Insurance Company",
+        "matchType": "exact-name"
+      }
+    ],
+    "notFound": [
+      {
+        "company": "Blue Ink Title Agency - Gilbert",
+        "email": "Laura@blueinktitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Blue Ink Title Agency - Gilbert",
+        "email": "william@blueinktitleagency.com",
+        "phone": "480-251-9661"
+      },
+      {
+        "company": "Blue Ink Title Agency - Sun City",
+        "email": "melinda@blueinktitleagency.com",
+        "phone": "623-246-5507"
+      },
+      {
+        "company": "Blue Ink Title Agency - Sun City",
+        "email": "dani@blueinktitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Empire West Title- Goodyear",
+        "email": "hinman@ewtaz.com",
+        "phone": "480-710-4969"
+      },
+      {
+        "company": "Equity Title",
+        "email": "mariea@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "company": "Equity Title",
+        "email": "2024-02-06-65c2a65880225-danij@eta-az.com",
+        "phone": ""
+      },
+      {
+        "company": "Equity Title",
+        "email": "marnea@eta-az.com",
+        "phone": ""
+      },
+      {
+        "company": "Equity Title",
+        "email": "Shannonr@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "company": "Equity Title",
+        "email": "juliaq@eta-az.com",
+        "phone": "602-888-8723"
+      },
+      {
+        "company": "Equity Title - Carrie Gutierrez",
+        "email": "mariea@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "company": "Equity Title - Carrie Gutierrez",
+        "email": "carrieg@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "company": "Equity Title - Carrie Gutierrez",
+        "email": "Natalieh@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "company": "Equity Title - Dani",
+        "email": "danij@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "company": "First Service Credit Union",
+        "email": "ZLi@fscu.com",
+        "phone": ""
+      },
+      {
+        "company": "Homie Title",
+        "email": "teamjessica@homietitleagency.com",
+        "phone": "801-608-7748"
+      },
+      {
+        "company": "Homie Title - Beth Jarrett",
+        "email": "beth.jarrett@homietitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Homie Title - Kristen Cook",
+        "email": "teamarizona@homietitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Homie Title - Kristen Cook",
+        "email": "kristen.cook@homietitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Homie Title - Kristen Cook",
+        "email": "TeamNevada1@homietitleagency.com",
+        "phone": "949-201-7269"
+      },
+      {
+        "company": "Investor Funding",
+        "email": "dolores.schell@investorfunding.com",
+        "phone": "719-399-5174"
+      },
+      {
+        "company": "Investor Funding Corp",
+        "email": "dolores.schell@investorfunding.com",
+        "phone": "719-399-5174"
+      },
+      {
+        "company": "Landmark Title - Arrowhead - Sonia Salas",
+        "email": "shantel.murphy@ltaz.com",
+        "phone": "602-775-5990"
+      },
+      {
+        "company": "Landmark Title - Arrowhead - Sonia Salas",
+        "email": "sonia.salas@ltaz.com",
+        "phone": "602-295-3790"
+      },
+      {
+        "company": "Landmark Title - Arrowhead - Sonia Salas",
+        "email": "victoria.crawford@ltaz.com",
+        "phone": "480-937-1810"
+      },
+      {
+        "company": "Landmark Title - Goodyear - Melissa Sorah-Saenz",
+        "email": "Melissa.Sorah-Saenz@ltaz.com",
+        "phone": ""
+      },
+      {
+        "company": "Landmark Title - Goodyear - Melissa Sorah-Saenz",
+        "email": "mery.sanchez@ltaz.com",
+        "phone": ""
+      },
+      {
+        "company": "Landmark Title-Biltmore",
+        "email": "liza.vasquez@ltaz.com",
+        "phone": "602-775-5990"
+      },
+      {
+        "company": "McMichael & Gray",
+        "email": "bpalmer@mmg.law",
+        "phone": "334-785-8040"
+      },
+      {
+        "company": "Mulberry",
+        "email": "jvidales@equityconnect.com",
+        "phone": ""
+      },
+      {
+        "company": "Pinnacle Title - Arrowhead",
+        "email": "ciane.miller@pinnacletitleaz.com",
+        "phone": "623-253-6160"
+      },
+      {
+        "company": "Pinnacle Title and Escrow",
+        "email": "Shara.Webber@pinnacletitleaz.com",
+        "phone": "623-570-1935"
+      },
+      {
+        "company": "Pioneer Title - Buckeye",
+        "email": "Jessica.southerlin@pioneertitleagency.com",
+        "phone": "623-215-3182"
+      },
+      {
+        "company": "Pioneer Title - Goodyear",
+        "email": "2024-05-16-66468775b04a2-tony.delgado@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Pioneer Title - Goodyear",
+        "email": "Jennifer.Tatham@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Pioneer Title - Goodyear",
+        "email": "DeeDee.Nadeau@pioneertitleagency.com",
+        "phone": "623-536-3404"
+      },
+      {
+        "company": "Pioneer Title - Goodyear",
+        "email": "Diana.Olson@pioneertitleagency.com",
+        "phone": "602-910-0294"
+      },
+      {
+        "company": "Pioneer Title - Prescott",
+        "email": "Kimberly.Joiner@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Pioneer Title - Summit Branch",
+        "email": "jami.busch@pioneertitleagency.com",
+        "phone": "480-252-1509"
+      },
+      {
+        "company": "Pioneer Title - Westgate",
+        "email": "Jessica.southerlin@pioneertitleagency.com",
+        "phone": "623-215-3182"
+      },
+      {
+        "company": "Pioneer Title Agency Prescott",
+        "email": "Cathy.Roe@pioneertitleagency.com",
+        "phone": "928-778-2222"
+      },
+      {
+        "company": "Pioneer Title Scottsdale",
+        "email": "katie.bell@pioneertitleagency.com",
+        "phone": "480-368-1500"
+      },
+      {
+        "company": "Pioneer Title Scottsdale",
+        "email": "Dina.Shroth@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "company": "Pioneer Title-Peoria",
+        "email": "Charis.Keller@pioneertitleagency.com",
+        "phone": "623-815-8700"
+      },
+      {
+        "company": "Republic Financial Services",
+        "email": "pablo@republicfinancialservices.com",
+        "phone": "480-703-9165"
+      },
+      {
+        "company": "Republic Financial Services",
+        "email": "Nancy@republicfinancialservices.com",
+        "phone": "480-655-0477"
+      },
+      {
+        "company": "Republic Financial Services",
+        "email": "richard@republicfinancialservices.com",
+        "phone": "623-633-3545"
+      },
+      {
+        "company": "Standard Title & Escrow, LLC-Zach Seewald",
+        "email": "zach@standardclosing.com",
+        "phone": ""
+      },
+      {
+        "company": "Summerlin Title Agency",
+        "email": "Tawna.Bartlett@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "company": "Summerlin Title Agency",
+        "email": "Kristen.Quiles@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "company": "Summerlin Title Agency",
+        "email": "alexis.wijngaarden@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "company": "Summerlin Title Agency",
+        "email": "ashlee.bennett@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "company": "Summerlin Title Agency",
+        "email": "Katie.Marinelli@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "company": "Verus Title",
+        "email": "beth.jarrett@verustitle.com",
+        "phone": "801-580-1126"
+      },
+      {
+        "company": "Verus Title",
+        "email": "beth.jarrett@verustitle.com",
+        "phone": "801-580-1126"
+      },
+      {
+        "company": "Verus Title",
+        "email": "teamjessicaut@verustitle.com",
+        "phone": ""
+      },
+      {
+        "company": "Verus Title-Scott Gowdy",
+        "email": "scott.gowdy@verustitle.com",
+        "phone": "385-520-2329"
+      },
+      {
+        "company": "Wasker, Dorr, Wimmer & Marcouiller, PC",
+        "email": "lweldon@wdwm.net",
+        "phone": ""
+      },
+      {
+        "company": "WFG National Title- Biltmore Location",
+        "email": "psterling@wfgtitle.com",
+        "phone": "602-648-3309"
+      },
+      {
+        "company": "WFG National Title- Peoria Location",
+        "email": "SReese@wfgtitle.com",
+        "phone": "480-682-1917"
+      }
+    ],
+    "partialMatches": [
+      {
+        "csv": "Blue Ink Title Agency - Gilbert",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Blue Ink Title Agency - Gilbert",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Blue Ink Title Agency - Sun City",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Blue Ink Title Agency - Sun City",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Empire West Title- Goodyear",
+        "found": "Empire West Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Equity Title",
+        "found": "EQUITY TITLE COMPANY (ETC)",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Equity Title",
+        "found": "EQUITY TITLE COMPANY (ETC)",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Equity Title",
+        "found": "EQUITY TITLE COMPANY (ETC)",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Equity Title",
+        "found": "EQUITY TITLE COMPANY (ETC)",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Equity Title",
+        "found": "EQUITY TITLE COMPANY (ETC)",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Landmark Title - Arrowhead - Sonia Salas",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Landmark Title - Arrowhead - Sonia Salas",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Landmark Title - Arrowhead - Sonia Salas",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Landmark Title - Goodyear - Melissa Sorah-Saenz",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Landmark Title - Goodyear - Melissa Sorah-Saenz",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Landmark Title-Biltmore",
+        "found": "K Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Pioneer Title Agency Prescott",
+        "found": "Pioneer Title Agency",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Standard Title & Escrow, LLC-Zach Seewald",
+        "found": "Standard Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Verus Title",
+        "found": "US Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Verus Title",
+        "found": "US Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Verus Title",
+        "found": "US Title",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Verus Title-Scott Gowdy",
+        "found": "US Title",
+        "matchType": "partial-name"
+      }
+    ]
+  },
+  "people": {
+    "found": [
+      {
+        "csv": "Julio Beltran",
+        "csvCompany": "Driggs Title Agency- Central Phoenix",
+        "found": "Julio  Beltran ",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Leticia Gracia",
+        "csvCompany": "Driggs Title Goodyear",
+        "found": "LETICIA GRACIA",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Arlene Bejarano",
+        "csvCompany": "Teema Title - Teem Arlene",
+        "found": "Arlene Bejarano",
+        "matchType": "exact-name"
+      },
+      {
+        "csv": "Julio Beltran",
+        "csvCompany": "Teema Title - Teem Julio",
+        "found": "Julio  Beltran ",
+        "matchType": "exact-name"
+      }
+    ],
+    "notFound": [
+      {
+        "name": "Laura Peralta",
+        "company": "Blue Ink Title Agency - Gilbert",
+        "email": "Laura@blueinktitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "William Hampton",
+        "company": "Blue Ink Title Agency - Gilbert",
+        "email": "william@blueinktitleagency.com",
+        "phone": "480-251-9661"
+      },
+      {
+        "name": "Melinda Peru",
+        "company": "Blue Ink Title Agency - Sun City",
+        "email": "melinda@blueinktitleagency.com",
+        "phone": "623-246-5507"
+      },
+      {
+        "name": "Dani Johnson",
+        "company": "Blue Ink Title Agency - Sun City",
+        "email": "dani@blueinktitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Mike Perry",
+        "company": "Clear Edge Title",
+        "email": "scheduling@cetitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Jennifer Cutrer",
+        "company": "Coogan Law Office",
+        "email": "jen.cooganlaw@gmail.com",
+        "phone": "508-693-3200"
+      },
+      {
+        "name": "Alma Demoreno",
+        "company": "DHI Title",
+        "email": "dcdocs@dhititle.com",
+        "phone": "480-778-0226"
+      },
+      {
+        "name": "Rachel Anaya",
+        "company": "Driggs Title",
+        "email": "rachela@driggstitle.com",
+        "phone": "602-692-7960"
+      },
+      {
+        "name": "Chelsea Eaton",
+        "company": "Driggs Title - Arrowhead",
+        "email": "chelseae@driggstitle.com",
+        "phone": "480-846-1152"
+      },
+      {
+        "name": "Andrea Hopkins",
+        "company": "Driggs Title - Arrowhead",
+        "email": "andreah@driggstitle.com",
+        "phone": "480-295-7667"
+      },
+      {
+        "name": "Brenda Freeman",
+        "company": "Driggs Title - Arrowhead",
+        "email": "2025-06-02-683e09377922a-brendaf@driggstitle.com",
+        "phone": "480-660-9221"
+      },
+      {
+        "name": "Jennifer Urquijo",
+        "company": "Driggs Title - Avondale",
+        "email": "teamoc@driggstitle.com",
+        "phone": "602-472-1853"
+      },
+      {
+        "name": "Ciane Miller",
+        "company": "Driggs Title - Ciane Miller",
+        "email": "cianem@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Jackie Dominguez",
+        "company": "Driggs Title - Metro Center",
+        "email": "jackied@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Sandra DeLeon",
+        "company": "Driggs Title - Metro Center",
+        "email": "2023-06-08-64829fd590b83-sandrad@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Connie Moreno",
+        "company": "Driggs Title - Metro Center",
+        "email": "conniem@driggstitle.com",
+        "phone": "480-237-4524"
+      },
+      {
+        "name": "Maria 16232372808",
+        "company": "Driggs Title - Westgate",
+        "email": "mariav@driggstitle.com",
+        "phone": "623-237-2808"
+      },
+      {
+        "name": "Maria Barboa",
+        "company": "Driggs Title - Westgate",
+        "email": "Mariab@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Ximena Carlos",
+        "company": "Driggs Title - Westgate",
+        "email": "ximenac@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Selene Iniguez",
+        "company": "Driggs title Agency",
+        "email": "siniguez@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Jackie Dominguez",
+        "company": "Driggs Title Agency",
+        "email": "teamd@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Paola Farinas",
+        "company": "Driggs Title Agency-Metro-Paola Farinas",
+        "email": "paolaf@driggstitle.com",
+        "phone": "480-237-4503"
+      },
+      {
+        "name": "Angel Nunez",
+        "company": "Driggs Title Arrowhead- Angel Nuñez",
+        "email": "angeln@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Charlett Nunez",
+        "company": "Driggs Title Goodyear",
+        "email": "charlettn@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Robyn Christl",
+        "company": "Driggs Title Goodyear",
+        "email": "robync@driggstitle.com",
+        "phone": "602-218-4030"
+      },
+      {
+        "name": "Liza Romero",
+        "company": "Driggs Title Tempe - Liza Romero",
+        "email": "lizar@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Vickie La Ritchie",
+        "company": "Driggs Title- Arrowhead - Vickie",
+        "email": "vickiel@driggstitle.com",
+        "phone": "602-708-2593"
+      },
+      {
+        "name": "Tami Perri",
+        "company": "Driggs Title-Nevada",
+        "email": "tamip@driggstitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Amber Diaz",
+        "company": "Empire Title",
+        "email": "adiaz@ewtaz.com",
+        "phone": ""
+      },
+      {
+        "name": "Amanda Alcantara",
+        "company": "Empire Title",
+        "email": "AAlcantara@ewtaz.com",
+        "phone": ""
+      },
+      {
+        "name": "Heidi Inman",
+        "company": "Empire West Title- Goodyear",
+        "email": "hinman@ewtaz.com",
+        "phone": "480-710-4969"
+      },
+      {
+        "name": "Marie Andrus",
+        "company": "Equity Title",
+        "email": "mariea@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "name": "Dani J",
+        "company": "Equity Title",
+        "email": "2024-02-06-65c2a65880225-danij@eta-az.com",
+        "phone": ""
+      },
+      {
+        "name": "Marne  Abshire",
+        "company": "Equity Title",
+        "email": "marnea@eta-az.com",
+        "phone": ""
+      },
+      {
+        "name": "Shannon Reichelt",
+        "company": "Equity Title",
+        "email": "Shannonr@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "name": "Julia Quintana",
+        "company": "Equity Title",
+        "email": "juliaq@eta-az.com",
+        "phone": "602-888-8723"
+      },
+      {
+        "name": "Marie Andrus",
+        "company": "Equity Title - Carrie Gutierrez",
+        "email": "mariea@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "name": "Carrie Gutierrez",
+        "company": "Equity Title - Carrie Gutierrez",
+        "email": "carrieg@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "name": "Natalie Hernandez",
+        "company": "Equity Title - Carrie Gutierrez",
+        "email": "Natalieh@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "name": "Dani Johnson",
+        "company": "Equity Title - Dani",
+        "email": "danij@eta-az.com",
+        "phone": "623-565-8088"
+      },
+      {
+        "name": "LOUIS GUARDIOLA",
+        "company": "First Integrity Title - Glendale",
+        "email": "teamoc@firstintegritytitle.com",
+        "phone": "623-204-0923"
+      },
+      {
+        "name": "Stephanie Argento",
+        "company": "First Integrity Title - Yvette Predovich",
+        "email": "stephanieaz@firstintegritytitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Stephanie Argento",
+        "company": "First Integrity Title-Scottsdale",
+        "email": "stephanieaz@firstintegritytitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Connie Li",
+        "company": "First Service Credit Union",
+        "email": "ZLi@fscu.com",
+        "phone": ""
+      },
+      {
+        "name": "Noel Serrato",
+        "company": "Gabriel Thorne Title Agency",
+        "email": "spartangabrielthorne@gmail.com",
+        "phone": ""
+      },
+      {
+        "name": "Tayler McNeil",
+        "company": "Great American Title - Glendale",
+        "email": "tmcneil@azgat.com",
+        "phone": "602-412-4545"
+      },
+      {
+        "name": "Team Wardman",
+        "company": "Great American Title - Glendale",
+        "email": "2024-03-01-65e20b964f1b9-teamwardman@azgat.com",
+        "phone": ""
+      },
+      {
+        "name": "Josie Cravens",
+        "company": "Great American Title - Glendale",
+        "email": "JCravens@azgat.com",
+        "phone": "602-412-4545"
+      },
+      {
+        "name": "Shannon Pells",
+        "company": "Great American Title Agency",
+        "email": "SPells@azgat.com",
+        "phone": "602-412-4545"
+      },
+      {
+        "name": "Shannon Pells",
+        "company": "Great American Title Agency",
+        "email": "2024-06-27-667db22e6b798-spells@azgat.com",
+        "phone": ""
+      },
+      {
+        "name": "Josie Cravens",
+        "company": "Great American Title Agency",
+        "email": "JCravens@azgat.com",
+        "phone": "602-412-4545"
+      },
+      {
+        "name": "Michelle Leitz",
+        "company": "Great American Title Agency (Bell-7055)",
+        "email": "mleitz@azgat.com",
+        "phone": "602-412-4545"
+      },
+      {
+        "name": "Josie Cravens",
+        "company": "Great American Title Agency (Bell-7055)",
+        "email": "JCravens@azgat.com",
+        "phone": "602-412-4545"
+      },
+      {
+        "name": "William Hampton",
+        "company": "Great American Title Agency- Gilbert",
+        "email": "whampton@azgat.com",
+        "phone": ""
+      },
+      {
+        "name": "Jo Ann O&#039;Brien",
+        "company": "Great American Title Agency- Gilbert",
+        "email": "jobrien@azgat.com",
+        "phone": "480-207-7400"
+      },
+      {
+        "name": "Jessica Jensen",
+        "company": "Homie Title",
+        "email": "teamjessica@homietitleagency.com",
+        "phone": "801-608-7748"
+      },
+      {
+        "name": "Beth Jarrett",
+        "company": "Homie Title - Beth Jarrett",
+        "email": "beth.jarrett@homietitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Kristen Cook",
+        "company": "Homie Title - Kristen Cook",
+        "email": "teamarizona@homietitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Kristen Cook",
+        "company": "Homie Title - Kristen Cook",
+        "email": "kristen.cook@homietitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Brad Morang",
+        "company": "Homie Title - Kristen Cook",
+        "email": "TeamNevada1@homietitleagency.com",
+        "phone": "949-201-7269"
+      },
+      {
+        "name": "Dolores Schell",
+        "company": "Investor Funding",
+        "email": "dolores.schell@investorfunding.com",
+        "phone": "719-399-5174"
+      },
+      {
+        "name": "Dolores Schell",
+        "company": "Investor Funding Corp",
+        "email": "dolores.schell@investorfunding.com",
+        "phone": "719-399-5174"
+      },
+      {
+        "name": "Chelsea Eaton",
+        "company": "Iron Title - Chelsea Eaton",
+        "email": "chelsea.eaton@irontitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Shantel Murphy",
+        "company": "Landmark Title - Arrowhead - Sonia Salas",
+        "email": "shantel.murphy@ltaz.com",
+        "phone": "602-775-5990"
+      },
+      {
+        "name": "Sonia Salas",
+        "company": "Landmark Title - Arrowhead - Sonia Salas",
+        "email": "sonia.salas@ltaz.com",
+        "phone": "602-295-3790"
+      },
+      {
+        "name": "Victoria Crawford",
+        "company": "Landmark Title - Arrowhead - Sonia Salas",
+        "email": "victoria.crawford@ltaz.com",
+        "phone": "480-937-1810"
+      },
+      {
+        "name": "Melissa Sorah-Saenz",
+        "company": "Landmark Title - Goodyear - Melissa Sorah-Saenz",
+        "email": "Melissa.Sorah-Saenz@ltaz.com",
+        "phone": ""
+      },
+      {
+        "name": "Mery Sanchez",
+        "company": "Landmark Title - Goodyear - Melissa Sorah-Saenz",
+        "email": "mery.sanchez@ltaz.com",
+        "phone": ""
+      },
+      {
+        "name": "Liza Vasquez",
+        "company": "Landmark Title-Biltmore",
+        "email": "liza.vasquez@ltaz.com",
+        "phone": "602-775-5990"
+      },
+      {
+        "name": "Elia Lopez",
+        "company": "Lotus Escrow",
+        "email": "Elia@lotusescrow.com",
+        "phone": ""
+      },
+      {
+        "name": "lotusescrow lotusescrow",
+        "company": "Lotus Escrow",
+        "email": "tl@lotusescrow.com",
+        "phone": ""
+      },
+      {
+        "name": "Brenda Freeman",
+        "company": "Magnus Title - Arrowhead",
+        "email": "brenda.freeman@magnustitle.com",
+        "phone": "623-385-3503"
+      },
+      {
+        "name": "Jan Freier",
+        "company": "Magnus Title - Arrowhead",
+        "email": "Jan.Freier@magnustitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Patty Clark",
+        "company": "Magnus Title - Arrowhead",
+        "email": "2023-09-18-6508fb7bf2eb4-patty.clark@magnustitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Angel Nunez",
+        "company": "Magnus Title - Arrowhead",
+        "email": "Angel.Nunez@magnustitle.com",
+        "phone": "623-241-1383"
+      },
+      {
+        "name": "Rachel Anaya",
+        "company": "Magnus Title - Buckeye",
+        "email": "RachelA@magnustitle.com",
+        "phone": "602-692-7960"
+      },
+      {
+        "name": "Paula Samano",
+        "company": "Magnus Title - Buckeye",
+        "email": "PaulaS@magnustitle.com",
+        "phone": "559-578-6714"
+      },
+      {
+        "name": "Joe Bartley",
+        "company": "Magnus Title- Gilbert",
+        "email": "Joe.Bartley@magnustitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Paola Farinas",
+        "company": "Magnus Title- Metro Center",
+        "email": "2025-07-08-686d4fee2784b-Paola.Farinas@magnustitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Jackie Dominguez",
+        "company": "Magnus Title- Metro Center",
+        "email": "JackieD@MagnusTitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Paola Farinas",
+        "company": "Magnus Title- Metro Center",
+        "email": "PaolaF@magnustitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Veronica Sunseri",
+        "company": "Magnus Title-Glendale",
+        "email": "vern@magnustitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Rachel Anaya",
+        "company": "Magnus Title-Tolleson",
+        "email": "RachelA@magnustitle.com",
+        "phone": "602-692-7960"
+      },
+      {
+        "name": "Baily Palmer",
+        "company": "McMichael & Gray",
+        "email": "bpalmer@mmg.law",
+        "phone": "334-785-8040"
+      },
+      {
+        "name": "Jared Vidales",
+        "company": "Mulberry",
+        "email": "jvidales@equityconnect.com",
+        "phone": ""
+      },
+      {
+        "name": "FABY ORTIZ",
+        "company": "Navi Title-Goodyear",
+        "email": "FORTIZ@NAVITITLE.COM",
+        "phone": ""
+      },
+      {
+        "name": "Sonia Salas",
+        "company": "Navi Title-Goodyear",
+        "email": "ssalas@navititle.com",
+        "phone": "623-335-6750"
+      },
+      {
+        "name": "Ciane Miller",
+        "company": "Pinnacle Title - Arrowhead",
+        "email": "ciane.miller@pinnacletitleaz.com",
+        "phone": "623-253-6160"
+      },
+      {
+        "name": "Shara Webber",
+        "company": "Pinnacle Title and Escrow",
+        "email": "Shara.Webber@pinnacletitleaz.com",
+        "phone": "623-570-1935"
+      },
+      {
+        "name": "Jessica Southerlin",
+        "company": "Pioneer Title - Buckeye",
+        "email": "Jessica.southerlin@pioneertitleagency.com",
+        "phone": "623-215-3182"
+      },
+      {
+        "name": "Tony Delgado",
+        "company": "Pioneer Title - Goodyear",
+        "email": "2024-05-16-66468775b04a2-tony.delgado@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Jessica Southerlin",
+        "company": "Pioneer Title - Goodyear",
+        "email": "jessica.southerlin@ptaaz.com",
+        "phone": ""
+      },
+      {
+        "name": "Jennifer Tatham",
+        "company": "Pioneer Title - Goodyear",
+        "email": "Jennifer.Tatham@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Dee Dee Nadeau",
+        "company": "Pioneer Title - Goodyear",
+        "email": "DeeDee.Nadeau@pioneertitleagency.com",
+        "phone": "623-536-3404"
+      },
+      {
+        "name": "Diana Olson",
+        "company": "Pioneer Title - Goodyear",
+        "email": "Diana.Olson@pioneertitleagency.com",
+        "phone": "602-910-0294"
+      },
+      {
+        "name": "Jody Hay",
+        "company": "Pioneer Title - Jody Hay",
+        "email": "jody.hay@ptaaz.com",
+        "phone": ""
+      },
+      {
+        "name": "Kimberly Joiner",
+        "company": "Pioneer Title - Prescott",
+        "email": "Kimberly.Joiner@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Donna Cathey",
+        "company": "Pioneer Title - Summit Branch",
+        "email": "Donna.Cathey@ptaaz.com",
+        "phone": "480-220-1801"
+      },
+      {
+        "name": "Cathy Foch",
+        "company": "Pioneer Title - Summit Branch",
+        "email": "Cathy.Foch@ptaaz.com",
+        "phone": ""
+      },
+      {
+        "name": "Jami Busch",
+        "company": "Pioneer Title - Summit Branch",
+        "email": "jami.busch@pioneertitleagency.com",
+        "phone": "480-252-1509"
+      },
+      {
+        "name": "Jessica Southerlin",
+        "company": "Pioneer Title - Westgate",
+        "email": "Jessica.southerlin@pioneertitleagency.com",
+        "phone": "623-215-3182"
+      },
+      {
+        "name": "Gloria Beltran",
+        "company": "Pioneer Title - Westgate",
+        "email": "gloria.beltran@ptaaz.com",
+        "phone": "623-877-8799"
+      },
+      {
+        "name": "Yvette Romo",
+        "company": "Pioneer Title - Westgate",
+        "email": "Yvette.Romo@ptaaz.com",
+        "phone": "623-877-8799"
+      },
+      {
+        "name": "Becca Cossey",
+        "company": "Pioneer Title - Westgate",
+        "email": "becca.cossey@ptaaz.com",
+        "phone": "623-877-8799"
+      },
+      {
+        "name": "Luisa Menchaca",
+        "company": "Pioneer Title - Westgate",
+        "email": "Luisa.Menchaca@Ptaaz.com",
+        "phone": "623-877-8799"
+      },
+      {
+        "name": "Cathy Roe",
+        "company": "Pioneer Title Agency Prescott",
+        "email": "Cathy.Roe@pioneertitleagency.com",
+        "phone": "928-778-2222"
+      },
+      {
+        "name": "Kimberly 9287782222",
+        "company": "Pioneer Title Agency Prescott",
+        "email": "kimberly.joiner@ptaaz.com",
+        "phone": "928-778-2222"
+      },
+      {
+        "name": "Katie Bell",
+        "company": "Pioneer Title Scottsdale",
+        "email": "katie.bell@pioneertitleagency.com",
+        "phone": "480-368-1500"
+      },
+      {
+        "name": "Dina Shroth",
+        "company": "Pioneer Title Scottsdale",
+        "email": "Dina.Shroth@pioneertitleagency.com",
+        "phone": ""
+      },
+      {
+        "name": "Charis Keller",
+        "company": "Pioneer Title-Peoria",
+        "email": "Charis.Keller@pioneertitleagency.com",
+        "phone": "623-815-8700"
+      },
+      {
+        "name": "Pablo Valdez",
+        "company": "Republic Financial Services",
+        "email": "pablo@republicfinancialservices.com",
+        "phone": "480-703-9165"
+      },
+      {
+        "name": "Nancy Castro",
+        "company": "Republic Financial Services",
+        "email": "Nancy@republicfinancialservices.com",
+        "phone": "480-655-0477"
+      },
+      {
+        "name": "Richard Sanders",
+        "company": "Republic Financial Services",
+        "email": "richard@republicfinancialservices.com",
+        "phone": "623-633-3545"
+      },
+      {
+        "name": "Ginger Medina",
+        "company": "Roc Title",
+        "email": "ginger.medina@roctitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Christine Tellez",
+        "company": "Roc Title - Arrowhead",
+        "email": "christine.tellez@roctitle.com",
+        "phone": "623-552-3787"
+      },
+      {
+        "name": "Julia Quintana",
+        "company": "Roc Title - Arrowhead",
+        "email": "Julia.Quintana@ROCTitle.com",
+        "phone": "623-552-7378"
+      },
+      {
+        "name": "William Hampton",
+        "company": "Roc Title - Chandler",
+        "email": "william.hampton@roctitle.com",
+        "phone": "480-847-2472"
+      },
+      {
+        "name": "Ginger Medina",
+        "company": "Roc Title - Goodyear",
+        "email": "ginger.medina@roctitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Lenea Shaver",
+        "company": "Roc Title - Lake Havasu -Shaver",
+        "email": "lenea.shaver@roctitle.com",
+        "phone": "928-412-1507"
+      },
+      {
+        "name": "Roberta Tindell",
+        "company": "Roc Title - Paradise Valley",
+        "email": "Roberta.Tindell@ROCTitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Art C De Baca",
+        "company": "Roc Title - Paradise Valley",
+        "email": "art@roctitle.com",
+        "phone": "623-698-2402"
+      },
+      {
+        "name": "Marie Andrus",
+        "company": "Roc Title - Paradise Valley",
+        "email": "2023-11-21-655d074d1a6f2-marie.andrus@roctitle.com",
+        "phone": "480-847-2988"
+      },
+      {
+        "name": "Jena Harris",
+        "company": "Roc Title - Surprise Christine Tellez",
+        "email": "jena.harris@roctitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Christine Tellez",
+        "company": "Roc Title - Surprise Christine Tellez",
+        "email": "christine.tellez@roctitle.com",
+        "phone": "623-552-3787"
+      },
+      {
+        "name": "Carmen Barron",
+        "company": "Roc Title - Surprise Christine Tellez",
+        "email": "carmen.barron@roctitle.com",
+        "phone": "623-552-7364"
+      },
+      {
+        "name": "Tina Wightman",
+        "company": "Roc Title Lake Havasu",
+        "email": "tina.wightman@roctitle.com",
+        "phone": "928-223-6755"
+      },
+      {
+        "name": "Heather Arellanes",
+        "company": "Roc Title Lake Havasu",
+        "email": "heather.arellanes@roctitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Beverly Hardy",
+        "company": "Roc Title Lake Havasu",
+        "email": "beverly.hardy@roctitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Lisa Weidman",
+        "company": "Roc Title Lake Havasu",
+        "email": "lisa.weidman@roctitle.com",
+        "phone": "928-223-6670"
+      },
+      {
+        "name": "Zachary Seewald",
+        "company": "Standard Title & Escrow, LLC-Zach Seewald",
+        "email": "zach@standardclosing.com",
+        "phone": ""
+      },
+      {
+        "name": "Tawna Bartlett",
+        "company": "Summerlin Title Agency",
+        "email": "Tawna.Bartlett@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "name": "Kristen Quiles",
+        "company": "Summerlin Title Agency",
+        "email": "Kristen.Quiles@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "name": "Alexis Wijngaarden",
+        "company": "Summerlin Title Agency",
+        "email": "alexis.wijngaarden@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "name": "Ashlee Bennett",
+        "company": "Summerlin Title Agency",
+        "email": "ashlee.bennett@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "name": "Katie Marinelli",
+        "company": "Summerlin Title Agency",
+        "email": "Katie.Marinelli@summerlintitle.com",
+        "phone": "928-854-7747"
+      },
+      {
+        "name": "Ada Ortiz",
+        "company": "Teema Tile - Teem Kelsey",
+        "email": "Aortiz@teematitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Kelsey Ver Straten",
+        "company": "Teema Tile - Teem Kelsey",
+        "email": "Kelsey@TeemaTitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Debbie Pritchett",
+        "company": "Teema Tile - Teem Kelsey",
+        "email": "DPritchett@teematitle.com",
+        "phone": "928-919-4206"
+      },
+      {
+        "name": "Brandon Shepherd",
+        "company": "Teema Tile - Teem Kelsey",
+        "email": "bshepherd@teematitle.com",
+        "phone": "480-848-1964"
+      },
+      {
+        "name": "Brandon Shepherd",
+        "company": "Teema Title - Chandler",
+        "email": "bshepherd@teematitle.com",
+        "phone": "480-848-1964"
+      },
+      {
+        "name": "Maggie Romero",
+        "company": "Teema Title - Teem Maggie",
+        "email": "mromero@teematitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Maria Barboa",
+        "company": "Teema Title - Teem Maria Barboa",
+        "email": "Mbarboa@teematitle.com",
+        "phone": "602-315-9748"
+      },
+      {
+        "name": "Maria Rodriguez",
+        "company": "Teema Title - Teem Maria Rodriguez",
+        "email": "Mrodriguez@teematitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Chris Lovett",
+        "company": "Teema Title- Goodyear",
+        "email": "clovett@teematitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Beth Evans",
+        "company": "Teema Title- Goodyear",
+        "email": "bevans@teematitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Amber Diaz",
+        "company": "Teema Title- Teem Amber Diaz",
+        "email": "ADiaz@teematitle.com",
+        "phone": "623-628-5461"
+      },
+      {
+        "name": "Amanda Alcantara",
+        "company": "Teema Title- Teem Amber Diaz",
+        "email": "AAlcantara@teematitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Elisa Reyes",
+        "company": "Title Services of The Valley Agency",
+        "email": "ereyes@tsvaz.com",
+        "phone": "602-299-9889"
+      },
+      {
+        "name": "Linda Gonzalez",
+        "company": "Tucson Tiques Collectibles",
+        "email": "scootersmom1970@gmail.com",
+        "phone": ""
+      },
+      {
+        "name": "Beth Jarrett",
+        "company": "Verus Title",
+        "email": "beth.jarrett@verustitle.com",
+        "phone": "801-580-1126"
+      },
+      {
+        "name": "Beth Jarrett",
+        "company": "Verus Title",
+        "email": "beth.jarrett@verustitle.com",
+        "phone": "801-580-1126"
+      },
+      {
+        "name": "Jessica Jensen",
+        "company": "Verus Title",
+        "email": "teamjessicaut@verustitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Scott Gowdy",
+        "company": "Verus Title-Scott Gowdy",
+        "email": "scott.gowdy@verustitle.com",
+        "phone": "385-520-2329"
+      },
+      {
+        "name": "Lissa Weldon",
+        "company": "Wasker, Dorr, Wimmer & Marcouiller, PC",
+        "email": "lweldon@wdwm.net",
+        "phone": ""
+      },
+      {
+        "name": "Amber Diaz",
+        "company": "WFG National Title Insurance Company",
+        "email": "2024-12-11-675a165254ef4-Amberdiaz@wfgtitle.com",
+        "phone": "623-628-5461"
+      },
+      {
+        "name": "Deanna Lee",
+        "company": "WFG National Title Insurance Company",
+        "email": "dlee@wfgtitle.com",
+        "phone": "928-358-9343"
+      },
+      {
+        "name": "Lori Joyner",
+        "company": "WFG National Title Insurance Company",
+        "email": "LJoyner@wfgtitle.com",
+        "phone": ""
+      },
+      {
+        "name": "Amanda Alcantara",
+        "company": "WFG National Title Insurance Company",
+        "email": "2024-12-11-675a165611ca3-AAlcantara@wfgtitle.com",
+        "phone": "623-547-9517"
+      },
+      {
+        "name": "Adrianna Cabello",
+        "company": "WFG National Title Insurance Company",
+        "email": "ACabello@wfgtitle.com",
+        "phone": "623-694-0731"
+      },
+      {
+        "name": "Sheila Roman",
+        "company": "WFG National Title Insurance Company",
+        "email": "SRoman@wfgtitle.com",
+        "phone": "623-792-9981"
+      },
+      {
+        "name": "Paige Sterling",
+        "company": "WFG National Title- Biltmore Location",
+        "email": "psterling@wfgtitle.com",
+        "phone": "602-648-3309"
+      },
+      {
+        "name": "Shelly Reese",
+        "company": "WFG National Title- Peoria Location",
+        "email": "SReese@wfgtitle.com",
+        "phone": "480-682-1917"
+      }
+    ],
+    "partialMatches": [
+      {
+        "csv": "Robyn Christl",
+        "csvCompany": "Driggs Title Goodyear",
+        "found": "Rob",
+        "matchType": "partial-name"
+      },
+      {
+        "csv": "Roberta Tindell",
+        "csvCompany": "Roc Title - Paradise Valley",
+        "found": "Rob",
+        "matchType": "partial-name"
+      }
+    ]
+  }
+}
