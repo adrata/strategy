@@ -29,7 +29,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
-  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number }) => number | React.ReactNode;
+  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number; visionCount: number }) => number | React.ReactNode;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -38,7 +38,7 @@ const navigationItems: NavigationItem[] = [
     label: 'Vision',
     icon: EyeIcon,
     description: 'Papers and pitches',
-    getCount: () => null // Vision doesn't show count
+    getCount: (stats) => stats.visionCount // Vision shows count of papers and pitches
   },
   {
     id: 'workstream',
@@ -80,7 +80,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     completed: 0,
     upNextCount: 0,
     backlogCount: 0,
-    workstreamCount: 0
+    workstreamCount: 0,
+    visionCount: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
   
@@ -115,7 +116,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   useEffect(() => {
     const fetchStacksCounts = async () => {
       if (!ui.activeWorkspace?.id) {
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0 });
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 });
         setStatsLoading(false);
         return;
       }
@@ -146,8 +147,20 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           cache: 'no-store' as RequestCache,
         });
 
+        // Fetch vision documents (papers and pitches) with cache-busting and no-cache headers
+        const visionResponse = await fetch(`/api/v1/stacks/vision?workspaceId=${ui.activeWorkspace.id}${cacheBuster}`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+          cache: 'no-store' as RequestCache,
+        });
+
         let stories: any[] = [];
         let tasks: any[] = [];
+        let visionCount = 0;
 
         if (storiesResponse.ok) {
           try {
@@ -186,6 +199,17 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           }
         }
 
+        if (visionResponse.ok) {
+          try {
+            const visionData = await visionResponse.json();
+            visionCount = visionData.documents?.length || 0;
+          } catch (e) {
+            console.warn('⚠️ [StacksLeftPanel] Failed to parse vision response:', e);
+          }
+        } else {
+          console.warn('⚠️ [StacksLeftPanel] Vision API returned:', visionResponse.status, visionResponse.statusText);
+        }
+
         // Combine stories and tasks for totals
         const allItems = [...stories, ...tasks];
         const total = allItems.length;
@@ -221,9 +245,9 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           !workstreamBoardStatuses.includes(item.status)
         ).length;
 
-        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, upNextCount, workstreamCount, backlogCount, stories: stories.length, tasks: tasks.length });
+        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, upNextCount, workstreamCount, backlogCount, visionCount, stories: stories.length, tasks: tasks.length });
 
-        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount });
+        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, visionCount });
       } catch (error) {
         console.error('Failed to fetch story/task counts:', error);
         // Log error details for debugging
@@ -235,7 +259,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           });
         }
         // Reset stats to 0 on error to show that data is unavailable
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0 });
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 });
       } finally {
         setStatsLoading(false);
       }
