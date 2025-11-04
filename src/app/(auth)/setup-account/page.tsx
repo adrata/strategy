@@ -433,9 +433,6 @@ export default function SetupAccountPage() {
                 Username
               </label>
               <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 text-sm sm:text-base">@</span>
-                </div>
                 <input
                   id="username"
                   name="username"
@@ -447,7 +444,7 @@ export default function SetupAccountPage() {
                     const value = e.target.value.replace('@', '').toLowerCase();
                     setUsername(value);
                   }}
-                  className="appearance-none block w-full pl-8 pr-3 py-3 sm:py-2 border border-border rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
+                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-border rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
                   placeholder="username"
                 />
               </div>

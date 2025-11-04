@@ -269,9 +269,19 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       willCallOnSubSectionChange: section !== activeSubSection
     });
     
-    // Only call onSubSectionChange if we're actually changing sections
-    // This prevents unnecessary navigation calls
+    // Only navigate if we're actually changing sections
     if (section !== activeSubSection) {
+      // Get workspace slug from pathname
+      const pathParts = pathname.split('/').filter(Boolean);
+      const workspaceSlug = pathParts[0] || 'workspace';
+      
+      // Build the correct path - /workspace/stacks/section
+      const newPath = `/${workspaceSlug}/stacks/${section}`;
+      
+      console.log('🔄 [StacksLeftPanel] Navigating to:', newPath);
+      router.push(newPath);
+      
+      // Also update the state via the provider
       onSubSectionChange(section);
     } else {
       console.log('⚠️ [StacksLeftPanel] Section already active, skipping navigation');
