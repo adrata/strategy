@@ -114,12 +114,18 @@ export async function GET(request: NextRequest) {
             workspaceId: context.workspaceId,
             deletedAt: null,
             globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
-            mainSellerId: context.userId,
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ],
             // Only companies with 0 people
             people: {
               none: {
                 deletedAt: null,
-                mainSellerId: context.userId
+                OR: [
+                  { mainSellerId: context.userId },
+                  { mainSellerId: null }
+                ]
               }
             }
           },
@@ -156,7 +162,10 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
             globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
-            mainSellerId: context.userId
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ]
           },
           select: {
             id: true,
