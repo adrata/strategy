@@ -290,20 +290,22 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
     };
 
     return (
-      <div className="h-full w-full">
+      <div className="h-full w-full flex flex-col overflow-hidden">
         {isPresentationMode ? (
           <PresentationView 
             slideData={slideData} 
             onClose={handleClosePresentation}
           />
         ) : (
-          <PitchRegularView 
-            slideData={slideData}
-            onPresent={handlePresent}
-            onBack={handleBackToVision}
-            hideHeader={false}
-            sectionName="Vision"
-          />
+          <div className="flex-1 overflow-hidden">
+            <PitchRegularView 
+              slideData={slideData}
+              onPresent={handlePresent}
+              onBack={handleBackToVision}
+              hideHeader={false}
+              sectionName="Vision"
+            />
+          </div>
         )}
       </div>
     );

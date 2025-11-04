@@ -69,5 +69,97 @@
       "source": "/api/v1/(.*)",
       "destination": "/api/v1/$1"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/notary-everyday",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/notary-everyday/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/notaryeveryday",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/notaryeveryday/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/ne",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/ne/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/adrata",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/adrata/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/rps",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/rps/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/top",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/top/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/demo",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/demo/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/cloudcaddie",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/cloudcaddie/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/pinpoint",
+      "destination": "/sign-in",
+      "permanent": false
+    },
+    {
+      "source": "/pinpoint/:path*",
+      "destination": "/sign-in",
+      "permanent": false
+    }
   ]
 }

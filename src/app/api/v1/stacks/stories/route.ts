@@ -304,11 +304,15 @@ export async function GET(request: NextRequest) {
         // Safely handle assignee with null checks
         let assignee = null;
         if (story.assignee) {
-          const firstName = story.assignee.firstName || '';
-          const lastName = story.assignee.lastName || '';
+          // Handle null values properly - convert null to empty string
+          const firstName = story.assignee.firstName != null ? String(story.assignee.firstName) : '';
+          const lastName = story.assignee.lastName != null ? String(story.assignee.lastName) : '';
+          const fullName = `${firstName} ${lastName}`.trim();
+          // Use name field if available, otherwise fall back to constructed name
+          const name = story.assignee.name || fullName || 'Unknown';
           assignee = {
             id: story.assignee.id,
-            name: `${firstName} ${lastName}`.trim() || 'Unknown',
+            name: name,
             email: story.assignee.email || ''
           };
         }
@@ -593,7 +597,14 @@ export async function POST(request: NextRequest) {
       viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
       assignee: story.assignee ? {
         id: story.assignee.id,
-        name: `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || 'Unknown',
+        name: (() => {
+          // Handle null values properly - convert null to empty string
+          const firstName = story.assignee.firstName != null ? String(story.assignee.firstName) : '';
+          const lastName = story.assignee.lastName != null ? String(story.assignee.lastName) : '';
+          const fullName = `${firstName} ${lastName}`.trim();
+          // Use name field if available, otherwise fall back to constructed name
+          return story.assignee.name || fullName || 'Unknown';
+        })(),
         email: story.assignee.email || ''
       } : null,
       epoch: story.epoch ? {
@@ -752,7 +763,14 @@ export async function PUT(request: NextRequest) {
       viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
       assignee: story.assignee ? {
         id: story.assignee.id,
-        name: `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || 'Unknown',
+        name: (() => {
+          // Handle null values properly - convert null to empty string
+          const firstName = story.assignee.firstName != null ? String(story.assignee.firstName) : '';
+          const lastName = story.assignee.lastName != null ? String(story.assignee.lastName) : '';
+          const fullName = `${firstName} ${lastName}`.trim();
+          // Use name field if available, otherwise fall back to constructed name
+          return story.assignee.name || fullName || 'Unknown';
+        })(),
         email: story.assignee.email || ''
       } : null,
       epoch: story.epoch ? {

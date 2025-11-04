@@ -116,13 +116,19 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   useEffect(() => {
     const fetchStacksCounts = async () => {
       if (!ui.activeWorkspace?.id) {
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 });
+        console.log('⚠️ [StacksLeftPanel] No workspace ID, resetting stats');
+        setStats(prev => ({ ...prev, total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 }));
         setStatsLoading(false);
         return;
       }
+      
+      console.log('🔍 [StacksLeftPanel] Fetching counts for workspace:', ui.activeWorkspace.id);
 
       // Add cache-busting timestamp to prevent stale data
       const cacheBuster = `&_t=${Date.now()}`;
+
+      // Get current stats to preserve visionCount on error
+      const previousVisionCount = stats.visionCount;
 
       try {
         // Fetch stories with cache-busting and no-cache headers
@@ -203,28 +209,45 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           try {
             const visionData = await visionResponse.json();
             visionCount = visionData.documents?.length || 0;
-            console.log('📊 [StacksLeftPanel] Vision count:', visionCount);
+            console.log('📊 [StacksLeftPanel] Vision API success - count:', visionCount, 'documents:', visionData.documents?.length, 'workspace:', ui.activeWorkspace.id);
+            
+            // Log document details for debugging
+            if (visionData.documents && visionData.documents.length > 0) {
+              console.log('📄 [StacksLeftPanel] Vision documents:', visionData.documents.map((d: any) => ({ id: d.id, title: d.title, type: d.documentType })));
+            }
           } catch (e) {
-            console.warn('⚠️ [StacksLeftPanel] Failed to parse vision response:', e);
+            console.error('❌ [StacksLeftPanel] Failed to parse vision response:', e);
+            console.error('❌ [StacksLeftPanel] Response status:', visionResponse.status, 'statusText:', visionResponse.statusText);
             visionCount = 0;
           }
         } else {
-          console.warn('⚠️ [StacksLeftPanel] Vision API returned:', visionResponse.status, visionResponse.statusText);
-          // Try to get error message for debugging
+          console.error('❌ [StacksLeftPanel] Vision API failed:', visionResponse.status, visionResponse.statusText);
+          console.error('❌ [StacksLeftPanel] Workspace ID:', ui.activeWorkspace.id);
+          
+          // Try to get error message for debugging - clone response first to avoid consuming body
           try {
-            const errorText = await visionResponse.text();
+            const clonedResponse = visionResponse.clone();
+            const errorText = await clonedResponse.text();
             if (errorText) {
               try {
                 const errorData = JSON.parse(errorText);
-                console.warn('⚠️ [StacksLeftPanel] Vision API error:', errorData.error || errorData.message);
+                console.error('❌ [StacksLeftPanel] Vision API error details:', errorData);
               } catch (parseError) {
-                console.warn('⚠️ [StacksLeftPanel] Vision API error (non-JSON):', errorText);
+                console.error('❌ [StacksLeftPanel] Vision API error (non-JSON):', errorText.substring(0, 200));
               }
             }
           } catch (e) {
-            // Response body already consumed
+            console.error('❌ [StacksLeftPanel] Could not read vision error response:', e);
           }
-          visionCount = 0;
+          
+          // Don't reset count to 0 on error - keep previous count if available
+          // This prevents showing 0 when there's a transient error
+          if (previousVisionCount > 0) {
+            console.warn('⚠️ [StacksLeftPanel] Keeping previous vision count due to API error:', previousVisionCount);
+            visionCount = previousVisionCount;
+          } else {
+            visionCount = 0;
+          }
         }
 
         // Combine stories and tasks for totals
@@ -262,21 +285,34 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           !workstreamBoardStatuses.includes(item.status)
         ).length;
 
-        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, upNextCount, workstreamCount, backlogCount, visionCount, stories: stories.length, tasks: tasks.length });
+        console.log('📊 [StacksLeftPanel] Final counts:', { 
+          total, 
+          active, 
+          completed, 
+          upNextCount, 
+          workstreamCount, 
+          backlogCount, 
+          visionCount, 
+          stories: stories.length, 
+          tasks: tasks.length,
+          workspace: ui.activeWorkspace.id 
+        });
 
         setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, visionCount });
       } catch (error) {
-        console.error('Failed to fetch story/task counts:', error);
+        console.error('❌ [StacksLeftPanel] Failed to fetch story/task counts:', error);
         // Log error details for debugging
         if (error instanceof Error) {
-          console.error('Error details:', {
+          console.error('❌ [StacksLeftPanel] Error details:', {
             message: error.message,
             stack: error.stack,
             name: error.name
           });
         }
-        // Reset stats to 0 on error to show that data is unavailable
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 });
+        // Preserve visionCount if we had a previous value, otherwise reset to 0
+        // This prevents showing 0 when there's a transient error
+        const preservedVisionCount = previousVisionCount > 0 ? previousVisionCount : 0;
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: preservedVisionCount });
       } finally {
         setStatsLoading(false);
       }

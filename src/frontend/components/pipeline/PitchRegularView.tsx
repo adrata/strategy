@@ -54,10 +54,10 @@ export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = fa
   }, [onPresent]);
 
   return (
-    <div className="h-full w-full bg-background">
+    <div className="h-full w-full bg-background flex flex-col overflow-hidden">
       {/* Breadcrumb Header - Sticky */}
       {!hideHeader && (
-        <div className="sticky top-0 z-10 px-6 py-4 border-b border-border bg-background">
+        <div className="sticky top-0 z-10 px-6 py-4 border-b border-border bg-background flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {onBack && (
@@ -90,13 +90,13 @@ export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = fa
         </div>
       )}
 
-      {/* Content - Properly Sized Slides */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide bg-white">
+      {/* Content - Properly Sized Slides - Scrollable */}
+      <div className="flex-1 overflow-y-auto invisible-scrollbar bg-white">
         <div className="py-16">
           <div className="space-y-24">
             {slides.map((slide, index) => {
               const SlideComponent = slide.component;
-              const slideDataForSlide = slideData.slides[slide.key];
+              const slideDataForSlide = slideData.slides?.[slide.key];
               
               return (
                 <div key={index} className="w-full flex justify-center px-8">

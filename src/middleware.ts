@@ -2,10 +2,61 @@
  * Desktop API Middleware
  * 
  * This middleware redirects API calls to Tauri commands when running in desktop mode
+ * Also handles workspace path redirects to sign-in
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { isDesktopBuild } from '@/lib/desktop-config';
+
+// Paths that should not be redirected
+const EXCLUDED_PATHS = [
+  '/api',
+  '/sign-in',
+  '/sign-up',
+  '/setup-account',
+  '/workspaces',
+  '/_next',
+  '/favicon.ico',
+];
+
+// Known workspace slugs (normalized without hyphens for comparison)
+// This handles both hyphenated (notary-everyday) and non-hyphenated (notaryeveryday) variations
+const WORKSPACE_SLUGS = [
+  'notaryeveryday', // matches both 'notary-everyday' and 'notaryeveryday'
+  'ne',
+  'adrata',
+  'rps',
+  'top',
+  'demo',
+  'cloudcaddie',
+  'pinpoint',
+];
+
+/**
+ * Check if a path segment matches a workspace slug pattern
+ * Handles both hyphenated and non-hyphenated variations
+ */
+function isWorkspaceSlug(slug: string): boolean {
+  // Normalize the slug by removing hyphens and converting to lowercase
+  const normalized = slug.toLowerCase().replace(/-/g, '');
+  
+  // Check if normalized slug matches any known workspace slug
+  return WORKSPACE_SLUGS.includes(normalized);
+}
+
+/**
+ * Check if pathname is a workspace path (first segment matches workspace slug)
+ */
+function isWorkspacePath(pathname: string): boolean {
+  // Remove leading slash and split
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length === 0) return false;
+  
+  const firstSegment = segments[0];
+  
+  // Check if first segment matches a workspace slug pattern
+  return isWorkspaceSlug(firstSegment);
+}
 
 export function middleware(request: NextRequest) {
   // Skip middleware for desktop builds (static export)
@@ -13,10 +64,55 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const { pathname } = request.nextUrl;
+  const hostname = request.headers.get('host') || '';
+
   // Handle API routes for web builds
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    // Allow API routes in web builds
+  if (pathname.startsWith('/api/')) {
     return NextResponse.next();
+  }
+
+  // Skip excluded paths
+  if (EXCLUDED_PATHS.some(path => pathname === path || pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
+
+  // Check if this is a workspace path
+  if (isWorkspacePath(pathname)) {
+    // Determine target domain
+    const isActionCom = hostname === 'action.com' || hostname.startsWith('action.com');
+    const targetDomain = isActionCom ? 'action.adrata.com' : hostname.split(':')[0]; // Remove port if present
+    
+    // Build redirect URL
+    const redirectUrl = new URL(request.url);
+    redirectUrl.host = targetDomain;
+    redirectUrl.pathname = '/sign-in';
+    
+    // Use https for production domains
+    if (!targetDomain.includes('localhost') && !targetDomain.includes('127.0.0.1')) {
+      redirectUrl.protocol = 'https:';
+    }
+    
+    // Preserve query parameters if present
+    if (request.nextUrl.search) {
+      redirectUrl.search = request.nextUrl.search;
+    }
+    
+    // Redirect to sign-in
+    return NextResponse.redirect(redirectUrl, 307);
+  }
+
+  // Handle domain redirect: action.com -> action.adrata.com
+  if (hostname === 'action.com' || hostname.startsWith('action.com')) {
+    const redirectUrl = new URL(request.url);
+    redirectUrl.host = 'action.adrata.com';
+    
+    // Use https for production domains
+    if (!hostname.includes('localhost')) {
+      redirectUrl.protocol = 'https:';
+    }
+    
+    return NextResponse.redirect(redirectUrl, 307);
   }
 
   return NextResponse.next();

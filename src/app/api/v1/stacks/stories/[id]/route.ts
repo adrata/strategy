@@ -116,8 +116,15 @@ export async function GET(
       section: story.section || null,
       assignee: story.assignee ? {
         id: story.assignee.id,
-        name: `${story.assignee.firstName} ${story.assignee.lastName}`,
-        email: story.assignee.email
+        name: (() => {
+          // Handle null values properly - convert null to empty string
+          const firstName = story.assignee.firstName != null ? String(story.assignee.firstName) : '';
+          const lastName = story.assignee.lastName != null ? String(story.assignee.lastName) : '';
+          const fullName = `${firstName} ${lastName}`.trim();
+          // Use name field if available, otherwise fall back to constructed name
+          return story.assignee.name || fullName || 'Unknown';
+        })(),
+        email: story.assignee.email || ''
       } : null,
       epoch: story.epoch ? {
         id: story.epoch.id,
@@ -308,8 +315,15 @@ export async function PATCH(
       section: story.section || null,
       assignee: story.assignee ? {
         id: story.assignee.id,
-        name: `${story.assignee.firstName} ${story.assignee.lastName}`,
-        email: story.assignee.email
+        name: (() => {
+          // Handle null values properly - convert null to empty string
+          const firstName = story.assignee.firstName != null ? String(story.assignee.firstName) : '';
+          const lastName = story.assignee.lastName != null ? String(story.assignee.lastName) : '';
+          const fullName = `${firstName} ${lastName}`.trim();
+          // Use name field if available, otherwise fall back to constructed name
+          return story.assignee.name || fullName || 'Unknown';
+        })(),
+        email: story.assignee.email || ''
       } : null,
       epoch: story.epoch ? {
         id: story.epoch.id,

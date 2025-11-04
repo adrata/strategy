@@ -320,7 +320,7 @@ export default function SetupAccountPage() {
         }
         console.log('✅ [SETUP] Final verification passed - session persisted');
 
-        // Redirect to the workspace - use workspace from API response or fallback to invitation data or workspaces list
+        // Redirect to speedrun - use workspace from API response or fallback to invitation data or workspaces list
         const workspace = data.data.workspace || invitationData.workspace;
         let workspaceSlug = workspace?.slug;
         
@@ -328,15 +328,29 @@ export default function SetupAccountPage() {
         if (!workspaceSlug && workspaces.length > 0) {
           // Find workspace that matches the activeWorkspaceId or use the first one
           const activeWorkspace = workspaces.find((ws: any) => ws.id === activeWorkspaceId) || workspaces[0];
-          workspaceSlug = activeWorkspace.slug;
+          workspaceSlug = activeWorkspace?.slug;
+        }
+        
+        // Final fallback: try to get slug from activeWorkspaceId if we still don't have it
+        if (!workspaceSlug && activeWorkspaceId && workspaces.length > 0) {
+          const matchedWorkspace = workspaces.find((ws: any) => ws.id === activeWorkspaceId);
+          if (matchedWorkspace?.slug) {
+            workspaceSlug = matchedWorkspace.slug;
+          }
         }
         
         if (workspaceSlug) {
-          console.log(`🔄 [SETUP] Redirecting to workspace: /${workspaceSlug}/speedrun`);
+          console.log(`🔄 [SETUP] Redirecting to speedrun: /${workspaceSlug}/speedrun`);
           // Use window.location.href to force a full page reload so auth system picks up the new session
           window.location.href = `/${workspaceSlug}/speedrun`;
         } else {
-          console.log('🔄 [SETUP] No workspace slug found, redirecting to workspaces page');
+          console.error('❌ [SETUP] No workspace slug found - this should not happen');
+          console.error('   API workspace:', data.data.workspace);
+          console.error('   Invitation workspace:', invitationData.workspace);
+          console.error('   Workspaces array:', workspaces);
+          console.error('   Active workspace ID:', activeWorkspaceId);
+          // Fallback: redirect to workspaces page where they can select a workspace
+          console.log('🔄 [SETUP] Redirecting to workspaces page as fallback');
           window.location.href = '/workspaces';
         }
       } else {

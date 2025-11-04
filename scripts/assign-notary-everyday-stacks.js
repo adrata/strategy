@@ -49,6 +49,14 @@ async function findNotaryEverydayWorkspace() {
   return workspace;
 }
 
+// Users to exclude from assignment
+const EXCLUDED_USER_IDS = [
+  '01K75WEXZMG7D2GGFQZNV9KMY5', // Todd Nestor
+  '01K7B327HWN9G6KGWA97S1TK43', // dan
+  '01K8JQE5PKZPWPBY6MNNGXG2VH', // Adrata
+  '01K7CY1M53T87RKKKRKCRY3GMH'  // Dan Darceystone (removed, but exclude just in case)
+];
+
 // Get all workspace members with validation
 async function getWorkspaceMembers(workspaceId) {
   console.log('👥 Finding workspace members...');
@@ -101,11 +109,18 @@ async function getWorkspaceMembers(workspaceId) {
     }
   });
   
-  // Validate all members exist in users table
+  // Validate all members exist in users table and filter out excluded users
   const validatedMembers = [];
   const invalidUserIds = [];
+  const excludedCount = { count: 0 };
   
   for (const member of Array.from(uniqueMembers.values())) {
+    // Skip excluded users
+    if (EXCLUDED_USER_IDS.includes(member.id)) {
+      excludedCount.count++;
+      continue;
+    }
+    
     try {
       const user = await prisma.users.findUnique({
         where: { id: member.id },
@@ -127,6 +142,10 @@ async function getWorkspaceMembers(workspaceId) {
       console.warn(`   ⚠️  Warning: Could not validate user ${member.id}: ${error.message}`);
       invalidUserIds.push(member.id);
     }
+  }
+  
+  if (excludedCount.count > 0) {
+    console.log(`   ℹ️  Excluded ${excludedCount.count} user(s) from assignment (Todd Nestor, dan, Adrata, Dan Darceystone)`);
   }
   
   if (invalidUserIds.length > 0) {
@@ -173,14 +192,17 @@ async function getUnassignedStories(projectId) {
   });
 }
 
-// Find and fix stories with invalid assigneeIds or assignees that would show "Unknown"
+// Find and fix stories and tasks with invalid assigneeIds or assignees that would show "Unknown"
 async function findAndFixInvalidAssignees(workspaceId, members) {
-  console.log('🔍 Checking for stories with invalid assigneeIds or "Unknown" assignees...\n');
+  console.log('🔍 Checking for stories and tasks with invalid assigneeIds or "Unknown" assignees...\n');
   
   const projects = await getProjects(workspaceId);
   const invalidStories = [];
+  const invalidTasks = [];
   const fixedStories = [];
-  let totalChecked = 0;
+  const fixedTasks = [];
+  let totalStoriesChecked = 0;
+  let totalTasksChecked = 0;
   
   // Build a set of valid user IDs for quick lookup
   const validUserIds = new Set(members.map(m => m.id));
@@ -192,7 +214,7 @@ async function findAndFixInvalidAssignees(workspaceId, members) {
   });
   
   if (membersWithNames.length === 0) {
-    console.warn('⚠️  Warning: No workspace members have proper names. Stories may show "Unknown".');
+    console.warn('⚠️  Warning: No workspace members have proper names. Items may show "Unknown".');
     console.warn('   Consider updating user profiles with firstName, lastName, or name fields.\n');
   }
   
@@ -219,7 +241,30 @@ async function findAndFixInvalidAssignees(workspaceId, members) {
       }
     });
     
-    totalChecked += storiesWithAssignee.length;
+    // Get all tasks with assigneeId set (not null or empty)
+    const tasksWithAssignee = await prisma.stacksTask.findMany({
+      where: {
+        projectId: project.id,
+        AND: [
+          { assigneeId: { not: null } },
+          { assigneeId: { not: '' } }
+        ]
+      },
+      include: {
+        assignee: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+    
+    totalStoriesChecked += storiesWithAssignee.length;
+    totalTasksChecked += tasksWithAssignee.length;
     
     for (const story of storiesWithAssignee) {
       // Check if assigneeId is invalid
@@ -255,29 +300,69 @@ async function findAndFixInvalidAssignees(workspaceId, members) {
       if (!hasName || (hasName && hasName.trim() === '')) {
         invalidStories.push({
           story,
-          reason: `Assignee exists but has no name fields (would show "Unknown")`
+          reason: `Assignee exists but has no name fields (would show "Unknown" or "null null")`
+        });
+        continue;
+      }
+    }
+    
+    for (const task of tasksWithAssignee) {
+      // Check if assigneeId is invalid
+      if (!task.assigneeId || task.assigneeId.trim() === '') {
+        invalidTasks.push({
+          task,
+          reason: 'Empty assigneeId'
+        });
+        continue;
+      }
+      
+      // Check if assignee doesn't exist in database
+      if (!task.assignee) {
+        invalidTasks.push({
+          task,
+          reason: `AssigneeId ${task.assigneeId} points to non-existent user`
+        });
+        continue;
+      }
+      
+      // Check if assignee is not in valid members list
+      if (!validUserIds.has(task.assigneeId)) {
+        invalidTasks.push({
+          task,
+          reason: `AssigneeId ${task.assigneeId} is not a workspace member`
+        });
+        continue;
+      }
+      
+      // Check if assignee would show "Unknown" (no firstName, lastName, or name)
+      const assignee = task.assignee;
+      const hasName = assignee.firstName || assignee.lastName || assignee.name;
+      if (!hasName || (hasName && hasName.trim() === '')) {
+        invalidTasks.push({
+          task,
+          reason: `Assignee exists but has no name fields (would show "Unknown" or "null null")`
         });
         continue;
       }
     }
   }
   
-  console.log(`📊 Checked ${totalChecked} stories with assigneeIds`);
-  console.log(`⚠️  Found ${invalidStories.length} stories with invalid/Unknown assignees\n`);
+  console.log(`📊 Checked ${totalStoriesChecked} stories and ${totalTasksChecked} tasks with assigneeIds`);
+  console.log(`⚠️  Found ${invalidStories.length} stories and ${invalidTasks.length} tasks with invalid/Unknown assignees\n`);
   
+  // Use members with names for reassignment to avoid creating more "Unknown" issues
+  const membersToUse = membersWithNames.length > 0 ? membersWithNames : members;
+  
+  if (membersToUse.length === 0) {
+    console.error('❌ Cannot fix items: No workspace members have proper names!');
+    console.error('   Please update user profiles with firstName, lastName, or name fields.\n');
+    return { invalidStories, invalidTasks, fixedStories: [], fixedTasks: [], totalStoriesChecked, totalTasksChecked };
+  }
+  
+  // Fix invalid stories
   if (invalidStories.length > 0) {
-    console.log('🔧 Fixing invalid/Unknown assignees...\n');
+    console.log('🔧 Fixing invalid/Unknown story assignees...\n');
     
-    // Use members with names for reassignment to avoid creating more "Unknown" issues
-    const membersToUse = membersWithNames.length > 0 ? membersWithNames : members;
-    
-    if (membersToUse.length === 0) {
-      console.error('❌ Cannot fix stories: No workspace members have proper names!');
-      console.error('   Please update user profiles with firstName, lastName, or name fields.\n');
-      return { invalidStories, fixedStories: [], totalChecked };
-    }
-    
-    // Assign invalid stories to valid members with names (round-robin)
     const assignments = assignStories(invalidStories.map(is => is.story), membersToUse);
     
     for (const assignment of assignments) {
@@ -309,11 +394,50 @@ async function findAndFixInvalidAssignees(workspaceId, members) {
     }
     
     console.log(`\n✅ Fixed ${fixedStories.length} stories with invalid/Unknown assignees\n`);
-  } else {
+  }
+  
+  // Fix invalid tasks
+  if (invalidTasks.length > 0) {
+    console.log('🔧 Fixing invalid/Unknown task assignees...\n');
+    
+    const assignments = assignTasks(invalidTasks.map(it => it.task), membersToUse);
+    
+    for (const assignment of assignments) {
+      try {
+        await prisma.stacksTask.update({
+          where: { id: assignment.taskId },
+          data: {
+            assigneeId: assignment.assigneeId,
+            updatedAt: new Date()
+          }
+        });
+        
+        const originalTask = invalidTasks.find(it => it.task.id === assignment.taskId);
+        fixedTasks.push({
+          taskId: assignment.taskId,
+          oldAssigneeId: originalTask?.task.assigneeId,
+          newAssigneeId: assignment.assigneeId,
+          assigneeName: assignment.assigneeName,
+          reason: originalTask?.reason
+        });
+        
+        console.log(`   ✅ Fixed task "${originalTask?.task.title || assignment.taskId}": ${assignment.assigneeName}`);
+        if (originalTask?.reason) {
+          console.log(`      Reason: ${originalTask.reason}`);
+        }
+      } catch (error) {
+        console.error(`   ❌ Failed to fix task ${assignment.taskId}: ${error.message}`);
+      }
+    }
+    
+    console.log(`\n✅ Fixed ${fixedTasks.length} tasks with invalid/Unknown assignees\n`);
+  }
+  
+  if (invalidStories.length === 0 && invalidTasks.length === 0) {
     console.log('✅ All assignees are valid and have proper names!\n');
   }
   
-  return { invalidStories, fixedStories, totalChecked };
+  return { invalidStories, invalidTasks, fixedStories, fixedTasks, totalStoriesChecked, totalTasksChecked };
 }
 
 // Get all stories in epics (to check if epics need assignment via their stories)
@@ -388,8 +512,220 @@ async function validateUserId(userId) {
   }
 }
 
-// Assign stories to users (round-robin distribution)
+// Ownership mapping from Growth Strategy 2025
+const OWNERSHIP_MATRIX = {
+  // Dano's domains
+  'dano': {
+    userId: '01K7DP7QHQ7WATZAJAXCGANBYJ', // Dano
+    keywords: [
+      'cold outreach', 'new business', 'new client', 'acquisition',
+      'title agency', 'settlement company', 'escrow company',
+      'independent agency', 'underwriter-owned', 'underwriter-managed',
+      'top 10', 'top notaries', 'notary outreach',
+      'event', 'bridging excellence', 'outreach initiative'
+    ],
+    titleKeywords: ['cold', 'outreach', 'new business', 'acquisition', 'top 10', 'event'],
+    descriptionKeywords: ['cold outreach', 'new client', 'systematic outreach', 'business development']
+  },
+  
+  // Noel's domains
+  'noel': {
+    userId: '01K7F6J780Q92BDG3Z3WQE823A', // Noel Serrato
+    keywords: [
+      'strategic partnership', 'enterprise', 'whale', 'large-scale',
+      'tech integration', 'software provider', 'holding company',
+      'parent company', 'underwriter partnership', 'ceo-level',
+      'executive', 'transformation', 'partnership agreement'
+    ],
+    titleKeywords: ['strategic', 'partnership', 'enterprise', 'whale', 'integration'],
+    descriptionKeywords: ['enterprise', 'strategic partnership', 'tech integration', 'whale hunting']
+  },
+  
+  // Expansion: Irene & Ryan (round-robin)
+  'expansion': {
+    userIds: [
+      '01K7DP7QTRKXZGDHJ857RZFEW8', // ryan
+      '01K7469230N74BVGK2PABPNNZ9'  // ross (assuming this is Irene or another expansion owner)
+    ],
+    keywords: [
+      'expansion', 'existing client', 'current client', 'retention',
+      'referral', 'cross-sell', 'upsell', 'increase share',
+      'arizona', 'florida', 'market share', 'penetration',
+      'relationship activation', 'expansion outreach'
+    ],
+    titleKeywords: ['expansion', 'existing', 'current client', 'retention', 'referral'],
+    descriptionKeywords: ['expansion', 'existing client', 'increase business', 'market share', 'arizona', 'florida']
+  },
+  
+  // Retention: All team (round-robin)
+  'retention': {
+    userIds: [
+      '01K7DP7QTRKXZGDHJ857RZFEW8', // ryan
+      '01K7F6J780Q92BDG3Z3WQE823A', // Noel Serrato
+      '01K7DP7QHQ7WATZAJAXCGANBYJ', // Dano
+      '01K7469230N74BVGK2PABPNNZ9'  // ross
+    ],
+    keywords: [
+      'retention', 'maintain', 'relationship', 'engagement',
+      'touchpoint', 'customer satisfaction', 'client relationship',
+      'partnership value', 'consistent care'
+    ],
+    titleKeywords: ['retention', 'relationship', 'maintain'],
+    descriptionKeywords: ['retention', 'maintain relationship', 'customer satisfaction', 'engagement']
+  }
+};
+
+// Analyze story content to determine ownership category
+function analyzeStoryContent(story) {
+  const title = (story.title || '').toLowerCase();
+  const description = (story.description || '').toLowerCase();
+  const combinedText = `${title} ${description}`;
+  
+  // Score each ownership category
+  const scores = {
+    dano: 0,
+    noel: 0,
+    expansion: 0,
+    retention: 0
+  };
+  
+  // Check keywords for each category
+  for (const [category, config] of Object.entries(OWNERSHIP_MATRIX)) {
+    if (category === 'expansion' || category === 'retention') {
+      // Handle multi-user categories
+      for (const keyword of config.keywords) {
+        if (combinedText.includes(keyword.toLowerCase())) {
+          scores[category] += 2;
+        }
+      }
+      for (const keyword of config.titleKeywords || []) {
+        if (title.includes(keyword.toLowerCase())) {
+          scores[category] += 3; // Title matches are more important
+        }
+      }
+      for (const keyword of config.descriptionKeywords || []) {
+        if (description.includes(keyword.toLowerCase())) {
+          scores[category] += 1;
+        }
+      }
+    } else {
+      // Single-user categories
+      for (const keyword of config.keywords) {
+        if (combinedText.includes(keyword.toLowerCase())) {
+          scores[category] += 2;
+        }
+      }
+      for (const keyword of config.titleKeywords || []) {
+        if (title.includes(keyword.toLowerCase())) {
+          scores[category] += 3;
+        }
+      }
+      for (const keyword of config.descriptionKeywords || []) {
+        if (description.includes(keyword.toLowerCase())) {
+          scores[category] += 1;
+        }
+      }
+    }
+  }
+  
+  // Determine winner
+  const maxScore = Math.max(...Object.values(scores));
+  if (maxScore === 0) {
+    return null; // No clear match
+  }
+  
+  // Find category with highest score
+  const winningCategory = Object.entries(scores).find(([_, score]) => score === maxScore)?.[0];
+  
+  return winningCategory;
+}
+
+// Assign to owner based on category
+function assignToOwner(category, storyIndex, allUsers) {
+  const config = OWNERSHIP_MATRIX[category];
+  
+  if (!config) {
+    return null;
+  }
+  
+  // Single owner categories
+  if (config.userId) {
+    return config.userId;
+  }
+  
+  // Multi-owner categories (round-robin)
+  if (config.userIds && config.userIds.length > 0) {
+    // Filter to only include valid users
+    const validUserIds = config.userIds.filter(userId => 
+      allUsers.some(u => u.id === userId)
+    );
+    
+    if (validUserIds.length === 0) {
+      return null;
+    }
+    
+    return validUserIds[storyIndex % validUserIds.length];
+  }
+  
+  return null;
+}
+
+// Assign stories intelligently based on Growth Strategy
+function assignStoriesIntelligently(stories, users) {
+  if (users.length === 0) {
+    throw new Error('No users available for assignment!');
+  }
+  
+  const assignments = [];
+  
+  for (let i = 0; i < stories.length; i++) {
+    const story = stories[i];
+    const category = analyzeStoryContent(story);
+    
+    let assigneeId = null;
+    let assigneeName = 'Unassigned';
+    
+    if (category) {
+      assigneeId = assignToOwner(category, i, users);
+    }
+    
+    // Fallback to round-robin if no intelligent match
+    if (!assigneeId) {
+      const user = users[i % users.length];
+      assigneeId = user.id;
+      assigneeName = user.name || 
+        (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}`.trim() : '') ||
+        user.firstName || 
+        user.lastName || 
+        user.email;
+    } else {
+      const user = users.find(u => u.id === assigneeId);
+      assigneeName = user?.name || 
+        (user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}`.trim() : '') ||
+        user?.firstName || 
+        user?.lastName || 
+        user?.email ||
+        assigneeId;
+    }
+    
+    assignments.push({
+      storyId: story.id,
+      assigneeId: assigneeId,
+      assigneeName: assigneeName,
+      category: category || 'default'
+    });
+  }
+  
+  return assignments;
+}
+
+// Assign stories to users (round-robin distribution) - kept for backward compatibility
 function assignStories(stories, users) {
+  return assignStoriesIntelligently(stories, users);
+}
+
+// Assign tasks to users (round-robin distribution)
+function assignTasks(tasks, users) {
   if (users.length === 0) {
     throw new Error('No users available for assignment!');
   }
@@ -397,12 +733,17 @@ function assignStories(stories, users) {
   const assignments = [];
   let userIndex = 0;
   
-  for (const story of stories) {
+  for (const task of tasks) {
     const user = users[userIndex % users.length];
+    const assigneeName = user.name || 
+      (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}`.trim() : '') ||
+      user.firstName || 
+      user.lastName || 
+      user.email;
     assignments.push({
-      storyId: story.id,
+      taskId: task.id,
       assigneeId: user.id,
-      assigneeName: user.name || user.email
+      assigneeName: assigneeName
     });
     userIndex++;
   }
@@ -791,12 +1132,16 @@ async function assignAllItems() {
     console.log('\n' + '='.repeat(80));
     console.log('📊 SUMMARY\n');
     console.log(`   Stories with invalid assigneeIds fixed: ${invalidAssigneeFix.fixedStories.length}`);
+    console.log(`   Tasks with invalid assigneeIds fixed: ${invalidAssigneeFix.fixedTasks.length}`);
     console.log(`   Total unique unassigned stories found: ${uniqueUnassignedStories.length}`);
     console.log(`   Total stories assigned: ${totalAssigned}`);
     console.log(`   Assignment errors: ${allErrors.length}`);
     
-    if (totalAssigned > 0) {
-      console.log(`\n✅ Successfully assigned ${totalAssigned} story/stories!`);
+    if (totalAssigned > 0 || invalidAssigneeFix.fixedStories.length > 0 || invalidAssigneeFix.fixedTasks.length > 0) {
+      console.log(`\n✅ Successfully fixed ${invalidAssigneeFix.fixedStories.length} stories and ${invalidAssigneeFix.fixedTasks.length} tasks with invalid assignees!`);
+      if (totalAssigned > 0) {
+        console.log(`✅ Successfully assigned ${totalAssigned} unassigned story/stories!`);
+      }
     } else {
       console.log(`\n✅ All items are already assigned!`);
     }
@@ -804,7 +1149,7 @@ async function assignAllItems() {
     console.log('\n' + '='.repeat(80));
     console.log('📝 Note: Epics and epochs don\'t have direct assigneeId fields in the schema.');
     console.log('   Assignment is handled through stories within them.');
-    console.log('   All stories within epics and epochs have been checked and assigned.');
+    console.log('   All stories and tasks within epics and epochs have been checked and assigned.');
     
     // Verification step (automatically fixes any remaining issues)
     const verification = await verifyAssignments(workspace.id, members);
