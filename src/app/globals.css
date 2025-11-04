@@ -30,8 +30,111 @@
   }
 }
 
-/* Import centralized scrollbar styling */
-@import '../platform/styles/scrollbar.css';
+/* Enhanced Theme-Aware Scrollbar Styling for Adrata */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #d1d5db);
+  border-radius: 4px;
+  transition: background-color var(--theme-transition-duration, 0.2s) ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #9ca3af);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, #d1d5db) transparent;
+}
+
+/* Custom scrollbar classes for specific components - Theme-aware */
+.ai-panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, #d1d5db) transparent;
+}
+
+.ai-panel-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ai-panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ai-panel-scroll::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #d1d5db);
+  border-radius: 3px;
+  transition: background-color var(--theme-transition-duration, 0.2s) ease;
+}
+
+.ai-panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #9ca3af);
+}
+
+/* Table scrollbars */
+.table-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, #d1d5db) transparent;
+}
+
+.table-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #d1d5db);
+  border-radius: 3px;
+  transition: background-color var(--theme-transition-duration, 0.2s) ease;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #9ca3af);
+}
+
+/* Panel scrollbars */
+.panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, #d1d5db) transparent;
+}
+
+.panel-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #d1d5db);
+  border-radius: 4px;
+  transition: background-color var(--theme-transition-duration, 0.2s) ease;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #9ca3af);
+}
 
 /* FIRST PRINCIPLES: Minimal loading animations */
 

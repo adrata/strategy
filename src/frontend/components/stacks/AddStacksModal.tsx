@@ -27,6 +27,10 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [activeWorkType, setActiveWorkType] = useState<WorkTypeTab>('story');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check if we're in Notary Everyday workspace (check by workspace slug 'ne')
+  const workspaceSlug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+  const isNotaryEveryday = workspaceSlug === 'ne';
+
   // Form data - different fields for different types
   const [formData, setFormData] = useState({
     title: '',
@@ -696,7 +700,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 </div>
               </div>
 
-              {/* Epoch Selector */}
+              {/* Epoch Selector - Hidden for Notary Everyday */}
+              {!isNotaryEveryday && (
               <div className="relative epic-search-container">
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Epoch
@@ -799,10 +804,12 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 </div>
               )}
               </div>
+              )}
             </>
           )}
 
-          {/* Product Dropdown */}
+          {/* Product Dropdown - Hidden for Notary Everyday */}
+          {!isNotaryEveryday && (
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
               Product
@@ -828,6 +835,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               className="w-full"
             />
           </div>
+          )}
 
           {/* Workstream/Column Dropdown */}
           {activeWorkType !== 'bug' && (
@@ -858,8 +866,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             </div>
           )}
 
-          {/* Features Dropdown - Only show when RevenueOS is selected */}
-          {formData.product === 'RevenueOS' && (
+          {/* Features Dropdown - Only show when RevenueOS is selected and not Notary Everyday */}
+          {!isNotaryEveryday && formData.product === 'RevenueOS' && (
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Features
