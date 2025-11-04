@@ -25,4 +25,3 @@ export function PitchEditorWrapper({ document, onSave, onAutoSave }: PitchEditor
     </div>
   );
 }
-

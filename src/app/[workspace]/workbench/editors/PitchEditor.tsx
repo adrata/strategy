@@ -844,4 +844,3 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
     </div>
   );
 }
-

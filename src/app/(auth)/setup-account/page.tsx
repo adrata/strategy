@@ -97,7 +97,9 @@ export default function SetupAccountPage() {
 
       if (data.success) {
         setInvitationData(data.data);
-        setUsername((data.data.user.firstName || data.data.user.name).toLowerCase());
+        // Extract first name only - get first word before any space
+        const firstName = data.data.user.firstName || data.data.user.name?.split(' ')[0] || data.data.user.email.split('@')[0];
+        setUsername(firstName.toLowerCase());
         setEmail(data.data.user.email);
         setError(null);
       } else {
@@ -430,16 +432,23 @@ export default function SetupAccountPage() {
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                 Username
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-500 text-sm sm:text-base">@</span>
+                </div>
                 <input
                   id="username"
                   name="username"
                   type="text"
                   required
                   value={username}
-                  onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-border rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
-                  placeholder="Enter your username"
+                  onChange={(e) => {
+                    // Remove @ if user types it, then convert to lowercase
+                    const value = e.target.value.replace('@', '').toLowerCase();
+                    setUsername(value);
+                  }}
+                  className="appearance-none block w-full pl-8 pr-3 py-3 sm:py-2 border border-border rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
+                  placeholder="username"
                 />
               </div>
             </div>

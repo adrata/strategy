@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useWorkbench } from "../layout";
-import { WorkshopDocument } from "../../workshop/types/document";
+import { WorkbenchDocument } from "../types/document";
 import { extractIdFromSlug } from "@/platform/utils/url-utils";
-import { PaperEditor } from "../../workshop/editors/PaperEditor";
-import { CodeEditor } from "../../workshop/editors/CodeEditor";
-import { GridEditor } from "../../workshop/editors/GridEditor";
-import { MatrixEditor } from "../../workshop/editors/MatrixEditor";
-import { PitchEditorWrapper } from "../../workshop/components/editors/PitchEditorWrapper";
+import { PaperEditor } from "../editors/PaperEditor";
+import { CodeEditor } from "../editors/CodeEditor";
+import { GridEditor } from "../editors/GridEditor";
+import { MatrixEditor } from "../editors/MatrixEditor";
+import { PitchEditorWrapper } from "../components/editors/PitchEditorWrapper";
 import { 
   ArrowLeftIcon,
   DocumentTextIcon,
@@ -26,7 +26,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
   const params = useParams();
   const router = useRouter();
   const { workspace } = useWorkbench();
-  const [document, setDocument] = useState<WorkshopDocument | null>(null);
+  const [document, setDocument] = useState<WorkbenchDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +45,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
           setLoading(true);
           setError(null);
 
-          const response = await fetch(`/api/workshop/documents/${fallbackId}`, {
+          const response = await fetch(`/api/workbench/documents/${fallbackId}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/workshop/documents/${documentId}`, {
+        const response = await fetch(`/api/workbench/documents/${documentId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
     if (!document) return;
 
     try {
-      const response = await fetch(`/api/workshop/documents/${document.id}/content`, {
+      const response = await fetch(`/api/workbench/documents/${document.id}/content`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
     try {
       // Auto-save with minimal error handling
-      await fetch(`/api/workshop/documents/${document.id}/content`, {
+      await fetch(`/api/workbench/documents/${document.id}/content`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

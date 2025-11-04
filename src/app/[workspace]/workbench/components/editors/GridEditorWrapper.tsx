@@ -19,4 +19,3 @@ export function GridEditorWrapper({ document, onSave, onAutoSave }: GridEditorWr
     />
   );
 }
-

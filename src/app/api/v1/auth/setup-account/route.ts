@@ -123,16 +123,29 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12);
     
     // Update the user's password and account details in the database
+    // Store username in username field, keep name as full name if available
+    const updateData: any = {
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      updatedAt: new Date(),
+      // Set active workspace if not already set
+      activeWorkspaceId: tokenRecord.user.activeWorkspaceId || workspaceId,
+    };
+    
+    // Only update name if we have firstName/lastName to preserve full name
+    // Otherwise, if name is empty, use the username as fallback
+    if (tokenRecord.user.firstName || tokenRecord.user.lastName) {
+      // Keep existing name structure
+      updateData.name = tokenRecord.user.name || `${tokenRecord.user.firstName || ''} ${tokenRecord.user.lastName || ''}`.trim();
+    } else if (!tokenRecord.user.name) {
+      // Only set name to username if name is completely empty
+      updateData.name = username;
+    }
+    
     await prisma.users.update({
       where: { id: tokenRecord.user.id },
-      data: { 
-        name: username,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        updatedAt: new Date(),
-        // Set active workspace if not already set
-        activeWorkspaceId: tokenRecord.user.activeWorkspaceId || workspaceId,
-      }
+      data: updateData
     });
 
     // Mark the token as used to prevent reuse

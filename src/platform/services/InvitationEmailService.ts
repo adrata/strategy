@@ -25,7 +25,9 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
     userName 
   } = data;
   
-  const firstName = userName?.split(' ')[0] || userEmail.split('@')[0];
+  const firstNameRaw = userName?.split(' ')[0] || userEmail.split('@')[0];
+  // Capitalize first letter of firstName for display
+  const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase();
 
   const displayName = userName || userEmail.split('@')[0];
   const expirationDate = expiresAt.toLocaleDateString('en-US', {
@@ -49,7 +51,7 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #0a2540;
-            background-color: #f6f9fc;
+            background-color: #ffffff;
             margin: 0;
             padding: 0;
         }
@@ -60,7 +62,10 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
         }
         .email-container {
             background-color: #ffffff;
-            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 48px 40px;
+            box-sizing: border-box;
         }
         .header {
             padding: 0;
@@ -208,6 +213,10 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
             .email-wrapper {
                 padding: 40px 16px;
             }
+            .email-container {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
             .header {
                 margin-bottom: 32px;
             }
@@ -234,6 +243,9 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
                 padding: 14px 24px;
                 display: block;
                 width: 100%;
+                border-radius: 16px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                padding: 48px;
                 box-sizing: border-box;
                 color: #ffffff !important;
             }
@@ -357,7 +369,9 @@ export function generateInvitationEmailText(data: InvitationEmailData): string {
     userName 
   } = data;
 
-  const firstName = userName?.split(' ')[0] || userEmail.split('@')[0];
+  const firstNameRaw = userName?.split(' ')[0] || userEmail.split('@')[0];
+  // Capitalize first letter of firstName for display
+  const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase();
   const headerText = workspaceName === 'Adrata' ? 'Join Adrata on Adrata' : `Join ${workspaceName} Workspace on Adrata`;
   const expirationDate = expiresAt.toLocaleDateString('en-US', {
     weekday: 'long',
