@@ -46,6 +46,7 @@ export function ShipButton() {
           const shipped = allStories.filter((story: any) => story.status === 'shipped');
           setShippedCount(shipped.length);
           setShippedItems(shipped);
+          console.log('📦 [ShipButton] Updated shipped count:', shipped.length);
         }
       } catch (error) {
         console.error('Failed to fetch shipped items:', error);
@@ -53,9 +54,21 @@ export function ShipButton() {
     };
 
     fetchShippedItems();
-    // Poll every 30 seconds to check for new shipped items
-    const interval = setInterval(fetchShippedItems, 30000);
-    return () => clearInterval(interval);
+    // Poll more frequently (every 5 seconds) to detect status changes quickly
+    const interval = setInterval(fetchShippedItems, 5000);
+    
+    // Also listen for custom events when cards are moved to shipped
+    const handleStatusChange = () => {
+      console.log('📦 [ShipButton] Status change detected, refreshing...');
+      fetchShippedItems();
+    };
+    
+    window.addEventListener('stacks-status-changed', handleStatusChange);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('stacks-status-changed', handleStatusChange);
+    };
   }, [ui.activeWorkspace?.id]);
 
   const handleShip = () => {

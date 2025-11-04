@@ -550,6 +550,14 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         console.error('Failed to update card status:', await response.text());
       } else {
         console.log(`Successfully moved card ${draggedCard.title} to ${targetStatus}`);
+        
+        // If status changed to 'shipped', notify ShipButton to refresh immediately
+        if (targetStatus === 'shipped') {
+          console.log('📦 [StacksBoard] Card moved to shipped, notifying ShipButton');
+          window.dispatchEvent(new CustomEvent('stacks-status-changed', {
+            detail: { status: 'shipped', storyId: draggedCard.id }
+          }));
+        }
       }
     } catch (error) {
       // Revert optimistic update on error
