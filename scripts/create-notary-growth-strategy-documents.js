@@ -27,24 +27,34 @@ async function findUserByEmail(email) {
 async function findNotaryEverydayWorkspace() {
   console.log('🔍 Finding Notary Everyday workspace...');
   
-  const workspace = await prisma.workspaces.findFirst({
-    where: {
-      OR: [
-        { name: { contains: 'Notary Everyday', mode: 'insensitive' } },
-        { name: { contains: 'NotaryEveryday', mode: 'insensitive' } },
-        { slug: { contains: 'notary-everyday', mode: 'insensitive' } },
-        { slug: { contains: 'notaryeveryday', mode: 'insensitive' } },
-        { slug: { contains: 'ne', mode: 'insensitive' } }
-      ],
-      isActive: true
-    }
+  // First try to find by exact slug
+  let workspace = await prisma.workspaces.findUnique({
+    where: { slug: 'notary-everyday' }
   });
+  
+  // If not found, try by name
+  if (!workspace) {
+    workspace = await prisma.workspaces.findFirst({
+      where: {
+        OR: [
+          { name: 'Notary Everyday' },
+          { name: { contains: 'Notary Everyday', mode: 'insensitive' } },
+          { name: { contains: 'NotaryEveryday', mode: 'insensitive' } },
+          { slug: { contains: 'notary-everyday', mode: 'insensitive' } },
+          { slug: { contains: 'notaryeveryday', mode: 'insensitive' } },
+          { slug: { contains: 'ne', mode: 'insensitive' } }
+        ],
+        isActive: true
+      }
+    });
+  }
   
   if (!workspace) {
     throw new Error('Notary Everyday workspace not found!');
   }
   
   console.log(`✅ Found workspace: ${workspace.name} (${workspace.id})`);
+  console.log(`   Slug: ${workspace.slug}\n`);
   return workspace;
 }
 
