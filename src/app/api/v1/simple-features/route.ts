@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSimpleFeatureAccess, type SimpleFeatureName } from '@/platform/services/simple-feature-service';
 
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+// Required for dynamic API routes that handle query parameters
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {

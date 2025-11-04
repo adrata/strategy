@@ -17,7 +17,9 @@ interface SimpleFeatureAccess {
  */
 export function getSimpleFeatureAccess(
   workspaceSlug: string, 
-  userRole: string = 'VIEWER'
+  userRole: string = 'VIEWER',
+  userId?: string,
+  userEmail?: string
 ): SimpleFeatureAccess {
   // Define which workspaces get all features
   const fullAccessWorkspaces = ['adrata', 'notary-everyday'];
