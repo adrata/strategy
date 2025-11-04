@@ -18,7 +18,7 @@ import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
 import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
 import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
-import { WorkshopLeftPanel } from "@/app/[workspace]/workshop/components/WorkshopLeftPanel";
+import { WorkbenchLeftPanel } from "@/app/[workspace]/workbench/components/WorkbenchLeftPanel";
 import { useUnifiedAuth } from "@/platform/auth";
 import { SettingsPopup } from "@/frontend/components/pipeline/SettingsPopup";
 import { useSettingsPopup } from "@/platform/ui/components/SettingsPopupContext";
@@ -140,7 +140,7 @@ function PipelineLayoutInner({
   // Determine current app based on pathname
   const getCurrentApp = () => {
     if (pathname.includes('/oasis')) return 'oasis';
-    if (pathname.includes('/workshop') || pathname.includes('/workbench')) return 'workshop';
+    if (pathname.includes('/workbench')) return 'workbench';
     if (pathname.includes('/adrata')) return 'adrata';
     if (pathname.includes('/stacks')) return 'stacks';
     return 'revenueos'; // Default to AcquisitionOS
@@ -175,8 +175,8 @@ function PipelineLayoutInner({
       return <OasisLeftPanel key="oasis-left-panel" />;
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel activeSubSection={stacksContext?.activeSubSection || 'stacks'} onSubSectionChange={stacksContext?.onSubSectionChange || (() => {})} />;
-    } else if (pathname.includes('/workshop') || pathname.includes('/workbench')) {
-      return <WorkshopLeftPanel key="workshop-left-panel" />;
+    } else if (pathname.includes('/workbench')) {
+      return <WorkbenchLeftPanel key="workbench-left-panel" />;
     } else if (pathname.includes('/adrata') && !isPipelineRoute) {
       // Only hide left panel for base /adrata chat route, not pipeline routes
       // Base Adrata chat route - minimal or null left panel since chat is in middle
@@ -221,7 +221,7 @@ function PipelineLayoutInner({
                             !pathname.includes('/customers') &&
                             !pathname.includes('/stacks') &&
                             !pathname.includes('/oasis') &&
-                            !pathname.includes('/workshop') &&
+                            !pathname.includes('/workbench') &&
                             !pathname.includes('/workbench');
 
   // Determine which right panel to show based on the current route
@@ -272,7 +272,7 @@ function PipelineLayoutInner({
   // Check if we're on a route where profile panel should stay open
   const shouldKeepProfilePanelOpen = pathname.includes('/speedrun') || 
                                      pathname.includes('/oasis') || 
-                                     pathname.includes('/workshop') || 
+                                     pathname.includes('/workbench') || 
                                      pathname.includes('/workbench') || 
                                      pathname.includes('/adrata') ||
                                      pathname.includes('/stacks') ||
@@ -368,7 +368,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     if (segments.length >= 2) {
       const section = segments[1];
       // Validate it's a known section
-      const validSections = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'metrics', 'dashboard', 'chronicle', 'oasis', 'stacks', 'workshop', 'olympus', 'grand-central', 'tower', 'database', 'atrium', 'encode', 'particle', 'docs'];
+      const validSections = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'metrics', 'dashboard', 'chronicle', 'oasis', 'stacks', 'workbench', 'olympus', 'grand-central', 'tower', 'database', 'atrium', 'encode', 'particle', 'docs'];
       if (validSections.includes(section)) {
         return section;
       }

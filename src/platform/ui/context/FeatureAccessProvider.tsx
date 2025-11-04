@@ -10,7 +10,7 @@ interface FeatureAccessContextType {
   hasFeature: (feature: SimpleFeatureName) => boolean;
   hasOasis: boolean;
   hasStacks: boolean;
-  hasWorkshop: boolean;
+  hasWorkbench: boolean;
   hasRevenueOS: boolean;
   hasMetrics: boolean;
   hasChronicle: boolean;
@@ -44,7 +44,7 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
   const [featureAccess, setFeatureAccess] = useState<Record<SimpleFeatureName, boolean>>({
     OASIS: false,
     STACKS: false,
-    WORKSHOP: false,
+    WORKBENCH: false,
     REVENUEOS: false,
     METRICS: false,
     CHRONICLE: false,
