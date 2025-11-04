@@ -20,6 +20,7 @@ interface PitchRegularViewProps {
   onPresent: () => void;
   onBack?: () => void;
   hideHeader?: boolean;
+  sectionName?: string; // Custom section name for breadcrumb (default: "Chronicle")
 }
 
 const slides = [
@@ -35,7 +36,7 @@ const slides = [
   { component: OutroSlide, key: 'outro', title: 'Outro' }
 ];
 
-export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = false }: PitchRegularViewProps) {
+export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = false, sectionName = 'Chronicle' }: PitchRegularViewProps) {
   // Keyboard shortcut for Present (Cmd+Enter)
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -70,11 +71,11 @@ export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = fa
                 </button>
               )}
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-muted">Chronicle</span>
+                <span className="text-muted">{sectionName}</span>
                 <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-                <span className="text-foreground font-medium">October 2025 Progress Report</span>
+                <span className="text-foreground font-medium">{slideData.title || 'Pitch Presentation'}</span>
               </div>
             </div>
             <div className="flex items-center gap-2">

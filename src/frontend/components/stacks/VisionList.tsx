@@ -11,7 +11,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { DocumentTextIcon, PresentationChartBarIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { VisionDocumentTypeSelector } from './VisionDocumentTypeSelector';
-import { VisionDocumentModal } from './VisionDocumentModal';
+import { PresentationView } from '@/frontend/components/pipeline/PresentationView';
+import { PitchRegularView } from '@/frontend/components/pipeline/PitchRegularView';
 
 interface VisionDocument {
   id: string;
@@ -28,7 +29,11 @@ interface VisionDocument {
   };
 }
 
-export function VisionList() {
+interface VisionListProps {
+  onDocumentSelect?: (document: VisionDocument) => void;
+}
+
+export function VisionList({ onDocumentSelect }: VisionListProps) {
   const { ui } = useRevenueOS();
   const [documents, setDocuments] = useState<VisionDocument[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +41,8 @@ export function VisionList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'paper' | 'pitch'>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<{ id: string; type: 'paper' | 'pitch' } | null>(null);
+  const [selectedPitchDocument, setSelectedPitchDocument] = useState<{ id: string; document: any } | null>(null);
+  const [isPresentationMode, setIsPresentationMode] = useState(false);
 
   const fetchDocuments = useCallback(async () => {
     if (!ui.activeWorkspace?.id) {
@@ -83,12 +89,49 @@ export function VisionList() {
     fetchDocuments();
   }, [fetchDocuments]);
 
-  const handleDocumentClick = (document: VisionDocument) => {
-    // Open document in modal instead of navigating
-    setSelectedDocument({
-      id: document.id,
-      type: document.documentType
-    });
+  const handleDocumentClick = async (document: VisionDocument) => {
+    // Handle pitch documents inline (like Chronicle does)
+    if (document.documentType === 'pitch') {
+      try {
+        const response = await fetch(`/api/v1/stacks/vision/${document.id}`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSelectedPitchDocument({
+            id: document.id,
+            document: data.document
+          });
+          setIsPresentationMode(false);
+        } else {
+          console.error('Failed to fetch pitch document');
+        }
+      } catch (err) {
+        console.error('Error fetching pitch document:', err);
+      }
+    } else {
+      // Call onDocumentSelect for paper documents (like Chronicle does for non-PITCH reports)
+      if (onDocumentSelect) {
+        onDocumentSelect(document);
+      }
+    }
+  };
+
+  const handlePresent = () => {
+    setIsPresentationMode(true);
+  };
+
+  const handleClosePresentation = () => {
+    setIsPresentationMode(false);
+  };
+
+  const handleBackToVision = () => {
+    setSelectedPitchDocument(null);
+    setIsPresentationMode(false);
   };
 
   const handleCreateDocument = useCallback(async (documentType: 'paper' | 'pitch') => {
@@ -121,16 +164,22 @@ export function VisionList() {
       // Refresh the documents list
       await fetchDocuments();
       
-      // Open the new document in modal instead of navigating
-      setSelectedDocument({
-        id: newDocument.id,
-        type: documentType
-      });
+      // Open the new document in middle panel (like Chronicle)
+      if (onDocumentSelect) {
+        onDocumentSelect({
+          id: newDocument.id,
+          title: newDocument.title || `New ${documentType === 'pitch' ? 'Pitch' : 'Paper'}`,
+          documentType: documentType,
+          status: 'draft',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      }
     } catch (error) {
       console.error('Error creating document:', error);
       setError('Failed to create document. Please try again.');
     }
-  }, [ui.activeWorkspace, fetchDocuments]);
+  }, [ui.activeWorkspace, fetchDocuments, onDocumentSelect]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -186,6 +235,34 @@ export function VisionList() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-800">{error}</p>
         </div>
+      </div>
+    );
+  }
+
+  // Show pitch presentation if selected (like Chronicle does)
+  if (selectedPitchDocument) {
+    const pitchData = selectedPitchDocument.document;
+    const slideData = {
+      ...(pitchData.content || { slides: {} }),
+      title: pitchData.title || 'Pitch Presentation'
+    };
+
+    return (
+      <div className="h-full w-full">
+        {isPresentationMode ? (
+          <PresentationView 
+            slideData={slideData} 
+            onClose={handleClosePresentation}
+          />
+        ) : (
+          <PitchRegularView 
+            slideData={slideData}
+            onPresent={handlePresent}
+            onBack={handleBackToVision}
+            hideHeader={false}
+            sectionName="Vision"
+          />
+        )}
       </div>
     );
   }
@@ -317,14 +394,6 @@ export function VisionList() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSelect={handleCreateDocument}
-      />
-
-      {/* Document View Modal */}
-      <VisionDocumentModal
-        isOpen={selectedDocument !== null}
-        onClose={() => setSelectedDocument(null)}
-        documentId={selectedDocument?.id || null}
-        documentType={selectedDocument?.type || null}
       />
     </div>
   );
