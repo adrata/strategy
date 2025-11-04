@@ -48,112 +48,102 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333333;
+            color: #0a2540;
+            background-color: #f6f9fc;
+            margin: 0;
+            padding: 0;
+        }
+        .email-wrapper {
             max-width: 600px;
             margin: 0 auto;
-            padding: 0;
-            background-color: #f8f9fa;
+            padding: 60px 20px;
         }
         .email-container {
             background-color: #ffffff;
-            margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            width: 100%;
         }
         .header {
-            background: #ffffff;
-            color: #333333;
-            padding: 40px 30px;
-            text-align: center;
-            border-bottom: 1px solid #e9ecef;
+            padding: 0;
+            margin-bottom: 40px;
         }
         .header h1 {
-            margin: 0;
+            margin: 0 0 8px 0;
             font-size: 28px;
             font-weight: 600;
             letter-spacing: -0.5px;
-            color: #333333;
+            color: #0a2540;
+            line-height: 1.3;
         }
         .header p {
-            margin: 8px 0 0 0;
+            margin: 0;
             font-size: 16px;
-            color: #666666;
+            color: #425466;
         }
         .content {
-            padding: 40px 30px;
+            padding: 0;
         }
         .greeting {
-            font-size: 20px;
+            font-size: 16px;
             margin-bottom: 24px;
-            color: #333333;
-            font-weight: 500;
+            color: #0a2540;
+            font-weight: 400;
         }
         .main-text {
             font-size: 16px;
             margin-bottom: 24px;
-            color: #555555;
+            color: #0a2540;
             line-height: 1.7;
         }
         .workspace-name {
             font-weight: 600;
-            color: #667eea;
+            color: #0a2540;
         }
         .description {
-            font-size: 15px;
+            font-size: 16px;
             margin-bottom: 32px;
-            color: #666666;
-            line-height: 1.6;
+            color: #425466;
+            line-height: 1.7;
         }
         .cta-button {
             display: inline-block;
-            background: #5B7FFF;
-            color: white;
+            background: #0a2540;
+            color: #ffffff !important;
             text-decoration: none;
-            padding: 16px 32px;
+            padding: 14px 28px;
             border-radius: 6px;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(91, 127, 255, 0.3);
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
         .cta-button:hover {
-            background: #4A6BFF;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(91, 127, 255, 0.4);
+            background: #1a365d;
+            color: #ffffff !important;
         }
         .button-container {
-            text-align: center;
-            margin: 32px 0;
+            margin: 32px 0 40px 0;
         }
         .info-section {
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            padding: 20px;
-            margin: 24px 0;
-            border-left: 4px solid #667eea;
-        }
-        .info-section h3 {
-            margin: 0 0 12px 0;
-            color: #333333;
-            font-size: 16px;
-            font-weight: 600;
+            margin: 32px 0;
+            padding: 0;
         }
         .info-section p {
             margin: 0;
-            color: #666666;
-            font-size: 14px;
-            line-height: 1.5;
+            color: #425466;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .info-section strong {
+            color: #0a2540;
+            font-weight: 600;
         }
         .features {
-            margin: 32px 0;
+            margin: 40px 0;
         }
         .features h3 {
-            font-size: 16px;
+            font-size: 15px;
             margin-bottom: 16px;
-            color: #333333;
+            color: #0a2540;
             font-weight: 600;
         }
         .features ul {
@@ -162,191 +152,190 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
             list-style: none;
         }
         .features li {
-            margin-bottom: 8px;
-            color: #555555;
-            font-size: 14px;
+            margin-bottom: 10px;
+            color: #425466;
+            font-size: 15px;
+            line-height: 1.6;
+            padding-left: 24px;
             position: relative;
-            padding-left: 20px;
         }
         .features li:before {
-            content: "✓";
-            color: #667eea;
-            font-weight: bold;
+            content: "•";
+            color: #425466;
             position: absolute;
-            left: 0;
-            top: 0;
+            left: 8px;
+            font-size: 16px;
+            line-height: 1.5;
         }
         .footer {
-            background-color: #f8f9fa;
-            padding: 24px 30px;
-            text-align: center;
-            border-top: 1px solid #e9ecef;
+            padding: 40px 0 0 0;
+            margin-top: 48px;
+            border-top: 1px solid #e3e8ef;
         }
         .footer p {
             margin: 0 0 12px 0;
-            color: #666666;
-            font-size: 13px;
-            line-height: 1.5;
+            color: #8898aa;
+            font-size: 14px;
+            line-height: 1.6;
         }
         .footer a {
-            color: #667eea;
+            color: #0a2540;
             text-decoration: none;
             word-break: break-all;
         }
-        .copyright {
-            font-size: 12px;
-            color: #999999;
-            margin-top: 16px;
+        .footer a:hover {
+            text-decoration: underline;
         }
-        .divider {
-            height: 1px;
-            background-color: #e9ecef;
-            margin: 24px 0;
+        .copyright {
+            font-size: 13px;
+            color: #8898aa;
+            margin-top: 24px;
+        }
+        .help-text {
+            color: #425466;
+            font-size: 15px;
+            margin: 32px 0 0 0;
+            line-height: 1.6;
+        }
+        .help-text a {
+            color: #0a2540;
+            text-decoration: none;
+        }
+        .help-text a:hover {
+            text-decoration: underline;
         }
         @media (max-width: 600px) {
-            body {
-                margin: 0;
-                padding: 0;
+            .email-wrapper {
+                padding: 40px 16px;
             }
-            .email-container {
-                margin: 0;
-                border-radius: 0;
-                box-shadow: none;
-            }
-            .header, .content, .footer {
-                padding: 20px 16px;
+            .header {
+                margin-bottom: 32px;
             }
             .header h1 {
-                font-size: 22px;
-                line-height: 1.3;
+                font-size: 24px;
             }
             .header p {
-                font-size: 14px;
-                margin-top: 6px;
+                font-size: 15px;
             }
             .greeting {
-                font-size: 18px;
+                font-size: 15px;
                 margin-bottom: 20px;
             }
             .main-text {
                 font-size: 15px;
-                line-height: 1.6;
                 margin-bottom: 20px;
             }
             .description {
-                font-size: 14px;
+                font-size: 15px;
                 margin-bottom: 28px;
             }
             .cta-button {
-                font-size: 16px;
-                padding: 16px 24px;
-                min-height: 48px;
+                font-size: 15px;
+                padding: 14px 24px;
                 display: block;
                 width: 100%;
                 box-sizing: border-box;
-                text-align: center;
+                color: #ffffff !important;
             }
             .button-container {
-                margin: 28px 0;
+                margin: 28px 0 32px 0;
             }
             .info-section {
-                padding: 16px;
-                margin: 20px 0;
-            }
-            .info-section h3 {
-                font-size: 15px;
-                margin-bottom: 8px;
-            }
-            .info-section p {
-                font-size: 13px;
-            }
-            .features {
                 margin: 28px 0;
             }
+            .info-section p {
+                font-size: 14px;
+            }
+            .features {
+                margin: 32px 0;
+            }
             .features h3 {
-                font-size: 15px;
+                font-size: 14px;
                 margin-bottom: 12px;
             }
             .features li {
-                font-size: 13px;
-                margin-bottom: 6px;
-                padding-left: 18px;
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+            .footer {
+                padding: 32px 0 0 0;
+                margin-top: 40px;
             }
             .footer p {
-                font-size: 12px;
-                line-height: 1.4;
+                font-size: 13px;
             }
             .footer a {
-                word-break: break-all;
-                font-size: 11px;
+                font-size: 13px;
             }
             .copyright {
-                font-size: 11px;
-                margin-top: 12px;
+                font-size: 12px;
+                margin-top: 20px;
+            }
+            .help-text {
+                font-size: 14px;
+                margin: 28px 0 0 0;
             }
         }
     </style>
 </head>
 <body>
-    <div class="email-container">
-        <div class="header">
-            <h1>You're Invited!</h1>
-            <p>Join ${workspaceName} on Adrata</p>
-        </div>
-        
-        <div class="content">
-            <div class="greeting">
-                Hi ${firstName},
+    <div class="email-wrapper">
+        <div class="email-container">
+            <div class="header">
+                <h1>You're invited to ${workspaceName}</h1>
+                <p>Join your team on Adrata</p>
             </div>
             
-            <div class="main-text">
-                You've been invited to join <span class="workspace-name">${workspaceName}</span> on Adrata, our intelligent sales platform that helps teams accelerate revenue growth.
+            <div class="content">
+                <div class="greeting">
+                    Hi ${firstName},
+                </div>
+                
+                <div class="main-text">
+                    You've been invited to join <span class="workspace-name">${workspaceName}</span> on Adrata.
+                </div>
+                
+                <div class="description">
+                    Adrata helps teams accelerate revenue growth with intelligent sales tools and AI-powered insights.
+                </div>
+                
+                <div class="button-container">
+                    <a href="${invitationLink}" class="cta-button">
+                        Accept invitation
+                    </a>
+                </div>
+                
+                <div class="info-section">
+                    <p>This invitation expires on <strong>${expirationDate}</strong>. Please accept it before then.</p>
+                </div>
+                
+                <div class="features">
+                    <h3>What you'll get access to:</h3>
+                    <ul>
+                        <li>Personalized sales dashboard</li>
+                        <li>Real-time team collaboration</li>
+                        <li>AI-powered sales insights</li>
+                        <li>Advanced pipeline management</li>
+                        <li>Prospect intelligence tools</li>
+                    </ul>
+                </div>
+                
+                <div class="help-text">
+                    Questions? Contact us at <a href="mailto:${inviterEmail}">${inviterEmail}</a>
+                </div>
             </div>
             
-            <div class="description">
-                Get ready to collaborate with your team, manage prospects more effectively, and leverage AI-powered insights to close more deals faster.
+            <div class="footer">
+                <p>
+                    Having trouble with the button? Copy and paste this link into your browser:
+                </p>
+                <p>
+                    <a href="${invitationLink}">${invitationLink}</a>
+                </p>
+                <p class="copyright">
+                    © ${new Date().getFullYear()} Adrata. All rights reserved.
+                </p>
             </div>
-            
-            <div class="button-container">
-                <a href="${invitationLink}" class="cta-button">
-                    Set Up My Account
-                </a>
-            </div>
-            
-            <div class="info-section">
-                <h3>⏰ Important</h3>
-                <p>This invitation expires on <strong>${expirationDate}</strong>. Please set up your account before this date to ensure access.</p>
-            </div>
-            
-            <div class="features">
-                <h3>What you'll get access to:</h3>
-                <ul>
-                    <li>Personalized sales dashboard</li>
-                    <li>Real-time team collaboration</li>
-                    <li>AI-powered sales insights</li>
-                    <li>Advanced pipeline management</li>
-                    <li>Prospect intelligence tools</li>
-                </ul>
-            </div>
-            
-            <div class="divider"></div>
-            
-            <p style="color: #666666; font-size: 14px; margin: 0;">
-                Questions? Contact us at <a href="mailto:${inviterEmail}" style="color: #667eea;">${inviterEmail}</a>
-            </p>
-        </div>
-        
-        <div class="footer">
-            <p>
-                This invitation was sent by Adrata Client Team via Adrata.
-            </p>
-            <p>
-                Having trouble with the button? Copy and paste this link:<br>
-                <a href="${invitationLink}">${invitationLink}</a>
-            </p>
-            <p class="copyright">
-                © ${new Date().getFullYear()} Adrata. All rights reserved.
-            </p>
         </div>
     </div>
 </body>
