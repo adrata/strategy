@@ -104,6 +104,8 @@ function PipelineSections({
   // Get workspace name for Nova visibility check
   const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === workspaceId);
   const workspaceName = activeWorkspace?.name || "";
+  // Get workspace slug for filtering (use slug if available, otherwise fall back to name)
+  const workspaceSlug = activeWorkspace?.slug || activeWorkspace?.name || workspaceName || 'default';
   
   // Check user restrictions immediately (synchronous) to prevent showing restricted sections on initial load
   const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
@@ -685,7 +687,6 @@ function PipelineSections({
   }, []);
 
   // Get workspace context for section filtering
-  const workspaceSlug = activeWorkspace?.name || workspaceName || 'default';
   const allowedSections = getFilteredSectionsForWorkspace({
     workspaceSlug,
     appId: 'pipeline'

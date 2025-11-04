@@ -49,13 +49,13 @@ export function SpeedrunDataProvider({ children }: SpeedrunDataProviderProps) {
       return;
     }
 
-    isInitialized['current'] = true;
+    isInitialized.current = true;
     
     console.log(`🔥 SpeedrunDataProvider: Initializing for workspace ${workspaceId}...`);
     
     try {
       // Get workspace-aware service instance
-      speedrunServiceRef['current'] = SpeedrunDataService.getInstance(workspaceId, userId);
+      speedrunServiceRef.current = SpeedrunDataService.getInstance(workspaceId, userId);
       
       // Get existing data first (if any)
       const existingProspects = speedrunServiceRef.current?.getProspects?.() || [];

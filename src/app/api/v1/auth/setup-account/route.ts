@@ -152,6 +152,13 @@ export async function POST(request: NextRequest) {
           slug: true,
         }
       });
+      
+      if (!workspace) {
+        console.warn(`⚠️ [SETUP ACCOUNT] Workspace not found for ID: ${workspaceId}, but continuing with workspaceId from metadata`);
+        // Still continue - the frontend can use the workspace from invitation data
+      } else {
+        console.log(`✅ [SETUP ACCOUNT] Workspace found: ${workspace.name} (${workspace.slug})`);
+      }
     }
 
     // Generate JWT token for immediate login

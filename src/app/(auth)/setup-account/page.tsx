@@ -78,6 +78,16 @@ export default function SetupAccountPage() {
       lowercase: /[a-z]/.test(password),
       number: /\d/.test(password),
     });
+    
+    // Scroll to submit button when password requirements appear
+    if (password) {
+      setTimeout(() => {
+        const submitButton = document.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 100);
+    }
   }, [password]);
 
   const validateToken = async () => {
@@ -180,7 +190,8 @@ export default function SetupAccountPage() {
               workspaces = workspacesData.data.workspaces.map((ws: any) => ({
                 id: ws.id,
                 name: ws.name,
-                role: ws.role || 'VIEWER',
+                slug: ws.slug,
+                role: ws.currentUserRole || 'VIEWER',
               }));
               console.log('✅ Fetched user workspaces:', workspaces);
             }
@@ -194,7 +205,15 @@ export default function SetupAccountPage() {
             workspaces = [{
               id: data.data.workspace.id,
               name: data.data.workspace.name,
+              slug: data.data.workspace.slug,
               role: data.data.role || 'VIEWER',
+            }];
+          } else if (invitationData.workspace) {
+            workspaces = [{
+              id: invitationData.workspace.id,
+              name: invitationData.workspace.name,
+              slug: invitationData.workspace.slug,
+              role: invitationData.role || 'VIEWER',
             }];
           }
         }
@@ -299,13 +318,23 @@ export default function SetupAccountPage() {
         }
         console.log('✅ [SETUP] Final verification passed - session persisted');
 
-        // Redirect to the workspace
-        if (data.data.workspace) {
-          console.log(`🔄 [SETUP] Redirecting to workspace: /${data.data.workspace.slug}/people`);
+        // Redirect to the workspace - use workspace from API response or fallback to invitation data or workspaces list
+        const workspace = data.data.workspace || invitationData.workspace;
+        let workspaceSlug = workspace?.slug;
+        
+        // If no slug from workspace object, try to get it from workspaces list
+        if (!workspaceSlug && workspaces.length > 0) {
+          // Find workspace that matches the activeWorkspaceId or use the first one
+          const activeWorkspace = workspaces.find((ws: any) => ws.id === activeWorkspaceId) || workspaces[0];
+          workspaceSlug = activeWorkspace.slug;
+        }
+        
+        if (workspaceSlug) {
+          console.log(`🔄 [SETUP] Redirecting to workspace: /${workspaceSlug}/speedrun`);
           // Use window.location.href to force a full page reload so auth system picks up the new session
-          window.location.href = `/${data.data.workspace.slug}/people`;
+          window.location.href = `/${workspaceSlug}/speedrun`;
         } else {
-          console.log('🔄 [SETUP] Redirecting to workspaces page');
+          console.log('🔄 [SETUP] No workspace slug found, redirecting to workspaces page');
           window.location.href = '/workspaces';
         }
       } else {
@@ -383,7 +412,7 @@ export default function SetupAccountPage() {
           )}
         </div>
 
-        <div className="bg-white py-4 px-4 sm:py-8 sm:px-6 shadow rounded-lg pb-8 sm:pb-8">
+        <div className="bg-white py-4 px-4 sm:py-8 sm:px-6 shadow rounded-lg pb-8 sm:pb-8 mb-8">
 
           <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
             {error && (
@@ -536,7 +565,7 @@ export default function SetupAccountPage() {
               )}
             </div>
 
-            <div className="mt-6 mb-4 sm:mb-0">
+            <div className="mt-6 mb-4 sm:mb-6">
               <button
                 type="submit"
                 disabled={submitting}
@@ -554,7 +583,7 @@ export default function SetupAccountPage() {
             </div>
           </form>
 
-          <div className="mt-4 sm:mt-6 text-center">
+          <div className="mt-4 sm:mt-6 text-center pb-2">
             <p className="text-xs text-gray-500 leading-relaxed">
               This invitation expires on{' '}
               <span className="font-medium">
