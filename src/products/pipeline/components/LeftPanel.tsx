@@ -1171,6 +1171,23 @@ export function PipelineLeftPanelStandalone({
         return;
       }
       
+      // Check if this is Ryan Serrato user - allow ProfilePanel access on Notary Everyday workspace
+      const isRyan = authUser?.email?.toLowerCase() === 'ryan@notaryeveryday.com' ||
+                   authUser?.id === '01K7DP7QTRKXZGDHJ857RZFEW8';
+      
+      // Check if this is Notary Everyday workspace
+      const isNotaryEverydayWorkspace = workspace?.name?.toLowerCase() === 'notary everyday' ||
+                                       workspace?.name?.toLowerCase() === 'notaryeveryday';
+      
+      // Allow Ryan to access ProfilePanel on Notary Everyday workspace
+      if (isRyan && isNotaryEverydayWorkspace) {
+        console.log('🔘 Opening ProfilePanel for Ryan on Notary Everyday:', workspace?.name);
+        const newState = !isProfilePanelVisible;
+        console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+        setIsProfilePanelVisible(newState);
+        return;
+      }
+      
       // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
       const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
       const userRestrictions = authUser?.id && authUser?.email ? 
