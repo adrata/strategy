@@ -203,11 +203,28 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           try {
             const visionData = await visionResponse.json();
             visionCount = visionData.documents?.length || 0;
+            console.log('📊 [StacksLeftPanel] Vision count:', visionCount);
           } catch (e) {
             console.warn('⚠️ [StacksLeftPanel] Failed to parse vision response:', e);
+            visionCount = 0;
           }
         } else {
           console.warn('⚠️ [StacksLeftPanel] Vision API returned:', visionResponse.status, visionResponse.statusText);
+          // Try to get error message for debugging
+          try {
+            const errorText = await visionResponse.text();
+            if (errorText) {
+              try {
+                const errorData = JSON.parse(errorText);
+                console.warn('⚠️ [StacksLeftPanel] Vision API error:', errorData.error || errorData.message);
+              } catch (parseError) {
+                console.warn('⚠️ [StacksLeftPanel] Vision API error (non-JSON):', errorText);
+              }
+            }
+          } catch (e) {
+            // Response body already consumed
+          }
+          visionCount = 0;
         }
 
         // Combine stories and tasks for totals

@@ -45,14 +45,20 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
   const [isPresentationMode, setIsPresentationMode] = useState(false);
 
   const fetchDocuments = useCallback(async () => {
-    if (!ui.activeWorkspace?.id) {
+    const workspaceId = ui.activeWorkspace?.id;
+    
+    if (!workspaceId) {
+      console.log('⚠️ [VisionList] No workspace ID available, waiting...');
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/v1/stacks/vision?workspaceId=${ui.activeWorkspace.id}`, {
+      setError(null); // Clear any previous errors
+      console.log('🔍 [VisionList] Fetching documents for workspace:', workspaceId);
+      
+      const response = await fetch(`/api/v1/stacks/vision?workspaceId=${workspaceId}`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -65,9 +71,19 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
         try {
           const errorData = await response.json();
           errorMessage = errorData.error || errorData.message || errorMessage;
+          console.error('❌ [VisionList] API error:', errorData);
         } catch (e) {
           // If response is not JSON, use status text
           errorMessage = `${response.status} ${response.statusText}`;
+          console.error('❌ [VisionList] API error (non-JSON):', response.status, response.statusText);
+        }
+        // Don't throw for auth errors - just show empty state
+        if (response.status === 401 || response.status === 403) {
+          console.warn('⚠️ [VisionList] Authentication error, showing empty state');
+          setDocuments([]);
+          setError('Authentication required. Please refresh the page.');
+          setLoading(false);
+          return;
         }
         throw new Error(errorMessage);
       }
@@ -86,8 +102,11 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
   }, [ui.activeWorkspace?.id]);
 
   useEffect(() => {
-    fetchDocuments();
-  }, [fetchDocuments]);
+    // Only fetch if workspace is available
+    if (ui.activeWorkspace?.id) {
+      fetchDocuments();
+    }
+  }, [fetchDocuments, ui.activeWorkspace?.id]);
 
   const handleDocumentClick = async (document: VisionDocument) => {
     // Handle pitch documents inline (like Chronicle does)
@@ -229,11 +248,34 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
     );
   }
 
-  if (error) {
+  if (error && documents.length === 0) {
     return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+      <div className="h-full w-full flex flex-col">
+        {/* Header */}
+        <div className="flex-shrink-0 p-6 border-b border-border">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-semibold text-foreground">Vision</h1>
+              <p className="text-sm text-muted mt-1">Papers and pitch presentations</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Error Message */}
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md">
+            <p className="text-red-800 font-medium mb-2">Unable to load documents</p>
+            <p className="text-red-700 text-sm">{error}</p>
+            <button
+              onClick={() => {
+                setError(null);
+                fetchDocuments();
+              }}
+              className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       </div>
     );

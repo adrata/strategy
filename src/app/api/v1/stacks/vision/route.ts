@@ -2,8 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/platform/database/prisma-client';
 
+// Force dynamic rendering to prevent caching issues
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
+  let workspaceId: string | null = null;
+  
   try {
+    console.log('🔍 [VISION API] GET request received');
+    console.log('🔍 [VISION API] Request URL:', request.url);
+    
+    // Use platform's unified authentication system
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
@@ -11,16 +20,30 @@ export async function GET(request: NextRequest) {
 
     if (response) {
       console.error('❌ [VISION API] Auth failed:', response.status);
-      return response;
+      return response; // Return error response if authentication failed
     }
 
     if (!context) {
-      console.error('❌ [VISION API] No context');
+      console.error('❌ [VISION API] No context after authentication');
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
+    // Get workspace ID - prefer query parameter over context (frontend may have different active workspace)
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId') || context.workspaceId;
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const contextWorkspaceId = context.workspaceId;
+    const userId = context.userId;
+    
+    // Use query parameter if provided, otherwise fall back to authenticated context
+    workspaceId = queryWorkspaceId || contextWorkspaceId;
+    
+    console.log('✅ [VISION API] Authenticated user:', userId);
+    console.log('🔍 [VISION API] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
+
+    if (!workspaceId) {
+      console.error('❌ [VISION API] No workspace ID available (query param or context)');
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
+    }
 
     console.log('🔍 [VISION API] Fetching documents for workspace:', workspaceId);
 
