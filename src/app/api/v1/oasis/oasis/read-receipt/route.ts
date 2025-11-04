@@ -1,7 +1,7 @@
-/**
 // Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
+export const dynamic = 'force-dynamic';
 
+/**
  * Oasis Read Receipt API
  * 
  * Handles marking messages as read
@@ -84,25 +84,39 @@ export async function POST(request: NextRequest) {
     }
 
     // Create read receipts for each message
+    // Using findFirst + create/update since Prisma composite unique constraints
+    // may need to be accessed differently
     const readReceipts = await Promise.all(
-      messageIds.map(messageId =>
-        prisma.oasisReadReceipt.upsert({
+      messageIds.map(async (messageId) => {
+        // Check if read receipt already exists
+        const existing = await prisma.oasisReadReceipt.findFirst({
           where: {
-            userId_messageId: {
-              userId: userId,
-              messageId: messageId
-            }
-          },
-          update: {
-            readAt: new Date()
-          },
-          create: {
             userId: userId,
-            messageId: messageId,
-            readAt: new Date()
+            messageId: messageId
           }
-        })
-      )
+        });
+
+        if (existing) {
+          // Update existing read receipt
+          return await prisma.oasisReadReceipt.update({
+            where: {
+              id: existing.id
+            },
+            data: {
+              readAt: new Date()
+            }
+          });
+        } else {
+          // Create new read receipt
+          return await prisma.oasisReadReceipt.create({
+            data: {
+              userId: userId,
+              messageId: messageId,
+              readAt: new Date()
+            }
+          });
+        }
+      })
     );
 
     return NextResponse.json({ 

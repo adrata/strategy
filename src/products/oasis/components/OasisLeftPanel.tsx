@@ -48,6 +48,7 @@ interface Conversation {
   status?: 'online' | 'away' | 'offline';
   isWorkspaceMember?: boolean;
   workspaceName?: string; // Add workspace name for pill display
+  workspaceId?: string; // Add workspace ID for message fetching (for cross-workspace DMs)
   isPrivate?: boolean; // Channel visibility
 }
 
@@ -210,12 +211,14 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
               id: matchingDM.id,
               name: getDisplayName(),
               type: 'dm' as const,
-              unread: 0,
+              unread: matchingDM.unreadCount || 0,
               isActive: true,
               lastMessage: matchingDM.lastMessage?.content || 'Started conversation',
               lastMessageTime: matchingDM.lastMessage?.createdAt ? new Date(matchingDM.lastMessage.createdAt).toLocaleTimeString() : 'now',
               status: 'online' as const,
-              isWorkspaceMember: true
+              isWorkspaceMember: true,
+              workspaceName: participant?.workspaceName, // Add workspace name for pill display
+              workspaceId: matchingDM.workspaceId // Add workspace ID for message fetching (for cross-workspace DMs)
             };
             setSelectedChannel(conversation);
             hasInitialSelection.current = true;
@@ -460,7 +463,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt).toLocaleTimeString() : 'now',
       status: 'online' as const,
       isWorkspaceMember: true,
-      workspaceName: participant?.workspaceName // Add workspace name for pill display
+      workspaceName: participant?.workspaceName, // Add workspace name for pill display
+      workspaceId: dm.workspaceId // Add workspace ID for message fetching (for cross-workspace DMs)
       };
     })
   ];
@@ -628,13 +632,15 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                       const currentWorkspace = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId);
                       const isDifferentWorkspace = currentWorkspace && dm.workspaceName !== currentWorkspace.name;
                       
-                      // Use different color for different workspace (purple/gray) vs same workspace (blue)
+                      // Improved styling: lighter colors for better visibility
+                      // Same workspace: subtle blue tint
+                      // Different workspace: soft purple/gray tint
                       const pillClass = isDifferentWorkspace 
-                        ? 'bg-muted-light text-foreground' 
-                        : 'bg-primary/10 text-primary';
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700' 
+                        : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700';
                       
                       return (
-                        <span className={`px-1.5 py-0.5 ${pillClass} text-xs font-medium rounded-full whitespace-nowrap flex items-center gap-1`}>
+                        <span className={`px-2 py-0.5 ${pillClass} text-xs font-medium rounded-md whitespace-nowrap flex items-center gap-1`}>
                           <BuildingOfficeIcon className="w-3 h-3" />
                           {dm.workspaceName === "Notary Everyday" ? "NE" : dm.workspaceName === "Adrata" ? "Adrata" : dm.workspaceName}
                         </span>
@@ -642,7 +648,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                     })()}
                   </div>
                   {dm.unread > 0 && (
-                    <span className="ml-auto px-2 py-1 bg-muted-light text-foreground text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
+                    <span className="ml-auto w-5 h-5 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded-full flex items-center justify-center">
                       {dm.unread}
                     </span>
                   )}

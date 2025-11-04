@@ -19,7 +19,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
+    // Validate userId exists
+    if (!authUser.id) {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 401 });
+    }
+
     const userId = authUser.id;
+    const userEmail = authUser.email || undefined; // Safe email access
 
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get('workspaceId');
@@ -27,6 +33,11 @@ export async function GET(request: NextRequest) {
     if (!workspaceId) {
       return NextResponse.json({ error: 'Workspace ID required' }, { status: 400 });
     }
+
+    // Check if this is Ross (special user who sees all DMs)
+    const ROSS_USER_ID = '01K1VBYZG41K9QA0D9CF06KNRG';
+    const ROSS_EMAIL = 'ross@adrata.com';
+    const isRoss = userId === ROSS_USER_ID || userEmail === ROSS_EMAIL;
 
     // Verify user has access to workspace
     const workspaceUser = await prisma.workspace_users.findFirst({
@@ -37,20 +48,27 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    if (!workspaceUser) {
+    if (!workspaceUser && !isRoss) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Get DMs where user is a participant
-    // Strategy: Get all DMs where user is a participant, then filter and deduplicate
-    const dms = await prisma.oasisDirectMessage.findMany({
-      where: {
-        participants: {
-          some: {
-            userId: userId
-          }
+    // Ross sees DMs from ALL workspaces, others only see current workspace
+    const dmsWhereClause: any = {
+      participants: {
+        some: {
+          userId: userId
         }
-      },
+      }
+    };
+
+    // Only filter by workspace if NOT Ross
+    if (!isRoss) {
+      dmsWhereClause.workspaceId = workspaceId;
+    }
+
+    const dms = await prisma.oasisDirectMessage.findMany({
+      where: dmsWhereClause,
       include: {
         participants: {
           include: {
@@ -81,36 +99,24 @@ export async function GET(request: NextRequest) {
       select: { name: true }
     });
 
-    // Filter and deduplicate DMs based on business rules
+    // Filter DMs based on workspace and user type
     const filteredDMs = dms.filter(dm => {
       const otherParticipants = dm.participants.filter(p => p.userId !== userId);
       
-      // Include self-DMs (no other participants) in current workspace
-      if (otherParticipants.length === 0 && dm.workspaceId === workspaceId) {
+      // Include self-DMs (no other participants)
+      if (otherParticipants.length === 0) {
+        // For Ross, include self-DMs from any workspace
+        // For others, only include self-DMs from current workspace
+        return isRoss || dm.workspaceId === workspaceId;
+      }
+      
+      // For Ross, include all DMs with other participants
+      if (isRoss) {
         return true;
       }
       
-      // If DM is in current workspace, always include it
-      if (dm.workspaceId === workspaceId) {
-        return true;
-      }
-      
-      // If DM is with Adrata users (Dan or Ross), include it
-      const hasAdrataUser = otherParticipants.some(p => 
-        p.user.email === 'dan@adrata.com' || p.user.email === 'ross@adrata.com'
-      );
-      
-      if (hasAdrataUser) {
-        return true;
-      }
-      
-      // If current user is in Notary Everyday workspace, include DMs with other NE users
-      if (workspaceId === 'cmezxb1ez0001pc94yry3ntjk') {
-        // Check if the DM is also in NE workspace
-        return dm.workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
-      }
-      
-      return false;
+      // For others, only include DMs from current workspace
+      return dm.workspaceId === workspaceId;
     });
 
     // Deduplicate DMs by participant combination
@@ -130,6 +136,14 @@ export async function GET(request: NextRequest) {
       const otherParticipants = dm.participants.filter(p => p.userId !== userId);
       const lastMessage = dm.messages[0];
       
+      // Fetch the actual workspace name for this DM's workspace
+      const dmWorkspace = dm.workspaceId !== workspaceId 
+        ? await prisma.workspaces.findUnique({
+            where: { id: dm.workspaceId },
+            select: { name: true }
+          })
+        : workspace;
+      
       // Calculate unread count for this DM
       // For now, we'll count all messages from other users as "unread"
       // TODO: Implement proper read receipt tracking in the future
@@ -142,6 +156,7 @@ export async function GET(request: NextRequest) {
       
       return {
         id: dm.id,
+        workspaceId: dm.workspaceId, // Include workspaceId for message fetching
         participants: otherParticipants.map(p => ({
           id: p.user.id,
           name: p.user.name || p.user.username || p.user.email?.split('@')[0] || '',
@@ -156,8 +171,8 @@ export async function GET(request: NextRequest) {
             if (dm.workspaceId === workspaceId) {
               return workspace?.name || 'Unknown Workspace';
             }
-            // For other cross-workspace DMs, show "External"
-            return 'External';
+            // For cross-workspace DMs, show the actual workspace name
+            return dmWorkspace?.name || 'Unknown Workspace';
           })()
         })),
         lastMessage: lastMessage ? {
@@ -175,9 +190,31 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ dms: dmsWithStats });
 
   } catch (error) {
+    // Get request context for better error logging
+    const url = new URL(request.url);
+    const workspaceId = url.searchParams.get('workspaceId');
+
     console.error('❌ [OASIS DMS] GET error:', error);
+    console.error('❌ [OASIS DMS] Request context:', {
+      workspaceId,
+      userId: authUser?.id,
+      userEmail: authUser?.email
+    });
+
+    // Log full error details for debugging
+    if (error instanceof Error) {
+      console.error('❌ [OASIS DMS] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
+
     return NextResponse.json(
-      { error: 'Failed to fetch DMs' },
+      { 
+        error: 'Failed to fetch DMs',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

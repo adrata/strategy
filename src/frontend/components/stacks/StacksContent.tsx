@@ -32,7 +32,7 @@ export function StacksContent({ section }: StacksContentProps) {
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   
   // State management
-  const [activeSubSection, setActiveSubSection] = useState<string>('workstream');
+  const [activeSubSection, setActiveSubSection] = useState<string>('vision');
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -51,14 +51,16 @@ export function StacksContent({ section }: StacksContentProps) {
 
   // Determine active subsection from pathname
   useEffect(() => {
-    if (pathname.includes('/chronicle')) {
-      setActiveSubSection('chronicle');
-    } else if (pathname.includes('/workstream')) {
+    if (pathname.includes('/stacks/vision')) {
+      setActiveSubSection('vision');
+    } else if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
       setActiveSubSection('workstream');
-    } else if (pathname.includes('/metrics')) {
+    } else if (pathname.includes('/stacks/metrics') || pathname.includes('/metrics')) {
       setActiveSubSection('metrics');
-    } else if (pathname.includes('/backlog')) {
+    } else if (pathname.includes('/stacks/backlog') || pathname.includes('/backlog')) {
       setActiveSubSection('backlog');
+    } else if (pathname.includes('/chronicle')) {
+      setActiveSubSection('chronicle');
     } else if (pathname.includes('/epics')) {
       setActiveSubSection('epics');
     } else if (pathname.includes('/stories')) {
@@ -69,23 +71,45 @@ export function StacksContent({ section }: StacksContentProps) {
       setActiveSubSection('futures');
     } else if (pathname.includes('/sell/pipeline') || pathname.includes('/pipeline/sell')) {
       setActiveSubSection('workstream');
-    } else if (pathname.includes('/metrics')) {
-      setActiveSubSection('metrics');
-    } else {
-      setActiveSubSection('workstream');
+    } else if (pathname.includes('/stacks')) {
+      // Default to vision if we're in stacks but no specific section
+      // Check if we're on /stacks without a specific section (e.g., /workspace/stacks)
+      const pathParts = pathname.split('/').filter(Boolean);
+      const isJustStacks = pathParts.length >= 2 && 
+                          pathParts[pathParts.length - 1] === 'stacks' &&
+                          !pathname.includes('/stacks/vision') &&
+                          !pathname.includes('/stacks/workstream') &&
+                          !pathname.includes('/stacks/metrics') &&
+                          !pathname.includes('/stacks/backlog');
+      
+      if (isJustStacks) {
+        // Navigate to vision section
+        const workspaceSlug = pathParts[0] || 'workspace';
+        router.push(`/${workspaceSlug}/stacks/vision`);
+      } else {
+        setActiveSubSection('vision');
+      }
     }
-  }, [pathname]);
+  }, [pathname, router]);
 
   // Navigation handlers
   const handleSubSectionChange = (newSubSection: string) => {
-    setActiveSubSection(newSubSection);
-    const basePath = pathname.split('/').slice(0, -1).join('/');
+    console.log('🔄 [StacksContent] handleSubSectionChange called:', { newSubSection, currentPathname: pathname });
     
-    if (newSubSection === 'stacks') {
-      router.push(basePath);
-    } else {
-      router.push(`${basePath}/${newSubSection}`);
-    }
+    // Update state immediately for responsive UI
+    setActiveSubSection(newSubSection);
+    
+    // Get workspace slug from pathname
+    const pathParts = pathname.split('/').filter(Boolean);
+    const workspaceSlug = pathParts[0] || 'workspace';
+    
+    // Build the correct path - /workspace/stacks/section
+    const newPath = newSubSection === 'stacks' 
+      ? `/${workspaceSlug}/stacks`
+      : `/${workspaceSlug}/stacks/${newSubSection}`;
+    
+    console.log('🔄 [StacksContent] Navigating to:', newPath);
+    router.push(newPath);
   };
 
   const handleItemClick = (item: any) => {

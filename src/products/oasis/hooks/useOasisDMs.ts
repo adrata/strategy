@@ -9,6 +9,7 @@ import { usePusherRealTime } from '@/platform/services/pusher-real-time-service'
 
 export interface OasisDM {
   id: string;
+  workspaceId?: string; // Workspace ID for the DM (needed for cross-workspace message fetching)
   participants: OasisDMParticipant[];
   lastMessage: OasisDMLastMessage | null;
   unreadCount: number;

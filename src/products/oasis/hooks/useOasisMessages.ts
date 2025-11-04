@@ -129,6 +129,14 @@ export function useOasisMessages(
       if (channelId) params.append('channelId', channelId);
       if (dmId) params.append('dmId', dmId);
 
+      console.log('📡 [OASIS MESSAGES] Fetching messages:', {
+        workspaceId,
+        channelId,
+        dmId,
+        offset: currentOffset,
+        reset
+      });
+
       const response = await fetch(`/api/v1/oasis/oasis/messages?${params}`, {
         credentials: 'include'
       });
@@ -156,6 +164,14 @@ export function useOasisMessages(
       }
 
       const data = await response.json();
+      
+      console.log('✅ [OASIS MESSAGES] Received response:', {
+        messageCount: data.messages?.length || 0,
+        hasMore: data.hasMore,
+        workspaceId,
+        channelId,
+        dmId
+      });
       
       // Validate response structure
       if (!data || !Array.isArray(data.messages)) {
@@ -419,6 +435,10 @@ export function useOasisMessages(
 
   // Mark messages as read
   const markAsRead = async (messageIds: string[]) => {
+    if (!messageIds || messageIds.length === 0) {
+      return; // No messages to mark as read
+    }
+
     try {
       const response = await fetch('/api/v1/oasis/oasis/read-receipt', {
         method: 'POST',
@@ -435,9 +455,22 @@ export function useOasisMessages(
       });
 
       if (!response.ok) {
-        throw new Error('Failed to mark messages as read');
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+        console.error('❌ [OASIS MESSAGES] Mark as read failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
+        throw new Error(`Failed to mark messages as read: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
+      // Don't throw - just log the error so it doesn't break the UI
       console.error('❌ [OASIS MESSAGES] Mark as read error:', error);
     }
   };
@@ -451,15 +484,23 @@ export function useOasisMessages(
     }
   }, [messages, workspaceId, markAsRead]);
 
-  // Initial fetch
+  // Initial fetch - clear cache when workspaceId changes (important for cross-workspace DMs)
   useEffect(() => {
     if (workspaceId && (channelId || dmId)) {
+      const conversationId = channelId || dmId;
+      const cacheKey = `oasis-messages-${conversationId}`;
+      
+      // Clear cache when switching workspaces (for cross-workspace DMs like Ryan's)
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem(cacheKey);
+      }
+      
       setMessages([]);
       setOffset(0);
       setHasMore(true);
       fetchMessages(true);
     }
-  }, [workspaceId, channelId, dmId]);
+  }, [workspaceId, channelId, dmId, fetchMessages]);
 
   // Listen for real-time updates
   useEffect(() => {

@@ -13,9 +13,9 @@ import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/
 import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { useUnifiedAuth } from "@/platform/auth";
 import { getWorkspaceSlugInfo } from "@/platform/auth/workspace-slugs";
-import { WorkshopLeftPanel } from "./components/WorkshopLeftPanel";
-import { WorkshopDocument } from "./types/document";
-import { WorkshopFolder } from "./types/folder";
+import { WorkbenchLeftPanel } from "./components/WorkbenchLeftPanel";
+import { WorkbenchDocument } from "./types/document";
+import { WorkbenchFolder } from "./types/folder";
 
 const queryClient = new QueryClient();
 
@@ -28,16 +28,16 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
   }) as T;
 }
 
-interface WorkshopContextType {
+interface WorkbenchContextType {
   // Selected items
-  selectedDocument: WorkshopDocument | null;
-  setSelectedDocument: (document: WorkshopDocument | null) => void;
-  selectedFolder: WorkshopFolder | null;
-  setSelectedFolder: (folder: WorkshopFolder | null) => void;
+  selectedDocument: WorkbenchDocument | null;
+  setSelectedDocument: (document: WorkbenchDocument | null) => void;
+  selectedFolder: WorkbenchFolder | null;
+  setSelectedFolder: (folder: WorkbenchFolder | null) => void;
   
   // Document viewing in middle panel
-  viewingDocument: WorkshopDocument | null;
-  setViewingDocument: (document: WorkshopDocument | null) => void;
+  viewingDocument: WorkbenchDocument | null;
+  setViewingDocument: (document: WorkbenchDocument | null) => void;
   isEditMode: boolean;
   setIsEditMode: (editMode: boolean) => void;
   
@@ -75,24 +75,24 @@ interface WorkshopContextType {
   } | null;
 }
 
-const WorkshopContext = createContext<WorkshopContextType | undefined>(undefined);
+const WorkbenchContext = createContext<WorkbenchContextType | undefined>(undefined);
 
-export const useWorkshop = () => {
-  const context = useContext(WorkshopContext);
+export const useWorkbench = () => {
+  const context = useContext(WorkbenchContext);
   if (!context) {
-    throw new Error('useWorkshop must be used within WorkshopProvider');
+    throw new Error('useWorkbench must be used within WorkbenchProvider');
   }
   return context;
 };
 
-interface WorkshopLayoutProps {
+interface WorkbenchLayoutProps {
   children: React.ReactNode;
 }
 
-export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
-  const [selectedDocument, setSelectedDocument] = useState<WorkshopDocument | null>(null);
-  const [selectedFolder, setSelectedFolder] = useState<WorkshopFolder | null>(null);
-  const [viewingDocument, setViewingDocument] = useState<WorkshopDocument | null>(null);
+export default function WorkbenchLayout({ children }: WorkbenchLayoutProps) {
+  const [selectedDocument, setSelectedDocument] = useState<WorkbenchDocument | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<WorkbenchFolder | null>(null);
+  const [viewingDocument, setViewingDocument] = useState<WorkbenchDocument | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [activeTab, setActiveTab] = useState<'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash' | 'stats' | 'folders'>('my-documents');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -122,7 +122,7 @@ export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WorkshopContext.Provider value={{ 
+      <WorkbenchContext.Provider value={{ 
         selectedDocument, 
         setSelectedDocument,
         selectedFolder,
@@ -154,26 +154,26 @@ export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
             <ProfilePopupProvider>
               <SettingsPopupProvider>
                 <ProfilePanelProvider>
-                  <WorkshopLayoutContent>
+                  <WorkbenchLayoutContent>
                     {children}
-                  </WorkshopLayoutContent>
+                  </WorkbenchLayoutContent>
                 </ProfilePanelProvider>
               </SettingsPopupProvider>
             </ProfilePopupProvider>
           </ZoomProvider>
         </RevenueOSProvider>
-      </WorkshopContext.Provider>
+      </WorkbenchContext.Provider>
     </QueryClientProvider>
   );
 }
 
-// Custom Right Panel for Workshop
-function WorkshopRightPanel() {
+// Custom Right Panel for Workbench
+function WorkbenchRightPanel() {
   return <RightPanel />;
 }
 
 // Layout content component that can use context hooks
-function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
+function WorkbenchLayoutContent({ children }: { children: React.ReactNode }) {
   const { ui } = useRevenueOS();
   const { user: authUser } = useUnifiedAuth();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
@@ -196,9 +196,9 @@ function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <PanelLayout
       thinLeftPanel={null}
-      leftPanel={<WorkshopLeftPanel />}
+      leftPanel={<WorkbenchLeftPanel />}
       middlePanel={children}
-      rightPanel={<WorkshopRightPanel />}
+      rightPanel={<WorkbenchRightPanel />}
       profilePanel={
         <ProfilePanel
           user={profileUser}

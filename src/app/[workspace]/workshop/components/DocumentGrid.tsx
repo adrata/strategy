@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useWorkshop } from "../layout";
-import { WorkshopDocument } from "../types/document";
+import { useWorkbench } from "../layout";
+import { WorkbenchDocument } from "../types/document";
 import { generateSlug } from "@/platform/utils/url-utils";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
@@ -28,11 +28,11 @@ export function DocumentGrid() {
     selectedDocumentType,
     currentFolderId,
     workspace,
-  } = useWorkshop();
+  } = useWorkbench();
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
 
-  const [documents, setDocuments] = useState<WorkshopDocument[]>([]);
+  const [documents, setDocuments] = useState<WorkbenchDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,7 +89,7 @@ export function DocumentGrid() {
       }
 
       const data = await apiFetch<{
-        documents: WorkshopDocument[];
+        documents: WorkbenchDocument[];
         pagination?: { total: number };
       }>(
         `/api/v1/documents/documents?${params.toString()}`,

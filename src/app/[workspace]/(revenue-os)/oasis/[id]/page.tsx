@@ -2,15 +2,15 @@ import { OasisPageContent } from "@/products/oasis/components/OasisPageContent";
 import { Metadata } from 'next';
 
 interface OasisPageProps {
-  params: {
+  params: Promise<{
     workspace: string;
     id: string; // e.g., "general-abc123" or "dan-mirolli-xyz789"
-  };
+  }>;
 }
 
 // Generate metadata for browser tab title
 export async function generateMetadata({ params }: OasisPageProps): Promise<Metadata> {
-  const { id } = params;
+  const { id } = await params;
   
   // Parse the ID to extract the human-readable name
   // Format: "general-abc123" -> "General"
@@ -35,8 +35,8 @@ export async function generateMetadata({ params }: OasisPageProps): Promise<Meta
   };
 }
 
-export default function WorkspaceOasisPage({ params }: OasisPageProps) {
-  const { id } = params;
+export default async function WorkspaceOasisPage({ params }: OasisPageProps) {
+  const { id } = await params;
   
   // Parse the ID to extract conversation type and ID
   let conversationType: string | null = null;

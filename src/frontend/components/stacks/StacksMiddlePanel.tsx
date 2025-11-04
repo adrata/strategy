@@ -24,6 +24,7 @@ import { StacksFilters } from './StacksFilters';
 import { ShipButton } from './ShipButton';
 import { AddStacksModal } from './AddStacksModal';
 import { StoryDetailView } from './StoryDetailView';
+import { VisionList } from './VisionList';
 import { ErrorBoundary } from '@/frontend/components/ErrorBoundary';
 
 interface StacksMiddlePanelProps {
@@ -288,7 +289,29 @@ export function StacksMiddlePanel({
     setVisibleColumns(columns);
   };
 
+  // Show loading state if isLoading is true
+  if (isLoading) {
+    return (
+      <div className="h-full flex flex-col bg-background">
+        <div className="flex items-center justify-center h-full">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--primary)]"></div>
+            <p className="text-muted text-sm">Loading Stacks...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Handle special sections that don't use the item list interface
+  if (activeSubSection === 'vision') {
+    return (
+      <div className="h-full flex flex-col bg-background">
+        <VisionList />
+      </div>
+    );
+  }
+
   if (activeSubSection === 'chronicle') {
     return (
       <div className="h-full flex flex-col bg-background">

@@ -648,9 +648,54 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             </div>
           </div>
 
-          {/* Story-specific fields - Epoch Selector at top */}
+          {/* Story-specific fields - View Type at top */}
           {activeWorkType === 'story' && (
             <>
+              {/* View Type Selector with Icons - At Top */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  View Type
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'detail' }))}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                      formData.viewType === 'detail'
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border bg-background text-foreground hover:bg-hover'
+                    }`}
+                    title="Detail"
+                  >
+                    <RectangleStackIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'list' }))}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                      formData.viewType === 'list'
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border bg-background text-foreground hover:bg-hover'
+                    }`}
+                    title="List"
+                  >
+                    <ListBulletIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'grid' }))}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                      formData.viewType === 'grid'
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border bg-background text-foreground hover:bg-hover'
+                    }`}
+                    title="Grid"
+                  >
+                    <TableCellsIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+
               {/* Epoch Selector */}
               <div className="relative epic-search-container">
                 <label className="block text-sm font-medium text-foreground mb-2">
@@ -864,56 +909,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-primary outline-none resize-none"
             />
           </div>
-
-          {/* Story-specific fields */}
-          {activeWorkType === 'story' && (
-            <>
-              {/* View Type Selector with Icons */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  View Type
-                </label>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'detail' }))}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                      formData.viewType === 'detail'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border bg-background text-foreground hover:bg-hover'
-                    }`}
-                    title="Detail"
-                  >
-                    <RectangleStackIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'list' }))}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                      formData.viewType === 'list'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border bg-background text-foreground hover:bg-hover'
-                    }`}
-                    title="List"
-                  >
-                    <ListBulletIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'grid' }))}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                      formData.viewType === 'grid'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border bg-background text-foreground hover:bg-hover'
-                    }`}
-                    title="Grid"
-                  >
-                    <TableCellsIcon className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
 
           {/* Epic-specific fields */}
           {activeWorkType === 'epic' && (

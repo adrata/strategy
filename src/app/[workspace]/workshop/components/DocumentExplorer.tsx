@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useWorkshop } from "../layout";
-import { WorkshopFolder } from "../types/folder";
-import { WorkshopDocument } from "../types/document";
+import { useWorkbench } from "../layout";
+import { WorkbenchFolder } from "../types/folder";
+import { WorkbenchDocument } from "../types/document";
 import { generateSlug } from "@/platform/utils/url-utils";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
@@ -23,8 +23,8 @@ interface ExplorerNode {
   id: string;
   name: string;
   type: 'folder' | 'document';
-  folder?: WorkshopFolder;
-  document?: WorkshopDocument;
+  folder?: WorkbenchFolder;
+  document?: WorkbenchDocument;
   children: ExplorerNode[];
   level: number;
 }
@@ -35,13 +35,13 @@ export function DocumentExplorer() {
     workspace,
     currentFolderId,
     setCurrentFolderId,
-  } = useWorkshop();
+  } = useWorkbench();
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
   
   const workspaceId = ui.activeWorkspace?.id || authUser?.activeWorkspaceId;
-  const [folders, setFolders] = useState<WorkshopFolder[]>([]);
-  const [documents, setDocuments] = useState<WorkshopDocument[]>([]);
+  const [folders, setFolders] = useState<WorkbenchFolder[]>([]);
+  const [documents, setDocuments] = useState<WorkbenchDocument[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,7 +55,7 @@ export function DocumentExplorer() {
     }
   }, [workspaceId]);
 
-  const ensureStandardFolders = async (existingFolders: WorkshopFolder[]) => {
+  const ensureStandardFolders = async (existingFolders: WorkbenchFolder[]) => {
     // If folders already exist, no need to create defaults
     if (existingFolders.length > 0) {
       return existingFolders;
@@ -75,7 +75,7 @@ export function DocumentExplorer() {
     
     try {
       // Create the workspace folder (top-level container)
-      const workspaceFolder = await apiPost<WorkshopFolder>(
+      const workspaceFolder = await apiPost<WorkbenchFolder>(
         '/api/v1/documents/folders',
         {
           name: workspaceName,
@@ -104,12 +104,12 @@ export function DocumentExplorer() {
         { name: 'Archive', description: 'Archived documents' },
       ];
 
-      const createdFolders: WorkshopFolder[] = [workspaceFolder];
+      const createdFolders: WorkbenchFolder[] = [workspaceFolder];
 
       // Create subfolders under the workspace folder
       for (const folder of standardFolders) {
         try {
-          const subfolder = await apiPost<WorkshopFolder>(
+          const subfolder = await apiPost<WorkbenchFolder>(
             '/api/v1/documents/folders',
             {
               name: folder.name,
@@ -140,7 +140,7 @@ export function DocumentExplorer() {
       setIsLoading(true);
       
       // Load all folders
-      let foldersData = await apiFetch<WorkshopFolder[]>(
+      let foldersData = await apiFetch<WorkbenchFolder[]>(
         `/api/v1/documents/folders?workspaceId=${workspaceId}`,
         {},
         []
@@ -154,7 +154,7 @@ export function DocumentExplorer() {
         // If we created new folders, reload to get the complete hierarchy from server
         if (foldersWithDefaults && foldersWithDefaults.length > foldersData.length) {
           // Reload all folders from server to get complete hierarchy
-          const reloadedFolders = await apiFetch<WorkshopFolder[]>(
+          const reloadedFolders = await apiFetch<WorkbenchFolder[]>(
             `/api/v1/documents/folders?workspaceId=${workspaceId}`,
             {},
             []
@@ -169,7 +169,7 @@ export function DocumentExplorer() {
 
       // Load all documents (root level only, documents in folders will be shown via folder structure)
       const docsData = await apiFetch<{
-        documents: WorkshopDocument[];
+        documents: WorkbenchDocument[];
       }>(
         `/api/v1/documents/documents?workspaceId=${workspaceId}&limit=1000&status=active`,
         {},

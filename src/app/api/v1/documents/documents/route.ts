@@ -184,6 +184,7 @@ export async function POST(request: NextRequest) {
         workspaceId,
         companyId,
         ownerId: session.user.id,
+        createdById: session.user.id,
         tags,
         isTemplate,
         content,

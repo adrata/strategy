@@ -312,14 +312,16 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
-    if (pathname.includes('/oasis')) return 'oasis';
-    if (pathname.includes('/workshop')) return 'workshop';
-    if (pathname.includes('/adrata')) return 'adrata';
+    // Check for speedrun/pipeline first (before adrata) since /adrata/speedrun should be revenueos
+    if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
+    // Check for stacks before adrata since /adrata/stacks should be stacks
     if (pathname.includes('/stacks')) return 'stacks';
+    if (pathname.includes('/oasis')) return 'oasis';
+    if (pathname.includes('/workshop') || pathname.includes('/workbench')) return 'workshop';
+    if (pathname.includes('/adrata')) return 'adrata';
     if (pathname.includes('/olympus')) return 'olympus';
     if (pathname.includes('/api')) return 'api-keys';
     if (pathname.includes('/grand-central')) return 'grand-central';
-    if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
     return propCurrentApp; // Fallback to prop or default
   };
 
@@ -385,11 +387,16 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     const fullPath = `/${workspaceSlug}${path}`;
     console.log(`🧭 ProfilePanel: Full navigation path: ${fullPath}`);
     
-    // Close panel for Stacks, keep open for Workshop and others
-    if (path === '/stacks') {
-      onClose();
+    // Store profile panel state in sessionStorage to preserve across navigation
+    // This ensures the panel stays open when navigating between apps
+    // Unified behavior: keep panel open for all apps when navigating
+    if (isOpen) {
+      sessionStorage.setItem('profilePanelShouldStayOpen', 'true');
     }
-    // For Workshop and other apps, keep panel open
+    
+    // Don't close the panel for any navigation - keep it open for all apps
+    // This provides a unified experience where the profile panel stays visible
+    // when navigating between RevenueOS, Oasis, Workbench, Stacks, etc.
     
     router.push(fullPath);
   };
@@ -819,7 +826,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   ? 'bg-slate-100 text-slate-700' 
                   : 'text-foreground hover:bg-hover'
               }`}
-              onClick={() => handleNavigation("/workshop")}
+              onClick={() => handleNavigation("/workbench")}
             >
               <DocumentTextIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Workbench</span>

@@ -12,7 +12,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import {
   QueueListIcon,
   ClipboardDocumentListIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
@@ -32,6 +33,13 @@ interface NavigationItem {
 }
 
 const navigationItems: NavigationItem[] = [
+  {
+    id: 'vision',
+    label: 'Vision',
+    icon: EyeIcon,
+    description: 'Papers and pitches',
+    getCount: () => null // Vision doesn't show count
+  },
   {
     id: 'workstream',
     label: 'Workstream',
@@ -142,17 +150,40 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         let tasks: any[] = [];
 
         if (storiesResponse.ok) {
-          const storiesData = await storiesResponse.json();
-          stories = storiesData.stories || [];
+          try {
+            const storiesData = await storiesResponse.json();
+            stories = storiesData.stories || [];
+          } catch (e) {
+            console.warn('⚠️ [StacksLeftPanel] Failed to parse stories response:', e);
+          }
         } else {
-          console.warn('⚠️ [StacksLeftPanel] Stories API returned:', storiesResponse.status);
+          console.warn('⚠️ [StacksLeftPanel] Stories API returned:', storiesResponse.status, storiesResponse.statusText);
         }
 
         if (tasksResponse.ok) {
-          const tasksData = await tasksResponse.json();
-          tasks = tasksData.tasks || [];
+          try {
+            const tasksData = await tasksResponse.json();
+            tasks = tasksData.tasks || [];
+          } catch (e) {
+            console.warn('⚠️ [StacksLeftPanel] Failed to parse tasks response:', e);
+          }
         } else {
-          console.warn('⚠️ [StacksLeftPanel] Tasks API returned:', tasksResponse.status);
+          console.warn('⚠️ [StacksLeftPanel] Tasks API returned:', tasksResponse.status, tasksResponse.statusText);
+          // Try to get error message from response (only if not already consumed)
+          try {
+            const errorText = await tasksResponse.text();
+            if (errorText) {
+              try {
+                const errorData = JSON.parse(errorText);
+                console.warn('⚠️ [StacksLeftPanel] Tasks API error:', errorData.error || errorData.message);
+              } catch (parseError) {
+                console.warn('⚠️ [StacksLeftPanel] Tasks API error (non-JSON):', errorText);
+              }
+            }
+          } catch (e) {
+            // Response body already consumed or not available
+            console.warn('⚠️ [StacksLeftPanel] Could not read tasks error response');
+          }
         }
 
         // Combine stories and tasks for totals
@@ -195,6 +226,14 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount });
       } catch (error) {
         console.error('Failed to fetch story/task counts:', error);
+        // Log error details for debugging
+        if (error instanceof Error) {
+          console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+          });
+        }
         // Reset stats to 0 on error to show that data is unavailable
         setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0 });
       } finally {
@@ -223,40 +262,51 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
                           authUser?.activeWorkspaceId === 'cmezxb1ez0001pc94yry3ntjk';
 
   const handleNavigation = (section: string) => {
-    onSubSectionChange(section);
+    console.log('🔄 [StacksLeftPanel] handleNavigation called:', { 
+      section, 
+      currentActiveSubSection: activeSubSection, 
+      pathname,
+      willCallOnSubSectionChange: section !== activeSubSection
+    });
     
-    // Map section to URL path
-    let urlPath = section;
-    if (section === 'workstream') {
-      urlPath = 'workstream';
-    } else if (section === 'backlog') {
-      urlPath = 'backlog';
-    } else if (section === 'metrics') {
-      urlPath = 'metrics';
+    // Only call onSubSectionChange if we're actually changing sections
+    // This prevents unnecessary navigation calls
+    if (section !== activeSubSection) {
+      onSubSectionChange(section);
+    } else {
+      console.log('⚠️ [StacksLeftPanel] Section already active, skipping navigation');
     }
-    
-    router.push(`/${workspaceSlug}/stacks/${urlPath}`);
   };
 
-  // Update activeSubSection based on pathname (for workstream URL)
+  // Update activeSubSection based on pathname (for URL-based navigation)
+  // This syncs the UI state with the URL when navigating directly or via browser back/forward
   useEffect(() => {
-    // Only update if pathname explicitly includes these paths
-    if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
-      if (activeSubSection !== 'workstream') {
-        onSubSectionChange('workstream');
-      }
+    // Extract section from pathname
+    let detectedSection: string | null = null;
+    
+    if (pathname.includes('/stacks/vision')) {
+      detectedSection = 'vision';
+    } else if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
+      detectedSection = 'workstream';
     } else if (pathname.includes('/sell/pipeline') || pathname.includes('/pipeline/sell')) {
-      if (activeSubSection !== 'workstream') {
-        onSubSectionChange('workstream');
-      }
+      detectedSection = 'workstream';
     } else if (pathname.includes('/stacks/backlog') || pathname.includes('/backlog')) {
-      if (activeSubSection !== 'backlog') {
-        onSubSectionChange('backlog');
-      }
+      detectedSection = 'backlog';
     } else if (pathname.includes('/stacks/metrics') || pathname.includes('/metrics')) {
-      if (activeSubSection !== 'metrics') {
-        onSubSectionChange('metrics');
-      }
+      detectedSection = 'metrics';
+    } else if (pathname.includes('/stacks')) {
+      // If we're on /stacks but no specific section, default to vision
+      detectedSection = 'vision';
+    }
+    
+    // Only update if we detected a different section and it doesn't match current state
+    if (detectedSection && detectedSection !== activeSubSection) {
+      console.log('🔄 [StacksLeftPanel] Pathname changed, updating section:', { 
+        detectedSection, 
+        currentActiveSubSection: activeSubSection,
+        pathname 
+      });
+      onSubSectionChange(detectedSection);
     }
   }, [pathname, onSubSectionChange, activeSubSection]);
 
@@ -321,7 +371,13 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
             return (
               <button
                 key={item.id}
-                onClick={() => handleNavigation(item.id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('🖱️ [StacksLeftPanel] Button clicked:', item.id);
+                  handleNavigation(item.id);
+                }}
+                type="button"
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                   isActive
                     ? 'bg-hover text-foreground'

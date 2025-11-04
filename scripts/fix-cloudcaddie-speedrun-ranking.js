@@ -434,6 +434,11 @@ async function fixCloudCaddieSpeedrunRanking() {
     
     if (after.totalRanked >= 50) {
       console.log('\n✅ SUCCESS: Speedrun now has 50 ranked records!');
+      console.log('\n📝 NOTE: The UI may still show cached results (43 records).');
+      console.log('   To see the updated 50 records, please:');
+      console.log('   1. Hard refresh the browser (Ctrl+Shift+R or Cmd+Shift+R)');
+      console.log('   2. Or wait 5 minutes for the cache to expire');
+      console.log('   3. Or add ?refresh=true to the URL to bypass cache');
     } else if (after.totalRanked > before.totalRanked) {
       console.log(`\n⚠️  PARTIAL SUCCESS: Only ${after.totalRanked} records ranked (expected 50)`);
       console.log(`   This may be because there are only ${after.totalPeople + after.totalCompanies} eligible records total.`);

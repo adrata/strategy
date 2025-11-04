@@ -948,6 +948,21 @@ export async function POST(request: NextRequest) {
     // Create full name
     const fullName = `${body.firstName} ${body.lastName}`;
 
+    // Validate status if provided
+    const validStatuses = ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CLIENT', 'PARTNER', 'SUPERFAN'];
+    if (body.status && !validStatuses.includes(body.status)) {
+      return createErrorResponse(
+        `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
+        'VALIDATION_ERROR',
+        400
+      );
+    }
+
+    // Normalize linkedin field - handle both 'linkedin' and 'linkedinUrl' for backwards compatibility
+    if (body.linkedin && !body.linkedinUrl) {
+      body.linkedinUrl = body.linkedin;
+    }
+
     // Handle company linking if company name is provided without companyId
     if (body.company && typeof body.company === 'string' && body.company.trim() && !body.companyId) {
       try {

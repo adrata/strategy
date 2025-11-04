@@ -18,6 +18,7 @@ import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
 import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
 import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
+import { WorkshopLeftPanel } from "@/app/[workspace]/workshop/components/WorkshopLeftPanel";
 import { useUnifiedAuth } from "@/platform/auth";
 import { SettingsPopup } from "@/frontend/components/pipeline/SettingsPopup";
 import { useSettingsPopup } from "@/platform/ui/components/SettingsPopupContext";
@@ -116,6 +117,17 @@ function PipelineLayoutInner({
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   const pathname = usePathname();
   
+  // Initialize profile panel state from sessionStorage on mount if needed
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const shouldStayOpen = sessionStorage.getItem('profilePanelShouldStayOpen') === 'true';
+      if (shouldStayOpen && !isProfilePanelVisible) {
+        setIsProfilePanelVisible(true);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
+  
   // Get Stacks context at the top level to avoid hooks order issues
   const stacksContext = useStacks();
 
@@ -128,7 +140,7 @@ function PipelineLayoutInner({
   // Determine current app based on pathname
   const getCurrentApp = () => {
     if (pathname.includes('/oasis')) return 'oasis';
-    if (pathname.includes('/workshop')) return 'workshop';
+    if (pathname.includes('/workshop') || pathname.includes('/workbench')) return 'workshop';
     if (pathname.includes('/adrata')) return 'adrata';
     if (pathname.includes('/stacks')) return 'stacks';
     return 'revenueos'; // Default to AcquisitionOS
@@ -151,16 +163,24 @@ function PipelineLayoutInner({
                             pathname.includes('/companies') ||
                             pathname.includes('/partners') ||
                             pathname.includes('/sellers') ||
-                            pathname.includes('/customers');
+                            pathname.includes('/customers') ||
+                            pathname.includes('/stacks') ||
+                            pathname.includes('/oasis') ||
+                            pathname.includes('/workshop') ||
+                            pathname.includes('/workbench');
     
-    // Only hide left panel for base /adrata chat route, not pipeline routes
-    if (pathname.includes('/adrata') && !isPipelineRoute) {
-      // Base Adrata chat route - minimal or null left panel since chat is in middle
-      return null;
-    } else if (pathname.includes('/oasis')) {
+    // Check for specific app routes FIRST (before generic /adrata check)
+    // This ensures /adrata/oasis, /adrata/stacks, and /adrata/workshop get their proper left panels
+    if (pathname.includes('/oasis')) {
       return <OasisLeftPanel key="oasis-left-panel" />;
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel activeSubSection={stacksContext?.activeSubSection || 'stacks'} onSubSectionChange={stacksContext?.onSubSectionChange || (() => {})} />;
+    } else if (pathname.includes('/workshop') || pathname.includes('/workbench')) {
+      return <WorkshopLeftPanel key="workshop-left-panel" />;
+    } else if (pathname.includes('/adrata') && !isPipelineRoute) {
+      // Only hide left panel for base /adrata chat route, not pipeline routes
+      // Base Adrata chat route - minimal or null left panel since chat is in middle
+      return null;
     } else if (pathname.includes('/speedrun/sprint')) {
       // Special left panel for sprint view - use SprintContext
       return <SprintLeftPanelWrapper />;
@@ -188,31 +208,41 @@ function PipelineLayoutInner({
     }
   };
 
+  // Check if this is a base /adrata route (not pipeline routes) - define early for use below
+  const isBaseAdrataRoute = pathname.includes('/adrata') && 
+                            !pathname.includes('/speedrun') && 
+                            !pathname.includes('/leads') && 
+                            !pathname.includes('/prospects') && 
+                            !pathname.includes('/opportunities') &&
+                            !pathname.includes('/people') &&
+                            !pathname.includes('/companies') &&
+                            !pathname.includes('/partners') &&
+                            !pathname.includes('/sellers') &&
+                            !pathname.includes('/customers') &&
+                            !pathname.includes('/stacks') &&
+                            !pathname.includes('/oasis') &&
+                            !pathname.includes('/workshop') &&
+                            !pathname.includes('/workbench');
+
   // Determine which right panel to show based on the current route
   const getRightPanel = () => {
-    if (pathname.includes('/pinpoint/adrata')) {
-      // Pinpoint adrata route - show conversation list grouped by date
+    // Only base Adrata app shows conversation list - all other apps (including /adrata/oasis, /adrata/stacks) show AI chat
+    if (pathname.includes('/pinpoint/adrata') || isBaseAdrataRoute) {
+      // Base Adrata routes - show conversation list (chat conversations)
       return <ConversationsListGrouped />;
-    } else if (pathname.includes('/adrata')) {
-      // Other adrata routes - show RightPanel alongside middle chat
-      return <RightPanel />;
-    } else if (pathname.includes('/oasis')) {
-      return <RightPanel />;
     } else if (pathname.includes('/stacks')) {
+      // Stacks - show detail panel if item selected, otherwise AI chat
       if (stacksContext?.selectedItem) {
         return <StacksDetailPanel item={stacksContext.selectedItem} />;
       } else {
-        return <RightPanel />;
+        return <RightPanel />; // AI chat for Stacks
       }
     } else {
+      // All other apps (RevenueOS, Oasis, Workbench, /adrata/oasis, /adrata/stacks, etc.) - show AI chat
       return <RightPanel />;
     }
   };
-
-  // Always show left panel for all sections (including Chronicle)
-  const shouldShowLeftPanel = true;
-  const isLeftPanelVisible = shouldShowLeftPanel && ui.isLeftPanelVisible;
-
+  
   // Determine right panel visibility based on route
   const isRightPanelVisible = pathname.includes('/pinpoint/adrata') 
     ? true 
@@ -220,14 +250,55 @@ function PipelineLayoutInner({
 
   // For /pinpoint/adrata route, always show profile panel and prevent closing
   const isPinpointAdrataRoute = pathname.includes('/pinpoint/adrata');
-  const forcedProfilePanelVisible = isPinpointAdrataRoute ? true : isProfilePanelVisible;
   
-  // Effect to ensure profile panel stays open for pinpoint/adrata route
+  // Get left panel visibility from UI context
+  const isLeftPanelVisible = ui.isLeftPanelVisible;
+  
+  // Hide left panel for base Adrata routes (since chat is in middle panel)
+  const shouldShowLeftPanel = !isBaseAdrataRoute && isLeftPanelVisible;
+  
+  // For base /adrata routes, automatically open profile panel
   useEffect(() => {
-    if (isPinpointAdrataRoute && !isProfilePanelVisible) {
+    if (isBaseAdrataRoute && !isProfilePanelVisible) {
       setIsProfilePanelVisible(true);
+      // Set sessionStorage flag to keep it open
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('profilePanelShouldStayOpen', 'true');
+      }
     }
-  }, [isPinpointAdrataRoute, isProfilePanelVisible, setIsProfilePanelVisible]);
+  }, [isBaseAdrataRoute, isProfilePanelVisible, setIsProfilePanelVisible]);
+  
+  // Keep profile panel open when navigating between RevenueOS, Oasis, Workbench, and other apps
+  // Check if we're on a route where profile panel should stay open
+  const shouldKeepProfilePanelOpen = pathname.includes('/speedrun') || 
+                                     pathname.includes('/oasis') || 
+                                     pathname.includes('/workshop') || 
+                                     pathname.includes('/workbench') || 
+                                     pathname.includes('/adrata') ||
+                                     pathname.includes('/stacks') ||
+                                     pathname.includes('/grand-central') ||
+                                     pathname.includes('/api');
+  
+  // Preserve profile panel state when navigating between these routes
+  // Check sessionStorage to see if profile panel should stay open after navigation
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const shouldStayOpen = sessionStorage.getItem('profilePanelShouldStayOpen') === 'true';
+      if (shouldStayOpen && shouldKeepProfilePanelOpen) {
+        // Restore profile panel visibility after navigation
+        if (!isProfilePanelVisible) {
+          setIsProfilePanelVisible(true);
+        }
+        // Clear the flag after restoring (with a small delay to ensure state is set)
+        setTimeout(() => {
+          sessionStorage.removeItem('profilePanelShouldStayOpen');
+        }, 100);
+      }
+    }
+  }, [pathname, shouldKeepProfilePanelOpen, isProfilePanelVisible, setIsProfilePanelVisible]);
+  
+  // Force profile panel visible for base Adrata routes and Pinpoint Adrata routes
+  const forcedProfilePanelVisible = (isBaseAdrataRoute || isPinpointAdrataRoute) ? true : isProfilePanelVisible;
 
   return (
     <>
@@ -242,18 +313,24 @@ function PipelineLayoutInner({
             company={company}
             workspace={workspace}
             isOpen={forcedProfilePanelVisible}
-            onClose={isPinpointAdrataRoute ? () => {} : () => setIsProfilePanelVisible(false)}
+            onClose={(isBaseAdrataRoute || isPinpointAdrataRoute) ? () => {} : () => {
+              // Clear sessionStorage flag when user manually closes the panel
+              if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('profilePanelShouldStayOpen');
+              }
+              setIsProfilePanelVisible(false);
+            }}
             username={username}
             currentApp={currentApp}
             userId={authUser?.id}
             userEmail={authUser?.email}
             onToggleLeftPanel={ui.toggleLeftPanel}
-            hideCloseButton={isPinpointAdrataRoute}
+            hideCloseButton={isBaseAdrataRoute || isPinpointAdrataRoute}
           />
         }
         isProfilePanelVisible={forcedProfilePanelVisible}
         zoom={100}
-        isLeftPanelVisible={isLeftPanelVisible}
+        isLeftPanelVisible={shouldShowLeftPanel}
         isRightPanelVisible={isRightPanelVisible}
         onToggleLeftPanel={ui.toggleLeftPanel}
         onToggleRightPanel={ui.toggleRightPanel}

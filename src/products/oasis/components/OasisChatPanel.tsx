@@ -52,8 +52,25 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   const { activeSection, selectedChannel, setIsVideoCallActive, setVideoCallRoom } = useOasisLayout();
   const { user: authUser } = useUnifiedAuth();
   
-  // Get workspace ID from auth user
-  const workspaceId = authUser?.activeWorkspaceId || '';
+  // Get workspace ID - use DM's workspaceId if available (for cross-workspace DMs), otherwise use auth user's workspace
+  // This is critical for Ross to see messages from DMs in other workspaces (like Ryan's DM from Notary Everyday)
+  const workspaceId = selectedChannel?.type === 'dm' && selectedChannel.workspaceId 
+    ? selectedChannel.workspaceId 
+    : authUser?.activeWorkspaceId || '';
+  
+  // Debug logging for message fetching
+  useEffect(() => {
+    if (selectedChannel?.type === 'dm') {
+      console.log('🔍 [OASIS CHAT PANEL] DM selected:', {
+        dmId: selectedChannel.id,
+        dmName: selectedChannel.name,
+        dmWorkspaceId: selectedChannel.workspaceId,
+        currentWorkspaceId: authUser?.activeWorkspaceId,
+        finalWorkspaceId: workspaceId,
+        isDifferentWorkspace: selectedChannel.workspaceId !== authUser?.activeWorkspaceId
+      });
+    }
+  }, [selectedChannel, workspaceId, authUser?.activeWorkspaceId]);
   
   // Real data hooks - only call when we have a selected channel
   const { 

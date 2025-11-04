@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 export default function WorkspaceStacksPage() {
-  // Redirect to workstream by default
-  redirect('./workstream');
+  // Redirect to vision by default
+  redirect('./vision');
 }
 
 

@@ -1,0 +1,177 @@
+#!/usr/bin/env node
+
+/**
+ * 📧 SEND JUSTIN WELCOME EMAIL (PRODUCTION - FIXED)
+ * 
+ * This script sends a welcome email to the correct Justin email
+ * in the CloudCaddie workspace using the existing invitation email system
+ */
+
+const { PrismaClient } = require('@prisma/client');
+const crypto = require('crypto');
+
+const prisma = new PrismaClient();
+
+async function sendJustinWelcomeEmail() {
+  console.log('📧 [SEND WELCOME EMAIL] Sending welcome email to Justin\n');
+
+  try {
+    await prisma.$connect();
+    
+    // First, invalidate the previous token that was sent to wrong email
+    console.log('🔒 Invalidating previous token...');
+    const previousToken = await prisma.reset_tokens.findFirst({
+      where: {
+        token: {
+          startsWith: '2fb02358'
+        },
+        used: false
+      }
+    });
+    
+    if (previousToken) {
+      await prisma.reset_tokens.update({
+        where: { id: previousToken.id },
+        data: { used: true }
+      });
+      console.log('✅ Previous token invalidated');
+    }
+    
+    // Get CloudCaddie workspace
+    const workspace = await prisma.workspaces.findFirst({
+      where: { 
+        isActive: true,
+        OR: [
+          { name: 'CloudCaddie' },
+          { slug: 'cloudcaddie' }
+        ]
+      },
+      select: { id: true, name: true, slug: true }
+    });
+
+    if (!workspace) {
+      console.log('❌ CloudCaddie workspace not found');
+      return;
+    }
+
+    console.log(`🎯 Using workspace: ${workspace.name} (${workspace.id})`);
+
+    // Get Justin user - try cloudcaddieconsulting.com first
+    let user = await prisma.users.findFirst({
+      where: { 
+        email: { contains: 'cloudcaddieconsulting.com', mode: 'insensitive' },
+        isActive: true 
+      },
+      select: { id: true, email: true, name: true, firstName: true, lastName: true }
+    });
+
+    // If not found, try justin.johnson@cloudcaddie.com
+    if (!user) {
+      user = await prisma.users.findFirst({
+        where: { 
+          email: 'justin.johnson@cloudcaddie.com',
+          isActive: true 
+        },
+        select: { id: true, email: true, name: true, firstName: true, lastName: true }
+      });
+    }
+
+    // If still not found, try searching by name
+    if (!user) {
+      user = await prisma.users.findFirst({
+        where: { 
+          name: { contains: 'Justin', mode: 'insensitive' },
+          isActive: true 
+        },
+        select: { id: true, email: true, name: true, firstName: true, lastName: true }
+      });
+    }
+
+    if (!user) {
+      console.log('❌ Justin user not found');
+      return;
+    }
+
+    console.log(`👤 Found user: ${user.name} (${user.email})`);
+
+    // Verify this is the correct user
+    if (!user.email.includes('cloudcaddieconsulting.com')) {
+      console.log(`⚠️  WARNING: User email is ${user.email}, not cloudcaddieconsulting.com`);
+      console.log('   Proceeding anyway, but please verify this is correct.');
+    }
+
+    // Generate new secure invitation token
+    const invitationToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
+
+    // Store invitation token - ensure it's user-specific
+    await prisma.reset_tokens.create({
+      data: {
+        token: invitationToken,
+        userId: user.id, // This ensures only this user can use the token
+        expiresAt: expiresAt,
+        used: false,
+        metadata: {
+          type: 'invitation',
+          workspaceId: workspace.id,
+          role: 'VIEWER',
+          invitedBy: user.id,
+          invitedAt: new Date().toISOString(),
+        }
+      }
+    });
+
+    console.log(`✅ Generated secure invitation token: ${invitationToken.substring(0, 8)}...`);
+    console.log(`   Token is user-specific (userId: ${user.id}) - only this user can use it`);
+
+    // Create production invitation link
+    const baseUrl = 'https://adrata.com';
+    const invitationLink = `${baseUrl}/setup-account?token=${invitationToken}`;
+
+    console.log(`🔗 Production Setup URL: ${invitationLink}`);
+
+    // Send email using Resend directly
+    console.log('\n📧 [EMAIL] Sending welcome email...');
+    
+    const emailData = {
+      inviterName: 'Adrata Client Team',
+      inviterEmail: 'noreply@adrata.com',
+      workspaceName: workspace.name,
+      invitationLink: invitationLink,
+      expiresAt: expiresAt,
+      userEmail: user.email,
+      userName: user.name
+    };
+
+    // Import the email service
+    const { sendInvitationEmail } = require('../src/platform/services/InvitationEmailService.ts');
+
+    const result = await sendInvitationEmail({
+      to: user.email,
+      inviterName: emailData.inviterName,
+      inviterEmail: emailData.inviterEmail,
+      workspaceName: emailData.workspaceName,
+      invitationLink: emailData.invitationLink,
+      expiresAt: emailData.expiresAt,
+      userEmail: emailData.userEmail,
+      userName: emailData.userName
+    });
+
+    if (result.success) {
+      console.log('✅ Welcome email sent successfully!');
+      console.log(`📧 Sent to: ${user.email}`);
+      console.log(`🔗 Setup link: ${invitationLink}`);
+      console.log(`\n🔒 Security: Token is user-specific and can only be used by ${user.email}`);
+    } else {
+      console.log('❌ Failed to send welcome email:', result.error);
+    }
+
+  } catch (error) {
+    console.error('❌ Error sending welcome email:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// Run the script
+sendJustinWelcomeEmail();
