@@ -231,17 +231,17 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
                     inputType="select"
                     options={[
                       { value: '', label: 'Unassigned' },
-                      ...workspaceUsers.map((user: any) => {
+                      ...(Array.isArray(workspaceUsers) ? workspaceUsers.filter((user: any) => user && user.id).map((user: any) => {
                         // Format name properly: firstName + lastName, fallback to name, then email
                         const displayName = 
-                          (user.firstName && user.lastName 
+                          (user?.firstName && user?.lastName 
                             ? `${user.firstName} ${user.lastName}`.trim()
-                            : user.firstName || user.lastName || user.name || user.email || 'Unknown User');
+                            : user?.firstName || user?.lastName || user?.name || user?.email || 'Unknown User');
                         return {
                           value: user.id,
                           label: displayName
                         };
-                      })
+                      }) : [])
                     ]}
                     onSave={handleSave}
                     className="text-sm font-medium"
