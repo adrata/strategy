@@ -49,6 +49,12 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [workspaceUsers, setWorkspaceUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
 
+  // Image upload state
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Fetch available epics for selection
   const [availableEpics, setAvailableEpics] = useState<any[]>([]);
   
@@ -159,6 +165,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
       assigneeId: '',
       epochId: ''
     });
+    setUploadedImages([]);
+    setIsDragging(false);
     setEpicSearchQuery('');
     setSelectedEpic(null);
     setEpicSearchResults([]);
@@ -297,6 +305,112 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     }
   };
 
+  // Image upload handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (activeWorkType === 'bug') {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (activeWorkType !== 'bug') return;
+
+    const files = Array.from(e.dataTransfer.files);
+    handleImageFiles(files);
+  };
+
+  const handleImageFiles = (files: File[]) => {
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length === 0) {
+      alert('Please drop image files only (PNG, JPG, GIF, WebP)');
+      return;
+    }
+
+    // Validate file sizes (max 10MB each)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const validFiles = imageFiles.filter(file => {
+      if (file.size > maxSize) {
+        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    // Limit to 10 images total
+    const remainingSlots = 10 - uploadedImages.length;
+    if (validFiles.length > remainingSlots) {
+      alert(`Maximum 10 images allowed. You can add ${remainingSlots} more.`);
+      return;
+    }
+
+    const filesToAdd = validFiles.slice(0, remainingSlots);
+    setUploadedImages(prev => [...prev, ...filesToAdd]);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      handleImageFiles(files);
+    }
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Upload images to task after creation
+  const uploadImagesToTask = async (taskId: string, workspaceId: string) => {
+    if (uploadedImages.length === 0) return [];
+
+    setUploadingImages(true);
+    const uploadedAttachments: any[] = [];
+
+    try {
+      for (const imageFile of uploadedImages) {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+
+        const response = await fetch(`/api/stacks/tasks/${taskId}/upload`, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.attachment) {
+            uploadedAttachments.push(data.attachment);
+          }
+        } else {
+          console.error('Failed to upload image:', imageFile.name);
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+    } finally {
+      setUploadingImages(false);
+    }
+
+    return uploadedAttachments;
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -418,7 +532,14 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
         if (response.ok) {
           const data = await response.json().catch(() => ({}));
-          onStacksAdded(data.task || data);
+          const createdTask = data.task || data;
+          
+          // Upload images if any
+          if (uploadedImages.length > 0) {
+            await uploadImagesToTask(createdTask.id, workspaceId);
+          }
+          
+          onStacksAdded(createdTask);
           onClose();
         } else {
           let errorMessage = 'Failed to create bug';
@@ -691,16 +812,78 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
               Description
+              {activeWorkType === 'bug' && uploadedImages.length > 0 && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                  {uploadedImages.length} {uploadedImages.length === 1 ? 'image' : 'images'}
+                </span>
+              )}
             </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder={`Describe the ${activeWorkType}`}
-              rows={4}
-              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-primary outline-none resize-none"
-            />
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`relative ${activeWorkType === 'bug' && isDragging ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+            >
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder={
+                  activeWorkType === 'bug'
+                    ? 'Describe the bug. You can drag and drop screenshots or image files here.'
+                    : `Describe the ${activeWorkType}`
+                }
+                rows={4}
+                className={`w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-primary outline-none resize-none ${
+                  activeWorkType === 'bug' && isDragging ? 'border-blue-500' : ''
+                }`}
+              />
+              {activeWorkType === 'bug' && (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileInputChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-2 right-2 px-2 py-1 text-xs text-muted hover:text-foreground bg-background border border-border rounded hover:bg-hover transition-colors"
+                  >
+                    Add Image
+                  </button>
+                </>
+              )}
+            </div>
+            {/* Image previews */}
+            {activeWorkType === 'bug' && uploadedImages.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {uploadedImages.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={`Preview ${index + 1}`}
+                      className="w-20 h-20 object-cover rounded border border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Remove image"
+                    >
+                      ×
+                    </button>
+                    <p className="text-xs text-muted mt-1 truncate w-20" title={image.name}>
+                      {image.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Points - Optional for stories */}
@@ -760,7 +943,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             </button>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || uploadingImages}
               className="px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ 
                 backgroundColor: '#111827',
@@ -768,17 +951,17 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 border: '1px solid #111827'
               }}
               onMouseEnter={(e) => {
-                if (!isLoading) {
+                if (!isLoading && !uploadingImages) {
                   e.currentTarget.style.backgroundColor = '#1f2937';
                 }
               }}
               onMouseLeave={(e) => {
-                if (!isLoading) {
+                if (!isLoading && !uploadingImages) {
                   e.currentTarget.style.backgroundColor = '#111827';
                 }
               }}
             >
-              {isLoading ? 'Creating...' : `Create ${workTypeLabels[activeWorkType]}`}
+              {uploadingImages ? 'Uploading images...' : isLoading ? 'Creating...' : `Create ${workTypeLabels[activeWorkType]}`}
             </button>
           </div>
         </form>

@@ -227,6 +227,7 @@ export async function GET(request: NextRequest) {
               }
             },
             orderBy: [
+              { rank: 'asc' },
               { createdAt: 'desc' },
               { priority: 'desc' }
             ]
@@ -291,6 +292,7 @@ export async function GET(request: NextRequest) {
                 }
               },
               orderBy: [
+                { rank: 'asc' },
                 { createdAt: 'desc' },
                 { priority: 'desc' }
               ]

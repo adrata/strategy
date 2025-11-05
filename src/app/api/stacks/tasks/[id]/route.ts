@@ -74,6 +74,8 @@ export async function GET(
         assigneeId: true,
         product: true,
         section: true,
+        rank: true,
+        attachments: true,
         createdAt: true,
         updatedAt: true,
         assignee: {
@@ -114,6 +116,8 @@ export async function GET(
       type: task.type || 'task',
       product: task.product || null,
       section: task.section || null,
+      rank: (task as any).rank || null,
+      attachments: task.attachments || null,
       assignee: task.assignee ? {
         id: task.assignee.id,
         name: (() => {
@@ -183,7 +187,7 @@ export async function PATCH(
     const taskId = extractIdFromSlug(paramValue);
     
     const body = await request.json();
-    const { userId, title, description, status, priority, type, assigneeId } = body;
+    const { userId, title, description, status, priority, type, assigneeId, attachments, rank } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
@@ -197,7 +201,9 @@ export async function PATCH(
         ...(status && { status }),
         ...(priority && { priority }),
         ...(type && { type }),
-        ...(assigneeId !== undefined && { assigneeId })
+        ...(assigneeId !== undefined && { assigneeId }),
+        ...(attachments !== undefined && { attachments }),
+        ...(rank !== undefined && { rank: rank === null || rank === '' ? null : parseInt(rank as string, 10) })
       },
       include: {
         project: {

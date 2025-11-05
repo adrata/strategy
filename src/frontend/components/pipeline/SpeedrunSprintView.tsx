@@ -145,6 +145,64 @@ export function SpeedrunSprintView() {
     }
   }, []);
 
+  // Sync completion state with records that have lastActionDate matching today
+  // This ensures records acted upon in list view are recognized in sprint view
+  useEffect(() => {
+    if (typeof window === 'undefined' || !Array.isArray(allData) || allData.length === 0) return;
+
+    const today = new Date();
+    const todayDateString = today.toDateString();
+
+    // Find all records with lastActionDate matching today
+    const recordsWithActionToday = allData.filter((record: any) => {
+      if (!record.lastActionDate) return false;
+      try {
+        const lastActionDate = new Date(record.lastActionDate);
+        return lastActionDate.toDateString() === todayDateString;
+      } catch (error) {
+        console.warn('Error parsing lastActionDate for record:', record.id, error);
+        return false;
+      }
+    });
+
+    if (recordsWithActionToday.length === 0) return;
+
+    // Get current completed records from state
+    setCompletedRecords((prev: string[]) => {
+      const safePrev = Array.isArray(prev) ? prev : [];
+      const recordIdsWithActionToday = recordsWithActionToday.map((r: any) => r.id).filter(Boolean);
+      
+      // Merge: add any new records that have actions today but aren't in completed list
+      const newRecordIds = recordIdsWithActionToday.filter((id: string) => !safePrev.includes(id));
+      
+      if (newRecordIds.length === 0) {
+        // No new records to add
+        return safePrev;
+      }
+
+      const updated = [...safePrev, ...newRecordIds];
+      
+      // Save to localStorage for persistence
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('speedrunCompletedRecords', JSON.stringify(updated));
+      }
+
+      console.log('🔄 [SPEEDRUN SPRINT VIEW] Synced completion state with lastActionDate:', {
+        recordsWithActionToday: recordIdsWithActionToday.length,
+        newRecordsAdded: newRecordIds.length,
+        previousCount: safePrev.length,
+        updatedCount: updated.length,
+        newRecordIds: newRecordIds,
+        recordNames: newRecordIds.map((id: string) => {
+          const record = recordsWithActionToday.find((r: any) => r.id === id);
+          return record?.name || record?.fullName || id;
+        })
+      });
+
+      return updated;
+    });
+  }, [allData, setCompletedRecords]);
+
   // Listen for speedrun action completion events to update completed records
   useEffect(() => {
     const handleSpeedrunActionLogged = (event: CustomEvent) => {

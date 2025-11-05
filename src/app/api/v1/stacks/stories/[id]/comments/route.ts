@@ -28,8 +28,8 @@ export async function GET(
       return createErrorResponse('Story ID required', 'STORY_ID_REQUIRED', 400);
     }
 
-    // Verify story belongs to workspace
-    const story = await prisma.stacksStory.findFirst({
+    // Verify story or task belongs to workspace
+    let story = await prisma.stacksStory.findFirst({
       where: {
         id: storyId,
         project: {
@@ -38,14 +38,78 @@ export async function GET(
       }
     });
 
+    // If not a story, check if it's a task (bug)
+    let task = null;
+    let actualStoryId = storyId;
+    
     if (!story) {
-      return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
+      task = await prisma.stacksTask.findFirst({
+        where: {
+          id: storyId,
+          project: {
+            workspaceId: context.workspaceId
+          }
+        },
+        include: {
+          story: true
+        }
+      });
+
+      if (!task) {
+        return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
+      }
+
+      // If task has a parent story, use that for comments
+      if (task.storyId && task.story) {
+        actualStoryId = task.storyId;
+        story = task.story;
+      } else {
+        // For standalone tasks/bugs, check if a story with this ID exists
+        // (it might have been created previously for comments)
+        const existingStory = await prisma.stacksStory.findFirst({
+          where: {
+            id: storyId,
+            projectId: task.projectId
+          }
+        });
+
+        if (existingStory) {
+          actualStoryId = existingStory.id;
+          story = existingStory;
+        } else {
+          // For standalone bugs, we'll try to create a story with the same ID
+          // This requires that the story and task don't conflict - we'll handle this carefully
+          try {
+            const newStory = await prisma.stacksStory.create({
+              data: {
+                id: storyId, // Use task ID - this will work if IDs don't conflict
+                projectId: task.projectId,
+                title: task.title || 'Bug/Task',
+                description: task.description || null,
+                status: task.status,
+                priority: task.priority
+              }
+            });
+            actualStoryId = newStory.id;
+            story = newStory;
+          } catch (error: any) {
+            // If creation fails (e.g., ID conflict), we can't support comments for this task
+            console.error('Failed to create story for task comments:', error);
+            return createErrorResponse(
+              'Comments are not available for this task. Please link it to a story first.',
+              'COMMENTS_NOT_AVAILABLE',
+              400
+            );
+          }
+        }
+      }
     }
 
     // Fetch all comments (not deleted)
+    // For tasks/bugs, use the actual storyId (which might be the task's parent story or the task ID itself)
     const comments = await prisma.stacksComment.findMany({
       where: {
-        storyId: storyId,
+        storyId: actualStoryId,
         deletedAt: null
       },
       include: {
@@ -137,8 +201,8 @@ export async function POST(
       return createErrorResponse('Comment content is required', 'CONTENT_REQUIRED', 400);
     }
 
-    // Verify story belongs to workspace
-    const story = await prisma.stacksStory.findFirst({
+    // Verify story or task belongs to workspace
+    let story = await prisma.stacksStory.findFirst({
       where: {
         id: storyId,
         project: {
@@ -147,8 +211,71 @@ export async function POST(
       }
     });
 
+    // If not a story, check if it's a task (bug)
+    let task = null;
+    let actualStoryId = storyId;
+    
     if (!story) {
-      return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
+      task = await prisma.stacksTask.findFirst({
+        where: {
+          id: storyId,
+          project: {
+            workspaceId: context.workspaceId
+          }
+        },
+        include: {
+          story: true
+        }
+      });
+
+      if (!task) {
+        return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
+      }
+
+      // If task has a parent story, use that for comments
+      if (task.storyId && task.story) {
+        actualStoryId = task.storyId;
+        story = task.story;
+      } else {
+        // For standalone tasks/bugs, check if a story with this ID exists
+        // (it might have been created previously for comments)
+        const existingStory = await prisma.stacksStory.findFirst({
+          where: {
+            id: storyId,
+            projectId: task.projectId
+          }
+        });
+
+        if (existingStory) {
+          actualStoryId = existingStory.id;
+          story = existingStory;
+        } else {
+          // For standalone bugs, we'll try to create a story with the same ID
+          // This requires that the story and task don't conflict - we'll handle this carefully
+          try {
+            const newStory = await prisma.stacksStory.create({
+              data: {
+                id: storyId, // Use task ID - this will work if IDs don't conflict
+                projectId: task.projectId,
+                title: task.title || 'Bug/Task',
+                description: task.description || null,
+                status: task.status,
+                priority: task.priority
+              }
+            });
+            actualStoryId = newStory.id;
+            story = newStory;
+          } catch (error: any) {
+            // If creation fails (e.g., ID conflict), we can't support comments for this task
+            console.error('Failed to create story for task comments:', error);
+            return createErrorResponse(
+              'Comments are not available for this task. Please link it to a story first.',
+              'COMMENTS_NOT_AVAILABLE',
+              400
+            );
+          }
+        }
+      }
     }
 
     // If parentId is provided, verify it exists
@@ -156,7 +283,7 @@ export async function POST(
       const parent = await prisma.stacksComment.findFirst({
         where: {
           id: parentId,
-          storyId: storyId,
+          storyId: actualStoryId,
           deletedAt: null
         }
       });
@@ -169,7 +296,7 @@ export async function POST(
     // Create comment
     const comment = await prisma.stacksComment.create({
       data: {
-        storyId: storyId,
+        storyId: actualStoryId,
         parentId: parentId || null,
         content: content.trim(),
         createdById: context.userId
@@ -243,11 +370,37 @@ export async function PATCH(
       return createErrorResponse('Comment content is required', 'CONTENT_REQUIRED', 400);
     }
 
+    // Resolve actual storyId (might be a task, so check for that)
+    let actualStoryId = storyId;
+    const story = await prisma.stacksStory.findFirst({
+      where: { id: storyId }
+    });
+    
+    if (!story) {
+      // Check if it's a task
+      const task = await prisma.stacksTask.findFirst({
+        where: { id: storyId },
+        include: { story: true }
+      });
+      
+      if (task) {
+        if (task.storyId && task.story) {
+          actualStoryId = task.storyId;
+        } else {
+          // For standalone tasks, try to find/create a story (same as POST logic)
+          const existingStory = await prisma.stacksStory.findFirst({
+            where: { id: storyId, projectId: task.projectId }
+          });
+          actualStoryId = existingStory?.id || storyId;
+        }
+      }
+    }
+
     // Verify comment exists and belongs to user
     const existingComment = await prisma.stacksComment.findFirst({
       where: {
         id: commentId,
-        storyId: storyId,
+        storyId: actualStoryId,
         createdById: context.userId,
         deletedAt: null
       }
@@ -323,11 +476,37 @@ export async function DELETE(
       return createErrorResponse('Comment ID required', 'COMMENT_ID_REQUIRED', 400);
     }
 
+    // Resolve actual storyId (might be a task, so check for that)
+    let actualStoryId = storyId;
+    const story = await prisma.stacksStory.findFirst({
+      where: { id: storyId }
+    });
+    
+    if (!story) {
+      // Check if it's a task
+      const task = await prisma.stacksTask.findFirst({
+        where: { id: storyId },
+        include: { story: true }
+      });
+      
+      if (task) {
+        if (task.storyId && task.story) {
+          actualStoryId = task.storyId;
+        } else {
+          // For standalone tasks, try to find/create a story (same as POST logic)
+          const existingStory = await prisma.stacksStory.findFirst({
+            where: { id: storyId, projectId: task.projectId }
+          });
+          actualStoryId = existingStory?.id || storyId;
+        }
+      }
+    }
+
     // Verify comment exists and belongs to user
     const existingComment = await prisma.stacksComment.findFirst({
       where: {
         id: commentId,
-        storyId: storyId,
+        storyId: actualStoryId,
         createdById: context.userId,
         deletedAt: null
       }

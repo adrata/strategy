@@ -130,10 +130,11 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
 
   return (
     <div 
-      className="h-full overflow-y-auto p-6 story-main-view-scrollable"
+      className="h-full overflow-y-auto invisible-scrollbar p-6"
       style={{ 
-        scrollbarWidth: 'thin', 
-        scrollbarColor: 'rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.05)' 
+        overflowX: "hidden",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
       }}
     >
       <div className="w-full space-y-6">
@@ -305,7 +306,14 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Description Box - Left */}
           <div className="bg-background rounded-lg border border-border p-6">
-            <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4">Description</h3>
+            <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4 flex items-center gap-2">
+              Description
+              {story.attachments && Array.isArray(story.attachments) && story.attachments.length > 0 && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                  {story.attachments.length} {story.attachments.length === 1 ? 'image' : 'images'}
+                </span>
+              )}
+            </h3>
             <div className="mt-1">
               <InlineEditField
                 value={story.description || ''}
@@ -337,6 +345,36 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
             </div>
           </div>
         </div>
+
+        {/* Images/Screenshots Section - Only show for bugs/tasks with attachments */}
+        {story.attachments && Array.isArray(story.attachments) && story.attachments.length > 0 && (
+          <div className="bg-background rounded-lg border border-border p-6">
+            <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4">
+              Screenshots ({story.attachments.length})
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {story.attachments.map((attachment: any, index: number) => (
+                <div key={index} className="relative group">
+                  <a
+                    href={attachment.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <img
+                      src={attachment.url}
+                      alt={attachment.filename || `Screenshot ${index + 1}`}
+                      className="w-full h-32 object-cover rounded border border-border hover:border-blue-500 transition-colors cursor-pointer"
+                    />
+                  </a>
+                  <div className="mt-1 text-xs text-muted truncate" title={attachment.filename}>
+                    {attachment.filename || `Image ${index + 1}`}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Comments Section */}
         <StacksCommentsSection storyId={story.id} />

@@ -32,6 +32,8 @@ export function StacksCommentsSection({ storyId }: StacksCommentsSectionProps) {
   const [replyContent, setReplyContent] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch comments
   useEffect(() => {
@@ -143,11 +145,16 @@ export function StacksCommentsSection({ storyId }: StacksCommentsSectionProps) {
     }
   };
 
-  const handleDeleteComment = async (commentId: string) => {
-    if (!confirm('Are you sure you want to delete this comment?')) return;
+  const handleDeleteComment = (commentId: string) => {
+    setDeleteConfirmId(commentId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirmId) return;
 
     try {
-      const response = await fetch(`/api/v1/stacks/stories/${storyId}/comments?commentId=${commentId}`, {
+      setIsDeleting(true);
+      const response = await fetch(`/api/v1/stacks/stories/${storyId}/comments?commentId=${deleteConfirmId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -164,7 +171,14 @@ export function StacksCommentsSection({ storyId }: StacksCommentsSectionProps) {
       }
     } catch (error) {
       console.error('Failed to delete comment:', error);
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirmId(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmId(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -184,121 +198,131 @@ export function StacksCommentsSection({ storyId }: StacksCommentsSectionProps) {
     const isReplying = replyingTo === comment.id;
 
     return (
-      <div key={comment.id} className={isReply ? 'ml-8 mt-3' : 'mb-4'}>
-        <div className="bg-panel-background rounded-lg border border-border p-4">
-          <div className="flex items-start justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-xs font-medium text-foreground">
-                {comment.author.name.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <div className="text-sm font-medium text-foreground">{comment.author.name}</div>
-                <div className="text-xs text-muted">{formatDate(comment.createdAt)}</div>
-              </div>
+      <div key={comment.id} className={`group ${isReply ? 'ml-12 mt-4' : 'mb-6'}`}>
+        <div className="flex items-start gap-3">
+          {/* Avatar */}
+          <div className="w-8 h-8 rounded-full bg-background border border-border/50 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-medium text-foreground/70">
+              {comment.author.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex items-baseline gap-2 mb-1.5">
+              <span className="text-sm font-medium text-foreground">
+                {comment.author.name}
+              </span>
+              <span className="text-xs text-foreground/50">
+                {formatDate(comment.createdAt)}
+              </span>
+              {isOwnComment(comment) && (
+                <div className="flex items-center gap-1 ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => {
+                      setEditingId(comment.id);
+                      setEditContent(comment.content);
+                    }}
+                    className="p-1.5 text-foreground/40 hover:text-foreground transition-colors"
+                    title="Edit comment"
+                  >
+                    <PencilIcon className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="p-1.5 text-foreground/40 hover:text-foreground transition-colors"
+                    title="Delete comment"
+                  >
+                    <TrashIcon className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
-            {isOwnComment(comment) && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    setEditingId(comment.id);
-                    setEditContent(comment.content);
-                  }}
-                  className="p-1 text-muted hover:text-foreground transition-colors"
-                  title="Edit comment"
-                >
-                  <PencilIcon className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => handleDeleteComment(comment.id)}
-                  className="p-1 text-muted hover:text-error-text transition-colors"
-                  title="Delete comment"
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </button>
+
+            {/* Comment Content */}
+            {isEditing ? (
+              <div className="space-y-3">
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-border/50 rounded-lg bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/20 focus:border-foreground/30 resize-none"
+                  rows={3}
+                  autoFocus
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEditComment(comment.id)}
+                    className="px-3 py-1.5 text-sm font-medium text-background bg-foreground rounded-lg hover:opacity-90 transition-opacity"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingId(null);
+                      setEditContent('');
+                    }}
+                    className="px-3 py-1.5 text-sm font-medium text-foreground/60 hover:text-foreground transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed mb-2">
+                  {comment.content}
+                </p>
+                {!isReply && (
+                  <button
+                    onClick={() => setReplyingTo(comment.id)}
+                    className="flex items-center gap-1.5 text-xs font-medium text-foreground/50 hover:text-foreground transition-colors -ml-1"
+                  >
+                    <ArrowUturnLeftIcon className="h-3.5 w-3.5" />
+                    Reply
+                  </button>
+                )}
+
+                {/* Reply Form */}
+                {isReplying && !isReply && (
+                  <div className="mt-4 pt-4 border-t border-border/30">
+                    <textarea
+                      value={replyContent}
+                      onChange={(e) => setReplyContent(e.target.value)}
+                      placeholder="Write a reply..."
+                      className="w-full px-3 py-2 text-sm border border-border/50 rounded-lg bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/20 focus:border-foreground/30 resize-none mb-3"
+                      rows={2}
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleSubmitReply(comment.id)}
+                        className="px-3 py-1.5 text-sm font-medium text-background bg-foreground rounded-lg hover:opacity-90 transition-opacity"
+                      >
+                        Reply
+                      </button>
+                      <button
+                        onClick={() => {
+                          setReplyingTo(null);
+                          setReplyContent('');
+                        }}
+                        className="px-3 py-1.5 text-sm font-medium text-foreground/60 hover:text-foreground transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Render replies */}
+            {comment.replies && comment.replies.length > 0 && (
+              <div className="mt-4 space-y-4">
+                {comment.replies.map(reply => renderComment(reply, true))}
               </div>
             )}
           </div>
-
-          {isEditing ? (
-            <div className="space-y-2">
-              <textarea
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                rows={3}
-                autoFocus
-              />
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEditComment(comment.id)}
-                  className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => {
-                    setEditingId(null);
-                    setEditContent('');
-                  }}
-                  className="px-3 py-1.5 text-sm bg-panel-background border border-border rounded-md hover:bg-hover transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="text-sm text-foreground whitespace-pre-wrap mb-3">
-                {comment.content}
-              </div>
-              {!isReply && (
-                <button
-                  onClick={() => setReplyingTo(comment.id)}
-                  className="flex items-center gap-1 text-xs text-muted hover:text-foreground transition-colors"
-                >
-                  <ArrowUturnLeftIcon className="h-3 w-3" />
-                  Reply
-                </button>
-              )}
-            </>
-          )}
-
-          {isReplying && !isReply && (
-            <div className="mt-3 pt-3 border-t border-border">
-              <textarea
-                value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
-                placeholder="Write a reply..."
-                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary mb-2"
-                rows={2}
-                autoFocus
-              />
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleSubmitReply(comment.id)}
-                  className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
-                >
-                  Reply
-                </button>
-                <button
-                  onClick={() => {
-                    setReplyingTo(null);
-                    setReplyContent('');
-                  }}
-                  className="px-3 py-1.5 text-sm bg-panel-background border border-border rounded-md hover:bg-hover transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Render replies */}
-          {comment.replies && comment.replies.length > 0 && (
-            <div className="mt-3 space-y-3">
-              {comment.replies.map(reply => renderComment(reply, true))}
-            </div>
-          )}
         </div>
       </div>
     );
@@ -306,49 +330,95 @@ export function StacksCommentsSection({ storyId }: StacksCommentsSectionProps) {
 
   if (loading) {
     return (
-      <div className="bg-background rounded-lg border border-border p-6">
-        <div className="text-muted">Loading comments...</div>
+      <div className="bg-background rounded-lg p-6">
+        <div className="text-foreground/40 text-sm">Loading comments...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-background rounded-lg border border-border p-6">
-      <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4 flex items-center gap-2">
-        <ChatBubbleLeftRightIcon className="h-4 w-4" />
-        Comments
-      </h3>
+    <div className="bg-background rounded-lg p-6">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-6">
+        <ChatBubbleLeftRightIcon className="h-4 w-4 text-foreground/60" />
+        <h3 className="text-sm font-semibold text-foreground tracking-tight">
+          Comments
+        </h3>
+        {comments.length > 0 && (
+          <span className="text-xs text-foreground/40 font-medium">
+            {comments.length}
+          </span>
+        )}
+      </div>
 
       {/* Comments List */}
-      <div className="space-y-4 mb-6">
+      <div className="mb-8">
         {comments.length === 0 ? (
-          <div className="text-muted text-sm py-8 text-center">No comments yet. Be the first to comment!</div>
+          <div className="text-foreground/40 text-sm py-12 text-center">
+            No comments yet. Be the first to comment!
+          </div>
         ) : (
-          comments.map(comment => renderComment(comment))
+          <div className="space-y-6">
+            {comments.map(comment => renderComment(comment))}
+          </div>
         )}
       </div>
 
       {/* Add New Comment */}
-      <form onSubmit={handleSubmitComment} className="border-t border-border pt-4">
-        <div className="space-y-2">
+      <form onSubmit={handleSubmitComment} className="border-t border-border/30 pt-6">
+        <div className="space-y-3">
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
-            className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-3 py-2.5 text-sm border border-border/50 rounded-lg bg-background text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/20 focus:border-foreground/30 resize-none"
             rows={3}
           />
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={!newComment.trim()}
-              className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-background bg-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
             >
               Post Comment
             </button>
           </div>
         </div>
       </form>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div 
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]" 
+          onClick={handleCancelDelete}
+        >
+          <div 
+            className="bg-background rounded-lg shadow-lg p-6 max-w-sm mx-4 border border-border/30" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-semibold text-foreground mb-2">Delete Comment</h3>
+            <p className="text-sm text-foreground/60 mb-6">
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={handleCancelDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 text-sm font-medium text-foreground/60 hover:text-foreground transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 text-sm font-medium text-background bg-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

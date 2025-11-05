@@ -1105,6 +1105,7 @@ model StacksTask {
   assigneeId  String?       @db.VarChar(30)
   product     String?       @db.VarChar(50)
   section     String?       @db.VarChar(50)
+  rank        Int?           // Order/position in backlog (1-based)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
@@ -1116,6 +1117,7 @@ model StacksTask {
   @@index([assigneeId])
   @@index([projectId, status])
   @@index([projectId, type])
+  @@index([projectId, rank])
 }
 
 model StacksComment {

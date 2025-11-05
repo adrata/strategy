@@ -59,6 +59,7 @@ interface BacklogItem {
   createdAt: string;
   updatedAt: string;
   rank?: number;
+  type?: 'story' | 'task'; // Track if this is a story or task
 }
 
 interface StacksBacklogTableProps {
@@ -341,7 +342,10 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         }
         
         // Combine stories and tasks, matching left panel logic
-        const allItems = [...stories, ...tasks];
+        // Mark stories with type for easier identification
+        const markedStories = stories.map((s: any) => ({ ...s, type: undefined })); // Stories don't have type
+        const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' })); // Tasks have type
+        const allItems = [...markedStories, ...markedTasks];
         
         console.log('📊 [StacksBacklogTable] Combined items:', {
           totalStories: stories.length,
@@ -355,12 +359,27 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         }
         
         // Map both stories and tasks to backlog item format
-        const backlogItems = allItems.map((item: any, index: number) => {
+        // First, sort by rank to preserve order
+        const sortedItems = [...allItems].sort((a, b) => {
+          const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+          const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+          if (rankA !== rankB) return rankA - rankB;
+          // If ranks are equal or both null, sort by createdAt
+          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+        });
+        
+        const backlogItems = sortedItems.map((item: any, index: number) => {
           // Add 'bug' tag if it's a task with type='bug'
           const tags = item.tags || [];
           if (item.type === 'bug') {
             tags.push('bug');
           }
+          
+          // Determine if this is a story or task
+          const itemType = item.type ? 'task' : 'story';
+          
+          // Use existing rank if available, otherwise assign based on sorted position
+          const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
           
           return {
             id: item.id,
@@ -373,9 +392,38 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             tags: tags,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
-            rank: item.rank !== null && item.rank !== undefined ? item.rank : index + 1
+            rank: rank,
+            type: itemType as 'story' | 'task'
           };
         });
+        
+        // Persist initial ranks for items without ranks
+        const itemsNeedingRanks = backlogItems.filter(item => 
+          item.rank === null || item.rank === undefined || 
+          (allItems.find((orig: any) => orig.id === item.id)?.rank === null || 
+           allItems.find((orig: any) => orig.id === item.id)?.rank === undefined)
+        );
+        
+        if (itemsNeedingRanks.length > 0) {
+          // Persist ranks in the background
+          Promise.all(itemsNeedingRanks.map(item => {
+            const updatePayload: any = { rank: item.rank };
+            const endpoint = item.type === 'task' 
+              ? `/api/stacks/tasks/${item.id}`
+              : `/api/v1/stacks/stories/${item.id}`;
+            
+            return fetch(endpoint, {
+              method: 'PATCH',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...updatePayload, userId: authUser?.id })
+            }).catch(err => {
+              console.warn(`Failed to persist rank for ${item.type} ${item.id}:`, err);
+            });
+          })).catch(() => {
+            // Silently fail - ranks will be set on next drag
+          });
+        }
         
         console.log('🔄 [StacksBacklogTable] Mapped backlog items:', backlogItems.length, 'items');
         
@@ -707,7 +755,17 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           updatePayload.status = newStatus;
         }
         
-        return fetch(`/api/v1/stacks/stories/${item.id}`, {
+        // Determine the correct API endpoint based on item type
+        const endpoint = item.type === 'task' 
+          ? `/api/stacks/tasks/${item.id}`
+          : `/api/v1/stacks/stories/${item.id}`;
+        
+        // Add userId for task updates (required by task API)
+        if (item.type === 'task') {
+          updatePayload.userId = authUser?.id;
+        }
+        
+        return fetch(endpoint, {
           method: 'PATCH',
           credentials: 'include',
           headers: {
@@ -721,82 +779,175 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       const failedUpdates = responses.filter(r => !r.ok);
 
       if (failedUpdates.length > 0) {
-        console.error(`Failed to update ${failedUpdates.length} story order(s)`);
-        // Refresh to revert optimistic update
-        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          if (data.stories && Array.isArray(data.stories)) {
-            const backlogItems = data.stories.map((story: any, index: number) => ({
-              id: story.id,
-              title: story.title,
-              description: story.description,
-              priority: story.priority,
-              status: story.status,
-              assignee: story.assignee?.name || story.assignee,
-              dueDate: story.dueDate,
-              tags: story.tags || [],
-              createdAt: story.createdAt,
-              updatedAt: story.updatedAt,
-              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
-            }));
-            setItems(backlogItems);
-          }
+        console.error(`Failed to update ${failedUpdates.length} item order(s)`);
+        // Refresh to revert optimistic update - fetch both stories and tasks
+        const [storiesResponse, tasksResponse] = await Promise.all([
+          fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+          }),
+          fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+          })
+        ]);
+        
+        if (storiesResponse.ok && tasksResponse.ok) {
+          const [storiesData, tasksData] = await Promise.all([
+            storiesResponse.json(),
+            tasksResponse.json()
+          ]);
+          
+          const stories = storiesData.stories || [];
+          const tasks = tasksData.tasks || [];
+          const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
+          const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
+          const allItems = [...markedStories, ...markedTasks];
+          
+          const sortedItems = [...allItems].sort((a, b) => {
+            const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+            const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+            if (rankA !== rankB) return rankA - rankB;
+            return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+          });
+          
+          const backlogItems = sortedItems.map((item: any, index: number) => {
+            const tags = item.tags || [];
+            if (item.type === 'bug') tags.push('bug');
+            const itemType = item.type ? 'task' : 'story';
+            const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
+            
+            return {
+              id: item.id,
+              title: item.title,
+              description: item.description,
+              priority: item.priority,
+              status: item.status,
+              assignee: item.assignee?.name || item.assignee || null,
+              dueDate: item.dueDate || null,
+              tags: tags,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt,
+              rank: rank,
+              type: itemType as 'story' | 'task'
+            };
+          });
+          
+          setItems(backlogItems);
         }
       } else {
         // Success - refresh to get server-confirmed order
-        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          if (data.stories && Array.isArray(data.stories)) {
-            const backlogItems = data.stories.map((story: any, index: number) => ({
-              id: story.id,
-              title: story.title,
-              description: story.description,
-              priority: story.priority,
-              status: story.status,
-              assignee: story.assignee?.name || story.assignee,
-              dueDate: story.dueDate,
-              tags: story.tags || [],
-              createdAt: story.createdAt,
-              updatedAt: story.updatedAt,
-              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
-            }));
-            setItems(backlogItems);
-          }
+        const [storiesResponse, tasksResponse] = await Promise.all([
+          fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+          }),
+          fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+          })
+        ]);
+        
+        if (storiesResponse.ok && tasksResponse.ok) {
+          const [storiesData, tasksData] = await Promise.all([
+            storiesResponse.json(),
+            tasksResponse.json()
+          ]);
+          
+          const stories = storiesData.stories || [];
+          const tasks = tasksData.tasks || [];
+          const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
+          const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
+          const allItems = [...markedStories, ...markedTasks];
+          
+          const sortedItems = [...allItems].sort((a, b) => {
+            const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+            const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+            if (rankA !== rankB) return rankA - rankB;
+            return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+          });
+          
+          const backlogItems = sortedItems.map((item: any, index: number) => {
+            const tags = item.tags || [];
+            if (item.type === 'bug') tags.push('bug');
+            const itemType = item.type ? 'task' : 'story';
+            const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
+            
+            return {
+              id: item.id,
+              title: item.title,
+              description: item.description,
+              priority: item.priority,
+              status: item.status,
+              assignee: item.assignee?.name || item.assignee || null,
+              dueDate: item.dueDate || null,
+              tags: tags,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt,
+              rank: rank,
+              type: itemType as 'story' | 'task'
+            };
+          });
+          
+          setItems(backlogItems);
         }
       }
     } catch (error) {
-      console.error('Error updating story order:', error);
-      // Refresh to revert optimistic update on error
-      const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (refreshResponse.ok) {
-        const data = await refreshResponse.json();
-        if (data.stories && Array.isArray(data.stories)) {
-          const backlogItems = data.stories.map((story: any, index: number) => ({
-            id: story.id,
-            title: story.title,
-            description: story.description,
-            priority: story.priority,
-            status: story.status,
-            assignee: story.assignee?.name || story.assignee,
-            dueDate: story.dueDate,
-            tags: story.tags || [],
-            createdAt: story.createdAt,
-            updatedAt: story.updatedAt,
-            rank: index + 1
-          }));
-          setItems(backlogItems);
-        }
+      console.error('Error updating item order:', error);
+      // Refresh to revert optimistic update on error - fetch both stories and tasks
+      const [storiesResponse, tasksResponse] = await Promise.all([
+        fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        }),
+        fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        })
+      ]);
+      
+      if (storiesResponse.ok && tasksResponse.ok) {
+        const [storiesData, tasksData] = await Promise.all([
+          storiesResponse.json(),
+          tasksResponse.json()
+        ]);
+        
+        const stories = storiesData.stories || [];
+        const tasks = tasksData.tasks || [];
+        const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
+        const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
+        const allItems = [...markedStories, ...markedTasks];
+        
+        const sortedItems = [...allItems].sort((a, b) => {
+          const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+          const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+          if (rankA !== rankB) return rankA - rankB;
+          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+        });
+        
+        const backlogItems = sortedItems.map((item: any, index: number) => {
+          const tags = item.tags || [];
+          if (item.type === 'bug') tags.push('bug');
+          const itemType = item.type ? 'task' : 'story';
+          const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
+          
+          return {
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            priority: item.priority,
+            status: item.status,
+            assignee: item.assignee?.name || item.assignee || null,
+            dueDate: item.dueDate || null,
+            tags: tags,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            rank: rank,
+            type: itemType as 'story' | 'task'
+          };
+        });
+        
+        setItems(backlogItems);
       }
     }
   };

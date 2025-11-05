@@ -480,6 +480,18 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
             >
               {isUpdating ? 'Refreshing...' : (() => {
                 try {
+                  // Bugs are tasks with type='bug' - check type field first
+                  // Also check tags as fallback since API adds 'bug' tag for bugs
+                  if (story?.type === 'bug' || story?.tags?.includes('bug')) {
+                    return 'Update Bug';
+                  }
+                  
+                  // Regular tasks have type='task'
+                  if (story?.type === 'task' || storyType === 'task') {
+                    return 'Update Task';
+                  }
+                  
+                  // Stories use viewType or default to 'Story'
                   const viewType = story?.viewType || 'detail';
                   const typeMap: Record<string, string> = {
                     'bug': 'Bug',

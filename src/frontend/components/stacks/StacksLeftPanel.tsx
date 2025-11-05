@@ -459,9 +459,24 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       const lastSegment = pathParts[pathParts.length - 1];
       
       // If last segment is NOT a known section, it's likely a story detail page
-      // Don't change activeSubSection - preserve current section
+      // Preserve current section or check sessionStorage for navigation source
       if (lastSegment && !knownSections.includes(lastSegment.toLowerCase())) {
-        // This looks like a story detail page (slug/ID), preserve current section
+        // This looks like a story detail page (slug/ID)
+        // Check if we came from backlog (or other section) via sessionStorage
+        const navigationSource = typeof window !== 'undefined' 
+          ? sessionStorage.getItem('stacks-navigation-source')
+          : null;
+        
+        if (navigationSource && knownSections.includes(navigationSource)) {
+          // Use the navigation source (e.g., 'backlog') if it's a valid section
+          console.log('📄 [StacksLeftPanel] Story detail page detected, using navigation source:', navigationSource);
+          if (navigationSource !== activeSubSection) {
+            onSubSectionChange(navigationSource);
+          }
+          return;
+        }
+        
+        // Otherwise preserve current section
         console.log('📄 [StacksLeftPanel] Story detail page detected, preserving current section:', activeSubSection);
         return; // Don't change section when viewing a story detail
       }
