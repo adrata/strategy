@@ -373,7 +373,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             tags: tags,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
-            rank: index + 1
+            rank: item.rank !== null && item.rank !== undefined ? item.rank : index + 1
           };
         });
         
@@ -741,7 +741,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               tags: story.tags || [],
               createdAt: story.createdAt,
               updatedAt: story.updatedAt,
-              rank: index + 1
+              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
             }));
             setItems(backlogItems);
           }
@@ -766,7 +766,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               tags: story.tags || [],
               createdAt: story.createdAt,
               updatedAt: story.updatedAt,
-              rank: index + 1
+              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
             }));
             setItems(backlogItems);
           }
@@ -881,7 +881,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               tags: story.tags || [],
               createdAt: story.createdAt,
               updatedAt: story.updatedAt,
-              rank: index + 1
+              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
             }));
             setItems(backlogItems);
           }
@@ -975,7 +975,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               tags: story.tags || [],
               createdAt: story.createdAt,
               updatedAt: story.updatedAt,
-              rank: index + 1
+              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
             }));
             setItems(backlogItems);
           }
@@ -1069,7 +1069,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               tags: story.tags || [],
               createdAt: story.createdAt,
               updatedAt: story.updatedAt,
-              rank: index + 1
+              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
             }));
             setItems(backlogItems);
           }
@@ -1166,7 +1166,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               tags: story.tags || [],
               createdAt: story.createdAt,
               updatedAt: story.updatedAt,
-              rank: index + 1
+              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
             }));
             setItems(backlogItems);
           }

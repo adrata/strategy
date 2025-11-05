@@ -139,36 +139,38 @@ export async function GET(request: NextRequest) {
           section: true,
           viewType: true,
                 statusChangedAt: true,
-                isFlagged: true,
-                points: true,
-                createdAt: true,
-                updatedAt: true,
-                epoch: {
-                  select: {
-                    id: true,
-                    title: true,
-                    description: true
-                  }
-                },
-                assignee: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true
-                  }
-                },
-                project: {
-                  select: {
-                    id: true,
-                    name: true
-                  }
-                }
-              },
-              orderBy: [
-                { createdAt: 'desc' },
-                { priority: 'desc' }
-              ]
+          isFlagged: true,
+          points: true,
+          rank: true,
+          createdAt: true,
+          updatedAt: true,
+          epoch: {
+            select: {
+              id: true,
+              title: true,
+              description: true
+            }
+          },
+          assignee: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          },
+          project: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        },
+        orderBy: [
+          { rank: 'asc' },
+          { createdAt: 'desc' },
+          { priority: 'desc' }
+        ]
             });
     } catch (queryError) {
       // Check if this is a P2022 error (column doesn't exist) for product, section, acceptanceCriteria, or isFlagged
@@ -199,7 +201,7 @@ export async function GET(request: NextRequest) {
               priority: true,
               assigneeId: true,
               statusChangedAt: true,
-              // product, section, acceptanceCriteria, isFlagged omitted - they don't exist in database
+              // product, section, acceptanceCriteria, isFlagged, rank omitted - they don't exist in database
               createdAt: true,
               updatedAt: true,
               epoch: {
@@ -263,7 +265,7 @@ export async function GET(request: NextRequest) {
                 priority: true,
                 assigneeId: true,
                 statusChangedAt: true,
-                // product, section, acceptanceCriteria, isFlagged omitted - they don't exist in database
+                // product, section, acceptanceCriteria, isFlagged, rank omitted - they don't exist in database
                 createdAt: true,
                 updatedAt: true,
                 epoch: {
@@ -361,6 +363,7 @@ export async function GET(request: NextRequest) {
           viewType: (story as any).viewType || 'detail', // Use story's viewType or default to 'detail'
           product: (story as any).product || null, // Safe access if column doesn't exist
           section: (story as any).section || null, // Safe access if column doesn't exist
+          rank: (story as any).rank || null, // Safe access if column doesn't exist
           assignee,
           epoch,
           project,

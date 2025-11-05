@@ -75,6 +75,7 @@ export async function GET(
         section: true,
         viewType: true,
         isFlagged: true,
+        rank: true,
         statusChangedAt: true,
         createdAt: true,
         updatedAt: true,
@@ -102,9 +103,103 @@ export async function GET(
       }
     });
 
+    // If story not found, check if it's a task
     if (!story) {
-      console.log('❌ [STACKS API] Story not found:', storyId);
-      return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
+      console.log('🔍 [STACKS API] Story not found, checking for task:', storyId);
+      
+      // Try to fetch as a task
+      const task = await prisma.stacksTask.findFirst({
+        where: {
+          id: storyId,
+          project: {
+            workspaceId: workspaceId
+          }
+        },
+        select: {
+          id: true,
+          storyId: true,
+          projectId: true,
+          title: true,
+          description: true,
+          status: true,
+          priority: true,
+          type: true,
+          assigneeId: true,
+          product: true,
+          section: true,
+          createdAt: true,
+          updatedAt: true,
+          assignee: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          },
+          story: {
+            select: {
+              id: true,
+              title: true
+            }
+          },
+          project: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      });
+
+      if (!task) {
+        console.log('❌ [STACKS API] Neither story nor task found:', storyId);
+        return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
+      }
+
+      // Transform task data to match story response format
+      const transformedStory = {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        acceptanceCriteria: null, // Tasks don't have acceptance criteria
+        status: task.status,
+        priority: task.priority,
+        viewType: 'detail', // Default view type for tasks
+        product: task.product || null,
+        section: task.section || null,
+        rank: null, // Tasks don't have rank
+        type: task.type || 'task', // Include type to distinguish from stories
+        assignee: task.assignee ? {
+          id: task.assignee.id,
+          name: (() => {
+            const firstName = task.assignee.firstName != null ? String(task.assignee.firstName) : '';
+            const lastName = task.assignee.lastName != null ? String(task.assignee.lastName) : '';
+            const fullName = `${firstName} ${lastName}`.trim();
+            return fullName || 'Unknown';
+          })(),
+          email: task.assignee.email || ''
+        } : null,
+        epoch: null, // Tasks don't have epochs
+        story: task.story ? {
+          id: task.story.id,
+          title: task.story.title
+        } : null,
+        project: task.project ? {
+          id: task.project.id,
+          name: task.project.name
+        } : null,
+        dueDate: null,
+        tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
+        isFlagged: false, // Tasks don't have isFlagged
+        points: null, // Tasks don't have points
+        createdAt: task.createdAt,
+        updatedAt: task.updatedAt,
+        timeInStatus: 0 // Tasks don't track statusChangedAt
+      };
+
+      console.log('✅ [STACKS API] Task found and transformed');
+      return NextResponse.json({ story: transformedStory, type: 'task' });
     }
 
     // Transform the data to match the expected format
@@ -118,6 +213,8 @@ export async function GET(
       viewType: (story as any).viewType || 'detail', // Use story's viewType or default to 'detail'
       product: (story as any).product || null, // Safe access if column doesn't exist
       section: (story as any).section || null, // Safe access if column doesn't exist
+      rank: (story as any).rank || null, // Safe access if column doesn't exist
+      type: 'story', // Explicitly mark as story
       assignee: story.assignee ? {
         id: story.assignee.id,
         name: (() => {
@@ -150,7 +247,7 @@ export async function GET(
     };
 
     console.log('✅ [STACKS API] Story found and transformed');
-    return NextResponse.json({ story: transformedStory });
+    return NextResponse.json({ story: transformedStory, type: 'story' });
 
   } catch (error) {
     console.error('❌ [STACKS API] Error fetching story:', error);
@@ -219,7 +316,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { title, description, acceptanceCriteria, priority, status, product, section, viewType, isFlagged, points, assigneeId } = body;
+    const { title, description, acceptanceCriteria, priority, status, product, section, viewType, isFlagged, points, assigneeId, rank } = body;
 
     // Verify story belongs to workspace
     const existingStory = await prisma.stacksStory.findFirst({
@@ -279,6 +376,9 @@ export async function PATCH(
     if (assigneeId !== undefined) {
       updateData.assigneeId = assigneeId || null;
     }
+    if (rank !== undefined) {
+      updateData.rank = rank === null || rank === '' ? null : parseInt(rank as string, 10);
+    }
 
     const story = await prisma.stacksStory.update({
       where: { id: storyId },
@@ -297,6 +397,7 @@ export async function PATCH(
         section: true,
         viewType: true,
         isFlagged: true,
+        rank: true,
         statusChangedAt: true,
         createdAt: true,
         updatedAt: true,
@@ -335,6 +436,7 @@ export async function PATCH(
       viewType: (story as any).viewType || 'detail', // Use story's viewType or default to 'detail'
       product: (story as any).product || null, // Safe access if column doesn't exist
       section: (story as any).section || null, // Safe access if column doesn't exist
+      rank: (story as any).rank || null, // Safe access if column doesn't exist
       assignee: story.assignee ? {
         id: story.assignee.id,
         name: (() => {

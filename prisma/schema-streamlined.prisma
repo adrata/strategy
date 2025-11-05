@@ -1075,6 +1075,7 @@ model StacksStory {
   statusChangedAt   DateTime?
   isFlagged         Boolean        @default(false)
   points            Int?
+  rank              Int?           // Order/position in backlog (1-based)
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   assignee          users?        @relation(fields: [assigneeId], references: [id])
@@ -1089,6 +1090,7 @@ model StacksStory {
   @@index([projectId])
   @@index([assigneeId])
   @@index([projectId, status])
+  @@index([projectId, rank])
 }
 
 model StacksTask {

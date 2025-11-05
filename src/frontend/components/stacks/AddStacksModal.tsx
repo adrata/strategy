@@ -36,6 +36,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     title: '',
     description: '',
     product: '' as '' | 'API' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
+    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
     section: '',
     status: 'up-next' as 'up-next' | 'todo' | 'in-progress' | 'built' | 'qa1' | 'qa2' | 'shipped',
     assigneeId: '',
@@ -152,6 +153,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
       title: '',
       description: '',
       product: '',
+      priority: 'medium',
       section: '',
       status: 'up-next',
       assigneeId: '',
@@ -393,7 +395,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           description: formData.description || undefined,
           status: 'up-next', // Bugs always default to 'up-next'
           type: 'bug',
-          storyId: null
+          storyId: null,
+          priority: formData.priority
         };
 
         if (formData.product) {
@@ -591,6 +594,32 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               className="w-full"
             />
           </div>
+          )}
+
+          {/* Priority Dropdown - Only for bugs */}
+          {activeWorkType === 'bug' && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Priority
+              </label>
+              <Select
+                value={formData.priority}
+                onChange={(newPriority) => {
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    priority: newPriority as typeof formData.priority
+                  }));
+                }}
+                options={[
+                  { value: 'low', label: 'Low' },
+                  { value: 'medium', label: 'Medium' },
+                  { value: 'high', label: 'High' },
+                  { value: 'urgent', label: 'Urgent' }
+                ]}
+                placeholder="Select priority..."
+                className="w-full"
+              />
+            </div>
           )}
 
           {/* Features Dropdown - Only show when RevenueOS is selected and not Notary Everyday */}

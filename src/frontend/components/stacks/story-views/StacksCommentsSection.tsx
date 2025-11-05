@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, ReplyIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -256,7 +256,7 @@ export function StacksCommentsSection({ storyId }: StacksCommentsSectionProps) {
                   onClick={() => setReplyingTo(comment.id)}
                   className="flex items-center gap-1 text-xs text-muted hover:text-foreground transition-colors"
                 >
-                  <ReplyIcon className="h-3 w-3" />
+                  <ArrowUturnLeftIcon className="h-3 w-3" />
                   Reply
                 </button>
               )}

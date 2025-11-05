@@ -59,6 +59,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   const pathname = usePathname();
   const { ui } = useRevenueOS();
   const [story, setStory] = useState<any>(null);
+  const [storyType, setStoryType] = useState<'story' | 'task'>('story');
   const [loading, setLoading] = useState(true);
   const [hasRedirected, setHasRedirected] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -121,8 +122,9 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
         if (response.ok) {
           const data = await response.json();
           if (data.story) {
-            console.log('✅ [StoryDetailView] Story loaded:', data.story);
+            console.log('✅ [StoryDetailView] Story/Task loaded:', data.story, 'type:', data.type);
             setStory(data.story);
+            setStoryType(data.type || data.story.type || 'story');
             
             // Redirect to slugged URL if current URL is just an ID
             if (data.story.title && !hasRedirected) {
@@ -146,11 +148,13 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
           } else {
             console.warn('⚠️ [StoryDetailView] No story in response');
             setStory(null);
+            setStoryType('story');
           }
         } else {
           const errorData = await response.json().catch(() => ({}));
           console.error('❌ [StoryDetailView] Failed to fetch story:', response.status, errorData);
           setStory(null);
+          setStoryType('story');
         }
       } catch (error) {
         console.error('❌ [StoryDetailView] Error fetching story:', error);
@@ -334,7 +338,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   if (!story) {
     return (
       <div className="h-full flex flex-col items-center justify-center bg-background">
-        <p className="text-muted mb-4">Story not found</p>
+        <p className="text-muted mb-4">Story or task not found</p>
         <button
           onClick={handleBack}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
