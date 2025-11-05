@@ -764,38 +764,18 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Update ranks and status via API
+    // Update ranks and status via API immediately using optimized helper
     try {
-      const updatePromises = itemsWithNewRanks.map(item => {
-        const updatePayload: any = { rank: item.rank };
-        
-        // If this is the moved item and it's a cross-section move, also update status
-        if (isCrossSectionMove && item.id === activeIdStr) {
-          updatePayload.status = newStatus;
-        }
-        
-        // Determine the correct API endpoint based on item type
-        const endpoint = item.type === 'task' 
-          ? `/api/stacks/tasks/${item.id}`
-          : `/api/v1/stacks/stories/${item.id}`;
-        
-        // Add userId for task updates (required by task API)
-        if (item.type === 'task') {
-          updatePayload.userId = authUser?.id;
-        }
-        
-        return fetch(endpoint, {
-          method: 'PATCH',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatePayload)
-        });
-      });
-
-      const responses = await Promise.all(updatePromises);
-      const failedUpdates = responses.filter(r => !r.ok);
+      await persistRanks(
+        itemsWithNewRanks, 
+        items,
+        isCrossSectionMove ? {
+          statusUpdate: {
+            itemId: activeIdStr,
+            newStatus: newStatus
+          }
+        } : undefined
+      );
 
       if (failedUpdates.length > 0) {
         console.error(`Failed to update ${failedUpdates.length} item order(s)`);
@@ -1360,33 +1340,161 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     setContextMenu(prev => ({ ...prev, isVisible: false }));
   };
 
-  const moveItem = (itemId: string, direction: 'top' | 'up' | 'down' | 'bottom') => {
-    setItems(prevItems => {
-      const newItems = [...prevItems];
-      const currentIndex = newItems.findIndex(item => item.id === itemId);
+  // Shared helper function to persist ranks efficiently
+  // Only updates items whose rank actually changed, batches all updates
+  const persistRanks = async (
+    newItems: BacklogItem[],
+    oldItems: BacklogItem[],
+    options?: { 
+      statusUpdate?: { itemId: string; newStatus: string };
+      onSuccess?: () => void;
+      onError?: () => void;
+    }
+  ) => {
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for updating item order');
+      options?.onError?.();
+      return;
+    }
+
+    try {
+      // Create a map for O(1) lookups
+      const oldItemsMap = new Map(oldItems.map(item => [item.id, item]));
       
-      if (currentIndex === -1) return prevItems;
+      // Calculate which items actually changed rank - O(n) instead of O(n²)
+      const itemsWithChangedRanks: Array<{ item: BacklogItem; payload: any }> = [];
       
-      const [item] = newItems.splice(currentIndex, 1);
+      for (const item of newItems) {
+        const oldItem = oldItemsMap.get(item.id);
+        const rankChanged = !oldItem || oldItem.rank !== item.rank;
+        const needsStatusUpdate = options?.statusUpdate && item.id === options.statusUpdate.itemId;
+        
+        if (rankChanged || needsStatusUpdate) {
+          const payload: any = { rank: item.rank };
+          
+          // Add status update if needed
+          if (needsStatusUpdate && options.statusUpdate) {
+            payload.status = options.statusUpdate.newStatus;
+          }
+          
+          itemsWithChangedRanks.push({ item, payload });
+        }
+      }
+
+      if (itemsWithChangedRanks.length === 0) {
+        console.log('✅ [StacksBacklogTable] No rank changes detected, skipping API calls');
+        options?.onSuccess?.();
+        return;
+      }
+
+      console.log(`🔄 [StacksBacklogTable] Persisting ${itemsWithChangedRanks.length} rank update(s) (optimized from ${newItems.length} total items)`);
       
-      switch (direction) {
-        case 'top':
-          newItems.unshift(item);
-          break;
-        case 'up':
-          newItems.splice(Math.max(0, currentIndex - 1), 0, item);
-          break;
-        case 'down':
-          newItems.splice(Math.min(newItems.length, currentIndex + 1), 0, item);
-          break;
-        case 'bottom':
-          newItems.push(item);
-          break;
+      // Batch all updates in parallel
+      const updatePromises = itemsWithChangedRanks.map(({ item, payload }) => {
+        const endpoint = item.type === 'task' 
+          ? `/api/stacks/tasks/${item.id}`
+          : `/api/v1/stacks/stories/${item.id}`;
+        
+        // Add userId for task updates (required by task API)
+        if (item.type === 'task') {
+          payload.userId = authUser?.id;
+        }
+        
+        return fetch(endpoint, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+      });
+
+      const responses = await Promise.all(updatePromises);
+      const failedUpdates = responses.filter(r => !r.ok);
+
+      if (failedUpdates.length > 0) {
+        console.error(`❌ [StacksBacklogTable] ${failedUpdates.length} update(s) failed`);
+        throw new Error(`${failedUpdates.length} update(s) failed`);
+      }
+
+      console.log('✅ [StacksBacklogTable] All rank updates persisted successfully');
+      
+      // Trigger refresh to sync with other components
+      if (stacksContext?.triggerRefresh) {
+        stacksContext.triggerRefresh();
       }
       
-      // Update ranks
-      return newItems.map((item, index) => ({ ...item, rank: index + 1 }));
-    });
+      options?.onSuccess?.();
+    } catch (error) {
+      console.error('❌ [StacksBacklogTable] Error persisting ranks:', error);
+      options?.onError?.();
+      throw error;
+    }
+  };
+
+  const moveItem = async (itemId: string, direction: 'top' | 'up' | 'down' | 'bottom') => {
+    // Get the item being moved
+    const itemToMove = items.find(item => item.id === itemId);
+    if (!itemToMove) return;
+
+    // Store old items for comparison
+    const oldItems = [...items];
+
+    // Calculate new order and ranks BEFORE updating state
+    const newItems = [...items];
+    const currentIndex = newItems.findIndex(item => item.id === itemId);
+    
+    if (currentIndex === -1) return;
+    
+    const [item] = newItems.splice(currentIndex, 1);
+    
+    switch (direction) {
+      case 'top':
+        newItems.unshift(item);
+        break;
+      case 'up':
+        newItems.splice(Math.max(0, currentIndex - 1), 0, item);
+        break;
+      case 'down':
+        newItems.splice(Math.min(newItems.length, currentIndex + 1), 0, item);
+        break;
+      case 'bottom':
+        newItems.push(item);
+        break;
+    }
+    
+    // Update ranks - calculate before state update
+    const itemsWithNewRanks = newItems.map((item, index) => ({ ...item, rank: index + 1 }));
+
+    // Optimistically update local state
+    setItems(itemsWithNewRanks);
+
+    // Immediately persist ranks using optimized helper
+    try {
+      await persistRanks(itemsWithNewRanks, oldItems);
+    } catch (error) {
+      // On error, refresh to get server state
+      console.error('Failed to persist ranks, refreshing from server...');
+      // The error handler in persistRanks will handle the refresh
+      // But we should also refresh here as a fallback
+      const refreshTrigger = stacksContext?.refreshTrigger || 0;
+      if (stacksContext?.triggerRefresh) {
+        stacksContext.triggerRefresh();
+      }
+    }
   };
 
   const formatDate = (dateString: string) => {
