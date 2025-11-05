@@ -410,19 +410,25 @@ export function SpeedrunSprintView() {
     
     const allCompleted = currentSprintRecords.every((record: any) => completedRecords.includes(record.id));
     
+    // Calculate actual completed count for this sprint
+    const completedCount = currentSprintRecords.filter((record: any) => completedRecords.includes(record.id)).length;
+    
     // Log sprint completion status for debugging
-    if (currentSprintRecords.length === SPRINT_SIZE) {
-      const completedCount = currentSprintRecords.filter((record: any) => completedRecords.includes(record.id)).length;
-      console.log(`🏃‍♂️ [SPRINT ${currentSprintNumber}] Completion check:`, {
-        totalInSprint: currentSprintRecords.length,
-        completedCount,
-        allCompleted,
-        sprintSize: SPRINT_SIZE
-      });
-    }
+    console.log(`🏃‍♂️ [SPRINT ${currentSprintNumber}] Completion check:`, {
+      totalInSprint: currentSprintRecords.length,
+      completedCount,
+      allCompleted,
+      sprintSize: SPRINT_SIZE
+    });
     
     return allCompleted;
   }, [currentSprintRecords, completedRecords, currentSprintNumber]);
+
+  // Calculate actual completed count for current sprint (for modal display)
+  const currentSprintCompletedCount = React.useMemo(() => {
+    if (!Array.isArray(currentSprintRecords) || !Array.isArray(completedRecords)) return 0;
+    return currentSprintRecords.filter((record: any) => completedRecords.includes(record.id)).length;
+  }, [currentSprintRecords, completedRecords]);
 
   // Watch for sprint completion and show modal
   useEffect(() => {
@@ -780,12 +786,14 @@ export function SpeedrunSprintView() {
       const nextRecord = data[currentIndex + 1];
       if (nextRecord) {
         setSelectedRecord(nextRecord);
-      } else if (hasNextSprint) {
-        // Current sprint done, move to next sprint
-        setCurrentSprintIndex(currentSprintIndex + 1);
       } else {
-        // All sprints done, go back to speedrun list
-        navigateToPipeline('speedrun');
+        // No more records in current sprint
+        // If sprint is complete, the modal will handle advancement
+        // If all sprints are done, go back to speedrun list
+        if (!hasNextSprint) {
+          navigateToPipeline('speedrun');
+        }
+        // Otherwise, stay on current sprint - modal will handle next sprint when it appears
       }
       
     } catch (error) {
@@ -957,10 +965,11 @@ export function SpeedrunSprintView() {
           if (nextRecord) {
             console.log(`🏃‍♂️ [SPRINT] Navigating to next record: ${nextRecord.name || nextRecord.fullName} (ID: ${nextRecord.id})`);
             setSelectedRecord(nextRecord);
-          } else if (hasNextSprint) {
-            // Current sprint done, move to next sprint
-            console.log(`🏃‍♂️ [SPRINT] Current sprint complete, moving to next sprint: ${currentSprintIndex + 2}`);
-            setCurrentSprintIndex(currentSprintIndex + 1);
+          } else {
+            // No more records in current sprint
+            // Don't auto-advance - the completion modal will handle sprint progression
+            // when all records in the sprint are completed
+            console.log(`🏃‍♂️ [SPRINT] No more records in current sprint. Modal will handle advancement when sprint completes.`);
           }
         }}
         onComplete={() => setShowCompleteModal(true)}
@@ -1085,7 +1094,7 @@ export function SpeedrunSprintView() {
         }}
         currentSprintNumber={currentSprintNumber}
         nextSprintNumber={currentSprintNumber + 1}
-        completedCount={SPRINT_SIZE}
+        completedCount={currentSprintCompletedCount}
       />
 
       {/* Profile Popup - SpeedrunSprintView Implementation */}
