@@ -145,6 +145,9 @@ function BacklogItemComponent({
                 bug
               </span>
             )}
+            {item.isFlagged && (
+              <FlagIcon className="h-4 w-4 text-red-500 flex-shrink-0" />
+            )}
             <h4 className="text-sm font-medium text-foreground truncate">
               {item.title}
             </h4>
@@ -384,7 +387,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             updatedAt: typeof item.updatedAt === 'string' ? item.updatedAt : item.updatedAt.toISOString(),
             rank: rank,
             type: isTask ? 'task' : 'story',
-            originalType: isTask ? item.type : undefined
+            originalType: isTask ? item.type : undefined,
+            isFlagged: item.isFlagged || false
           };
         });
         
@@ -618,7 +622,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           updatedAt: typeof item.updatedAt === 'string' ? item.updatedAt : item.updatedAt.toISOString(),
           rank: rank,
           type: isTask ? 'task' : 'story',
-          originalType: isTask ? item.type : undefined // Preserve original type to detect bugs
+          originalType: isTask ? item.type : undefined, // Preserve original type to detect bugs
+          isFlagged: item.isFlagged || false
         };
       });
 
