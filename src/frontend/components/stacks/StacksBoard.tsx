@@ -1087,11 +1087,19 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         )}
                         
                         <div className="mb-2 ml-8">
-                          <h4 className="font-medium text-foreground text-sm leading-tight mb-1">
-                            {card.title}
-                          </h4>
+                          <div className="flex items-center gap-2 mb-1">
+                            {/* Bug pill for bug type */}
+                            {(card.originalType === 'bug' || card.tags?.includes('bug')) && (
+                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                bug
+                              </span>
+                            )}
+                            <h4 className="font-medium text-foreground text-sm leading-tight">
+                              {card.title}
+                            </h4>
+                          </div>
                           {card.description && (
-                            <p className="text-xs text-muted">
+                            <p className="text-xs text-muted line-clamp-2">
                               {card.description}
                             </p>
                           )}
