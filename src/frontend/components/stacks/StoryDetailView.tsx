@@ -176,15 +176,21 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       const currentPath = pathname;
       const workspaceSlug = currentPath.split('/')[1];
       
-      // Check if referrer or current path indicates we came from backlog
-      const cameFromBacklog = referrer.includes('/backlog') || 
-                             (typeof window !== 'undefined' && 
-                              (sessionStorage.getItem('stacks-navigation-source') === 'backlog' ||
-                               sessionStorage.getItem('stacks-navigation-source') === 'up-next'));
+      // Check navigation source from sessionStorage
+      const navigationSource = typeof window !== 'undefined' 
+        ? sessionStorage.getItem('stacks-navigation-source') 
+        : null;
+      
+      // Check if referrer or current path indicates we came from a specific section
+      const cameFromBacklog = referrer.includes('/backlog') || navigationSource === 'backlog' || navigationSource === 'up-next';
+      const cameFromEpics = referrer.includes('/epics') || navigationSource === 'epics';
       
       if (cameFromBacklog && workspaceSlug) {
         // Navigate back to backlog
         router.push(`/${workspaceSlug}/stacks/backlog`);
+      } else if (cameFromEpics && workspaceSlug) {
+        // Navigate back to epics
+        router.push(`/${workspaceSlug}/stacks/epics`);
       } else {
         // Use browser history for smooth navigation without page reload
         router.back();
