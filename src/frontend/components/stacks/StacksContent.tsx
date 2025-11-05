@@ -32,7 +32,7 @@ export function StacksContent({ section }: StacksContentProps) {
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   
   // State management
-  const [activeSubSection, setActiveSubSection] = useState<string>('vision');
+  const [activeSubSection, setActiveSubSection] = useState<string>('epics');
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -53,7 +53,7 @@ export function StacksContent({ section }: StacksContentProps) {
   useEffect(() => {
     // Check if this is a story detail page (has a slug/ID that's not a known section)
     const pathParts = pathname.split('/').filter(Boolean);
-    const knownSections = ['vision', 'workstream', 'metrics', 'backlog', 'chronicle', 'epics', 'stories', 'bugs', 'futures'];
+    const knownSections = ['epics', 'workstream', 'metrics', 'backlog', 'chronicle', 'stories', 'bugs', 'futures'];
     
     // If we're on /stacks/{something}, check if it's a known section or a story slug
     if (pathParts.length >= 3 && pathParts[1] === 'stacks') {
@@ -69,8 +69,8 @@ export function StacksContent({ section }: StacksContentProps) {
     }
     
     // Now check for known sections
-    if (pathname.includes('/stacks/vision')) {
-      setActiveSubSection('vision');
+    if (pathname.includes('/stacks/epics')) {
+      setActiveSubSection('epics');
     } else if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
       setActiveSubSection('workstream');
     } else if (pathname.includes('/stacks/metrics') || pathname.includes('/metrics')) {
@@ -90,23 +90,23 @@ export function StacksContent({ section }: StacksContentProps) {
     } else if (pathname.includes('/sell/pipeline') || pathname.includes('/pipeline/sell')) {
       setActiveSubSection('workstream');
     } else if (pathname.includes('/stacks')) {
-      // Default to vision if we're in stacks but no specific section
+      // Default to epics if we're in stacks but no specific section
       // Check if we're on /stacks without a specific section (e.g., /workspace/stacks)
       const isJustStacks = pathParts.length >= 2 && 
                           pathParts[pathParts.length - 1] === 'stacks' &&
-                          !pathname.includes('/stacks/vision') &&
+                          !pathname.includes('/stacks/epics') &&
                           !pathname.includes('/stacks/workstream') &&
                           !pathname.includes('/stacks/metrics') &&
                           !pathname.includes('/stacks/backlog');
       
       if (isJustStacks) {
-        // Navigate to vision section
+        // Navigate to epics section
         const workspaceSlug = pathParts[0] || 'workspace';
-        router.push(`/${workspaceSlug}/stacks/vision`);
+        router.push(`/${workspaceSlug}/stacks/epics`);
       } else {
-        // Only default to vision if we're truly on a base /stacks route
+        // Only default to epics if we're truly on a base /stacks route
         // If we're on a story detail, don't change section
-        setActiveSubSection('vision');
+        setActiveSubSection('epics');
       }
     }
   }, [pathname, router, activeSubSection]);

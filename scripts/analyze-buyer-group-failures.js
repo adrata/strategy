@@ -66,8 +66,6 @@ async function analyzeFailures() {
         id: true,
         companyName: true,
         totalMembers: true,
-        totalEmployeesFound: true,
-        totalCost: true,
         cohesionScore: true,
         createdAt: true
       },
@@ -121,9 +119,7 @@ async function analyzeFailures() {
         console.log(`   Website: ${company.website || 'N/A'}`);
         console.log(`   LinkedIn: ${company.linkedinUrl || 'N/A'}`);
         console.log(`   Buyer Group Members: ${buyerGroup.totalMembers}`);
-        console.log(`   Employees Found: ${buyerGroup.totalEmployeesFound}`);
         console.log(`   People in DB: ${company._count.people}`);
-        console.log(`   Cost: $${buyerGroup.totalCost || 0}`);
         console.log(`   Cohesion: ${buyerGroup.cohesionScore || 0}%`);
       });
     }
