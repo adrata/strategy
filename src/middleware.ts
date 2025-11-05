@@ -77,30 +77,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if this is a workspace path
-  if (isWorkspacePath(pathname)) {
-    // Determine target domain
-    const isActionCom = hostname === 'action.com' || hostname.startsWith('action.com');
-    const targetDomain = isActionCom ? 'action.adrata.com' : hostname.split(':')[0]; // Remove port if present
-    
-    // Build redirect URL
-    const redirectUrl = new URL(request.url);
-    redirectUrl.host = targetDomain;
-    redirectUrl.pathname = '/sign-in';
-    
-    // Use https for production domains
-    if (!targetDomain.includes('localhost') && !targetDomain.includes('127.0.0.1')) {
-      redirectUrl.protocol = 'https:';
-    }
-    
-    // Preserve query parameters if present
-    if (request.nextUrl.search) {
-      redirectUrl.search = request.nextUrl.search;
-    }
-    
-    // Redirect to sign-in
-    return NextResponse.redirect(redirectUrl, 307);
-  }
+  // NOTE: Workspace path authentication is handled client-side by RouteGuard
+  // This middleware only handles domain redirects, not authentication checks
+  // Removing workspace path redirect to prevent redirect loops after sign-in
 
   // Handle domain redirect: action.com -> action.adrata.com
   if (hostname === 'action.com' || hostname.startsWith('action.com')) {
