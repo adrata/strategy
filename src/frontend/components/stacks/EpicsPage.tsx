@@ -4,8 +4,9 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { PlusIcon, DocumentTextIcon, PresentationChartBarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
+import { generateSlug } from '@/platform/utils/url-utils';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
 import { EpicGoalBar } from './EpicGoalBar';
 import { AddEpicModal } from './AddEpicModal';
@@ -48,6 +49,7 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
   const { ui } = useRevenueOS();
   const { user: authUser } = useUnifiedAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const stacksContext = useStacks();
   const { epics, triggerRefresh, isLoading: contextLoading } = stacksContext || { epics: [], triggerRefresh: () => {}, isLoading: false };
@@ -392,16 +394,20 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
             {coreDocs.map((doc) => (
               <div
                 key={doc.id}
-                className="p-4 bg-card rounded-lg border border-border hover:border-[var(--primary)] transition-colors cursor-pointer"
+                onClick={() => {
+                  const slug = generateSlug(doc.title, doc.id);
+                  router.push(`/${workspaceSlug}/workbench/${slug}`);
+                }}
+                className="group p-4 bg-card rounded-lg border border-border hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="flex items-start gap-3">
                   {doc.documentType === 'paper' ? (
-                    <DocumentTextIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5" />
+                    <DocumentTextIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                   ) : (
-                    <PresentationChartBarIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5" />
+                    <PresentationChartBarIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-foreground truncate">{doc.title}</h3>
+                    <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-[var(--primary)] transition-colors">{doc.title}</h3>
                     {doc.description && (
                       <p className="text-xs text-muted mt-1 line-clamp-2">{doc.description}</p>
                     )}
