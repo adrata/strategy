@@ -1124,7 +1124,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                         : customItems.filter(item => !item.completed);
                     
                     return itemsToShow.length > 0 ? (
-                      <div className={`space-y-1 ${presetItems.length > 0 ? 'mb-3 pb-3 border-b border-border' : ''}`}>
+                      <div className="space-y-1">
                         {!showOnlyCompleted && (
                           <p className="px-3 text-xs font-medium text-muted uppercase tracking-wider mb-1">
                             New Items
@@ -1146,7 +1146,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   
                   {/* Preset Items Section */}
                   {!showOnlyCompleted && presetItems.length > 0 && (
-                    <div className="space-y-1 pt-[7px]">
+                    <div className="space-y-1">
                       {/* Streak Message */}
                       {presetItems.every(item => item.completed) && streak > 0 && (
                         <div className="px-3 py-2 mb-2 bg-green-50 border border-green-200 rounded-lg">

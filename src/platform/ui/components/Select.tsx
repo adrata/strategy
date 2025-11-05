@@ -43,48 +43,11 @@ export function Select({
     };
   }, []);
 
-  // Keyboard navigation with numbers (like Speedrun sprint)
+  // Keyboard navigation - only Escape to close
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Handle number keys (1-9) for quick selection
-      const isNumberKey = (event.key >= '1' && event.key <= '9') ||
-                         (event.code >= 'Numpad1' && event.code <= 'Numpad9');
-      
-      if (isNumberKey) {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        
-        // Extract number from key or code
-        let pressedNumber: number;
-        if (event.key >= '1' && event.key <= '9') {
-          pressedNumber = parseInt(event.key);
-        } else if (event.code.includes('Digit')) {
-          pressedNumber = parseInt(event.code.replace('Digit', ''));
-        } else if (event.code.includes('Numpad')) {
-          pressedNumber = parseInt(event.code.replace('Numpad', ''));
-        } else {
-          return;
-        }
-        
-        // Check if the pressed number is within our options range
-        if (pressedNumber <= options.length) {
-          const currentIndex = options.findIndex(option => option.value === value);
-          
-          // If pressing the same number as current selection, cycle to next option
-          if (currentIndex === pressedNumber - 1) {
-            const nextIndex = (currentIndex + 1) % options.length;
-            onChange(options[nextIndex].value);
-          } else {
-            // Otherwise, select the pressed number
-            onChange(options[pressedNumber - 1].value);
-          }
-        }
-        return;
-      }
-
       // Handle Escape to close
       if (event.key === 'Escape') {
         event.preventDefault();
@@ -93,15 +56,12 @@ export function Select({
       }
     };
 
-    // Use both capture and bubble phases to ensure we get the event
     document.addEventListener('keydown', handleKeyDown, true);
-    document.addEventListener('keydown', handleKeyDown, false);
     
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
-      document.removeEventListener('keydown', handleKeyDown, false);
     };
-  }, [isOpen, options, value, onChange]);
+  }, [isOpen]);
 
   const handleOptionClick = (optionValue: string) => {
     onChange(optionValue);
@@ -123,7 +83,7 @@ export function Select({
         `}
       >
         <span className={selectedOption ? 'text-foreground' : 'text-muted'}>
-          {selectedOption ? `${options.findIndex(opt => opt.value === selectedOption.value) + 1}. ${selectedOption.label}` : placeholder}
+          {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDownIcon 
           className={`
@@ -147,9 +107,6 @@ export function Select({
                 ${option.value === value ? 'bg-blue-50 text-blue-700 font-medium' : 'text-foreground'}
               `}
             >
-              <span className="inline-block w-6 text-muted font-mono text-xs">
-                {index + 1}.
-              </span>
               {option.label}
             </button>
           ))}

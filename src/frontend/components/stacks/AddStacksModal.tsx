@@ -3,12 +3,12 @@
 /**
  * Add Stacks Modal Component
  * 
- * Simple, clean modal for creating Story, Bug, Epic, or Epoch
+ * Simple, clean modal for creating Story, Bug, or Epic
  * Similar to Add Lead modal - single column, minimal design
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { XMarkIcon, PlusIcon, RectangleStackIcon, ListBulletIcon, TableCellsIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 import { Select } from '@/platform/ui/components/Select';
@@ -19,7 +19,7 @@ interface AddStacksModalProps {
   onStacksAdded: (stacks: any) => void;
 }
 
-type WorkTypeTab = 'story' | 'bug' | 'epic' | 'epoch';
+type WorkTypeTab = 'story' | 'bug' | 'epic';
 
 export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModalProps) {
   const { ui } = useRevenueOS();
@@ -35,20 +35,20 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    product: '' as '' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
+    product: '' as '' | 'API' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
     section: '',
     status: 'up-next' as 'up-next' | 'todo' | 'in-progress' | 'built' | 'qa1' | 'qa2' | 'shipped',
-    // Story-specific
-    epochId: '',
-    viewType: 'detail' as 'detail' | 'list' | 'grid',
-    // Epoch-specific
-    goal: '',
-    timeframe: ''
+    assigneeId: '',
+    // Epic-specific (epochId is used for linking epics to epochs)
+    epochId: ''
   });
 
-  // Fetch available epics and epochs for selection
+  // Workspace users for assignee dropdown
+  const [workspaceUsers, setWorkspaceUsers] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  // Fetch available epics for selection
   const [availableEpics, setAvailableEpics] = useState<any[]>([]);
-  const [availableEpochs, setAvailableEpochs] = useState<any[]>([]);
   
   // Epic search state
   const [epicSearchQuery, setEpicSearchQuery] = useState('');
@@ -58,18 +58,9 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [showEpicDropdown, setShowEpicDropdown] = useState(false);
   const [showCreateEpicForm, setShowCreateEpicForm] = useState(false);
   const [newEpicTitle, setNewEpicTitle] = useState('');
-  
-  // Epoch search state
-  const [epochSearchQuery, setEpochSearchQuery] = useState('');
-  const [epochSearchResults, setEpochSearchResults] = useState<any[]>([]);
-  const [isSearchingEpochs, setIsSearchingEpochs] = useState(false);
-  const [selectedEpoch, setSelectedEpoch] = useState<any | null>(null);
-  const [showEpochDropdown, setShowEpochDropdown] = useState(false);
-  const [showCreateEpochForm, setShowCreateEpochForm] = useState(false);
-  const [newEpochTitle, setNewEpochTitle] = useState('');
 
   useEffect(() => {
-    const fetchEpicsAndEpochs = async () => {
+    const fetchEpics = async () => {
       if (!ui.activeWorkspace?.id) return;
 
       try {
@@ -83,15 +74,48 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           const data = await response.json();
           const epics = data.epics || [];
           setAvailableEpics(epics.filter((e: any) => !e.isEpoch));
-          setAvailableEpochs(epics.filter((e: any) => e.isEpoch));
         }
       } catch (error) {
-        console.error('Failed to fetch epics/epochs:', error);
+        console.error('Failed to fetch epics:', error);
       }
     };
 
     if (isOpen) {
-      fetchEpicsAndEpochs();
+      fetchEpics();
+    }
+  }, [isOpen, ui.activeWorkspace?.id]);
+
+  // Fetch workspace users for assignee dropdown
+  useEffect(() => {
+    const fetchWorkspaceUsers = async () => {
+      if (!ui.activeWorkspace?.id) return;
+
+      setLoadingUsers(true);
+      try {
+        const response = await fetch(
+          `/api/workspace/users?workspaceId=${ui.activeWorkspace.id}`,
+          { credentials: 'include' }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data?.users) {
+            setWorkspaceUsers(data.data.users);
+          } else if (Array.isArray(data)) {
+            setWorkspaceUsers(data);
+          } else if (data.users) {
+            setWorkspaceUsers(data.users);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch workspace users:', error);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchWorkspaceUsers();
     }
   }, [isOpen, ui.activeWorkspace?.id]);
 
@@ -121,41 +145,45 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     { value: 'dashboard', label: 'Dashboard' }
   ];
 
-  // Reset form when modal closes
+  // Reset form when modal closes or when switching tabs
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      product: '',
+      section: '',
+      status: 'up-next',
+      assigneeId: '',
+      epochId: ''
+    });
+    setEpicSearchQuery('');
+    setSelectedEpic(null);
+    setEpicSearchResults([]);
+    setShowEpicDropdown(false);
+    setShowCreateEpicForm(false);
+  };
+
   useEffect(() => {
     if (!isOpen) {
       setActiveWorkType('story');
-      setFormData({
-        title: '',
-        description: '',
-        product: '',
-        section: '',
-        status: 'up-next',
-        epochId: '',
-        viewType: 'detail',
-        goal: '',
-        timeframe: ''
-      });
-      setEpicSearchQuery('');
-      setEpochSearchQuery('');
-      setSelectedEpic(null);
-      setSelectedEpoch(null);
-      setEpicSearchResults([]);
-      setEpochSearchResults([]);
-      setShowEpicDropdown(false);
-      setShowEpochDropdown(false);
-      setShowCreateEpicForm(false);
-      setShowCreateEpochForm(false);
+      resetForm();
     }
   }, [isOpen]);
+
+  // Reset form when switching tabs
+  useEffect(() => {
+    if (isOpen) {
+      resetForm();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeWorkType]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.epic-search-container') && !target.closest('.epoch-search-container')) {
+      if (!target.closest('.epic-search-container')) {
         setShowEpicDropdown(false);
-        setShowEpochDropdown(false);
       }
     };
 
@@ -206,46 +234,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [epicSearchQuery, ui.activeWorkspace?.id]);
 
-  const searchEpochs = async (query: string) => {
-    if (!ui.activeWorkspace?.id || !query.trim()) return;
-    
-    setIsSearchingEpochs(true);
-    try {
-      const response = await fetch(
-        `/api/stacks/epics?workspaceId=${ui.activeWorkspace.id}&search=${encodeURIComponent(query)}`,
-        { credentials: 'include' }
-      );
-      
-      if (response.ok) {
-        const data = await response.json();
-        const epics = data.epics || [];
-        const filteredEpochs = epics.filter((e: any) => e.isEpoch);
-        setEpochSearchResults(filteredEpochs);
-        setShowEpochDropdown(true);
-      }
-    } catch (error) {
-      console.error('Error searching epochs:', error);
-    } finally {
-      setIsSearchingEpochs(false);
-    }
-  };
-
-  // Debounced epoch search
-  useEffect(() => {
-    if (!epochSearchQuery.trim()) {
-      setEpochSearchResults([]);
-      setShowEpochDropdown(false);
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      searchEpochs(epochSearchQuery);
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [epochSearchQuery, ui.activeWorkspace?.id]);
-
   const handleEpicSelect = (epic: any) => {
     setSelectedEpic(epic);
     setFormData(prev => ({ ...prev, epochId: epic.id }));
@@ -259,21 +247,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     setFormData(prev => ({ ...prev, epochId: '' }));
     setEpicSearchQuery('');
     setEpicSearchResults([]);
-  };
-
-  const handleEpochSelect = (epoch: any) => {
-    setSelectedEpoch(epoch);
-    setFormData(prev => ({ ...prev, epochId: epoch.id }));
-    setEpochSearchQuery(epoch.title);
-    setEpochSearchResults([]);
-    setShowEpochDropdown(false);
-  };
-
-  const handleEpochRemove = () => {
-    setSelectedEpoch(null);
-    setFormData(prev => ({ ...prev, epochId: '' }));
-    setEpochSearchQuery('');
-    setEpochSearchResults([]);
   };
 
   const handleCreateEpic = async () => {
@@ -321,51 +294,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     }
   };
 
-  const handleCreateEpoch = async () => {
-    if (!newEpochTitle.trim()) return;
-    
-    const workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId || !user?.id) return;
-
-    try {
-      // API will auto-create project if needed
-      const response = await fetch('/api/stacks/epics', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workspaceId,
-          userId: user.id,
-          title: newEpochTitle,
-          status: 'todo',
-          isEpoch: true
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const newEpoch = data.epic;
-        handleEpochSelect(newEpoch);
-        setNewEpochTitle('');
-        setShowCreateEpochForm(false);
-        // Refresh available epochs
-        const refreshResponse = await fetch(
-          `/api/stacks/epics?workspaceId=${workspaceId}`,
-          { credentials: 'include' }
-        );
-        if (refreshResponse.ok) {
-          const refreshData = await refreshResponse.json();
-          const epics = refreshData.epics || [];
-          setAvailableEpochs(epics.filter((e: any) => e.isEpoch));
-        }
-      } else {
-        alert('Failed to create epoch');
-      }
-    } catch (error) {
-      console.error('Error creating epoch:', error);
-      alert('Error creating epoch');
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -411,8 +339,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         const storyData: any = {
           title: formData.title,
           description: formData.description || undefined,
-          status: formData.status,
-          viewType: formData.viewType || 'detail'
+          status: formData.status
         };
 
         if (formData.product) {
@@ -421,8 +348,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         if (formData.section) {
           storyData.section = formData.section;
         }
-        if (formData.epochId) {
-          storyData.epochId = formData.epochId;
+        if (formData.assigneeId) {
+          storyData.assigneeId = formData.assigneeId;
         }
         // Note: projectId is auto-created by API if not provided
         // Pass workspaceId as query param to ensure correct workspace is used
@@ -467,6 +394,9 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         }
         if (formData.section) {
           bugData.section = formData.section;
+        }
+        if (formData.assigneeId) {
+          bugData.assigneeId = formData.assigneeId;
         }
 
         const response = await fetch('/api/stacks/tasks', {
@@ -519,6 +449,9 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         if (formData.epochId) {
           epicData.epochId = formData.epochId;
         }
+        if (formData.assigneeId) {
+          epicData.assigneeId = formData.assigneeId;
+        }
 
         const response = await fetch('/api/stacks/epics', {
           method: 'POST',
@@ -543,49 +476,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           }
           alert(errorMessage);
         }
-      } else if (activeWorkType === 'epoch') {
-        // Create epoch (as epic with epoch flag)
-        const userId = user?.id || '';
-        if (!userId) {
-          alert('User ID not found');
-          setIsLoading(false);
-          return;
-        }
-
-        const epochData: any = {
-          workspaceId,
-          userId,
-          // projectId will be auto-created by API if not provided
-          title: formData.title,
-          description: formData.description || undefined,
-          status: 'todo',
-          isEpoch: true,
-          goal: formData.goal || undefined,
-          timeframe: formData.timeframe || undefined
-        };
-
-        if (formData.product) {
-          epochData.product = formData.product;
-        }
-        if (formData.section) {
-          epochData.section = formData.section;
-        }
-
-        const response = await fetch('/api/stacks/epics', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(epochData)
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          onStacksAdded(data.epic || data);
-          onClose();
-        } else {
-          const error = await response.json();
-          alert(error.error || 'Failed to create epoch');
-        }
       }
     } catch (error) {
       console.error('Error creating stack:', error);
@@ -600,8 +490,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const workTypeLabels = {
     story: 'Story',
     bug: 'Bug',
-    epic: 'Epic',
-    epoch: 'Epoch'
+    epic: 'Epic'
   };
 
   return (
@@ -663,175 +552,9 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               >
                 Epic
               </button>
-              <button
-                type="button"
-                onClick={() => setActiveWorkType('epoch')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  activeWorkType === 'epoch'
-                    ? 'text-foreground border-b-2 border-primary'
-                    : 'text-muted hover:text-foreground'
-                }`}
-              >
-                Epoch
-              </button>
             </div>
           </div>
 
-          {/* Story-specific fields - View Type at top */}
-          {activeWorkType === 'story' && (
-            <>
-              {/* View Type Selector with Icons - At Top */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  View Type
-                </label>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'detail' }))}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                      formData.viewType === 'detail'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border bg-background text-foreground hover:bg-hover'
-                    }`}
-                    title="Detail"
-                  >
-                    <RectangleStackIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'list' }))}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                      formData.viewType === 'list'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border bg-background text-foreground hover:bg-hover'
-                    }`}
-                    title="List"
-                  >
-                    <ListBulletIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, viewType: 'grid' }))}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                      formData.viewType === 'grid'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border bg-background text-foreground hover:bg-hover'
-                    }`}
-                    title="Grid"
-                  >
-                    <TableCellsIcon className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Epoch Selector - Hidden for Notary Everyday */}
-              {!isNotaryEveryday && (
-              <div className="relative epic-search-container">
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Epoch
-                </label>
-              {selectedEpic ? (
-                <div className="flex items-center gap-2 p-2 bg-panel-background border border-border rounded-lg">
-                  <span className="flex-1 text-sm text-foreground">{selectedEpic.title}</span>
-                  <button
-                    type="button"
-                    onClick={handleEpicRemove}
-                    className="p-1 hover:bg-hover rounded transition-colors"
-                  >
-                    <XMarkIcon className="h-4 w-4 text-muted" />
-                  </button>
-                </div>
-              ) : (
-                <div className="relative">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={epicSearchQuery}
-                      onChange={(e) => {
-                        setEpicSearchQuery(e.target.value);
-                        setShowEpicDropdown(true);
-                      }}
-                      onFocus={() => {
-                        if (epicSearchQuery) {
-                          searchEpics(epicSearchQuery);
-                        }
-                      }}
-                      placeholder="Search or create epoch..."
-                      className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-primary outline-none"
-                      style={{ paddingRight: '1rem' }}
-                    />
-                  </div>
-                  {showEpicDropdown && (epicSearchResults.length > 0 || epicSearchQuery.trim() || showCreateEpicForm) && (
-                    <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                      {isSearchingEpics ? (
-                        <div className="p-3 text-sm text-muted">Searching...</div>
-                      ) : (
-                        <>
-                          {epicSearchResults.map((epic) => (
-                            <button
-                              key={epic.id}
-                              type="button"
-                              onClick={() => handleEpicSelect(epic)}
-                              className="w-full text-left px-4 py-2 hover:bg-hover text-sm text-foreground"
-                            >
-                              {epic.title}
-                            </button>
-                          ))}
-                          {epicSearchResults.length === 0 && epicSearchQuery.trim() && !showCreateEpicForm && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowCreateEpicForm(true);
-                                setNewEpicTitle(epicSearchQuery);
-                              }}
-                              className="w-full text-left px-4 py-2 hover:bg-hover text-sm text-blue-600 flex items-center gap-2"
-                            >
-                              <PlusIcon className="h-4 w-4" />
-                              Create "{epicSearchQuery}"
-                            </button>
-                          )}
-                          {showCreateEpicForm && (
-                            <div className="p-3 border-t border-gray-200">
-                              <input
-                                type="text"
-                                value={newEpicTitle}
-                                onChange={(e) => setNewEpicTitle(e.target.value)}
-                                placeholder="Epoch title"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2"
-                                autoFocus
-                              />
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={handleCreateEpic}
-                                  className="flex-1 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
-                                >
-                                  Create Epoch
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setShowCreateEpicForm(false);
-                                    setNewEpicTitle('');
-                                  }}
-                                  className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-              </div>
-              )}
-            </>
-          )}
 
           {/* Product Dropdown - Hidden for Notary Everyday */}
           {!isNotaryEveryday && (
@@ -850,6 +573,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               }}
               options={[
                 { value: '', label: 'Select a product...' },
+                { value: 'API', label: 'API' },
                 { value: 'RevenueOS', label: 'RevenueOS' },
                 { value: 'Workshop', label: 'Workshop' },
                 { value: 'Adrata', label: 'Adrata' },
@@ -860,6 +584,28 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               className="w-full"
             />
           </div>
+          )}
+
+          {/* Features Dropdown - Only show when RevenueOS is selected and not Notary Everyday */}
+          {!isNotaryEveryday && formData.product === 'RevenueOS' && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Features
+              </label>
+              <Select
+                value={formData.section}
+                onChange={(value) => setFormData(prev => ({ ...prev, section: value }))}
+                options={[
+                  { value: '', label: 'Select a feature...' },
+                  ...revenueOSSections.map((section) => ({
+                    value: section.value,
+                    label: section.label
+                  }))
+                ]}
+                placeholder="Select a feature..."
+                className="w-full"
+              />
+            </div>
           )}
 
           {/* Workstream/Column Dropdown */}
@@ -886,28 +632,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                   { value: 'shipped', label: 'Shipped' }
                 ]}
                 placeholder="Select workstream..."
-                className="w-full"
-              />
-            </div>
-          )}
-
-          {/* Features Dropdown - Only show when RevenueOS is selected and not Notary Everyday */}
-          {!isNotaryEveryday && formData.product === 'RevenueOS' && (
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Features
-              </label>
-              <Select
-                value={formData.section}
-                onChange={(value) => setFormData(prev => ({ ...prev, section: value }))}
-                options={[
-                  { value: '', label: 'Select a feature...' },
-                  ...revenueOSSections.map((section) => ({
-                    value: section.value,
-                    label: section.label
-                  }))
-                ]}
-                placeholder="Select a feature..."
                 className="w-full"
               />
             </div>
@@ -1048,35 +772,26 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             </div>
           )}
 
-          {/* Epoch-specific fields */}
-          {activeWorkType === 'epoch' && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Goal
-                </label>
-                <input
-                  type="text"
-                  value={formData.goal}
-                  onChange={(e) => setFormData(prev => ({ ...prev, goal: e.target.value }))}
-                  placeholder="What is the main goal of this epoch?"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Timeframe
-                </label>
-                <input
-                  type="text"
-                  value={formData.timeframe}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timeframe: e.target.value }))}
-                  placeholder="e.g., Q1 2024, 6 months"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
-                />
-              </div>
-            </>
-          )}
+          {/* Assign Dropdown - At bottom of each form */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Assign
+            </label>
+            <Select
+              value={formData.assigneeId}
+              onChange={(assigneeId) => setFormData(prev => ({ ...prev, assigneeId }))}
+              options={[
+                { value: '', label: 'Select assignee...' },
+                ...workspaceUsers.map((user: any) => ({
+                  value: user.id,
+                  label: user.name || user.email || 'Unknown User'
+                }))
+              ]}
+              placeholder="Select assignee..."
+              className="w-full"
+              disabled={loadingUsers}
+            />
+          </div>
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
