@@ -32,16 +32,16 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
-  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number; visionCount: number }) => number | React.ReactNode;
+  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number; visionCount: number; epicsCount: number }) => number | React.ReactNode;
 }
 
 const navigationItems: NavigationItem[] = [
   {
-    id: 'vision',
-    label: 'Vision',
+    id: 'epics',
+    label: 'Epics',
     icon: EyeIcon,
-    description: 'Papers and pitches',
-    getCount: (stats) => stats.visionCount // Vision shows count of papers and pitches
+    description: 'Epics and strategy',
+    getCount: (stats) => stats.epicsCount || 0 // Epics count
   },
   {
     id: 'workstream',
@@ -82,14 +82,15 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
   
   // State for story counts
-  const [stats, setStats] = useState({
+    const [stats, setStats] = useState({
     total: 0,
     active: 0,
     completed: 0,
     upNextCount: 0,
     backlogCount: 0,
     workstreamCount: 0,
-    visionCount: 0
+    visionCount: 0,
+    epicsCount: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
   
@@ -128,7 +129,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     const fetchStacksCounts = async () => {
       if (!workspaceId) {
         console.warn('⚠️ [StacksLeftPanel] No workspace ID available, resetting stats');
-        setStats(prev => ({ ...prev, total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 }));
+        setStats(prev => ({ ...prev, total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0, epicsCount: 0 }));
         setStatsLoading(false);
         return;
       }
@@ -138,8 +139,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       // Add cache-busting timestamp to prevent stale data
       const cacheBuster = `&_t=${Date.now()}`;
 
-      // Get current stats to preserve visionCount on error
-      const previousVisionCount = stats.visionCount;
+      // Get current stats to preserve counts on error
+      const previousEpicsCount = stats.epicsCount;
 
       try {
         // Fetch stories with cache-busting and no-cache headers
@@ -164,8 +165,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           cache: 'no-store' as RequestCache,
         });
 
-        // Fetch vision documents (papers and pitches) with cache-busting and no-cache headers
-        const visionResponse = await fetch(`/api/v1/stacks/vision?workspaceId=${workspaceId}${cacheBuster}`, {
+        // Fetch epics with cache-busting and no-cache headers
+        const epicsResponse = await fetch(`/api/stacks/epics?workspaceId=${workspaceId}${cacheBuster}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -178,6 +179,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         let stories: any[] = [];
         let tasks: any[] = [];
         let visionCount = 0;
+        let epicsCount = 0;
 
         if (storiesResponse.ok) {
           try {
@@ -216,49 +218,19 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           }
         }
 
-        if (visionResponse.ok) {
+        if (epicsResponse.ok) {
           try {
-            const visionData = await visionResponse.json();
-            visionCount = visionData.documents?.length || 0;
-            console.log('📊 [StacksLeftPanel] Vision API success - count:', visionCount, 'documents:', visionData.documents?.length, 'workspace:', workspaceId);
-            
-            // Log document details for debugging
-            if (visionData.documents && visionData.documents.length > 0) {
-              console.log('📄 [StacksLeftPanel] Vision documents:', visionData.documents.map((d: any) => ({ id: d.id, title: d.title, type: d.documentType })));
-            }
+            const epicsData = await epicsResponse.json();
+            epicsCount = (epicsData.epics || epicsData.epochs || []).length;
+            console.log('📊 [StacksLeftPanel] Epics API success - count:', epicsCount, 'epics:', (epicsData.epics || epicsData.epochs || []).length, 'workspace:', workspaceId);
           } catch (e) {
-            console.error('❌ [StacksLeftPanel] Failed to parse vision response:', e);
-            console.error('❌ [StacksLeftPanel] Response status:', visionResponse.status, 'statusText:', visionResponse.statusText);
-            visionCount = 0;
+            console.error('❌ [StacksLeftPanel] Failed to parse epics response:', e);
+            console.error('❌ [StacksLeftPanel] Response status:', epicsResponse.status, 'statusText:', epicsResponse.statusText);
+            epicsCount = 0;
           }
         } else {
-          console.error('❌ [StacksLeftPanel] Vision API failed:', visionResponse.status, visionResponse.statusText);
-          console.error('❌ [StacksLeftPanel] Workspace ID:', workspaceId);
-          
-          // Try to get error message for debugging - clone response first to avoid consuming body
-          try {
-            const clonedResponse = visionResponse.clone();
-            const errorText = await clonedResponse.text();
-            if (errorText) {
-              try {
-                const errorData = JSON.parse(errorText);
-                console.error('❌ [StacksLeftPanel] Vision API error details:', errorData);
-              } catch (parseError) {
-                console.error('❌ [StacksLeftPanel] Vision API error (non-JSON):', errorText.substring(0, 200));
-              }
-            }
-          } catch (e) {
-            console.error('❌ [StacksLeftPanel] Could not read vision error response:', e);
-          }
-          
-          // Don't reset count to 0 on error - keep previous count if available
-          // This prevents showing 0 when there's a transient error
-          if (previousVisionCount > 0) {
-            console.warn('⚠️ [StacksLeftPanel] Keeping previous vision count due to API error:', previousVisionCount);
-            visionCount = previousVisionCount;
-          } else {
-            visionCount = 0;
-          }
+          console.warn('⚠️ [StacksLeftPanel] Epics API failed:', epicsResponse.status, epicsResponse.statusText);
+          epicsCount = 0;
         }
 
         // Combine stories and tasks for totals
@@ -296,13 +268,14 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           upNextCount, 
           workstreamCount, 
           backlogCount, 
-          visionCount, 
+          visionCount,
+          epicsCount,
           stories: stories.length, 
           tasks: tasks.length,
           workspace: workspaceId 
         });
 
-        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, visionCount });
+        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, visionCount, epicsCount });
       } catch (error) {
         console.error('❌ [StacksLeftPanel] Failed to fetch story/task counts:', error);
         // Log error details for debugging
@@ -313,10 +286,10 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
             name: error.name
           });
         }
-        // Preserve visionCount if we had a previous value, otherwise reset to 0
+        // Preserve counts if we had previous values, otherwise reset to 0
         // This prevents showing 0 when there's a transient error
-        const preservedVisionCount = previousVisionCount > 0 ? previousVisionCount : 0;
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: preservedVisionCount });
+        const preservedEpicsCount = previousEpicsCount > 0 ? previousEpicsCount : 0;
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0, epicsCount: preservedEpicsCount });
       } finally {
         setStatsLoading(false);
       }
@@ -419,7 +392,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   useEffect(() => {
     // Check if this is a story detail page (has a slug/ID that's not a known section)
     const pathParts = pathname.split('/').filter(Boolean);
-    const knownSections = ['vision', 'workstream', 'metrics', 'backlog', 'chronicle', 'epics', 'stories', 'bugs', 'futures'];
+    const knownSections = ['epics', 'workstream', 'metrics', 'backlog', 'chronicle', 'vision', 'stories', 'bugs', 'futures'];
     
     // If we're on /stacks/{something}, check if it's a known section or a story slug
     if (pathParts.length >= 3 && pathParts[1] === 'stacks') {
@@ -452,8 +425,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     // Extract section from pathname
     let detectedSection: string | null = null;
     
-    if (pathname.includes('/stacks/vision')) {
-      detectedSection = 'vision';
+    if (pathname.includes('/stacks/epics')) {
+      detectedSection = 'epics';
     } else if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
       detectedSection = 'workstream';
     } else if (pathname.includes('/sell/pipeline') || pathname.includes('/pipeline/sell')) {
@@ -463,11 +436,11 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     } else if (pathname.includes('/stacks/metrics') || pathname.includes('/metrics')) {
       detectedSection = 'metrics';
     } else if (pathname.includes('/stacks')) {
-      // Only default to vision if we're truly on a base /stacks route
+      // Only default to epics if we're truly on a base /stacks route
       // If we're on a story detail, don't change section
       const isJustStacks = pathParts.length >= 2 && pathParts[pathParts.length - 1] === 'stacks';
       if (isJustStacks) {
-        detectedSection = 'vision';
+        detectedSection = 'epics';
       }
     }
     

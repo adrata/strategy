@@ -73,9 +73,9 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     }
     
     // New URL structure: /stacks/{category}/{section}
-    if (pathname.includes('/stacks/vision')) {
-      console.log('✅ [StacksContainer] Setting: vision');
-      onSubSectionChange('vision');
+    if (pathname.includes('/stacks/epics')) {
+      console.log('✅ [StacksContainer] Setting: epics');
+      onSubSectionChange('epics');
     } else if (pathname.includes('/stacks/workstream')) {
       console.log('✅ [StacksContainer] Setting: workstream');
       onSubSectionChange('workstream');
@@ -116,8 +116,8 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
       console.log('✅ [StacksContainer] Setting: stacks-build');
       onSubSectionChange('stacks-build');
     } else if (pathname.includes('/stacks')) {
-      console.log('✅ [StacksContainer] Default: vision');
-      onSubSectionChange('vision');
+      console.log('✅ [StacksContainer] Default: epics');
+      onSubSectionChange('epics');
     }
   }, [pathname, onSubSectionChange]);
 

@@ -26,6 +26,9 @@ import { AddStacksModal } from './AddStacksModal';
 import { StoryDetailView } from './StoryDetailView';
 import { VisionList } from './VisionList';
 import { VisionDocumentDetail } from './VisionDocumentDetail';
+import { EpicsPage } from './EpicsPage';
+import { EpicStoriesList } from './EpicStoriesList';
+import { StacksEpic } from './types';
 import { ErrorBoundary } from '@/frontend/components/ErrorBoundary';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
 
@@ -202,6 +205,7 @@ export function StacksMiddlePanel({
     assignee: 'all'
   });
   const [selectedVisionDocument, setSelectedVisionDocument] = useState<{ id: string; documentType: 'paper' | 'pitch' } | null>(null);
+  const [selectedEpic, setSelectedEpic] = useState<StacksEpic | null>(null);
 
   // Handle story detail view when storyId is provided
   useEffect(() => {
@@ -309,6 +313,38 @@ export function StacksMiddlePanel({
   }
 
   // Handle special sections that don't use the item list interface
+  if (activeSubSection === 'epics') {
+    // If an epic is selected, show stories filtered by that epic
+    if (selectedEpic) {
+      return (
+        <div className="h-full flex flex-col bg-background">
+          <div className="flex-shrink-0 p-4 border-b border-border bg-background">
+            <button
+              onClick={() => setSelectedEpic(null)}
+              className="text-sm text-muted hover:text-foreground mb-4 flex items-center gap-1"
+            >
+              ← Back to Epics
+            </button>
+            <h2 className="text-xl font-semibold text-foreground">{selectedEpic.title}</h2>
+            {selectedEpic.description && (
+              <p className="text-sm text-muted mt-2">{selectedEpic.description}</p>
+            )}
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <EpicStoriesList epicId={selectedEpic.id} onItemClick={onItemClick} />
+          </div>
+        </div>
+      );
+    }
+    
+    // Otherwise show EpicsPage
+    return (
+      <div className="h-full flex flex-col bg-background">
+        <EpicsPage onEpicSelect={(epic) => setSelectedEpic(epic)} />
+      </div>
+    );
+  }
+
   if (activeSubSection === 'vision') {
     return (
       <div className="h-full flex flex-col bg-background">
