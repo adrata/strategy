@@ -140,6 +140,7 @@ export async function GET(request: NextRequest) {
           viewType: true,
                 statusChangedAt: true,
                 isFlagged: true,
+                points: true,
                 createdAt: true,
                 updatedAt: true,
                 epoch: {
@@ -177,7 +178,8 @@ export async function GET(request: NextRequest) {
         columnName.includes('product') || 
         columnName.includes('section') || 
         columnName.includes('acceptancecriteria') || 
-        columnName.includes('isflagged')
+        columnName.includes('isflagged') ||
+        columnName.includes('points')
       );
       
       if (isNewColumnError) {
@@ -365,6 +367,7 @@ export async function GET(request: NextRequest) {
           dueDate: null, // dueDate field doesn't exist in schema yet
           tags: [], // tags field doesn't exist in schema yet
           isFlagged: (story as any).isFlagged || false, // Safe access if column doesn't exist
+          points: (story as any).points || null, // Safe access if column doesn't exist
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
           updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
           // Calculate time in current status (in days) using statusChangedAt
@@ -388,6 +391,7 @@ export async function GET(request: NextRequest) {
           dueDate: null,
           tags: [],
           isFlagged: false,
+          points: null,
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
           updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
           timeInStatus: 0

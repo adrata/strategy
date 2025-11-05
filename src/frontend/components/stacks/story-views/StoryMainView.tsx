@@ -10,6 +10,7 @@ import React, { useState, useEffect } from 'react';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { StacksCommentsSection } from './StacksCommentsSection';
+import { SuccessMessage } from '@/platform/ui/components/SuccessMessage';
 
 interface StoryMainViewProps {
   story: any;
@@ -21,11 +22,22 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
   const { ui } = useRevenueOS();
   const [workspaceUsers, setWorkspaceUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Update story when prop changes
   useEffect(() => {
     setStory(initialStory);
   }, [initialStory]);
+
+  // Guard against null/undefined story
+  if (!story || !story.id) {
+    return (
+      <div className="h-full flex items-center justify-center p-6">
+        <div className="text-muted">Story not found or loading...</div>
+      </div>
+    );
+  }
 
   // Fetch workspace users for assignee dropdown
   useEffect(() => {
@@ -84,6 +96,17 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
           onStoryUpdate(updatedStory);
         }
         
+        // Show success message
+        const fieldName = field === 'isFlagged' ? 'Flag' :
+                         field === 'acceptanceCriteria' ? 'Acceptance Criteria' :
+                         field === 'description' ? 'Description' :
+                         field === 'assigneeId' ? 'Assignee' :
+                         field === 'priority' ? 'Priority' :
+                         field.charAt(0).toUpperCase() + field.slice(1);
+        setSuccessMessage(`${fieldName} updated successfully!`);
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+        
         console.log('✅ [StoryMainView] Story updated successfully:', field, value);
       } else {
         const errorText = await response.text();
@@ -106,7 +129,13 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
 
 
   return (
-    <div className="h-full overflow-y-auto p-6">
+    <div 
+      className="h-full overflow-y-auto p-6 story-main-view-scrollable"
+      style={{ 
+        scrollbarWidth: 'thin', 
+        scrollbarColor: 'rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.05)' 
+      }}
+    >
       <div className="w-full space-y-6">
         {/* Overview Section */}
         <div className="bg-background rounded-lg border border-border p-6">
@@ -312,6 +341,14 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
         {/* Comments Section */}
         <StacksCommentsSection storyId={story.id} />
       </div>
+      
+      {/* Success Message */}
+      <SuccessMessage
+        message={successMessage}
+        isVisible={showSuccessMessage}
+        onClose={() => setShowSuccessMessage(false)}
+        type="success"
+      />
     </div>
   );
 }

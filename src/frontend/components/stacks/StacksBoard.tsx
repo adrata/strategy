@@ -12,9 +12,9 @@ import {
   PaperAirplaneIcon,
   RectangleStackIcon,
   ListBulletIcon,
-  TableCellsIcon,
-  FlagIcon
+  TableCellsIcon
 } from '@heroicons/react/24/outline';
+import { FlagIcon } from '@heroicons/react/24/solid';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
@@ -42,6 +42,7 @@ interface StackCard {
   };
   timeInStatus?: number; // days in current status
   isFlagged?: boolean;
+  points?: number | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -414,6 +415,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       epoch: story.epoch,
       timeInStatus: story.timeInStatus,
       isFlagged: story.isFlagged || false,
+      points: story.points || null,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt
     };
@@ -912,18 +914,18 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         
                         <div className="flex justify-between items-center text-xs text-muted">
                           <div className="flex items-center gap-2">
-                            <span className="bg-panel-background text-muted px-2 py-1 rounded text-xs flex items-center">
-                              {card.viewType === 'list' ? (
-                                <ListBulletIcon className="h-3 w-3" />
-                              ) : card.viewType === 'grid' ? (
-                                <TableCellsIcon className="h-3 w-3" />
-                              ) : (
-                                <RectangleStackIcon className="h-3 w-3" />
-                              )}
-                            </span>
-                            {card.timeInStatus !== undefined && card.timeInStatus >= 3 && (
-                              <span className="bg-error-bg text-error-text px-2 py-1 rounded text-xs font-medium">
-                                {card.timeInStatus === 1 ? '1 Day' : `${card.timeInStatus} Days`}
+                            {card.points !== undefined && card.points !== null ? (
+                              <span className="bg-panel-background text-muted px-2 py-1 rounded text-xs font-medium">
+                                {card.points} pts
+                              </span>
+                            ) : null}
+                            {card.timeInStatus !== undefined && card.timeInStatus > 0 && (
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                card.timeInStatus >= 7 ? 'bg-error-bg text-error-text' : 
+                                card.timeInStatus >= 3 ? 'bg-yellow-100 text-yellow-800' : 
+                                'bg-panel-background text-muted'
+                              }`}>
+                                {card.timeInStatus === 1 ? '1d' : `${card.timeInStatus}d`}
                               </span>
                             )}
                           </div>
@@ -931,11 +933,6 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                             {card.assignee && (
                               <span className="bg-panel-background text-foreground px-2 py-1 rounded-full text-xs">
                                 {card.assignee}
-                              </span>
-                            )}
-                            {card.updatedAt && (
-                              <span className="text-muted">
-                                {formatRelativeTime(card.updatedAt)}
                               </span>
                             )}
                           </div>

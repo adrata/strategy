@@ -39,6 +39,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     section: '',
     status: 'up-next' as 'up-next' | 'todo' | 'in-progress' | 'built' | 'qa1' | 'qa2' | 'shipped',
     assigneeId: '',
+    points: '',
     // Epic-specific (epochId is used for linking epics to epochs)
     epochId: ''
   });
@@ -350,6 +351,12 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         }
         if (formData.assigneeId) {
           storyData.assigneeId = formData.assigneeId;
+        }
+        if (formData.points && formData.points.trim()) {
+          const pointsValue = parseInt(formData.points, 10);
+          if (!isNaN(pointsValue) && pointsValue > 0) {
+            storyData.points = pointsValue;
+          }
         }
         // Note: projectId is auto-created by API if not provided
         // Pass workspaceId as query param to ensure correct workspace is used
@@ -667,6 +674,23 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             />
           </div>
 
+          {/* Points - Optional for stories */}
+          {activeWorkType === 'story' && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Points (optional)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formData.points}
+                onChange={(e) => setFormData(prev => ({ ...prev, points: e.target.value }))}
+                placeholder="e.g., 3, 5, 8, 13"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-primary outline-none"
+              />
+              <p className="text-xs text-muted mt-1">Story points for effort estimation</p>
+            </div>
+          )}
 
           {/* Assign Dropdown - At bottom of each form */}
           <div>

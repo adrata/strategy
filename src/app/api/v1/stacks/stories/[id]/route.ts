@@ -142,6 +142,7 @@ export async function GET(
       dueDate: null, // dueDate field doesn't exist in schema yet
       tags: [], // tags field doesn't exist in schema yet
       isFlagged: story.isFlagged || false,
+      points: (story as any).points || null, // Safe access if column doesn't exist
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
       // Calculate time in current status (in days) using statusChangedAt
@@ -218,7 +219,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { title, description, acceptanceCriteria, priority, status, product, section, viewType, isFlagged, assigneeId } = body;
+    const { title, description, acceptanceCriteria, priority, status, product, section, viewType, isFlagged, points, assigneeId } = body;
 
     // Verify story belongs to workspace
     const existingStory = await prisma.stacksStory.findFirst({
@@ -271,6 +272,9 @@ export async function PATCH(
     }
     if (isFlagged !== undefined) {
       updateData.isFlagged = isFlagged === true || isFlagged === 'true';
+    }
+    if (points !== undefined) {
+      updateData.points = points === null || points === '' ? null : parseInt(points as string, 10);
     }
     if (assigneeId !== undefined) {
       updateData.assigneeId = assigneeId || null;

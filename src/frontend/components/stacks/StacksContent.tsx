@@ -51,6 +51,24 @@ export function StacksContent({ section }: StacksContentProps) {
 
   // Determine active subsection from pathname
   useEffect(() => {
+    // Check if this is a story detail page (has a slug/ID that's not a known section)
+    const pathParts = pathname.split('/').filter(Boolean);
+    const knownSections = ['vision', 'workstream', 'metrics', 'backlog', 'chronicle', 'epics', 'stories', 'bugs', 'futures'];
+    
+    // If we're on /stacks/{something}, check if it's a known section or a story slug
+    if (pathParts.length >= 3 && pathParts[1] === 'stacks') {
+      const lastSegment = pathParts[pathParts.length - 1];
+      
+      // If last segment is NOT a known section, it's likely a story detail page
+      // Don't change activeSubSection - preserve current section
+      if (lastSegment && !knownSections.includes(lastSegment.toLowerCase())) {
+        // This looks like a story detail page (slug/ID), preserve current section
+        console.log('📄 [StacksContent] Story detail page detected, preserving current section:', activeSubSection);
+        return; // Don't change section when viewing a story detail
+      }
+    }
+    
+    // Now check for known sections
     if (pathname.includes('/stacks/vision')) {
       setActiveSubSection('vision');
     } else if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
@@ -74,7 +92,6 @@ export function StacksContent({ section }: StacksContentProps) {
     } else if (pathname.includes('/stacks')) {
       // Default to vision if we're in stacks but no specific section
       // Check if we're on /stacks without a specific section (e.g., /workspace/stacks)
-      const pathParts = pathname.split('/').filter(Boolean);
       const isJustStacks = pathParts.length >= 2 && 
                           pathParts[pathParts.length - 1] === 'stacks' &&
                           !pathname.includes('/stacks/vision') &&
@@ -87,10 +104,12 @@ export function StacksContent({ section }: StacksContentProps) {
         const workspaceSlug = pathParts[0] || 'workspace';
         router.push(`/${workspaceSlug}/stacks/vision`);
       } else {
+        // Only default to vision if we're truly on a base /stacks route
+        // If we're on a story detail, don't change section
         setActiveSubSection('vision');
       }
     }
-  }, [pathname, router]);
+  }, [pathname, router, activeSubSection]);
 
   // Navigation handlers
   const handleSubSectionChange = (newSubSection: string) => {

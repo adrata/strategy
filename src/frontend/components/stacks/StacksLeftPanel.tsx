@@ -450,6 +450,23 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   // Update activeSubSection based on pathname (for URL-based navigation)
   // This syncs the UI state with the URL when navigating directly or via browser back/forward
   useEffect(() => {
+    // Check if this is a story detail page (has a slug/ID that's not a known section)
+    const pathParts = pathname.split('/').filter(Boolean);
+    const knownSections = ['vision', 'workstream', 'metrics', 'backlog', 'chronicle', 'epics', 'stories', 'bugs', 'futures'];
+    
+    // If we're on /stacks/{something}, check if it's a known section or a story slug
+    if (pathParts.length >= 3 && pathParts[1] === 'stacks') {
+      const lastSegment = pathParts[pathParts.length - 1];
+      
+      // If last segment is NOT a known section, it's likely a story detail page
+      // Don't change activeSubSection - preserve current section
+      if (lastSegment && !knownSections.includes(lastSegment.toLowerCase())) {
+        // This looks like a story detail page (slug/ID), preserve current section
+        console.log('📄 [StacksLeftPanel] Story detail page detected, preserving current section:', activeSubSection);
+        return; // Don't change section when viewing a story detail
+      }
+    }
+    
     // Extract section from pathname
     let detectedSection: string | null = null;
     
@@ -464,8 +481,12 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     } else if (pathname.includes('/stacks/metrics') || pathname.includes('/metrics')) {
       detectedSection = 'metrics';
     } else if (pathname.includes('/stacks')) {
-      // If we're on /stacks but no specific section, default to vision
-      detectedSection = 'vision';
+      // Only default to vision if we're truly on a base /stacks route
+      // If we're on a story detail, don't change section
+      const isJustStacks = pathParts.length >= 2 && pathParts[pathParts.length - 1] === 'stacks';
+      if (isJustStacks) {
+        detectedSection = 'vision';
+      }
     }
     
     // Only update if we detected a different section and it doesn't match current state

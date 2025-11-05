@@ -61,6 +61,48 @@ async function applyMigrations() {
       }
     }
 
+    // Migration 3: Add points
+    console.log('\n📝 Applying migration: 20250115000003_add_stacks_points.sql');
+    const migration3 = fs.readFileSync(
+      path.join(__dirname, '../prisma/migrations/20250115000003_add_stacks_points.sql'),
+      'utf8'
+    );
+    
+    const statements3 = migration3.split(';').filter(s => s.trim());
+    for (const statement of statements3) {
+      if (statement.trim()) {
+        try {
+          await prisma.$executeRawUnsafe(statement.trim());
+          console.log('  ✅ Executed statement');
+        } catch (error) {
+          if (!error.message.includes('already exists') && !error.message.includes('duplicate')) {
+            console.warn('  ⚠️  Statement result:', error.message);
+          }
+        }
+      }
+    }
+
+    // Migration 4: Verification (idempotent)
+    console.log('\n📝 Applying verification migration: 20250115000002_verify_stacks_updates.sql');
+    const migration4 = fs.readFileSync(
+      path.join(__dirname, '../prisma/migrations/20250115000002_verify_stacks_updates.sql'),
+      'utf8'
+    );
+    
+    const statements2 = migration2.split(';').filter(s => s.trim());
+    for (const statement of statements2) {
+      if (statement.trim()) {
+        try {
+          await prisma.$executeRawUnsafe(statement.trim());
+          console.log('  ✅ Executed statement');
+        } catch (error) {
+          if (!error.message.includes('already exists') && !error.message.includes('duplicate')) {
+            console.warn('  ⚠️  Statement result:', error.message);
+          }
+        }
+      }
+    }
+
     // Migration 3: Verification (idempotent)
     console.log('\n📝 Applying verification migration: 20250115000002_verify_stacks_updates.sql');
     const migration3 = fs.readFileSync(
@@ -70,7 +112,7 @@ async function applyMigrations() {
     
     // Execute the entire DO block as one statement
     try {
-      await prisma.$executeRawUnsafe(migration3);
+      await prisma.$executeRawUnsafe(migration4);
       console.log('  ✅ Verification migration executed');
     } catch (error) {
       console.warn('  ⚠️  Verification migration result:', error.message);

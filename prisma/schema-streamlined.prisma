@@ -1074,6 +1074,7 @@ model StacksStory {
   section           String?       @db.VarChar(50)
   statusChangedAt   DateTime?
   isFlagged         Boolean        @default(false)
+  points            Int?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   assignee          users?        @relation(fields: [assigneeId], references: [id])

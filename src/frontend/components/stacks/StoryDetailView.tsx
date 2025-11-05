@@ -290,8 +290,43 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted">Loading story...</div>
+      <div className="h-full flex flex-col bg-background">
+        <div className="bg-background border-b border-border px-6 py-4">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 bg-loading-bg rounded-full animate-pulse"></div>
+            <div>
+              <div className="h-8 w-48 bg-loading-bg rounded animate-pulse mb-2"></div>
+              <div className="h-4 w-32 bg-loading-bg rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 px-6 py-6">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <div className="h-6 w-32 bg-loading-bg rounded animate-pulse"></div>
+              <div className="space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="h-4 bg-loading-bg rounded animate-pulse" style={{ width: i === 4 ? '60%' : '100%' }}></div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="h-6 w-40 bg-loading-bg rounded animate-pulse"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="h-4 bg-loading-bg rounded animate-pulse" style={{ width: i === 5 ? '60%' : '100%' }}></div>
+                  ))}
+                </div>
+                <div className="space-y-4">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="h-4 bg-loading-bg rounded animate-pulse" style={{ width: i === 5 ? '60%' : '100%' }}></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -440,14 +475,18 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
               className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isUpdating ? 'Refreshing...' : (() => {
-                const viewType = story.viewType || 'detail';
-                const typeMap: Record<string, string> = {
-                  'bug': 'Bug',
-                  'task': 'Task',
-                  'story': 'Story',
-                  'detail': 'Story'
-                };
-                return `Update ${typeMap[viewType] || 'Story'}`;
+                try {
+                  const viewType = story?.viewType || 'detail';
+                  const typeMap: Record<string, string> = {
+                    'bug': 'Bug',
+                    'task': 'Task',
+                    'story': 'Story',
+                    'detail': 'Story'
+                  };
+                  return `Update ${typeMap[viewType] || 'Story'}`;
+                } catch {
+                  return 'Update Story';
+                }
               })()}
             </button>
             {nextStatus && nextStatusLabel && (
@@ -469,13 +508,17 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
 
       {/* Content Area */}
       <div className="flex-1 overflow-hidden">
-        <StoryMainView 
-          story={story} 
-          onStoryUpdate={(updatedStory) => {
-            // Update story state when child component saves
-            setStory(updatedStory);
-          }}
-        />
+        {story ? (
+          <StoryMainView 
+            story={story} 
+            onStoryUpdate={(updatedStory) => {
+              // Update story state when child component saves
+              setStory(updatedStory);
+            }}
+          />
+        ) : (
+          <div className="p-6 text-muted">Loading story details...</div>
+        )}
       </div>
     </div>
   );
