@@ -314,11 +314,11 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
   // Epics come from context and should display even while loading
   const isInitialLoad = loading && coreDocs.length === 0;
 
-  // Filter epics based on search and filters
-  const filteredEpics = useMemo(() => {
-    if (!epics) return [];
+  // Filter and apply to sorted epics
+  const filteredAndSortedEpics = useMemo(() => {
+    if (!sortedEpics || sortedEpics.length === 0) return [];
     
-    return epics.filter(epic => {
+    return sortedEpics.filter(epic => {
       // Search filter
       const matchesSearch = searchQuery === '' || 
         epic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -332,7 +332,7 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
       
       return matchesSearch && matchesStatus && matchesPriority;
     });
-  }, [epics, searchQuery, statusFilter, priorityFilter]);
+  }, [sortedEpics, searchQuery, statusFilter, priorityFilter]);
 
   return (
     <div className="h-full flex flex-col bg-background">
@@ -438,6 +438,20 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
               Create your first epic
             </button>
           </div>
+        ) : filteredAndSortedEpics.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <p className="text-muted mb-2">No epics match your filters</p>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setStatusFilter('all');
+                setPriorityFilter('all');
+              }}
+              className="text-sm text-[var(--primary)] hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
         ) : (
           <DndContext
             sensors={sensors}
@@ -446,11 +460,11 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={sortedEpics.map((e) => e.id)}
+              items={filteredAndSortedEpics.map((e) => e.id)}
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-4">
-                {sortedEpics.map((epic, index) => {
+                {filteredAndSortedEpics.map((epic, index) => {
                   const rank = epic.rank || index + 1;
                   return (
                     <SortableEpicCard
