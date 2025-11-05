@@ -522,6 +522,45 @@ class SmartBuyerGroupPipeline {
   }
 
   /**
+   * Extract email from Coresignal data
+   * @param {object} fullProfile - Full Coresignal profile data
+   * @returns {string|null} Best email found (only real emails, not @coresignal.temp)
+   */
+  extractEmailFromCoresignal(fullProfile) {
+    if (!fullProfile) return null;
+    
+    // Check emails array
+    if (fullProfile.emails && Array.isArray(fullProfile.emails) && fullProfile.emails.length > 0) {
+      // Find the best email (prioritize personal/work emails, exclude fake ones)
+      const validEmails = fullProfile.emails
+        .map(e => (typeof e === 'string' ? e : e.email || e.address))
+        .filter(email => email && !email.includes('@coresignal.temp') && email.includes('@'));
+      
+      if (validEmails.length > 0) {
+        // Prefer work/personal emails
+        const workEmail = fullProfile.emails.find(e => {
+          const email = typeof e === 'string' ? e : e.email || e.address;
+          return email && (e.type === 'work' || e.type === 'professional');
+        });
+        if (workEmail) {
+          const email = typeof workEmail === 'string' ? workEmail : workEmail.email || workEmail.address;
+          if (email && !email.includes('@coresignal.temp')) return email;
+        }
+        return validEmails[0];
+      }
+    }
+    
+    // Check direct email field
+    if (fullProfile.email && typeof fullProfile.email === 'string') {
+      if (!fullProfile.email.includes('@coresignal.temp') && fullProfile.email.includes('@')) {
+        return fullProfile.email;
+      }
+    }
+    
+    return null;
+  }
+
+  /**
    * Extract phone number from Coresignal data
    * @param {object} fullProfile - Full Coresignal profile data
    * @returns {string|null} Best phone number found
@@ -1112,19 +1151,27 @@ class SmartBuyerGroupPipeline {
       // 2. Create/update People records for ALL buyer group members
       console.log(`👥 Creating/updating People records for ${buyerGroup.length} members...`);
       for (const member of buyerGroup) {
-        const email = member.email || `${member.id}@coresignal.temp`;
         const nameParts = member.name.split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
+        
+        // Extract email from Coresignal data (prioritize real emails from fullProfile)
+        const coresignalEmail = this.extractEmailFromCoresignal(member.fullProfile);
+        // Use coresignal email if available, otherwise fallback to member.email (but only if it's not fake)
+        const email = coresignalEmail || (member.email && !member.email.includes('@coresignal.temp') ? member.email : null);
         
         // Extract phone from Coresignal data
         const coresignalPhone = this.extractPhoneFromCoresignal(member.fullProfile);
         
         // Check if person already exists
+        // Use LinkedIn URL as primary identifier, fallback to email if no LinkedIn
         const existingPerson = await this.prisma.people.findFirst({
           where: {
             workspaceId: this.workspaceId,
-            email: email
+            OR: [
+              member.linkedinUrl ? { linkedinUrl: member.linkedinUrl } : null,
+              email ? { email: email } : null
+            ].filter(Boolean)
           }
         });
 
@@ -1181,7 +1228,7 @@ class SmartBuyerGroupPipeline {
               buyerGroupRole: member.buyerGroupRole,
               isBuyerGroupMember: true,
               buyerGroupOptimized: true,
-              coresignalData: member.fullProfile,
+              coresignalData: member.fullProfile, // Keep coresignal data
               enrichedData: aiIntelligence,
               aiIntelligence: aiIntelligence,
               aiLastUpdated: new Date(),
@@ -1247,7 +1294,7 @@ class SmartBuyerGroupPipeline {
               buyerGroupRole: member.buyerGroupRole,
               isBuyerGroupMember: true,
               buyerGroupOptimized: true,
-              coresignalData: member.fullProfile, // Full Coresignal data
+              coresignalData: member.fullProfile, // Keep coresignal data
               enrichedData: aiIntelligence,
               aiIntelligence: aiIntelligence,
               aiLastUpdated: new Date(),
@@ -1335,19 +1382,25 @@ class SmartBuyerGroupPipeline {
       
       // 4. Create BuyerGroupMembers records (for relationship tracking)
       try {
-      const memberRecords = buyerGroup.map(member => ({
-        id: createUniqueId('bgm'),
-        buyerGroupId: buyerGroupRecord.id,
-        name: member.name,
-        title: member.title,
+      const memberRecords = buyerGroup.map(member => {
+        // Extract email from Coresignal data (prioritize real emails from fullProfile)
+        const coresignalEmail = this.extractEmailFromCoresignal(member.fullProfile);
+        const email = coresignalEmail || (member.email && !member.email.includes('@coresignal.temp') ? member.email : null);
+        
+        return {
+          id: createUniqueId('bgm'),
+          buyerGroupId: buyerGroupRecord.id,
+          name: member.name,
+          title: member.title,
           department: member.department,
-        role: member.buyerGroupRole,
-          email: member.email || `${member.id}@coresignal.temp`,
-        linkedin: member.linkedinUrl,
-        confidence: member.roleConfidence || 0,
-        influenceScore: member.scores?.influence || 0,
-        updatedAt: new Date()
-      }));
+          role: member.buyerGroupRole,
+          email: email, // Only real emails, no fake @coresignal.temp
+          linkedin: member.linkedinUrl,
+          confidence: member.roleConfidence || 0,
+          influenceScore: member.scores?.influence || 0,
+          updatedAt: new Date()
+        };
+      });
       
       await this.prisma.buyerGroupMembers.createMany({
         data: memberRecords

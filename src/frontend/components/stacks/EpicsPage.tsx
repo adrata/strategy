@@ -336,98 +336,99 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
 
   return (
     <div className="h-full flex flex-col bg-background">
-      {/* Header with Add Epics button */}
-      <div className="flex-shrink-0 p-6 border-b border-border bg-background z-10">
-        <div className="flex items-center justify-between mb-6">
+      {/* Header */}
+      <div className="flex-shrink-0 p-4 border-b border-border bg-background">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Epics</h1>
             <p className="text-sm text-muted mt-1">Strategy and execution planning</p>
           </div>
           <button
             onClick={() => setIsAddEpicModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition-opacity shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition-opacity"
             type="button"
           >
             <PlusIcon className="w-5 h-5" />
             <span>Add Epic</span>
           </button>
         </div>
+      </div>
 
-        {/* Search and Filters */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative flex-1">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" />
-            <input
-              type="text"
-              placeholder="Search epics..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
-            />
-          </div>
-          
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
-          >
-            <option value="all">All Status</option>
-            <option value="todo">To Do</option>
-            <option value="in-progress">In Progress</option>
-            <option value="done">Done</option>
-          </select>
-          
-          <select
-            value={priorityFilter}
-            onChange={(e) => setPriorityFilter(e.target.value)}
-            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
-          >
-            <option value="all">All Priority</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
-        </div>
-
-        {/* 3 Core Documents */}
-        {coreDocs.length > 0 && (
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            {coreDocs.map((doc) => (
-              <div
-                key={doc.id}
-                onClick={() => {
-                  const slug = generateSlug(doc.title, doc.id);
-                  router.push(`/${workspaceSlug}/workbench/${slug}`);
-                }}
-                className="group p-4 bg-card rounded-lg border border-border hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
-              >
-                <div className="flex items-start gap-3">
-                  {doc.documentType === 'paper' ? (
-                    <DocumentTextIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-                  ) : (
-                    <PresentationChartBarIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-[var(--primary)] transition-colors">{doc.title}</h3>
-                    {doc.description && (
-                      <p className="text-xs text-muted mt-1 line-clamp-2">{doc.description}</p>
+      {/* Content area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6">
+          {/* 3 Core Documents */}
+          {coreDocs.length > 0 && (
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              {coreDocs.map((doc) => (
+                <div
+                  key={doc.id}
+                  onClick={() => {
+                    const slug = generateSlug(doc.title, doc.id);
+                    router.push(`/${workspaceSlug}/workbench/${slug}`);
+                  }}
+                  className="group p-4 bg-card rounded-lg border border-border hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
+                >
+                  <div className="flex items-start gap-3">
+                    {doc.documentType === 'paper' ? (
+                      <DocumentTextIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    ) : (
+                      <PresentationChartBarIcon className="w-6 h-6 text-[var(--primary)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     )}
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs text-muted capitalize">{doc.documentType}</span>
-                      <span className="text-xs text-muted">•</span>
-                      <span className="text-xs text-muted capitalize">{doc.status}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-[var(--primary)] transition-colors">{doc.title}</h3>
+                      {doc.description && (
+                        <p className="text-xs text-muted mt-1 line-clamp-2">{doc.description}</p>
+                      )}
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs text-muted capitalize">{doc.documentType}</span>
+                        <span className="text-xs text-muted">•</span>
+                        <span className="text-xs text-muted capitalize">{doc.status}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
 
-      {/* Epic Cards */}
-      <div className="flex-1 overflow-y-auto p-6">
-        {!epics || epics.length === 0 ? (
+          {/* Search and Filters */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Search epics..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+              />
+            </div>
+            
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+            >
+              <option value="all">All Status</option>
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+            
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+            >
+              <option value="all">All Priority</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+
+          {/* Epic Cards */}
+          {!epics || epics.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <p className="text-muted mb-4">No epics yet</p>
             <button

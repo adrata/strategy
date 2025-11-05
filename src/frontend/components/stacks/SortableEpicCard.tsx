@@ -3,7 +3,6 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Bars3Icon } from '@heroicons/react/24/outline';
 import { StacksEpic } from './types';
 import { EpicGoalBar } from './EpicGoalBar';
 import { EpicRankBadge } from './EpicRankBadge';
@@ -46,25 +45,19 @@ export function SortableEpicCard({
       style={style}
       onClick={onClick}
       onContextMenu={(e) => onContextMenu(e, epic.id)}
+      {...attributes}
+      {...listeners}
       className={`
         w-full p-6 bg-card rounded-lg border border-border shadow-sm 
-        hover:shadow-md hover:border-[var(--primary)] transition-all cursor-pointer
+        hover:shadow-md hover:border-[var(--primary)] transition-all cursor-grab active:cursor-grabbing
         ${isSelected ? 'border-[var(--primary)] ring-2 ring-[var(--primary)]/20' : ''}
         ${isDragging ? 'ring-2 ring-[var(--primary)]/50 opacity-50' : ''}
       `}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start gap-3 flex-1">
-          {/* Drag handle and rank badge */}
+          {/* Rank badge */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <div
-              {...attributes}
-              {...listeners}
-              className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded transition-colors"
-              onClick={(e) => e.stopPropagation()} // Prevent card click when dragging
-            >
-              <Bars3Icon className="w-5 h-5 text-muted" />
-            </div>
             <EpicRankBadge rank={rank} />
           </div>
           <div className="flex-1 min-w-0">
