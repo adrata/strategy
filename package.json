@@ -277,7 +277,7 @@
     ]
   },
   "overrides": {
-    "cookie": "^0.7.0",
+    "cookie": "^1.0.2",
     "nanoid": "^3.3.8",
     "tmp": "^0.2.4",
     "dompurify": "^3.2.7"
