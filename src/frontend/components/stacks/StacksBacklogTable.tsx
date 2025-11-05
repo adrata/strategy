@@ -60,6 +60,7 @@ interface BacklogItem {
   updatedAt: string;
   rank?: number;
   type?: 'story' | 'task'; // Track if this is a story or task
+  originalType?: string; // Preserve original type to detect bugs (e.g., 'bug')
 }
 
 interface StacksBacklogTableProps {
@@ -381,7 +382,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           }
           
           // Determine if this is a story or task
-          const itemType = item.type ? 'task' : 'story';
+          const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
           
           // Use existing rank if available, otherwise assign based on sorted position
           const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
@@ -398,7 +399,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
             rank: rank,
-            type: itemType as 'story' | 'task'
+            type: itemType as 'story' | 'task',
+            originalType: item.type // Preserve original type to detect bugs
           };
         });
         
@@ -503,15 +505,16 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Helper function to check if an item is a bug
   // Bugs can be identified by having a 'bug' tag or by being a task with type='bug'
   const isBug = (item: BacklogItem): boolean => {
+    // Check if the original type was 'bug'
+    if (item.originalType === 'bug') {
+      return true;
+    }
     // Check if item has a 'bug' tag
     if (item.tags && item.tags.length > 0) {
       if (item.tags.some(tag => tag.toLowerCase() === 'bug' || tag.toLowerCase().includes('bug'))) {
         return true;
       }
     }
-    // Also check if the original item type was 'bug' (for tasks that are bugs)
-    // Note: BacklogItem.type is 'task' | 'story', but we can check if it's a task
-    // and if the original data had type='bug' by checking if it's a task with bug tag
     return false;
   };
 
@@ -830,7 +833,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           const backlogItems = sortedItems.map((item: any, index: number) => {
             const tags = item.tags || [];
             if (item.type === 'bug') tags.push('bug');
-            const itemType = item.type ? 'task' : 'story';
+            const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
             const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
             
             return {
@@ -845,7 +848,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               createdAt: item.createdAt,
               updatedAt: item.updatedAt,
               rank: rank,
-              type: itemType as 'story' | 'task'
+              type: itemType as 'story' | 'task',
+              originalType: item.type // Preserve original type to detect bugs
             };
           });
           
@@ -886,7 +890,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           const backlogItems = sortedItems.map((item: any, index: number) => {
             const tags = item.tags || [];
             if (item.type === 'bug') tags.push('bug');
-            const itemType = item.type ? 'task' : 'story';
+            const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
             const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
             
             return {
@@ -901,7 +905,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
               createdAt: item.createdAt,
               updatedAt: item.updatedAt,
               rank: rank,
-              type: itemType as 'story' | 'task'
+              type: itemType as 'story' | 'task',
+              originalType: item.type // Preserve original type to detect bugs
             };
           });
           
