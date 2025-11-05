@@ -153,6 +153,7 @@ model users {
   oasis_read_receipts                                                   OasisReadReceipt[]
   stacks_story_assignees                                                StacksStory[]
   stacks_task_assignees                                                 StacksTask[]
+  stacks_comments                                                       StacksComment[]
   assigned_actions                                                      actions[]                   @relation("AssignedActions")
   ai_conversations                                                      ai_conversations[]
   api_cost_tracking                                                     api_cost_tracking[]
@@ -1058,26 +1059,29 @@ model StacksEpoch {
 }
 
 model StacksStory {
-  id              String        @id @default(cuid())
-  epicId          String? // Stories belong to Epic (existing column in database)
-  epochId         String? // Stories can also belong to Epoch (bigger items)
-  projectId       String
-  title           String        @db.VarChar(200)
-  description     String?
-  status          String        @default("todo") @db.VarChar(20)
-  priority        String        @default("medium") @db.VarChar(20)
-  assigneeId      String?       @db.VarChar(30)
-  viewType        String?       @db.VarChar(20)
-  product         String?       @db.VarChar(50)
-  section         String?       @db.VarChar(50)
-  statusChangedAt DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  assignee        users?        @relation(fields: [assigneeId], references: [id])
-  epic            StacksEpic?   @relation("StacksEpicStories", fields: [epicId], references: [id])
-  epoch           StacksEpoch?  @relation("StacksEpochStories", fields: [epochId], references: [id])
-  project         StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tasks           StacksTask[]
+  id                String        @id @default(cuid())
+  epicId            String? // Stories belong to Epic (existing column in database)
+  epochId           String? // Stories can also belong to Epoch (bigger items)
+  projectId         String
+  title             String        @db.VarChar(200)
+  description       String?
+  acceptanceCriteria String?      @db.Text
+  status            String        @default("todo") @db.VarChar(20)
+  priority          String        @default("medium") @db.VarChar(20)
+  assigneeId        String?       @db.VarChar(30)
+  viewType          String?       @db.VarChar(20)
+  product           String?       @db.VarChar(50)
+  section           String?       @db.VarChar(50)
+  statusChangedAt   DateTime?
+  isFlagged         Boolean        @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  assignee          users?        @relation(fields: [assigneeId], references: [id])
+  epic              StacksEpic?   @relation("StacksEpicStories", fields: [epicId], references: [id])
+  epoch             StacksEpoch?  @relation("StacksEpochStories", fields: [epochId], references: [id])
+  project           StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks             StacksTask[]
+  comments          StacksComment[]
 
   @@index([epicId])
   @@index([epochId])
@@ -1109,6 +1113,28 @@ model StacksTask {
   @@index([assigneeId])
   @@index([projectId, status])
   @@index([projectId, type])
+}
+
+model StacksComment {
+  id          String    @id @default(ulid())
+  storyId     String    @db.VarChar(30)
+  parentId    String?
+  content     String    @db.Text
+  createdById String    @db.VarChar(30)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  // Relations
+  story     StacksStory    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  parent    StacksComment? @relation("StacksCommentParent", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   StacksComment[] @relation("StacksCommentParent")
+  createdBy users           @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([storyId])
+  @@index([parentId])
+  @@index([createdAt])
+  @@index([deletedAt])
 }
 
 model BuyerGroupMembers {

@@ -678,10 +678,17 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               onChange={(assigneeId) => setFormData(prev => ({ ...prev, assigneeId }))}
               options={[
                 { value: '', label: 'Select assignee...' },
-                ...workspaceUsers.map((user: any) => ({
-                  value: user.id,
-                  label: user.name || user.email || 'Unknown User'
-                }))
+                ...workspaceUsers.map((user: any) => {
+                  // Format name properly: firstName + lastName, fallback to name, then email
+                  const displayName = 
+                    (user.firstName && user.lastName 
+                      ? `${user.firstName} ${user.lastName}`.trim()
+                      : user.firstName || user.lastName || user.name || user.email || 'Unknown User');
+                  return {
+                    value: user.id,
+                    label: displayName
+                  };
+                })
               ]}
               placeholder="Select assignee..."
               className="w-full"

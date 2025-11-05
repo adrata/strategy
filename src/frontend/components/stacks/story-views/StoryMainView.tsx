@@ -8,6 +8,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
+import { useRevenueOS } from '@/platform/ui/hooks/useRevenueOS';
+import { StacksCommentsSection } from './StacksCommentsSection';
 
 interface StoryMainViewProps {
   story: any;
@@ -16,11 +18,46 @@ interface StoryMainViewProps {
 
 export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainViewProps) {
   const [story, setStory] = useState(initialStory);
+  const { ui } = useRevenueOS();
+  const [workspaceUsers, setWorkspaceUsers] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   // Update story when prop changes
   useEffect(() => {
     setStory(initialStory);
   }, [initialStory]);
+
+  // Fetch workspace users for assignee dropdown
+  useEffect(() => {
+    const fetchWorkspaceUsers = async () => {
+      if (!ui.activeWorkspace?.id) return;
+
+      setLoadingUsers(true);
+      try {
+        const response = await fetch(
+          `/api/workspace/users?workspaceId=${ui.activeWorkspace.id}`,
+          { credentials: 'include' }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data?.users) {
+            setWorkspaceUsers(data.data.users);
+          } else if (Array.isArray(data)) {
+            setWorkspaceUsers(data);
+          } else if (data.users) {
+            setWorkspaceUsers(data.users);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch workspace users:', error);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    fetchWorkspaceUsers();
+  }, [ui.activeWorkspace?.id]);
 
   const handleSave = async (field: string, value: string | any, recordId: string, recordType: string) => {
     try {
@@ -126,10 +163,10 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
                     recordType="stacks"
                     inputType="select"
                     options={[
-                      { value: 'low', label: 'Low' },
-                      { value: 'medium', label: 'Medium' },
+                      { value: 'urgent', label: 'Urgent' },
                       { value: 'high', label: 'High' },
-                      { value: 'urgent', label: 'Urgent' }
+                      { value: 'medium', label: 'Medium' },
+                      { value: 'low', label: 'Low' }
                     ]}
                     onSave={handleSave}
                     className="text-sm font-medium"
@@ -156,12 +193,30 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
             <div className="space-y-4">
               <div>
                 <label className="text-xs text-muted uppercase tracking-wide">Assignee</label>
-                <div className="text-sm text-foreground mt-1">
-                  {story.assignee 
-                    ? (typeof story.assignee === 'object' 
-                      ? story.assignee.name || `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || story.assignee.email
-                      : story.assignee)
-                    : 'Unassigned'}
+                <div className="mt-1">
+                  <InlineEditField
+                    value={story.assignee?.id || ''}
+                    field="assigneeId"
+                    recordId={story.id}
+                    recordType="stacks"
+                    inputType="select"
+                    options={[
+                      { value: '', label: 'Unassigned' },
+                      ...workspaceUsers.map((user: any) => {
+                        // Format name properly: firstName + lastName, fallback to name, then email
+                        const displayName = 
+                          (user.firstName && user.lastName 
+                            ? `${user.firstName} ${user.lastName}`.trim()
+                            : user.firstName || user.lastName || user.name || user.email || 'Unknown User');
+                        return {
+                          value: user.id,
+                          label: displayName
+                        };
+                      })
+                    ]}
+                    onSave={handleSave}
+                    className="text-sm font-medium"
+                  />
                 </div>
               </div>
               
@@ -192,26 +247,70 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
                   </div>
                 </div>
               )}
+
+              <div>
+                <label className="text-xs text-muted uppercase tracking-wide">Flag</label>
+                <div className="mt-1">
+                  <InlineEditField
+                    value={story.isFlagged ? 'true' : 'false'}
+                    field="isFlagged"
+                    recordId={story.id}
+                    recordType="stacks"
+                    inputType="select"
+                    options={[
+                      { value: 'false', label: 'No' },
+                      { value: 'true', label: 'Yes' }
+                    ]}
+                    onSave={async (field, value, recordId, recordType) => {
+                      await handleSave(field, value === 'true', recordId, recordType);
+                    }}
+                    className="text-sm font-medium"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Description Section */}
-        <div className="bg-background rounded-lg border border-border p-6">
-          <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4">Description</h3>
-          <div className="mt-1">
-            <InlineEditField
-              value={story.description || ''}
-              field="description"
-              recordId={story.id}
-              recordType="stacks"
-              type="textarea"
-              placeholder="Enter description"
-              onSave={handleSave}
-              className="text-sm text-foreground whitespace-pre-wrap"
-            />
+        {/* Description and Acceptance Criteria Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Description Box - Left */}
+          <div className="bg-background rounded-lg border border-border p-6">
+            <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4">Description</h3>
+            <div className="mt-1">
+              <InlineEditField
+                value={story.description || ''}
+                field="description"
+                recordId={story.id}
+                recordType="stacks"
+                type="textarea"
+                placeholder="Enter description"
+                onSave={handleSave}
+                className="text-sm text-foreground whitespace-pre-wrap"
+              />
+            </div>
+          </div>
+
+          {/* Acceptance Criteria Box - Right */}
+          <div className="bg-background rounded-lg border border-border p-6">
+            <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4">Acceptance Criteria</h3>
+            <div className="mt-1">
+              <InlineEditField
+                value={story.acceptanceCriteria || ''}
+                field="acceptanceCriteria"
+                recordId={story.id}
+                recordType="stacks"
+                type="textarea"
+                placeholder="Enter acceptance criteria"
+                onSave={handleSave}
+                className="text-sm text-foreground whitespace-pre-wrap"
+              />
+            </div>
           </div>
         </div>
+
+        {/* Comments Section */}
+        <StacksCommentsSection storyId={story.id} />
       </div>
     </div>
   );

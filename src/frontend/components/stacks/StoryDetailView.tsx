@@ -364,6 +364,14 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       <div className="flex-shrink-0 border-b border-border px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
+            {/* Rank Squircle - similar to leads */}
+            {currentIndex !== null && (
+              <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative">
+                <span className="text-sm font-semibold text-foreground">
+                  {currentIndex + 1}
+                </span>
+              </div>
+            )}
             <div>
               <h1 className="text-2xl font-bold text-foreground">
                 {story.title || 'Untitled Story'}
@@ -381,7 +389,16 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
               disabled={isUpdating}
               className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isUpdating ? 'Refreshing...' : 'Update'}
+              {isUpdating ? 'Refreshing...' : (() => {
+                const viewType = story.viewType || 'detail';
+                const typeMap: Record<string, string> = {
+                  'bug': 'Bug',
+                  'task': 'Task',
+                  'story': 'Story',
+                  'detail': 'Story'
+                };
+                return `Update ${typeMap[viewType] || 'Story'}`;
+              })()}
             </button>
             {nextStatus && nextStatusLabel && (
               <button
@@ -389,7 +406,11 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
                 disabled={isUpdating}
                 className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isUpdating ? 'Updating...' : `Advance to ${nextStatusLabel}`}
+                {isUpdating ? 'Updating...' : (
+                  <>
+                    Advance to <span className="italic">{nextStatusLabel}</span>
+                  </>
+                )}
               </button>
             )}
           </div>

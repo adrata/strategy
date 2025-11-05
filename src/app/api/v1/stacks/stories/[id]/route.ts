@@ -67,12 +67,15 @@ export async function GET(
         projectId: true,
         title: true,
         description: true,
+        acceptanceCriteria: true,
         status: true,
         priority: true,
         assigneeId: true,
         product: true,
         section: true,
         viewType: true,
+        isFlagged: true,
+        statusChangedAt: true,
         createdAt: true,
         updatedAt: true,
         epoch: {
@@ -109,6 +112,7 @@ export async function GET(
       id: story.id,
       title: story.title,
       description: story.description,
+      acceptanceCriteria: story.acceptanceCriteria || null,
       status: story.status,
       priority: story.priority,
       viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
@@ -137,6 +141,7 @@ export async function GET(
       } : null,
       dueDate: null, // dueDate field doesn't exist in schema yet
       tags: [], // tags field doesn't exist in schema yet
+      isFlagged: story.isFlagged || false,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
       // Calculate time in current status (in days) using statusChangedAt
@@ -213,7 +218,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { title, description, priority, status, product, section, viewType } = body;
+    const { title, description, acceptanceCriteria, priority, status, product, section, viewType, isFlagged, assigneeId } = body;
 
     // Verify story belongs to workspace
     const existingStory = await prisma.stacksStory.findFirst({
@@ -242,6 +247,9 @@ export async function PATCH(
     if (description !== undefined) {
       updateData.description = description;
     }
+    if (acceptanceCriteria !== undefined) {
+      updateData.acceptanceCriteria = acceptanceCriteria;
+    }
     if (priority !== undefined) {
       updateData.priority = priority;
     }
@@ -261,6 +269,12 @@ export async function PATCH(
     if (viewType !== undefined) {
       updateData.viewType = viewType;
     }
+    if (isFlagged !== undefined) {
+      updateData.isFlagged = isFlagged === true || isFlagged === 'true';
+    }
+    if (assigneeId !== undefined) {
+      updateData.assigneeId = assigneeId || null;
+    }
 
     const story = await prisma.stacksStory.update({
       where: { id: storyId },
@@ -271,12 +285,15 @@ export async function PATCH(
         projectId: true,
         title: true,
         description: true,
+        acceptanceCriteria: true,
         status: true,
         priority: true,
         assigneeId: true,
         product: true,
         section: true,
         viewType: true,
+        isFlagged: true,
+        statusChangedAt: true,
         createdAt: true,
         updatedAt: true,
         epoch: {
@@ -308,6 +325,7 @@ export async function PATCH(
       id: story.id,
       title: story.title,
       description: story.description,
+      acceptanceCriteria: story.acceptanceCriteria || null,
       status: story.status,
       priority: story.priority,
       viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
@@ -334,6 +352,7 @@ export async function PATCH(
         id: story.project.id,
         name: story.project.name
       } : null,
+      isFlagged: story.isFlagged || false,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt
     };

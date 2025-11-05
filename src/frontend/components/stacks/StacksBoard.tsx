@@ -12,7 +12,8 @@ import {
   PaperAirplaneIcon,
   RectangleStackIcon,
   ListBulletIcon,
-  TableCellsIcon
+  TableCellsIcon,
+  FlagIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
@@ -40,6 +41,7 @@ interface StackCard {
     description?: string;
   };
   timeInStatus?: number; // days in current status
+  isFlagged?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -404,6 +406,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       tags: story.tags || [],
       epoch: story.epoch,
       timeInStatus: story.timeInStatus,
+      isFlagged: story.isFlagged || false,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt
     };
@@ -872,6 +875,13 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         <div className="absolute top-2 left-2 w-6 h-6 bg-panel-background text-foreground rounded-[12px] flex items-center justify-center text-xs font-bold flex-shrink-0 shrink-0">
                           {displayNumber}
                         </div>
+                        
+                        {/* Flag icon in top right */}
+                        {card.isFlagged && (
+                          <div className="absolute top-2 right-2">
+                            <FlagIcon className="h-4 w-4 text-red-500" />
+                          </div>
+                        )}
                         
                         <div className="mb-2 ml-8">
                           <h4 className="font-medium text-foreground text-sm leading-tight mb-1">

@@ -129,12 +129,12 @@ export function ShipButton() {
         disabled={loading || shippedCount === 0}
         className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-colors ${
           shippedCount > 0
-            ? 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700'
+            ? 'bg-foreground text-background border-foreground hover:opacity-90'
             : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         <PaperAirplaneIcon className="h-4 w-4" />
-        Ship {shippedCount > 0 && `(${shippedCount})`}
+        Ship
       </button>
       
       {showModal && (

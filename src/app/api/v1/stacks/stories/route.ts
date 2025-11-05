@@ -131,42 +131,44 @@ export async function GET(request: NextRequest) {
           projectId: true,
           title: true,
           description: true,
+          acceptanceCriteria: true,
           status: true,
           priority: true,
           assigneeId: true,
           product: true,
           section: true,
           viewType: true,
-          statusChangedAt: true,
-          createdAt: true,
-          updatedAt: true,
-          epoch: {
-            select: {
-              id: true,
-              title: true,
-              description: true
-            }
-          },
-          assignee: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true
-            }
-          },
-          project: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
-        },
-        orderBy: [
-          { createdAt: 'desc' },
-          { priority: 'desc' }
-        ]
-      });
+                statusChangedAt: true,
+                isFlagged: true,
+                createdAt: true,
+                updatedAt: true,
+                epoch: {
+                  select: {
+                    id: true,
+                    title: true,
+                    description: true
+                  }
+                },
+                assignee: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true
+                  }
+                },
+                project: {
+                  select: {
+                    id: true,
+                    name: true
+                  }
+                }
+              },
+              orderBy: [
+                { createdAt: 'desc' },
+                { priority: 'desc' }
+              ]
+            });
     } catch (queryError) {
       // Check if this is a P2022 error (column doesn't exist) for product or section
       const isColumnError = queryError && typeof queryError === 'object' && 'code' in queryError && (queryError as any).code === 'P2022';
@@ -346,6 +348,7 @@ export async function GET(request: NextRequest) {
           id: story.id,
           title: story.title || '',
           description: story.description || '',
+          acceptanceCriteria: story.acceptanceCriteria || null,
           status: story.status || 'todo',
           priority: story.priority || 'medium',
           viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
@@ -356,6 +359,7 @@ export async function GET(request: NextRequest) {
           project,
           dueDate: null, // dueDate field doesn't exist in schema yet
           tags: [], // tags field doesn't exist in schema yet
+          isFlagged: story.isFlagged || false,
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
           updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
           // Calculate time in current status (in days) using statusChangedAt
@@ -378,6 +382,7 @@ export async function GET(request: NextRequest) {
           project: null,
           dueDate: null,
           tags: [],
+          isFlagged: false,
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
           updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
           timeInStatus: 0
@@ -588,10 +593,11 @@ export async function POST(request: NextRequest) {
         product: true,
         section: true,
         viewType: true,
-        statusChangedAt: true,
-        createdAt: true,
-        updatedAt: true,
-        epoch: {
+          statusChangedAt: true,
+          isFlagged: true,
+          createdAt: true,
+          updatedAt: true,
+          epoch: {
           select: {
             id: true,
             title: true,
@@ -754,10 +760,11 @@ export async function PUT(request: NextRequest) {
         assigneeId: true,
         product: true,
         section: true,
-        statusChangedAt: true,
-        createdAt: true,
-        updatedAt: true,
-        epoch: {
+          statusChangedAt: true,
+          isFlagged: true,
+          createdAt: true,
+          updatedAt: true,
+          epoch: {
           select: {
             id: true,
             title: true,
