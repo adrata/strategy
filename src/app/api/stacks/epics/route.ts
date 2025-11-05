@@ -64,7 +64,10 @@ export async function GET(request: NextRequest) {
             select: { stories: true }
           }
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: [
+          { rank: 'asc' }, // Order by rank first (lower = more important, nulls last)
+          { createdAt: 'desc' } // Then by creation date
+        ]
       });
     } catch (dbError) {
       // Handle specific Prisma errors
@@ -199,6 +202,14 @@ export async function POST(request: NextRequest) {
       finalProjectId = project.id;
     }
 
+    // Get current max rank to assign new epic
+    const maxRankEpic = await prisma.stacksEpic.findFirst({
+      where: { projectId: finalProjectId },
+      orderBy: { rank: 'desc' },
+      select: { rank: true }
+    });
+    const nextRank = maxRankEpic?.rank ? maxRankEpic.rank + 1 : 1;
+
     const epoch = await prisma.stacksEpic.create({
       data: {
         projectId: finalProjectId,
@@ -206,6 +217,7 @@ export async function POST(request: NextRequest) {
         description,
         status: status || 'todo',
         priority: priority || 'medium',
+        rank: nextRank, // Assign next rank
         product: product || null,
         section: section || null
       },

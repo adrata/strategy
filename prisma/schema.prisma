@@ -1023,6 +1023,7 @@ model StacksEpic {
   description String?
   status      String        @default("todo") @db.VarChar(20)
   priority    String        @default("medium") @db.VarChar(20)
+  rank        Int? // Order/position (1-based, lower = more important)
   product     String?       @db.VarChar(50)
   section     String?       @db.VarChar(50)
   createdAt   DateTime      @default(now())
@@ -1034,6 +1035,7 @@ model StacksEpic {
   @@index([projectId])
   @@index([epochId])
   @@index([projectId, status])
+  @@index([projectId, rank])
   @@map("StacksEpic") // Maps to existing database table
 }
 
@@ -1100,7 +1102,7 @@ model StacksTask {
   assigneeId  String?       @db.VarChar(30)
   product     String?       @db.VarChar(50)
   section     String?       @db.VarChar(50)
-  rank        Int?           // Order/position in backlog (1-based)
+  rank        Int? // Order/position in backlog (1-based)
   attachments Json?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
