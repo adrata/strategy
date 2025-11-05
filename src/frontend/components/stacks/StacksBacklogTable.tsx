@@ -500,6 +500,21 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     setVisibleColumns(columns);
   };
 
+  // Helper function to check if an item is a bug
+  // Bugs can be identified by having a 'bug' tag or by being a task with type='bug'
+  const isBug = (item: BacklogItem): boolean => {
+    // Check if item has a 'bug' tag
+    if (item.tags && item.tags.length > 0) {
+      if (item.tags.some(tag => tag.toLowerCase() === 'bug' || tag.toLowerCase().includes('bug'))) {
+        return true;
+      }
+    }
+    // Also check if the original item type was 'bug' (for tasks that are bugs)
+    // Note: BacklogItem.type is 'task' | 'story', but we can check if it's a task
+    // and if the original data had type='bug' by checking if it's a task with bug tag
+    return false;
+  };
+
   // Filter and sort items
   const filteredItems = items
     .filter(item => {
@@ -521,7 +536,9 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       const matchesPriority = filters.priority === 'all' || item.priority === filters.priority;
       
       // Workstream filter (check tags for workstream names)
-      const matchesWorkstream = filters.workstream === 'all' || 
+      // Bugs should always pass workstream filter since they're cross-cutting issues
+      const itemIsBug = isBug(item);
+      const matchesWorkstream = filters.workstream === 'all' || itemIsBug ||
         (item.tags && item.tags.some(tag => 
           tag.toLowerCase() === filters.workstream.toLowerCase()
         ));
@@ -575,12 +592,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       }))
     });
   }, [items.length, filteredItems.length, filters, searchQuery]);
-
-  // Helper function to check if an item is a bug
-  const isBug = (item: BacklogItem): boolean => {
-    if (!item.tags || item.tags.length === 0) return false;
-    return item.tags.some(tag => tag.toLowerCase() === 'bug' || tag.toLowerCase().includes('bug'));
-  };
 
   // Separate items into "Up Next" (status='up-next' or 'todo') and other items
   // Map 'todo' to 'up-next' for display purposes
