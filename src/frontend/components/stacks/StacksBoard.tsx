@@ -887,7 +887,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         
                         {/* Flag icon in top right */}
                         {card.isFlagged && (
-                          <div className="absolute top-2 right-2">
+                          <div className="absolute top-[9px] right-2">
                             <FlagIcon className="h-4 w-4 text-red-500" />
                           </div>
                         )}
