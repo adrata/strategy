@@ -12,7 +12,7 @@ import { AddCompanyModal } from '@/platform/ui/components/AddCompanyModal';
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
-import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from './InlineEditField';
 import { TabErrorBoundary } from './TabErrorBoundary';
 import { Loader, CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
@@ -28,6 +28,7 @@ import { DeepValueReportView } from '@/platform/ui/components/reports/DeepValueR
 import { DeepValueReport } from '@/platform/services/deep-value-report-service';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
+import { DatePicker } from '@/platform/ui/components/DatePicker';
 
 // Import universal tab components
 import {
@@ -400,6 +401,27 @@ export function UniversalRecordTemplate({
   const [isAddCompanyModalOpen, setIsAddCompanyModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isEditRecordModalOpen, setIsEditRecordModalOpen] = useState(false);
+  const [isSnoozeDropdownOpen, setIsSnoozeDropdownOpen] = useState(false);
+  const [isDatePickerModalOpen, setIsDatePickerModalOpen] = useState(false);
+  const [selectedSnoozeDate, setSelectedSnoozeDate] = useState<Date | null>(null);
+  const snoozeDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close snooze dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (snoozeDropdownRef.current && !snoozeDropdownRef.current.contains(event.target as Node)) {
+        setIsSnoozeDropdownOpen(false);
+      }
+    };
+
+    if (isSnoozeDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSnoozeDropdownOpen]);
   const [activeEditTab, setActiveEditTab] = useState('overview');
   const [hasLoggedAction, setHasLoggedAction] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -1355,7 +1377,109 @@ export function UniversalRecordTemplate({
     }
   };
 
-  // Handle snooze functionality
+  // Handle snooze functionality with new dropdown options
+  const handleSnoozeOption = (option: 'next-sprint' | 'end-of-day' | 'tomorrow' | 'choose-date', customDate?: Date) => {
+    if (!record) return;
+
+    let snoozeUntil: string;
+    let duration: string;
+    let targetSprint: number | null = null;
+
+    const now = new Date();
+
+    switch (option) {
+      case 'next-sprint': {
+        // Calculate next sprint index based on record rank
+        // Sprint context may not be available, so calculate from rank
+        const SPRINT_SIZE = 10;
+        const rank = record.globalRank || record.rank || 999999;
+        const currentSprintIndex = Math.floor((rank - 1) / SPRINT_SIZE);
+        const nextSprintIndex = currentSprintIndex + 1;
+        // Snooze until end of current day (midnight) so it appears in next sprint
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        snoozeUntil = tomorrow.toISOString();
+        duration = 'next-sprint';
+        break;
+      }
+      case 'end-of-day': {
+        // Snooze until 4pm today, record appears in sprint 5
+        const eod = new Date(now);
+        eod.setHours(16, 0, 0, 0); // 4pm
+        if (eod < now) {
+          // If 4pm has passed, set for tomorrow 4pm
+          eod.setDate(eod.getDate() + 1);
+        }
+        snoozeUntil = eod.toISOString();
+        duration = 'end-of-day';
+        targetSprint = 5; // Record appears in sprint 5
+        break;
+      }
+      case 'tomorrow': {
+        // Snooze until midnight tomorrow
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        snoozeUntil = tomorrow.toISOString();
+        duration = 'tomorrow';
+        break;
+      }
+      case 'choose-date': {
+        if (!customDate) return;
+        // Use selected date, set to start of day
+        const selectedDate = new Date(customDate);
+        selectedDate.setHours(0, 0, 0, 0);
+        snoozeUntil = selectedDate.toISOString();
+        duration = 'custom-date';
+        break;
+      }
+      default:
+        return;
+    }
+
+    // Store snooze data in localStorage
+    const snoozeData: any = {
+      recordId: record.id,
+      recordName: record.fullName || record.name || 'Unknown',
+      recordType,
+      duration,
+      snoozeUntil,
+      snoozedAt: new Date().toISOString()
+    };
+
+    // Add target sprint if specified (for End of Day)
+    if (targetSprint !== null) {
+      snoozeData.targetSprint = targetSprint;
+    }
+
+    // Get existing snoozed records
+    const existingSnoozed = JSON.parse(localStorage.getItem('snoozedRecords') || '[]');
+
+    // Add new snooze record (replace if already exists)
+    const updatedSnoozed = existingSnoozed.filter((item: any) => item.recordId !== record.id);
+    updatedSnoozed.push(snoozeData);
+
+    // Save to localStorage
+    localStorage.setItem('snoozedRecords', JSON.stringify(updatedSnoozed));
+
+    // Call parent handler if provided
+    if (onSnooze) {
+      onSnooze(record.id, duration);
+    }
+
+    const optionLabels: Record<string, string> = {
+      'next-sprint': 'Next Sprint',
+      'end-of-day': 'End of Day',
+      'tomorrow': 'Tomorrow',
+      'custom-date': 'Custom Date'
+    };
+    showMessage(`Snoozed until ${optionLabels[duration] || duration}`);
+    
+    setTimeout(() => onBack(), 1000);
+  };
+
+  // Legacy handleSnooze for backward compatibility (kept for non-speedrun records)
   const handleSnooze = () => {
     const snoozeOptions = [
       { label: "1 Hour", value: "1h" },
@@ -1401,7 +1525,7 @@ export function UniversalRecordTemplate({
     }
   };
 
-  // Calculate snooze until date
+  // Calculate snooze until date (legacy function)
   const calculateSnoozeUntil = (duration: string): string => {
     const now = new Date();
     
@@ -3703,6 +3827,70 @@ export function UniversalRecordTemplate({
       </button>
     );
 
+    // Snooze button - only for speedrun records
+    if (recordType === 'speedrun') {
+      buttons.push(
+        <div key="snooze" className="relative" ref={snoozeDropdownRef}>
+          <button
+            onClick={() => setIsSnoozeDropdownOpen(!isSnoozeDropdownOpen)}
+            className="px-3 py-1.5 text-sm bg-background text-gray-700 border border-border rounded-md hover:bg-panel-background transition-colors flex items-center gap-1.5"
+          >
+            <ClockIcon className="w-4 h-4" />
+            <span>Snooze</span>
+            <svg
+              className={`w-4 h-4 transition-transform ${isSnoozeDropdownOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {isSnoozeDropdownOpen && (
+        <div className="absolute right-0 top-full mt-1 w-48 bg-background rounded-md shadow-lg border border-border z-[9999] py-1">
+          <button
+            onClick={() => {
+              setIsSnoozeDropdownOpen(false);
+              handleSnoozeOption('next-sprint');
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-hover transition-colors"
+          >
+            Next Sprint
+          </button>
+          <button
+            onClick={() => {
+              setIsSnoozeDropdownOpen(false);
+              handleSnoozeOption('end-of-day');
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-hover transition-colors"
+          >
+            End of Day
+          </button>
+          <button
+            onClick={() => {
+              setIsSnoozeDropdownOpen(false);
+              handleSnoozeOption('tomorrow');
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-hover transition-colors"
+          >
+            Tomorrow
+          </button>
+          <button
+            onClick={() => {
+              setIsSnoozeDropdownOpen(false);
+              setIsDatePickerModalOpen(true);
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-hover transition-colors"
+          >
+            Choose Date
+          </button>
+        </div>
+      )}
+        </div>
+      );
+    }
+
     // Add Person button - for company records and company leads/prospects
     const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
                            (recordType === 'leads' && record?.isCompanyLead === true) ||
@@ -4578,6 +4766,63 @@ export function UniversalRecordTemplate({
           onCompanyAdded={handleCompanyAdded}
           section={recordType}
         />
+      )}
+
+      {/* Snooze Date Picker Modal */}
+      {isDatePickerModalOpen && (
+        <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-background rounded-xl border border-gray-100 shadow-sm p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-foreground">Choose Snooze Date</h3>
+              <button
+                onClick={() => {
+                  setIsDatePickerModalOpen(false);
+                  setSelectedSnoozeDate(null);
+                }}
+                className="text-muted hover:text-foreground transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <DatePicker
+                value={selectedSnoozeDate || undefined}
+                onChange={(date) => setSelectedSnoozeDate(date)}
+                placeholder="Select date"
+                className="w-full"
+                inModal={true}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setIsDatePickerModalOpen(false);
+                  setSelectedSnoozeDate(null);
+                }}
+                className="px-4 py-2 text-sm bg-background text-gray-700 border border-border rounded-md hover:bg-panel-background transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (selectedSnoozeDate) {
+                    handleSnoozeOption('choose-date', selectedSnoozeDate);
+                    setIsDatePickerModalOpen(false);
+                    setSelectedSnoozeDate(null);
+                  }
+                }}
+                disabled={!selectedSnoozeDate}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Snooze
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Profile Image Upload Modal - TEMPORARILY COMMENTED OUT */}

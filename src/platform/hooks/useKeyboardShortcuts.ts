@@ -7,6 +7,7 @@ import {
   ALL_SHORTCUTS,
   type KeyboardShortcut,
 } from "@/platform/keyboard-shortcuts/shortcuts";
+import { useOptionalSettingsPopup } from "@/platform/ui/components/SettingsPopupContext";
 
 interface UseKeyboardShortcutsOptions {
   onToggleRightPanel?: () => void;
@@ -14,6 +15,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenCommandPalette?: () => void;
   onOpenQuickSearch?: () => void;
   onToggleAI?: () => void;
+  onOpenSettings?: () => void;
   context?:
     | "global"
     | "text-editor"
@@ -29,12 +31,18 @@ export function useKeyboardShortcuts(
 ) {
   const router = useRouter();
   const { navigateToAOS, navigateToMonaco } = useWorkspaceNavigation();
+  
+  // Use SettingsPopupContext if available (optional - won't throw if provider not available)
+  const settingsContext = useOptionalSettingsPopup();
+  const setIsSettingsOpen = settingsContext?.setIsSettingsOpen;
+  
   const {
     onToggleRightPanel,
     onToggleLeftPanel,
     onOpenCommandPalette,
     onOpenQuickSearch,
     onToggleAI,
+    onOpenSettings,
     context = "global",
   } = options;
 
@@ -111,7 +119,14 @@ export function useKeyboardShortcuts(
           window.open("/docs", "_blank");
           break;
         case "open-preferences":
-          router.push("./grand-central/profile");
+          // Try to open settings popup first, fallback to navigation
+          if (onOpenSettings) {
+            onOpenSettings();
+          } else if (setIsSettingsOpen) {
+            setIsSettingsOpen(true);
+          } else {
+            router.push("./grand-central/profile");
+          }
           break;
         case "focus-search-input":
           // Find and focus the first visible search input
@@ -146,6 +161,8 @@ export function useKeyboardShortcuts(
       onOpenCommandPalette,
       onOpenQuickSearch,
       onToggleAI,
+      onOpenSettings,
+      setIsSettingsOpen,
     ],
   );
 

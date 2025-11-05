@@ -120,6 +120,10 @@ function BacklogItemComponent({
 
   const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
   const itemIsBug = isBug(item);
+  
+  // Filter out 'bug' tag since it's already shown in the red pill
+  const filteredTags = item.tags?.filter(tag => tag.toLowerCase() !== 'bug') || [];
+  const displayTag = filteredTags.length > 0 ? filteredTags[0] : null;
 
   return (
     <div
@@ -158,9 +162,9 @@ function BacklogItemComponent({
           )}
           <div className="flex items-center gap-3 text-xs text-muted">
             {item.assignee && <span>{item.assignee}</span>}
-            {item.tags && item.tags.length > 0 && (
+            {displayTag && (
               <span className="bg-panel-background px-2 py-0.5 rounded">
-                {item.tags[0]}
+                {displayTag}
               </span>
             )}
           </div>

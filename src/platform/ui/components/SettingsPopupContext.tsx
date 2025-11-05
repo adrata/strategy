@@ -31,3 +31,11 @@ export function useSettingsPopup() {
   }
   return context;
 }
+
+/**
+ * Optional version of useSettingsPopup that returns undefined if provider is not available
+ * Use this when the provider might not be present
+ */
+export function useOptionalSettingsPopup() {
+  return useContext(SettingsPopupContext);
+}
