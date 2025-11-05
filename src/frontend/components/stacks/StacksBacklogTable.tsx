@@ -764,9 +764,18 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Update ranks and status via API
+    // Update ranks and status via API immediately - only update items whose rank changed
     try {
-      const updatePromises = itemsWithNewRanks.map(item => {
+      // Calculate which items actually changed rank
+      const itemsWithChangedRanks = itemsWithNewRanks.filter((item, newIndex) => {
+        const oldItem = items.find(old => old.id === item.id);
+        if (!oldItem) return true; // New item, definitely needs update
+        return oldItem.rank !== item.rank || (isCrossSectionMove && item.id === activeIdStr);
+      });
+
+      console.log(`🔄 [StacksBacklogTable] Updating ${itemsWithChangedRanks.length} items with changed ranks (out of ${itemsWithNewRanks.length} total)`);
+
+      const updatePromises = itemsWithChangedRanks.map(item => {
         const updatePayload: any = { rank: item.rank };
         
         // If this is the moved item and it's a cross-section move, also update status
@@ -796,6 +805,14 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
       const responses = await Promise.all(updatePromises);
       const failedUpdates = responses.filter(r => !r.ok);
+      
+      if (failedUpdates.length === 0) {
+        console.log('✅ [StacksBacklogTable] All rank updates persisted immediately');
+        // Trigger refresh to sync with other components (like workstream board)
+        if (stacksContext?.triggerRefresh) {
+          stacksContext.triggerRefresh();
+        }
+      }
 
       if (failedUpdates.length > 0) {
         console.error(`Failed to update ${failedUpdates.length} item order(s)`);
@@ -1360,33 +1377,159 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     setContextMenu(prev => ({ ...prev, isVisible: false }));
   };
 
-  const moveItem = (itemId: string, direction: 'top' | 'up' | 'down' | 'bottom') => {
-    setItems(prevItems => {
-      const newItems = [...prevItems];
-      const currentIndex = newItems.findIndex(item => item.id === itemId);
-      
-      if (currentIndex === -1) return prevItems;
-      
-      const [item] = newItems.splice(currentIndex, 1);
-      
-      switch (direction) {
-        case 'top':
-          newItems.unshift(item);
-          break;
-        case 'up':
-          newItems.splice(Math.max(0, currentIndex - 1), 0, item);
-          break;
-        case 'down':
-          newItems.splice(Math.min(newItems.length, currentIndex + 1), 0, item);
-          break;
-        case 'bottom':
-          newItems.push(item);
-          break;
+  const moveItem = async (itemId: string, direction: 'top' | 'up' | 'down' | 'bottom') => {
+    // Get the item being moved
+    const itemToMove = items.find(item => item.id === itemId);
+    if (!itemToMove) return;
+
+    // Calculate new order and ranks BEFORE updating state
+    const newItems = [...items];
+    const currentIndex = newItems.findIndex(item => item.id === itemId);
+    
+    if (currentIndex === -1) return;
+    
+    const [item] = newItems.splice(currentIndex, 1);
+    
+    switch (direction) {
+      case 'top':
+        newItems.unshift(item);
+        break;
+      case 'up':
+        newItems.splice(Math.max(0, currentIndex - 1), 0, item);
+        break;
+      case 'down':
+        newItems.splice(Math.min(newItems.length, currentIndex + 1), 0, item);
+        break;
+      case 'bottom':
+        newItems.push(item);
+        break;
+    }
+    
+    // Update ranks - calculate before state update
+    const itemsWithNewRanks = newItems.map((item, index) => ({ ...item, rank: index + 1 }));
+
+    // Optimistically update local state
+    setItems(itemsWithNewRanks);
+
+    // Immediately persist ranks to API
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
       }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for updating item order');
+      return;
+    }
+
+    // Persist ranks to API immediately - only update items whose rank changed
+    try {
+      // Calculate which items actually changed rank
+      const itemsWithChangedRanks = itemsWithNewRanks.filter((item) => {
+        const oldItem = items.find(old => old.id === item.id);
+        if (!oldItem) return true; // New item, definitely needs update
+        return oldItem.rank !== item.rank;
+      });
+
+      console.log(`🔄 [StacksBacklogTable] moveItem: Updating ${itemsWithChangedRanks.length} items with changed ranks (out of ${itemsWithNewRanks.length} total)`);
       
-      // Update ranks
-      return newItems.map((item, index) => ({ ...item, rank: index + 1 }));
-    });
+      const updatedItems = itemsWithChangedRanks;
+      
+      const updatePromises = updatedItems.map(item => {
+        const updatePayload: any = { rank: item.rank };
+        
+        // Determine the correct API endpoint based on item type
+        const endpoint = item.type === 'task' 
+          ? `/api/stacks/tasks/${item.id}`
+          : `/api/v1/stacks/stories/${item.id}`;
+        
+        // Add userId for task updates (required by task API)
+        if (item.type === 'task') {
+          updatePayload.userId = authUser?.id;
+        }
+        
+        return fetch(endpoint, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatePayload)
+        });
+      });
+
+      await Promise.all(updatePromises);
+      console.log('✅ [StacksBacklogTable] Ranks persisted immediately after moveItem');
+      
+      // Trigger refresh to sync with other components
+      if (stacksContext?.triggerRefresh) {
+        stacksContext.triggerRefresh();
+      }
+    } catch (error) {
+      console.error('❌ [StacksBacklogTable] Error persisting ranks after moveItem:', error);
+      // On error, refresh to get server state
+      const [storiesResponse, tasksResponse] = await Promise.all([
+        fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        }),
+        fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        })
+      ]);
+      
+      if (storiesResponse.ok && tasksResponse.ok) {
+        const [storiesData, tasksData] = await Promise.all([
+          storiesResponse.json(),
+          tasksResponse.json()
+        ]);
+        
+        const stories = storiesData.stories || [];
+        const tasks = tasksData.tasks || [];
+        const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
+        const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
+        const allItems = [...markedStories, ...markedTasks];
+        
+        const sortedItems = [...allItems].sort((a, b) => {
+          const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+          const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+          if (rankA !== rankB) return rankA - rankB;
+          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+        });
+        
+        const backlogItems = sortedItems.map((item: any, index: number) => {
+          const tags = item.tags || [];
+          if (item.type === 'bug') tags.push('bug');
+          const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
+          const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
+          
+          return {
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            priority: item.priority,
+            status: item.status,
+            assignee: item.assignee?.name || item.assignee || null,
+            dueDate: item.dueDate || null,
+            tags: tags,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            rank: rank,
+            type: itemType as 'story' | 'task',
+            originalType: item.type
+          };
+        });
+        
+        setItems(backlogItems);
+      }
+    }
   };
 
   const formatDate = (dateString: string) => {
