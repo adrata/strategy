@@ -1087,10 +1087,10 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         )}
                         
                         <div className="mb-2 ml-8">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-start gap-2 mb-1">
                             {/* Bug pill for bug type */}
                             {(card.originalType === 'bug' || card.tags?.includes('bug')) && (
-                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0">
                                 bug
                               </span>
                             )}
