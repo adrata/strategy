@@ -62,7 +62,7 @@ const navigationItems: NavigationItem[] = [
     label: 'Metrics',
     icon: ChartBarIcon,
     description: 'Performance and analytics',
-    getCount: () => null // Metrics doesn't show count
+    getCount: () => 9 // Number of metric cards displayed (Velocity, Cycle Time, Throughput, Lead Time, WIP, Completed This Week, Avg Time to Done, Shipped This Month, Active Items)
   }
 ];
 
