@@ -260,6 +260,41 @@ export async function GET(request: NextRequest) {
         }))
       );
 
+      // 🚀 BATCH QUERY ACTIONS: Get action counts for all people in one query
+      const personIds = speedrunRecords
+        .filter(r => r.type === 'person')
+        .map(r => r.id);
+      
+      let actionCountsMap: Record<string, number> = {};
+      
+      if (personIds.length > 0) {
+        try {
+          // Query all actions for these people in one batch
+          const actions = await prisma.actions.findMany({
+            where: {
+              personId: { in: personIds },
+              status: 'COMPLETED'
+            },
+            select: {
+              personId: true,
+              type: true
+            }
+          });
+
+          // Count meaningful actions per person
+          for (const action of actions) {
+            if (action.personId && isMeaningfulAction(action.type)) {
+              actionCountsMap[action.personId] = (actionCountsMap[action.personId] || 0) + 1;
+            }
+          }
+
+          console.log(`🔍 [SPEEDRUN API] Action counts queried: ${Object.keys(actionCountsMap).length} people with actions`);
+        } catch (actionError) {
+          console.error('❌ [SPEEDRUN API] Error querying actions:', actionError);
+          // Continue with empty map if action query fails
+        }
+      }
+
       // 🚀 TRANSFORM: Pre-format data for frontend (unified companies and people)
       const speedrunPeopleData = speedrunRecords.map((record, index) => {
         // Format owner name - show "Me" for current user
@@ -425,14 +460,14 @@ export async function GET(request: NextRequest) {
           }
         }
 
-        // Count meaningful actions (simplified - no actions relation in unified query)
-        const totalActions = 0; // No actions relation in unified query
-        const meaningfulActionCount = 0; // No actions relation in unified query
+        // Get action count from batch query (only for people, not companies)
+        const meaningfulActionCount = record.type === 'person' 
+          ? (actionCountsMap[record.id] || 0)
+          : 0;
         
         // Debug logging for action counts - show more details for high counts
         if (index < 5 || meaningfulActionCount > 50) { // Log first 5 records OR any with high counts
           console.log(`🔍 [SPEEDRUN API] Record ${record.displayName} action count:`, {
-            totalActions,
             meaningfulActions: meaningfulActionCount,
             recordId: record.id,
             recordType: record.type

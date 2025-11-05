@@ -54,7 +54,7 @@ const navigationItems: NavigationItem[] = [
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
     description: 'Prioritized work queue',
-    getCount: (stats) => stats.upNextCount + stats.backlogCount // Backlog shows both "Up Next" and "Backlog" items
+    getCount: (stats) => stats.upNextCount // Backlog equals up next count (all backlog items are in up next)
   },
   {
     id: 'metrics',
@@ -304,18 +304,15 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         // Workstream = items with any workstream board column status
         // The workstream board displays items across all columns: UP NEXT, WORKING ON, BUILT, QA1, QA2, SHIPPED
         // Cards appear in the column matching their status
-        const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped'];
+        // Include 'todo' status as it's mapped to 'up-next' on the board
+        const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
         const workstreamCount = allItems.filter((item: any) => 
           workstreamBoardStatuses.includes(item.status)
         ).length;
 
-        // Backlog = items with statuses not shown on workstream board (excluding workstream board statuses, 'done', and 'todo')
-        const backlogCount = allItems.filter((item: any) => 
-          item.status && 
-          item.status !== 'done' && 
-          item.status !== 'todo' &&
-          !workstreamBoardStatuses.includes(item.status)
-        ).length;
+        // Backlog = all items in up next (user requirement: all backlog items are in up next)
+        // So backlog count equals upNextCount
+        const backlogCount = upNextCount;
 
         console.log('📊 [StacksLeftPanel] Final counts:', { 
           total, 
@@ -385,18 +382,15 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       ).length;
 
       // Workstream = items with any workstream board column status
-      const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped'];
+      // Include 'todo' status as it's mapped to 'up-next' on the board
+      const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
       const workstreamCount = allItems.filter((item: any) => 
         workstreamBoardStatuses.includes(item.status)
       ).length;
 
-      // Backlog = items with statuses not shown on workstream board
-      const backlogCount = allItems.filter((item: any) => 
-        item.status && 
-        item.status !== 'done' && 
-        item.status !== 'todo' &&
-        !workstreamBoardStatuses.includes(item.status)
-      ).length;
+      // Backlog = all items in up next (user requirement: all backlog items are in up next)
+      // So backlog count equals upNextCount
+      const backlogCount = upNextCount;
 
       // Update stats (preserve visionCount from previous state)
       setStats(prev => ({

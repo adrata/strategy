@@ -3348,6 +3348,18 @@ export function UniversalRecordTemplate({
         
         console.log('✅ [SPEEDRUN] Event dispatched successfully');
         
+        // Update progress tracking for speedrun section
+        if (recordType === 'speedrun' && record.id) {
+          try {
+            // Import markLeadAsCompleted function
+            const { markLeadAsCompleted } = await import('@/products/speedrun/state');
+            markLeadAsCompleted(record.id);
+            console.log('📊 [SPEEDRUN] Updated progress tracking for record:', record.id);
+          } catch (error) {
+            console.warn('⚠️ [SPEEDRUN] Could not update progress tracking:', error);
+          }
+        }
+        
         // Navigate to next record if available (for sprint view)
         if (onNavigateNext) {
           console.log('🎯 [SPEEDRUN] Navigating to next record');

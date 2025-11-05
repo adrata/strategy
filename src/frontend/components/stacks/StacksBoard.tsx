@@ -226,126 +226,142 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
 
       try {
         setLoading(true);
-        const apiUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}`;
-        console.log('🔍 [StacksBoard] Fetching from:', apiUrl);
+        const cacheBuster = `&_t=${Date.now()}`;
+        const storiesUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}${cacheBuster}`;
+        const tasksUrl = `/api/stacks/tasks?workspaceId=${workspaceId}${cacheBuster}`;
+        
+        console.log('🔍 [StacksBoard] Fetching from:', storiesUrl, tasksUrl);
         console.log('🔍 [StacksBoard] Request workspace ID:', workspaceId);
         
-        const response = await fetch(apiUrl, {
-          credentials: 'include', // Include cookies for authentication
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        // Fetch both stories and tasks in parallel
+        const [storiesResponse, tasksResponse] = await Promise.all([
+          fetch(storiesUrl, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }),
+          fetch(tasksUrl, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+        ]);
         
-        console.log('🔍 [StacksBoard] Response status:', response.status, response.ok);
+        console.log('🔍 [StacksBoard] Response status:', storiesResponse.status, tasksResponse.status);
         
-        if (response.ok) {
-          const data = await response.json();
+        let stories: any[] = [];
+        let tasks: any[] = [];
+        
+        if (storiesResponse.ok) {
+          const storiesData = await storiesResponse.json();
+          stories = storiesData.stories || [];
           console.log('📊 [StacksBoard] Fetched stories from database:', {
-            totalStories: data.stories?.length || 0,
-            stories: data.stories,
+            totalStories: stories.length,
             workspaceId,
             isNotaryEveryday
           });
-          
-          if (data.stories && Array.isArray(data.stories)) {
-            if (data.stories.length === 0) {
-              console.log('ℹ️ [StacksBoard] No stories found for workspace:', workspaceId);
-            }
-            
-            const sellingStories = filterSellingStories(data.stories);
-            console.log('🎯 [StacksBoard] Filtered selling stories:', {
-              original: data.stories.length,
-              filtered: sellingStories.length,
-              stories: sellingStories.map((s: any) => ({ id: s.id, title: s.title, status: s.status }))
-            });
-            
-            // Workstream board shows items with any workstream board column status
-            // Allowed statuses: up-next, in-progress, built, qa1, qa2, shipped
-            // Also include 'todo' status and map it to 'up-next' column
-            // Cards can appear in any column based on their status
-            const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
-            const workstreamStories = sellingStories.filter((story: any) => {
-              // Include items with any workstream board column status
-              // Also include 'todo' status (will be mapped to 'up-next' column)
-              return workstreamBoardStatuses.includes(story.status);
-            }).map((story: any) => {
-              // Map 'todo' status to 'up-next' for display on board
-              if (story.status === 'todo') {
-                return { ...story, status: 'up-next' };
-              }
-              return story;
-            });
-            
-            console.log('🔍 [StacksBoard] After filtering for workstream (all board statuses):', {
-              before: sellingStories.length,
-              after: workstreamStories.length,
-              removed: sellingStories.length - workstreamStories.length,
-              removedStatuses: sellingStories
-                .filter((s: any) => !workstreamBoardStatuses.includes(s.status))
-                .reduce((acc: any, story: any) => {
-                  const status = story.status || 'null';
-                  acc[status] = (acc[status] || 0) + 1;
-                  return acc;
-                }, {})
-            });
-            
-            // Log status distribution before conversion
-            const statusCounts = workstreamStories.reduce((acc: any, story: any) => {
-              acc[story.status || 'null'] = (acc[story.status || 'null'] || 0) + 1;
-              return acc;
-            }, {});
-            console.log('📊 [StacksBoard] Status distribution (workstream only):', statusCounts);
-            
-            const convertedCards = workstreamStories.map(convertNotaryStoryToStackCard);
-            console.log('🔄 [StacksBoard] Converted cards:', convertedCards.length, 'cards');
-            
-            // Log status distribution after conversion
-            const convertedStatusCounts = convertedCards.reduce((acc: any, card: StackCard) => {
-              acc[card.status] = (acc[card.status] || 0) + 1;
-              return acc;
-            }, {});
-            console.log('📊 [StacksBoard] Converted status distribution:', convertedStatusCounts);
-            
-            setCards(convertedCards);
-          } else {
-            console.warn('⚠️ [StacksBoard] Invalid response format - stories is not an array');
-            console.warn('⚠️ [StacksBoard] Response data:', data);
-            setCards([]);
-          }
         } else {
-          let errorData;
-          try {
-            const errorText = await response.text();
-            errorData = errorText;
-            // Try to parse as JSON
-            try {
-              errorData = JSON.parse(errorText);
-            } catch {
-              // Keep as text if not JSON
-            }
-          } catch (parseError) {
-            errorData = { error: 'Failed to parse error response' };
-          }
-          
-          console.error('❌ [StacksBoard] API request failed:', {
-            status: response.status,
-            statusText: response.statusText,
-            workspaceId,
-            error: errorData
+          console.warn('⚠️ [StacksBoard] Stories API returned:', storiesResponse.status, storiesResponse.statusText);
+        }
+        
+        if (tasksResponse.ok) {
+          const tasksData = await tasksResponse.json();
+          tasks = tasksData.tasks || [];
+          console.log('📊 [StacksBoard] Fetched tasks from database:', {
+            totalTasks: tasks.length,
+            bugs: tasks.filter((t: any) => t.type === 'bug').length,
+            workspaceId
           });
-          
-          if (response.status === 400 && errorData?.code === 'WORKSPACE_REQUIRED') {
-            console.error('❌ [StacksBoard] Workspace ID missing or invalid');
-          } else if (response.status === 401) {
-            console.error('❌ [StacksBoard] Authentication failed');
-          } else if (response.status === 403) {
-            console.error('❌ [StacksBoard] Access denied to workspace');
-          } else {
-            console.error('❌ [StacksBoard] Unexpected error:', response.status);
-          }
-          
+        } else {
+          console.warn('⚠️ [StacksBoard] Tasks API returned:', tasksResponse.status, tasksResponse.statusText);
+        }
+        
+        // Combine stories and tasks, treating tasks similar to stories
+        const allItems = [...stories, ...tasks];
+        
+        if (allItems.length === 0) {
+          console.log('ℹ️ [StacksBoard] No stories or tasks found for workspace:', workspaceId);
           setCards([]);
+          return;
+        }
+        
+        const sellingItems = filterSellingStories(allItems);
+        console.log('🎯 [StacksBoard] Filtered selling items:', {
+          original: allItems.length,
+          filtered: sellingItems.length,
+          stories: sellingItems.filter((s: any) => !s.type || s.type === 'story').length,
+          tasks: sellingItems.filter((s: any) => s.type === 'task').length,
+          bugs: sellingItems.filter((s: any) => s.type === 'bug').length,
+          items: sellingItems.map((s: any) => ({ id: s.id, title: s.title, status: s.status, type: s.type }))
+        });
+        
+        // Workstream board shows items with any workstream board column status
+        // Allowed statuses: up-next, in-progress, built, qa1, qa2, shipped
+        // Also include 'todo' status and map it to 'up-next' column
+        // Cards can appear in any column based on their status
+        const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
+        const workstreamItems = sellingItems.filter((item: any) => {
+          // Include items with any workstream board column status
+          // Also include 'todo' status (will be mapped to 'up-next' column)
+          return workstreamBoardStatuses.includes(item.status);
+        }).map((item: any) => {
+          // Map 'todo' status to 'up-next' for display on board
+          if (item.status === 'todo') {
+            return { ...item, status: 'up-next' };
+          }
+          return item;
+        });
+        
+        console.log('🔍 [StacksBoard] After filtering for workstream (all board statuses):', {
+          before: sellingItems.length,
+          after: workstreamItems.length,
+          removed: sellingItems.length - workstreamItems.length,
+          removedStatuses: sellingItems
+            .filter((s: any) => !workstreamBoardStatuses.includes(s.status))
+            .reduce((acc: any, item: any) => {
+              const status = item.status || 'null';
+              acc[status] = (acc[status] || 0) + 1;
+              return acc;
+            }, {})
+        });
+        
+        // Log status distribution before conversion
+        const statusCounts = workstreamItems.reduce((acc: any, item: any) => {
+          acc[item.status || 'null'] = (acc[item.status || 'null'] || 0) + 1;
+          return acc;
+        }, {});
+        console.log('📊 [StacksBoard] Status distribution (workstream only):', statusCounts);
+        
+        // Convert stories and tasks to StackCard format
+        const convertedCards = workstreamItems.map((item: any) => {
+          // If it's a task (has type field), use task conversion, otherwise use story conversion
+          if (item.type === 'bug' || item.type === 'task') {
+            return convertTaskToStackCard(item);
+          }
+          return convertNotaryStoryToStackCard(item);
+        });
+        
+        console.log('🔄 [StacksBoard] Converted cards:', convertedCards.length, 'cards');
+        
+        // Log status distribution after conversion
+        const convertedStatusCounts = convertedCards.reduce((acc: any, card: StackCard) => {
+          acc[card.status] = (acc[card.status] || 0) + 1;
+          return acc;
+        }, {});
+        console.log('📊 [StacksBoard] Converted status distribution:', convertedStatusCounts);
+        
+        setCards(convertedCards);
+        
+        // Log warnings if either request failed (but we still have some data)
+        if (!storiesResponse.ok || !tasksResponse.ok) {
+          if (!storiesResponse.ok) {
+            console.warn('⚠️ [StacksBoard] Stories API failed, but continuing with tasks');
+          }
+          if (!tasksResponse.ok) {
+            console.warn('⚠️ [StacksBoard] Tasks API failed, but continuing with stories');
+          }
         }
       } catch (error) {
         console.error('❌ [StacksBoard] Error fetching stories:', error);
@@ -363,11 +379,11 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     fetchStories();
   }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, pathname, workspaceSlug, isNotaryEveryday, refreshTrigger]); // Refresh when context triggers update or pathname changes
   
-  // Helper function to filter selling stories
-  const filterSellingStories = (stories: any[]): any[] => {
-    // For now, return all stories since we don't have category filtering yet
-    // In the future, this could filter by project category or other criteria
-    return stories;
+  // Helper function to filter selling stories and tasks
+  // Currently returns all items (stories and tasks) since we don't have category filtering yet
+  // In the future, this could filter by project category or other criteria
+  const filterSellingStories = (items: any[]): any[] => {
+    return items;
   };
 
   // Helper function to convert Notary story to StackCard format
@@ -418,6 +434,60 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       points: story.points || null,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt
+    };
+  };
+
+  // Helper function to convert task (including bugs) to StackCard format
+  const convertTaskToStackCard = (task: any): StackCard => {
+    // Map status values to board column statuses
+    // Note: 'todo' status is mapped to 'up-next' before this function is called
+    let mappedStatus = task.status;
+    
+    if (task.status === 'done') {
+      mappedStatus = 'built';
+    } else if (task.status === 'up-next') {
+      mappedStatus = 'up-next';
+    } else if (task.status === 'in-progress') {
+      mappedStatus = 'in-progress';
+    } else if (task.status === 'built') {
+      mappedStatus = 'built';
+    } else if (task.status === 'qa1') {
+      mappedStatus = 'qa1';
+    } else if (task.status === 'qa2') {
+      mappedStatus = 'qa2';
+    } else if (task.status === 'shipped') {
+      mappedStatus = 'shipped';
+    } else if (!task.status || task.status === 'todo') {
+      // Should not happen (filtered out above), but handle gracefully
+      console.warn(`⚠️ [StacksBoard] Received todo/null status task "${task.title}" in convert function - this should be filtered out`);
+      mappedStatus = 'up-next';
+    } else {
+      // Unknown status - default to 'up-next' instead of passing through invalid status
+      console.warn(`⚠️ [StacksBoard] Unknown status "${task.status}" for task "${task.title}", defaulting to 'up-next'`);
+      mappedStatus = 'up-next';
+    }
+    
+    // Build tags array - include 'bug' tag if it's a bug
+    const tags = task.type === 'bug' ? ['bug', ...(task.tags || [])] : (task.tags || []);
+    
+    return {
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      priority: task.priority || 'medium',
+      status: mappedStatus as StackCard['status'],
+      viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs
+      product: task.product || null,
+      section: task.section || null,
+      assignee: task.assignee?.name || undefined,
+      dueDate: task.dueDate || undefined,
+      tags: tags,
+      epoch: null, // Tasks don't have epochs
+      timeInStatus: 0, // Tasks don't track timeInStatus
+      isFlagged: false, // Tasks don't have isFlagged
+      points: null, // Tasks don't have points
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt
     };
   };
 

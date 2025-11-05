@@ -329,6 +329,32 @@ export function PipelineHeader({
     }
   }, [searchParams, section]);
 
+  // Refresh timeData when actions are logged (for Actions Today/This Week totals)
+  useEffect(() => {
+    if (section !== 'speedrun') return;
+
+    const handleSpeedrunActionLogged = () => {
+      // Refresh time tracking data when action is logged
+      const updatedTimeData = getTimeTrackingData('America/New_York', user?.id);
+      setTimeData(prev => ({
+        ...updatedTimeData,
+        hoursLeft: updatedTimeData.hoursLeft || prev.hoursLeft || 6.5,
+        todayTarget: updatedTimeData.todayTarget || prev.todayTarget || 30,
+        weekTarget: updatedTimeData.weekTarget || prev.weekTarget || 250,
+        allTimeRecord: updatedTimeData.allTimeRecord || prev.allTimeRecord || 285
+      }));
+      console.log('🔄 [PIPELINE HEADER] Refreshed timeData after action logged:', {
+        todayProgress: updatedTimeData.todayProgress,
+        weekProgress: updatedTimeData.weekProgress
+      });
+    };
+
+    document.addEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    return () => {
+      document.removeEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    };
+  }, [section, user?.id]);
+
   const getUrlParamForView = (view: SpeedrunView): string => {
     switch (view) {
       case 'sales_actions': return 'actions';
