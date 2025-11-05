@@ -86,14 +86,33 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Build where clause - only include tasks with a project in this workspace
-    // If a project doesn't exist, we've already created one above
+    // Get all project IDs for this workspace to safely filter tasks
+    // This avoids issues with nested relation filters and orphaned tasks
+    const workspaceProjects = await prisma.stacksProject.findMany({
+      where: { workspaceId },
+      select: { id: true }
+    });
+    const workspaceProjectIds = workspaceProjects.map(p => p.id);
+
+    if (workspaceProjectIds.length === 0) {
+      // No projects exist for this workspace, return empty result
+      console.warn('⚠️ [STACKS TASKS API] No projects found for workspace, returning empty tasks');
+      return NextResponse.json({ tasks: [] });
+    }
+
+    // Build where clause - filter tasks by project IDs in this workspace
     const where: any = {
-      project: { workspaceId }
+      projectId: { in: workspaceProjectIds }
     };
 
     if (projectId) {
-      where.projectId = projectId;
+      // If specific projectId is provided, ensure it's in the workspace
+      if (workspaceProjectIds.includes(projectId)) {
+        where.projectId = projectId;
+      } else {
+        console.warn('⚠️ [STACKS TASKS API] Requested projectId not in workspace, returning empty');
+        return NextResponse.json({ tasks: [] });
+      }
     }
 
     if (storyId) {
