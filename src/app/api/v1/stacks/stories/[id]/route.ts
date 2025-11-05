@@ -53,107 +53,54 @@ export async function GET(
     }
 
     // Fetch the story with workspace validation
-    // Try with all columns first, fallback if new columns don't exist
-    let story: any;
-    try {
-      story = await prisma.stacksStory.findFirst({
-        where: {
-          id: storyId,
-          project: {
-            workspaceId: workspaceId
-          }
-        },
-        select: {
-          id: true,
-          epochId: true,
-          projectId: true,
-          title: true,
-          description: true,
-          acceptanceCriteria: true,
-          status: true,
-          priority: true,
-          assigneeId: true,
-          product: true,
-          section: true,
-          viewType: true,
-          isFlagged: true,
-          statusChangedAt: true,
-          createdAt: true,
-          updatedAt: true,
-          epoch: {
-            select: {
-              id: true,
-              title: true,
-              description: true
-            }
-          },
-          assignee: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true
-            }
-          },
-          project: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
+    // Use explicit select to avoid selecting viewType column that may not exist in database
+    const story = await prisma.stacksStory.findFirst({
+      where: {
+        id: storyId,
+        project: {
+          workspaceId: workspaceId
         }
-      });
-    } catch (queryError) {
-      // If new columns don't exist, try without them
-      const isColumnError = queryError && typeof queryError === 'object' && 'code' in queryError && (queryError as any).code === 'P2022';
-      if (isColumnError) {
-        console.warn('⚠️ [STACKS API] New columns missing in single story query, using fallback');
-        story = await prisma.stacksStory.findFirst({
-          where: {
-            id: storyId,
-            project: {
-              workspaceId: workspaceId
-            }
-          },
+      },
+      select: {
+        id: true,
+        epochId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        acceptanceCriteria: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        viewType: true,
+        isFlagged: true,
+        statusChangedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        epoch: {
           select: {
             id: true,
-            epochId: true,
-            projectId: true,
             title: true,
-            description: true,
-            status: true,
-            priority: true,
-            assigneeId: true,
-            statusChangedAt: true,
-            createdAt: true,
-            updatedAt: true,
-            epoch: {
-              select: {
-                id: true,
-                title: true,
-                description: true
-              }
-            },
-            assignee: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true
-              }
-            },
-            project: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
+            description: true
           }
-        });
-      } else {
-        throw queryError;
+        },
+        assignee: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true
+          }
+        },
+        project: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
       }
-    }
+    });
 
     if (!story) {
       console.log('❌ [STACKS API] Story not found:', storyId);
@@ -165,12 +112,12 @@ export async function GET(
       id: story.id,
       title: story.title,
       description: story.description,
-      acceptanceCriteria: story.acceptanceCriteria || null,
+      acceptanceCriteria: (story as any).acceptanceCriteria || null, // Safe access if column doesn't exist
       status: story.status,
       priority: story.priority,
-      viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
-      product: story.product || null,
-      section: story.section || null,
+      viewType: (story as any).viewType || 'detail', // Use story's viewType or default to 'detail'
+      product: (story as any).product || null, // Safe access if column doesn't exist
+      section: (story as any).section || null, // Safe access if column doesn't exist
       assignee: story.assignee ? {
         id: story.assignee.id,
         name: (() => {
@@ -194,7 +141,7 @@ export async function GET(
       } : null,
       dueDate: null, // dueDate field doesn't exist in schema yet
       tags: [], // tags field doesn't exist in schema yet
-      isFlagged: (story as any).isFlagged || false, // Safe access if column doesn't exist
+      isFlagged: story.isFlagged || false,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
       // Calculate time in current status (in days) using statusChangedAt
@@ -378,12 +325,12 @@ export async function PATCH(
       id: story.id,
       title: story.title,
       description: story.description,
-      acceptanceCriteria: story.acceptanceCriteria || null,
+      acceptanceCriteria: (story as any).acceptanceCriteria || null, // Safe access if column doesn't exist
       status: story.status,
       priority: story.priority,
-      viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
-      product: story.product || null,
-      section: story.section || null,
+      viewType: (story as any).viewType || 'detail', // Use story's viewType or default to 'detail'
+      product: (story as any).product || null, // Safe access if column doesn't exist
+      section: (story as any).section || null, // Safe access if column doesn't exist
       assignee: story.assignee ? {
         id: story.assignee.id,
         name: (() => {
