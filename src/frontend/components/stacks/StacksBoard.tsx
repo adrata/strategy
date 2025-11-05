@@ -29,7 +29,7 @@ interface StackCard {
   description?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'up-next' | 'in-progress' | 'shipped' | 'qa1' | 'qa2' | 'built';
-  viewType?: 'detail' | 'list' | 'grid';
+  viewType?: 'detail' | 'list' | 'grid' | 'bug';
   product?: string | null;
   section?: string | null;
   assignee?: string;
@@ -46,6 +46,8 @@ interface StackCard {
   createdAt?: string;
   updatedAt?: string;
   rank?: number; // Rank for ordering within status
+  type?: 'story' | 'task'; // Track if this is a story or task
+  originalType?: string; // Preserve original type to detect bugs (e.g., 'bug')
 }
 
 interface StacksBoardProps {
@@ -435,7 +437,9 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       points: story.points || null,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
-      rank: story.rank || null // Include rank for sorting
+      rank: story.rank || null, // Include rank for sorting
+      type: 'story' as const, // Stories have type 'story'
+      originalType: undefined // Stories don't have originalType
     };
   };
 
@@ -490,7 +494,9 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       points: null, // Tasks don't have points
       createdAt: task.createdAt,
       updatedAt: task.updatedAt,
-      rank: task.rank || null // Include rank for sorting
+      rank: task.rank || null, // Include rank for sorting
+      type: 'task' as const, // Tasks have type 'task'
+      originalType: task.type // Preserve original type to detect bugs
     };
   };
 
@@ -515,6 +521,75 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       return `${diffInWeeks}w`;
     } else {
       return `${diffInMonths}mo`;
+    }
+  };
+
+  // Helper function to persist ranks for cards in a specific column
+  const persistRanks = async (cardsInColumn: StackCard[], oldCards: StackCard[]): Promise<void> => {
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for persisting ranks');
+      return;
+    }
+
+    try {
+      // Create a map of old cards for O(1) lookup
+      const oldCardsMap = new Map<string, StackCard>();
+      oldCards.forEach(card => oldCardsMap.set(card.id, card));
+
+      // Find cards whose rank changed
+      const cardsWithChangedRanks = cardsInColumn.filter((card) => {
+        const oldCard = oldCardsMap.get(card.id);
+        if (!oldCard) return true; // New card, definitely needs update
+        return oldCard.rank !== card.rank;
+      });
+
+      if (cardsWithChangedRanks.length === 0) {
+        return; // No changes to persist
+      }
+
+      // Batch updates in parallel
+      const updatePromises = cardsWithChangedRanks.map(card => {
+        const updatePayload: any = { rank: card.rank };
+        
+        // Determine the correct API endpoint based on card type
+        const endpoint = card.type === 'task' 
+          ? `/api/stacks/tasks/${card.id}`
+          : `/api/v1/stacks/stories/${card.id}`;
+        
+        // Add userId for task updates (required by task API)
+        if (card.type === 'task') {
+          updatePayload.userId = authUser?.id;
+        }
+        
+        return fetch(endpoint, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatePayload)
+        });
+      });
+
+      await Promise.all(updatePromises);
+      
+      // Trigger refresh to sync with other components
+      if (stacksContext?.triggerRefresh) {
+        stacksContext.triggerRefresh();
+      }
+    } catch (error) {
+      console.error('Error persisting ranks:', error);
+      throw error;
     }
   };
 
@@ -614,68 +689,101 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     e.preventDefault();
     setDragOverColumn(null);
     
-    if (!draggedCard || draggedCard.status === targetStatus) {
+    if (!draggedCard) {
       setDraggedCard(null);
       return;
     }
 
-    // Optimistic UI update
     const previousStatus = draggedCard.status;
-    setCards(prevCards => 
-      prevCards.map(card => 
-        card.id === draggedCard.id 
-          ? { ...card, status: targetStatus as StackCard['status'] }
-          : card
-      )
-    );
+    const isSameColumn = draggedCard.status === targetStatus;
+    const oldCards = [...cards];
+
+    // Optimistic UI update
+    let updatedCards: StackCard[];
     
+    if (isSameColumn) {
+      // Same-column reordering: move card to end of column and recalculate ranks
+      const cardsInColumn = cards.filter(c => c.status === targetStatus);
+      const otherCards = cards.filter(c => c.status !== targetStatus);
+      const cardToMove = cardsInColumn.find(c => c.id === draggedCard.id);
+      const cardsWithoutMoved = cardsInColumn.filter(c => c.id !== draggedCard.id);
+      
+      // Move card to end of column
+      const reorderedColumn = [...cardsWithoutMoved, cardToMove!];
+      
+      // Recalculate ranks for the column
+      const columnWithRanks = reorderedColumn.map((card, index) => ({
+        ...card,
+        rank: index + 1
+      }));
+      
+      updatedCards = [...otherCards, ...columnWithRanks];
+    } else {
+      // Cross-column move: update status and recalculate ranks for target column
+      const cardsInTargetColumn = cards.filter(c => c.status === targetStatus);
+      const otherCards = cards.filter(c => c.status !== targetStatus && c.id !== draggedCard.id);
+      const movedCard = { ...draggedCard, status: targetStatus as StackCard['status'] };
+      
+      // Add moved card to target column and recalculate ranks
+      const updatedTargetColumn = [...cardsInTargetColumn, movedCard].map((card, index) => ({
+        ...card,
+        rank: index + 1
+      }));
+      
+      updatedCards = [...otherCards, ...updatedTargetColumn];
+    }
+
+    setCards(updatedCards);
     console.log(`Moving card ${draggedCard.title} to ${targetStatus}`);
     setDraggedCard(null);
 
-    // Persist to database in background
+    // Persist changes to database
     try {
-      const response = await fetch(`/api/v1/stacks/stories/${draggedCard.id}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          status: targetStatus
-        })
-      });
-
-      if (!response.ok) {
-        // Revert optimistic update on failure
-        setCards(prevCards => 
-          prevCards.map(card => 
-            card.id === draggedCard.id 
-              ? { ...card, status: previousStatus as StackCard['status'] }
-              : card
-          )
-        );
-        console.error('Failed to update card status:', await response.text());
-      } else {
-        console.log(`Successfully moved card ${draggedCard.title} to ${targetStatus}`);
+      // If status changed, update status first
+      if (!isSameColumn) {
+        const statusEndpoint = draggedCard.type === 'task'
+          ? `/api/stacks/tasks/${draggedCard.id}`
+          : `/api/v1/stacks/stories/${draggedCard.id}`;
         
-        // If status changed to 'shipped', notify ShipButton to refresh immediately
-        if (targetStatus === 'shipped') {
-          console.log('📦 [StacksBoard] Card moved to shipped, notifying ShipButton');
-          window.dispatchEvent(new CustomEvent('stacks-status-changed', {
-            detail: { status: 'shipped', storyId: draggedCard.id }
-          }));
+        const statusPayload: any = { status: targetStatus };
+        if (draggedCard.type === 'task') {
+          statusPayload.userId = authUser?.id;
         }
+        
+        const statusResponse = await fetch(statusEndpoint, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(statusPayload)
+        });
+
+        if (!statusResponse.ok) {
+          // Revert optimistic update on failure
+          setCards(oldCards);
+          console.error('Failed to update card status:', await statusResponse.text());
+          return;
+        }
+      }
+
+      // Persist ranks for cards in the target column
+      const cardsInTargetColumn = updatedCards.filter(c => c.status === targetStatus);
+      await persistRanks(cardsInTargetColumn, oldCards);
+
+      console.log(`Successfully moved card ${draggedCard.title} to ${targetStatus}`);
+      
+      // If status changed to 'shipped', notify ShipButton to refresh immediately
+      if (targetStatus === 'shipped') {
+        console.log('📦 [StacksBoard] Card moved to shipped, notifying ShipButton');
+        window.dispatchEvent(new CustomEvent('stacks-status-changed', {
+          detail: { status: 'shipped', storyId: draggedCard.id }
+        }));
       }
     } catch (error) {
       // Revert optimistic update on error
-      setCards(prevCards => 
-        prevCards.map(card => 
-          card.id === draggedCard.id 
-            ? { ...card, status: previousStatus as StackCard['status'] }
-            : card
-        )
-      );
-      console.error('Error updating card status:', error);
+      setCards(oldCards);
+      console.error('Error updating card:', error);
     }
   };
 
@@ -705,15 +813,39 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       return;
     }
 
-    // Optimistic update - move card to top of its column
+    const oldCards = [...cards];
+
+    // Optimistic update - move card to top of its column and recalculate ranks
     setCards(prevCards => {
       const filtered = prevCards.filter(c => c.id !== card.id);
       const sameStatus = filtered.filter(c => c.status === card.status);
-      return [card, ...sameStatus, ...filtered.filter(c => c.status !== card.status)];
+      const otherCards = filtered.filter(c => c.status !== card.status);
+      
+      // Recalculate ranks for the column
+      const reorderedColumn = [card, ...sameStatus].map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      
+      return [...reorderedColumn, ...otherCards];
     });
 
     setContextMenu(null);
-    // TODO: Implement API call to persist new order
+    
+    // Persist ranks - calculate updated column from oldCards
+    try {
+      const filtered = oldCards.filter(c => c.id !== card.id);
+      const sameStatus = filtered.filter(c => c.status === card.status);
+      const reorderedColumn = [card, ...sameStatus].map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      await persistRanks(reorderedColumn, oldCards);
+    } catch (error) {
+      // Revert on error
+      setCards(oldCards);
+      console.error('Error moving card to top:', error);
+    }
   };
 
   const handleMoveUp = async () => {
@@ -727,7 +859,9 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       return;
     }
 
-    // Optimistic update - swap with card above
+    const oldCards = [...cards];
+
+    // Optimistic update - swap with card above and recalculate ranks
     setCards(prevCards => {
       const newCards = [...prevCards];
       const sameStatus = newCards.filter(c => c.status === card.status);
@@ -738,11 +872,37 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         [sameStatus[cardIndex - 1], sameStatus[cardIndex]] = [sameStatus[cardIndex], sameStatus[cardIndex - 1]];
       }
       
-      return [...sameStatus, ...otherCards];
+      // Recalculate ranks for the column
+      const reorderedColumn = sameStatus.map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      
+      return [...reorderedColumn, ...otherCards];
     });
 
     setContextMenu(null);
-    // TODO: Implement API call to persist new order
+    
+    // Persist ranks - calculate updated column from oldCards
+    try {
+      const newCards = [...oldCards];
+      const sameStatus = newCards.filter(c => c.status === card.status);
+      const cardIndex = sameStatus.findIndex(c => c.id === card.id);
+      
+      if (cardIndex > 0) {
+        [sameStatus[cardIndex - 1], sameStatus[cardIndex]] = [sameStatus[cardIndex], sameStatus[cardIndex - 1]];
+      }
+      
+      const reorderedColumn = sameStatus.map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      await persistRanks(reorderedColumn, oldCards);
+    } catch (error) {
+      // Revert on error
+      setCards(oldCards);
+      console.error('Error moving card up:', error);
+    }
   };
 
   const handleMoveDown = async () => {
@@ -756,7 +916,9 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       return;
     }
 
-    // Optimistic update - swap with card below
+    const oldCards = [...cards];
+
+    // Optimistic update - swap with card below and recalculate ranks
     setCards(prevCards => {
       const newCards = [...prevCards];
       const sameStatus = newCards.filter(c => c.status === card.status);
@@ -767,11 +929,38 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       }
       
       const otherCards = newCards.filter(c => c.status !== card.status);
-      return [...sameStatus, ...otherCards];
+      
+      // Recalculate ranks for the column
+      const reorderedColumn = sameStatus.map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      
+      return [...reorderedColumn, ...otherCards];
     });
 
     setContextMenu(null);
-    // TODO: Implement API call to persist new order
+    
+    // Persist ranks - calculate updated column from oldCards
+    try {
+      const newCards = [...oldCards];
+      const sameStatus = newCards.filter(c => c.status === card.status);
+      const cardIndex = sameStatus.findIndex(c => c.id === card.id);
+      
+      if (cardIndex < sameStatus.length - 1) {
+        [sameStatus[cardIndex], sameStatus[cardIndex + 1]] = [sameStatus[cardIndex + 1], sameStatus[cardIndex]];
+      }
+      
+      const reorderedColumn = sameStatus.map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      await persistRanks(reorderedColumn, oldCards);
+    } catch (error) {
+      // Revert on error
+      setCards(oldCards);
+      console.error('Error moving card down:', error);
+    }
   };
 
   const handleMoveToBottom = async () => {
@@ -785,16 +974,39 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       return;
     }
 
-    // Optimistic update - move card to bottom of its column
+    const oldCards = [...cards];
+
+    // Optimistic update - move card to bottom of its column and recalculate ranks
     setCards(prevCards => {
       const filtered = prevCards.filter(c => c.id !== card.id);
       const sameStatus = filtered.filter(c => c.status === card.status);
       const otherCards = filtered.filter(c => c.status !== card.status);
-      return [...sameStatus, card, ...otherCards];
+      
+      // Recalculate ranks for the column
+      const reorderedColumn = [...sameStatus, card].map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      
+      return [...reorderedColumn, ...otherCards];
     });
 
     setContextMenu(null);
-    // TODO: Implement API call to persist new order
+    
+    // Persist ranks - calculate updated column from oldCards
+    try {
+      const filtered = oldCards.filter(c => c.id !== card.id);
+      const sameStatus = filtered.filter(c => c.status === card.status);
+      const reorderedColumn = [...sameStatus, card].map((c, index) => ({
+        ...c,
+        rank: index + 1
+      }));
+      await persistRanks(reorderedColumn, oldCards);
+    } catch (error) {
+      // Revert on error
+      setCards(oldCards);
+      console.error('Error moving card to bottom:', error);
+    }
   };
 
   const handleDelete = async () => {
@@ -811,7 +1023,11 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     setContextMenu(null);
 
     try {
-      const response = await fetch(`/api/v1/stacks/stories/${card.id}`, {
+      const endpoint = card.type === 'task' 
+        ? `/api/stacks/tasks/${card.id}`
+        : `/api/v1/stacks/stories/${card.id}`;
+      
+      const response = await fetch(endpoint, {
         method: 'DELETE',
         credentials: 'include',
         headers: {

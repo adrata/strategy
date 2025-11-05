@@ -518,11 +518,223 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     return false;
   };
 
+  // Helper function to refresh items by fetching both stories and tasks
+  const refreshItems = async (): Promise<void> => {
+    // Resolve workspace ID with fallback logic
+    let workspaceId = ui.activeWorkspace?.id;
+    
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for refreshing items');
+      return;
+    }
+
+    try {
+      const cacheBuster = `&_t=${Date.now()}`;
+      const storiesUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}${cacheBuster}`;
+      const tasksUrl = `/api/stacks/tasks?workspaceId=${workspaceId}${cacheBuster}`;
+
+      const [storiesResponse, tasksResponse] = await Promise.all([
+        fetch(storiesUrl, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+          cache: 'no-store' as RequestCache,
+        }),
+        fetch(tasksUrl, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+          cache: 'no-store' as RequestCache,
+        })
+      ]);
+
+      let stories: any[] = [];
+      let tasks: any[] = [];
+
+      if (storiesResponse.ok) {
+        const storiesData = await storiesResponse.json();
+        stories = storiesData.stories || [];
+      }
+
+      if (tasksResponse.ok) {
+        const tasksData = await tasksResponse.json();
+        tasks = tasksData.tasks || [];
+      }
+
+      // Combine stories and tasks, matching main useEffect logic
+      const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
+      const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
+      const allItems = [...markedStories, ...markedTasks];
+
+      // Sort by rank to preserve order
+      const sortedItems = [...allItems].sort((a, b) => {
+        const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+        const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+        if (rankA !== rankB) return rankA - rankB;
+        return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+      });
+
+      // Map both stories and tasks to backlog item format (same logic as main useEffect)
+      const backlogItems = sortedItems.map((item: any, index: number) => {
+        const tags = item.tags || [];
+        if (item.type === 'bug') {
+          tags.push('bug');
+        }
+        
+        const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
+        const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
+        
+        return {
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          priority: item.priority,
+          status: item.status,
+          assignee: item.assignee?.name || item.assignee || null,
+          dueDate: item.dueDate || null,
+          tags: tags,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          rank: rank,
+          type: itemType as 'story' | 'task',
+          originalType: item.type // Preserve original type to detect bugs
+        };
+      });
+
+      setItems(backlogItems);
+    } catch (error) {
+      console.error('Error refreshing items:', error);
+    }
+  };
+
+  // Helper function to persist ranks for items that changed
+  const persistRanks = async (
+    newItems: BacklogItem[],
+    oldItems: BacklogItem[],
+    statusUpdate?: { itemId: string; newStatus: string }
+  ): Promise<void> => {
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for persisting ranks');
+      return;
+    }
+
+    try {
+      // Create a map of old items for O(1) lookup
+      const oldItemsMap = new Map<string, BacklogItem>();
+      oldItems.forEach(item => oldItemsMap.set(item.id, item));
+
+      // Find items whose rank changed
+      const itemsWithChangedRanks = newItems.filter((item) => {
+        const oldItem = oldItemsMap.get(item.id);
+        if (!oldItem) return true; // New item, definitely needs update
+        return oldItem.rank !== item.rank;
+      });
+
+      // Also handle status update if provided
+      const updatePromises: Promise<Response>[] = [];
+
+      // Update ranks for items that changed
+      itemsWithChangedRanks.forEach(item => {
+        const updatePayload: any = { rank: item.rank };
+        
+        // Determine the correct API endpoint based on item type
+        const endpoint = item.type === 'task' 
+          ? `/api/stacks/tasks/${item.id}`
+          : `/api/v1/stacks/stories/${item.id}`;
+        
+        // Add userId for task updates (required by task API)
+        if (item.type === 'task') {
+          updatePayload.userId = authUser?.id;
+        }
+        
+        updatePromises.push(
+          fetch(endpoint, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatePayload)
+          })
+        );
+      });
+
+      // Handle status update if provided
+      if (statusUpdate) {
+        const itemToUpdate = newItems.find(i => i.id === statusUpdate.itemId);
+        if (itemToUpdate) {
+          const statusPayload: any = { status: statusUpdate.newStatus };
+          const statusEndpoint = itemToUpdate.type === 'task'
+            ? `/api/stacks/tasks/${statusUpdate.itemId}`
+            : `/api/v1/stacks/stories/${statusUpdate.itemId}`;
+          
+          if (itemToUpdate.type === 'task') {
+            statusPayload.userId = authUser?.id;
+          }
+          
+          updatePromises.push(
+            fetch(statusEndpoint, {
+              method: 'PATCH',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(statusPayload)
+            })
+          );
+        }
+      }
+
+      await Promise.all(updatePromises);
+      
+      // Trigger refresh to sync with other components
+      if (stacksContext?.triggerRefresh) {
+        stacksContext.triggerRefresh();
+      }
+    } catch (error) {
+      console.error('Error persisting ranks:', error);
+      throw error;
+    }
+  };
+
   // Filter and sort items
   const filteredItems = items
     .filter(item => {
       // Exclude deep-backlog items from regular backlog view
       if (item.status === 'deep-backlog') {
+        return false;
+      }
+      
+      // Exclude workstream board statuses from backlog view
+      // Items with these statuses should only appear on the workstream board
+      // Note: 'up-next' and 'todo' are allowed since they appear in the "Up Next" section
+      const workstreamBoardStatuses = ['in-progress', 'built', 'qa1', 'qa2', 'shipped', 'done'];
+      if (workstreamBoardStatuses.includes(item.status)) {
         return false;
       }
       
@@ -825,17 +1037,24 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Update via API
+    // Update via API - determine correct endpoint based on item type
     try {
-      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+      const endpoint = item.type === 'task' 
+        ? `/api/stacks/tasks/${item.id}`
+        : `/api/v1/stacks/stories/${item.id}`;
+      
+      const updatePayload: any = { status: newStatus };
+      if (item.type === 'task') {
+        updatePayload.userId = authUser?.id;
+      }
+      
+      const response = await fetch(endpoint, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          status: newStatus
-        })
+        body: JSON.stringify(updatePayload)
       });
 
       if (!response.ok) {
@@ -848,30 +1067,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         console.error('Failed to update story status:', await response.text());
       } else {
         console.log(`Successfully moved ${item.title} below the line`);
-        // Refresh the list to get updated data
-        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          if (data.stories && Array.isArray(data.stories)) {
-            const backlogItems = data.stories.map((story: any, index: number) => ({
-              id: story.id,
-              title: story.title,
-              description: story.description,
-              priority: story.priority,
-              status: story.status,
-              assignee: story.assignee?.name || story.assignee,
-              dueDate: story.dueDate,
-              tags: story.tags || [],
-              createdAt: story.createdAt,
-              updatedAt: story.updatedAt,
-              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
-            }));
-            setItems(backlogItems);
-          }
-        }
+        // Refresh the list to get updated data (fetches both stories and tasks)
+        await refreshItems();
       }
     } catch (error) {
       // Revert on error
@@ -919,17 +1116,24 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Update via API
+    // Update via API - determine correct endpoint based on item type
     try {
-      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+      const endpoint = item.type === 'task' 
+        ? `/api/stacks/tasks/${item.id}`
+        : `/api/v1/stacks/stories/${item.id}`;
+      
+      const updatePayload: any = { status: newStatus };
+      if (item.type === 'task') {
+        updatePayload.userId = authUser?.id;
+      }
+      
+      const response = await fetch(endpoint, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          status: newStatus
-        })
+        body: JSON.stringify(updatePayload)
       });
 
       if (!response.ok) {
@@ -942,30 +1146,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         console.error('Failed to update story status:', await response.text());
       } else {
         console.log(`Successfully moved ${item.title} to Up Next`);
-        // Refresh the list to get updated data
-        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          if (data.stories && Array.isArray(data.stories)) {
-            const backlogItems = data.stories.map((story: any, index: number) => ({
-              id: story.id,
-              title: story.title,
-              description: story.description,
-              priority: story.priority,
-              status: story.status,
-              assignee: story.assignee?.name || story.assignee,
-              dueDate: story.dueDate,
-              tags: story.tags || [],
-              createdAt: story.createdAt,
-              updatedAt: story.updatedAt,
-              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
-            }));
-            setItems(backlogItems);
-          }
-        }
+        // Refresh the list to get updated data (fetches both stories and tasks)
+        await refreshItems();
       }
     } catch (error) {
       // Revert on error
@@ -1013,17 +1195,24 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Update via API
+    // Update via API - determine correct endpoint based on item type
     try {
-      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+      const endpoint = item.type === 'task' 
+        ? `/api/stacks/tasks/${item.id}`
+        : `/api/v1/stacks/stories/${item.id}`;
+      
+      const updatePayload: any = { status: newStatus };
+      if (item.type === 'task') {
+        updatePayload.userId = authUser?.id;
+      }
+      
+      const response = await fetch(endpoint, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          status: newStatus
-        })
+        body: JSON.stringify(updatePayload)
       });
 
       if (!response.ok) {
@@ -1036,30 +1225,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         console.error('Failed to update story status:', await response.text());
       } else {
         console.log(`Successfully moved ${item.title} to deep backlog`);
-        // Refresh the list to get updated data
-        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          if (data.stories && Array.isArray(data.stories)) {
-            const backlogItems = data.stories.map((story: any, index: number) => ({
-              id: story.id,
-              title: story.title,
-              description: story.description,
-              priority: story.priority,
-              status: story.status,
-              assignee: story.assignee?.name || story.assignee,
-              dueDate: story.dueDate,
-              tags: story.tags || [],
-              createdAt: story.createdAt,
-              updatedAt: story.updatedAt,
-              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
-            }));
-            setItems(backlogItems);
-          }
-        }
+        // Refresh the list to get updated data (fetches both stories and tasks)
+        await refreshItems();
       }
     } catch (error) {
       // Revert on error
@@ -1112,9 +1279,13 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Delete via API
+    // Delete via API - determine correct endpoint based on item type
     try {
-      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+      const endpoint = item.type === 'task' 
+        ? `/api/stacks/tasks/${item.id}`
+        : `/api/v1/stacks/stories/${item.id}`;
+      
+      const response = await fetch(endpoint, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -1133,30 +1304,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         console.error('Failed to delete story:', await response.text());
       } else {
         console.log(`Successfully deleted story "${item.title}"`);
-        // Refresh the list to get updated data
-        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          if (data.stories && Array.isArray(data.stories)) {
-            const backlogItems = data.stories.map((story: any, index: number) => ({
-              id: story.id,
-              title: story.title,
-              description: story.description,
-              priority: story.priority,
-              status: story.status,
-              assignee: story.assignee?.name || story.assignee,
-              dueDate: story.dueDate,
-              tags: story.tags || [],
-              createdAt: story.createdAt,
-              updatedAt: story.updatedAt,
-              rank: story.rank !== null && story.rank !== undefined ? story.rank : index + 1
-            }));
-            setItems(backlogItems);
-          }
-        }
+        // Refresh the list to get updated data (fetches both stories and tasks)
+        await refreshItems();
       }
     } catch (error) {
       // Revert on error
