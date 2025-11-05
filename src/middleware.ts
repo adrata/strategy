@@ -2,7 +2,7 @@
  * Desktop API Middleware
  * 
  * This middleware redirects API calls to Tauri commands when running in desktop mode
- * Also handles workspace path redirects to sign-in
+ * Also handles workspace path redirects to sign-in (only for unauthenticated users)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -58,6 +58,69 @@ function isWorkspacePath(pathname: string): boolean {
   return isWorkspaceSlug(firstSegment);
 }
 
+/**
+ * Check if user is authenticated by verifying auth token cookie
+ * Uses lightweight JWT decode to avoid database calls in middleware
+ */
+function isAuthenticated(request: NextRequest): boolean {
+  try {
+    const cookieHeader = request.headers.get('cookie');
+    if (!cookieHeader) return false;
+
+    // Parse cookies
+    const cookies = cookieHeader.split(';').reduce(
+      (acc, cookie) => {
+        const [key, value] = cookie.trim().split('=');
+        if (key && value) {
+          try {
+            acc[key] = decodeURIComponent(value);
+          } catch (e) {
+            acc[key] = value;
+          }
+        }
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
+    // Check for auth token
+    const token = cookies['auth-token'] || cookies['adrata_unified_session'];
+    if (!token) return false;
+
+    // If it's the unified session cookie, extract the token
+    let actualToken = token;
+    try {
+      const sessionData = JSON.parse(token);
+      if (sessionData.accessToken) {
+        actualToken = sessionData.accessToken;
+      }
+    } catch (e) {
+      // Not JSON, use as-is
+    }
+
+    // Lightweight check: verify token exists and has valid JWT structure
+    // We don't verify signature here to keep middleware fast
+    // Full verification happens in RouteGuard and API routes
+    const parts = actualToken.split('.');
+    if (parts.length !== 3) return false;
+
+    // Quick expiry check from payload (without full verification)
+    try {
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+      if (payload.exp && payload.exp < Date.now() / 1000) {
+        return false; // Token expired
+      }
+      return true; // Token exists and not expired
+    } catch (e) {
+      // Invalid payload, but token exists - let RouteGuard handle it
+      return true; // Assume authenticated, let RouteGuard verify
+    }
+  } catch (error) {
+    // Error parsing cookies - assume not authenticated
+    return false;
+  }
+}
+
 export function middleware(request: NextRequest) {
   // Skip middleware for desktop builds (static export)
   if (isDesktopBuild) {
@@ -77,9 +140,35 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // NOTE: Workspace path authentication is handled client-side by RouteGuard
-  // This middleware only handles domain redirects, not authentication checks
-  // Removing workspace path redirect to prevent redirect loops after sign-in
+  // Check if this is a workspace path
+  if (isWorkspacePath(pathname)) {
+    // Check if user is authenticated
+    const authenticated = isAuthenticated(request);
+    
+    if (!authenticated) {
+      // Unauthenticated user - redirect to sign-in
+      const hostname = request.headers.get('host') || '';
+      const isActionCom = hostname === 'action.com' || hostname.startsWith('action.com');
+      const targetDomain = isActionCom ? 'action.adrata.com' : hostname.split(':')[0];
+      
+      const redirectUrl = new URL(request.url);
+      redirectUrl.host = targetDomain;
+      redirectUrl.pathname = '/sign-in';
+      
+      if (!targetDomain.includes('localhost') && !targetDomain.includes('127.0.0.1')) {
+        redirectUrl.protocol = 'https:';
+      }
+      
+      if (request.nextUrl.search) {
+        redirectUrl.search = request.nextUrl.search;
+      }
+      
+      return NextResponse.redirect(redirectUrl, 307);
+    }
+    
+    // Authenticated user - allow through
+    return NextResponse.next();
+  }
 
   // Handle domain redirect: action.com -> action.adrata.com
   if (hostname === 'action.com' || hostname.startsWith('action.com')) {

@@ -10,6 +10,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DocumentTextIcon, PresentationChartBarIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { useUnifiedAuth } from '@/platform/auth';
+import { usePathname } from 'next/navigation';
+import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 import { VisionDocumentTypeSelector } from './VisionDocumentTypeSelector';
 import { PresentationView } from '@/frontend/components/pipeline/PresentationView';
 import { PitchRegularView } from '@/frontend/components/pipeline/PitchRegularView';
@@ -35,6 +38,9 @@ interface VisionListProps {
 
 export function VisionList({ onDocumentSelect }: VisionListProps) {
   const { ui } = useRevenueOS();
+  const { user: authUser } = useUnifiedAuth();
+  const pathname = usePathname();
+  const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const [documents, setDocuments] = useState<VisionDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,10 +51,26 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
   const [isPresentationMode, setIsPresentationMode] = useState(false);
 
   const fetchDocuments = useCallback(async () => {
-    const workspaceId = ui.activeWorkspace?.id;
+    // Resolve workspace ID with fallback logic (same as StacksBoard and StacksLeftPanel)
+    let workspaceId = ui.activeWorkspace?.id;
+    
+    // Fallback 1: Get from URL workspace slug if UI workspace is missing
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        console.log(`🔍 [VisionList] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    
+    // Fallback 2: Use user's active workspace ID
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      console.log(`🔍 [VisionList] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
+      workspaceId = authUser.activeWorkspaceId;
+    }
     
     if (!workspaceId) {
-      console.log('⚠️ [VisionList] No workspace ID available, waiting...');
+      console.log('⚠️ [VisionList] No workspace ID available after all fallbacks, waiting...');
       setLoading(false);
       return;
     }
@@ -99,14 +121,12 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
     } finally {
       setLoading(false);
     }
-  }, [ui.activeWorkspace?.id]);
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug]);
 
   useEffect(() => {
-    // Only fetch if workspace is available
-    if (ui.activeWorkspace?.id) {
-      fetchDocuments();
-    }
-  }, [fetchDocuments, ui.activeWorkspace?.id]);
+    // Fetch documents when workspace is resolved
+    fetchDocuments();
+  }, [fetchDocuments]);
 
   const handleDocumentClick = async (document: VisionDocument) => {
     // Handle pitch documents inline (like Chronicle does)
@@ -154,7 +174,21 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
   };
 
   const handleCreateDocument = useCallback(async (documentType: 'paper' | 'pitch') => {
-    if (!ui.activeWorkspace?.id) {
+    // Resolve workspace ID with fallback logic
+    let workspaceId = ui.activeWorkspace?.id;
+    
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
       console.error('No workspace selected');
       return;
     }
@@ -169,7 +203,7 @@ export function VisionList({ onDocumentSelect }: VisionListProps) {
         body: JSON.stringify({
           title: `New ${documentType === 'pitch' ? 'Pitch' : 'Paper'}`,
           documentType: documentType,
-          workspaceId: ui.activeWorkspace.id,
+          workspaceId: workspaceId,
         }),
       });
 

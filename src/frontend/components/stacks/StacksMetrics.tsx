@@ -8,6 +8,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { useUnifiedAuth } from '@/platform/auth';
+import { usePathname } from 'next/navigation';
+import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 
 interface MetricCardProps {
   title: string;
@@ -52,6 +55,9 @@ function MetricCard({ title, value, subtitle, trend, color = 'default' }: Metric
 
 export function StacksMetrics() {
   const { ui } = useRevenueOS();
+  const { user: authUser } = useUnifiedAuth();
+  const pathname = usePathname();
+  const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const [metrics, setMetrics] = useState({
     velocity: 0,
     cycleTime: 0,
@@ -67,13 +73,32 @@ export function StacksMetrics() {
 
   useEffect(() => {
     const fetchMetrics = async () => {
-      if (!ui.activeWorkspace?.id) {
+      // Resolve workspace ID with fallback logic (same as StacksBoard and StacksLeftPanel)
+      let workspaceId = ui.activeWorkspace?.id;
+      
+      // Fallback 1: Get from URL workspace slug if UI workspace is missing
+      if (!workspaceId && workspaceSlug) {
+        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+        if (urlWorkspaceId) {
+          console.log(`🔍 [StacksMetrics] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+          workspaceId = urlWorkspaceId;
+        }
+      }
+      
+      // Fallback 2: Use user's active workspace ID
+      if (!workspaceId && authUser?.activeWorkspaceId) {
+        console.log(`🔍 [StacksMetrics] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
+        workspaceId = authUser.activeWorkspaceId;
+      }
+      
+      if (!workspaceId) {
+        console.warn('⚠️ [StacksMetrics] No workspace ID available after all fallbacks');
         setLoading(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`, {
+        const response = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -167,7 +192,7 @@ export function StacksMetrics() {
     };
 
     fetchMetrics();
-  }, [ui.activeWorkspace?.id]);
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug]);
 
   if (loading) {
     return (

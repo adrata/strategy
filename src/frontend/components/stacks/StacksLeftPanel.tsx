@@ -18,6 +18,7 @@ import {
 import { useUnifiedAuth } from '@/platform/auth';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 
 interface StacksLeftPanelProps {
   activeSubSection: string;
@@ -112,17 +113,43 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     fetchUserProfile();
   }, [authUser?.id]);
 
+  // Get workspace slug from pathname
+  const workspaceSlug = pathname.split('/').filter(Boolean)[0];
+
   // Fetch story and task counts
   useEffect(() => {
     const fetchStacksCounts = async () => {
-      if (!ui.activeWorkspace?.id) {
-        console.log('⚠️ [StacksLeftPanel] No workspace ID, resetting stats');
+      // Resolve workspace ID with fallback logic (same as StacksBoard)
+      let workspaceId = ui.activeWorkspace?.id;
+      
+      // Fallback 1: Get from URL workspace slug if UI workspace is missing
+      if (!workspaceId && workspaceSlug) {
+        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+        if (urlWorkspaceId) {
+          console.log(`🔍 [StacksLeftPanel] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+          workspaceId = urlWorkspaceId;
+        }
+      }
+      
+      // Fallback 2: Use user's active workspace ID
+      if (!workspaceId && authUser?.activeWorkspaceId) {
+        console.log(`🔍 [StacksLeftPanel] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
+        workspaceId = authUser.activeWorkspaceId;
+      }
+      
+      console.log('🔍 [StacksLeftPanel] Starting fetch, workspace:', ui.activeWorkspace);
+      console.log('🔍 [StacksLeftPanel] Workspace ID (resolved):', workspaceId);
+      console.log('🔍 [StacksLeftPanel] URL workspace slug:', workspaceSlug);
+      console.log('🔍 [StacksLeftPanel] User activeWorkspaceId:', authUser?.activeWorkspaceId);
+      
+      if (!workspaceId) {
+        console.warn('⚠️ [StacksLeftPanel] No workspace ID available after all fallbacks, resetting stats');
         setStats(prev => ({ ...prev, total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 }));
         setStatsLoading(false);
         return;
       }
       
-      console.log('🔍 [StacksLeftPanel] Fetching counts for workspace:', ui.activeWorkspace.id);
+      console.log('🔍 [StacksLeftPanel] Fetching counts for workspace:', workspaceId);
 
       // Add cache-busting timestamp to prevent stale data
       const cacheBuster = `&_t=${Date.now()}`;
@@ -132,7 +159,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
 
       try {
         // Fetch stories with cache-busting and no-cache headers
-        const storiesResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}${cacheBuster}`, {
+        const storiesResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}${cacheBuster}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -143,7 +170,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         });
 
         // Fetch tasks/bugs with cache-busting and no-cache headers
-        const tasksResponse = await fetch(`/api/stacks/tasks?workspaceId=${ui.activeWorkspace.id}${cacheBuster}`, {
+        const tasksResponse = await fetch(`/api/stacks/tasks?workspaceId=${workspaceId}${cacheBuster}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -154,7 +181,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         });
 
         // Fetch vision documents (papers and pitches) with cache-busting and no-cache headers
-        const visionResponse = await fetch(`/api/v1/stacks/vision?workspaceId=${ui.activeWorkspace.id}${cacheBuster}`, {
+        const visionResponse = await fetch(`/api/v1/stacks/vision?workspaceId=${workspaceId}${cacheBuster}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -209,7 +236,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           try {
             const visionData = await visionResponse.json();
             visionCount = visionData.documents?.length || 0;
-            console.log('📊 [StacksLeftPanel] Vision API success - count:', visionCount, 'documents:', visionData.documents?.length, 'workspace:', ui.activeWorkspace.id);
+            console.log('📊 [StacksLeftPanel] Vision API success - count:', visionCount, 'documents:', visionData.documents?.length, 'workspace:', workspaceId);
             
             // Log document details for debugging
             if (visionData.documents && visionData.documents.length > 0) {
@@ -222,7 +249,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           }
         } else {
           console.error('❌ [StacksLeftPanel] Vision API failed:', visionResponse.status, visionResponse.statusText);
-          console.error('❌ [StacksLeftPanel] Workspace ID:', ui.activeWorkspace.id);
+          console.error('❌ [StacksLeftPanel] Workspace ID:', workspaceId);
           
           // Try to get error message for debugging - clone response first to avoid consuming body
           try {
@@ -295,7 +322,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           visionCount, 
           stories: stories.length, 
           tasks: tasks.length,
-          workspace: ui.activeWorkspace.id 
+          workspace: workspaceId 
         });
 
         setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, visionCount });
@@ -326,11 +353,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     }, 30000);
 
     return () => clearInterval(refreshInterval);
-  }, [ui.activeWorkspace?.id, pathname]); // Add pathname to refresh when navigating
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug, pathname]); // Add pathname to refresh when navigating
 
-  // Get current workspace from pathname
-  const workspaceSlug = pathname.split('/')[1];
-  
   // Check if we're in Notary Everyday workspace
   const isNotaryEveryday = workspaceSlug === 'ne' || 
                           (typeof window !== "undefined" && window.location.pathname.startsWith('/ne/')) ||
