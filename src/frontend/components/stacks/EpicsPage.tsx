@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { PlusIcon, DocumentTextIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { PlusIcon, DocumentTextIcon, PresentationChartBarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 import { usePathname } from 'next/navigation';
@@ -56,6 +56,9 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
   const [loading, setLoading] = useState(true);
   const [isAddEpicModalOpen, setIsAddEpicModalOpen] = useState(false);
   const [selectedEpic, setSelectedEpic] = useState<StacksEpic | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [sortedEpics, setSortedEpics] = useState<StacksEpic[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; epicId: string } | null>(null);
@@ -308,6 +311,26 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
   // Epics come from context and should display even while loading
   const isInitialLoad = loading && coreDocs.length === 0;
 
+  // Filter epics based on search and filters
+  const filteredEpics = useMemo(() => {
+    if (!epics) return [];
+    
+    return epics.filter(epic => {
+      // Search filter
+      const matchesSearch = searchQuery === '' || 
+        epic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        epic.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Status filter
+      const matchesStatus = statusFilter === 'all' || epic.status === statusFilter;
+      
+      // Priority filter
+      const matchesPriority = priorityFilter === 'all' || epic.priority === priorityFilter;
+      
+      return matchesSearch && matchesStatus && matchesPriority;
+    });
+  }, [epics, searchQuery, statusFilter, priorityFilter]);
+
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header with Add Epics button */}
@@ -325,6 +348,42 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
             <PlusIcon className="w-5 h-5" />
             <span>Add Epic</span>
           </button>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative flex-1">
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" />
+            <input
+              type="text"
+              placeholder="Search epics..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+            />
+          </div>
+          
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+          >
+            <option value="all">All Status</option>
+            <option value="todo">To Do</option>
+            <option value="in-progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+          
+          <select
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+          >
+            <option value="all">All Priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
         </div>
 
         {/* 3 Core Documents */}

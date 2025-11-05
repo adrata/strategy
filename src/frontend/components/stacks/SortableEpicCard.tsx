@@ -1,0 +1,93 @@
+"use client";
+
+import React from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Bars3Icon } from '@heroicons/react/24/outline';
+import { StacksEpic } from './types';
+import { EpicGoalBar } from './EpicGoalBar';
+import { EpicRankBadge } from './EpicRankBadge';
+
+interface SortableEpicCardProps {
+  epic: StacksEpic & { rank?: number };
+  isSelected: boolean;
+  isDragging: boolean;
+  onClick: () => void;
+  onContextMenu: (e: React.MouseEvent, epicId: string) => void;
+}
+
+export function SortableEpicCard({
+  epic,
+  isSelected,
+  isDragging,
+  onClick,
+  onContextMenu,
+}: SortableEpicCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: epic.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  // Calculate rank based on epic's rank or position
+  const rank = epic.rank || 1;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      onClick={onClick}
+      onContextMenu={(e) => onContextMenu(e, epic.id)}
+      className={`
+        w-full p-6 bg-card rounded-lg border border-border shadow-sm 
+        hover:shadow-md hover:border-[var(--primary)] transition-all cursor-pointer
+        ${isSelected ? 'border-[var(--primary)] ring-2 ring-[var(--primary)]/20' : ''}
+        ${isDragging ? 'ring-2 ring-[var(--primary)]/50 opacity-50' : ''}
+      `}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start gap-3 flex-1">
+          {/* Drag handle and rank badge */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <div
+              {...attributes}
+              {...listeners}
+              className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded transition-colors"
+              onClick={(e) => e.stopPropagation()} // Prevent card click when dragging
+            >
+              <Bars3Icon className="w-5 h-5 text-muted" />
+            </div>
+            <EpicRankBadge rank={rank} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-lg font-semibold text-foreground mb-2">{epic.title}</h2>
+            {epic.description && (
+              <p className="text-sm text-muted line-clamp-2">{epic.description}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+          {epic.priority && (
+            <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+              epic.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
+              epic.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
+              'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
+            }`}>
+              {epic.priority}
+            </span>
+          )}
+        </div>
+      </div>
+      <EpicGoalBar epicId={epic.id} />
+    </div>
+  );
+}
+

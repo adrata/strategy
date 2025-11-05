@@ -8,25 +8,46 @@ const prisma = new PrismaClient();
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const body = await request.json();
-    const { userId, title, description, status, priority } = body;
-    const { id } = params;
+    const { workspaceId, title, description, status, priority, rank } = body;
+    const { id } = resolvedParams;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    if (!workspaceId) {
+      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
     }
 
-    const epoch = await prisma.stacksEpoch.update({
+    // Verify epic belongs to workspace
+    const existingEpic = await prisma.stacksEpic.findFirst({
+      where: {
+        id,
+        project: {
+          workspaceId
+        }
+      }
+    });
+
+    if (!existingEpic) {
+      return NextResponse.json({ error: 'Epic not found' }, { status: 404 });
+    }
+
+    // Build update data
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (status !== undefined) updateData.status = status;
+    if (priority !== undefined) updateData.priority = priority;
+    if (rank !== undefined && rank !== null) updateData.rank = rank;
+
+    const epic = await prisma.stacksEpic.update({
       where: { id },
-      data: {
-        ...(title && { title }),
-        ...(description !== undefined && { description }),
-        ...(status && { status }),
-        ...(priority && { priority })
-      },
+      data: updateData,
       include: {
         project: {
           select: { id: true, name: true }
@@ -34,33 +55,48 @@ export async function PATCH(
       }
     });
 
-    return NextResponse.json({ epic: epoch, epoch });
+    return NextResponse.json({ epic, epoch: epic });
   } catch (error) {
-    console.error('Error updating epoch:', error);
-    return NextResponse.json({ error: 'Failed to update epoch' }, { status: 500 });
+    console.error('Error updating epic:', error);
+    return NextResponse.json({ error: 'Failed to update epic' }, { status: 500 });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const body = await request.json();
-    const { userId } = body;
-    const { id } = params;
+    const { workspaceId } = body;
+    const { id } = resolvedParams;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    if (!workspaceId) {
+      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
     }
 
-    await prisma.stacksEpoch.delete({
+    // Verify epic belongs to workspace before deleting
+    const existingEpic = await prisma.stacksEpic.findFirst({
+      where: {
+        id,
+        project: {
+          workspaceId
+        }
+      }
+    });
+
+    if (!existingEpic) {
+      return NextResponse.json({ error: 'Epic not found' }, { status: 404 });
+    }
+
+    await prisma.stacksEpic.delete({
       where: { id }
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting epoch:', error);
-    return NextResponse.json({ error: 'Failed to delete epoch' }, { status: 500 });
+    console.error('Error deleting epic:', error);
+    return NextResponse.json({ error: 'Failed to delete epic' }, { status: 500 });
   }
 }

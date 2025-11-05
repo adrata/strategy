@@ -28,6 +28,9 @@ export interface StacksEpic {
   description?: string | null;
   epochId?: string | null;
   isEpoch?: boolean;
+  rank?: number | null;
+  status?: string | null;
+  priority?: string | null;
   createdAt: Date | string;
   updatedAt: Date | string;
   project?: StacksProject;
