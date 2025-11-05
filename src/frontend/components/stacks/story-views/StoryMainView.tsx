@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
-import { useRevenueOS } from '@/platform/ui/hooks/useRevenueOS';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { StacksCommentsSection } from './StacksCommentsSection';
 
 interface StoryMainViewProps {
