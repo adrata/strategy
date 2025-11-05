@@ -51,6 +51,7 @@ import {
   getStatusLabel
 } from './constants';
 import { useWorkspaceId } from './utils/workspaceId';
+import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 // Removed mock data imports
 
 interface StacksBacklogTableProps {
@@ -1000,19 +1001,19 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     setContextMenu(prev => ({ ...prev, isVisible: false }));
 
-    // Resolve workspace ID
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
+    // Resolve workspace ID - use the hook's workspaceId or fallback
+    let resolvedWorkspaceId = workspaceId;
+    if (!resolvedWorkspaceId && workspaceSlug) {
       const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
       if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
+        resolvedWorkspaceId = urlWorkspaceId;
       }
     }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
+    if (!resolvedWorkspaceId && authUser?.activeWorkspaceId) {
+      resolvedWorkspaceId = authUser.activeWorkspaceId;
     }
 
-    if (!workspaceId) {
+    if (!resolvedWorkspaceId) {
       console.error('No workspace ID available for updating story status');
       return;
     }
@@ -1079,19 +1080,19 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     setContextMenu(prev => ({ ...prev, isVisible: false }));
 
-    // Resolve workspace ID
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
+    // Resolve workspace ID - use the hook's workspaceId or fallback
+    let resolvedWorkspaceId = workspaceId;
+    if (!resolvedWorkspaceId && workspaceSlug) {
       const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
       if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
+        resolvedWorkspaceId = urlWorkspaceId;
       }
     }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
+    if (!resolvedWorkspaceId && authUser?.activeWorkspaceId) {
+      resolvedWorkspaceId = authUser.activeWorkspaceId;
     }
 
-    if (!workspaceId) {
+    if (!resolvedWorkspaceId) {
       console.error('No workspace ID available for updating story status');
       return;
     }
@@ -1158,19 +1159,19 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     setContextMenu(prev => ({ ...prev, isVisible: false }));
 
-    // Resolve workspace ID
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
+    // Resolve workspace ID - use the hook's workspaceId or fallback
+    let resolvedWorkspaceId = workspaceId;
+    if (!resolvedWorkspaceId && workspaceSlug) {
       const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
       if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
+        resolvedWorkspaceId = urlWorkspaceId;
       }
     }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
+    if (!resolvedWorkspaceId && authUser?.activeWorkspaceId) {
+      resolvedWorkspaceId = authUser.activeWorkspaceId;
     }
 
-    if (!workspaceId) {
+    if (!resolvedWorkspaceId) {
       console.error('No workspace ID available for updating story status');
       return;
     }
@@ -1235,16 +1236,16 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     setItems(prevItems => prevItems.filter(i => i.id !== contextMenu.itemId));
     setContextMenu(prev => ({ ...prev, isVisible: false }));
 
-    // Resolve workspace ID
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
+    // Resolve workspace ID - use the hook's workspaceId or fallback
+    let resolvedWorkspaceId = workspaceId;
+    if (!resolvedWorkspaceId && workspaceSlug) {
       const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
       if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
+        resolvedWorkspaceId = urlWorkspaceId;
       }
     }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
+    if (!resolvedWorkspaceId && authUser?.activeWorkspaceId) {
+      resolvedWorkspaceId = authUser.activeWorkspaceId;
     }
 
     if (!workspaceId) {
@@ -1337,19 +1338,19 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     // Optimistically update local state
     setItems(itemsWithNewRanks);
 
-    // Immediately persist ranks to API
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
+    // Immediately persist ranks to API - use the hook's workspaceId or fallback
+    let resolvedWorkspaceId = workspaceId;
+    if (!resolvedWorkspaceId && workspaceSlug) {
       const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
       if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
+        resolvedWorkspaceId = urlWorkspaceId;
       }
     }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
+    if (!resolvedWorkspaceId && authUser?.activeWorkspaceId) {
+      resolvedWorkspaceId = authUser.activeWorkspaceId;
     }
 
-    if (!workspaceId) {
+    if (!resolvedWorkspaceId) {
       console.error('No workspace ID available for updating item order');
       return;
     }
@@ -1401,11 +1402,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       console.error('❌ [StacksBacklogTable] Error persisting ranks after moveItem:', error);
       // On error, refresh to get server state
       const [storiesResponse, tasksResponse] = await Promise.all([
-        fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+        fetch(`/api/v1/stacks/stories?workspaceId=${resolvedWorkspaceId}`, {
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
         }),
-        fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
+        fetch(`/api/stacks/tasks?workspaceId=${resolvedWorkspaceId}`, {
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
         })
