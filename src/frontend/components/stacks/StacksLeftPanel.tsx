@@ -17,9 +17,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
-import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
-import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
+import { STACK_STATUS, WORKSTREAM_BOARD_STATUSES } from './constants';
+import { useWorkspaceId } from './utils/workspaceId';
 
 interface StacksLeftPanelProps {
   activeSubSection: string;
@@ -70,7 +70,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const pathname = usePathname();
   const { user: authUser } = useUnifiedAuth();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
-  const { ui } = useRevenueOS();
+  const workspaceId = useWorkspaceId();
   
   // Get shared data from StacksContext for syncing
   const stacksContext = useStacks();
@@ -124,31 +124,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   // Fetch story and task counts
   useEffect(() => {
     const fetchStacksCounts = async () => {
-      // Resolve workspace ID with fallback logic (same as StacksBoard)
-      let workspaceId = ui.activeWorkspace?.id;
-      
-      // Fallback 1: Get from URL workspace slug if UI workspace is missing
-      if (!workspaceId && workspaceSlug) {
-        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-        if (urlWorkspaceId) {
-          console.log(`🔍 [StacksLeftPanel] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
-          workspaceId = urlWorkspaceId;
-        }
-      }
-      
-      // Fallback 2: Use user's active workspace ID
-      if (!workspaceId && authUser?.activeWorkspaceId) {
-        console.log(`🔍 [StacksLeftPanel] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
-        workspaceId = authUser.activeWorkspaceId;
-      }
-      
-      console.log('🔍 [StacksLeftPanel] Starting fetch, workspace:', ui.activeWorkspace);
-      console.log('🔍 [StacksLeftPanel] Workspace ID (resolved):', workspaceId);
-      console.log('🔍 [StacksLeftPanel] URL workspace slug:', workspaceSlug);
-      console.log('🔍 [StacksLeftPanel] User activeWorkspaceId:', authUser?.activeWorkspaceId);
-      
       if (!workspaceId) {
-        console.warn('⚠️ [StacksLeftPanel] No workspace ID available after all fallbacks, resetting stats');
+        console.warn('⚠️ [StacksLeftPanel] No workspace ID available, resetting stats');
         setStats(prev => ({ ...prev, total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0 }));
         setStatsLoading(false);
         return;
@@ -288,26 +265,22 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         
         // Active = all statuses except 'done' and 'shipped'
         const active = allItems.filter((item: any) => 
-          item.status && item.status !== 'done' && item.status !== 'shipped'
+          item.status && item.status !== STACK_STATUS.DONE && item.status !== STACK_STATUS.SHIPPED
         ).length;
         
         // Completed = 'done' and 'shipped'
         const completed = allItems.filter((item: any) => 
-          item.status === 'done' || item.status === 'shipped'
+          item.status === STACK_STATUS.DONE || item.status === STACK_STATUS.SHIPPED
         ).length;
 
         // Up Next = items with status 'up-next' or 'todo'
         const upNextCount = allItems.filter((item: any) => 
-          item.status === 'up-next' || item.status === 'todo'
+          item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO
         ).length;
 
         // Workstream = items with any workstream board column status
-        // The workstream board displays items across all columns: UP NEXT, WORKING ON, BUILT, QA1, QA2, SHIPPED
-        // Cards appear in the column matching their status
-        // Include 'todo' status as it's mapped to 'up-next' on the board
-        const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
         const workstreamCount = allItems.filter((item: any) => 
-          workstreamBoardStatuses.includes(item.status)
+          WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])
         ).length;
 
         // Backlog = all items in up next (user requirement: all backlog items are in up next)
@@ -355,7 +328,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     }, 30000);
 
     return () => clearInterval(refreshInterval);
-  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug, pathname]); // Add pathname to refresh when navigating
+  }, [workspaceId, pathname]); // Refresh when workspace ID or pathname changes
 
   // Sync stats from StacksContext when context data changes (for same-page sync)
   useEffect(() => {
@@ -366,26 +339,24 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       const allItems = [...(contextStories || []), ...(contextTasks || [])];
       const total = allItems.length;
       
-      // Active = all statuses except 'done' and 'shipped'
-      const active = allItems.filter((item: any) => 
-        item.status && item.status !== 'done' && item.status !== 'shipped'
-      ).length;
-      
-      // Completed = 'done' and 'shipped'
-      const completed = allItems.filter((item: any) => 
-        item.status === 'done' || item.status === 'shipped'
-      ).length;
-
-      // Up Next = items with status 'up-next' or 'todo'
-      const upNextCount = allItems.filter((item: any) => 
-        item.status === 'up-next' || item.status === 'todo'
-      ).length;
+        // Active = all statuses except 'done' and 'shipped'
+        const active = allItems.filter((item: any) => 
+          item.status && item.status !== STACK_STATUS.DONE && item.status !== STACK_STATUS.SHIPPED
+        ).length;
+        
+        // Completed = 'done' and 'shipped'
+        const completed = allItems.filter((item: any) => 
+          item.status === STACK_STATUS.DONE || item.status === STACK_STATUS.SHIPPED
+        ).length;
+        
+        // Up Next = items with status 'up-next' or 'todo'
+        const upNextCount = allItems.filter((item: any) => 
+          item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO
+        ).length;
 
       // Workstream = items with any workstream board column status
-      // Include 'todo' status as it's mapped to 'up-next' on the board
-      const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
       const workstreamCount = allItems.filter((item: any) => 
-        workstreamBoardStatuses.includes(item.status)
+        WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])
       ).length;
 
       // Backlog = all items in up next (user requirement: all backlog items are in up next)

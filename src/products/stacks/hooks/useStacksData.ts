@@ -274,7 +274,7 @@ export function useStacksData() {
     }
 
     try {
-      const response = await fetch('/api/stacks/stories', {
+      const response = await fetch('/api/v1/stacks/stories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -381,7 +381,7 @@ export function useStacksData() {
     }
 
     try {
-      const response = await fetch(`/api/stacks/stories/${id}`, {
+      const response = await fetch(`/api/v1/stacks/stories/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -484,7 +484,7 @@ export function useStacksData() {
     }
 
     try {
-      const response = await fetch(`/api/stacks/stories/${id}`, {
+      const response = await fetch(`/api/v1/stacks/stories/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

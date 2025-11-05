@@ -41,50 +41,41 @@ import { StacksContextMenu } from './StacksContextMenu';
 import { StacksFilters } from './StacksFilters';
 import { AddStacksModal } from './AddStacksModal';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
-import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
 import { usePathname } from 'next/navigation';
+import { BacklogItem, StacksStory, StacksTask } from './types';
+import { 
+  STACK_STATUS, 
+  STACK_PRIORITY, 
+  WORKSTREAM_BOARD_STATUSES,
+  getStatusLabel
+} from './constants';
+import { useWorkspaceId } from './utils/workspaceId';
 // Removed mock data imports
-
-interface BacklogItem {
-  id: string;
-  title: string;
-  description?: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'todo' | 'up-next' | 'in-progress' | 'review' | 'done' | 'shipped' | 'qa1' | 'qa2' | 'built';
-  assignee?: string;
-  dueDate?: string;
-  tags?: string[];
-  createdAt: string;
-  updatedAt: string;
-  rank?: number;
-  type?: 'story' | 'task'; // Track if this is a story or task
-  originalType?: string; // Preserve original type to detect bugs (e.g., 'bug')
-}
 
 interface StacksBacklogTableProps {
   onItemClick?: (item: BacklogItem) => void;
 }
 
 
-const PRIORITY_COLORS = {
-  urgent: 'bg-priority-high-bg text-priority-high-text',
-  high: 'bg-priority-high-bg text-priority-high-text',
-  medium: 'bg-priority-medium-bg text-priority-medium-text',
-  low: 'bg-priority-low-bg text-priority-low-text',
+const PRIORITY_COLORS: Record<typeof STACK_PRIORITY[keyof typeof STACK_PRIORITY], string> = {
+  [STACK_PRIORITY.URGENT]: 'bg-priority-high-bg text-priority-high-text',
+  [STACK_PRIORITY.HIGH]: 'bg-priority-high-bg text-priority-high-text',
+  [STACK_PRIORITY.MEDIUM]: 'bg-priority-medium-bg text-priority-medium-text',
+  [STACK_PRIORITY.LOW]: 'bg-priority-low-bg text-priority-low-text',
 };
 
-const STATUS_ICONS = {
-  todo: ClockIcon,
-  'up-next': ClockIcon,
-  'in-progress': ExclamationTriangleIcon,
-  review: ClockIcon,
-  done: CheckCircleIcon,
-  shipped: PaperAirplaneIcon,
-  qa1: ClockIcon,
-  qa2: ClockIcon,
-  built: CheckCircleIcon
+const STATUS_ICONS: Record<typeof STACK_STATUS[keyof typeof STACK_STATUS], typeof ClockIcon> = {
+  [STACK_STATUS.TODO]: ClockIcon,
+  [STACK_STATUS.UP_NEXT]: ClockIcon,
+  [STACK_STATUS.IN_PROGRESS]: ExclamationTriangleIcon,
+  [STACK_STATUS.REVIEW]: ClockIcon,
+  [STACK_STATUS.DONE]: CheckCircleIcon,
+  [STACK_STATUS.SHIPPED]: PaperAirplaneIcon,
+  [STACK_STATUS.QA1]: ClockIcon,
+  [STACK_STATUS.QA2]: ClockIcon,
+  [STACK_STATUS.BUILT]: CheckCircleIcon,
+  [STACK_STATUS.DEEP_BACKLOG]: ClockIcon,
 };
 
 // Sortable Item Component with drag handle
@@ -183,8 +174,8 @@ function BacklogItemComponent({
 
 export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const { user: authUser } = useUnifiedAuth();
-  const { ui } = useRevenueOS();
   const pathname = usePathname();
+  const workspaceId = useWorkspaceId();
   
   // Get refresh trigger from context to sync with other components
   const stacksContext = useStacks();
@@ -218,16 +209,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const isNotaryEveryday = workspaceSlug === 'ne';
   
-  console.log('🔍 [StacksBacklogTable] Debug info:', {
-    workspaceSlug,
-    isNotaryEveryday,
-    pathname: typeof window !== 'undefined' ? window.location.pathname : 'server-side'
-  });
-  
   // Define selling workstreams (revenue-generating)
   const SELLING_WORKSTREAMS = ['Video', 'Cold', 'Referral', 'Events', 'Social'];
-  
-  // Removed mock data conversion function
   
   // Helper function to format relative time
   const formatRelativeTime = (dateString: string): string => {
@@ -253,8 +236,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     }
   };
   
-  // Removed mock data functions
-  
   const [items, setItems] = useState<BacklogItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [showAddStacksModal, setShowAddStacksModal] = useState(false);
@@ -262,32 +243,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Fetch data from API
   useEffect(() => {
     const fetchItems = async () => {
-      // Resolve workspace ID with fallback logic (same as StacksBoard)
-      let workspaceId = ui.activeWorkspace?.id;
-      
-      // Fallback 1: Get from URL workspace slug if UI workspace is missing
-      if (!workspaceId && workspaceSlug) {
-        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-        if (urlWorkspaceId) {
-          console.log(`🔍 [StacksBacklogTable] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
-          workspaceId = urlWorkspaceId;
-        }
-      }
-      
-      // Fallback 2: Use user's active workspace ID
-      if (!workspaceId && authUser?.activeWorkspaceId) {
-        console.log(`🔍 [StacksBacklogTable] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
-        workspaceId = authUser.activeWorkspaceId;
-      }
-      
-      console.log('🔍 [StacksBacklogTable] Starting fetch, workspace:', ui.activeWorkspace);
-      console.log('🔍 [StacksBacklogTable] Workspace ID (resolved):', workspaceId);
-      console.log('🔍 [StacksBacklogTable] URL workspace slug:', workspaceSlug);
-      console.log('🔍 [StacksBacklogTable] User activeWorkspaceId:', authUser?.activeWorkspaceId);
-      
       if (!workspaceId) {
-        console.warn('⚠️ [StacksBacklogTable] No workspace ID available after all fallbacks, cannot fetch backlog items');
-        console.warn('⚠️ [StacksBacklogTable] activeWorkspace:', ui.activeWorkspace);
+        console.warn('⚠️ [StacksBacklogTable] No workspace ID available, cannot fetch backlog items');
         setItems([]);
         setLoading(false);
         return;
@@ -328,34 +285,51 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         console.log('🔍 [StacksBacklogTable] Stories response status:', storiesResponse.status, storiesResponse.ok);
         console.log('🔍 [StacksBacklogTable] Tasks response status:', tasksResponse.status, tasksResponse.ok);
         
-        let stories: any[] = [];
-        let tasks: any[] = [];
+        let stories: StacksStory[] = [];
+        let tasks: StacksTask[] = [];
         
         if (storiesResponse.ok) {
           const storiesData = await storiesResponse.json();
-          stories = storiesData.stories || [];
-          console.log('📊 [StacksBacklogTable] Fetched stories:', stories.length);
+          stories = (storiesData.stories || []) as StacksStory[];
         } else {
           console.warn('⚠️ [StacksBacklogTable] Stories API returned:', storiesResponse.status);
         }
         
         if (tasksResponse.ok) {
           const tasksData = await tasksResponse.json();
-          tasks = tasksData.tasks || [];
-          console.log('📊 [StacksBacklogTable] Fetched tasks:', tasks.length);
+          tasks = (tasksData.tasks || []) as StacksTask[];
         } else {
-          console.warn('⚠️ [StacksBacklogTable] Tasks API returned:', tasksResponse.status);
+          // Log detailed error information
+          let errorBody = '';
+          try {
+            errorBody = await tasksResponse.text();
+            const parsedError = JSON.parse(errorBody);
+            console.error('❌ [StacksBacklogTable] Tasks API error response:', {
+              status: tasksResponse.status,
+              statusText: tasksResponse.statusText,
+              error: parsedError,
+              url: tasksUrl
+            });
+          } catch (parseError) {
+            console.error('❌ [StacksBacklogTable] Tasks API error response (raw):', {
+              status: tasksResponse.status,
+              statusText: tasksResponse.statusText,
+              body: errorBody,
+              url: tasksUrl
+            });
+          }
         }
         
-        // Combine stories and tasks, matching left panel logic
-        // Mark stories with type for easier identification
-        const markedStories = stories.map((s: any) => ({ ...s, type: undefined })); // Stories don't have type
-        const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' })); // Tasks have type
-        const allItems = [...markedStories, ...markedTasks];
+        // Combine stories and tasks
+        const allItems: (StacksStory | StacksTask)[] = [...stories, ...tasks];
         
+        // Debug: Log bug detection
+        const bugs = tasks.filter((t: StacksTask) => t.type === 'bug');
         console.log('📊 [StacksBacklogTable] Combined items:', {
           totalStories: stories.length,
           totalTasks: tasks.length,
+          bugs: bugs.length,
+          bugDetails: bugs.map(b => ({ id: b.id, title: b.title, type: b.type })),
           totalItems: allItems.length,
           workspaceId
         });
@@ -374,33 +348,42 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
         });
         
-        const backlogItems = sortedItems.map((item: any, index: number) => {
-          // Add 'bug' tag if it's a task with type='bug'
+        const backlogItems: BacklogItem[] = sortedItems.map((item, index: number) => {
+          // Determine if this is a story or task
+          // Tasks have a 'type' property that is 'task' or 'bug'
+          // Stories don't have a 'type' property (or have type: undefined)
+          const isTask = item.type === 'task' || item.type === 'bug';
+          const isBug = item.type === 'bug';
+          
+          // Add 'bug' tag if it's a bug
           const tags = item.tags || [];
-          if (item.type === 'bug') {
+          if (isBug) {
             tags.push('bug');
           }
-          
-          // Determine if this is a story or task
-          const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
           
           // Use existing rank if available, otherwise assign based on sorted position
           const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
           
+          // Get assignee name
+          const assigneeName = item.assignee?.name || 
+            (item.assignee?.firstName && item.assignee?.lastName 
+              ? `${item.assignee.firstName} ${item.assignee.lastName}`.trim() 
+              : null);
+          
           return {
             id: item.id,
             title: item.title,
-            description: item.description,
+            description: item.description || undefined,
             priority: item.priority,
             status: item.status,
-            assignee: item.assignee?.name || item.assignee || null,
-            dueDate: item.dueDate || null,
+            assignee: assigneeName || undefined,
+            dueDate: undefined,
             tags: tags,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt,
+            createdAt: typeof item.createdAt === 'string' ? item.createdAt : item.createdAt.toISOString(),
+            updatedAt: typeof item.updatedAt === 'string' ? item.updatedAt : item.updatedAt.toISOString(),
             rank: rank,
-            type: itemType as 'story' | 'task',
-            originalType: item.type // Preserve original type to detect bugs
+            type: isTask ? 'task' : 'story',
+            originalType: isTask ? item.type : undefined
           };
         });
         
@@ -432,7 +415,12 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           });
         }
         
-        console.log('🔄 [StacksBacklogTable] Mapped backlog items:', backlogItems.length, 'items');
+        // Debug: Log bugs after mapping
+        const mappedBugs = backlogItems.filter(item => item.originalType === 'bug' || isBug(item));
+        console.log('🔄 [StacksBacklogTable] Mapped backlog items:', backlogItems.length, 'items', {
+          bugs: mappedBugs.length,
+          bugIds: mappedBugs.map(b => ({ id: b.id, title: b.title, originalType: b.originalType, tags: b.tags }))
+        });
         
         setItems(backlogItems);
         
@@ -467,7 +455,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     };
 
     fetchItems();
-  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, pathname, workspaceSlug, refreshTrigger]); // Refresh when context triggers update or pathname changes
+  }, [workspaceId, pathname, refreshTrigger]); // Refresh when workspace ID, pathname, or context triggers update
   const [contextMenu, setContextMenu] = useState<{
     isVisible: boolean;
     position: { x: number; y: number };
@@ -520,20 +508,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
   // Helper function to refresh items by fetching both stories and tasks
   const refreshItems = async (): Promise<void> => {
-    // Resolve workspace ID with fallback logic
-    let workspaceId = ui.activeWorkspace?.id;
-    
-    if (!workspaceId && workspaceSlug) {
-      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-      if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
-      }
-    }
-    
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
-    }
-
     if (!workspaceId) {
       console.error('No workspace ID available for refreshing items');
       return;
@@ -576,12 +550,31 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       if (tasksResponse.ok) {
         const tasksData = await tasksResponse.json();
         tasks = tasksData.tasks || [];
+      } else {
+        // Log detailed error information
+        let errorBody = '';
+        try {
+          errorBody = await tasksResponse.text();
+          const parsedError = JSON.parse(errorBody);
+          console.error('❌ [StacksBacklogTable] refreshItems - Tasks API error:', {
+            status: tasksResponse.status,
+            statusText: tasksResponse.statusText,
+            error: parsedError,
+            url: tasksUrl
+          });
+        } catch (parseError) {
+          console.error('❌ [StacksBacklogTable] refreshItems - Tasks API error (raw):', {
+            status: tasksResponse.status,
+            statusText: tasksResponse.statusText,
+            body: errorBody,
+            url: tasksUrl
+          });
+        }
       }
 
-      // Combine stories and tasks, matching main useEffect logic
-      const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
-      const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
-      const allItems = [...markedStories, ...markedTasks];
+      // Combine stories and tasks - tasks already have type field, stories don't need it
+      // Stories don't have a 'type' property, tasks have type: 'task' or type: 'bug'
+      const allItems = [...stories, ...tasks];
 
       // Sort by rank to preserve order
       const sortedItems = [...allItems].sort((a, b) => {
@@ -593,28 +586,38 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
       // Map both stories and tasks to backlog item format (same logic as main useEffect)
       const backlogItems = sortedItems.map((item: any, index: number) => {
+        // Determine if this is a story or task (same logic as main fetchItems)
+        const isTask = item.type === 'task' || item.type === 'bug';
+        const isBug = item.type === 'bug';
+        
+        // Add 'bug' tag if it's a bug
         const tags = item.tags || [];
-        if (item.type === 'bug') {
+        if (isBug) {
           tags.push('bug');
         }
         
-        const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
         const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
+        
+        // Get assignee name
+        const assigneeName = item.assignee?.name || 
+          (item.assignee?.firstName && item.assignee?.lastName 
+            ? `${item.assignee.firstName} ${item.assignee.lastName}`.trim() 
+            : null);
         
         return {
           id: item.id,
           title: item.title,
-          description: item.description,
+          description: item.description || undefined,
           priority: item.priority,
           status: item.status,
-          assignee: item.assignee?.name || item.assignee || null,
-          dueDate: item.dueDate || null,
+          assignee: assigneeName || undefined,
+          dueDate: undefined,
           tags: tags,
-          createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
+          createdAt: typeof item.createdAt === 'string' ? item.createdAt : item.createdAt.toISOString(),
+          updatedAt: typeof item.updatedAt === 'string' ? item.updatedAt : item.updatedAt.toISOString(),
           rank: rank,
-          type: itemType as 'story' | 'task',
-          originalType: item.type // Preserve original type to detect bugs
+          type: isTask ? 'task' : 'story',
+          originalType: isTask ? item.type : undefined // Preserve original type to detect bugs
         };
       });
 
@@ -630,18 +633,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     oldItems: BacklogItem[],
     statusUpdate?: { itemId: string; newStatus: string }
   ): Promise<void> => {
-    // Resolve workspace ID
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
-      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-      if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
-      }
-    }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
-    }
-
     if (!workspaceId) {
       console.error('No workspace ID available for persisting ranks');
       return;
@@ -726,15 +717,16 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const filteredItems = items
     .filter(item => {
       // Exclude deep-backlog items from regular backlog view
-      if (item.status === 'deep-backlog') {
+      if (item.status === STACK_STATUS.DEEP_BACKLOG) {
         return false;
       }
       
       // Exclude workstream board statuses from backlog view
       // Items with these statuses should only appear on the workstream board
-      // Note: 'up-next' and 'todo' are allowed since they appear in the "Up Next" section
-      const workstreamBoardStatuses = ['in-progress', 'built', 'qa1', 'qa2', 'shipped', 'done'];
-      if (workstreamBoardStatuses.includes(item.status)) {
+      // Exclude workstream board statuses (except 'up-next' and 'todo' which appear in backlog)
+      if (WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS]) && 
+          item.status !== STACK_STATUS.UP_NEXT && 
+          item.status !== STACK_STATUS.TODO) {
         return false;
       }
       
@@ -787,8 +779,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
   // Debug logging
   useEffect(() => {
-    const upNextCount = filteredItems.filter(item => item.status === 'up-next').length;
-    const otherCount = filteredItems.filter(item => item.status !== 'up-next').length;
+    const upNextCount = filteredItems.filter(item => item.status === STACK_STATUS.UP_NEXT).length;
+    const otherCount = filteredItems.filter(item => item.status !== STACK_STATUS.UP_NEXT).length;
     
     console.log('📊 [StacksBacklogTable] Filtering debug:', {
       totalItems: items.length,
@@ -809,18 +801,17 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   }, [items.length, filteredItems.length, filters, searchQuery]);
 
   // Separate items into "Up Next" (status='up-next' or 'todo') and other items
-  // Map 'todo' to 'up-next' for display purposes
   const upNextItems = filteredItems.filter(item => 
-    item.status === 'up-next' || item.status === 'todo'
+    item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO
   );
   const otherItems = filteredItems.filter(item => 
-    item.status !== 'up-next' && item.status !== 'todo'
+    item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO
   );
   
   // Debug: If filtering removed everything, show all items for debugging
   const itemsToDisplay = filteredItems.length > 0 ? { upNextItems, otherItems } : {
-    upNextItems: items.filter(item => item.status === 'up-next' || item.status === 'todo'),
-    otherItems: items.filter(item => item.status !== 'up-next' && item.status !== 'todo')
+    upNextItems: items.filter(item => item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO),
+    otherItems: items.filter(item => item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO)
   };
 
   const handleContextMenu = (e: React.MouseEvent, itemId: string, isUpNext?: boolean) => {
@@ -864,8 +855,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    const activeIsUpNext = activeItem.status === 'up-next' || activeItem.status === 'todo';
-    const overIsUpNext = overItem.status === 'up-next' || overItem.status === 'todo';
+    const activeIsUpNext = activeItem.status === STACK_STATUS.UP_NEXT || activeItem.status === STACK_STATUS.TODO;
+    const overIsUpNext = overItem.status === STACK_STATUS.UP_NEXT || overItem.status === STACK_STATUS.TODO;
 
     // Determine target section (where the item is being dropped)
     const targetSection = overIsUpNext ? 'upNext' : 'backlog';
@@ -874,14 +865,14 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     // If moving between sections, update the status
     const isCrossSectionMove = activeIsUpNext !== overIsUpNext;
     const newStatus = isCrossSectionMove 
-      ? (overIsUpNext ? 'up-next' : 'in-progress') 
+      ? (overIsUpNext ? STACK_STATUS.UP_NEXT : STACK_STATUS.IN_PROGRESS) 
       : activeItem.status;
     
     // Get items in the target section (where we're dropping)
     const targetSectionItems = items.filter(item => 
       targetSection === 'upNext' 
-        ? (item.status === 'up-next' || item.status === 'todo')
-        : (item.status !== 'up-next' && item.status !== 'todo')
+        ? (item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO)
+        : (item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO)
     );
     
     // Find the drop position in the target section
@@ -898,8 +889,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       // Get items in target section from itemsWithoutDragged
       const targetSectionItemsWithoutDragged = itemsWithoutDragged.filter(item => 
         targetSection === 'upNext'
-          ? (item.status === 'up-next' || item.status === 'todo')
-          : (item.status !== 'up-next' && item.status !== 'todo')
+          ? (item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO)
+          : (item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO)
       );
       
       // Insert the dragged item at the drop position in the target section
@@ -910,8 +901,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       // Get items from the source section (items not in target section)
       const sourceSectionItemsWithoutDragged = itemsWithoutDragged.filter(item => 
         targetSection === 'upNext'
-          ? (item.status !== 'up-next' && item.status !== 'todo')
-          : (item.status === 'up-next' || item.status === 'todo')
+          ? (item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO)
+          : (item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO)
       );
       
       // Merge sections: target section items first, then source section items
@@ -942,7 +933,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       const otherItems = items.filter(item => 
         targetSection === 'upNext'
           ? (item.status !== 'up-next' && item.status !== 'todo')
-          : (item.status === 'up-next' || item.status === 'todo')
+          : (item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO)
       );
 
       // Merge sections back together
@@ -960,17 +951,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     }
 
     // Persist to API
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
-      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-      if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
-      }
-    }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
-    }
-
     if (!workspaceId) {
       console.error('No workspace ID available for updating story order');
       return;
@@ -1007,8 +987,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     // Change status from 'up-next'/'todo' to 'in-progress' to move below the line
     // Items with status other than 'up-next' or 'todo' go to the Backlog section
-    const newStatus = item.status === 'up-next' || item.status === 'todo' 
-      ? 'in-progress' 
+    const newStatus = item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO 
+      ? STACK_STATUS.IN_PROGRESS 
       : item.status;
 
     // Optimistic update
@@ -1167,7 +1147,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     if (!item) return;
 
     // Change status to 'deep-backlog'
-    const newStatus = 'deep-backlog';
+    const newStatus = STACK_STATUS.DEEP_BACKLOG;
 
     // Optimistic update
     setItems(prevItems => 
