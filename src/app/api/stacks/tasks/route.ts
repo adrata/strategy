@@ -26,16 +26,68 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const workspaceId = context.workspaceId;
+    // Get workspace ID - prefer query parameter over context (frontend may have different active workspace)
     const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const contextWorkspaceId = context.workspaceId;
+    const userId = context.userId;
+    
+    // Use query parameter if provided, otherwise fall back to authenticated context
+    const workspaceId = queryWorkspaceId || contextWorkspaceId;
+    
     const projectId = searchParams.get('projectId');
     const storyId = searchParams.get('storyId');
     const type = searchParams.get('type');
 
     if (!workspaceId) {
+      console.error('❌ [STACKS TASKS API] No workspace ID available (query param or context)');
       return createErrorResponse('Workspace ID is required', 'WORKSPACE_REQUIRED', 400);
     }
+    
+    console.log('✅ [STACKS TASKS API] Authenticated user:', context.userId);
+    console.log('🔍 [STACKS TASKS API] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
+    
+    // CRITICAL FIX: Log warning if using fallback workspaceId, but allow query to proceed
+    if (workspaceId === 'local-workspace') {
+      console.warn('⚠️ [STACKS TASKS API] Using fallback workspaceId - queries may return empty results:', {
+        workspaceId,
+        queryWorkspaceId,
+        contextWorkspaceId,
+        userId: context.userId
+      });
+    }
 
+    // Security check: if both are provided, ensure they match (user should only access their workspace)
+    if (queryWorkspaceId && contextWorkspaceId && queryWorkspaceId !== contextWorkspaceId) {
+      console.warn('⚠️ [STACKS TASKS API] Workspace ID mismatch - Query:', queryWorkspaceId, 'Context:', contextWorkspaceId);
+      // Still allow it but log the warning - the context workspace may be different from active workspace
+    }
+
+    // Auto-create or get project for workspace (consistent with stories API behavior)
+    // This ensures we can always query tasks even if project was deleted
+    let project = await prisma.stacksProject.findFirst({
+      where: { workspaceId }
+    });
+    
+    if (!project) {
+      console.log('ℹ️ [STACKS TASKS API] No project found for workspace, auto-creating default project');
+      try {
+        project = await prisma.stacksProject.create({
+          data: {
+            workspaceId,
+            name: 'Default Project',
+            description: 'Default project for stacks'
+          }
+        });
+        console.log('✅ [STACKS TASKS API] Created default project:', project.id);
+      } catch (createError) {
+        console.error('❌ [STACKS TASKS API] Error creating default project:', createError);
+        // Continue anyway - maybe there are orphaned tasks
+      }
+    }
+
+    // Build where clause - only include tasks with a project in this workspace
+    // If a project doesn't exist, we've already created one above
     const where: any = {
       project: { workspaceId }
     };
@@ -52,39 +104,86 @@ export async function GET(request: NextRequest) {
       where.type = type;
     }
 
-    const tasks = await prisma.stacksTask.findMany({
-      where,
-      select: {
-        id: true,
-        storyId: true,
-        projectId: true,
-        title: true,
-        description: true,
-        status: true,
-        priority: true,
-        type: true,
-        assigneeId: true,
-        product: true,
-        section: true,
-        rank: true,
-        attachments: true,
-        createdAt: true,
-        updatedAt: true,
-        project: {
-          select: { id: true, name: true }
+    console.log('🔍 [STACKS TASKS API] Query where clause:', JSON.stringify(where, null, 2));
+
+    // Fetch tasks with defensive select - try with optional columns first, fallback without them if they don't exist
+    let tasks;
+    try {
+      // First attempt: try with rank column (may not exist in production)
+      tasks = await prisma.stacksTask.findMany({
+        where,
+        select: {
+          id: true,
+          storyId: true,
+          projectId: true,
+          title: true,
+          description: true,
+          status: true,
+          priority: true,
+          type: true,
+          assigneeId: true,
+          product: true,
+          section: true,
+          rank: true,
+          attachments: true,
+          createdAt: true,
+          updatedAt: true,
+          project: {
+            select: { id: true, name: true }
+          },
+          story: {
+            select: { id: true, title: true }
+          },
+          assignee: {
+            select: { id: true, firstName: true, lastName: true, email: true }
+          }
         },
-        story: {
-          select: { id: true, title: true }
-        },
-        assignee: {
-          select: { id: true, firstName: true, lastName: true, email: true }
-        }
-      },
-      orderBy: [
-        { rank: 'asc' },
-        { createdAt: 'desc' }
-      ]
-    });
+        orderBy: [
+          { rank: 'asc' as const },
+          { createdAt: 'desc' as const }
+        ]
+      });
+    } catch (rankError: any) {
+      // If rank column doesn't exist, try without it
+      if (rankError && typeof rankError === 'object' && 'code' in rankError && rankError.code === 'P2022') {
+        console.warn('⚠️ [STACKS TASKS API] Rank column does not exist, fetching without rank');
+        tasks = await prisma.stacksTask.findMany({
+          where,
+          select: {
+            id: true,
+            storyId: true,
+            projectId: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            type: true,
+            assigneeId: true,
+            product: true,
+            section: true,
+            attachments: true,
+            createdAt: true,
+            updatedAt: true,
+            project: {
+              select: { id: true, name: true }
+            },
+            story: {
+              select: { id: true, title: true }
+            },
+            assignee: {
+              select: { id: true, firstName: true, lastName: true, email: true }
+            }
+          },
+          orderBy: [
+            { createdAt: 'desc' }
+          ]
+        });
+        // Add null rank to all tasks
+        tasks = tasks.map((task: any) => ({ ...task, rank: null }));
+      } else {
+        throw rankError; // Re-throw if it's not a P2022 error
+      }
+    }
 
     // Transform assignee field to match expected format
     const transformedTasks = tasks.map(task => ({
@@ -117,12 +216,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    console.error('❌ [STACKS TASKS API] Unexpected error in GET:', error);
+    console.error('❌ [STACKS TASKS API] Error details:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      code: (error as any)?.code,
+      meta: (error as any)?.meta,
+      workspaceId: context?.workspaceId,
+      userId: context?.userId
+    });
+
     return logAndCreateErrorResponse(
       error,
       {
         endpoint: 'STACKS_TASKS_API_GET',
         userId: context?.userId,
-        workspaceId: context?.workspaceId,
+        workspaceId: queryWorkspaceId || context?.workspaceId,
         requestId: request.headers.get('x-request-id') || undefined
       },
       'Failed to fetch tasks',

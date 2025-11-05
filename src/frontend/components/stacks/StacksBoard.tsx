@@ -17,38 +17,19 @@ import {
 import { FlagIcon } from '@heroicons/react/24/solid';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
-import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 import { StacksContextMenu } from './StacksContextMenu';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
 import { usePathname } from 'next/navigation';
+import { StackCard, StacksStory, StacksTask } from './types';
+import { 
+  STACK_STATUS, 
+  STACK_PRIORITY, 
+  WORKSTREAM_BOARD_STATUSES,
+  normalizeStatusForDisplay,
+  getStatusLabel
+} from './constants';
+import { useWorkspaceId } from './utils/workspaceId';
 // Removed mock data imports
-
-interface StackCard {
-  id: string;
-  title: string;
-  description?: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'up-next' | 'in-progress' | 'shipped' | 'qa1' | 'qa2' | 'built';
-  viewType?: 'detail' | 'list' | 'grid' | 'bug';
-  product?: string | null;
-  section?: string | null;
-  assignee?: string;
-  dueDate?: string;
-  tags?: string[];
-  epoch?: {
-    id: string;
-    title: string;
-    description?: string;
-  };
-  timeInStatus?: number; // days in current status
-  isFlagged?: boolean;
-  points?: number | null;
-  createdAt?: string;
-  updatedAt?: string;
-  rank?: number; // Rank for ordering within status
-  type?: 'story' | 'task'; // Track if this is a story or task
-  originalType?: string; // Preserve original type to detect bugs (e.g., 'bug')
-}
 
 interface StacksBoardProps {
   onCardClick?: (card: StackCard) => void;
@@ -120,60 +101,60 @@ const MOCK_CARDS: StackCard[] = [
 
 const STACK_COLUMNS = [
   {
-    key: 'up-next',
-    label: 'Up Next',
+    key: STACK_STATUS.UP_NEXT,
+    label: getStatusLabel(STACK_STATUS.UP_NEXT),
     color: 'bg-background border-border',
     icon: ClockIcon,
     description: 'Ready to start'
   },
   {
-    key: 'in-progress',
-    label: 'Working On',
+    key: STACK_STATUS.IN_PROGRESS,
+    label: getStatusLabel(STACK_STATUS.IN_PROGRESS),
     color: 'bg-background border-border',
     icon: CogIcon,
     description: 'In progress'
   },
   {
-    key: 'built',
-    label: 'Built',
+    key: STACK_STATUS.BUILT,
+    label: getStatusLabel(STACK_STATUS.BUILT),
     color: 'bg-background border-border',
     icon: CheckCircleIcon,
     description: 'Fully completed'
   },
   {
-    key: 'qa1',
-    label: 'QA1',
+    key: STACK_STATUS.QA1,
+    label: getStatusLabel(STACK_STATUS.QA1),
     color: 'bg-background border-border',
     icon: ClockIcon,
     description: 'First quality assurance'
   },
   {
-    key: 'qa2',
-    label: 'QA2',
+    key: STACK_STATUS.QA2,
+    label: getStatusLabel(STACK_STATUS.QA2),
     color: 'bg-background border-border',
     icon: ClockIcon,
     description: 'Second quality assurance'
   },
   {
-    key: 'shipped',
-    label: 'Shipped',
+    key: STACK_STATUS.SHIPPED,
+    label: getStatusLabel(STACK_STATUS.SHIPPED),
     color: 'bg-background border-border',
     icon: PaperAirplaneIcon,
     description: 'Shipped to production'
   }
 ];
 
-const PRIORITY_COLORS = {
-  low: 'bg-gray-100 text-gray-700 border-gray-200',
-  medium: 'bg-gray-200 text-gray-800 border-gray-300',
-  high: 'bg-gray-300 text-gray-900 border-gray-400',
-  urgent: 'bg-gray-400 text-white border-gray-500'
+const PRIORITY_COLORS: Record<typeof STACK_PRIORITY[keyof typeof STACK_PRIORITY], string> = {
+  [STACK_PRIORITY.LOW]: 'bg-gray-100 text-gray-700 border-gray-200',
+  [STACK_PRIORITY.MEDIUM]: 'bg-gray-200 text-gray-800 border-gray-300',
+  [STACK_PRIORITY.HIGH]: 'bg-gray-300 text-gray-900 border-gray-400',
+  [STACK_PRIORITY.URGENT]: 'bg-gray-400 text-white border-gray-500'
 };
 
 export function StacksBoard({ onCardClick }: StacksBoardProps) {
   const { user: authUser } = useUnifiedAuth();
-  const { ui } = useRevenueOS();
   const pathname = usePathname();
+  const workspaceId = useWorkspaceId();
   
   // Get refresh trigger from context to sync with other components
   const stacksContext = useStacks();
@@ -196,32 +177,9 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   // Fetch stories from database
   useEffect(() => {
     const fetchStories = async () => {
-      // Resolve workspace ID with fallback logic
-      let workspaceId = ui.activeWorkspace?.id;
-      
-      // Fallback 1: Get from URL workspace slug if UI workspace is missing
-      if (!workspaceId && workspaceSlug) {
-        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-        if (urlWorkspaceId) {
-          console.log(`🔍 [StacksBoard] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
-          workspaceId = urlWorkspaceId;
-        }
-      }
-      
-      // Fallback 2: Use user's active workspace ID
-      if (!workspaceId && authUser?.activeWorkspaceId) {
-        console.log(`🔍 [StacksBoard] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
-        workspaceId = authUser.activeWorkspaceId;
-      }
-      
-      console.log('🔍 [StacksBoard] Starting fetch, workspace:', ui.activeWorkspace);
-      console.log('🔍 [StacksBoard] Workspace ID (resolved):', workspaceId);
-      console.log('🔍 [StacksBoard] URL workspace slug:', workspaceSlug);
-      console.log('🔍 [StacksBoard] User activeWorkspaceId:', authUser?.activeWorkspaceId);
       
       if (!workspaceId) {
-        console.warn('⚠️ [StacksBoard] No workspace ID available after all fallbacks, cannot fetch stories');
-        console.warn('⚠️ [StacksBoard] activeWorkspace:', ui.activeWorkspace);
+        console.warn('⚠️ [StacksBoard] No workspace ID available, cannot fetch stories');
         setCards([]);
         setLoading(false);
         return;
@@ -254,106 +212,71 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         
         console.log('🔍 [StacksBoard] Response status:', storiesResponse.status, tasksResponse.status);
         
-        let stories: any[] = [];
-        let tasks: any[] = [];
+        let stories: StacksStory[] = [];
+        let tasks: StacksTask[] = [];
         
         if (storiesResponse.ok) {
           const storiesData = await storiesResponse.json();
-          stories = storiesData.stories || [];
-          console.log('📊 [StacksBoard] Fetched stories from database:', {
-            totalStories: stories.length,
-            workspaceId,
-            isNotaryEveryday
-          });
+          stories = (storiesData.stories || []) as StacksStory[];
         } else {
           console.warn('⚠️ [StacksBoard] Stories API returned:', storiesResponse.status, storiesResponse.statusText);
         }
         
         if (tasksResponse.ok) {
           const tasksData = await tasksResponse.json();
-          tasks = tasksData.tasks || [];
-          console.log('📊 [StacksBoard] Fetched tasks from database:', {
-            totalTasks: tasks.length,
-            bugs: tasks.filter((t: any) => t.type === 'bug').length,
-            workspaceId
-          });
+          tasks = (tasksData.tasks || []) as StacksTask[];
         } else {
-          console.warn('⚠️ [StacksBoard] Tasks API returned:', tasksResponse.status, tasksResponse.statusText);
+          // Log detailed error information
+          let errorBody = '';
+          try {
+            errorBody = await tasksResponse.text();
+            const parsedError = JSON.parse(errorBody);
+            console.error('❌ [StacksBoard] Tasks API error response:', {
+              status: tasksResponse.status,
+              statusText: tasksResponse.statusText,
+              error: parsedError,
+              url: tasksUrl
+            });
+          } catch (parseError) {
+            console.error('❌ [StacksBoard] Tasks API error response (raw):', {
+              status: tasksResponse.status,
+              statusText: tasksResponse.statusText,
+              body: errorBody,
+              url: tasksUrl
+            });
+          }
         }
         
-        // Combine stories and tasks, treating tasks similar to stories
-        const allItems = [...stories, ...tasks];
+        // Combine stories and tasks
+        const allItems: (StacksStory | StacksTask)[] = [...stories, ...tasks];
         
         if (allItems.length === 0) {
-          console.log('ℹ️ [StacksBoard] No stories or tasks found for workspace:', workspaceId);
           setCards([]);
           return;
         }
         
         const sellingItems = filterSellingStories(allItems);
-        console.log('🎯 [StacksBoard] Filtered selling items:', {
-          original: allItems.length,
-          filtered: sellingItems.length,
-          stories: sellingItems.filter((s: any) => !s.type || s.type === 'story').length,
-          tasks: sellingItems.filter((s: any) => s.type === 'task').length,
-          bugs: sellingItems.filter((s: any) => s.type === 'bug').length,
-          items: sellingItems.map((s: any) => ({ id: s.id, title: s.title, status: s.status, type: s.type }))
-        });
         
-        // Workstream board shows items with any workstream board column status
-        // Allowed statuses: up-next, in-progress, built, qa1, qa2, shipped
-        // Also include 'todo' status and map it to 'up-next' column
-        // Cards can appear in any column based on their status
-        const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
-        const workstreamItems = sellingItems.filter((item: any) => {
-          // Include items with any workstream board column status
-          // Also include 'todo' status (will be mapped to 'up-next' column)
-          return workstreamBoardStatuses.includes(item.status);
-        }).map((item: any) => {
-          // Map 'todo' status to 'up-next' for display on board
-          if (item.status === 'todo') {
-            return { ...item, status: 'up-next' };
-          }
-          return item;
-        });
-        
-        console.log('🔍 [StacksBoard] After filtering for workstream (all board statuses):', {
-          before: sellingItems.length,
-          after: workstreamItems.length,
-          removed: sellingItems.length - workstreamItems.length,
-          removedStatuses: sellingItems
-            .filter((s: any) => !workstreamBoardStatuses.includes(s.status))
-            .reduce((acc: any, item: any) => {
-              const status = item.status || 'null';
-              acc[status] = (acc[status] || 0) + 1;
-              return acc;
-            }, {})
-        });
-        
-        // Log status distribution before conversion
-        const statusCounts = workstreamItems.reduce((acc: any, item: any) => {
-          acc[item.status || 'null'] = (acc[item.status || 'null'] || 0) + 1;
-          return acc;
-        }, {});
-        console.log('📊 [StacksBoard] Status distribution (workstream only):', statusCounts);
+        // Filter for workstream board statuses and normalize 'todo' to 'up-next'
+        const workstreamItems = sellingItems
+          .filter((item) => WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS]))
+          .map((item) => {
+            // Map 'todo' status to 'up-next' for display on board
+            if (item.status === STACK_STATUS.TODO) {
+              return { ...item, status: STACK_STATUS.UP_NEXT };
+            }
+            return item;
+          });
         
         // Convert stories and tasks to StackCard format
-        const convertedCards = workstreamItems.map((item: any) => {
-          // If it's a task (has type field), use task conversion, otherwise use story conversion
-          if (item.type === 'bug' || item.type === 'task') {
-            return convertTaskToStackCard(item);
+        const convertedCards = workstreamItems.map((item) => {
+          // If it's a task (type is 'task' or 'bug'), use task conversion, otherwise use story conversion
+          // Tasks have type: 'task' or type: 'bug', stories don't have a type property
+          if (item.type === 'task' || item.type === 'bug') {
+            return convertTaskToStackCard(item as StacksTask);
           }
-          return convertNotaryStoryToStackCard(item);
+          return convertNotaryStoryToStackCard(item as StacksStory);
         });
-        
-        console.log('🔄 [StacksBoard] Converted cards:', convertedCards.length, 'cards');
-        
-        // Log status distribution after conversion
-        const convertedStatusCounts = convertedCards.reduce((acc: any, card: StackCard) => {
-          acc[card.status] = (acc[card.status] || 0) + 1;
-          return acc;
-        }, {});
-        console.log('📊 [StacksBoard] Converted status distribution:', convertedStatusCounts);
         
         setCards(convertedCards);
         
@@ -380,97 +303,75 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     };
 
     fetchStories();
-  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, pathname, workspaceSlug, isNotaryEveryday, refreshTrigger]); // Refresh when context triggers update or pathname changes
+  }, [workspaceId, pathname, refreshTrigger]); // Refresh when workspace ID, pathname, or context triggers update
   
   // Helper function to filter selling stories and tasks
   // Currently returns all items (stories and tasks) since we don't have category filtering yet
   // In the future, this could filter by project category or other criteria
-  const filterSellingStories = (items: any[]): any[] => {
+  const filterSellingStories = (items: (StacksStory | StacksTask)[]): (StacksStory | StacksTask)[] => {
     return items;
   };
 
   // Helper function to convert Notary story to StackCard format
-  const convertNotaryStoryToStackCard = (story: any): StackCard => {
-    // Map status values to board column statuses
+  const convertNotaryStoryToStackCard = (story: StacksStory): StackCard => {
+    // Map status values to board column statuses using normalizeStatusForDisplay
     // Note: 'todo' status is mapped to 'up-next' before this function is called
-    let mappedStatus = story.status;
+    let mappedStatus = normalizeStatusForDisplay(story.status);
     
-    if (story.status === 'done') {
-      mappedStatus = 'built';
-    } else if (story.status === 'up-next') {
-      mappedStatus = 'up-next';
-    } else if (story.status === 'in-progress') {
-      mappedStatus = 'in-progress';
-    } else if (story.status === 'built') {
-      mappedStatus = 'built';
-    } else if (story.status === 'qa1') {
-      mappedStatus = 'qa1';
-    } else if (story.status === 'qa2') {
-      mappedStatus = 'qa2';
-    } else if (story.status === 'shipped') {
-      mappedStatus = 'shipped';
-    } else if (!story.status || story.status === 'todo') {
-      // Should not happen (filtered out above), but handle gracefully
-      console.warn(`⚠️ [StacksBoard] Received todo/null status story "${story.title}" in convert function - this should be filtered out`);
-      mappedStatus = 'up-next';
-    } else {
+    // Handle legacy 'done' status
+    if (story.status === STACK_STATUS.DONE) {
+      mappedStatus = STACK_STATUS.BUILT;
+    } else if (!story.status || !WORKSTREAM_BOARD_STATUSES.includes(story.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])) {
       // Unknown status - default to 'up-next' instead of passing through invalid status
-      console.warn(`⚠️ [StacksBoard] Unknown status "${story.status}" for story "${story.title}", defaulting to 'up-next'`);
-      mappedStatus = 'up-next';
+      console.warn(`⚠️ [StacksBoard] Unknown or invalid status "${story.status}" for story "${story.title}", defaulting to 'up-next'`);
+      mappedStatus = STACK_STATUS.UP_NEXT;
     }
     
     return {
       id: story.id,
       title: story.title,
-      description: story.description,
-      priority: story.priority || 'medium',
-      status: mappedStatus as StackCard['status'],
+      description: story.description || undefined,
+      priority: story.priority || STACK_PRIORITY.MEDIUM,
+      status: mappedStatus,
       viewType: story.viewType || 'detail',
       product: story.product || null,
       section: story.section || null,
-      assignee: story.assignee?.name || undefined,
-      dueDate: story.dueDate,
+      assignee: story.assignee?.name || (story.assignee?.firstName && story.assignee?.lastName 
+        ? `${story.assignee.firstName} ${story.assignee.lastName}`.trim() 
+        : undefined),
+      dueDate: undefined,
       tags: story.tags || [],
-      epoch: story.epoch,
-      timeInStatus: story.timeInStatus,
+      epoch: story.epoch ? {
+        id: story.epoch.id,
+        title: story.epoch.title,
+        description: story.epoch.description || undefined
+      } : undefined,
+      timeInStatus: story.statusChangedAt 
+        ? Math.floor((Date.now() - new Date(story.statusChangedAt).getTime()) / (1000 * 60 * 60 * 24))
+        : undefined,
       isFlagged: story.isFlagged || false,
       points: story.points || null,
-      createdAt: story.createdAt,
-      updatedAt: story.updatedAt,
-      rank: story.rank || null, // Include rank for sorting
-      type: 'story' as const, // Stories have type 'story'
-      originalType: undefined // Stories don't have originalType
+      createdAt: typeof story.createdAt === 'string' ? story.createdAt : story.createdAt.toISOString(),
+      updatedAt: typeof story.updatedAt === 'string' ? story.updatedAt : story.updatedAt.toISOString(),
+      rank: story.rank || null,
+      type: 'story' as const,
+      originalType: undefined
     };
   };
 
   // Helper function to convert task (including bugs) to StackCard format
-  const convertTaskToStackCard = (task: any): StackCard => {
-    // Map status values to board column statuses
+  const convertTaskToStackCard = (task: StacksTask): StackCard => {
+    // Map status values to board column statuses using normalizeStatusForDisplay
     // Note: 'todo' status is mapped to 'up-next' before this function is called
-    let mappedStatus = task.status;
+    let mappedStatus = normalizeStatusForDisplay(task.status);
     
-    if (task.status === 'done') {
-      mappedStatus = 'built';
-    } else if (task.status === 'up-next') {
-      mappedStatus = 'up-next';
-    } else if (task.status === 'in-progress') {
-      mappedStatus = 'in-progress';
-    } else if (task.status === 'built') {
-      mappedStatus = 'built';
-    } else if (task.status === 'qa1') {
-      mappedStatus = 'qa1';
-    } else if (task.status === 'qa2') {
-      mappedStatus = 'qa2';
-    } else if (task.status === 'shipped') {
-      mappedStatus = 'shipped';
-    } else if (!task.status || task.status === 'todo') {
-      // Should not happen (filtered out above), but handle gracefully
-      console.warn(`⚠️ [StacksBoard] Received todo/null status task "${task.title}" in convert function - this should be filtered out`);
-      mappedStatus = 'up-next';
-    } else {
+    // Handle legacy 'done' status
+    if (task.status === STACK_STATUS.DONE) {
+      mappedStatus = STACK_STATUS.BUILT;
+    } else if (!task.status || !WORKSTREAM_BOARD_STATUSES.includes(task.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])) {
       // Unknown status - default to 'up-next' instead of passing through invalid status
-      console.warn(`⚠️ [StacksBoard] Unknown status "${task.status}" for task "${task.title}", defaulting to 'up-next'`);
-      mappedStatus = 'up-next';
+      console.warn(`⚠️ [StacksBoard] Unknown or invalid status "${task.status}" for task "${task.title}", defaulting to 'up-next'`);
+      mappedStatus = STACK_STATUS.UP_NEXT;
     }
     
     // Build tags array - include 'bug' tag if it's a bug
@@ -479,24 +380,26 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     return {
       id: task.id,
       title: task.title,
-      description: task.description,
-      priority: task.priority || 'medium',
-      status: mappedStatus as StackCard['status'],
-      viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs
+      description: task.description || undefined,
+      priority: task.priority || STACK_PRIORITY.MEDIUM,
+      status: mappedStatus,
+      viewType: task.type === 'bug' ? 'bug' : 'detail',
       product: task.product || null,
       section: task.section || null,
-      assignee: task.assignee?.name || undefined,
-      dueDate: task.dueDate || undefined,
+      assignee: task.assignee?.name || (task.assignee?.firstName && task.assignee?.lastName 
+        ? `${task.assignee.firstName} ${task.assignee.lastName}`.trim() 
+        : undefined),
+      dueDate: undefined,
       tags: tags,
-      epoch: null, // Tasks don't have epochs
-      timeInStatus: 0, // Tasks don't track timeInStatus
-      isFlagged: false, // Tasks don't have isFlagged
-      points: null, // Tasks don't have points
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
-      rank: task.rank || null, // Include rank for sorting
-      type: 'task' as const, // Tasks have type 'task'
-      originalType: task.type // Preserve original type to detect bugs
+      epoch: undefined,
+      timeInStatus: undefined,
+      isFlagged: false,
+      points: null,
+      createdAt: typeof task.createdAt === 'string' ? task.createdAt : task.createdAt.toISOString(),
+      updatedAt: typeof task.updatedAt === 'string' ? task.updatedAt : task.updatedAt.toISOString(),
+      rank: task.rank || null,
+      type: 'task' as const,
+      originalType: task.type
     };
   };
 
@@ -526,20 +429,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
 
   // Helper function to persist ranks for cards in a specific column
   const persistRanks = async (cardsInColumn: StackCard[], oldCards: StackCard[]): Promise<void> => {
-    // Resolve workspace ID
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
-      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-      if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
-      }
-    }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
-    }
-
     if (!workspaceId) {
-      console.error('No workspace ID available for persisting ranks');
+      console.error('❌ [StacksBoard] No workspace ID available for persisting ranks');
       return;
     }
 
@@ -774,10 +665,10 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       console.log(`Successfully moved card ${draggedCard.title} to ${targetStatus}`);
       
       // If status changed to 'shipped', notify ShipButton to refresh immediately
-      if (targetStatus === 'shipped') {
+      if (targetStatus === STACK_STATUS.SHIPPED) {
         console.log('📦 [StacksBoard] Card moved to shipped, notifying ShipButton');
         window.dispatchEvent(new CustomEvent('stacks-status-changed', {
-          detail: { status: 'shipped', storyId: draggedCard.id }
+          detail: { status: STACK_STATUS.SHIPPED, storyId: draggedCard.id }
         }));
       }
     } catch (error) {

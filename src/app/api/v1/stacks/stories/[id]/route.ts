@@ -127,6 +127,7 @@ export async function GET(
           assigneeId: true,
           product: true,
           section: true,
+          rank: true,
           attachments: true,
           createdAt: true,
           updatedAt: true,
@@ -170,7 +171,7 @@ export async function GET(
         product: task.product || null,
         section: task.section || null,
         attachments: task.attachments || null,
-        rank: null, // Tasks don't have rank
+        rank: (task as any).rank || null, // Tasks have rank field
         type: task.type || 'task', // Include type to distinguish from stories
         assignee: task.assignee ? {
           id: task.assignee.id,

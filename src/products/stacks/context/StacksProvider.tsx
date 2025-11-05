@@ -146,6 +146,7 @@ export function StacksProvider({ children }: StacksProviderProps) {
     try {
       await apiCreateTask(data);
       await fetchTasks(); // Refresh list
+      setRefreshTrigger(prev => prev + 1); // Trigger refresh across components
     } catch (error) {
       console.error('Failed to create task:', error);
       throw error;
