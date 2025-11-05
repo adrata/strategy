@@ -24,8 +24,6 @@ import { StacksFilters } from './StacksFilters';
 import { ShipButton } from './ShipButton';
 import { AddStacksModal } from './AddStacksModal';
 import { StoryDetailView } from './StoryDetailView';
-import { VisionList } from './VisionList';
-import { VisionDocumentDetail } from './VisionDocumentDetail';
 import { EpicsPage } from './EpicsPage';
 import { EpicStoriesList } from './EpicStoriesList';
 import { StacksEpic } from './types';
@@ -204,7 +202,6 @@ export function StacksMiddlePanel({
     workstream: 'all',
     assignee: 'all'
   });
-  const [selectedVisionDocument, setSelectedVisionDocument] = useState<{ id: string; documentType: 'paper' | 'pitch' } | null>(null);
   const [selectedEpic, setSelectedEpic] = useState<StacksEpic | null>(null);
 
   // Handle story detail view when storyId is provided
@@ -341,27 +338,6 @@ export function StacksMiddlePanel({
     return (
       <div className="h-full flex flex-col bg-background">
         <EpicsPage onEpicSelect={(epic) => setSelectedEpic(epic)} />
-      </div>
-    );
-  }
-
-  if (activeSubSection === 'vision') {
-    return (
-      <div className="h-full flex flex-col bg-background">
-        {selectedVisionDocument ? (
-          <VisionDocumentDetail
-            documentId={selectedVisionDocument.id}
-            documentType={selectedVisionDocument.documentType}
-            onBack={() => setSelectedVisionDocument(null)}
-          />
-        ) : (
-          <VisionList onDocumentSelect={(document) => {
-            setSelectedVisionDocument({
-              id: document.id,
-              documentType: document.documentType
-            });
-          }} />
-        )}
       </div>
     );
   }
