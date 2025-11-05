@@ -481,6 +481,7 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
             </SortableContext>
           </DndContext>
         )}
+        </div>
       </div>
 
       {isAddEpicModalOpen && (
