@@ -20,6 +20,10 @@ import {
 import { StacksContextMenu } from './StacksContextMenu';
 import { useUnifiedAuth } from '@/platform/auth';
 import { NOTARY_EVERYDAY_EPOCHS, Story as NotaryStory } from './notary-everyday-data';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { usePathname } from 'next/navigation';
+import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
+import { useStacks } from '@/products/stacks/context/StacksProvider';
 
 interface BacklogItem {
   id: string;
@@ -55,10 +59,19 @@ const STATUS_ICONS = {
 
 export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
   const { user: authUser } = useUnifiedAuth();
+  const { ui } = useRevenueOS();
+  const pathname = usePathname();
+  const workspaceSlug = pathname.split('/').filter(Boolean)[0];
+  
+  // Get refresh trigger from context to sync with other components
+  const stacksContext = useStacks();
+  const refreshTrigger = stacksContext?.refreshTrigger || 0;
+  
   const [sortBy, setSortBy] = useState<'priority' | 'dueDate' | 'createdAt' | 'title' | 'rank'>('rank');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [draggedItem, setDraggedItem] = useState<BacklogItem | null>(null);
+  const [loading, setLoading] = useState(false);
   
   // Check if we're in Notary Everyday workspace
   const isNotaryEveryday = authUser?.activeWorkspace?.name === 'Notary Everyday';
@@ -136,8 +149,138 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
         return sellingStories.map((story, index) => convertNotaryStoryToBacklogItem(story, index));
       })()
     : [];
-  
+
   const [items, setItems] = useState<BacklogItem[]>(isNotaryEveryday ? notaryBacklogItems : []);
+
+  // Fetch deep backlog items from API for non-Notary workspaces
+  useEffect(() => {
+    // Skip fetching for Notary Everyday (uses mock data)
+    if (isNotaryEveryday) {
+      setItems(notaryBacklogItems);
+      return;
+    }
+
+    const fetchDeepBacklogItems = async () => {
+      // Resolve workspace ID with fallback logic (same as other Stacks components)
+      let workspaceId = ui.activeWorkspace?.id;
+
+      // Fallback 1: Get from URL workspace slug if UI workspace is missing
+      if (!workspaceId && workspaceSlug) {
+        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+        if (urlWorkspaceId) {
+          console.log(`🔍 [StacksBacklogList] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+          workspaceId = urlWorkspaceId;
+        }
+      }
+
+      // Fallback 2: Use user's active workspace ID
+      if (!workspaceId && authUser?.activeWorkspaceId) {
+        console.log(`🔍 [StacksBacklogList] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
+        workspaceId = authUser.activeWorkspaceId;
+      }
+
+      if (!workspaceId) {
+        console.log('⚠️ [StacksBacklogList] No workspace ID available after all fallbacks, waiting...');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const cacheBuster = `&_t=${Date.now()}`;
+        
+        // Fetch both stories and tasks (deep backlog shows all items)
+        const storiesUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}${cacheBuster}`;
+        const tasksUrl = `/api/stacks/tasks?workspaceId=${workspaceId}${cacheBuster}`;
+        
+        console.log('🔍 [StacksBacklogList] Fetching from:', storiesUrl, tasksUrl);
+        
+        const [storiesResponse, tasksResponse] = await Promise.all([
+          fetch(storiesUrl, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+            },
+            cache: 'no-store' as RequestCache,
+          }),
+          fetch(tasksUrl, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+            },
+            cache: 'no-store' as RequestCache,
+          })
+        ]);
+        
+        let stories: any[] = [];
+        let tasks: any[] = [];
+        
+        if (storiesResponse.ok) {
+          const storiesData = await storiesResponse.json();
+          stories = storiesData.stories || [];
+          console.log('📊 [StacksBacklogList] Fetched stories:', stories.length);
+        } else {
+          console.warn('⚠️ [StacksBacklogList] Stories API returned:', storiesResponse.status);
+        }
+        
+        if (tasksResponse.ok) {
+          const tasksData = await tasksResponse.json();
+          tasks = tasksData.tasks || [];
+          console.log('📊 [StacksBacklogList] Fetched tasks:', tasks.length);
+        } else {
+          console.warn('⚠️ [StacksBacklogList] Tasks API returned:', tasksResponse.status);
+        }
+
+        // Convert stories and tasks to BacklogItem format
+        const allItems: BacklogItem[] = [
+          ...stories.map((story: any, index: number) => ({
+            id: story.id,
+            title: story.title || story.name || 'Untitled',
+            description: story.description,
+            priority: (story.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
+            status: (story.status || 'todo') as 'todo' | 'in-progress' | 'review' | 'done',
+            assignee: story.assigneeId || story.assignee?.name || story.assignedTo,
+            dueDate: story.dueDate,
+            tags: story.tags || [],
+            createdAt: story.createdAt || new Date().toISOString(),
+            updatedAt: story.updatedAt || story.createdAt || new Date().toISOString(),
+            rank: story.rank || index + 1
+          })),
+          ...tasks.map((task: any, index: number) => ({
+            id: task.id,
+            title: task.title || task.name || 'Untitled',
+            description: task.description,
+            priority: (task.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
+            status: (task.status || 'todo') as 'todo' | 'in-progress' | 'review' | 'done',
+            assignee: task.assigneeId || task.assignee?.name || task.assignedTo,
+            dueDate: task.dueDate,
+            tags: task.tags || [],
+            createdAt: task.createdAt || new Date().toISOString(),
+            updatedAt: task.updatedAt || task.createdAt || new Date().toISOString(),
+            rank: task.rank || stories.length + index + 1
+          }))
+        ];
+
+        // Sort by rank if available
+        allItems.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+        
+        setItems(allItems);
+        console.log('✅ [StacksBacklogList] Updated items:', allItems.length);
+      } catch (error) {
+        console.error('❌ [StacksBacklogList] Error fetching deep backlog items:', error);
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeepBacklogItems();
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug, refreshTrigger, isNotaryEveryday, notaryBacklogItems]);
+  
   const [contextMenu, setContextMenu] = useState<{
     isVisible: boolean;
     position: { x: number; y: number };
@@ -277,7 +420,11 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
 
       {/* Table Content */}
       <div className="flex-1 overflow-y-auto invisible-scrollbar">
-        {filteredItems.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="text-gray-500">Loading deep backlog items...</div>
+          </div>
+        ) : filteredItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📋</div>
             <h3 className="text-lg font-semibold text-foreground mb-2">

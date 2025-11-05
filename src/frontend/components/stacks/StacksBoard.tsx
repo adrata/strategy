@@ -18,6 +18,8 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 import { StacksContextMenu } from './StacksContextMenu';
+import { useStacks } from '@/products/stacks/context/StacksProvider';
+import { usePathname } from 'next/navigation';
 // Removed mock data imports
 
 interface StackCard {
@@ -165,6 +167,12 @@ const PRIORITY_COLORS = {
 export function StacksBoard({ onCardClick }: StacksBoardProps) {
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
+  const pathname = usePathname();
+  
+  // Get refresh trigger from context to sync with other components
+  const stacksContext = useStacks();
+  const refreshTrigger = stacksContext?.refreshTrigger || 0;
+  
   const [draggedCard, setDraggedCard] = useState<StackCard | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
   const [cards, setCards] = useState<StackCard[]>([]);
@@ -172,8 +180,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; card: StackCard } | null>(null);
   
-  // Check if we're in Notary Everyday workspace (check by workspace slug 'ne')
-  const workspaceSlug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+  // Get workspace slug from pathname (consistent with other components)
+  const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const isNotaryEveryday = workspaceSlug === 'ne';
   
   // Define selling workstreams (revenue-generating)
@@ -342,7 +350,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     };
 
     fetchStories();
-  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug, isNotaryEveryday]);
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, pathname, workspaceSlug, isNotaryEveryday, refreshTrigger]); // Refresh when context triggers update or pathname changes
   
   // Helper function to filter selling stories
   const filterSellingStories = (stories: any[]): any[] => {

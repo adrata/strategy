@@ -19,6 +19,7 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
+import { useStacks } from '@/products/stacks/context/StacksProvider';
 
 interface StacksLeftPanelProps {
   activeSubSection: string;
@@ -70,6 +71,10 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const { user: authUser } = useUnifiedAuth();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   const { ui } = useRevenueOS();
+  
+  // Get shared data from StacksContext for syncing
+  const stacksContext = useStacks();
+  const { stories: contextStories, tasks: contextTasks } = stacksContext || { stories: [], tasks: [] };
   
   // State for user profile data
   const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
@@ -354,6 +359,59 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
 
     return () => clearInterval(refreshInterval);
   }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug, pathname]); // Add pathname to refresh when navigating
+
+  // Sync stats from StacksContext when context data changes (for same-page sync)
+  useEffect(() => {
+    if (contextStories.length > 0 || contextTasks.length > 0) {
+      console.log('🔄 [StacksLeftPanel] Context data changed, recalculating stats from context');
+      
+      // Combine stories and tasks from context
+      const allItems = [...(contextStories || []), ...(contextTasks || [])];
+      const total = allItems.length;
+      
+      // Active = all statuses except 'done' and 'shipped'
+      const active = allItems.filter((item: any) => 
+        item.status && item.status !== 'done' && item.status !== 'shipped'
+      ).length;
+      
+      // Completed = 'done' and 'shipped'
+      const completed = allItems.filter((item: any) => 
+        item.status === 'done' || item.status === 'shipped'
+      ).length;
+
+      // Up Next = items with status 'up-next' or 'todo'
+      const upNextCount = allItems.filter((item: any) => 
+        item.status === 'up-next' || item.status === 'todo'
+      ).length;
+
+      // Workstream = items with any workstream board column status
+      const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped'];
+      const workstreamCount = allItems.filter((item: any) => 
+        workstreamBoardStatuses.includes(item.status)
+      ).length;
+
+      // Backlog = items with statuses not shown on workstream board
+      const backlogCount = allItems.filter((item: any) => 
+        item.status && 
+        item.status !== 'done' && 
+        item.status !== 'todo' &&
+        !workstreamBoardStatuses.includes(item.status)
+      ).length;
+
+      // Update stats (preserve visionCount from previous state)
+      setStats(prev => ({
+        total,
+        active,
+        completed,
+        upNextCount,
+        backlogCount,
+        workstreamCount,
+        visionCount: prev.visionCount // Keep vision count, it's fetched separately
+      }));
+      
+      console.log('✅ [StacksLeftPanel] Stats updated from context:', { total, active, completed, upNextCount, backlogCount, workstreamCount });
+    }
+  }, [contextStories, contextTasks]);
 
   // Check if we're in Notary Everyday workspace
   const isNotaryEveryday = workspaceSlug === 'ne' || 

@@ -43,6 +43,8 @@ import { AddStacksModal } from './AddStacksModal';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
+import { useStacks } from '@/products/stacks/context/StacksProvider';
+import { usePathname } from 'next/navigation';
 // Removed mock data imports
 
 interface BacklogItem {
@@ -171,6 +173,11 @@ function BacklogItemComponent({
 export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
+  const pathname = usePathname();
+  
+  // Get refresh trigger from context to sync with other components
+  const stacksContext = useStacks();
+  const refreshTrigger = stacksContext?.refreshTrigger || 0;
   const [sortBy, setSortBy] = useState<'priority' | 'dueDate' | 'createdAt' | 'title' | 'rank'>('rank');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState('rank');
@@ -196,8 +203,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     })
   );
   
-  // Check if we're in Notary Everyday workspace (check by workspace slug 'ne')
-  const workspaceSlug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+  // Get workspace slug from pathname (consistent with other components)
+  const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const isNotaryEveryday = workspaceSlug === 'ne';
   
   console.log('🔍 [StacksBacklogTable] Debug info:', {
@@ -401,7 +408,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     };
 
     fetchItems();
-  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug]);
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, pathname, workspaceSlug, refreshTrigger]); // Refresh when context triggers update or pathname changes
   const [contextMenu, setContextMenu] = useState<{
     isVisible: boolean;
     position: { x: number; y: number };
@@ -1212,62 +1219,12 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   };
 
   const handleStacksAdded = (newStack: any) => {
-    // Refresh the backlog items with workspace ID resolution
-    let workspaceId = ui.activeWorkspace?.id;
-    
-    // Fallback 1: Get from URL workspace slug if UI workspace is missing
-    if (!workspaceId && workspaceSlug) {
-      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-      if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
-      }
+    console.log('Stacks added:', newStack);
+    // Trigger refresh via context - this will sync left panel and middle panel
+    if (stacksContext?.triggerRefresh) {
+      stacksContext.triggerRefresh();
     }
-    
-    // Fallback 2: Use user's active workspace ID
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
-    }
-    
-    if (!workspaceId) {
-      console.warn('⚠️ [StacksBacklogTable] No workspace ID available for refresh');
-      setShowAddStacksModal(false);
-      return;
-    }
-    
-    fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(`API returned ${response.status}`);
-        }
-      })
-      .then(data => {
-        const backlogItems = data.stories?.map((story: any, index: number) => ({
-          id: story.id,
-          title: story.title,
-          description: story.description,
-          priority: story.priority,
-          status: story.status,
-          assignee: story.assignee?.name || story.assignee,
-          dueDate: story.dueDate,
-          tags: story.tags || [],
-          createdAt: story.createdAt,
-          updatedAt: story.updatedAt,
-          rank: index + 1
-        })) || [];
-        setItems(backlogItems);
-        console.log('🔄 [StacksBacklogTable] Refreshed backlog items:', backlogItems.length, 'items');
-      })
-      .catch(error => {
-        console.error('❌ [StacksBacklogTable] Error refreshing backlog items:', error);
-      });
-    
+    // The useEffect with refreshTrigger dependency will automatically refresh
     setShowAddStacksModal(false);
   };
 

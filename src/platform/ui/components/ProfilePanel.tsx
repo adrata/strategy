@@ -1115,6 +1115,35 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 </div>
               ) : (
                 <>
+                  {/* Custom Items Section - New Items */}
+                  {customItems.length > 0 && (() => {
+                    const itemsToShow = showOnlyCompleted 
+                      ? customItems.filter(item => item.completed)
+                      : showAllItems 
+                        ? customItems 
+                        : customItems.filter(item => !item.completed);
+                    
+                    return itemsToShow.length > 0 ? (
+                      <div className={`space-y-1 ${presetItems.length > 0 ? 'mb-3 pb-3 border-b border-border' : ''}`}>
+                        {!showOnlyCompleted && (
+                          <p className="px-3 text-xs font-medium text-muted uppercase tracking-wider mb-1">
+                            New Items
+                          </p>
+                        )}
+                        {itemsToShow.map((item) => (
+                          <ChecklistItemComponent
+                            key={item.id}
+                            item={item}
+                            onToggle={handleToggleItem}
+                            onDelete={handleDeleteItem}
+                            onEdit={handleEditItem}
+                            isRemoving={removingItemIds.has(item.id)}
+                          />
+                        ))}
+                      </div>
+                    ) : null;
+                  })()}
+                  
                   {/* Preset Items Section */}
                   {!showOnlyCompleted && presetItems.length > 0 && (
                     <div className="space-y-1 pt-[7px]">
@@ -1141,35 +1170,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                       ))}
                     </div>
                   )}
-                  
-                  {/* Custom Items Section */}
-                  {customItems.length > 0 && (() => {
-                    const itemsToShow = showOnlyCompleted 
-                      ? customItems.filter(item => item.completed)
-                      : showAllItems 
-                        ? customItems 
-                        : customItems.filter(item => !item.completed);
-                    
-                    return itemsToShow.length > 0 ? (
-                      <div className={`space-y-1 ${presetItems.length > 0 ? 'mt-3 pt-3 border-t border-border' : ''}`}>
-                        {!showOnlyCompleted && (
-                          <p className="px-3 text-xs font-medium text-muted uppercase tracking-wider mb-1">
-                            Bonus items
-                          </p>
-                        )}
-                        {itemsToShow.map((item) => (
-                          <ChecklistItemComponent
-                            key={item.id}
-                            item={item}
-                            onToggle={handleToggleItem}
-                            onDelete={handleDeleteItem}
-                            onEdit={handleEditItem}
-                            isRemoving={removingItemIds.has(item.id)}
-                          />
-                        ))}
-                      </div>
-                    ) : null;
-                  })()}
                   
                   {/* Custom Items when showing only completed */}
                   {showOnlyCompleted && customItems.length > 0 && (

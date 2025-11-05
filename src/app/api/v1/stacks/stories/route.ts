@@ -95,21 +95,27 @@ export async function GET(request: NextRequest) {
 
     console.log('🔍 [STACKS API] Query where clause:', JSON.stringify(where, null, 2));
 
-    // First check if there are any projects for this workspace
-    // If no projects exist, return empty array (can't have stories without projects)
-    let projectCount = 0;
-    try {
-      projectCount = await prisma.stacksProject.count({
-        where: { workspaceId }
-      });
-    } catch (countError) {
-      console.error('❌ [STACKS API] Error counting projects:', countError);
-      // If counting fails, still try to query stories (maybe there are orphaned stories)
-    }
-
-    if (projectCount === 0) {
-      console.log('ℹ️ [STACKS API] No projects found for workspace, returning empty stories array');
-      return NextResponse.json({ stories: [] });
+    // Auto-create or get project for workspace (consistent with POST route behavior)
+    // This ensures we can always query stories even if project was deleted
+    let project = await prisma.stacksProject.findFirst({
+      where: { workspaceId }
+    });
+    
+    if (!project) {
+      console.log('ℹ️ [STACKS API] No project found for workspace, auto-creating default project');
+      try {
+        project = await prisma.stacksProject.create({
+          data: {
+            workspaceId,
+            name: 'Default Project',
+            description: 'Default project for stacks'
+          }
+        });
+        console.log('✅ [STACKS API] Created default project:', project.id);
+      } catch (createError) {
+        console.error('❌ [STACKS API] Error creating default project:', createError);
+        // Continue anyway - maybe there are orphaned stories
+      }
     }
 
     // Fetch stories with epic and assignee information

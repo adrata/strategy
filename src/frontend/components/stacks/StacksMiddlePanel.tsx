@@ -27,6 +27,7 @@ import { StoryDetailView } from './StoryDetailView';
 import { VisionList } from './VisionList';
 import { VisionDocumentDetail } from './VisionDocumentDetail';
 import { ErrorBoundary } from '@/frontend/components/ErrorBoundary';
+import { useStacks } from '@/products/stacks/context/StacksProvider';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
@@ -185,6 +186,7 @@ export function StacksMiddlePanel({
   isLoading,
   storyId
 }: StacksMiddlePanelProps) {
+  const stacksContext = useStacks();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -253,9 +255,10 @@ export function StacksMiddlePanel({
 
   const handleStacksAdded = (stacks: any) => {
     console.log('Stacks added:', stacks);
-    // Refresh the board/stories
-    // The component will automatically refresh when the workspace context updates
-    window.location.reload(); // Temporary - in production, use a proper refresh mechanism
+    // Trigger refresh via context - this will sync left panel and middle panel
+    if (stacksContext?.triggerRefresh) {
+      stacksContext.triggerRefresh();
+    }
   };
 
   const handleItemClick = (item: StacksItem) => {

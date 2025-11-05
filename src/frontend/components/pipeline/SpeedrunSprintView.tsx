@@ -25,6 +25,7 @@ import { useSprint } from './SprintContext';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
+import { SprintCompletionModal } from './SprintCompletionModal';
 
 export function SpeedrunSprintView() {
   const router = useRouter();
@@ -52,6 +53,8 @@ export function SpeedrunSprintView() {
   const [showAddActionModal, setShowAddActionModal] = useState(false);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [snoozedRecords, setSnoozedRecords] = useState<string[]>([]);
+  const [showSprintCompletionModal, setShowSprintCompletionModal] = useState(false);
+  const [sprintCompletionModalShownFor, setSprintCompletionModalShownFor] = React.useRef<number | null>(null);
 
   // Get workspace info
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
@@ -318,6 +321,73 @@ export function SpeedrunSprintView() {
   const totalSprints = TOTAL_SPRINTS; // Fixed at 3 sprints
   const hasNextSprint = currentSprintIndex < totalSprints - 1;
   const currentSprintNumber = currentSprintIndex + 1;
+
+  // Calculate which records belong to the current sprint based on rank
+  // Use allData (not filteredData) to ensure we check ALL records that should be in the sprint
+  // regardless of snooze status - we want to know when all 10 are truly completed
+  const currentSprintRecords = React.useMemo(() => {
+    if (!allData || allData.length === 0) return [];
+    
+    const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
+    const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
+    
+    // Get all records that should be in this sprint based on their rank
+    // Use allData to include all records, not just filtered ones
+    const sortedRecords = [...allData].sort((a: any, b: any) => {
+      const rankA = a.globalRank || a.rank || 999999;
+      const rankB = b.globalRank || b.rank || 999999;
+      return rankA - rankB;
+    });
+    
+    const sprintRecords = sortedRecords.slice(sprintStartIndex, sprintEndIndex);
+    
+    console.log(`🏃‍♂️ [SPRINT ${currentSprintIndex + 1}] Records in sprint:`, {
+      sprintIndex: currentSprintIndex,
+      sprintStartIndex,
+      sprintEndIndex,
+      totalRecords: sprintRecords.length,
+      expectedCount: SPRINT_SIZE,
+      recordIds: sprintRecords.map((r: any) => r.id),
+      recordNames: sprintRecords.map((r: any) => r.name || r.fullName)
+    });
+    
+    return sprintRecords;
+  }, [allData, currentSprintIndex]);
+
+  // Check if all records in the current sprint are completed
+  const isSprintComplete = React.useMemo(() => {
+    if (currentSprintRecords.length === 0) return false;
+    const allCompleted = currentSprintRecords.every((record: any) => completedRecords.includes(record.id));
+    
+    // Log sprint completion status for debugging
+    if (currentSprintRecords.length === SPRINT_SIZE) {
+      const completedCount = currentSprintRecords.filter((record: any) => completedRecords.includes(record.id)).length;
+      console.log(`🏃‍♂️ [SPRINT ${currentSprintNumber}] Completion check:`, {
+        totalInSprint: currentSprintRecords.length,
+        completedCount,
+        allCompleted,
+        sprintSize: SPRINT_SIZE
+      });
+    }
+    
+    return allCompleted;
+  }, [currentSprintRecords, completedRecords, currentSprintNumber]);
+
+  // Watch for sprint completion and show modal
+  useEffect(() => {
+    if (isSprintComplete && hasNextSprint && !showSprintCompletionModal && sprintCompletionModalShownFor.current !== currentSprintIndex) {
+      console.log(`🎉 Sprint ${currentSprintNumber} complete! Showing completion modal`);
+      sprintCompletionModalShownFor.current = currentSprintIndex;
+      setShowSprintCompletionModal(true);
+    }
+  }, [isSprintComplete, hasNextSprint, currentSprintNumber, showSprintCompletionModal, currentSprintIndex]);
+
+  // Reset the modal shown flag when sprint changes
+  useEffect(() => {
+    if (sprintCompletionModalShownFor.current !== currentSprintIndex) {
+      sprintCompletionModalShownFor.current = null;
+    }
+  }, [currentSprintIndex]);
 
   // Set Speedrun context for AI panel
   useEffect(() => {
@@ -624,7 +694,32 @@ export function SpeedrunSprintView() {
         localStorage.setItem('speedrunCompletedRecords', JSON.stringify(newCompletedRecords));
       }
       
-      // Move to next record
+      // Close action completion modal first
+      setShowCompleteModal(false);
+
+      // Check if sprint is now complete with the updated completed records
+      const updatedSprintRecords = (() => {
+        if (!filteredData || filteredData.length === 0) return [];
+        const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
+        const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
+        const sortedRecords = [...filteredData].sort((a: any, b: any) => {
+          const rankA = a.globalRank || a.rank || 999999;
+          const rankB = b.globalRank || b.rank || 999999;
+          return rankA - rankB;
+        });
+        return sortedRecords.slice(sprintStartIndex, sprintEndIndex);
+      })();
+      
+      const allSprintRecordsCompleted = updatedSprintRecords.length > 0 && 
+        updatedSprintRecords.every((record: any) => newCompletedRecords.includes(record.id));
+
+      // If sprint is complete, the useEffect will show the modal - don't navigate yet
+      if (allSprintRecordsCompleted && hasNextSprint) {
+        // Don't navigate - the modal will handle it
+        return;
+      }
+
+      // Move to next record normally
       const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
       const nextRecord = data[currentIndex + 1];
       if (nextRecord) {
@@ -636,9 +731,6 @@ export function SpeedrunSprintView() {
         // All sprints done, go back to speedrun list
         navigateToPipeline('speedrun');
       }
-
-      // Close modal
-      setShowCompleteModal(false);
       
     } catch (error) {
       console.error('❌ Error saving action log:', error);
@@ -917,6 +1009,27 @@ export function SpeedrunSprintView() {
         companyName={typeof selectedRecord?.company === 'object' ? selectedRecord?.company?.name : selectedRecord?.company}
         isLoading={isSubmittingAction}
         section="speedrun"
+      />
+
+      {/* Sprint Completion Modal */}
+      <SprintCompletionModal
+        isOpen={showSprintCompletionModal}
+        onContinue={() => {
+          setShowSprintCompletionModal(false);
+          // Advance to next sprint
+          if (hasNextSprint) {
+            console.log(`🏃‍♂️ [SPRINT] Advancing from Sprint ${currentSprintNumber} to Sprint ${currentSprintNumber + 1}`);
+            setCurrentSprintIndex(currentSprintIndex + 1);
+            // Reset the modal shown flag for the new sprint
+            sprintCompletionModalShownFor.current = null;
+          } else {
+            // No more sprints, go back to speedrun list
+            navigateToPipeline('speedrun');
+          }
+        }}
+        currentSprintNumber={currentSprintNumber}
+        nextSprintNumber={currentSprintNumber + 1}
+        completedCount={SPRINT_SIZE}
       />
 
       {/* Profile Popup - SpeedrunSprintView Implementation */}

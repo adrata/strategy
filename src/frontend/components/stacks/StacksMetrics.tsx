@@ -11,6 +11,7 @@ import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 import { usePathname } from 'next/navigation';
 import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
+import { useStacks } from '@/products/stacks/context/StacksProvider';
 
 interface MetricCardProps {
   title: string;
@@ -58,6 +59,11 @@ export function StacksMetrics() {
   const { user: authUser } = useUnifiedAuth();
   const pathname = usePathname();
   const workspaceSlug = pathname.split('/').filter(Boolean)[0];
+  
+  // Get refresh trigger from context to sync with other components
+  const stacksContext = useStacks();
+  const refreshTrigger = stacksContext?.refreshTrigger || 0;
+  
   const [metrics, setMetrics] = useState({
     velocity: 0,
     cycleTime: 0,
@@ -192,7 +198,7 @@ export function StacksMetrics() {
     };
 
     fetchMetrics();
-  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug]);
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug, refreshTrigger]); // Refresh when context triggers update
 
   if (loading) {
     return (

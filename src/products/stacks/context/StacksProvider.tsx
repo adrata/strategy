@@ -15,6 +15,7 @@ interface StacksContextType {
   bugs: any[];
   loading: boolean;
   isLoading: boolean;
+  refreshTrigger: number; // Counter that increments to trigger refreshes
 
   // Actions
   setActiveSubSection: (section: string) => void;
@@ -26,6 +27,7 @@ interface StacksContextType {
   createTask: (data: any) => Promise<void>;
   updateItem: (type: string, id: string, data: any) => Promise<void>;
   deleteItem: (type: string, id: string) => Promise<void>;
+  triggerRefresh: () => void; // Manually trigger refresh across all components
 }
 
 const StacksContext = createContext<StacksContextType | undefined>(undefined);
@@ -39,6 +41,7 @@ export function StacksProvider({ children }: StacksProviderProps) {
   const [activeSubSection, setActiveSubSection] = useState('stacks');
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const {
     projects,
@@ -132,6 +135,7 @@ export function StacksProvider({ children }: StacksProviderProps) {
     try {
       await apiCreateStory(data);
       await fetchStories(); // Refresh list
+      setRefreshTrigger(prev => prev + 1); // Trigger refresh across components
     } catch (error) {
       console.error('Failed to create story:', error);
       throw error;
@@ -175,6 +179,8 @@ export function StacksProvider({ children }: StacksProviderProps) {
       if (selectedItem && selectedItem.id === id) {
         setSelectedItem({ ...selectedItem, ...data });
       }
+      
+      setRefreshTrigger(prev => prev + 1); // Trigger refresh across components
     } catch (error) {
       console.error(`Failed to update ${type}:`, error);
       throw error;
@@ -208,10 +214,16 @@ export function StacksProvider({ children }: StacksProviderProps) {
       if (selectedItem && selectedItem.id === id) {
         setSelectedItem(null);
       }
+      
+      setRefreshTrigger(prev => prev + 1); // Trigger refresh across components
     } catch (error) {
       console.error(`Failed to delete ${type}:`, error);
       throw error;
     }
+  };
+
+  const triggerRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const contextValue: StacksContextType = {
@@ -225,6 +237,7 @@ export function StacksProvider({ children }: StacksProviderProps) {
     bugs,
     loading,
     isLoading,
+    refreshTrigger,
 
     // Actions
     setActiveSubSection,
@@ -236,6 +249,7 @@ export function StacksProvider({ children }: StacksProviderProps) {
     createTask,
     updateItem,
     deleteItem,
+    triggerRefresh,
   };
 
   return (
