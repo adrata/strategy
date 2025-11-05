@@ -261,11 +261,19 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
             
             // Workstream board shows items with any workstream board column status
             // Allowed statuses: up-next, in-progress, built, qa1, qa2, shipped
+            // Also include 'todo' status and map it to 'up-next' column
             // Cards can appear in any column based on their status
-            const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped'];
+            const workstreamBoardStatuses = ['up-next', 'in-progress', 'built', 'qa1', 'qa2', 'shipped', 'todo'];
             const workstreamStories = sellingStories.filter((story: any) => {
               // Include items with any workstream board column status
+              // Also include 'todo' status (will be mapped to 'up-next' column)
               return workstreamBoardStatuses.includes(story.status);
+            }).map((story: any) => {
+              // Map 'todo' status to 'up-next' for display on board
+              if (story.status === 'todo') {
+                return { ...story, status: 'up-next' };
+              }
+              return story;
             });
             
             console.log('🔍 [StacksBoard] After filtering for workstream (all board statuses):', {
@@ -364,8 +372,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   // Helper function to convert Notary story to StackCard format
   const convertNotaryStoryToStackCard = (story: any): StackCard => {
     // Map status values to board column statuses
-    // Note: This function should only receive items that are NOT 'todo' status
-    // (they should be filtered out before this function is called)
+    // Note: 'todo' status is mapped to 'up-next' before this function is called
     let mappedStatus = story.status;
     
     if (story.status === 'done') {

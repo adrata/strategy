@@ -170,15 +170,20 @@ export async function GET(request: NextRequest) {
               ]
             });
     } catch (queryError) {
-      // Check if this is a P2022 error (column doesn't exist) for product or section
+      // Check if this is a P2022 error (column doesn't exist) for product, section, acceptanceCriteria, or isFlagged
       const isColumnError = queryError && typeof queryError === 'object' && 'code' in queryError && (queryError as any).code === 'P2022';
       const columnName = isColumnError ? ((queryError as any).meta?.column_name || '').toLowerCase() : '';
-      const isProductOrSectionError = isColumnError && (columnName.includes('product') || columnName.includes('section'));
+      const isNewColumnError = isColumnError && (
+        columnName.includes('product') || 
+        columnName.includes('section') || 
+        columnName.includes('acceptancecriteria') || 
+        columnName.includes('isflagged')
+      );
       
-      if (isProductOrSectionError) {
-        console.warn('⚠️ [STACKS API] product/section columns missing, querying without them:', columnName);
+      if (isNewColumnError) {
+        console.warn('⚠️ [STACKS API] New columns missing, querying without them:', columnName);
         
-        // Fallback: query without product and section columns
+        // Fallback: query without new columns (product, section, acceptanceCriteria, isFlagged)
         try {
           stories = await prisma.stacksStory.findMany({
             where,
@@ -192,7 +197,7 @@ export async function GET(request: NextRequest) {
               priority: true,
               assigneeId: true,
               statusChangedAt: true,
-              // product and section omitted - they don't exist in database
+              // product, section, acceptanceCriteria, isFlagged omitted - they don't exist in database
               createdAt: true,
               updatedAt: true,
               epoch: {
