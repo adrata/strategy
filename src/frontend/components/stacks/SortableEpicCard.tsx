@@ -67,17 +67,6 @@ export function SortableEpicCard({
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-          {epic.priority && (
-            <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-              epic.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-              epic.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
-              'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
-            }`}>
-              {epic.priority}
-            </span>
-          )}
-        </div>
       </div>
       <EpicGoalBar epicId={epic.id} />
     </div>
