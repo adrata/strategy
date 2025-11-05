@@ -53,54 +53,107 @@ export async function GET(
     }
 
     // Fetch the story with workspace validation
-    // Use explicit select to avoid selecting viewType column that may not exist in database
-    const story = await prisma.stacksStory.findFirst({
-      where: {
-        id: storyId,
-        project: {
-          workspaceId: workspaceId
+    // Try with all columns first, fallback if new columns don't exist
+    let story: any;
+    try {
+      story = await prisma.stacksStory.findFirst({
+        where: {
+          id: storyId,
+          project: {
+            workspaceId: workspaceId
+          }
+        },
+        select: {
+          id: true,
+          epochId: true,
+          projectId: true,
+          title: true,
+          description: true,
+          acceptanceCriteria: true,
+          status: true,
+          priority: true,
+          assigneeId: true,
+          product: true,
+          section: true,
+          viewType: true,
+          isFlagged: true,
+          statusChangedAt: true,
+          createdAt: true,
+          updatedAt: true,
+          epoch: {
+            select: {
+              id: true,
+              title: true,
+              description: true
+            }
+          },
+          assignee: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          },
+          project: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
         }
-      },
-      select: {
-        id: true,
-        epochId: true,
-        projectId: true,
-        title: true,
-        description: true,
-        acceptanceCriteria: true,
-        status: true,
-        priority: true,
-        assigneeId: true,
-        product: true,
-        section: true,
-        viewType: true,
-        isFlagged: true,
-        statusChangedAt: true,
-        createdAt: true,
-        updatedAt: true,
-        epoch: {
+      });
+    } catch (queryError) {
+      // If new columns don't exist, try without them
+      const isColumnError = queryError && typeof queryError === 'object' && 'code' in queryError && (queryError as any).code === 'P2022';
+      if (isColumnError) {
+        console.warn('⚠️ [STACKS API] New columns missing in single story query, using fallback');
+        story = await prisma.stacksStory.findFirst({
+          where: {
+            id: storyId,
+            project: {
+              workspaceId: workspaceId
+            }
+          },
           select: {
             id: true,
+            epochId: true,
+            projectId: true,
             title: true,
-            description: true
+            description: true,
+            status: true,
+            priority: true,
+            assigneeId: true,
+            statusChangedAt: true,
+            createdAt: true,
+            updatedAt: true,
+            epoch: {
+              select: {
+                id: true,
+                title: true,
+                description: true
+              }
+            },
+            assignee: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true
+              }
+            },
+            project: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
           }
-        },
-        assignee: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true
-          }
-        },
-        project: {
-          select: {
-            id: true,
-            name: true
-          }
-        }
+        });
+      } else {
+        throw queryError;
       }
-    });
+    }
 
     if (!story) {
       console.log('❌ [STACKS API] Story not found:', storyId);
@@ -141,7 +194,7 @@ export async function GET(
       } : null,
       dueDate: null, // dueDate field doesn't exist in schema yet
       tags: [], // tags field doesn't exist in schema yet
-      isFlagged: story.isFlagged || false,
+      isFlagged: (story as any).isFlagged || false, // Safe access if column doesn't exist
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
       // Calculate time in current status (in days) using statusChangedAt

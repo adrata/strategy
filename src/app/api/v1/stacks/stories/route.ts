@@ -261,7 +261,7 @@ export async function GET(request: NextRequest) {
                 priority: true,
                 assigneeId: true,
                 statusChangedAt: true,
-                // product and section omitted - they don't exist in database
+                // product, section, acceptanceCriteria, isFlagged omitted - they don't exist in database
                 createdAt: true,
                 updatedAt: true,
                 epoch: {
@@ -353,18 +353,18 @@ export async function GET(request: NextRequest) {
           id: story.id,
           title: story.title || '',
           description: story.description || '',
-          acceptanceCriteria: story.acceptanceCriteria || null,
+          acceptanceCriteria: (story as any).acceptanceCriteria || null, // Safe access if column doesn't exist
           status: story.status || 'todo',
           priority: story.priority || 'medium',
-          viewType: story.viewType || 'detail', // Use story's viewType or default to 'detail'
-          product: story.product || null,
-          section: story.section || null,
+          viewType: (story as any).viewType || 'detail', // Use story's viewType or default to 'detail'
+          product: (story as any).product || null, // Safe access if column doesn't exist
+          section: (story as any).section || null, // Safe access if column doesn't exist
           assignee,
           epoch,
           project,
           dueDate: null, // dueDate field doesn't exist in schema yet
           tags: [], // tags field doesn't exist in schema yet
-          isFlagged: story.isFlagged || false,
+          isFlagged: (story as any).isFlagged || false, // Safe access if column doesn't exist
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
           updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
           // Calculate time in current status (in days) using statusChangedAt
