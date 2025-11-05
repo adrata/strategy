@@ -11,6 +11,7 @@ import { useStacks } from '@/products/stacks/context/StacksProvider';
 import { EpicGoalBar } from './EpicGoalBar';
 import { AddEpicModal } from './AddEpicModal';
 import { EpicRankBadge } from './EpicRankBadge';
+import { SortableEpicCard } from './SortableEpicCard';
 import { StacksEpic } from './types';
 import {
   DndContext,
