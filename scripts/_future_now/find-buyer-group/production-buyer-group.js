@@ -279,10 +279,6 @@ class ProductionBuyerGroupPipeline {
           website: this.targetCompany,
           industry: result.companyIntelligence?.industry || null,
           companySize: result.companyIntelligence?.size || null,
-          companyTier: result.companyIntelligence?.companyTier || null,
-          dealSize: this.personalizedConfig?.dealSizeRange || this.dealSize || null,
-          totalEmployeesFound: result.previewEmployees?.length || 0,
-          totalCost: result.costs?.total || 0,
           workspaceId: this.options.workspaceId || null,
           cohesionScore: result.cohesion?.score || 0,
           overallConfidence: result.report?.qualityMetrics?.averageConfidence || 0,
@@ -308,9 +304,6 @@ class ProductionBuyerGroupPipeline {
           linkedin: member.linkedinUrl || null,
           confidence: member.roleConfidence || 0,
           influenceScore: member.scores?.influence || 0,
-          roleReasoning: member.roleReasoning || null,
-          connectionsCount: member.connectionsCount || 0,
-          followersCount: member.followersCount || 0,
           createdAt: new Date(),
           updatedAt: new Date()
         }));

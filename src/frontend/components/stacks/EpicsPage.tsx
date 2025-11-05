@@ -180,25 +180,29 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
               <div
                 key={epic.id}
                 onClick={() => handleEpicClick(epic)}
-                className={`w-full p-6 bg-hover rounded-lg border border-border hover:border-[var(--primary)] transition-all cursor-pointer ${
-                  selectedEpic?.id === epic.id ? 'border-[var(--primary)] bg-panel-background' : ''
+                className={`w-full p-6 bg-card rounded-lg border border-border shadow-sm hover:shadow-md hover:border-[var(--primary)] transition-all cursor-pointer ${
+                  selectedEpic?.id === epic.id ? 'border-[var(--primary)] ring-2 ring-[var(--primary)]/20' : ''
                 }`}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <h2 className="text-lg font-semibold text-foreground mb-2">{epic.title}</h2>
                     {epic.description && (
-                      <p className="text-sm text-muted">{epic.description}</p>
+                      <p className="text-sm text-muted line-clamp-2">{epic.description}</p>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 ml-4">
+                  <div className="flex items-center gap-2 ml-4 flex-shrink-0">
                     {epic.status && (
-                      <span className="px-2 py-1 text-xs font-medium rounded capitalize bg-panel-background text-foreground">
+                      <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                         {epic.status}
                       </span>
                     )}
                     {epic.priority && (
-                      <span className="px-2 py-1 text-xs font-medium rounded capitalize bg-panel-background text-foreground">
+                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                        epic.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
+                        epic.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                        'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
+                      }`}>
                         {epic.priority}
                       </span>
                     )}

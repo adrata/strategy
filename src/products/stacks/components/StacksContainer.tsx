@@ -76,6 +76,10 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     if (pathname.includes('/stacks/epics')) {
       console.log('✅ [StacksContainer] Setting: epics');
       onSubSectionChange('epics');
+      // Clear navigation source when returning to epics
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('stacks-navigation-source');
+      }
     } else if (pathname.includes('/stacks/workstream')) {
       console.log('✅ [StacksContainer] Setting: workstream');
       onSubSectionChange('workstream');
@@ -128,10 +132,14 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     
     if (!item?.id) return;
     
-    // Store navigation source if coming from backlog or up-next section
+    // Store navigation source if coming from backlog, epics, or up-next section
     if (activeSubSection === 'backlog' || pathname.includes('/backlog')) {
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('stacks-navigation-source', 'backlog');
+      }
+    } else if (activeSubSection === 'epics' || pathname.includes('/epics')) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('stacks-navigation-source', 'epics');
       }
     }
     

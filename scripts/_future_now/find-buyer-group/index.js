@@ -1308,10 +1308,6 @@ class SmartBuyerGroupPipeline {
             website: intelligence.website,
           industry: intelligence.industry,
           companySize: intelligence.employeeCount?.toString(),
-            companyTier: intelligence.tier,
-            dealSize: this.dealSize,
-            totalEmployeesFound: this.pipelineState.totalEmployees,
-            totalCost: this.pipelineState.costs.total,
             cohesionScore: report.cohesionAnalysis?.overallScore || 0,
             overallConfidence: report.qualityMetrics?.averageConfidence || 0,
           totalMembers: buyerGroup.length,
@@ -1320,6 +1316,10 @@ class SmartBuyerGroupPipeline {
             report: report,
             intelligence: intelligence,
             costs: this.pipelineState.costs,
+            companyTier: intelligence.tier,
+            dealSize: this.dealSize,
+            totalEmployeesFound: this.pipelineState.totalEmployees,
+            totalCost: this.pipelineState.costs.total,
               pipelineVersion: '2.1.0',
               aiEnabled: !!this.aiReasoning,
             createdAt: new Date().toISOString()
@@ -1346,7 +1346,6 @@ class SmartBuyerGroupPipeline {
         linkedin: member.linkedinUrl,
         confidence: member.roleConfidence || 0,
         influenceScore: member.scores?.influence || 0,
-          roleReasoning: member.roleReasoning,
         updatedAt: new Date()
       }));
       
