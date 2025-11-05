@@ -16,6 +16,7 @@ import {
   EyeIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
 import { STACK_STATUS, WORKSTREAM_BOARD_STATUSES } from './constants';
@@ -69,6 +70,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const router = useRouter();
   const pathname = usePathname();
   const { user: authUser } = useUnifiedAuth();
+  const { ui } = useRevenueOS();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   const workspaceId = useWorkspaceId();
   
