@@ -128,7 +128,6 @@ export async function GET(
           product: true,
           section: true,
           rank: true,
-          attachments: true,
           createdAt: true,
           updatedAt: true,
           assignee: {
@@ -170,7 +169,6 @@ export async function GET(
         viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs, 'detail' for other tasks
         product: task.product || null,
         section: task.section || null,
-        attachments: task.attachments || null,
         rank: (task as any).rank || null, // Tasks have rank field
         type: task.type || 'task', // Include type to distinguish from stories
         assignee: task.assignee ? {

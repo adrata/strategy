@@ -13,6 +13,7 @@ import { AddEpicModal } from './AddEpicModal';
 import { EpicRankBadge } from './EpicRankBadge';
 import { SortableEpicCard } from './SortableEpicCard';
 import { StacksEpic } from './types';
+import { getCategoryColors } from '@/platform/config/color-palette';
 import {
   DndContext,
   closestCenter,
@@ -345,7 +346,18 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
           </div>
           <button
             onClick={() => setIsAddEpicModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors font-medium text-sm"
+            style={{
+              backgroundColor: getCategoryColors('opportunities').light,
+              borderColor: getCategoryColors('opportunities').border,
+              color: getCategoryColors('opportunities').text,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = getCategoryColors('opportunities').bgHover;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = getCategoryColors('opportunities').light;
+            }}
             type="button"
           >
             <PlusIcon className="w-5 h-5" />
