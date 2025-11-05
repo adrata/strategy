@@ -45,6 +45,7 @@ interface StackCard {
   points?: number | null;
   createdAt?: string;
   updatedAt?: string;
+  rank?: number; // Rank for ordering within status
 }
 
 interface StacksBoardProps {
@@ -433,7 +434,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       isFlagged: story.isFlagged || false,
       points: story.points || null,
       createdAt: story.createdAt,
-      updatedAt: story.updatedAt
+      updatedAt: story.updatedAt,
+      rank: story.rank || null // Include rank for sorting
     };
   };
 
@@ -487,7 +489,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       isFlagged: false, // Tasks don't have isFlagged
       points: null, // Tasks don't have points
       createdAt: task.createdAt,
-      updatedAt: task.updatedAt
+      updatedAt: task.updatedAt,
+      rank: task.rank || null // Include rank for sorting
     };
   };
 
@@ -515,7 +518,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     }
   };
 
-  // Group cards by status
+  // Group cards by status and sort by rank within each group
   const groupedCards = cards.reduce((acc, card) => {
     if (!acc[card.status]) {
       acc[card.status] = [];
@@ -523,6 +526,20 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     acc[card.status].push(card);
     return acc;
   }, {} as Record<string, StackCard[]>);
+
+  // Sort cards within each status group by rank
+  Object.keys(groupedCards).forEach(status => {
+    groupedCards[status].sort((a, b) => {
+      // Sort by rank first (ascending), then by createdAt if ranks are equal or missing
+      const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+      const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+      if (rankA !== rankB) return rankA - rankB;
+      // If ranks are equal or both missing, sort by createdAt
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateA - dateB;
+    });
+  });
 
   const handleDragStart = (e: React.DragEvent, card: StackCard) => {
     setDraggedCard(card);
