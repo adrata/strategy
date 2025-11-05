@@ -480,6 +480,23 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
+    // Get workspace ID - prefer query parameter over context (frontend may have different active workspace)
+    const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const contextWorkspaceId = context.workspaceId;
+    const userId = context.userId;
+    
+    // Use query parameter if provided, otherwise fall back to authenticated context
+    const workspaceId = queryWorkspaceId || contextWorkspaceId;
+    
+    console.log('✅ [STACKS API POST] Authenticated user:', userId);
+    console.log('🔍 [STACKS API POST] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
+
+    if (!workspaceId) {
+      console.error('❌ [STACKS API POST] No workspace ID available (query param or context)');
+      return createErrorResponse('Workspace ID is required', 'WORKSPACE_REQUIRED', 400);
+    }
+
     let body;
     try {
       body = await request.json();
@@ -497,17 +514,18 @@ export async function POST(request: NextRequest) {
     let finalProjectId = projectId;
     if (!finalProjectId) {
       let project = await prisma.stacksProject.findFirst({
-        where: { workspaceId: context.workspaceId }
+        where: { workspaceId: workspaceId }
       });
       
       if (!project) {
         project = await prisma.stacksProject.create({
           data: {
-            workspaceId: context.workspaceId,
+            workspaceId: workspaceId,
             name: 'Default Project',
             description: 'Default project for stacks'
           }
         });
+        console.log('✅ [STACKS API POST] Created default project:', project.id, 'for workspace:', workspaceId);
       }
       finalProjectId = project.id;
     }

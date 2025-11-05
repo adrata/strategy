@@ -302,11 +302,29 @@ export function SpeedrunSprintView() {
     // Ensure completedRecords is an array
     const safeCompletedRecords = Array.isArray(completedRecords) ? completedRecords : [];
     
+    // Calculate sprint boundaries based on strategic rank (1-indexed rank system)
+    // Sprint 1 (index 0): ranks 1-10, Sprint 2 (index 1): ranks 11-20, etc.
+    const sprintStartRank = currentSprintIndex * SPRINT_SIZE + 1;
+    const sprintEndRank = (currentSprintIndex + 1) * SPRINT_SIZE;
+    
     // Separate active and completed records
     const activeRecords = filteredData.filter((record: any) => !safeCompletedRecords.includes(record.id));
-    const completedRecordsInSprint = filteredData.filter((record: any) => safeCompletedRecords.includes(record.id));
     
-    // Calculate sprint boundaries based on strategic rank, not array position
+    // Filter completed records to only include those in the current sprint based on rank
+    const allCompletedRecords = filteredData.filter((record: any) => safeCompletedRecords.includes(record.id));
+    const sortedCompletedRecords = allCompletedRecords.sort((a: any, b: any) => {
+      const rankA = a.globalRank || a.rank || 999999;
+      const rankB = b.globalRank || b.rank || 999999;
+      return rankA - rankB;
+    });
+    
+    // Only include completed records whose rank falls within current sprint boundaries
+    const completedRecordsInSprint = sortedCompletedRecords.filter((record: any) => {
+      const rank = record.globalRank || record.rank || 999999;
+      return rank >= sprintStartRank && rank <= sprintEndRank;
+    });
+    
+    // Calculate array-based sprint boundaries for slicing active records
     const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
     const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
     
