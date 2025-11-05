@@ -776,11 +776,13 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           }
         } : undefined
       );
-
-      if (failedUpdates.length > 0) {
-        console.error(`Failed to update ${failedUpdates.length} item order(s)`);
-        // Refresh to revert optimistic update - fetch both stories and tasks
-        const [storiesResponse, tasksResponse] = await Promise.all([
+      
+      // Success - ranks are persisted, no need to refresh immediately
+      // The persistRanks function already triggers refresh via context
+    } catch (error) {
+      console.error('Failed to update item order:', error);
+      // Refresh to revert optimistic update - fetch both stories and tasks
+      const [storiesResponse, tasksResponse] = await Promise.all([
           fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
