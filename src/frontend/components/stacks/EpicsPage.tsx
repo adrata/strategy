@@ -31,12 +31,19 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
   const pathname = usePathname();
   const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const stacksContext = useStacks();
-  const { epics, triggerRefresh } = stacksContext || { epics: [], triggerRefresh: () => {} };
+  const { epics, triggerRefresh, isLoading: contextLoading } = stacksContext || { epics: [], triggerRefresh: () => {}, isLoading: false };
 
   const [coreDocs, setCoreDocs] = useState<CoreDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddEpicModalOpen, setIsAddEpicModalOpen] = useState(false);
   const [selectedEpic, setSelectedEpic] = useState<StacksEpic | null>(null);
+
+  // Debug: Log epics
+  useEffect(() => {
+    console.log('📊 [EpicsPage] Epics from context:', epics?.length, epics);
+    console.log('📊 [EpicsPage] Context loading:', contextLoading);
+    console.log('📊 [EpicsPage] Full context:', stacksContext);
+  }, [epics, contextLoading, stacksContext]);
 
   // Fetch core documents (3 most recent papers/pitches)
   const fetchCoreDocuments = useCallback(async () => {
@@ -100,18 +107,14 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="h-full flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--primary)]"></div>
-      </div>
-    );
-  }
+  // Only show loading spinner for core docs initial load
+  // Epics come from context and should display even while loading
+  const isInitialLoad = loading && coreDocs.length === 0;
 
   return (
     <div className="h-full flex flex-col bg-background overflow-y-auto">
       {/* Header with Add Epics button */}
-      <div className="flex-shrink-0 p-6 border-b border-border">
+      <div className="flex-shrink-0 p-6 border-b border-border bg-background">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Epics</h1>
@@ -119,7 +122,8 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
           </div>
           <button
             onClick={() => setIsAddEpicModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition-opacity shadow-sm"
+            type="button"
           >
             <PlusIcon className="w-5 h-5" />
             <span>Add Epic</span>
@@ -132,7 +136,7 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
             {coreDocs.map((doc) => (
               <div
                 key={doc.id}
-                className="p-4 bg-hover rounded-lg border border-border hover:border-[var(--primary)] transition-colors cursor-pointer"
+                className="p-4 bg-card rounded-lg border border-border hover:border-[var(--primary)] transition-colors cursor-pointer"
               >
                 <div className="flex items-start gap-3">
                   {doc.documentType === 'paper' ? (
@@ -160,7 +164,7 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
 
       {/* Epic Cards */}
       <div className="flex-1 p-6">
-        {epics.length === 0 ? (
+        {!epics || epics.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <p className="text-muted mb-4">No epics yet</p>
             <button
@@ -172,7 +176,7 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            {epics.map((epic) => (
+            {(epics || []).map((epic) => (
               <div
                 key={epic.id}
                 onClick={() => handleEpicClick(epic)}
