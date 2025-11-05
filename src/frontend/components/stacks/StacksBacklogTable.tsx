@@ -777,180 +777,12 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         } : undefined
       );
       
-      // Success - ranks are persisted, no need to refresh immediately
-      // The persistRanks function already triggers refresh via context
+      // Success - ranks are persisted, persistRanks function already triggers refresh via context
     } catch (error) {
       console.error('Failed to update item order:', error);
-      // Refresh to revert optimistic update - fetch both stories and tasks
-      const [storiesResponse, tasksResponse] = await Promise.all([
-          fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-          }),
-          fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-          })
-        ]);
-        
-        if (storiesResponse.ok && tasksResponse.ok) {
-          const [storiesData, tasksData] = await Promise.all([
-            storiesResponse.json(),
-            tasksResponse.json()
-          ]);
-          
-          const stories = storiesData.stories || [];
-          const tasks = tasksData.tasks || [];
-          const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
-          const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
-          const allItems = [...markedStories, ...markedTasks];
-          
-          const sortedItems = [...allItems].sort((a, b) => {
-            const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
-            const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
-            if (rankA !== rankB) return rankA - rankB;
-            return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
-          });
-          
-          const backlogItems = sortedItems.map((item: any, index: number) => {
-            const tags = item.tags || [];
-            if (item.type === 'bug') tags.push('bug');
-            const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
-            const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
-            
-            return {
-              id: item.id,
-              title: item.title,
-              description: item.description,
-              priority: item.priority,
-              status: item.status,
-              assignee: item.assignee?.name || item.assignee || null,
-              dueDate: item.dueDate || null,
-              tags: tags,
-              createdAt: item.createdAt,
-              updatedAt: item.updatedAt,
-              rank: rank,
-              type: itemType as 'story' | 'task',
-              originalType: item.type // Preserve original type to detect bugs
-            };
-          });
-          
-          setItems(backlogItems);
-        }
-      } else {
-        // Success - refresh to get server-confirmed order
-        const [storiesResponse, tasksResponse] = await Promise.all([
-          fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-          }),
-          fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-          })
-        ]);
-        
-        if (storiesResponse.ok && tasksResponse.ok) {
-          const [storiesData, tasksData] = await Promise.all([
-            storiesResponse.json(),
-            tasksResponse.json()
-          ]);
-          
-          const stories = storiesData.stories || [];
-          const tasks = tasksData.tasks || [];
-          const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
-          const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
-          const allItems = [...markedStories, ...markedTasks];
-          
-          const sortedItems = [...allItems].sort((a, b) => {
-            const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
-            const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
-            if (rankA !== rankB) return rankA - rankB;
-            return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
-          });
-          
-          const backlogItems = sortedItems.map((item: any, index: number) => {
-            const tags = item.tags || [];
-            if (item.type === 'bug') tags.push('bug');
-            const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
-            const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
-            
-            return {
-              id: item.id,
-              title: item.title,
-              description: item.description,
-              priority: item.priority,
-              status: item.status,
-              assignee: item.assignee?.name || item.assignee || null,
-              dueDate: item.dueDate || null,
-              tags: tags,
-              createdAt: item.createdAt,
-              updatedAt: item.updatedAt,
-              rank: rank,
-              type: itemType as 'story' | 'task',
-              originalType: item.type // Preserve original type to detect bugs
-            };
-          });
-          
-          setItems(backlogItems);
-        }
-      }
-    } catch (error) {
-      console.error('Error updating item order:', error);
-      // Refresh to revert optimistic update on error - fetch both stories and tasks
-      const [storiesResponse, tasksResponse] = await Promise.all([
-        fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        }),
-        fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        })
-      ]);
-      
-      if (storiesResponse.ok && tasksResponse.ok) {
-        const [storiesData, tasksData] = await Promise.all([
-          storiesResponse.json(),
-          tasksResponse.json()
-        ]);
-        
-        const stories = storiesData.stories || [];
-        const tasks = tasksData.tasks || [];
-        const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
-        const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
-        const allItems = [...markedStories, ...markedTasks];
-        
-        const sortedItems = [...allItems].sort((a, b) => {
-          const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
-          const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
-          if (rankA !== rankB) return rankA - rankB;
-          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
-        });
-        
-        const backlogItems = sortedItems.map((item: any, index: number) => {
-          const tags = item.tags || [];
-          if (item.type === 'bug') tags.push('bug');
-          const itemType = item.type ? 'task' : 'story';
-          const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
-          
-          return {
-            id: item.id,
-            title: item.title,
-            description: item.description,
-            priority: item.priority,
-            status: item.status,
-            assignee: item.assignee?.name || item.assignee || null,
-            dueDate: item.dueDate || null,
-            tags: tags,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt,
-            rank: rank,
-            type: itemType as 'story' | 'task'
-          };
-        });
-        
-        setItems(backlogItems);
+      // Trigger refresh to revert optimistic update and sync with server
+      if (stacksContext?.triggerRefresh) {
+        stacksContext.triggerRefresh();
       }
     }
   };
@@ -1342,118 +1174,10 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     setContextMenu(prev => ({ ...prev, isVisible: false }));
   };
 
-  // Shared helper function to persist ranks efficiently
-  // Only updates items whose rank actually changed, batches all updates
-  const persistRanks = async (
-    newItems: BacklogItem[],
-    oldItems: BacklogItem[],
-    options?: { 
-      statusUpdate?: { itemId: string; newStatus: string };
-      onSuccess?: () => void;
-      onError?: () => void;
-    }
-  ) => {
-    // Resolve workspace ID
-    let workspaceId = ui.activeWorkspace?.id;
-    if (!workspaceId && workspaceSlug) {
-      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-      if (urlWorkspaceId) {
-        workspaceId = urlWorkspaceId;
-      }
-    }
-    if (!workspaceId && authUser?.activeWorkspaceId) {
-      workspaceId = authUser.activeWorkspaceId;
-    }
-
-    if (!workspaceId) {
-      console.error('No workspace ID available for updating item order');
-      options?.onError?.();
-      return;
-    }
-
-    try {
-      // Create a map for O(1) lookups
-      const oldItemsMap = new Map(oldItems.map(item => [item.id, item]));
-      
-      // Calculate which items actually changed rank - O(n) instead of O(n²)
-      const itemsWithChangedRanks: Array<{ item: BacklogItem; payload: any }> = [];
-      
-      for (const item of newItems) {
-        const oldItem = oldItemsMap.get(item.id);
-        const rankChanged = !oldItem || oldItem.rank !== item.rank;
-        const needsStatusUpdate = options?.statusUpdate && item.id === options.statusUpdate.itemId;
-        
-        if (rankChanged || needsStatusUpdate) {
-          const payload: any = { rank: item.rank };
-          
-          // Add status update if needed
-          if (needsStatusUpdate && options.statusUpdate) {
-            payload.status = options.statusUpdate.newStatus;
-          }
-          
-          itemsWithChangedRanks.push({ item, payload });
-        }
-      }
-
-      if (itemsWithChangedRanks.length === 0) {
-        console.log('✅ [StacksBacklogTable] No rank changes detected, skipping API calls');
-        options?.onSuccess?.();
-        return;
-      }
-
-      console.log(`🔄 [StacksBacklogTable] Persisting ${itemsWithChangedRanks.length} rank update(s) (optimized from ${newItems.length} total items)`);
-      
-      // Batch all updates in parallel
-      const updatePromises = itemsWithChangedRanks.map(({ item, payload }) => {
-        const endpoint = item.type === 'task' 
-          ? `/api/stacks/tasks/${item.id}`
-          : `/api/v1/stacks/stories/${item.id}`;
-        
-        // Add userId for task updates (required by task API)
-        if (item.type === 'task') {
-          payload.userId = authUser?.id;
-        }
-        
-        return fetch(endpoint, {
-          method: 'PATCH',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload)
-        });
-      });
-
-      const responses = await Promise.all(updatePromises);
-      const failedUpdates = responses.filter(r => !r.ok);
-
-      if (failedUpdates.length > 0) {
-        console.error(`❌ [StacksBacklogTable] ${failedUpdates.length} update(s) failed`);
-        throw new Error(`${failedUpdates.length} update(s) failed`);
-      }
-
-      console.log('✅ [StacksBacklogTable] All rank updates persisted successfully');
-      
-      // Trigger refresh to sync with other components
-      if (stacksContext?.triggerRefresh) {
-        stacksContext.triggerRefresh();
-      }
-      
-      options?.onSuccess?.();
-    } catch (error) {
-      console.error('❌ [StacksBacklogTable] Error persisting ranks:', error);
-      options?.onError?.();
-      throw error;
-    }
-  };
-
   const moveItem = async (itemId: string, direction: 'top' | 'up' | 'down' | 'bottom') => {
     // Get the item being moved
     const itemToMove = items.find(item => item.id === itemId);
     if (!itemToMove) return;
-
-    // Store old items for comparison
-    const oldItems = [...items];
 
     // Calculate new order and ranks BEFORE updating state
     const newItems = [...items];
@@ -1484,17 +1208,123 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     // Optimistically update local state
     setItems(itemsWithNewRanks);
 
-    // Immediately persist ranks using optimized helper
+    // Immediately persist ranks to API
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for updating item order');
+      return;
+    }
+
+    // Persist ranks to API immediately - only update items whose rank changed
     try {
-      await persistRanks(itemsWithNewRanks, oldItems);
-    } catch (error) {
-      // On error, refresh to get server state
-      console.error('Failed to persist ranks, refreshing from server...');
-      // The error handler in persistRanks will handle the refresh
-      // But we should also refresh here as a fallback
-      const refreshTrigger = stacksContext?.refreshTrigger || 0;
+      // Calculate which items actually changed rank
+      const itemsWithChangedRanks = itemsWithNewRanks.filter((item) => {
+        const oldItem = items.find(old => old.id === item.id);
+        if (!oldItem) return true; // New item, definitely needs update
+        return oldItem.rank !== item.rank;
+      });
+
+      console.log(`🔄 [StacksBacklogTable] moveItem: Updating ${itemsWithChangedRanks.length} items with changed ranks (out of ${itemsWithNewRanks.length} total)`);
+      
+      const updatedItems = itemsWithChangedRanks;
+      
+      const updatePromises = updatedItems.map(item => {
+        const updatePayload: any = { rank: item.rank };
+        
+        // Determine the correct API endpoint based on item type
+        const endpoint = item.type === 'task' 
+          ? `/api/stacks/tasks/${item.id}`
+          : `/api/v1/stacks/stories/${item.id}`;
+        
+        // Add userId for task updates (required by task API)
+        if (item.type === 'task') {
+          updatePayload.userId = authUser?.id;
+        }
+        
+        return fetch(endpoint, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatePayload)
+        });
+      });
+
+      await Promise.all(updatePromises);
+      console.log('✅ [StacksBacklogTable] Ranks persisted immediately after moveItem');
+      
+      // Trigger refresh to sync with other components
       if (stacksContext?.triggerRefresh) {
         stacksContext.triggerRefresh();
+      }
+    } catch (error) {
+      console.error('❌ [StacksBacklogTable] Error persisting ranks after moveItem:', error);
+      // On error, refresh to get server state
+      const [storiesResponse, tasksResponse] = await Promise.all([
+        fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        }),
+        fetch(`/api/stacks/tasks?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        })
+      ]);
+      
+      if (storiesResponse.ok && tasksResponse.ok) {
+        const [storiesData, tasksData] = await Promise.all([
+          storiesResponse.json(),
+          tasksResponse.json()
+        ]);
+        
+        const stories = storiesData.stories || [];
+        const tasks = tasksData.tasks || [];
+        const markedStories = stories.map((s: any) => ({ ...s, type: undefined }));
+        const markedTasks = tasks.map((t: any) => ({ ...t, type: t.type || 'task' }));
+        const allItems = [...markedStories, ...markedTasks];
+        
+        const sortedItems = [...allItems].sort((a, b) => {
+          const rankA = a.rank !== null && a.rank !== undefined ? a.rank : 999999;
+          const rankB = b.rank !== null && b.rank !== undefined ? b.rank : 999999;
+          if (rankA !== rankB) return rankA - rankB;
+          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+        });
+        
+        const backlogItems = sortedItems.map((item: any, index: number) => {
+          const tags = item.tags || [];
+          if (item.type === 'bug') tags.push('bug');
+          const itemType = item.type && item.type !== 'bug' ? 'task' : (item.type === 'bug' ? 'task' : 'story');
+          const rank = item.rank !== null && item.rank !== undefined ? item.rank : index + 1;
+          
+          return {
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            priority: item.priority,
+            status: item.status,
+            assignee: item.assignee?.name || item.assignee || null,
+            dueDate: item.dueDate || null,
+            tags: tags,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            rank: rank,
+            type: itemType as 'story' | 'task',
+            originalType: item.type
+          };
+        });
+        
+        setItems(backlogItems);
       }
     }
   };
