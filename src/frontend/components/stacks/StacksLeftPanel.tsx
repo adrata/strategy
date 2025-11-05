@@ -32,7 +32,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
-  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number; visionCount: number; epicsCount: number }) => number | React.ReactNode;
+  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number; epicsCount: number }) => number | React.ReactNode;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -89,7 +89,6 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     upNextCount: 0,
     backlogCount: 0,
     workstreamCount: 0,
-    visionCount: 0,
     epicsCount: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
@@ -129,7 +128,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     const fetchStacksCounts = async () => {
       if (!workspaceId) {
         console.warn('⚠️ [StacksLeftPanel] No workspace ID available, resetting stats');
-        setStats(prev => ({ ...prev, total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0, epicsCount: 0 }));
+        setStats(prev => ({ ...prev, total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, epicsCount: 0 }));
         setStatsLoading(false);
         return;
       }
@@ -178,7 +177,6 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
 
         let stories: any[] = [];
         let tasks: any[] = [];
-        let visionCount = 0;
         let epicsCount = 0;
 
         if (storiesResponse.ok) {
@@ -268,14 +266,13 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           upNextCount, 
           workstreamCount, 
           backlogCount, 
-          visionCount,
           epicsCount,
           stories: stories.length, 
           tasks: tasks.length,
           workspace: workspaceId 
         });
 
-        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, visionCount, epicsCount });
+        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, epicsCount });
       } catch (error) {
         console.error('❌ [StacksLeftPanel] Failed to fetch story/task counts:', error);
         // Log error details for debugging
@@ -289,7 +286,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         // Preserve counts if we had previous values, otherwise reset to 0
         // This prevents showing 0 when there's a transient error
         const preservedEpicsCount = previousEpicsCount > 0 ? previousEpicsCount : 0;
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, visionCount: 0, epicsCount: preservedEpicsCount });
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, epicsCount: preservedEpicsCount });
       } finally {
         setStatsLoading(false);
       }
@@ -338,7 +335,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       // So backlog count equals upNextCount
       const backlogCount = upNextCount;
 
-      // Update stats (preserve visionCount from previous state)
+      // Update stats
       setStats(prev => ({
         total,
         active,
@@ -346,7 +343,6 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         upNextCount,
         backlogCount,
         workstreamCount,
-        visionCount: prev.visionCount // Keep vision count, it's fetched separately
       }));
       
       console.log('✅ [StacksLeftPanel] Stats updated from context:', { total, active, completed, upNextCount, backlogCount, workstreamCount });
@@ -392,7 +388,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   useEffect(() => {
     // Check if this is a story detail page (has a slug/ID that's not a known section)
     const pathParts = pathname.split('/').filter(Boolean);
-    const knownSections = ['epics', 'workstream', 'metrics', 'backlog', 'chronicle', 'vision', 'stories', 'bugs', 'futures'];
+    const knownSections = ['epics', 'workstream', 'metrics', 'backlog', 'chronicle', 'stories', 'bugs', 'futures'];
     
     // If we're on /stacks/{something}, check if it's a known section or a story slug
     if (pathParts.length >= 3 && pathParts[1] === 'stacks') {
