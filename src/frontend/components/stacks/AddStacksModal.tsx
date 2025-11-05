@@ -378,11 +378,33 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     setIsLoading(true);
 
     try {
-      const workspaceId = ui.activeWorkspace?.id;
+      // Resolve workspace ID with fallback logic (same as other Stacks components)
+      let workspaceId = ui.activeWorkspace?.id;
+      
+      // Fallback 1: Get from URL workspace slug if UI workspace is missing
+      if (!workspaceId && workspaceSlug) {
+        const { getWorkspaceIdBySlug } = await import('@/platform/config/workspace-mapping');
+        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+        if (urlWorkspaceId) {
+          console.log(`🔍 [AddStacksModal] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+          workspaceId = urlWorkspaceId;
+        }
+      }
+      
+      // Fallback 2: Use user's active workspace ID
+      if (!workspaceId && user?.activeWorkspaceId) {
+        console.log(`🔍 [AddStacksModal] Using user activeWorkspaceId: ${user.activeWorkspaceId}`);
+        workspaceId = user.activeWorkspaceId;
+      }
+      
       if (!workspaceId) {
-        alert('No workspace found');
+        alert('No workspace found. Please try refreshing the page.');
+        console.error('❌ [AddStacksModal] No workspace ID available after all fallbacks');
+        setIsLoading(false);
         return;
       }
+      
+      console.log('✅ [AddStacksModal] Using workspace ID:', workspaceId);
 
       if (activeWorkType === 'story') {
         // Create story - API will auto-create project if needed
@@ -403,8 +425,11 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           storyData.epochId = formData.epochId;
         }
         // Note: projectId is auto-created by API if not provided
+        // Pass workspaceId as query param to ensure correct workspace is used
+        const apiUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}`;
+        console.log('📤 [AddStacksModal] Creating story with workspaceId:', workspaceId);
 
-        const response = await fetch('/api/v1/stacks/stories', {
+        const response = await fetch(apiUrl, {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },

@@ -54,7 +54,7 @@ export function SpeedrunSprintView() {
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [snoozedRecords, setSnoozedRecords] = useState<string[]>([]);
   const [showSprintCompletionModal, setShowSprintCompletionModal] = useState(false);
-  const [sprintCompletionModalShownFor, setSprintCompletionModalShownFor] = React.useRef<number | null>(null);
+  const sprintCompletionModalShownFor = React.useRef<number | null>(null);
 
   // Get workspace info
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
@@ -70,7 +70,8 @@ export function SpeedrunSprintView() {
 
   // 🏆 USE DATABASE RANKING: Keep the same order as speedrun table (database globalRank)
   const allData = React.useMemo(() => {
-    if (!rawData || rawData.length === 0) return [];
+    // Ensure rawData is an array
+    if (!Array.isArray(rawData) || rawData.length === 0) return [];
     
     // Use raw data directly to maintain database ranking order
     // This ensures sprint view shows the same people in the same order as the speedrun table
@@ -93,7 +94,8 @@ export function SpeedrunSprintView() {
 
   // Apply optimistic updates to rawData
   const enrichedData = React.useMemo(() => {
-    if (!allData || allData.length === 0) return [];
+    // Ensure allData is an array
+    if (!Array.isArray(allData) || allData.length === 0) return [];
     
     return allData.map((record: any) => {
       const optimisticUpdate = optimisticUpdatesRef.current.get(record.id);
@@ -128,8 +130,18 @@ export function SpeedrunSprintView() {
   // Load completed records from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedCompleted = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
-      setCompletedRecords(storedCompleted);
+      try {
+        const storedCompleted = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+        // Ensure it's an array
+        if (Array.isArray(storedCompleted)) {
+          setCompletedRecords(storedCompleted);
+        } else {
+          setCompletedRecords([]);
+        }
+      } catch (error) {
+        console.error('Error loading completed records from localStorage:', error);
+        setCompletedRecords([]);
+      }
     }
   }, []);
 
@@ -145,7 +157,7 @@ export function SpeedrunSprintView() {
         currentRecordName: currentRecord?.name || currentRecord?.fullName,
         hasCurrentRecord: !!currentRecord,
         currentCompletedRecords: completedRecords,
-        currentRecordInCompleted: currentRecord?.id ? completedRecords.includes(currentRecord.id) : false
+        currentRecordInCompleted: currentRecord?.id ? (Array.isArray(completedRecords) && completedRecords.includes(currentRecord.id)) : false
       });
       
       if (!currentRecord?.id) {
@@ -156,20 +168,23 @@ export function SpeedrunSprintView() {
       console.log('🎯 [SPEEDRUN SPRINT VIEW] Action logged for:', currentRecord.name || currentRecord.fullName);
 
       // Add to completed records if not already there
-      setCompletedRecords(prev => {
+      setCompletedRecords((prev: string[]) => {
+        // Ensure prev is an array
+        const safePrev = Array.isArray(prev) ? prev : [];
+        
         console.log('🔄 [SPEEDRUN SPRINT VIEW] Updating completedRecords state:', {
-          previousCompletedRecords: prev,
+          previousCompletedRecords: safePrev,
           recordIdToAdd: currentRecord.id,
           recordName: currentRecord.name || currentRecord.fullName,
-          alreadyCompleted: prev.includes(currentRecord.id)
+          alreadyCompleted: safePrev.includes(currentRecord.id)
         });
         
-        if (prev.includes(currentRecord.id)) {
+        if (safePrev.includes(currentRecord.id)) {
           console.log('✅ [SPEEDRUN SPRINT VIEW] Record already in completed list');
-          return prev;
+          return safePrev;
         }
         
-        const updated = [...prev, currentRecord.id];
+        const updated = [...safePrev, currentRecord.id];
         
         // Save to localStorage for persistence
         if (typeof window !== 'undefined') {
@@ -225,10 +240,22 @@ export function SpeedrunSprintView() {
     // Use enrichedData instead of allData to include optimistic updates
     const dataSource = enrichedData.length > 0 ? enrichedData : (allData || []);
     
-    if (!dataSource || typeof window === 'undefined') return dataSource || [];
+    // Ensure dataSource is an array
+    if (!Array.isArray(dataSource) || typeof window === 'undefined') return [];
     
-    const snoozedRecords = JSON.parse(localStorage.getItem('snoozedRecords') || '[]');
+    let snoozedRecords: any[] = [];
+    try {
+      snoozedRecords = JSON.parse(localStorage.getItem('snoozedRecords') || '[]');
+      if (!Array.isArray(snoozedRecords)) snoozedRecords = [];
+    } catch (error) {
+      console.error('Error parsing snoozedRecords from localStorage:', error);
+      snoozedRecords = [];
+    }
+    
     const now = new Date();
+    
+    // Ensure completedRecords is an array
+    const safeCompletedRecords = Array.isArray(completedRecords) ? completedRecords : [];
     
     // First filter out snoozed records
     const activeRecords = dataSource.filter((record: any) => {
@@ -244,13 +271,13 @@ export function SpeedrunSprintView() {
     });
 
     // Separate completed and active records
-    const active = activeRecords.filter((record: any) => !completedRecords.includes(record.id));
-    const completed = activeRecords.filter((record: any) => completedRecords.includes(record.id));
+    const active = activeRecords.filter((record: any) => !safeCompletedRecords.includes(record.id));
+    const completed = activeRecords.filter((record: any) => safeCompletedRecords.includes(record.id));
     
     // Debug: Log completed records found
-    if (completedRecords.length > 0) {
+    if (safeCompletedRecords.length > 0) {
       console.log('🔍 [FILTERED DATA] Completed records debug:', {
-        completedRecordsIds: completedRecords,
+        completedRecordsIds: safeCompletedRecords,
         completedRecordsFound: completed.map((r: any) => ({ id: r.id, name: r.name, rank: r.rank })),
         totalActiveRecords: active.length,
         totalCompletedRecords: completed.length
@@ -270,11 +297,14 @@ export function SpeedrunSprintView() {
   
   // 🏃‍♂️ SPRINT LOGIC: Show 10 total items per sprint with completed ones at bottom
   const data = React.useMemo(() => {
-    if (!filteredData || filteredData.length === 0) return [];
+    if (!Array.isArray(filteredData) || filteredData.length === 0) return [];
+    
+    // Ensure completedRecords is an array
+    const safeCompletedRecords = Array.isArray(completedRecords) ? completedRecords : [];
     
     // Separate active and completed records
-    const activeRecords = filteredData.filter((record: any) => !completedRecords.includes(record.id));
-    const completedRecordsInSprint = filteredData.filter((record: any) => completedRecords.includes(record.id));
+    const activeRecords = filteredData.filter((record: any) => !safeCompletedRecords.includes(record.id));
+    const completedRecordsInSprint = filteredData.filter((record: any) => safeCompletedRecords.includes(record.id));
     
     // Calculate sprint boundaries based on strategic rank, not array position
     const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
@@ -326,7 +356,8 @@ export function SpeedrunSprintView() {
   // Use allData (not filteredData) to ensure we check ALL records that should be in the sprint
   // regardless of snooze status - we want to know when all 10 are truly completed
   const currentSprintRecords = React.useMemo(() => {
-    if (!allData || allData.length === 0) return [];
+    // Ensure allData is an array
+    if (!Array.isArray(allData) || allData.length === 0) return [];
     
     const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
     const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
@@ -356,7 +387,9 @@ export function SpeedrunSprintView() {
 
   // Check if all records in the current sprint are completed
   const isSprintComplete = React.useMemo(() => {
-    if (currentSprintRecords.length === 0) return false;
+    if (!Array.isArray(currentSprintRecords) || currentSprintRecords.length === 0) return false;
+    if (!Array.isArray(completedRecords)) return false;
+    
     const allCompleted = currentSprintRecords.every((record: any) => completedRecords.includes(record.id));
     
     // Log sprint completion status for debugging
@@ -424,17 +457,20 @@ export function SpeedrunSprintView() {
     // 2. No record is currently selected
     // 3. We're not in a loading state
     if (data && data.length > 0 && !selectedRecord && !loading) {
+      // Ensure completedRecords is an array
+      const safeCompletedRecords = Array.isArray(completedRecords) ? completedRecords : [];
+      
       // Prefer first non-completed record, otherwise first record overall
-      const firstNonCompleted = data.find((record: any) => !completedRecords.includes(record.id));
+      const firstNonCompleted = data.find((record: any) => !safeCompletedRecords.includes(record.id));
       const recordToSelect = firstNonCompleted || data[0];
       
       if (recordToSelect) {
         console.log('🚀 [SPEEDRUN SPRINT] Auto-selecting first record:', {
           recordId: recordToSelect.id,
           recordName: recordToSelect.name || recordToSelect.fullName,
-          isNonCompleted: !completedRecords.includes(recordToSelect.id),
+          isNonCompleted: !safeCompletedRecords.includes(recordToSelect.id),
           totalRecords: data.length,
-          completedCount: completedRecords.length
+          completedCount: safeCompletedRecords.length
         });
         setSelectedRecord(recordToSelect);
       }
@@ -578,7 +614,7 @@ export function SpeedrunSprintView() {
         const isInputField = activeElement && (
           activeElement.tagName === 'INPUT' ||
           activeElement.tagName === 'TEXTAREA' ||
-          activeElement.contentEditable === 'true' ||
+          (activeElement as HTMLElement).contentEditable === 'true' ||
           activeElement.getAttribute('role') === 'textbox'
         );
         
@@ -672,8 +708,8 @@ export function SpeedrunSprintView() {
           type: actionData.type,
           subject: `${actionData.type} - ${selectedRecord.fullName || selectedRecord.name || 'Unknown'}`,
           description: actionData.action, // Use action field for description
-          outcome: actionData.nextAction,
-          scheduledAt: actionData.nextActionDate,
+          outcome: (actionData as any).nextAction || '',
+          scheduledAt: (actionData as any).nextActionDate || null,
           completedAt: new Date().toISOString(),
           status: 'COMPLETED',
           priority: 'NORMAL',
@@ -686,7 +722,9 @@ export function SpeedrunSprintView() {
       console.log(`✅ Action log saved for ${selectedRecord.name || selectedRecord.fullName}:`, result);
 
       // Mark the current record as completed
-      const newCompletedRecords = [...completedRecords, selectedRecord.id];
+      // Ensure completedRecords is an array before spreading
+      const safeCompletedRecords = Array.isArray(completedRecords) ? completedRecords : [];
+      const newCompletedRecords = [...safeCompletedRecords, selectedRecord.id];
       setCompletedRecords(newCompletedRecords);
       
       // Save to localStorage for persistence
@@ -699,7 +737,7 @@ export function SpeedrunSprintView() {
 
       // Check if sprint is now complete with the updated completed records
       const updatedSprintRecords = (() => {
-        if (!filteredData || filteredData.length === 0) return [];
+        if (!Array.isArray(filteredData) || filteredData.length === 0) return [];
         const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
         const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
         const sortedRecords = [...filteredData].sort((a: any, b: any) => {
@@ -1069,11 +1107,11 @@ export function SpeedrunSprintView() {
         >
           <ProfileBox
             user={pipelineUser}
-            company={company}
-            workspace={workspace}
+            company={typeof company === 'string' ? company : ((company as any)?.name || '')}
+            workspace={typeof workspace === 'string' ? workspace : ((workspace as any)?.name || '')}
             isProfileOpen={isProfileOpen}
             setIsProfileOpen={setIsProfileOpen}
-            userId={user?.id}
+            userId={user?.id || ''}
             userEmail={user?.email}
             isSellersVisible={true}
             setIsSellersVisible={() => {}}
@@ -1089,12 +1127,6 @@ export function SpeedrunSprintView() {
             setIsCustomersVisible={() => {}}
             isPartnersVisible={true}
             setIsPartnersVisible={() => {}}
-            onThemesClick={() => {
-              console.log('🎨 Themes clicked in SpeedrunSprintView');
-            }}
-            onSignOut={() => {
-              console.log('🚪 Sign out clicked in SpeedrunSprintView');
-            }}
           />
         </div>
       )}

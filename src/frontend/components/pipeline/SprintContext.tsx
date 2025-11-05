@@ -8,7 +8,7 @@ interface SprintContextType {
   currentSprintIndex: number;
   setCurrentSprintIndex: (index: number) => void;
   completedRecords: string[];
-  setCompletedRecords: (records: string[]) => void;
+  setCompletedRecords: (records: string[] | ((prev: string[]) => string[])) => void;
 }
 
 const SprintContext = createContext<SprintContextType | undefined>(undefined);
