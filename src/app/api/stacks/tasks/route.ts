@@ -165,7 +165,6 @@ export async function GET(request: NextRequest) {
           product: true,
           section: true,
           rank: true,
-          attachments: true,
           createdAt: true,
           updatedAt: true,
           project: {
@@ -211,7 +210,6 @@ export async function GET(request: NextRequest) {
             assigneeId: true,
             product: true,
             section: true,
-            attachments: true,
             createdAt: true,
             updatedAt: true,
             project: {
@@ -285,7 +283,7 @@ export async function GET(request: NextRequest) {
       {
         endpoint: 'STACKS_TASKS_API_GET',
         userId: context?.userId,
-        workspaceId: queryWorkspaceId || context?.workspaceId,
+        workspaceId: context?.workspaceId,
         requestId: request.headers.get('x-request-id') || undefined
       },
       'Failed to fetch tasks',
@@ -320,7 +318,7 @@ export async function POST(request: NextRequest) {
     const workspaceId = context.workspaceId;
     const userId = context.userId;
     const body = await request.json();
-    const { projectId, storyId, title, description, status, priority, type, assigneeId, product, section, attachments } = body;
+    const { projectId, storyId, title, description, status, priority, type, assigneeId, product, section } = body;
 
     if (!workspaceId || !userId || !title) {
       return createErrorResponse('Workspace ID, user ID, and title are required', 'MISSING_REQUIRED_FIELDS', 400);
@@ -375,9 +373,7 @@ export async function POST(request: NextRequest) {
       createData.section = null;
     }
 
-    if (attachments !== undefined && attachments !== null && Array.isArray(attachments)) {
-      createData.attachments = attachments;
-    }
+    // NOTE: attachments field removed - not in streamlined schema used in production
 
     const task = await prisma.stacksTask.create({
       data: createData,
