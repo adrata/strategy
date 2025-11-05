@@ -365,13 +365,63 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Rank Squircle - similar to leads */}
-            {currentIndex !== null && (
-              <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative">
-                <span className="text-sm font-semibold text-foreground">
-                  {currentIndex + 1}
-                </span>
-              </div>
-            )}
+            {currentIndex !== null && (() => {
+              // Calculate alphanumeric rank (1A, 2B, etc.)
+              // Group stories by priority, then assign letters within each priority group
+              const priorityOrder = ['urgent', 'high', 'medium', 'low'];
+              const currentStory = stories[currentIndex];
+              const currentPriority = currentStory?.priority || 'medium';
+              
+              // Group stories by priority
+              const groupedByPriority: Record<string, any[]> = {};
+              stories.forEach((s, idx) => {
+                const priority = s.priority || 'medium';
+                if (!groupedByPriority[priority]) {
+                  groupedByPriority[priority] = [];
+                }
+                groupedByPriority[priority].push({ ...s, originalIndex: idx });
+              });
+              
+              // Calculate rank within priority group
+              let rankNumber = 1;
+              for (const priority of priorityOrder) {
+                if (priority === currentPriority) {
+                  const groupStories = groupedByPriority[priority] || [];
+                  const storyInGroup = groupStories.find(s => s.id === currentStory?.id);
+                  const letterIndex = storyInGroup ? groupStories.indexOf(storyInGroup) : 0;
+                  const letter = String.fromCharCode(65 + letterIndex); // A, B, C, etc.
+                  
+                  // Calculate the base number: count stories in higher priority groups
+                  let baseNumber = 1;
+                  for (const higherPriority of priorityOrder) {
+                    if (higherPriority === priority) break;
+                    baseNumber += (groupedByPriority[higherPriority]?.length || 0);
+                  }
+                  
+                  // If there are multiple stories in the same priority group, use the same number
+                  rankNumber = baseNumber;
+                  const rankDisplay = `${rankNumber}${letter}`;
+                  
+                  return (
+                    <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative">
+                      <span className="text-sm font-semibold text-foreground">
+                        {rankDisplay}
+                      </span>
+                    </div>
+                  );
+                }
+                rankNumber += (groupedByPriority[priority]?.length || 0);
+              }
+              
+              // Fallback to numeric if calculation fails
+              return (
+                <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative">
+                  <span className="text-sm font-semibold text-foreground">
+                    {currentIndex + 1}
+                  </span>
+                </div>
+              );
+            })()}
             <div>
               <h1 className="text-2xl font-bold text-foreground">
                 {story.title || 'Untitled Story'}
