@@ -88,11 +88,30 @@ export async function GET(request: NextRequest) {
 
     // Get all project IDs for this workspace to safely filter tasks
     // This avoids issues with nested relation filters and orphaned tasks
-    const workspaceProjects = await prisma.stacksProject.findMany({
-      where: { workspaceId },
-      select: { id: true }
-    });
+    let workspaceProjects;
+    try {
+      workspaceProjects = await prisma.stacksProject.findMany({
+        where: { workspaceId },
+        select: { id: true }
+      });
+    } catch (projectError) {
+      console.error('❌ [STACKS TASKS API] Error fetching projects:', projectError);
+      return logAndCreateErrorResponse(
+        projectError,
+        {
+          endpoint: 'STACKS_TASKS_API_GET_PROJECTS',
+          userId: context?.userId,
+          workspaceId,
+          requestId: request.headers.get('x-request-id') || undefined
+        },
+        'Failed to fetch workspace projects',
+        'STACKS_TASKS_PROJECTS_FETCH_ERROR',
+        500
+      );
+    }
+    
     const workspaceProjectIds = workspaceProjects.map(p => p.id);
+    console.log('🔍 [STACKS TASKS API] Found projects for workspace:', workspaceProjectIds.length, 'project IDs:', workspaceProjectIds);
 
     if (workspaceProjectIds.length === 0) {
       // No projects exist for this workspace, return empty result
@@ -124,10 +143,12 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('🔍 [STACKS TASKS API] Query where clause:', JSON.stringify(where, null, 2));
+    console.log('🔍 [STACKS TASKS API] Workspace ID:', workspaceId, 'Project IDs:', workspaceProjectIds);
 
     // Fetch tasks with defensive select - try with optional columns first, fallback without them if they don't exist
     let tasks;
     try {
+      console.log('🔍 [STACKS TASKS API] Attempting to fetch tasks with rank column...');
       // First attempt: try with rank column (may not exist in production)
       tasks = await prisma.stacksTask.findMany({
         where,
@@ -163,10 +184,20 @@ export async function GET(request: NextRequest) {
         ]
       });
     } catch (rankError: any) {
+      console.error('❌ [STACKS TASKS API] Error fetching tasks with rank:', rankError);
+      console.error('❌ [STACKS TASKS API] Error details:', {
+        message: rankError instanceof Error ? rankError.message : String(rankError),
+        code: rankError?.code,
+        meta: rankError?.meta,
+        workspaceId,
+        workspaceProjectIds
+      });
+      
       // If rank column doesn't exist, try without it
       if (rankError && typeof rankError === 'object' && 'code' in rankError && rankError.code === 'P2022') {
         console.warn('⚠️ [STACKS TASKS API] Rank column does not exist, fetching without rank');
-        tasks = await prisma.stacksTask.findMany({
+        try {
+          tasks = await prisma.stacksTask.findMany({
           where,
           select: {
             id: true,
@@ -197,8 +228,12 @@ export async function GET(request: NextRequest) {
             { createdAt: 'desc' }
           ]
         });
-        // Add null rank to all tasks
-        tasks = tasks.map((task: any) => ({ ...task, rank: null }));
+          // Add null rank to all tasks
+          tasks = tasks.map((task: any) => ({ ...task, rank: null }));
+        } catch (fallbackError: any) {
+          console.error('❌ [STACKS TASKS API] Error fetching tasks without rank:', fallbackError);
+          throw fallbackError;
+        }
       } else {
         throw rankError; // Re-throw if it's not a P2022 error
       }
