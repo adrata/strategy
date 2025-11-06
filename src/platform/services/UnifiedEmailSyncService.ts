@@ -453,23 +453,40 @@ export class UnifiedEmailSyncService {
                   success: true,
                   data: responseData
                 };
-              } catch (nangoError) {
+              } catch (nangoError: any) {
                 const errorMessage = nangoError instanceof Error ? nangoError.message : String(nangoError);
                 
+                // Extract detailed error information from Nango/API response
+                let apiErrorDetails: any = null;
+                if (nangoError?.response?.data) {
+                  apiErrorDetails = nangoError.response.data;
+                } else if (nangoError?.response) {
+                  apiErrorDetails = nangoError.response;
+                } else if (nangoError?.data) {
+                  apiErrorDetails = nangoError.data;
+                }
+                
+                // Log the full error response for debugging
+                console.error(`❌ [EMAIL SYNC] Nango proxy error for ${folderConfig.folder} (page ${pageCount + 1}):`, {
+                  message: errorMessage,
+                  status: nangoError?.response?.status || nangoError?.status,
+                  statusText: nangoError?.response?.statusText,
+                  apiErrorDetails: apiErrorDetails ? JSON.stringify(apiErrorDetails, null, 2) : null,
+                  errorBody: nangoError?.response?.data || nangoError?.data,
+                  stack: nangoError instanceof Error ? nangoError.stack : undefined,
+                  providerConfigKey: connection.providerConfigKey,
+                  connectionId: connection.nangoConnectionId,
+                  endpoint,
+                  filter: folderConfig.filter || folderConfig.q
+                });
+                
                 // Check for rate limiting errors
-                if (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('quota')) {
+                if (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('quota') || nangoError?.response?.status === 429) {
                   console.warn(`⚠️ [EMAIL SYNC] Rate limit detected, waiting longer before retry...`);
                   // Wait longer for rate limits
                   await new Promise(resolve => setTimeout(resolve, 5000));
                 }
                 
-                console.error(`❌ [EMAIL SYNC] Nango proxy error for ${folderConfig.folder} (page ${pageCount + 1}):`, {
-                  message: errorMessage,
-                  stack: nangoError instanceof Error ? nangoError.stack : undefined,
-                  providerConfigKey: connection.providerConfigKey,
-                  connectionId: connection.nangoConnectionId,
-                  endpoint
-                });
                 throw nangoError;
               }
             },
