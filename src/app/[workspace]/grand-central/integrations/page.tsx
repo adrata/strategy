@@ -311,36 +311,16 @@ const IntegrationsPage = () => {
       // Initialize Nango SDK (works with or without config)
       const nango = new Nango(Object.keys(nangoConfig).length > 0 ? nangoConfig : undefined);
       
-      // Listen for postMessage from the OAuth popup to auto-close it
-      const messageHandler = (event: MessageEvent) => {
-        // Only accept messages from Nango's domain for security
-        if (event.origin.includes('nango.dev') || event.origin.includes('api.nango.dev')) {
-          if (event.data?.type === 'nango-oauth-success' || event.data?.type === 'nango-oauth-close') {
-            // Try to close the popup window
-            if (event.source && typeof (event.source as Window).close === 'function') {
-              try {
-                (event.source as Window).close();
-              } catch (e) {
-                // Cross-origin restrictions might prevent closing
-                console.log('Could not close popup window:', e);
-              }
-            }
-            window.removeEventListener('message', messageHandler);
-          }
-        }
-      };
-      
-      window.addEventListener('message', messageHandler);
+      // Store the connect instance to potentially close it programmatically
+      let connectInstance: any = null;
       
       const connect = nango.openConnectUI({
         onEvent: (event) => {
           if (event.type === 'close') {
             setConnectingProvider(null);
-            window.removeEventListener('message', messageHandler);
             // User closed the modal
           } else if (event.type === 'connect') {
             setConnectingProvider(null);
-            window.removeEventListener('message', messageHandler);
             const providerName = data.provider === 'gmail' ? 'Gmail' : data.provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
             const actionText = data.provider === 'google-calendar' ? 'Syncing calendar...' : 'Processing emails...';
             setOauthMessage({
@@ -348,22 +328,23 @@ const IntegrationsPage = () => {
               message: `${providerName} successfully connected! ${actionText}`,
             });
             
-            // Try to close any open popup windows (Nango's success page)
-            // The popup might still be open showing "You are now connected"
-            // We'll try to close it after a short delay to allow the success message to be seen
-            setTimeout(() => {
-              // Try to find and close the popup window
-              // Note: Due to browser security, we can only close windows we opened
-              // Nango manages the popup, so it should close automatically, but we try anyway
-              try {
-                // Check if there's a window.opener reference we can use
-                if (window.opener) {
-                  window.opener.postMessage({ type: 'nango-close-popup' }, '*');
-                }
-              } catch (e) {
-                // Ignore cross-origin errors
+            // Try to close the popup immediately after connection
+            // The Nango SDK should handle this, but we try to force it
+            try {
+              // Check if connect instance has a close method
+              if (connectInstance && typeof connectInstance.close === 'function') {
+                connectInstance.close();
               }
-            }, 2000); // Give user 2 seconds to see the success message
+            } catch (e) {
+              // Ignore errors - popup might close automatically
+            }
+            
+            // Note: The Nango popup window cannot be programmatically closed due to
+            // browser cross-origin security restrictions. The popup shows Nango's
+            // success page ("You are now connected") which the user needs to manually close.
+            // This is a limitation of browser security, not our code.
+            // The Nango SDK should handle closing the popup automatically, but if it doesn't,
+            // the user can simply click the "You can close this window" button.
             
             // Reload connections after successful connection
             setTimeout(() => {
@@ -382,6 +363,9 @@ const IntegrationsPage = () => {
         },
       });
 
+      // Store the connect instance
+      connectInstance = connect;
+      
       // Set the session token to trigger the auth flow
       connect.setSessionToken(data.sessionToken);
 
@@ -649,8 +633,10 @@ const IntegrationsPage = () => {
               <div className="pt-4">
                 <Button
                   onClick={() => handleConnect('outlook')}
-                  disabled={connectingProvider !== null}
-                  className="bg-blue-600 hover:bg-blue-700 text-white w-40"
+                  disabled={connectingProvider === 'outlook'}
+                  className={`bg-blue-600 hover:bg-blue-700 text-white w-40 ${
+                    connectingProvider === 'outlook' ? 'opacity-75 cursor-not-allowed' : ''
+                  }`}
                 >
                   {connectingProvider === 'outlook' ? "Connecting..." : "Connect Outlook"}
                 </Button>
@@ -758,8 +744,10 @@ const IntegrationsPage = () => {
               <div className="pt-4">
                 <Button
                   onClick={() => handleConnect('gmail')}
-                  disabled={connectingProvider !== null}
-                  className="bg-blue-600 hover:bg-blue-700 text-white w-40"
+                  disabled={connectingProvider === 'gmail'}
+                  className={`bg-blue-600 hover:bg-blue-700 text-white w-40 ${
+                    connectingProvider === 'gmail' ? 'opacity-75 cursor-not-allowed' : ''
+                  }`}
                 >
                   {connectingProvider === 'gmail' ? "Connecting..." : "Connect Gmail"}
                 </Button>
@@ -867,8 +855,10 @@ const IntegrationsPage = () => {
               <div className="pt-4">
                 <Button
                   onClick={() => handleConnect('google-calendar')}
-                  disabled={connectingProvider !== null}
-                  className="bg-blue-600 hover:bg-blue-700 text-white w-40"
+                  disabled={connectingProvider === 'google-calendar'}
+                  className={`bg-blue-600 hover:bg-blue-700 text-white w-40 ${
+                    connectingProvider === 'google-calendar' ? 'opacity-75 cursor-not-allowed' : ''
+                  }`}
                 >
                   {connectingProvider === 'google-calendar' ? "Connecting..." : "Connect Google Calendar"}
                 </Button>
