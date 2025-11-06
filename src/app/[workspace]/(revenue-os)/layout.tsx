@@ -125,14 +125,28 @@ function PipelineLayoutInner({
   const pathname = usePathname();
   
   // Get thread data from OasisLayoutContext if available
+  // Use a hook-like pattern to ensure reactivity
   let threadData = null;
+  let oasisLayoutContext: OasisLayoutContextType | undefined;
   try {
-    const oasisLayout = useOasisLayout();
-    threadData = oasisLayout.threadData;
+    oasisLayoutContext = useOasisLayout();
+    threadData = oasisLayoutContext.threadData;
   } catch (error) {
     // Context not available (not in Oasis route), continue
     threadData = null;
   }
+  
+  // Debug logging for thread data changes
+  useEffect(() => {
+    if (pathname.includes('/oasis')) {
+      console.log('🔍 [LAYOUT] Thread data state:', {
+        hasThreadData: !!threadData,
+        messageId: threadData?.messageId,
+        threadMessagesCount: threadData?.threadMessages?.length || 0,
+        contextAvailable: !!oasisLayoutContext
+      });
+    }
+  }, [pathname, threadData, oasisLayoutContext]);
   
   // Initialize profile panel state from sessionStorage on mount if needed
   useEffect(() => {
@@ -151,7 +165,14 @@ function PipelineLayoutInner({
   // Get user data for profile panel
   const pipelineUser = authUser || { name: "User", email: "" };
   const company = "Adrata"; // You can get this from workspace context if needed
-  const workspace = "Adrata"; // You can get this from workspace context if needed
+  
+  // Get actual workspace name from user's workspaces to prevent flicker
+  // Use useMemo to ensure stable value and prevent flicker during authUser updates
+  const workspace = React.useMemo(() => {
+    const activeWorkspaceForProfile = authUser?.workspaces?.find(w => w['id'] === authUser.activeWorkspaceId);
+    return activeWorkspaceForProfile?.name || "Adrata"; // Use actual workspace name, fallback to "Adrata"
+  }, [authUser?.workspaces, authUser?.activeWorkspaceId]);
+  
   const username = authUser?.name ? `@${authUser.name.toLowerCase().replace(/\s+/g, "")}` : "@user";
   
   // Determine current app based on pathname
@@ -304,11 +325,29 @@ function PipelineLayoutInner({
   useEffect(() => {
     if (pathname.includes('/oasis') && threadData) {
       // Always ensure right panel is visible when threadData exists
-      if (!ui.isRightPanelVisible) {
-        ui.setIsRightPanelVisible(true);
-      }
+      console.log('🔍 [LAYOUT] Thread data detected, ensuring right panel is visible:', {
+        hasThreadData: !!threadData,
+        messageId: threadData.messageId,
+        threadMessagesCount: threadData.threadMessages?.length || 0,
+        currentVisibility: ui.isRightPanelVisible
+      });
+      
+      // Force right panel visible when thread data exists
+      ui.setIsRightPanelVisible(true);
+      
+      // Double-check after a brief delay
+      setTimeout(() => {
+        if (!ui.isRightPanelVisible) {
+          console.warn('⚠️ [LAYOUT] Right panel still not visible after timeout, forcing again');
+          ui.setIsRightPanelVisible(true);
+        }
+      }, 50);
+    } else if (pathname.includes('/oasis') && !threadData) {
+      // If we're on Oasis but no thread data, check if right panel should be hidden
+      // (but don't force hide, let UI state manage it)
+      console.log('🔍 [LAYOUT] On Oasis route but no thread data');
     }
-  }, [pathname, threadData, ui.isRightPanelVisible, ui.setIsRightPanelVisible]);
+  }, [pathname, threadData, ui]);
   
   // Keep profile panel open when navigating between RevenueOS, Oasis, Workbench, and other apps
   // Check if we're on a route where profile panel should stay open
