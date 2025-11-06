@@ -3,6 +3,10 @@
     {
       "path": "/api/v1/chronicle/scheduler",
       "schedule": "0 9 * * 5"
+    },
+    {
+      "path": "/api/cron/email-sync",
+      "schedule": "*/5 * * * *"
     }
   ],
   "functions": {
@@ -17,6 +21,9 @@
     },
     "src/app/api/v1/chronicle/scheduler/route.ts": {
       "maxDuration": 60
+    },
+    "src/app/api/cron/email-sync/route.ts": {
+      "maxDuration": 300
     }
   },
   "headers": [
