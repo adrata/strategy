@@ -10,6 +10,7 @@ import {
   Clock,
   Mail,
   Unplug,
+  Loader2,
 } from "lucide-react";
 
 interface Connection {
@@ -34,6 +35,7 @@ const IntegrationsPage = () => {
   const [connections, setConnections] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
   const [pendingDisconnectId, setPendingDisconnectId] = useState<string | null>(null);
 
@@ -72,10 +74,14 @@ const IntegrationsPage = () => {
     if (success === "connected" && provider) {
       setOauthMessage({
         type: "success",
-        message: `Outlook successfully connected!`,
+        message: `Outlook successfully connected! Processing emails...`,
       });
       window.history.replaceState({}, "", window.location.pathname);
       loadConnections();
+      // Trigger email sync automatically
+      setTimeout(() => {
+        triggerEmailSync();
+      }, 1500);
     } else if (error) {
       let errorMessage = "Failed to connect. Please try again.";
       if (error === "connection_not_found") {
@@ -100,6 +106,94 @@ const IntegrationsPage = () => {
       loadConnections();
     }
   }, [user?.activeWorkspaceId, loadConnections]);
+
+  // Auto-trigger email sync when connection is established
+  const triggerEmailSync = useCallback(async () => {
+    if (!user?.activeWorkspaceId || isSyncing) return;
+
+    setIsSyncing(true);
+    try {
+      const response = await fetch('/api/v1/integrations/nango/sync-now', {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Email sync triggered:', data);
+        
+        // Poll for connection status updates
+        let attempts = 0;
+        const maxAttempts = 30; // 30 seconds max
+        
+        const pollStatus = setInterval(async () => {
+          attempts++;
+          
+          // Fetch fresh connections
+          try {
+            const connResponse = await fetch(
+              `/api/v1/integrations/nango/connections?workspaceId=${user.activeWorkspaceId}`,
+              { credentials: "include" }
+            );
+            
+            if (connResponse.ok) {
+              const connData = await connResponse.json();
+              const outlookConnections = (connData.connections || []).filter(
+                (conn: Connection) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
+              );
+              const outlookConn = outlookConnections[0];
+              
+              // Update connections state
+              setConnections(outlookConnections);
+              
+              // If connection is active and has lastSyncAt, sync is complete
+              if (outlookConn?.status === 'active' && outlookConn?.lastSyncAt) {
+                clearInterval(pollStatus);
+                setIsSyncing(false);
+                setOauthMessage({
+                  type: "success",
+                  message: "Emails synced successfully!",
+                });
+                setTimeout(() => setOauthMessage(null), 5000);
+              } else if (attempts >= maxAttempts) {
+                clearInterval(pollStatus);
+                setIsSyncing(false);
+                // Still show success if connection is active
+                if (outlookConn?.status === 'active') {
+                  setOauthMessage({
+                    type: "success",
+                    message: "Connection active. Emails are syncing in the background.",
+                  });
+                }
+              }
+            }
+          } catch (err) {
+            console.error('Error polling connection status:', err);
+          }
+        }, 1000); // Poll every second
+
+        // Cleanup on unmount
+        return () => clearInterval(pollStatus);
+      } else {
+        setIsSyncing(false);
+        console.error('Failed to trigger email sync');
+      }
+    } catch (error) {
+      setIsSyncing(false);
+      console.error('Error triggering email sync:', error);
+    }
+  }, [user?.activeWorkspaceId, isSyncing]);
+
+  // Auto-refresh connections periodically when syncing
+  useEffect(() => {
+    if (!isSyncing) return;
+
+    const interval = setInterval(() => {
+      loadConnections();
+    }, 2000); // Refresh every 2 seconds while syncing
+
+    return () => clearInterval(interval);
+  }, [isSyncing, loadConnections]);
 
   // Handle Nango Outlook connection
   const handleConnect = async () => {
@@ -205,11 +299,13 @@ const IntegrationsPage = () => {
             setIsConnecting(false);
             setOauthMessage({
               type: "success",
-              message: "Outlook successfully connected!",
+              message: "Outlook successfully connected! Processing emails...",
             });
             // Reload connections after successful connection
             setTimeout(() => {
               loadConnections();
+              // Trigger email sync automatically
+              triggerEmailSync();
             }, 1000);
           } else if (event.type === 'error') {
             setIsConnecting(false);
@@ -419,18 +515,25 @@ const IntegrationsPage = () => {
             {outlookConnection ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  {outlookConnection.status === 'active' ? (
+                  {outlookConnection.status === 'active' && !isSyncing ? (
                     <>
                       <CheckCircle className="h-5 w-5 text-green-500" />
                       <span className="text-sm font-medium text-green-600">
-                        Active
+                        Connected
+                      </span>
+                    </>
+                  ) : isSyncing || (outlookConnection.status === 'pending' && isSyncing) ? (
+                    <>
+                      <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+                      <span className="text-sm font-medium text-blue-600">
+                        Processing emails...
                       </span>
                     </>
                   ) : outlookConnection.status === 'pending' ? (
                     <>
                       <Clock className="h-5 w-5 text-yellow-500" />
                       <span className="text-sm text-yellow-600">
-                        Pending
+                        Setting up connection...
                       </span>
                     </>
                   ) : (
