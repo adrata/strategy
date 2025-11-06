@@ -88,12 +88,14 @@ export async function POST(request: NextRequest) {
         'outlook': process.env.NANGO_OUTLOOK_INTEGRATION_ID || 'outlook',
         'gmail': process.env.NANGO_GMAIL_INTEGRATION_ID || 'gmail',
         'google': process.env.NANGO_GOOGLE_INTEGRATION_ID || 'gmail',
+        'google-calendar': process.env.NANGO_GOOGLE_CALENDAR_INTEGRATION_ID || 'google-calendar',
+        'calendar': process.env.NANGO_GOOGLE_CALENDAR_INTEGRATION_ID || 'google-calendar',
       };
 
       const integrationId = mapping[provider.toLowerCase()];
       
       if (!integrationId) {
-        throw new Error(`Unknown provider: ${provider}. Supported providers: outlook, gmail`);
+        throw new Error(`Unknown provider: ${provider}. Supported providers: outlook, gmail, google-calendar`);
       }
 
       return integrationId;
@@ -239,7 +241,7 @@ export async function POST(request: NextRequest) {
           provider: provider, // Keep simple provider name for filtering
           providerConfigKey: nangoIntegrationId, // Use actual Integration ID from Nango
           nangoConnectionId: `session-${Date.now()}`, // Temporary, will be updated by webhook
-          connectionName: `${provider === 'outlook' ? 'Outlook' : provider} Connection`,
+          connectionName: `${provider === 'outlook' ? 'Outlook' : provider === 'gmail' ? 'Gmail' : provider === 'google-calendar' ? 'Google Calendar' : provider} Connection`,
           status: 'pending',
           metadata: {
             sessionToken,
