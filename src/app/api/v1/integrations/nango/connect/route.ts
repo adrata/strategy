@@ -172,9 +172,10 @@ export async function POST(request: NextRequest) {
         allowed_integrations: [nangoIntegrationId],
       });
       
-      // Handle both response formats (token as property or direct value)
-      sessionToken = sessionResponse.token || sessionResponse;
-      console.log(`✅ [NANGO CONNECT] Session token created:`, sessionToken ? `${String(sessionToken).substring(0, 20)}...` : 'undefined');
+      // Extract token from Nango response
+      // Nango returns: { data: { token: "...", connect_link: "...", expires_at: "..." } }
+      sessionToken = sessionResponse.data?.token || sessionResponse.token || sessionResponse;
+      console.log(`✅ [NANGO CONNECT] Session token created:`, sessionToken ? `${String(sessionToken).substring(0, 40)}...` : 'undefined');
       console.log(`📋 [NANGO CONNECT] Full response structure:`, JSON.stringify(sessionResponse, null, 2));
     } catch (nangoError: any) {
       console.error('❌ [NANGO CONNECT] createConnectSession error:', {
