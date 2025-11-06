@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeftIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
-import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
+import { useOasisLayout } from '@/products/oasis/context/OasisLayoutContext';
 import { useUnifiedAuth } from "@/platform/auth";
 import { formatMessageTime } from '@/platform/utils/dateUtils';
 

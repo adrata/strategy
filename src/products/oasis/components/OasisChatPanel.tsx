@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
+import { useOasisLayout } from '@/products/oasis/context/OasisLayoutContext';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useOasisMessages } from '@/products/oasis/hooks/useOasisMessages';

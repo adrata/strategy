@@ -3,7 +3,7 @@
 import React from "react";
 import { OasisChatPanel } from "@/products/oasis/components/OasisChatPanel";
 import { VideoCallPanel } from "@/products/oasis/components/VideoCallPanel";
-import { useOasisLayout } from "@/app/[workspace]/(revenue-os)/layout";
+import { useOasisLayout } from "@/products/oasis/context/OasisLayoutContext";
 
 interface OasisPageContentProps {
   conversationType?: string;

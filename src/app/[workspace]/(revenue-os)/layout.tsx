@@ -30,32 +30,10 @@ import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { FeatureAccessProvider } from "@/platform/ui/context/FeatureAccessProvider";
 import { OasisProvider } from "@/products/oasis/context/OasisProvider";
+import { OasisLayoutContext, useOasisLayout, type OasisLayoutContextType } from "@/products/oasis/context/OasisLayoutContext";
 
-// Oasis Context - Local state for layout-specific needs
-interface OasisLayoutContextType {
-  activeSection: 'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings';
-  setActiveSection: (section: 'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings') => void;
-  selectedChannel: any | null;
-  setSelectedChannel: (channel: any | null) => void;
-  isVideoCallActive: boolean;
-  setIsVideoCallActive: (active: boolean) => void;
-  videoCallRoom: { id: string; name: string } | null;
-  setVideoCallRoom: (room: { id: string; name: string } | null) => void;
-  threadData: { messageId: string; threadMessages: any[]; parentMessageId: string | null; channelId: string | null; dmId: string | null } | null;
-  setThreadData: (data: { messageId: string; threadMessages: any[]; parentMessageId: string | null; channelId: string | null; dmId: string | null } | null) => void;
-  threadNavigationStack: Array<{ messageId: string; parentMessageId: string | null; level: number }>;
-  setThreadNavigationStack: (stack: Array<{ messageId: string; parentMessageId: string | null; level: number }>) => void;
-}
-
-const OasisLayoutContext = createContext<OasisLayoutContextType | undefined>(undefined);
-
-export const useOasisLayout = () => {
-  const context = useContext(OasisLayoutContext);
-  if (!context) {
-    throw new Error('useOasisLayout must be used within OasisLayoutProvider');
-  }
-  return context;
-};
+// Re-export useOasisLayout for backward compatibility
+export { useOasisLayout };
 
 // Wrapper component for sprint left panel that uses SprintContext
 function SprintLeftPanelWrapper() {
