@@ -11,7 +11,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
-import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
+import { useOasisLayout } from '@/products/oasis/context/OasisLayoutContext';
 import { useOasis } from '@/products/oasis/context/OasisProvider';
 import { useOasisChannels } from '@/products/oasis/hooks/useOasisChannels';
 import { useOasisDMs } from '@/products/oasis/hooks/useOasisDMs';
