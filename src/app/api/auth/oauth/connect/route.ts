@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OAuthService } from '@/platform/services/oauth-service';
-import { getUnifiedAuthUser } from '@/platform/auth/unified-auth-utils';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
