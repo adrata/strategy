@@ -241,8 +241,58 @@ export async function POST(request: NextRequest) {
 
     // Store pending session in database (connectionId will come from webhook)
     // Use the actual Nango Integration ID for providerConfigKey
+    // IMPORTANT: Ensure Gmail and Calendar are completely separate
     try {
-      console.log(`💾 [NANGO CONNECT] Saving connection to database...`);
+      console.log(`💾 [NANGO CONNECT] Saving connection to database...`, {
+        provider,
+        nangoIntegrationId,
+        workspaceId,
+        userId: user.id
+      });
+
+      // Validation: Ensure provider and providerConfigKey are consistent
+      // Gmail should never use google-calendar as providerConfigKey and vice versa
+      if (provider === 'gmail' && nangoIntegrationId === 'google-calendar') {
+        throw new Error('Invalid configuration: Gmail provider cannot use google-calendar integration ID');
+      }
+      if (provider === 'google-calendar' && (nangoIntegrationId === 'gmail' || nangoIntegrationId === 'google-mail')) {
+        throw new Error('Invalid configuration: Google Calendar provider cannot use Gmail integration ID');
+      }
+
+      // Check if there's already an active connection for the opposite provider
+      // This prevents Gmail and Calendar from being linked
+      if (provider === 'gmail') {
+        const existingCalendar = await prisma.grand_central_connections.findFirst({
+          where: {
+            workspaceId,
+            userId: user.id,
+            provider: 'google-calendar',
+            status: { in: ['active', 'pending'] }
+          }
+        });
+        if (existingCalendar) {
+          console.warn(`⚠️ [NANGO CONNECT] Gmail connection being created, but Calendar connection already exists:`, {
+            calendarConnectionId: existingCalendar.id,
+            calendarProviderConfigKey: existingCalendar.providerConfigKey
+          });
+        }
+      } else if (provider === 'google-calendar') {
+        const existingGmail = await prisma.grand_central_connections.findFirst({
+          where: {
+            workspaceId,
+            userId: user.id,
+            provider: 'gmail',
+            status: { in: ['active', 'pending'] }
+          }
+        });
+        if (existingGmail) {
+          console.warn(`⚠️ [NANGO CONNECT] Calendar connection being created, but Gmail connection already exists:`, {
+            gmailConnectionId: existingGmail.id,
+            gmailProviderConfigKey: existingGmail.providerConfigKey
+          });
+        }
+      }
+
       await prisma.grand_central_connections.create({
         data: {
           workspaceId,
