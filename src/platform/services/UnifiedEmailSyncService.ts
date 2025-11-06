@@ -234,13 +234,18 @@ export class UnifiedEmailSyncService {
             method: 'GET'
           });
           
-          console.log(`📧 [EMAIL SYNC] Nango response received, data keys:`, Object.keys(response.data || {}));
-          console.log(`📧 [EMAIL SYNC] Response has 'value' key:`, 'value' in (response.data || {}));
-          console.log(`📧 [EMAIL SYNC] Response has 'messages' key:`, 'messages' in (response.data || {}));
+          const responseData = response.data || response;
+          console.log(`📧 [EMAIL SYNC] Nango response received, data keys:`, Object.keys(responseData));
+          console.log(`📧 [EMAIL SYNC] Response has 'value' key:`, 'value' in responseData);
+          console.log(`📧 [EMAIL SYNC] Response has 'messages' key:`, 'messages' in responseData);
+          
+          // Log email count for debugging
+          const emailArray = responseData.value || responseData.messages || [];
+          console.log(`📧 [EMAIL SYNC] Found ${Array.isArray(emailArray) ? emailArray.length : 0} emails in response`);
           
           return {
             success: true,
-            data: response.data
+            data: responseData
           };
         } catch (nangoError) {
           console.error(`❌ [EMAIL SYNC] Nango proxy error:`, {
