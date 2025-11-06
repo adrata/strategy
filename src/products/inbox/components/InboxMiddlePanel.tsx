@@ -7,9 +7,10 @@
  * Modeled after Speedrun Sprint view for consistency.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import { useInbox } from '../context/InboxProvider';
-import { formatEmailTimestamp, parseEmailAddress, extractPlainText } from '../utils/emailFormatting';
+import { formatEmailTimestamp, parseEmailAddress } from '../utils/emailFormatting';
 import { 
   ArrowUturnLeftIcon,
   ArrowUturnRightIcon,
@@ -29,10 +30,28 @@ export function InboxMiddlePanel() {
   if (selectedEmail) {
     const fromParsed = parseEmailAddress(selectedEmail.from);
     const timestamp = formatEmailTimestamp(selectedEmail.receivedAt);
-    const bodyContent = selectedEmail.bodyHtml 
-      ? extractPlainText(selectedEmail.bodyHtml) 
-      : selectedEmail.body;
     const attachments = selectedEmail.attachments as any[] | null;
+
+    // Sanitize HTML email content to prevent XSS attacks
+    const sanitizedHtml = useMemo(() => {
+      if (selectedEmail.bodyHtml) {
+        return DOMPurify.sanitize(selectedEmail.bodyHtml, {
+          ALLOWED_TAGS: [
+            'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'pre', 'code', 'div', 'span',
+            'table', 'thead', 'tbody', 'tr', 'td', 'th', 'hr'
+          ],
+          ALLOWED_ATTR: [
+            'href', 'src', 'alt', 'title', 'class', 'style', 'width', 'height',
+            'align', 'valign', 'colspan', 'rowspan', 'border', 'cellpadding', 'cellspacing'
+          ],
+          ALLOW_DATA_ATTR: false,
+          // Allow safe email styling
+          ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+        });
+      }
+      return null;
+    }, [selectedEmail.bodyHtml]);
 
     // Navigation helpers
     const currentIndex = emails.findIndex(e => e.id === selectedEmail.id);
@@ -237,14 +256,14 @@ export function InboxMiddlePanel() {
             </div>
           )}
 
-          {selectedEmail.bodyHtml ? (
+          {sanitizedHtml ? (
             <div 
-              className="prose prose-sm max-w-none text-foreground"
-              dangerouslySetInnerHTML={{ __html: selectedEmail.bodyHtml }}
+              className="prose prose-sm max-w-none text-foreground email-body"
+              dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
             />
           ) : (
             <div className="whitespace-pre-wrap text-foreground">
-              {bodyContent || 'No content'}
+              {selectedEmail.body || 'No content'}
             </div>
           )}
 
