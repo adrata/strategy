@@ -337,7 +337,7 @@ export function useOasisMessages(
       const data = await response.json();
       
       // Add message to list (optimistic update)
-      setMessages(prev => [data.message, ...prev]);
+      setMessages(prev => [...prev, data.message]);
       
       // Trigger AI response only when Adrata is directly engaged
       if (workspaceId) {
@@ -363,7 +363,7 @@ export function useOasisMessages(
             if (aiResponse.ok) {
               const aiMessage = await aiResponse.json();
               // Add AI response to messages
-              setMessages(prev => [aiMessage, ...prev]);
+              setMessages(prev => [...prev, aiMessage]);
             }
           }
         } catch (aiError) {
@@ -589,8 +589,8 @@ export function useOasisMessages(
         (dmId && event.dmId === dmId)
       ) {
         if (event.type === 'oasis_message_sent') {
-          // Add new message
-          setMessages(prev => [event, ...prev]);
+          // Add new message to the end (newest at bottom)
+          setMessages(prev => [...prev, event]);
         } else if (event.type === 'oasis_message_edited') {
           // Update existing message
           setMessages(prev => 
