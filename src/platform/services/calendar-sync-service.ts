@@ -56,7 +56,19 @@ export class CalendarSyncService {
     platform: 'microsoft' | 'google' = 'microsoft'
   ): Promise<CalendarSyncResult> {
     console.log(`📅 [CALENDAR SYNC] Starting sync for user ${userId} on platform ${platform}`);
-    
+
+    // TEMPORARILY DISABLED: Outlook calendar sync to focus on email sync
+    if (platform === 'microsoft') {
+      console.log(`⏭️ [CALENDAR SYNC] Outlook calendar sync temporarily disabled to focus on email sync`);
+      return {
+        success: true,
+        eventsCreated: 0,
+        eventsUpdated: 0,
+        eventsDeleted: 0,
+        errors: []
+      };
+    }
+
     const result: CalendarSyncResult = {
       success: true,
       eventsProcessed: 0,
