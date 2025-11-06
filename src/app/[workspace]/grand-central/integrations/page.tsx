@@ -152,18 +152,21 @@ const IntegrationsPage = () => {
                 (conn: Connection) => 
                   conn.provider === 'outlook' || 
                   conn.provider === 'gmail' ||
+                  conn.provider === 'google-calendar' ||
                   conn.providerConfigKey === 'outlook' ||
                   conn.providerConfigKey === 'google-mail' ||
-                  conn.providerConfigKey === 'gmail'
+                  conn.providerConfigKey === 'gmail' ||
+                  conn.providerConfigKey === 'google-calendar'
               );
               const outlookConn = emailConnections.find(c => c.provider === 'outlook' || c.providerConfigKey === 'outlook');
               const gmailConn = emailConnections.find(c => c.provider === 'gmail' || c.providerConfigKey === 'google-mail' || c.providerConfigKey === 'gmail');
+              const calendarConn = emailConnections.find(c => c.provider === 'google-calendar' || c.providerConfigKey === 'google-calendar');
               
               // Update connections state
               setConnections(emailConnections);
               
               // If connection is active and has lastSyncAt, sync is complete
-              const activeConn = outlookConn || gmailConn;
+              const activeConn = outlookConn || gmailConn || calendarConn;
               if (activeConn?.status === 'active' && activeConn?.lastSyncAt) {
                 clearInterval(pollStatus);
                 setIsSyncing(false);
@@ -715,6 +718,115 @@ const IntegrationsPage = () => {
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   {isConnecting ? "Connecting..." : "Connect Gmail"}
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Google Calendar Integration Card */}
+          <div
+            className={`p-6 border rounded-lg ${
+              googleCalendarConnection?.status === 'active'
+                ? 'border-green-200 bg-green-50/50'
+                : 'border-border bg-background'
+            }`}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className={`p-3 rounded-lg ${
+                    googleCalendarConnection?.status === 'active'
+                      ? 'bg-green-100'
+                      : 'bg-hover'
+                  }`}
+                >
+                  <Calendar
+                    className={`h-6 w-6 ${
+                      googleCalendarConnection?.status === 'active'
+                        ? 'text-green-600'
+                        : 'text-foreground'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      Google Calendar
+                    </h3>
+                    {googleCalendarConnection?.status === 'active' && (
+                      <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                        Connected
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted">
+                    Calendar access via Nango
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Connection Status */}
+            {googleCalendarConnection ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  {googleCalendarConnection.status === 'active' && !isSyncing ? (
+                    <>
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <span className="text-sm font-medium text-green-600">
+                        Connected
+                      </span>
+                    </>
+                  ) : isSyncing || (googleCalendarConnection.status === 'pending' && isSyncing) ? (
+                    <>
+                      <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+                      <span className="text-sm font-medium text-blue-600">
+                        Syncing calendar...
+                      </span>
+                    </>
+                  ) : googleCalendarConnection.status === 'pending' ? (
+                    <>
+                      <Clock className="h-5 w-5 text-yellow-500" />
+                      <span className="text-sm text-yellow-600">
+                        Setting up connection...
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="h-5 w-5 text-red-500" />
+                      <span className="text-sm text-red-600">
+                        Error
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                {googleCalendarConnection.lastSyncAt && (
+                  <p className="text-xs text-muted">
+                    Last synced: {new Date(googleCalendarConnection.lastSyncAt).toLocaleString()}
+                  </p>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDisconnect(googleCalendarConnection.id)}
+                    className="text-white"
+                  >
+                    <Unplug className="h-4 w-4 mr-1" />
+                    Disconnect
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="pt-4">
+                <Button
+                  onClick={() => handleConnect('google-calendar')}
+                  disabled={isConnecting}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  {isConnecting ? "Connecting..." : "Connect Google Calendar"}
                 </Button>
               </div>
             )}
