@@ -11,6 +11,7 @@ import {
   Mail,
   Unplug,
   Loader2,
+  Calendar,
 } from "lucide-react";
 
 interface Connection {
@@ -53,11 +54,18 @@ const IntegrationsPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Filter to only show Outlook connections
-        const outlookConnections = (data.connections || []).filter(
-          (conn: Connection) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
+        // Filter to show Outlook, Gmail, and Google Calendar connections
+        const emailConnections = (data.connections || []).filter(
+          (conn: Connection) => 
+            conn.provider === 'outlook' || 
+            conn.provider === 'gmail' ||
+            conn.provider === 'google-calendar' ||
+            conn.providerConfigKey === 'outlook' ||
+            conn.providerConfigKey === 'google-mail' ||
+            conn.providerConfigKey === 'gmail' ||
+            conn.providerConfigKey === 'google-calendar'
         );
-        setConnections(outlookConnections);
+        setConnections(emailConnections);
       }
     } catch (error) {
       console.error("Failed to load connections:", error);
@@ -72,9 +80,11 @@ const IntegrationsPage = () => {
     const provider = urlParams.get("provider");
 
     if (success === "connected" && provider) {
+      const providerName = provider === 'gmail' ? 'Gmail' : provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
+      const actionText = provider === 'google-calendar' ? 'Syncing calendar...' : 'Processing emails...';
       setOauthMessage({
         type: "success",
-        message: `Outlook successfully connected! Processing emails...`,
+        message: `${providerName} successfully connected! ${actionText}`,
       });
       window.history.replaceState({}, "", window.location.pathname);
       loadConnections();
@@ -138,16 +148,23 @@ const IntegrationsPage = () => {
             
             if (connResponse.ok) {
               const connData = await connResponse.json();
-              const outlookConnections = (connData.connections || []).filter(
-                (conn: Connection) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
+              const emailConnections = (connData.connections || []).filter(
+                (conn: Connection) => 
+                  conn.provider === 'outlook' || 
+                  conn.provider === 'gmail' ||
+                  conn.providerConfigKey === 'outlook' ||
+                  conn.providerConfigKey === 'google-mail' ||
+                  conn.providerConfigKey === 'gmail'
               );
-              const outlookConn = outlookConnections[0];
+              const outlookConn = emailConnections.find(c => c.provider === 'outlook' || c.providerConfigKey === 'outlook');
+              const gmailConn = emailConnections.find(c => c.provider === 'gmail' || c.providerConfigKey === 'google-mail' || c.providerConfigKey === 'gmail');
               
               // Update connections state
-              setConnections(outlookConnections);
+              setConnections(emailConnections);
               
               // If connection is active and has lastSyncAt, sync is complete
-              if (outlookConn?.status === 'active' && outlookConn?.lastSyncAt) {
+              const activeConn = outlookConn || gmailConn;
+              if (activeConn?.status === 'active' && activeConn?.lastSyncAt) {
                 clearInterval(pollStatus);
                 setIsSyncing(false);
                 setOauthMessage({
@@ -159,7 +176,7 @@ const IntegrationsPage = () => {
                 clearInterval(pollStatus);
                 setIsSyncing(false);
                 // Still show success if connection is active
-                if (outlookConn?.status === 'active') {
+                if (activeConn?.status === 'active') {
                   setOauthMessage({
                     type: "success",
                     message: "Connection active. Emails are syncing in the background.",
@@ -195,8 +212,8 @@ const IntegrationsPage = () => {
     return () => clearInterval(interval);
   }, [isSyncing, loadConnections]);
 
-  // Handle Nango Outlook connection
-  const handleConnect = async () => {
+  // Handle Nango connection (Outlook, Gmail, or Google Calendar)
+  const handleConnect = async (provider: 'outlook' | 'gmail' | 'google-calendar' = 'outlook') => {
     if (!user?.activeWorkspaceId) {
       setOauthMessage({
         type: "error",
@@ -217,7 +234,7 @@ const IntegrationsPage = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          provider: "outlook",
+          provider,
           workspaceId: user.activeWorkspaceId,
           redirectUrl: `${window.location.origin}/${user.activeWorkspaceId}/grand-central/integrations`,
         }),
@@ -297,9 +314,11 @@ const IntegrationsPage = () => {
             // User closed the modal
           } else if (event.type === 'connect') {
             setIsConnecting(false);
+            const providerName = data.provider === 'gmail' ? 'Gmail' : data.provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
+            const actionText = data.provider === 'google-calendar' ? 'Syncing calendar...' : 'Processing emails...';
             setOauthMessage({
               type: "success",
-              message: "Outlook successfully connected! Processing emails...",
+              message: `${providerName} successfully connected! ${actionText}`,
             });
             // Reload connections after successful connection
             setTimeout(() => {
@@ -338,7 +357,7 @@ const IntegrationsPage = () => {
         if (error.message.includes("Nango is not configured")) {
           errorMessage = "Nango is not configured. Please contact your administrator to set up the Nango integration.";
         } else if (error.message.includes("not configured in Nango") || error.message.includes("Integration does not exist")) {
-          errorMessage = "Outlook integration is not configured in Nango. Please check:";
+          errorMessage = "Email integration is not configured in Nango. Please check:";
           errorDetails = error.message.includes("details:") 
             ? error.message.split("details:")[1]?.trim() 
             : "1. Verify NANGO_SECRET_KEY in Vercel matches the 'prod' environment secret key\n2. Ensure the integration is saved in Nango dashboard\n3. Check that Client ID and Secret are correctly entered";
@@ -402,9 +421,11 @@ const IntegrationsPage = () => {
       });
 
       if (response.ok) {
+        const connection = connections.find(c => c.id === connectionId);
+        const providerName = connection?.provider === 'gmail' ? 'Gmail' : connection?.provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
         setOauthMessage({
           type: "success",
-          message: "Outlook disconnected successfully.",
+          message: `${providerName} disconnected successfully.`,
         });
         loadConnections();
       } else {
@@ -422,6 +443,19 @@ const IntegrationsPage = () => {
   const outlookConnection = connections.find(
     (conn) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
   );
+  
+  const gmailConnection = connections.find(
+    (conn) => 
+      conn.provider === 'gmail' || 
+      conn.providerConfigKey === 'google-mail' ||
+      conn.providerConfigKey === 'gmail'
+  );
+  
+  const googleCalendarConnection = connections.find(
+    (conn) => 
+      conn.provider === 'google-calendar' || 
+      conn.providerConfigKey === 'google-calendar'
+  );
 
   return (
     <div className="h-full flex flex-col bg-background">
@@ -431,7 +465,7 @@ const IntegrationsPage = () => {
           Integrations
         </h1>
         <p className="text-muted">
-          Connect your Outlook account to sync emails
+          Connect your email accounts to sync emails
         </p>
       </div>
 
@@ -467,7 +501,7 @@ const IntegrationsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl space-y-4">
           {/* Outlook Integration Card */}
           <div
             className={`p-6 border rounded-lg ${
@@ -567,11 +601,120 @@ const IntegrationsPage = () => {
             ) : (
               <div className="pt-4">
                 <Button
-                  onClick={handleConnect}
+                  onClick={() => handleConnect('outlook')}
                   disabled={isConnecting}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   {isConnecting ? "Connecting..." : "Connect Outlook"}
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Gmail Integration Card */}
+          <div
+            className={`p-6 border rounded-lg ${
+              gmailConnection?.status === 'active'
+                ? 'border-green-200 bg-green-50/50'
+                : 'border-border bg-background'
+            }`}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className={`p-3 rounded-lg ${
+                    gmailConnection?.status === 'active'
+                      ? 'bg-green-100'
+                      : 'bg-hover'
+                  }`}
+                >
+                  <Mail
+                    className={`h-6 w-6 ${
+                      gmailConnection?.status === 'active'
+                        ? 'text-green-600'
+                        : 'text-foreground'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      Gmail
+                    </h3>
+                    {gmailConnection?.status === 'active' && (
+                      <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                        Connected
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted">
+                    Email access via Nango
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Connection Status */}
+            {gmailConnection ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  {gmailConnection.status === 'active' && !isSyncing ? (
+                    <>
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <span className="text-sm font-medium text-green-600">
+                        Connected
+                      </span>
+                    </>
+                  ) : isSyncing || (gmailConnection.status === 'pending' && isSyncing) ? (
+                    <>
+                      <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+                      <span className="text-sm font-medium text-blue-600">
+                        Processing emails...
+                      </span>
+                    </>
+                  ) : gmailConnection.status === 'pending' ? (
+                    <>
+                      <Clock className="h-5 w-5 text-yellow-500" />
+                      <span className="text-sm text-yellow-600">
+                        Setting up connection...
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="h-5 w-5 text-red-500" />
+                      <span className="text-sm text-red-600">
+                        Error
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                {gmailConnection.lastSyncAt && (
+                  <p className="text-xs text-muted">
+                    Last synced: {new Date(gmailConnection.lastSyncAt).toLocaleString()}
+                  </p>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDisconnect(gmailConnection.id)}
+                    className="text-white"
+                  >
+                    <Unplug className="h-4 w-4 mr-1" />
+                    Disconnect
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="pt-4">
+                <Button
+                  onClick={() => handleConnect('gmail')}
+                  disabled={isConnecting}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  {isConnecting ? "Connecting..." : "Connect Gmail"}
                 </Button>
               </div>
             )}
@@ -589,9 +732,9 @@ const IntegrationsPage = () => {
             className="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4" 
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Disconnect Outlook</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Disconnect Email Account</h3>
             <p className="text-sm text-gray-600 mb-6">
-              Are you sure you want to disconnect Outlook? You'll need to reconnect to sync emails and calendar events.
+              Are you sure you want to disconnect this email account? You'll need to reconnect to sync emails.
             </p>
             <div className="flex gap-3 justify-end">
               <button

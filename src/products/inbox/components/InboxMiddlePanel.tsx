@@ -8,13 +8,8 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import { useInbox } from '../context/InboxProvider';
-
-// Dynamically import DOMPurify to ensure it's only loaded in the browser
-let DOMPurify: typeof import('dompurify') | null = null;
-if (typeof window !== 'undefined') {
-  DOMPurify = require('dompurify');
-}
 import { formatEmailTimestamp, parseEmailAddress } from '../utils/emailFormatting';
 import { 
   ArrowUturnLeftIcon,
@@ -39,7 +34,7 @@ export function InboxMiddlePanel() {
 
     // Sanitize HTML email content to prevent XSS attacks
     const sanitizedHtml = useMemo(() => {
-      if (selectedEmail.bodyHtml && DOMPurify) {
+      if (selectedEmail.bodyHtml) {
         return DOMPurify.sanitize(selectedEmail.bodyHtml, {
           ALLOWED_TAGS: [
             'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -55,7 +50,7 @@ export function InboxMiddlePanel() {
           ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
         });
       }
-      return selectedEmail.bodyHtml || null;
+      return null;
     }, [selectedEmail.bodyHtml]);
 
     // Navigation helpers
