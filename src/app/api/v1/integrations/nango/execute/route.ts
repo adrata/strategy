@@ -4,12 +4,26 @@ import { prisma } from '@/platform/database/prisma-client';
 import { Nango } from '@nangohq/node';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
+export const dynamic = 'force-dynamic';
 
-const nango = new Nango({
-  secretKey: process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY!,
-  host: process.env.NANGO_HOST || 'https://api.nango.dev'
-});
+/**
+ * Initialize Nango client with error handling
+ * Priority: Use NANGO_SECRET_KEY for production, NANGO_SECRET_KEY_DEV for development
+ */
+function getNangoClient(): Nango {
+  const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
+  
+  if (!secretKey) {
+    throw new Error('NANGO_SECRET_KEY or NANGO_SECRET_KEY_DEV environment variable is not set');
+  }
+
+  const host = process.env.NANGO_HOST || 'https://api.nango.dev';
+  
+  return new Nango({
+    secretKey,
+    host
+  });
+}
 
 /**
  * POST /api/grand-central/nango/execute
@@ -66,6 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Execute API call via Nango proxy
+    const nango = getNangoClient();
     const response = await nango.proxy({
       providerConfigKey: connection.providerConfigKey,
       connectionId: connection.nangoConnectionId,

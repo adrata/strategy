@@ -17,7 +17,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Check environment variables
-    const secretKey = process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY;
+    // Priority: Use NANGO_SECRET_KEY for production, NANGO_SECRET_KEY_DEV for development
+    const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
     const publicKey = process.env.NANGO_PUBLIC_KEY;
     const host = process.env.NANGO_HOST || 'https://api.nango.dev';
 

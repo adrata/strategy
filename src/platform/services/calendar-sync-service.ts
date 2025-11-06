@@ -185,7 +185,8 @@ export class CalendarSyncService {
       const { Nango } = await import('@nangohq/node');
       
       // Initialize Nango client
-      const secretKey = process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY;
+      // Priority: Use NANGO_SECRET_KEY for production, NANGO_SECRET_KEY_DEV for development
+      const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
       if (!secretKey) {
         console.warn(`⚠️ [CALENDAR SYNC] NANGO_SECRET_KEY not configured`);
         return [];
