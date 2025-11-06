@@ -52,7 +52,15 @@ export class UnifiedEmailSyncService {
    * Sync emails from all connected providers for a workspace
    */
   static async syncWorkspaceEmails(workspaceId: string, userId: string) {
+    console.log(`📧 [EMAIL SYNC] ========================================`);
     console.log(`📧 [EMAIL SYNC] Starting email sync for workspace: ${workspaceId}, user: ${userId}`);
+    console.log(`📧 [EMAIL SYNC] ========================================`);
+    
+    // Verify workspace exists and log current email count
+    const currentEmailCount = await prisma.email_messages.count({
+      where: { workspaceId }
+    });
+    console.log(`📧 [EMAIL SYNC] Current email count in database for workspace ${workspaceId}: ${currentEmailCount}`);
     
     const connections = await prisma.grand_central_connections.findMany({
       where: {
@@ -687,14 +695,20 @@ export class UnifiedEmailSyncService {
     const newEmailsAdded = currentEmailCount - previousEmailCount;
     
     // Comprehensive sync summary
+    console.log(`📊 [EMAIL SYNC] ========================================`);
     console.log(`📊 [EMAIL SYNC] Sync Verification Summary:`);
+    console.log(`📊 [EMAIL SYNC] ========================================`);
+    console.log(`   - Workspace ID: ${workspaceId}`);
     console.log(`   - Provider: ${provider}`);
+    console.log(`   - Connection ID: ${nangoConnectionId}`);
     console.log(`   - Total emails fetched from API: ${allEmails.length}`);
     console.log(`   - Emails stored successfully: ${count}`);
     console.log(`   - Emails failed to store: ${errorCount}`);
     console.log(`   - Previous total emails in database: ${previousEmailCount}`);
+    console.log(`   - Current total emails in database: ${currentEmailCount}`);
     console.log(`   - New emails added this sync: ${newEmailsAdded}`);
     console.log(`   - Success rate: ${allEmails.length > 0 ? Math.round((count / allEmails.length) * 100) : 0}%`);
+    console.log(`📊 [EMAIL SYNC] ========================================`);
     
     if (errorCount > 0) {
       console.warn(`⚠️ [EMAIL SYNC] ${errorCount} emails failed to store out of ${allEmails.length} total`);
