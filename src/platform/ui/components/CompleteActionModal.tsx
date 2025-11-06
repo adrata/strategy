@@ -45,13 +45,6 @@ export function CompleteActionModal({
 }: CompleteActionModalProps) {
   const { users, currentUser } = useWorkspaceUsers();
   
-  // Debug logging
-  console.log('🔍 [CompleteActionModal] Props:', {
-    personName,
-    companyName,
-    section,
-    isOpen
-  });
   const notesRef = useRef<HTMLTextAreaElement>(null);
   const firstNameInputRef = useRef<HTMLInputElement>(null);
   const personSearchRef = useRef<HTMLInputElement>(null);
@@ -91,14 +84,6 @@ export function CompleteActionModal({
       action: '',
       actionPerformedBy: currentUser?.id || ''
     };
-    
-    console.log('🔍 [CompleteActionModal] Initial formData:', {
-      personName,
-      companyName,
-      personId,
-      companyId,
-      initialFormData
-    });
     
     return initialFormData;
   });
