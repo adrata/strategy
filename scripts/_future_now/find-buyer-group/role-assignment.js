@@ -536,17 +536,14 @@ class RoleAssignment {
   selectOptimalBuyerGroup(employees, buyerGroupSize) {
     const { min, max, ideal } = buyerGroupSize;
     
-    // Handle case where only 1 person is acceptable and available
-    if (min === 1 && employees.length === 1) {
+    // CRITICAL: If we have only 1 person, they MUST be a decision maker
+    if (employees.length === 1) {
       const best = employees[0];
-      // Ensure they have a role (prefer decision maker if qualified)
-      if (!best.buyerGroupRole) {
-        if (this.isDecisionMaker(best.title, this.dealSize, best)) {
-          best.buyerGroupRole = 'decision';
-        } else {
-          best.buyerGroupRole = 'champion'; // Fallback to champion
-        }
-      }
+      // Always make single person a decision maker - they're the only contact
+      best.buyerGroupRole = 'decision';
+      best.roleConfidence = Math.max(70, best.roleConfidence || 70);
+      best.roleReasoning = 'Single person buyer group - automatically assigned as decision maker';
+      console.log(`✅ Single person buyer group: ${best.name} assigned as decision maker`);
       return [best];
     }
     
@@ -639,6 +636,14 @@ class RoleAssignment {
         .sort((a, b) => (b.scores?.overallScore || 0) - (a.scores?.overallScore || 0))
         .slice(0, min - selected.length);
       selected.push(...additional);
+    }
+
+    // CRITICAL: If we end up with only 1 person, ensure they're a decision maker
+    if (selected.length === 1) {
+      selected[0].buyerGroupRole = 'decision';
+      selected[0].roleConfidence = Math.max(70, selected[0].roleConfidence || 70);
+      selected[0].roleReasoning = 'Single person buyer group - automatically assigned as decision maker';
+      console.log(`✅ Final buyer group has 1 person: ${selected[0].name} assigned as decision maker`);
     }
 
     // Limit to maximum size
