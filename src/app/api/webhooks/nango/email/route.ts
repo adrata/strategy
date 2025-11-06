@@ -13,12 +13,17 @@ const RATE_LIMIT_MAX_ATTEMPTS = 10; // Max 10 webhooks per minute per IP
 
 /**
  * Verify Nango webhook signature
+ * 
+ * Nango uses: SHA256(secretKey + payload)
+ * NOT HMAC - just concatenation then hash
  */
-function verifyNangoSignature(payload: string, signature: string, secret: string): boolean {
+function verifyNangoSignature(payload: string, signature: string, secretKey: string): boolean {
   try {
+    // Nango's signature: SHA256(secretKey + payload)
+    const combined = secretKey + payload;
     const expectedSignature = crypto
-      .createHmac('sha256', secret)
-      .update(payload)
+      .createHash('sha256')
+      .update(combined)
       .digest('hex');
     
     return crypto.timingSafeEqual(
@@ -67,29 +72,32 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    // Get webhook secret from environment
-    const webhookSecret = process.env.NANGO_WEBHOOK_SECRET;
+    // Get secret key for webhook verification (uses same key as API)
+    const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
     
     // Get payload first (needed for both signature verification and processing)
     const payload = await request.text();
     const payloadObj = JSON.parse(payload);
     
-    // Verify webhook signature (if secret is configured)
-    if (webhookSecret) {
+    // Verify webhook signature (if secret key is configured)
+    if (secretKey) {
       const signature = request.headers.get('x-nango-signature');
       if (!signature) {
-        console.error('❌ Missing webhook signature (but NANGO_WEBHOOK_SECRET is set)');
+        console.error('❌ Missing webhook signature in x-nango-signature header');
         return Response.json({ error: 'Missing signature' }, { status: 401 });
       }
       
-      if (!verifyNangoSignature(payload, signature, webhookSecret)) {
-        console.error('❌ Invalid webhook signature');
+      if (!verifyNangoSignature(payload, signature, secretKey)) {
+        console.error('❌ Invalid webhook signature - signature verification failed');
+        console.error('   Received signature:', signature);
+        console.error('   Using secret key prefix:', secretKey.substring(0, 12));
         return Response.json({ error: 'Invalid signature' }, { status: 401 });
       }
+      console.log('✅ Webhook signature verified successfully');
       console.log('📧 Received verified Nango webhook:', JSON.stringify(payloadObj, null, 2));
     } else {
       // TEMPORARY: Allow webhooks without signature verification if secret not configured
-      console.warn('⚠️ NANGO_WEBHOOK_SECRET not configured - accepting webhook WITHOUT signature verification (NOT recommended for production)');
+      console.warn('⚠️ NANGO_SECRET_KEY not configured - accepting webhook WITHOUT signature verification (NOT recommended for production)');
       console.log('📧 Received Nango webhook (unverified):', JSON.stringify(payloadObj, null, 2));
     }
     
