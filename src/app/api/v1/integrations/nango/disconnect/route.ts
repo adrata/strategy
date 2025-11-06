@@ -67,8 +67,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Delete connection from Nango (if it exists)
-    if (connection.nangoConnectionId && connection.providerConfigKey) {
+    // Delete connection from Nango (if it exists and is a real connection ID)
+    // Skip if it's a temporary session ID (starts with "session-")
+    const isTemporarySessionId = connection.nangoConnectionId?.startsWith('session-');
+    
+    if (connection.nangoConnectionId && connection.providerConfigKey && !isTemporarySessionId) {
       try {
         const nango = getNangoClient();
         console.log(`🗑️ [NANGO DISCONNECT] Attempting to delete connection:`, {
@@ -86,24 +89,31 @@ export async function POST(request: NextRequest) {
         // Log detailed error information
         const errorMessage = error?.response?.data?.error || error?.message || 'Unknown error';
         const errorStatus = error?.response?.status || error?.status || 'Unknown';
+        const errorCode = error?.response?.data?.error?.code || error?.code;
         
         console.error('❌ [NANGO DISCONNECT] Error deleting from Nango:', {
           message: errorMessage,
+          code: errorCode,
           status: errorStatus,
           providerConfigKey: connection.providerConfigKey,
           nangoConnectionId: connection.nangoConnectionId,
           fullError: error?.response?.data || error
         });
         
-        // If connection doesn't exist in Nango (404), that's okay - continue with DB deletion
-        // If it's a 400, log it but still continue (connection might be in invalid state)
-        if (errorStatus === 404) {
-          console.log(`ℹ️ [NANGO DISCONNECT] Connection not found in Nango (may have been deleted already), continuing with DB cleanup`);
+        // If connection doesn't exist in Nango (404 or unknown_connection), that's okay - continue with DB deletion
+        // This can happen if:
+        // 1. Connection was already deleted in Nango
+        // 2. Connection never existed (webhook didn't fire)
+        // 3. Connection ID is invalid
+        if (errorStatus === 404 || errorCode === 'unknown_connection') {
+          console.log(`ℹ️ [NANGO DISCONNECT] Connection not found in Nango (${errorCode || '404'}), continuing with DB cleanup`);
         } else {
-          console.warn(`⚠️ [NANGO DISCONNECT] Nango deletion failed but continuing with database cleanup`);
+          console.warn(`⚠️ [NANGO DISCONNECT] Nango deletion failed (${errorStatus}) but continuing with database cleanup`);
         }
         // Continue with database deletion even if Nango deletion fails
       }
+    } else if (isTemporarySessionId) {
+      console.log(`ℹ️ [NANGO DISCONNECT] Skipping Nango deletion - connection has temporary session ID (webhook may not have fired yet)`);
     } else {
       console.log(`ℹ️ [NANGO DISCONNECT] Skipping Nango deletion - missing nangoConnectionId or providerConfigKey`, {
         hasNangoConnectionId: !!connection.nangoConnectionId,
