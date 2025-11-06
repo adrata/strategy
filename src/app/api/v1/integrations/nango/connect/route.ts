@@ -96,15 +96,30 @@ export async function POST(request: NextRequest) {
 
     // Verify integration exists before creating session
     let integrationExists = false;
+    let availableIntegrations: string[] = [];
     try {
       console.log(`🔍 [NANGO CONNECT] Verifying integration "${nangoIntegrationId}" exists...`);
       const providers = await nango.listProviders();
-      integrationExists = providers.providers?.some((p: any) => 
-        p.unique_key === nangoIntegrationId || p.provider === nangoIntegrationId
-      ) || false;
       
-      console.log(`🔍 [NANGO CONNECT] Available integrations:`, providers.providers?.map((p: any) => p.unique_key || p.provider));
-      console.log(`🔍 [NANGO CONNECT] Integration "${nangoIntegrationId}" exists: ${integrationExists}`);
+      // Extract all possible integration identifiers
+      availableIntegrations = providers.providers?.map((p: any) => {
+        // Check multiple possible fields
+        return p.unique_key || p.provider || p.providerConfigKey || p.id || JSON.stringify(p);
+      }) || [];
+      
+      // Check if our integration ID matches any of the available ones
+      integrationExists = availableIntegrations.some((id: string) => 
+        id === nangoIntegrationId || 
+        id?.toLowerCase() === nangoIntegrationId.toLowerCase()
+      );
+      
+      console.log(`🔍 [NANGO CONNECT] Available integrations:`, availableIntegrations);
+      console.log(`🔍 [NANGO CONNECT] Looking for: "${nangoIntegrationId}"`);
+      console.log(`🔍 [NANGO CONNECT] Integration exists: ${integrationExists}`);
+      
+      if (!integrationExists && availableIntegrations.length > 0) {
+        console.warn(`⚠️ [NANGO CONNECT] Integration "${nangoIntegrationId}" not found. Available: ${availableIntegrations.join(', ')}`);
+      }
     } catch (verifyError: any) {
       console.warn(`⚠️ [NANGO CONNECT] Could not verify integration (non-critical):`, verifyError?.message);
       // Continue anyway - createConnectSession will fail if integration doesn't exist
@@ -168,8 +183,10 @@ export async function POST(request: NextRequest) {
               nangoIntegrationId,
               host: process.env.NANGO_HOST || 'https://api.nango.dev',
               integrationExists,
+              availableIntegrations,
               errorStatus,
-              errorMessage
+              errorMessage,
+              errorData
             }
           },
           { status: 400 }
