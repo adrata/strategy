@@ -40,6 +40,10 @@ interface OasisLayoutContextType {
   setIsVideoCallActive: (active: boolean) => void;
   videoCallRoom: { id: string; name: string } | null;
   setVideoCallRoom: (room: { id: string; name: string } | null) => void;
+  threadData: { messageId: string; threadMessages: any[]; parentMessageId: string | null } | null;
+  setThreadData: (data: { messageId: string; threadMessages: any[]; parentMessageId: string | null } | null) => void;
+  threadNavigationStack: Array<{ messageId: string; parentMessageId: string | null; level: number }>;
+  setThreadNavigationStack: (stack: Array<{ messageId: string; parentMessageId: string | null; level: number }>) => void;
 }
 
 const OasisLayoutContext = createContext<OasisLayoutContextType | undefined>(undefined);
@@ -225,6 +229,7 @@ function PipelineLayoutInner({
                             !pathname.includes('/customers') &&
                             !pathname.includes('/stacks') &&
                             !pathname.includes('/oasis') &&
+                            !pathname.includes('/inbox') &&
                             !pathname.includes('/workbench') &&
                             !pathname.includes('/workbench');
 
@@ -241,6 +246,9 @@ function PipelineLayoutInner({
       } else {
         return <RightPanel />; // AI chat for Stacks
       }
+    } else if (pathname.includes('/inbox')) {
+      // Inbox - show AI chat
+      return <RightPanel />;
     } else {
       // All other apps (RevenueOS, Oasis, Workbench, /adrata/oasis, /adrata/stacks, etc.) - show AI chat
       return <RightPanel />;
@@ -259,7 +267,8 @@ function PipelineLayoutInner({
   const isLeftPanelVisible = ui.isLeftPanelVisible;
   
   // Hide left panel for base Adrata routes (since chat is in middle panel)
-  const shouldShowLeftPanel = !isBaseAdrataRoute && isLeftPanelVisible;
+  // Always show left panel for inbox routes
+  const shouldShowLeftPanel = pathname.includes('/inbox') ? true : (!isBaseAdrataRoute && isLeftPanelVisible);
   
   // For base /adrata routes, automatically open profile panel
   useEffect(() => {

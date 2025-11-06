@@ -22,6 +22,7 @@ import {
   PlusIcon
 } from '@heroicons/react/24/outline';
 import { CompleteActionModal } from '@/platform/ui/components/CompleteActionModal';
+import { formatMessageTime } from '@/platform/utils/dateUtils';
 
 interface Message {
   id: string;
@@ -390,7 +391,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-medium text-foreground">{message.senderName || 'Unknown'}</span>
-                <span className="text-sm text-muted">{new Date(message.createdAt).toLocaleTimeString()}</span>
+                <span className="text-sm text-muted">{formatMessageTime(message.createdAt)}</span>
               </div>
               
               <p className="text-sm text-foreground mb-2">{message.content}</p>

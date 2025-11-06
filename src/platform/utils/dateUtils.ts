@@ -158,3 +158,49 @@ export function formatLastActionTime(record: any): string {
     return 'Invalid date';
   }
 }
+
+/**
+ * Format message timestamp with relative time (e.g., "2 days ago", "3:45 PM")
+ * Shows time if today, relative date if older
+ */
+export function formatMessageTime(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    
+    // Same day - show time
+    if (diffInDays === 0) {
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+    
+    // Yesterday
+    if (diffInDays === 1) {
+      return 'Yesterday';
+    }
+    
+    // Within a week - show "X days ago"
+    if (diffInDays < 7) {
+      return `${diffInDays} days ago`;
+    }
+    
+    // Within a month - show "X weeks ago"
+    if (diffInDays < 30) {
+      const weeks = Math.floor(diffInDays / 7);
+      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    }
+    
+    // Older - show formatted date
+    return formatDate(dateString);
+  } catch (error) {
+    console.error('Error formatting message time:', error);
+    return 'Invalid date';
+  }
+}

@@ -52,7 +52,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get DMs where user is a participant
-    // Ross sees DMs from ALL workspaces, others only see current workspace
+    // Show all DMs where user is a participant (cross-workspace support)
+    // This allows users to see conversations regardless of which workspace they're viewing from
     const dmsWhereClause: any = {
       participants: {
         some: {
@@ -60,11 +61,6 @@ export async function GET(request: NextRequest) {
         }
       }
     };
-
-    // Only filter by workspace if NOT Ross
-    if (!isRoss) {
-      dmsWhereClause.workspaceId = workspaceId;
-    }
 
     const dms = await prisma.oasisDirectMessage.findMany({
       where: dmsWhereClause,
@@ -98,7 +94,8 @@ export async function GET(request: NextRequest) {
       select: { name: true }
     });
 
-    // Filter DMs based on workspace and user type
+    // Filter DMs - show all DMs where user is a participant
+    // This allows cross-workspace conversations (e.g., Ross in Adrata messaging Ryan in Notary Everyday)
     const filteredDMs = dms.filter(dm => {
       const otherParticipants = dm.participants.filter(p => p.userId !== userId);
       
@@ -109,13 +106,9 @@ export async function GET(request: NextRequest) {
         return isRoss || dm.workspaceId === workspaceId;
       }
       
-      // For Ross, include all DMs with other participants
-      if (isRoss) {
-        return true;
-      }
-      
-      // For others, only include DMs from current workspace
-      return dm.workspaceId === workspaceId;
+      // Include all DMs with other participants (cross-workspace support)
+      // This ensures users can see conversations they're part of regardless of workspace
+      return true;
     });
 
     // Deduplicate DMs by participant combination
@@ -143,15 +136,31 @@ export async function GET(request: NextRequest) {
           })
         : workspace;
       
-      // Calculate unread count for this DM
-      // For now, we'll count all messages from other users as "unread"
-      // TODO: Implement proper read receipt tracking in the future
-      const unreadCount = await prisma.oasisMessage.count({
+      // Calculate unread count using read receipts
+      // Count messages from other users that don't have read receipts for this user
+      const unreadMessages = await prisma.oasisMessage.findMany({
         where: {
           dmId: dm.id,
           senderId: { not: userId } // Only count messages from other users
-        }
+        },
+        select: { id: true }
       });
+      
+      const messageIds = unreadMessages.map(m => m.id);
+      let unreadCount = 0;
+      
+      if (messageIds.length > 0) {
+        const readReceipts = await prisma.oasisReadReceipt.findMany({
+          where: {
+            messageId: { in: messageIds },
+            userId: userId
+          },
+          select: { messageId: true }
+        });
+        
+        const readMessageIds = readReceipts.map(r => r.messageId);
+        unreadCount = messageIds.filter(id => !readMessageIds.includes(id)).length;
+      }
       
       return {
         id: dm.id,

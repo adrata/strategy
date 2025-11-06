@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/lib/prisma';
 import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service';
+import { sendEmail } from '@/platform/services/ResendService';
 
 // GET /api/oasis/messages - Get messages for channel or DM
 export async function GET(request: NextRequest) {
@@ -134,20 +135,15 @@ export async function GET(request: NextRequest) {
     }
 
     if (dmId) {
-      const dmWhereClause: any = {
-        id: dmId,
-        participants: {
-          some: { userId: userId }
-        }
-      };
-      
-      // Only filter by workspace if NOT Ross
-      if (!isRoss) {
-        dmWhereClause.workspaceId = workspaceId;
-      }
-
+      // Allow access to DMs where user is a participant, regardless of workspace
+      // This enables cross-workspace conversations (e.g., Ross in Adrata messaging Ryan in Notary Everyday)
       const dm = await prisma.oasisDirectMessage.findFirst({
-        where: dmWhereClause,
+        where: {
+          id: dmId,
+          participants: {
+            some: { userId: userId }
+          }
+        },
         select: {
           id: true,
           workspaceId: true,
@@ -164,19 +160,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Access denied or DM not found' }, { status: 403 });
       }
 
-      // For non-Ross users: Verify the workspaceId parameter matches the DM's actual workspaceId
-      if (!isRoss && dm.workspaceId !== workspaceId) {
-        console.error('❌ [OASIS MESSAGES] Workspace mismatch for non-Ross user:', {
-          dmId: dm.id,
-          dmWorkspaceId: dm.workspaceId,
-          requestedWorkspaceId: workspaceId,
-          userId
-        });
-        return NextResponse.json(
-          { error: 'Workspace access denied' },
-          { status: 403 }
-        );
-      }
+      // Allow cross-workspace access - if user is a participant, they can view messages
+      // The workspaceId parameter is used for real-time channel subscriptions, but shouldn't block access
+      // Note: We still use the requested workspaceId for real-time updates, but allow message access
     }
 
     // Validate dmId or channelId exists before querying (with try-catch)
@@ -556,6 +542,79 @@ export async function POST(request: NextRequest) {
 
     // Broadcast message
     await OasisRealtimeService.broadcastMessage(workspaceId, message);
+
+    // Send email notification if Ross sends a message to Ryan in a DM
+    if (dmId) {
+      try {
+        const sender = await prisma.users.findUnique({
+          where: { id: userId },
+          select: { email: true, name: true }
+        });
+
+        // Check if sender is Ross
+        if (sender?.email === 'ross@adrata.com') {
+          // Get the DM to find the recipient
+          const dm = await prisma.oasisDirectMessage.findUnique({
+            where: { id: dmId },
+            include: {
+              participants: {
+                include: {
+                  user: {
+                    select: { email: true, name: true }
+                  }
+                }
+              },
+              workspace: {
+                select: { slug: true, name: true }
+              }
+            }
+          });
+
+          if (dm) {
+            // Find Ryan as the recipient
+            const ryanParticipant = dm.participants.find(
+              p => p.user.email === 'ryan@notaryeveryday.com'
+            );
+
+            if (ryanParticipant) {
+              // Send email notification to Ryan
+              const workspaceSlug = dm.workspace.slug || 'workspace';
+              const oasisUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.adrata.com'}/${workspaceSlug}/oasis`;
+              
+              await sendEmail({
+                to: 'ryan@notaryeveryday.com',
+                subject: 'Ross sent you a message on Oasis',
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h2 style="color: #0066cc;">New Message from Ross</h2>
+                    <p>Hi Ryan,</p>
+                    <p>Ross sent you a message on Oasis:</p>
+                    <div style="background-color: #f5f5f5; padding: 16px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0066cc;">
+                      <p style="margin: 0; white-space: pre-wrap;">${content}</p>
+                    </div>
+                    <div style="margin: 30px 0; text-align: center;">
+                      <a href="${oasisUrl}" 
+                         style="display: inline-block; background-color: #0066cc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                        View Message on Oasis
+                      </a>
+                    </div>
+                    <p style="color: #666; font-size: 14px; margin-top: 30px;">
+                      You're receiving this because Ross sent you a direct message on Oasis.
+                    </p>
+                  </div>
+                `,
+                text: `Ross sent you a message on Oasis:\n\n${content}\n\nView it here: ${oasisUrl}`
+              });
+
+              console.log('✅ [OASIS EMAIL] Sent notification to Ryan for message from Ross');
+            }
+          }
+        }
+      } catch (emailError) {
+        // Don't fail the message send if email fails
+        console.error('❌ [OASIS EMAIL] Failed to send notification:', emailError);
+      }
+    }
 
     return NextResponse.json({
       message: {

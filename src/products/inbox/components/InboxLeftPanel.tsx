@@ -19,6 +19,36 @@ export function InboxLeftPanel() {
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
+  
+  // Safely get inbox context - handle case where provider might not be available
+  let inboxContext;
+  try {
+    inboxContext = useInbox();
+  } catch (error) {
+    console.error('Failed to get Inbox context:', error);
+    // Return loading state if context not available
+    return (
+      <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
+        <div className="flex-shrink-0 pt-0 pr-2 pl-2">
+          <div className="mx-2 mt-4 mb-2">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden">
+                <span className="text-lg font-bold text-black">I</span>
+              </div>
+              <div className="flex-1">
+                <h2 className="text-base font-semibold text-foreground">Inbox</h2>
+                <p className="text-xs text-muted">Email Management</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto invisible-scrollbar px-2">
+          <div className="text-center py-8 text-muted text-sm">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+  
   const { 
     emails, 
     selectedEmail, 
@@ -27,7 +57,7 @@ export function InboxLeftPanel() {
     loading, 
     selectEmail, 
     setFilters 
-  } = useInbox();
+  } = inboxContext;
 
   // State for user profile data
   const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
