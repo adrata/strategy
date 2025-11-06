@@ -57,12 +57,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    /**
+     * Map provider names to Nango Integration IDs
+     * This mapping is stored server-side in environment variables for security
+     * Frontend sends simple provider names like "outlook", backend maps to actual Integration ID
+     */
+    function getNangoIntegrationId(provider: string): string {
+      const mapping: Record<string, string> = {
+        'outlook': process.env.NANGO_OUTLOOK_INTEGRATION_ID || 'outlook',
+        'gmail': process.env.NANGO_GMAIL_INTEGRATION_ID || 'gmail',
+        'google': process.env.NANGO_GOOGLE_INTEGRATION_ID || 'gmail',
+      };
+
+      const integrationId = mapping[provider.toLowerCase()];
+      
+      if (!integrationId) {
+        throw new Error(`Unknown provider: ${provider}. Supported providers: outlook, gmail`);
+      }
+
+      return integrationId;
+    }
+
+    // Get the actual Nango Integration ID from environment variables
+    let nangoIntegrationId: string;
+    try {
+      nangoIntegrationId = getNangoIntegrationId(provider);
+      console.log(`📧 [NANGO CONNECT] Mapped provider "${provider}" to Integration ID "${nangoIntegrationId}"`);
+    } catch (mappingError) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid provider',
+          details: mappingError instanceof Error ? mappingError.message : 'Unknown provider'
+        },
+        { status: 400 }
+      );
+    }
+
     // Create a connect session using Nango (correct method per Nango docs)
-    // Note: The provider should match the Integration ID in your Nango dashboard
-    // Common values: "outlook", "microsoft-outlook", or the exact integration ID
     let sessionToken: string;
     try {
-      console.log(`📧 [NANGO CONNECT] Creating connect session for provider: ${provider}, user: ${user.id}`);
+      console.log(`📧 [NANGO CONNECT] Creating connect session for provider: ${provider} (Integration ID: ${nangoIntegrationId}), user: ${user.id}`);
       
       const sessionResponse = await nango.createConnectSession({
         end_user: {
@@ -74,7 +108,7 @@ export async function POST(request: NextRequest) {
             provider 
           }
         },
-        allowed_integrations: [provider],
+        allowed_integrations: [nangoIntegrationId],
       });
       
       sessionToken = sessionResponse.token;
@@ -95,11 +129,11 @@ export async function POST(request: NextRequest) {
       if (errorStatus === 400 || errorMessage?.includes('provider') || errorMessage?.includes('not found') || errorMessage?.includes('integration')) {
         return NextResponse.json(
           { 
-            error: `Provider "${provider}" is not configured in Nango. Please check:`,
+            error: `Integration "${nangoIntegrationId}" is not configured in Nango. Please check:`,
             details: [
-              `1. Verify the Integration ID in your Nango dashboard matches "${provider}"`,
-              `2. Common Integration IDs: "outlook", "microsoft-outlook"`,
-              `3. Check that the integration is properly configured with Client ID and Secret`,
+              `1. Verify the Integration ID in your Nango dashboard matches "${nangoIntegrationId}"`,
+              `2. Set the environment variable NANGO_OUTLOOK_INTEGRATION_ID (or NANGO_GMAIL_INTEGRATION_ID) in Vercel`,
+              `3. Check that the integration is properly configured with Client ID and Secret in Nango dashboard`,
               `4. Error from Nango: ${errorMessage}`
             ].join('\n')
           },
@@ -118,13 +152,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Store pending session in database (connectionId will come from webhook)
+    // Use the actual Nango Integration ID for providerConfigKey
     try {
       await prisma.grand_central_connections.create({
         data: {
           workspaceId,
           userId: user.id,
-          provider: provider,
-          providerConfigKey: provider,
+          provider: provider, // Keep simple provider name for filtering
+          providerConfigKey: nangoIntegrationId, // Use actual Integration ID from Nango
           nangoConnectionId: `session-${Date.now()}`, // Temporary, will be updated by webhook
           connectionName: `${provider === 'outlook' ? 'Outlook' : provider} Connection`,
           status: 'pending',
@@ -146,6 +181,7 @@ export async function POST(request: NextRequest) {
             status: { in: ['pending', 'error'] }
           },
           data: {
+            providerConfigKey: nangoIntegrationId, // Update with actual Integration ID
             status: 'pending',
             metadata: {
               sessionToken,

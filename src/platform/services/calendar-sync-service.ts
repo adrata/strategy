@@ -200,28 +200,23 @@ export class CalendarSyncService {
       const now = new Date();
       const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-      // Determine endpoint and query params based on platform
+      // Determine endpoint with query params based on platform
       let endpoint: string;
-      let queryParams: any;
 
       if (platform === 'microsoft') {
-        // Microsoft Graph API endpoint
-        endpoint = '/v1.0/me/events';
-        queryParams = {
-          '$filter': `start/dateTime ge '${now.toISOString()}' and start/dateTime le '${endDate.toISOString()}'`,
-          '$orderby': 'start/dateTime',
-          '$top': 100
-        };
+        // Microsoft Graph API endpoint with query parameters
+        const filter = encodeURIComponent(`start/dateTime ge '${now.toISOString()}' and start/dateTime le '${endDate.toISOString()}'`);
+        endpoint = `/v1.0/me/events?$filter=${filter}&$orderby=start/dateTime&$top=100`;
       } else {
-        // Google Calendar API endpoint
-        endpoint = '/calendar/v3/calendars/primary/events';
-        queryParams = {
+        // Google Calendar API endpoint with query parameters
+        const params = new URLSearchParams({
           timeMin: now.toISOString(),
           timeMax: endDate.toISOString(),
-          singleEvents: true,
+          singleEvents: 'true',
           orderBy: 'startTime',
-          maxResults: 100
-        };
+          maxResults: '100'
+        });
+        endpoint = `/calendar/v3/calendars/primary/events?${params.toString()}`;
       }
 
       // Use Nango's proxy method to fetch calendar events (GET request)
