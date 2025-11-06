@@ -37,12 +37,32 @@ function getNangoClient(): Nango {
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log(`🗑️ [NANGO DISCONNECT] POST request received`);
+    
     const user = await getUnifiedAuthUser(request);
     if (!user) {
+      console.error(`❌ [NANGO DISCONNECT] Unauthorized - no user`);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { connectionId, workspaceId } = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error(`❌ [NANGO DISCONNECT] Failed to parse request body:`, parseError);
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 }
+      );
+    }
+
+    const { connectionId, workspaceId } = body;
+    
+    console.log(`🗑️ [NANGO DISCONNECT] Request data:`, {
+      connectionId,
+      workspaceId,
+      userId: user.id
+    });
 
     if (!connectionId || !workspaceId) {
       return NextResponse.json(
@@ -150,8 +170,23 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error disconnecting provider:', error);
     return NextResponse.json(
-      { error: 'Failed to disconnect provider' },
+      { 
+        error: 'Failed to disconnect provider',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
+}
+
+/**
+ * GET /api/v1/integrations/nango/disconnect
+ * Health check endpoint
+ */
+export async function GET(request: NextRequest) {
+  return NextResponse.json({ 
+    message: 'Disconnect endpoint is active',
+    method: 'POST',
+    description: 'Use POST method to disconnect a connection'
+  });
 }
