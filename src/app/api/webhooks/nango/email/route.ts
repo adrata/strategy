@@ -343,7 +343,7 @@ async function handleSyncWebhook(payload: any) {
     // Only process email-related syncs
     // Nango syncs: "emails", "calendars", "events", "folders"
     // We only want to trigger email sync for "emails" syncs
-    // Calendar syncs ("calendars", "events") should be handled separately
+    // Calendar syncs ("calendars", "events") are TEMPORARILY DISABLED to focus on email sync
     const isEmailSync = syncName && (
       syncName.toLowerCase().includes('email') || 
       syncName.toLowerCase() === 'emails' ||
@@ -353,8 +353,8 @@ async function handleSyncWebhook(payload: any) {
     );
     
     if (syncName && !isEmailSync) {
-      console.log(`⏭️ Sync ${syncName} (model: ${model}) is not email-related, skipping. This is expected for calendar syncs.`);
-      return Response.json({ success: true, message: 'Not an email sync - calendar syncs are handled separately' });
+      console.log(`⏭️ Sync ${syncName} (model: ${model}) is not email-related, skipping. Calendar syncs are temporarily disabled to focus on email sync.`);
+      return Response.json({ success: true, message: 'Not an email sync - calendar syncs are temporarily disabled' });
     }
     
     // Log if this is an email sync
