@@ -946,6 +946,7 @@ const IntegrationsPage = () => {
               </div>
             )}
           </div>
+          */}
         </div>
       </div>
 

@@ -252,8 +252,10 @@ async function handleConnectionCreation(payload: any) {
       // Create new connection record if not found (fallback)
       if (workspaceId) {
         // Map providerConfigKey to provider name
+        // IMPORTANT: Outlook is working in production - maintain its mapping first
         let provider = providerConfigKey;
         if (providerConfigKey === 'outlook') {
+          // ⚠️ DO NOT CHANGE: Outlook is working in production
           provider = 'outlook';
         } else if (providerConfigKey === 'google-mail' || providerConfigKey === 'gmail') {
           provider = 'gmail';

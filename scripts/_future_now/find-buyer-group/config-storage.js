@@ -19,10 +19,9 @@ class ConfigStorage {
     if (!workspaceId || !prisma) return false;
 
     try {
-      // Try to load from database
+      // Try to load from database - get full workspace to avoid select issues
       const workspace = await prisma.workspaces.findUnique({
-        where: { id: workspaceId },
-        select: { customFields: true }
+        where: { id: workspaceId }
       });
 
       if (workspace?.customFields && typeof workspace.customFields === 'object') {
@@ -49,8 +48,7 @@ class ConfigStorage {
 
     try {
       const workspace = await prisma.workspaces.findUnique({
-        where: { id: workspaceId },
-        select: { customFields: true }
+        where: { id: workspaceId }
       });
 
       if (!workspace || !workspace.customFields) {
@@ -89,7 +87,7 @@ class ConfigStorage {
       // Get existing customFields
       const workspace = await prisma.workspaces.findUnique({
         where: { id: workspaceId },
-        select: { customFields: true }
+        select: { id: true, customFields: true }
       });
 
       let customFields = {};

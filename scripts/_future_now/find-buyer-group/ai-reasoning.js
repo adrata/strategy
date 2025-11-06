@@ -8,8 +8,13 @@
 class AIReasoning {
   constructor(apiKey) {
     this.apiKey = apiKey || process.env.ANTHROPIC_API_KEY;
-    this.model = 'claude-sonnet-4-5-20250929'; // Claude 4.5 Sonnet (latest)
+    // Use claude-3-5-sonnet-20241022 (latest) or fallback to claude-3-5-sonnet-20240620
+    this.model = 'claude-3-5-sonnet-20240620'; // Claude 3.5 Sonnet (stable version)
     this.baseUrl = 'https://api.anthropic.com/v1/messages';
+    
+    if (!this.apiKey) {
+      console.warn('⚠️  ANTHROPIC_API_KEY not found - AI features will be disabled');
+    }
   }
 
   /**
@@ -234,6 +239,10 @@ Respond in JSON format:
    * @returns {string} Claude response
    */
   async callClaude(prompt) {
+    if (!this.apiKey) {
+      throw new Error('ANTHROPIC_API_KEY is not set');
+    }
+
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
@@ -254,7 +263,15 @@ Respond in JSON format:
     });
 
     if (!response.ok) {
-      throw new Error(`Claude API error: ${response.status} ${response.statusText}`);
+      // Try to get error details from response
+      let errorDetails = '';
+      try {
+        const errorData = await response.json();
+        errorDetails = errorData.error ? JSON.stringify(errorData.error) : '';
+      } catch (e) {
+        errorDetails = await response.text();
+      }
+      throw new Error(`Claude API error: ${response.status} ${response.statusText}${errorDetails ? ' - ' + errorDetails : ''}`);
     }
 
     const data = await response.json();
