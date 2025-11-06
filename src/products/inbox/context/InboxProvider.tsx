@@ -61,6 +61,8 @@ interface InboxContextType {
   selectEmail: (email: EmailMessage | null) => void;
   setFilters: (filters: Partial<InboxFilters>) => void;
   markAsRead: (emailId: string, isRead: boolean) => Promise<void>;
+  archiveEmail: (emailId: string) => Promise<void>;
+  deleteEmail: (emailId: string) => Promise<void>;
   refreshEmails: () => Promise<void>;
 }
 
@@ -156,26 +158,6 @@ export function InboxProvider({ children }: InboxProviderProps) {
     }
   }, [user?.activeWorkspaceId, filters]);
 
-  const selectEmail = useCallback((email: EmailMessage | null) => {
-    setSelectedEmail(email);
-    
-    // Mark as read when selected
-    if (email && !email.isRead) {
-      markAsRead(email.id, true);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchEmails();
-  }, [fetchEmails]);
-
-  // Auto-select first email when emails load
-  useEffect(() => {
-    if (emails.length > 0 && !selectedEmail) {
-      selectEmail(emails[0]);
-    }
-  }, [emails, selectedEmail, selectEmail]);
-
   const markAsRead = useCallback(async (emailId: string, isRead: boolean) => {
     try {
       const response = await fetch(`/api/v1/emails/${emailId}/read`, {
@@ -188,28 +170,152 @@ export function InboxProvider({ children }: InboxProviderProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update email read status');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to update email read status');
       }
 
-      // Update local state
+      // Update local state immediately for better UX
       setEmails(prev => prev.map(email => 
         email.id === emailId ? { ...email, isRead } : email
       ));
 
-      if (selectedEmail?.id === emailId) {
-        setSelectedEmail(prev => prev ? { ...prev, isRead } : null);
-      }
+      setSelectedEmail(prev => {
+        if (prev?.id === emailId) {
+          return { ...prev, isRead };
+        }
+        return prev;
+      });
 
-      // Refresh stats
-      await fetchEmails();
+      // Update stats without full refetch
+      setStats(prev => {
+        const email = emails.find(e => e.id === emailId);
+        if (!email) return prev;
+        
+        const wasUnread = !email.isRead;
+        const nowUnread = !isRead;
+        
+        let unread = prev.unread;
+        if (wasUnread && nowUnread) {
+          // No change
+        } else if (wasUnread && !nowUnread) {
+          unread = Math.max(0, unread - 1);
+        } else if (!wasUnread && nowUnread) {
+          unread = unread + 1;
+        }
+        
+        return { ...prev, unread };
+      });
     } catch (error) {
       console.error('❌ Error marking email as read:', error);
+      // Revert optimistic update on error
+      setEmails(prev => prev.map(email => 
+        email.id === emailId ? { ...email, isRead: !isRead } : email
+      ));
     }
-  }, [selectedEmail, fetchEmails]);
+  }, [emails]);
+  
+  const selectEmail = useCallback((email: EmailMessage | null) => {
+    setSelectedEmail(email);
+    
+    // Mark as read when selected (but don't wait for it)
+    if (email && !email.isRead) {
+      markAsRead(email.id, true).catch(console.error);
+    }
+  }, [markAsRead]);
+
+  useEffect(() => {
+    fetchEmails();
+  }, [fetchEmails]);
+
+  // Auto-select first email when emails load
+  useEffect(() => {
+    if (emails.length > 0 && !selectedEmail) {
+      selectEmail(emails[0]);
+    }
+  }, [emails, selectedEmail, selectEmail]);
 
   const setFilters = useCallback((newFilters: Partial<InboxFilters>) => {
     setFiltersState(prev => ({ ...prev, ...newFilters }));
   }, []);
+
+  const archiveEmail = useCallback(async (emailId: string) => {
+    try {
+      const response = await fetch(`/api/v1/emails/${emailId}/archive`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to archive email');
+      }
+
+      // Remove from list
+      setEmails(prev => prev.filter(email => email.id !== emailId));
+      
+      // Clear selection if archived
+      if (selectedEmail?.id === emailId) {
+        const currentIndex = emails.findIndex(e => e.id === emailId);
+        if (currentIndex > 0 && emails[currentIndex - 1]) {
+          selectEmail(emails[currentIndex - 1]);
+        } else if (emails[currentIndex + 1]) {
+          selectEmail(emails[currentIndex + 1]);
+        } else {
+          selectEmail(null);
+        }
+      }
+
+      // Update stats
+      setStats(prev => ({
+        ...prev,
+        total: Math.max(0, prev.total - 1)
+      }));
+    } catch (error) {
+      console.error('❌ Error archiving email:', error);
+    }
+  }, [emails, selectedEmail, selectEmail]);
+
+  const deleteEmail = useCallback(async (emailId: string) => {
+    try {
+      const response = await fetch(`/api/v1/emails/${emailId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete email');
+      }
+
+      // Remove from list
+      setEmails(prev => prev.filter(email => email.id !== emailId));
+      
+      // Clear selection if deleted
+      if (selectedEmail?.id === emailId) {
+        const currentIndex = emails.findIndex(e => e.id === emailId);
+        if (currentIndex > 0 && emails[currentIndex - 1]) {
+          selectEmail(emails[currentIndex - 1]);
+        } else if (emails[currentIndex + 1]) {
+          selectEmail(emails[currentIndex + 1]);
+        } else {
+          selectEmail(null);
+        }
+      }
+
+      // Update stats
+      setStats(prev => {
+        const email = emails.find(e => e.id === emailId);
+        return {
+          total: Math.max(0, prev.total - 1),
+          unread: email && !email.isRead ? Math.max(0, prev.unread - 1) : prev.unread,
+          urgent: email && email.isImportant ? Math.max(0, prev.urgent - 1) : prev.urgent
+        };
+      });
+    } catch (error) {
+      console.error('❌ Error deleting email:', error);
+    }
+  }, [emails, selectedEmail, selectEmail]);
 
   const refreshEmails = useCallback(async () => {
     setRefreshing(true);
@@ -226,6 +332,8 @@ export function InboxProvider({ children }: InboxProviderProps) {
     selectEmail,
     setFilters,
     markAsRead,
+    archiveEmail,
+    deleteEmail,
     refreshEmails
   };
 

@@ -23,7 +23,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export function InboxMiddlePanel() {
-  const { selectedEmail, emails, selectEmail, markAsRead, loading } = useInbox();
+  const { selectedEmail, emails, selectEmail, markAsRead, archiveEmail, deleteEmail, loading } = useInbox();
 
   if (selectedEmail) {
     const fromParsed = parseEmailAddress(selectedEmail.from);
@@ -127,32 +127,56 @@ export function InboxMiddlePanel() {
               <div className="flex items-center gap-1 border-l border-border/50 pl-2">
                 <button
                   onClick={() => markAsRead(selectedEmail.id, !selectedEmail.isRead)}
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 px-3"
+                  className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-9 px-3 ${
+                    !selectedEmail.isRead 
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                      : 'hover:bg-accent hover:text-accent-foreground'
+                  }`}
                   title={selectedEmail.isRead ? 'Mark as Unread' : 'Mark as Read'}
                 >
                   <EnvelopeIcon className="w-4 h-4 mr-1.5" />
                   {selectedEmail.isRead ? 'Unread' : 'Read'}
                 </button>
                 <button 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 px-3"
+                  onClick={() => {
+                    // TODO: Implement reply functionality
+                    console.log('Reply to:', selectedEmail.from);
+                  }}
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Reply"
+                  disabled
                 >
                   <ArrowUturnLeftIcon className="w-4 h-4 mr-1.5" />
                   Reply
                 </button>
                 <button 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 w-9"
+                  onClick={() => {
+                    // TODO: Implement forward functionality
+                    console.log('Forward:', selectedEmail.subject);
+                  }}
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 w-9 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Forward"
+                  disabled
                 >
                   <ArrowUturnRightIcon className="w-4 h-4" />
                 </button>
                 <button 
+                  onClick={() => {
+                    if (confirm('Archive this email?')) {
+                      archiveEmail(selectedEmail.id);
+                    }
+                  }}
                   className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 w-9"
                   title="Archive"
                 >
                   <ArchiveBoxIcon className="w-4 h-4" />
                 </button>
                 <button 
+                  onClick={() => {
+                    if (confirm('Delete this email? This action cannot be undone.')) {
+                      deleteEmail(selectedEmail.id);
+                    }
+                  }}
                   className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-destructive hover:text-destructive-foreground h-9 w-9"
                   title="Delete"
                 >

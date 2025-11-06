@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getUnifiedAuthUser } from '@/platform/api-auth';
 
-export async function PATCH(
+export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -17,14 +17,6 @@ export async function PATCH(
     }
     
     const { id } = await params;
-    const body = await request.json();
-    const { isRead } = body;
-    
-    if (typeof isRead !== 'boolean') {
-      return NextResponse.json({ 
-        error: 'isRead must be a boolean' 
-      }, { status: 400 });
-    }
     
     // Verify email exists and user has access
     const email = await prisma.email_messages.findFirst({
@@ -40,25 +32,18 @@ export async function PATCH(
       }, { status: 404 });
     }
     
-    // Update read status
-    const updatedEmail = await prisma.email_messages.update({
-      where: { id },
-      data: { 
-        isRead,
-        updatedAt: new Date()
-      }
+    // Delete the email
+    await prisma.email_messages.delete({
+      where: { id }
     });
     
     return NextResponse.json({
       success: true,
-      email: {
-        id: updatedEmail.id,
-        isRead: updatedEmail.isRead
-      }
+      message: 'Email deleted successfully'
     });
     
   } catch (error) {
-    console.error('❌ Error updating email read status:', error);
+    console.error('❌ Error deleting email:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       message: error instanceof Error ? error.message : 'Unknown error'
