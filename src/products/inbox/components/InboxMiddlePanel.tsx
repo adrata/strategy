@@ -7,7 +7,7 @@
  * Modeled after Speedrun Sprint view for consistency.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useInbox } from '../context/InboxProvider';
 import { formatEmailTimestamp, parseEmailAddress, extractPlainText } from '../utils/emailFormatting';
 import { 
@@ -18,12 +18,13 @@ import {
   TrashIcon,
   StarIcon,
   ChevronLeftIcon,
-  ChevronRightIcon,
-  EnvelopeIcon
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 
 export function InboxMiddlePanel() {
-  const { selectedEmail, emails, selectEmail, markAsRead, archiveEmail, deleteEmail, loading } = useInbox();
+  const { selectedEmail, emails, selectEmail, archiveEmail, deleteEmail, loading } = useInbox();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
 
   if (selectedEmail) {
     const fromParsed = parseEmailAddress(selectedEmail.from);
@@ -125,25 +126,13 @@ export function InboxMiddlePanel() {
               
               {/* Email Actions */}
               <div className="flex items-center gap-1 border-l border-border/50 pl-2">
-                <button
-                  onClick={() => markAsRead(selectedEmail.id, !selectedEmail.isRead)}
-                  className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-9 px-3 ${
-                    !selectedEmail.isRead 
-                      ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                      : 'hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                  title={selectedEmail.isRead ? 'Mark as Unread' : 'Mark as Read'}
-                >
-                  <EnvelopeIcon className="w-4 h-4 mr-1.5" />
-                  {selectedEmail.isRead ? 'Unread' : 'Read'}
-                </button>
                 <button 
                   onClick={() => {
                     // TODO: Implement reply functionality
                     console.log('Reply to:', selectedEmail.from);
                   }}
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Reply"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-9 px-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Reply (Coming soon)"
                   disabled
                 >
                   <ArrowUturnLeftIcon className="w-4 h-4 mr-1.5" />
@@ -154,30 +143,22 @@ export function InboxMiddlePanel() {
                     // TODO: Implement forward functionality
                     console.log('Forward:', selectedEmail.subject);
                   }}
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 w-9 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Forward"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-9 w-9 text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Forward (Coming soon)"
                   disabled
                 >
                   <ArrowUturnRightIcon className="w-4 h-4" />
                 </button>
                 <button 
-                  onClick={() => {
-                    if (confirm('Archive this email?')) {
-                      archiveEmail(selectedEmail.id);
-                    }
-                  }}
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 w-9"
+                  onClick={() => setShowArchiveConfirm(true)}
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-9 w-9 text-foreground hover:bg-accent hover:text-accent-foreground"
                   title="Archive"
                 >
                   <ArchiveBoxIcon className="w-4 h-4" />
                 </button>
                 <button 
-                  onClick={() => {
-                    if (confirm('Delete this email? This action cannot be undone.')) {
-                      deleteEmail(selectedEmail.id);
-                    }
-                  }}
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-destructive hover:text-destructive-foreground h-9 w-9"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-9 w-9 text-foreground hover:bg-destructive hover:text-destructive-foreground"
                   title="Delete"
                 >
                   <TrashIcon className="w-4 h-4" />
@@ -285,6 +266,80 @@ export function InboxMiddlePanel() {
             </div>
           )}
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div 
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-[9999]" 
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            <div 
+              className="bg-background border border-border rounded-lg shadow-xl p-6 max-w-sm mx-4 w-full" 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Delete Email
+              </h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Are you sure you want to delete this email? This action cannot be undone.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-4 py-2 text-sm font-medium text-foreground bg-hover hover:bg-panel-background border border-border rounded-md transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    deleteEmail(selectedEmail.id);
+                    setShowDeleteConfirm(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-destructive hover:bg-destructive/90 rounded-md transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Archive Confirmation Modal */}
+        {showArchiveConfirm && (
+          <div 
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-[9999]" 
+            onClick={() => setShowArchiveConfirm(false)}
+          >
+            <div 
+              className="bg-background border border-border rounded-lg shadow-xl p-6 max-w-sm mx-4 w-full" 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Archive Email
+              </h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Are you sure you want to archive this email? You can find it in your archived emails later.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowArchiveConfirm(false)}
+                  className="px-4 py-2 text-sm font-medium text-foreground bg-hover hover:bg-panel-background border border-border rounded-md transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    archiveEmail(selectedEmail.id);
+                    setShowArchiveConfirm(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors"
+                >
+                  Archive
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -321,23 +376,23 @@ export function InboxMiddlePanel() {
       <div className="flex-shrink-0 px-6 py-4 border-b border-border">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-hover rounded-full flex items-center justify-center">
-            <EnvelopeIcon className="w-6 h-6 text-muted" />
+            <PaperClipIcon className="w-6 h-6 text-muted-foreground" />
           </div>
           <div>
             <h1 className="text-xl font-semibold text-foreground">Inbox</h1>
-            <p className="text-sm text-muted">Select an email to view its contents</p>
+            <p className="text-sm text-muted-foreground">Select an email to view its contents</p>
           </div>
         </div>
       </div>
       <div className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
-            <EnvelopeIcon className="w-8 h-8 text-muted" />
+            <PaperClipIcon className="w-8 h-8 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-2">
             No Email Selected
           </h3>
-          <p className="text-muted text-sm">
+          <p className="text-muted-foreground text-sm">
             Choose an email from the left panel to view its contents
           </p>
         </div>

@@ -13,9 +13,11 @@ import { prisma } from '@/lib/prisma';
  * {
  *   "crons": [{
  *     "path": "/api/cron/email-sync",
- *     "schedule": "*/5 * * * *"  // Every 5 minutes
+ *     "schedule": "*/5 * * * *"
  *   }]
  * }
+ * 
+ * Schedule runs every 5 minutes.
  */
 export async function GET(request: NextRequest) {
   try {

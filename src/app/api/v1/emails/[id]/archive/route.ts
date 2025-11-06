@@ -32,8 +32,13 @@ export async function POST(
       }, { status: 404 });
     }
     
-    // For now, we'll just delete the email (archive = soft delete)
-    // In the future, we could add an 'archived' field to the schema
+    // Archive the email by marking it as archived
+    // Note: Currently deletes the email. To implement proper archiving,
+    // add an 'isArchived' Boolean field to the email_messages schema and update this to:
+    // await prisma.email_messages.update({
+    //   where: { id },
+    //   data: { isArchived: true }
+    // });
     await prisma.email_messages.delete({
       where: { id }
     });

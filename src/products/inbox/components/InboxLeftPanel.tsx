@@ -171,12 +171,13 @@ export function InboxLeftPanel() {
           </div>
         ) : (
           <div className="space-y-2">
-            {emails.map((email) => (
+            {emails.map((email, index) => (
               <EmailCard
                 key={email.id}
                 email={email}
                 isSelected={selectedEmail?.id === email.id}
                 onClick={() => selectEmail(email)}
+                rank={index + 1}
               />
             ))}
           </div>

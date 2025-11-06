@@ -8,9 +8,10 @@ interface EmailCardProps {
   email: EmailMessage;
   isSelected: boolean;
   onClick: () => void;
+  rank: number;
 }
 
-export function EmailCard({ email, isSelected, onClick }: EmailCardProps) {
+export function EmailCard({ email, isSelected, onClick, rank }: EmailCardProps) {
   const senderName = getSenderName(email.from);
   const preview = getEmailPreview(email.body, email.bodyHtml);
   const timestamp = formatEmailTimestamp(email.receivedAt);
@@ -26,7 +27,11 @@ export function EmailCard({ email, isSelected, onClick }: EmailCardProps) {
             : 'bg-background hover:bg-panel-background border-gray-100 hover:border-border hover:shadow-sm'
       }`}
     >
-      <div className="flex items-start justify-between gap-2">
+      {/* Rank badge in top left */}
+      <div className="absolute top-2 left-2 w-6 h-6 bg-panel-background text-foreground rounded-[12px] flex items-center justify-center text-xs font-bold flex-shrink-0 shrink-0 border border-border">
+        {rank}
+      </div>
+      <div className="flex items-start justify-between gap-2 pl-7">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             {!email.isRead && (
