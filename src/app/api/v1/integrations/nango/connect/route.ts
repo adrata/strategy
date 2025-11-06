@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify integration exists before creating session
+    // Try to verify integration exists (optional - some Nango accounts don't support listProviders)
     let integrationExists = false;
     let availableIntegrations: string[] = [];
     try {
@@ -138,12 +138,7 @@ export async function POST(request: NextRequest) {
       console.log(`🔍 [NANGO CONNECT] Integration exists: ${integrationExists}`);
       
       if (availableIntegrations.length === 0) {
-        console.error(`❌ [NANGO CONNECT] No integrations found! This means:
-    1. NANGO_SECRET_KEY is for wrong environment (check Nango dashboard environment)
-    2. No integrations are configured in this Nango environment
-    3. Secret key doesn't have permission to list integrations
-    
-    Action needed: Verify NANGO_SECRET_KEY in Vercel matches the environment where Outlook is configured`);
+        console.warn(`⚠️ [NANGO CONNECT] listProviders() returned empty array - this is OK if integrations exist (will try anyway)`);
       } else if (!integrationExists && availableIntegrations.length > 0) {
         console.warn(`⚠️ [NANGO CONNECT] Integration "${nangoIntegrationId}" not found. Available: ${availableIntegrations.join(', ')}`);
       }
