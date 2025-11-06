@@ -49,7 +49,7 @@ const IntegrationsPage = () => {
         const data = await response.json();
         // Filter to only show Outlook connections
         const outlookConnections = (data.connections || []).filter(
-          (conn: Connection) => conn.provider === 'outlook' || conn.providerConfigKey === 'microsoft-outlook'
+          (conn: Connection) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
         );
         setConnections(outlookConnections);
       }
@@ -118,7 +118,7 @@ const IntegrationsPage = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          provider: "microsoft-outlook",
+          provider: "outlook",
           workspaceId: user.activeWorkspaceId,
           redirectUrl: `${window.location.origin}/${user.activeWorkspaceId}/grand-central/integrations`,
         }),
@@ -126,10 +126,9 @@ const IntegrationsPage = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.error ||
-            `HTTP ${response.status}: Failed to initiate Outlook OAuth connection`,
-        );
+        const errorMessage = errorData.error || `HTTP ${response.status}: Failed to initiate Outlook OAuth connection`;
+        const errorDetails = errorData.details ? ` (${errorData.details})` : '';
+        throw new Error(`${errorMessage}${errorDetails}`);
       }
 
       const data = await response.json();
@@ -141,9 +140,24 @@ const IntegrationsPage = () => {
       }
     } catch (error) {
       console.error("OAuth initiation error:", error);
+      let errorMessage = "Failed to initiate connection.";
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        
+        // Provide user-friendly messages for common errors
+        if (error.message.includes("Nango is not configured")) {
+          errorMessage = "Nango is not configured. Please contact your administrator to set up the Nango integration.";
+        } else if (error.message.includes("not configured in Nango")) {
+          errorMessage = "Outlook integration is not configured in Nango. Please configure it in your Nango dashboard.";
+        } else if (error.message.includes("NANGO_SECRET_KEY")) {
+          errorMessage = "Nango configuration is missing. Please set up Nango environment variables.";
+        }
+      }
+      
       setOauthMessage({
         type: "error",
-        message: `Failed to initiate connection. ${error instanceof Error ? error.message : "Please try again."}`,
+        message: errorMessage,
       });
       setIsConnecting(false);
     }
@@ -195,7 +209,7 @@ const IntegrationsPage = () => {
   };
 
   const outlookConnection = connections.find(
-    (conn) => conn.provider === 'outlook' || conn.providerConfigKey === 'microsoft-outlook'
+    (conn) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
   );
 
   return (
