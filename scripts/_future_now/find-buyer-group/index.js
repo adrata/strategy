@@ -13,6 +13,7 @@ const { CrossFunctionalCoverage } = require('./cross-functional');
 const { CohesionValidator } = require('./cohesion-validator');
 const { ResearchReport } = require('./research-report');
 const { AIReasoning } = require('./ai-reasoning');
+const { BuyerGroupSizing } = require('./buyer-group-sizing');
 const { extractDomain, createUniqueId, delay } = require('./utils');
 
 class SmartBuyerGroupPipeline {
@@ -227,16 +228,52 @@ class SmartBuyerGroupPipeline {
         });
       }
       
+      // Stage 5: Determine Optimal Buyer Group Size (smart sizing)
+      const sizing = new BuyerGroupSizing(this.dealSize, intelligence, aiValidatedEmployees);
+      const sizeConstraints = sizing.determineOptimalSize();
+      
+      console.log(`📏 Buyer Group Size Analysis:`);
+      console.log(`   Constraints: ${sizeConstraints.min}-${sizeConstraints.max} (ideal: ${sizeConstraints.ideal})`);
+      console.log(`   Reasoning: ${sizeConstraints.reasoning}`);
+      if (sizeConstraints.acceptSinglePerson) {
+        console.log(`   ✅ Single person buyer group acceptable`);
+      }
+      
       // Stage 5: Select Optimal Group (free)
       const initialBuyerGroup = await this.executeStage('group-selection', async () => {
-        const buyerGroupSize = this.options.buyerGroupSize || params.buyerGroupSize;
+        // Use smart sizing constraints instead of rigid tier-based size
+        const buyerGroupSize = {
+          min: sizeConstraints.min,
+          max: sizeConstraints.max,
+          ideal: sizeConstraints.ideal
+        };
+        
         const roleAssignment = new RoleAssignment(
           this.dealSize, 
           intelligence.revenue || 0, 
           intelligence.employeeCount || 0,
           this.options.rolePriorities || null
         );
-        return roleAssignment.selectOptimalBuyerGroup(aiValidatedEmployees, buyerGroupSize);
+        const selected = roleAssignment.selectOptimalBuyerGroup(aiValidatedEmployees, buyerGroupSize);
+        
+        // Validate the selected size
+        const validation = sizing.validateSize(selected.length, sizeConstraints);
+        const recommendation = sizing.getRecommendation(selected.length, sizeConstraints);
+        
+        console.log(`📊 Buyer Group Size Validation:`);
+        console.log(`   Actual: ${selected.length} members`);
+        console.log(`   Score: ${validation.score}/100`);
+        console.log(`   ${validation.reasoning}`);
+        console.log(`   Recommendation: ${recommendation.message}`);
+        
+        // Store sizing info in pipeline state
+        this.pipelineState.buyerGroupSizing = {
+          constraints: sizeConstraints,
+          validation: validation,
+          recommendation: recommendation
+        };
+        
+        return selected;
       });
       
       // Stage 6: Cross-Functional Coverage (free)
@@ -334,10 +371,14 @@ class SmartBuyerGroupPipeline {
         return await this.enrichBuyerGroupWithLusha(enrichedBuyerGroup);
       });
       
-      // Stage 11: Database Persistence
-      await this.executeStage('database-persistence', async () => {
-        return await this.saveBuyerGroupToDatabase(phoneEnrichedBuyerGroup, report, intelligence);
-      });
+      // Stage 11: Database Persistence (conditional)
+      if (!this.options.skipDatabase) {
+        await this.executeStage('database-persistence', async () => {
+          return await this.saveBuyerGroupToDatabase(phoneEnrichedBuyerGroup, report, intelligence);
+        });
+      } else {
+        console.log('⏭️  Skipping database persistence (skipDatabase flag set)');
+      }
       
       this.pipelineState.finalBuyerGroup = phoneEnrichedBuyerGroup;
       this.pipelineState.stage = 'completed';

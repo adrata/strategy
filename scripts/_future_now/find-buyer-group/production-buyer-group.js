@@ -15,6 +15,8 @@ const { SmartBuyerGroupPipeline } = require('./index');
 const { BuyerGroupInterview } = require('./interview-config');
 const { AIConfigGenerator } = require('./ai-config-generator');
 const { ConfigStorage } = require('./config-storage');
+const fs = require('fs');
+const path = require('path');
 
 class ProductionBuyerGroupPipeline {
   constructor(options = {}) {
@@ -91,6 +93,9 @@ class ProductionBuyerGroupPipeline {
         }
       }
       
+      // Pass skip database flag to pipeline
+      pipelineOptions.skipDatabase = this.options.skipDatabase || false;
+      
       // Initialize the smart pipeline with personalized config
       const pipeline = new SmartBuyerGroupPipeline(pipelineOptions);
 
@@ -111,8 +116,17 @@ class ProductionBuyerGroupPipeline {
       // Display results
       this.displayResults(result);
       
-      // Save to database
-      await this.saveToDatabase(result);
+      // Export results to JSON if requested
+      if (this.options.exportResultsJson) {
+        await this.exportResultsToJSON(result);
+      }
+      
+      // Save to database (only if not skipping)
+      if (!this.options.skipDatabase) {
+        await this.saveToDatabase(result);
+      } else {
+        console.log('⏭️  Skipping database save (--skip-database flag set)');
+      }
       
       console.log('✅ Pipeline completed successfully!');
       return result;
@@ -194,14 +208,14 @@ class ProductionBuyerGroupPipeline {
     console.log('\n📊 Pipeline Results:');
     console.log('─'.repeat(40));
     
-    if (result.companyIntelligence) {
-      console.log(`🏢 Company: ${result.companyIntelligence.name || 'Unknown'}`);
-      console.log(`👥 Employees: ${result.companyIntelligence.employees || 'Unknown'}`);
-      console.log(`💰 Revenue: $${(result.companyIntelligence.revenue || 0).toLocaleString()}`);
-      console.log(`🏷️  Tier: ${result.companyIntelligence.tier || 'Unknown'}`);
+    const intelligence = result.intelligence || {};
+    if (intelligence.companyName || intelligence.employeeCount) {
+      console.log(`🏢 Company: ${intelligence.companyName || 'Unknown'}`);
+      console.log(`👥 Employees: ${intelligence.employeeCount || 'Unknown'}`);
+      console.log(`💰 Revenue: $${(intelligence.revenue || 0).toLocaleString()}`);
+      console.log(`🏷️  Tier: ${intelligence.tier || 'Unknown'}`);
     }
     
-    console.log(`📋 Total Employees Found: ${result.previewEmployees?.length || 0}`);
     console.log(`🎯 Buyer Group Size: ${result.buyerGroup?.length || 0}`);
     console.log(`💵 Total Cost: $${(result.costs?.total || 0).toFixed(2)}`);
     
@@ -320,6 +334,61 @@ class ProductionBuyerGroupPipeline {
       throw error;
     }
   }
+
+  /**
+   * Export complete pipeline results to JSON file
+   * @param {object} result - Complete pipeline result
+   * @returns {Promise<string>} Path to saved file
+   */
+  async exportResultsToJSON(result) {
+    try {
+      console.log('\n📄 Exporting results to JSON...');
+      
+      // Determine output path
+      let filePath = this.options.jsonOutput;
+      if (!filePath) {
+        const companyName = this.extractCompanyName(this.targetCompany).replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+        const filename = `buyer-group-results-${companyName}-${timestamp}.json`;
+        filePath = path.join(process.cwd(), filename);
+      }
+
+      // Ensure directory exists
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      // Prepare export data with all pipeline results
+      const exportData = {
+        metadata: {
+          exportedAt: new Date().toISOString(),
+          version: '1.0',
+          workspaceId: this.options.workspaceId || null,
+          targetCompany: this.targetCompany,
+          dealSize: this.dealSize,
+          processingTime: Date.now() - this.startTime
+        },
+        intelligence: result.intelligence || {},
+        buyerGroup: result.buyerGroup || [],
+        report: result.report || {},
+        cohesion: result.cohesion || {},
+        coverage: result.coverage || {},
+        costs: result.costs || {},
+        pipelineState: result.pipelineState || {},
+        processingTime: result.processingTime || 0
+      };
+
+      // Write to file
+      fs.writeFileSync(filePath, JSON.stringify(exportData, null, 2), 'utf8');
+
+      console.log(`✅ Exported results to: ${filePath}`);
+      return filePath;
+    } catch (error) {
+      console.error('❌ Failed to export results to JSON:', error.message);
+      throw error;
+    }
+  }
 }
 
 // CLI Interface
@@ -360,6 +429,14 @@ async function main() {
       case 'json-output':
         options.jsonOutput = value;
         break;
+      case 'export-results-json':
+        options.exportResultsJson = true;
+        i--; // No value for boolean flags
+        break;
+      case 'skip-database':
+        options.skipDatabase = true;
+        i--; // No value for boolean flags
+        break;
       default:
         options[key] = value;
     }
@@ -375,8 +452,10 @@ async function main() {
     console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --skip-interview');
     console.log('\n  USA-only filter:');
     console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --usa-only');
-    console.log('\n  Export JSON (for TOP):');
+    console.log('\n  Export config JSON:');
     console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --export-json --json-output "./config.json"');
+    console.log('\n  Export results JSON (skip database):');
+    console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --export-results-json --skip-database --json-output "./results.json"');
     process.exit(1);
   }
   

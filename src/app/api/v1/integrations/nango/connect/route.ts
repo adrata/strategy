@@ -81,10 +81,13 @@ export async function POST(request: NextRequest) {
      * Map provider names to Nango Integration IDs
      * This mapping is stored server-side in environment variables for security
      * Frontend sends simple provider names like "outlook", backend maps to actual Integration ID
+     * 
+     * IMPORTANT: Outlook is working in production - do not change its default mapping
      */
     function getNangoIntegrationId(provider: string): string {
       const mapping: Record<string, string> = {
         // Outlook: Default to 'outlook' if env var not set (matches common Nango Integration ID)
+        // ⚠️ DO NOT CHANGE: Outlook is working in production with this default
         'outlook': process.env.NANGO_OUTLOOK_INTEGRATION_ID || 'outlook',
         'gmail': process.env.NANGO_GMAIL_INTEGRATION_ID || 'gmail',
         'google': process.env.NANGO_GOOGLE_INTEGRATION_ID || 'gmail',
@@ -96,6 +99,12 @@ export async function POST(request: NextRequest) {
       
       if (!integrationId) {
         throw new Error(`Unknown provider: ${provider}. Supported providers: outlook, gmail, google-calendar`);
+      }
+
+      // Safety check: Ensure Outlook mapping is never empty
+      if (provider.toLowerCase() === 'outlook' && !integrationId) {
+        console.error('❌ [NANGO CONNECT] CRITICAL: Outlook integration ID is empty! Falling back to "outlook"');
+        return 'outlook';
       }
 
       return integrationId;
