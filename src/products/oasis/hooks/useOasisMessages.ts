@@ -518,6 +518,28 @@ export function useOasisMessages(
 
   // Send message
   const sendMessage = async (content: string, parentMessageId?: string) => {
+    // OPTIMISTIC UPDATE: Add message immediately for instant UI feedback
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMessage: OasisMessage = {
+      id: tempId,
+      content,
+      channelId: channelId || null,
+      dmId: dmId || null,
+      senderId: 'current-user', // Will be replaced with real data
+      senderName: 'You',
+      senderUsername: null,
+      parentMessageId: parentMessageId || null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      reactions: [],
+      threadCount: 0,
+      threadMessages: []
+    };
+
+    // Add optimistic message immediately
+    setMessages(prev => [...prev, optimisticMessage]);
+    console.log(`⚡ [OASIS MESSAGES] Optimistic update: added message ${tempId}`);
+
     try {
       const response = await fetch('/api/v1/oasis/oasis/messages', {
         method: 'POST',
@@ -534,13 +556,18 @@ export function useOasisMessages(
       });
 
       if (!response.ok) {
+        // Remove optimistic message on error
+        setMessages(prev => prev.filter(msg => msg.id !== tempId));
         throw new Error('Failed to send message');
       }
 
       const data = await response.json();
       
-      // Add message to list (optimistic update)
-      setMessages(prev => [...prev, data.message]);
+      // Replace optimistic message with real message from server
+      setMessages(prev => prev.map(msg => 
+        msg.id === tempId ? data.message : msg
+      ));
+      console.log(`✅ [OASIS MESSAGES] Replaced optimistic message with real message: ${data.message.id}`);
       
       // Trigger AI response only when Adrata is directly engaged
       if (workspaceId) {
@@ -577,6 +604,8 @@ export function useOasisMessages(
       
       return data.message;
     } catch (err) {
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg.id === tempId));
       console.error('❌ [OASIS MESSAGES] Send error:', err);
       setError(err instanceof Error ? err.message : 'Failed to send message');
       throw err;
