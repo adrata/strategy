@@ -9,15 +9,16 @@ import { prisma } from '@/lib/prisma';
  * from all active Outlook/Gmail connections. This ensures emails are synced even
  * if webhooks fail or aren't configured.
  * 
- * Configure in vercel.json:
+ * Configure in vercel.json with a cron schedule that runs every 5 minutes.
+ * Example configuration:
  * {
  *   "crons": [{
  *     "path": "/api/cron/email-sync",
- *     "schedule": "*/5 * * * *"
+ *     "schedule": "0,5,10,15,20,25,30,35,40,45,50,55 * * * *"
  *   }]
  * }
  * 
- * Schedule runs every 5 minutes.
+ * This runs at minute 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, and 55 of every hour.
  */
 export async function GET(request: NextRequest) {
   try {
