@@ -72,9 +72,36 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const selectedChannel = layoutContext?.selectedChannel || null;
   const setSelectedChannel = layoutContext?.setSelectedChannel || (() => {});
   
+  // Get workspace ID from auth user or acquisition data (calculate before data hooks)
+  const workspaceId = authUser?.activeWorkspaceId || acquisitionData?.auth?.authUser?.activeWorkspaceId || '';
+  
+  // CRITICAL FIX: Validate workspaceId before calling hooks
+  // If workspaceId is empty, hooks will fail or return empty data
+  const safeWorkspaceId = workspaceId && workspaceId !== 'default' && workspaceId.trim() !== '' ? workspaceId : '';
+  
+  // Real data hooks - CRITICAL: All hooks must be called before any conditional returns (React Rules of Hooks)
+  const { channels, loading: channelsLoading, createChannel } = useOasisChannels(safeWorkspaceId);
+  const { dms, loading: dmsLoading, error: dmsError, createDM } = useOasisDMs(safeWorkspaceId);
+  const { userCount, isConnected } = useOasisPresence(safeWorkspaceId);
+  const { autoCreateRossDMs } = useAutoCreateRossDMs();
+  
+  // CRITICAL: Refs must be called before any conditional returns
+  const hasInitialSelection = useRef(false);
+  const hasAutoCreatedRossDMs = useRef(false);
+  
+  // State for creating new channels/DMs - must be called before any conditional returns
+  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+  const [showAddDMModal, setShowAddDMModal] = useState(false);
+  
   // Unified loading state - check auth first
   const isLoading = authLoading;
   
+  console.log('🔍 [OASIS LEFT PANEL] Auth user:', authUser);
+  console.log('🔍 [OASIS LEFT PANEL] Acquisition data:', acquisitionData?.auth?.authUser);
+  console.log('🔍 [OASIS LEFT PANEL] URL params:', params);
+  console.log('🔍 [OASIS LEFT PANEL] Workspace ID:', workspaceId);
+  
+  // NOW safe to have conditional returns - all hooks have been called
   if (isLoading) {
     return (
       <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
@@ -114,30 +141,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       </div>
     );
   }
-  
-  // Get workspace ID from auth user or acquisition data
-  const workspaceId = authUser?.activeWorkspaceId || acquisitionData?.auth?.authUser?.activeWorkspaceId || '';
-  
-  console.log('🔍 [OASIS LEFT PANEL] Auth user:', authUser);
-  console.log('🔍 [OASIS LEFT PANEL] Acquisition data:', acquisitionData?.auth?.authUser);
-  console.log('🔍 [OASIS LEFT PANEL] URL params:', params);
-  console.log('🔍 [OASIS LEFT PANEL] Workspace ID:', workspaceId);
-  
-  // CRITICAL FIX: Validate workspaceId before calling hooks
-  // If workspaceId is empty, hooks will fail or return empty data
-  const safeWorkspaceId = workspaceId && workspaceId !== 'default' && workspaceId.trim() !== '' ? workspaceId : '';
-  
-  // Real data hooks - only call if we have a valid workspaceId and not loading
-  // Unified loading check prevents duplicate skeleton rendering
-  // CRITICAL: All hooks must be called before any conditional returns (React Rules of Hooks)
-  const { channels, loading: channelsLoading, createChannel } = useOasisChannels(safeWorkspaceId);
-  const { dms, loading: dmsLoading, error: dmsError, createDM } = useOasisDMs(safeWorkspaceId);
-  const { userCount, isConnected } = useOasisPresence(safeWorkspaceId);
-  const { autoCreateRossDMs } = useAutoCreateRossDMs();
-  
-  // CRITICAL: Refs must be called before any conditional returns
-  const hasInitialSelection = useRef(false);
-  const hasAutoCreatedRossDMs = useRef(false);
   
   // Combined loading state - if any data is loading, show skeleton
   // This prevents showing skeleton then immediately showing real content
@@ -286,10 +289,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       }
     }
   }, [channels, dms, channelsLoading, setSelectedChannel]);
-  
-  // State for creating new channels/DMs
-  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
-  const [showAddDMModal, setShowAddDMModal] = useState(false);
 
   const handleConversationClick = async (conversation: Conversation) => {
     setSelectedChannel(conversation);
