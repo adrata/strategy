@@ -70,14 +70,23 @@ export class CalendarSyncService {
       // Get or create primary calendar
       const calendar = await this.getOrCreatePrimaryCalendar(userId, workspaceId, platform);
       
-      // Get access token for the platform
-      const accessToken = await this.getAccessToken(userId, platform);
-      if (!accessToken) {
-        throw new Error(`No access token available for ${platform}`);
+      // Try to use Nango connection first (preferred method)
+      let platformEvents: CalendarEvent[] = [];
+      const nangoEvents = await this.fetchEventsFromNango(userId, workspaceId, platform);
+      
+      if (nangoEvents.length > 0) {
+        console.log(`✅ [CALENDAR SYNC] Fetched ${nangoEvents.length} events from Nango`);
+        platformEvents = nangoEvents;
+      } else {
+        // Fall back to direct token-based method
+        console.log(`⚠️ [CALENDAR SYNC] No Nango connection found, falling back to token-based method`);
+        const accessToken = await this.getAccessToken(userId, platform);
+        if (!accessToken) {
+          throw new Error(`No access token available for ${platform}`);
+        }
+        platformEvents = await this.fetchPlatformEvents(accessToken, platform);
       }
-
-      // Fetch events from the platform API
-      const platformEvents = await this.fetchPlatformEvents(accessToken, platform);
+      
       result['eventsProcessed'] = platformEvents.length;
 
       // Process each event
@@ -141,6 +150,188 @@ export class CalendarSyncService {
     }
 
     return calendar;
+  }
+
+  /**
+   * Fetch calendar events from Nango connection
+   */
+  private async fetchEventsFromNango(
+    userId: string,
+    workspaceId: string,
+    platform: 'microsoft' | 'google'
+  ): Promise<CalendarEvent[]> {
+    try {
+      // Map platform to Nango provider
+      const nangoProvider = platform === 'microsoft' ? 'outlook' : 'gmail';
+      
+      // Find active Nango connection
+      const connection = await prisma.grand_central_connections.findFirst({
+        where: {
+          workspaceId,
+          userId,
+          provider: nangoProvider,
+          status: 'active'
+        }
+      });
+
+      if (!connection || !connection.nangoConnectionId) {
+        console.log(`📅 [CALENDAR SYNC] No active Nango connection found for ${nangoProvider}`);
+        return [];
+      }
+
+      console.log(`📅 [CALENDAR SYNC] Found Nango connection: ${connection.nangoConnectionId}`);
+
+      // Import Nango SDK directly
+      const { Nango } = await import('@nangohq/node');
+      
+      // Initialize Nango client
+      const secretKey = process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY;
+      if (!secretKey) {
+        console.warn(`⚠️ [CALENDAR SYNC] NANGO_SECRET_KEY not configured`);
+        return [];
+      }
+
+      const nango = new Nango({
+        secretKey,
+        host: process.env.NANGO_HOST || 'https://api.nango.dev'
+      });
+
+      // Calculate date range (today to 30 days from now)
+      const now = new Date();
+      const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+      // Determine endpoint and query params based on platform
+      let endpoint: string;
+      let queryParams: any;
+
+      if (platform === 'microsoft') {
+        // Microsoft Graph API endpoint
+        endpoint = '/v1.0/me/events';
+        queryParams = {
+          '$filter': `start/dateTime ge '${now.toISOString()}' and start/dateTime le '${endDate.toISOString()}'`,
+          '$orderby': 'start/dateTime',
+          '$top': 100
+        };
+      } else {
+        // Google Calendar API endpoint
+        endpoint = '/calendar/v3/calendars/primary/events';
+        queryParams = {
+          timeMin: now.toISOString(),
+          timeMax: endDate.toISOString(),
+          singleEvents: true,
+          orderBy: 'startTime',
+          maxResults: 100
+        };
+      }
+
+      // Use Nango's proxy method to fetch calendar events (GET request)
+      const response = await nango.proxy({
+        endpoint,
+        providerConfigKey: connection.providerConfigKey || nangoProvider,
+        connectionId: connection.nangoConnectionId,
+        method: 'GET',
+        retries: 3
+      });
+
+      // Transform Nango response to CalendarEvent format
+      // Nango proxy returns { data: {...} }, so we need to extract the data
+      const events = this.transformNangoEventsToCalendarEvents(response.data || response, platform);
+      
+      console.log(`✅ [CALENDAR SYNC] Transformed ${events.length} events from Nango`);
+      return events;
+
+    } catch (error) {
+      console.error(`❌ [CALENDAR SYNC] Error fetching events from Nango:`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Transform Nango API response to CalendarEvent format
+   */
+  private transformNangoEventsToCalendarEvents(
+    data: any,
+    platform: 'microsoft' | 'google'
+  ): CalendarEvent[] {
+    const events: CalendarEvent[] = [];
+
+    try {
+      if (platform === 'microsoft') {
+        // Microsoft Graph API format: { value: [...] }
+        const rawEvents = data.value || data || [];
+        
+        for (const event of rawEvents) {
+          events.push({
+            id: event.id,
+            title: event.subject || 'Untitled Event',
+            description: event.body?.content || '',
+            location: event.location?.displayName || '',
+            startTime: new Date(event.start.dateTime || event.start.date),
+            endTime: new Date(event.end.dateTime || event.end.date),
+            isAllDay: !event.start.dateTime,
+            isRecurring: !!event.recurrence,
+            recurrenceRule: event.recurrence?.pattern?.type,
+            status: event.isCancelled ? 'cancelled' : (event.responseStatus === 'tentativelyAccepted' ? 'tentative' : 'confirmed'),
+            visibility: event.sensitivity === 'private' ? 'private' : (event.sensitivity === 'public' ? 'public' : 'default'),
+            platform: 'microsoft',
+            externalId: event.id,
+            meetingUrl: event.onlineMeeting?.joinUrl || event.webLink,
+            attendees: event.attendees?.map((a: any) => ({
+              email: a.emailAddress?.address,
+              name: a.emailAddress?.name,
+              status: a.status?.response
+            })) || [],
+            organizer: event.organizer ? {
+              email: event.organizer.emailAddress?.address,
+              name: event.organizer.emailAddress?.name
+            } : undefined,
+            reminders: event.reminders?.map((r: any) => ({
+              method: r.method,
+              minutes: r.minutesBeforeStart
+            })) || []
+          });
+        }
+      } else {
+        // Google Calendar API format: { items: [...] }
+        const rawEvents = data.items || data || [];
+        
+        for (const event of rawEvents) {
+          events.push({
+            id: event.id,
+            title: event.summary || 'Untitled Event',
+            description: event.description || '',
+            location: event.location || '',
+            startTime: new Date(event.start.dateTime || event.start.date),
+            endTime: new Date(event.end.dateTime || event.end.date),
+            isAllDay: !event.start.dateTime,
+            isRecurring: !!event.recurrence,
+            recurrenceRule: event.recurrence?.[0],
+            status: event.status === 'cancelled' ? 'cancelled' : (event.status === 'tentative' ? 'tentative' : 'confirmed'),
+            visibility: event.visibility || 'default',
+            platform: 'google',
+            externalId: event.id,
+            meetingUrl: event.hangoutLink || event.htmlLink,
+            attendees: event.attendees?.map((a: any) => ({
+              email: a.email,
+              name: a.displayName,
+              status: a.responseStatus
+            })) || [],
+            organizer: event.organizer ? {
+              email: event.organizer.email,
+              name: event.organizer.displayName
+            } : undefined,
+            reminders: event.reminders?.overrides?.map((r: any) => ({
+              method: r.method,
+              minutes: r.minutes
+            })) || []
+          });
+        }
+      }
+    } catch (error) {
+      console.error(`❌ [CALENDAR SYNC] Error transforming events:`, error);
+    }
+
+    return events;
   }
 
   /**

@@ -113,11 +113,17 @@ export function GrandCentralLeftPanel() {
       {/* Fixed Bottom Section - Profile Button */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
-          onClick={() => setIsProfilePanelVisible(!isProfilePanelVisible)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Profile button clicked, current state:', isProfilePanelVisible);
+            setIsProfilePanelVisible(!isProfilePanelVisible);
+          }}
           className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors ${
-            isProfilePanelVisible ? 'bg-hover' : 'hover:bg-hover'
+            isProfilePanelVisible ? 'bg-hover text-foreground' : 'hover:bg-hover'
           }`}
           title="Profile"
+          type="button"
         >
           <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">{getInitial()}</span>
