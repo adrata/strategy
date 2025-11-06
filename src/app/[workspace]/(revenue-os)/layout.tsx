@@ -127,10 +127,11 @@ function PipelineLayoutInner({
   // Get thread data from OasisLayoutContext if available
   let threadData = null;
   try {
-    const { threadData: td } = useOasisLayout();
-    threadData = td;
+    const oasisLayout = useOasisLayout();
+    threadData = oasisLayout.threadData;
   } catch (error) {
-    // Context not available, continue
+    // Context not available (not in Oasis route), continue
+    threadData = null;
   }
   
   // Initialize profile panel state from sessionStorage on mount if needed
@@ -271,7 +272,10 @@ function PipelineLayoutInner({
   };
   
   // Determine right panel visibility based on route
+  // Show right panel if thread is open, or based on route/UI state
   const isRightPanelVisible = pathname.includes('/pinpoint/adrata') 
+    ? true 
+    : (threadData !== null && pathname.includes('/oasis')) 
     ? true 
     : ui.isRightPanelVisible;
 
@@ -295,6 +299,13 @@ function PipelineLayoutInner({
       }
     }
   }, [isBaseAdrataRoute, isProfilePanelVisible, setIsProfilePanelVisible]);
+
+  // Ensure right panel is visible when thread is opened
+  useEffect(() => {
+    if (pathname.includes('/oasis') && threadData && !ui.isRightPanelVisible) {
+      ui.setIsRightPanelVisible(true);
+    }
+  }, [pathname, threadData, ui.isRightPanelVisible, ui.setIsRightPanelVisible]);
   
   // Keep profile panel open when navigating between RevenueOS, Oasis, Workbench, and other apps
   // Check if we're on a route where profile panel should stay open
