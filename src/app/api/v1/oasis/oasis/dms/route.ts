@@ -138,28 +138,40 @@ export async function GET(request: NextRequest) {
       
       // Calculate unread count using read receipts
       // Count messages from other users that don't have read receipts for this user
-      const unreadMessages = await prisma.oasisMessage.findMany({
-        where: {
-          dmId: dm.id,
-          senderId: { not: userId } // Only count messages from other users
-        },
-        select: { id: true }
-      });
-      
-      const messageIds = unreadMessages.map(m => m.id);
       let unreadCount = 0;
       
-      if (messageIds.length > 0) {
-        const readReceipts = await prisma.oasisReadReceipt.findMany({
+      try {
+        const unreadMessages = await prisma.oasisMessage.findMany({
           where: {
-            messageId: { in: messageIds },
-            userId: userId
+            dmId: dm.id,
+            senderId: { not: userId } // Only count messages from other users
           },
-          select: { messageId: true }
+          select: { id: true }
         });
         
-        const readMessageIds = readReceipts.map(r => r.messageId);
-        unreadCount = messageIds.filter(id => !readMessageIds.includes(id)).length;
+        const messageIds = unreadMessages.map(m => m.id);
+        
+        if (messageIds.length > 0) {
+          const readReceipts = await prisma.oasisReadReceipt.findMany({
+            where: {
+              messageId: { in: messageIds },
+              userId: userId
+            },
+            select: { messageId: true }
+          });
+          
+          const readMessageIds = readReceipts.map(r => r.messageId);
+          unreadCount = messageIds.filter(id => !readMessageIds.includes(id)).length;
+        }
+      } catch (readReceiptError: any) {
+        // If OasisReadReceipt table doesn't exist yet (P2021), just set unreadCount to 0
+        if (readReceiptError.code === 'P2021') {
+          console.warn('⚠️ [OASIS DMS] OasisReadReceipt table does not exist - unread counts will be 0');
+          unreadCount = 0;
+        } else {
+          // Re-throw other errors
+          throw readReceiptError;
+        }
       }
       
       return {
