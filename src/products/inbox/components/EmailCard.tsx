@@ -28,7 +28,7 @@ export function EmailCard({ email, isSelected, onClick, rank }: EmailCardProps) 
       }`}
     >
       {/* Rank badge in top left */}
-      <div className="absolute top-2 left-2 w-6 h-6 bg-panel-background text-foreground rounded-[12px] flex items-center justify-center text-xs font-bold flex-shrink-0 shrink-0 border border-border">
+      <div className="absolute top-2 left-2 w-6 h-6 bg-panel-background text-foreground rounded-md flex items-center justify-center text-xs font-bold flex-shrink-0 shrink-0 border border-border">
         {rank}
       </div>
       <div className="flex items-start justify-between gap-2 pl-7">

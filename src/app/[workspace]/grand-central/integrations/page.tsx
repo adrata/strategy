@@ -468,7 +468,7 @@ const IntegrationsPage = () => {
           Integrations
         </h1>
         <p className="text-muted">
-          Connect your email accounts to sync emails
+          Connect your email accounts to automatically sync incoming and outgoing emails in real-time
         </p>
       </div>
 
@@ -504,7 +504,7 @@ const IntegrationsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="max-w-2xl space-y-4">
+        <div className="space-y-4">
           {/* Outlook Integration Card */}
           <div
             className={`p-6 border rounded-lg ${
@@ -585,7 +585,7 @@ const IntegrationsPage = () => {
 
                 {outlookConnection.lastSyncAt && (
                   <p className="text-xs text-muted">
-                    Last synced: {new Date(outlookConnection.lastSyncAt).toLocaleString()}
+                    Emails sync automatically via webhooks and cron (every 5 minutes)
                   </p>
                 )}
 
@@ -694,7 +694,7 @@ const IntegrationsPage = () => {
 
                 {gmailConnection.lastSyncAt && (
                   <p className="text-xs text-muted">
-                    Last synced: {new Date(gmailConnection.lastSyncAt).toLocaleString()}
+                    Emails sync automatically via webhooks and cron (every 5 minutes)
                   </p>
                 )}
 
@@ -803,7 +803,7 @@ const IntegrationsPage = () => {
 
                 {googleCalendarConnection.lastSyncAt && (
                   <p className="text-xs text-muted">
-                    Last synced: {new Date(googleCalendarConnection.lastSyncAt).toLocaleString()}
+                    Calendar syncs automatically via webhooks and cron (every 5 minutes)
                   </p>
                 )}
 
