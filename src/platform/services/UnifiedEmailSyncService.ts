@@ -216,72 +216,127 @@ export class UnifiedEmailSyncService {
     
     let allEmails: any[] = [];
     
-    // Fetch from each folder
+    // Fetch from each folder with pagination
     for (const folderConfig of foldersToSync) {
       try {
-        let endpoint: string;
-        let queryParams: URLSearchParams;
+        let nextLink: string | null = null;
+        let pageCount = 0;
+        const maxPages = 50; // Safety limit: max 50 pages (5000 emails per folder)
         
-        if (provider === 'outlook') {
-          endpoint = `/v1.0/me/mailFolders/${folderConfig.folder}/messages`;
-          queryParams = new URLSearchParams();
-          queryParams.append('$top', '100');
-          if (folderConfig.filter) {
-            queryParams.append('$filter', folderConfig.filter);
-          }
-          if (folderConfig.orderby) {
-            queryParams.append('$orderby', folderConfig.orderby);
-          }
-          endpoint += `?${queryParams.toString()}`;
-          console.log(`📧 [EMAIL SYNC] Outlook endpoint: ${endpoint}`);
-        } else {
-          endpoint = '/gmail/v1/users/me/messages';
-          queryParams = new URLSearchParams();
-          queryParams.append('maxResults', '100');
-          if (folderConfig.q) {
-            queryParams.append('q', `${folderConfig.q} in:${folderConfig.folder}`);
-          }
-          endpoint += `?${queryParams.toString()}`;
-        }
-        
-        console.log(`📧 [EMAIL SYNC] Fetching from ${folderConfig.folder} folder...`);
-        
-        const result = await retryWithBackoff(
-          async () => {
-            try {
-              const response = await nango.proxy({
-                providerConfigKey: connection.providerConfigKey,
-                connectionId: connection.nangoConnectionId,
-                endpoint,
-                method: 'GET'
-              });
-              
-              const responseData = response.data || response;
-              const emailArray = responseData.value || responseData.messages || [];
-              console.log(`📧 [EMAIL SYNC] Found ${Array.isArray(emailArray) ? emailArray.length : 0} emails in ${folderConfig.folder}`);
-              
-              return {
-                success: true,
-                data: responseData
-              };
-            } catch (nangoError) {
-              console.error(`❌ [EMAIL SYNC] Nango proxy error for ${folderConfig.folder}:`, {
-                message: nangoError instanceof Error ? nangoError.message : 'Unknown error',
-                stack: nangoError instanceof Error ? nangoError.stack : undefined,
-                providerConfigKey: connection.providerConfigKey,
-                connectionId: connection.nangoConnectionId,
-                endpoint
-              });
-              throw nangoError;
+        do {
+          let endpoint: string;
+          let queryParams: URLSearchParams;
+          
+          if (provider === 'outlook') {
+            if (nextLink) {
+              // Use the nextLink URL directly (it's a full URL from Microsoft Graph)
+              // Extract the path and query from the nextLink
+              const url = new URL(nextLink);
+              endpoint = url.pathname + url.search;
+              // Remove the host part since Nango proxy expects relative paths
+              endpoint = endpoint.replace('https://graph.microsoft.com', '');
+            } else {
+              endpoint = `/v1.0/me/mailFolders/${folderConfig.folder}/messages`;
+              queryParams = new URLSearchParams();
+              queryParams.append('$top', '100'); // Fetch 100 per page
+              if (folderConfig.filter) {
+                queryParams.append('$filter', folderConfig.filter);
+              }
+              if (folderConfig.orderby) {
+                queryParams.append('$orderby', folderConfig.orderby);
+              }
+              endpoint += `?${queryParams.toString()}`;
             }
-          },
-          `Email fetch from ${provider} ${folderConfig.folder}`
-        );
+            console.log(`📧 [EMAIL SYNC] Outlook endpoint (page ${pageCount + 1}): ${endpoint}`);
+          } else {
+            // Gmail pagination
+            endpoint = '/gmail/v1/users/me/messages';
+            queryParams = new URLSearchParams();
+            queryParams.append('maxResults', '100');
+            if (nextLink) {
+              // Gmail uses pageToken for pagination
+              const url = new URL(nextLink);
+              const pageToken = url.searchParams.get('pageToken');
+              if (pageToken) {
+                queryParams.append('pageToken', pageToken);
+              }
+            }
+            if (folderConfig.q) {
+              queryParams.append('q', `${folderConfig.q} in:${folderConfig.folder}`);
+            }
+            endpoint += `?${queryParams.toString()}`;
+            console.log(`📧 [EMAIL SYNC] Gmail endpoint (page ${pageCount + 1}): ${endpoint}`);
+          }
+          
+          const result = await retryWithBackoff(
+            async () => {
+              try {
+                const response = await nango.proxy({
+                  providerConfigKey: connection.providerConfigKey,
+                  connectionId: connection.nangoConnectionId,
+                  endpoint,
+                  method: 'GET'
+                });
+                
+                const responseData = response.data || response;
+                const emailArray = responseData.value || responseData.messages || [];
+                console.log(`📧 [EMAIL SYNC] Found ${Array.isArray(emailArray) ? emailArray.length : 0} emails in ${folderConfig.folder} (page ${pageCount + 1})`);
+                
+                return {
+                  success: true,
+                  data: responseData
+                };
+              } catch (nangoError) {
+                console.error(`❌ [EMAIL SYNC] Nango proxy error for ${folderConfig.folder} (page ${pageCount + 1}):`, {
+                  message: nangoError instanceof Error ? nangoError.message : 'Unknown error',
+                  stack: nangoError instanceof Error ? nangoError.stack : undefined,
+                  providerConfigKey: connection.providerConfigKey,
+                  connectionId: connection.nangoConnectionId,
+                  endpoint
+                });
+                throw nangoError;
+              }
+            },
+            `Email fetch from ${provider} ${folderConfig.folder} (page ${pageCount + 1})`
+          );
+          
+          if (result.success && result.data) {
+            const emails = result.data.value || result.data.messages || [];
+            allEmails = allEmails.concat(emails);
+            
+            // Get next page link
+            if (provider === 'outlook') {
+              // Microsoft Graph uses @odata.nextLink
+              nextLink = result.data['@odata.nextLink'] || null;
+            } else {
+              // Gmail uses nextPageToken
+              const nextPageToken = result.data.nextPageToken;
+              if (nextPageToken) {
+                const baseUrl = `https://gmail.googleapis.com/gmail/v1/users/me/messages`;
+                nextLink = `${baseUrl}?pageToken=${nextPageToken}&maxResults=100`;
+              } else {
+                nextLink = null;
+              }
+            }
+            
+            pageCount++;
+            
+            // Safety check: don't fetch more than maxPages
+            if (pageCount >= maxPages) {
+              console.log(`⚠️ [EMAIL SYNC] Reached max pages (${maxPages}) for ${folderConfig.folder}, stopping pagination`);
+              nextLink = null;
+            }
+            
+            // If no more emails, stop
+            if (emails.length === 0) {
+              nextLink = null;
+            }
+          } else {
+            nextLink = null;
+          }
+        } while (nextLink);
         
-        if (result.success && result.data) {
-          const emails = result.data.value || result.data.messages || [];
-          allEmails = allEmails.concat(emails);
-        }
+        console.log(`✅ [EMAIL SYNC] Completed fetching from ${folderConfig.folder}: ${allEmails.length} total emails so far`);
       } catch (error) {
         console.error(`❌ [EMAIL SYNC] Failed to fetch from ${folderConfig.folder}:`, error);
         // Continue with other folders even if one fails
