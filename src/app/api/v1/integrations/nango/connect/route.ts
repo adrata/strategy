@@ -21,7 +21,9 @@ function getNangoClient(): Nango {
   const host = process.env.NANGO_HOST || 'https://api.nango.dev';
   
   // Log which key is being used (first 12 chars only for security)
-  console.log(`🔑 [NANGO] Using secret key: ${secretKey.substring(0, 12)}... (from ${process.env.NANGO_SECRET_KEY ? 'NANGO_SECRET_KEY' : 'NANGO_SECRET_KEY_DEV'})`);
+  // Note: Secret keys may or may not start with 'nango_sk' depending on Nango version/instance
+  const keyPrefix = secretKey.length > 12 ? secretKey.substring(0, 12) : secretKey.substring(0, Math.min(secretKey.length, 8));
+  console.log(`🔑 [NANGO] Using secret key: ${keyPrefix}... (from ${process.env.NANGO_SECRET_KEY ? 'NANGO_SECRET_KEY' : 'NANGO_SECRET_KEY_DEV'})`);
   console.log(`🌐 [NANGO] Using host: ${host}`);
 
   return new Nango({

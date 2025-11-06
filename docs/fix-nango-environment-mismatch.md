@@ -12,9 +12,11 @@
 
 1. Go to https://app.nango.dev
 2. **IMPORTANT:** Make sure you're in the "prod" environment (check top right)
-3. Go to **Environment Settings** (left sidebar)
-4. Find the **Secret Key** section
-5. Copy the secret key that starts with `nango_sk_...`
+3. Go to **Environment Settings** (left sidebar, at the bottom)
+4. Scroll to **Backend Settings** section
+5. Find the **Secret Key** field (it may be masked with dots)
+6. Click the **eye icon** or **copy icon** to reveal/copy the secret key
+7. **Note:** The key format may vary - it might start with `nango_sk_` or have a different format depending on your Nango instance
 
 ### Step 2: Update Vercel
 
