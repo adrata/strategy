@@ -140,7 +140,29 @@ const IntegrationsPage = () => {
       }
 
       // Step 2: Use Nango frontend SDK to open connect UI
-      const nango = new Nango();
+      // Initialize Nango with public key and host if available
+      const nangoConfig: any = {};
+      
+      // Try to get public key from environment (if exposed to frontend) or API
+      try {
+        const configResponse = await fetch('/api/v1/integrations/nango/config', {
+          credentials: 'include'
+        });
+        if (configResponse.ok) {
+          const config = await configResponse.json();
+          if (config.publicKey) {
+            nangoConfig.publicKey = config.publicKey;
+          }
+          if (config.host) {
+            nangoConfig.host = config.host;
+          }
+        }
+      } catch (configError) {
+        console.warn('Could not fetch Nango config, using defaults:', configError);
+      }
+
+      const nango = new Nango(nangoConfig);
+      
       const connect = nango.openConnectUI({
         onEvent: (event) => {
           if (event.type === 'close') {
@@ -156,6 +178,12 @@ const IntegrationsPage = () => {
             setTimeout(() => {
               loadConnections();
             }, 1000);
+          } else if (event.type === 'error') {
+            setIsConnecting(false);
+            setOauthMessage({
+              type: "error",
+              message: event.error || "An error occurred during connection",
+            });
           }
         },
       });

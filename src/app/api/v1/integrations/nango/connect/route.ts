@@ -58,8 +58,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Create a connect session using Nango (correct method per Nango docs)
+    // Note: The provider should match the Integration ID in your Nango dashboard
+    // Common values: "outlook", "microsoft-outlook", or the exact integration ID
     let sessionToken: string;
     try {
+      console.log(`📧 [NANGO CONNECT] Creating connect session for provider: ${provider}, user: ${user.id}`);
+      
       const sessionResponse = await nango.createConnectSession({
         end_user: {
           id: user.id,
@@ -74,21 +78,43 @@ export async function POST(request: NextRequest) {
       });
       
       sessionToken = sessionResponse.token;
+      console.log(`✅ [NANGO CONNECT] Session token created successfully`);
     } catch (nangoError: any) {
-      console.error('Nango createConnectSession error:', nangoError);
+      console.error('❌ [NANGO CONNECT] createConnectSession error:', {
+        message: nangoError?.message,
+        response: nangoError?.response?.data,
+        status: nangoError?.response?.status,
+        provider,
+        userId: user.id
+      });
       
       // Check if it's a provider configuration error
-      if (nangoError?.message?.includes('provider') || nangoError?.message?.includes('not found') || nangoError?.message?.includes('integration')) {
+      const errorMessage = nangoError?.message || nangoError?.response?.data?.message || 'Unknown error';
+      const errorStatus = nangoError?.response?.status || 500;
+      
+      if (errorStatus === 400 || errorMessage?.includes('provider') || errorMessage?.includes('not found') || errorMessage?.includes('integration')) {
         return NextResponse.json(
           { 
-            error: `Provider "${provider}" is not configured in Nango. Please configure it in your Nango dashboard.`,
-            details: nangoError.message
+            error: `Provider "${provider}" is not configured in Nango. Please check:`,
+            details: [
+              `1. Verify the Integration ID in your Nango dashboard matches "${provider}"`,
+              `2. Common Integration IDs: "outlook", "microsoft-outlook"`,
+              `3. Check that the integration is properly configured with Client ID and Secret`,
+              `4. Error from Nango: ${errorMessage}`
+            ].join('\n')
           },
           { status: 400 }
         );
       }
       
-      throw nangoError;
+      return NextResponse.json(
+        { 
+          error: 'Failed to create Nango connect session',
+          details: errorMessage,
+          status: errorStatus
+        },
+        { status: errorStatus >= 400 && errorStatus < 500 ? errorStatus : 500 }
+      );
     }
 
     // Store pending session in database (connectionId will come from webhook)

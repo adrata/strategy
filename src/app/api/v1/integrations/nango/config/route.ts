@@ -53,6 +53,9 @@ export async function GET(request: NextRequest) {
       config,
       nangoStatus,
       nangoError,
+      // Expose public key and host for frontend SDK initialization
+      publicKey: publicKey || null,
+      host: host,
       timestamp: new Date().toISOString()
     });
   } catch (error) {

@@ -303,6 +303,132 @@ export class UnifiedEmailSyncService {
     
     return { linked };
   }
+
+  /**
+   * Reverse linking: Link existing emails to a newly created person
+   * Called when a person is created to find and link their existing emails
+   */
+  static async linkExistingEmailsToPerson(
+    personId: string,
+    workspaceId: string,
+    personEmails: string[]
+  ): Promise<{ linked: number; actionsCreated: number }> {
+    if (!personEmails || personEmails.length === 0) {
+      return { linked: 0, actionsCreated: 0 };
+    }
+
+    console.log(`🔗 [EMAIL LINKING] Linking existing emails to person ${personId} with emails:`, personEmails);
+
+    // Normalize email addresses (lowercase, trim)
+    const normalizedEmails = personEmails
+      .filter(Boolean)
+      .map(email => email.toLowerCase().trim());
+
+    if (normalizedEmails.length === 0) {
+      return { linked: 0, actionsCreated: 0 };
+    }
+
+    // Find unlinked emails matching any of the person's email addresses
+    const matchingEmails = await prisma.email_messages.findMany({
+      where: {
+        workspaceId,
+        personId: null,
+        OR: [
+          { from: { in: normalizedEmails } },
+          { to: { hasSome: normalizedEmails } },
+          { cc: { hasSome: normalizedEmails } }
+        ]
+      },
+      take: 1000 // Limit to prevent performance issues
+    });
+
+    if (matchingEmails.length === 0) {
+      console.log(`📧 [EMAIL LINKING] No matching emails found for person ${personId}`);
+      return { linked: 0, actionsCreated: 0 };
+    }
+
+    // Get person details to get companyId
+    const person = await prisma.people.findUnique({
+      where: { id: personId },
+      select: { companyId: true }
+    });
+
+    if (!person) {
+      console.warn(`⚠️ [EMAIL LINKING] Person ${personId} not found`);
+      return { linked: 0, actionsCreated: 0 };
+    }
+
+    // Link all matching emails
+    let linked = 0;
+    for (const email of matchingEmails) {
+      try {
+        await prisma.email_messages.update({
+          where: { id: email.id },
+          data: {
+            personId: personId,
+            companyId: person.companyId
+          }
+        });
+        linked++;
+      } catch (error) {
+        console.error(`❌ [EMAIL LINKING] Failed to link email ${email.id}:`, error);
+      }
+    }
+
+    // Create action records for linked emails
+    let actionsCreated = 0;
+    const linkedEmailIds = matchingEmails.map(e => e.id);
+    
+    // Get workspace user for action assignment
+    const workspaceUser = await prisma.workspace_users.findFirst({
+      where: {
+        workspaceId,
+        isActive: true
+      }
+    });
+
+    if (workspaceUser) {
+      for (const email of matchingEmails) {
+        try {
+          // Check if action already exists
+          const existingAction = await prisma.actions.findFirst({
+            where: {
+              workspaceId,
+              personId: personId,
+              type: 'EMAIL',
+              subject: email.subject,
+              completedAt: email.receivedAt
+            }
+          });
+
+          if (!existingAction) {
+            await prisma.actions.create({
+              data: {
+                workspaceId,
+                userId: workspaceUser.userId,
+                companyId: person.companyId,
+                personId: personId,
+                type: 'EMAIL',
+                subject: email.subject,
+                description: email.body.substring(0, 500),
+                status: 'COMPLETED',
+                completedAt: email.receivedAt,
+                createdAt: email.receivedAt,
+                updatedAt: email.receivedAt
+              }
+            });
+            actionsCreated++;
+          }
+        } catch (error) {
+          console.error(`❌ [EMAIL LINKING] Failed to create action for email ${email.id}:`, error);
+        }
+      }
+    }
+
+    console.log(`✅ [EMAIL LINKING] Linked ${linked} emails and created ${actionsCreated} actions for person ${personId}`);
+    
+    return { linked, actionsCreated };
+  }
   
   /**
    * Create action records for emails (unified timeline)

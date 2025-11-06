@@ -1140,6 +1140,35 @@ export async function POST(request: NextRequest) {
 
     const person = result.person;
 
+    // Reverse linking: Link existing emails to this newly created person
+    setImmediate(async () => {
+      try {
+        const { UnifiedEmailSyncService } = await import('@/platform/services/UnifiedEmailSyncService');
+        
+        // Collect all email addresses for this person
+        const personEmails = [
+          person.email,
+          person.workEmail,
+          person.personalEmail
+        ].filter(Boolean) as string[];
+
+        if (personEmails.length > 0) {
+          const linkResult = await UnifiedEmailSyncService.linkExistingEmailsToPerson(
+            person.id,
+            context.workspaceId,
+            personEmails
+          );
+          
+          if (linkResult.linked > 0) {
+            console.log(`✅ [PEOPLE API] Reverse-linked ${linkResult.linked} emails and created ${linkResult.actionsCreated} actions for new person ${person.id}`);
+          }
+        }
+      } catch (error) {
+        console.error('⚠️ [PEOPLE API] Failed to reverse-link emails (non-blocking):', error);
+        // Don't fail the request if reverse linking fails
+      }
+    });
+
     // Transform to use mainSeller terminology like speedrun
     const transformedPerson = {
       ...person,
