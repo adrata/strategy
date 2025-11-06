@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
 import { useGrandCentral } from "../layout";
 import { useUnifiedAuth } from "@/platform/auth";
+import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 // import { usePipeline } from "@/products/pipeline/context/PipelineContext";
 
 export function GrandCentralLeftPanel() {
@@ -13,6 +14,7 @@ export function GrandCentralLeftPanel() {
   const workspace = params.workspace;
   const { activeTab, setActiveTab } = useGrandCentral();
   const { user: authUser } = useUnifiedAuth();
+  const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   // const { user, workspace: workspaceName } = usePipeline();
   
   // User profile data for firstName and lastName
@@ -111,7 +113,10 @@ export function GrandCentralLeftPanel() {
       {/* Fixed Bottom Section - Profile Button */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
+          onClick={() => setIsProfilePanelVisible(!isProfilePanelVisible)}
+          className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors ${
+            isProfilePanelVisible ? 'bg-hover' : 'hover:bg-hover'
+          }`}
           title="Profile"
         >
           <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">

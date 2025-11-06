@@ -57,25 +57,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique connection ID
-    const connectionId = `${workspaceId}-${provider}-${Date.now()}`;
-    
-    // Generate OAuth URL using Nango
-    let authUrl: string;
+    // Create a connect session using Nango (correct method per Nango docs)
+    let sessionToken: string;
     try {
-      authUrl = await nango.getAuthorizationURL(
-        provider,
-        connectionId,
-        undefined, // scopes - will use default from Nango config
-        {
-          return_to: redirectUrl || `${process.env.NEXTAUTH_URL || 'https://action.adrata.com'}/${workspaceId}/grand-central/integrations`
-        }
-      );
+      const sessionResponse = await nango.createConnectSession({
+        end_user: {
+          id: user.id,
+          email: user.email || undefined,
+          display_name: user.name || undefined,
+          tags: { 
+            workspaceId,
+            provider 
+          }
+        },
+        allowed_integrations: [provider],
+      });
+      
+      sessionToken = sessionResponse.token;
     } catch (nangoError: any) {
-      console.error('Nango getAuthorizationURL error:', nangoError);
+      console.error('Nango createConnectSession error:', nangoError);
       
       // Check if it's a provider configuration error
-      if (nangoError?.message?.includes('provider') || nangoError?.message?.includes('not found')) {
+      if (nangoError?.message?.includes('provider') || nangoError?.message?.includes('not found') || nangoError?.message?.includes('integration')) {
         return NextResponse.json(
           { 
             error: `Provider "${provider}" is not configured in Nango. Please configure it in your Nango dashboard.`,
@@ -88,7 +91,7 @@ export async function POST(request: NextRequest) {
       throw nangoError;
     }
 
-    // Store pending connection in database
+    // Store pending session in database (connectionId will come from webhook)
     try {
       await prisma.grand_central_connections.create({
         data: {
@@ -96,12 +99,13 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           provider: provider,
           providerConfigKey: provider,
-          nangoConnectionId: connectionId,
+          nangoConnectionId: `session-${Date.now()}`, // Temporary, will be updated by webhook
           connectionName: `${provider === 'outlook' ? 'Outlook' : provider} Connection`,
           status: 'pending',
           metadata: {
-            authUrl,
-            redirectUrl: redirectUrl || `${process.env.NEXTAUTH_URL || 'https://action.adrata.com'}/${workspaceId}/grand-central/integrations`
+            sessionToken,
+            redirectUrl: redirectUrl || `${process.env.NEXTAUTH_URL || 'https://action.adrata.com'}/${workspaceId}/grand-central/integrations`,
+            createdAt: new Date().toISOString()
           }
         }
       });
@@ -116,11 +120,11 @@ export async function POST(request: NextRequest) {
             status: { in: ['pending', 'error'] }
           },
           data: {
-            nangoConnectionId: connectionId,
             status: 'pending',
             metadata: {
-              authUrl,
-              redirectUrl: redirectUrl || `${process.env.NEXTAUTH_URL || 'https://action.adrata.com'}/${workspaceId}/grand-central/integrations`
+              sessionToken,
+              redirectUrl: redirectUrl || `${process.env.NEXTAUTH_URL || 'https://action.adrata.com'}/${workspaceId}/grand-central/integrations`,
+              updatedAt: new Date().toISOString()
             },
             updatedAt: new Date()
           }
@@ -131,8 +135,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ 
-      authUrl,
-      connectionId 
+      sessionToken,
+      provider
     });
   } catch (error) {
     console.error('Error initiating OAuth flow:', error);

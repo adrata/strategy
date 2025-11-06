@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/platform/shared/components/ui/button";
 import { useUnifiedAuth } from "@/platform/auth";
+import Nango from '@nangohq/frontend';
 import {
   CheckCircle,
   AlertCircle,
@@ -111,6 +112,7 @@ const IntegrationsPage = () => {
     setOauthMessage(null);
 
     try {
+      // Step 1: Get session token from backend
       const response = await fetch("/api/v1/integrations/nango/connect", {
         method: "POST",
         headers: {
@@ -133,11 +135,34 @@ const IntegrationsPage = () => {
 
       const data = await response.json();
 
-      if (data.authUrl) {
-        window.location.href = data.authUrl;
-      } else {
-        throw new Error(data.error || "Failed to get Outlook authorization URL");
+      if (!data.sessionToken) {
+        throw new Error(data.error || "Failed to get session token from backend");
       }
+
+      // Step 2: Use Nango frontend SDK to open connect UI
+      const nango = new Nango();
+      const connect = nango.openConnectUI({
+        onEvent: (event) => {
+          if (event.type === 'close') {
+            setIsConnecting(false);
+            // User closed the modal
+          } else if (event.type === 'connect') {
+            setIsConnecting(false);
+            setOauthMessage({
+              type: "success",
+              message: "Outlook successfully connected!",
+            });
+            // Reload connections after successful connection
+            setTimeout(() => {
+              loadConnections();
+            }, 1000);
+          }
+        },
+      });
+
+      // Set the session token to trigger the auth flow
+      connect.setSessionToken(data.sessionToken);
+
     } catch (error) {
       console.error("OAuth initiation error:", error);
       let errorMessage = "Failed to initiate connection.";

@@ -9,7 +9,8 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
-import { ProfilePanelProvider } from "@/platform/ui/components/ProfilePanelContext";
+import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
+import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { IntegrationNode } from "./types/integration";
 import { GrandCentralLeftPanel } from "./components/GrandCentralLeftPanel";
 
@@ -403,6 +404,23 @@ function GrandCentralRightPanel() {
 // Layout content component that can use context hooks
 function GrandCentralLayoutContent({ children }: { children: React.ReactNode }) {
   const { ui } = useRevenueOS();
+  const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
+  const { user: authUser } = useUnifiedAuth();
+  const params = useParams();
+  const workspaceSlug = params.workspace as string;
+
+  // Prepare user data for ProfilePanel
+  const profileUser = {
+    name: authUser?.name || 'User',
+    lastName: undefined
+  };
+
+  // Get workspace name
+  const workspace = ui.activeWorkspace?.name || workspaceSlug || 'Workspace';
+  const company = workspace;
+
+  // Get username from auth
+  const username = authUser?.name || undefined;
 
   return (
     <PanelLayout
@@ -410,6 +428,19 @@ function GrandCentralLayoutContent({ children }: { children: React.ReactNode }) 
       leftPanel={<GrandCentralLeftPanel />}
       middlePanel={children}
       rightPanel={<GrandCentralRightPanel />}
+      profilePanel={
+        <ProfilePanel
+          user={profileUser}
+          company={company}
+          workspace={workspace}
+          isOpen={isProfilePanelVisible}
+          onClose={() => setIsProfilePanelVisible(false)}
+          username={username}
+          currentApp="grand-central"
+          onToggleLeftPanel={ui.toggleLeftPanel}
+        />
+      }
+      isProfilePanelVisible={isProfilePanelVisible}
       zoom={100}
       isLeftPanelVisible={ui.isLeftPanelVisible}
       isRightPanelVisible={ui.isRightPanelVisible}
