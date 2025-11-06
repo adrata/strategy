@@ -239,7 +239,16 @@ export class UnifiedEmailSyncService {
     const filterDateISO = finalFilterDate.toISOString();
     
     console.log(`📧 [EMAIL SYNC] Connection ${nangoConnectionId} (${provider}): Fetching emails since ${filterDateISO}`);
-    console.log(`📧 [EMAIL SYNC] Last sync source: ${lastSyncSource}, Last sync time: ${lastSync.toISOString()}, Window: ${isFirstSync || connectionRecentlyActivated ? '30-day' : '1-hour'}`);
+    console.log(`📧 [EMAIL SYNC] Last sync source: ${lastSyncSource}, Last sync time: ${lastSync.toISOString()}, Window: ${isFirstSync || connectionRecentlyActivated || hasNoEmailsButHasLastSync ? '30-day' : '1-hour'}`);
+    console.log(`📧 [EMAIL SYNC] Date filter breakdown:`, {
+      isFirstSync,
+      connectionRecentlyActivated,
+      hasNoEmailsButHasLastSync,
+      existingEmailCount,
+      filterDate: filterDate.toISOString(),
+      finalFilterDate: finalFilterDate.toISOString(),
+      filterDateISO
+    });
     
     // Initialize Nango client
     const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
