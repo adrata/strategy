@@ -477,6 +477,14 @@ function AcquisitionOSLayoutInner({
                     } else if (slug === "Speedrun") {
                       newUrl = `/aos/speedrun`;
                       console.log("🔥 ThinLeftPanel: Navigating to Speedrun at", newUrl);
+                    } else if (slug === "grand-central") {
+                      // Grand Central should navigate to integrations page
+                      // Get workspace from URL path or context
+                      const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+                      const segments = currentPath.split('/').filter(Boolean);
+                      const workspaceFromUrl = segments[0] || workspaceContext?.workspaceName?.toLowerCase() || 'adrata';
+                      newUrl = `/${workspaceFromUrl}/grand-central/integrations`;
+                      console.log("🔥 ThinLeftPanel: Navigating to Grand Central integrations at", newUrl);
                     } else {
                       // Use AOS structure for all apps
                       newUrl = `/aos/${slug}`;

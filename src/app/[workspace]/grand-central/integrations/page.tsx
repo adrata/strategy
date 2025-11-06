@@ -34,6 +34,8 @@ const IntegrationsPage = () => {
   const [connections, setConnections] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
+  const [pendingDisconnectId, setPendingDisconnectId] = useState<string | null>(null);
 
   // Load connections from Nango API
   const loadConnections = useCallback(async () => {
@@ -238,8 +240,8 @@ const IntegrationsPage = () => {
     }
   };
 
-  // Handle disconnecting
-  const handleDisconnect = async (connectionId: string) => {
+  // Handle disconnecting - show confirmation modal
+  const handleDisconnect = (connectionId: string) => {
     if (!user?.activeWorkspaceId) {
       setOauthMessage({
         type: "error",
@@ -248,9 +250,27 @@ const IntegrationsPage = () => {
       return;
     }
 
-    if (!confirm("Are you sure you want to disconnect Outlook?")) {
+    setPendingDisconnectId(connectionId);
+    setShowDisconnectConfirm(true);
+  };
+
+  // Cancel disconnect confirmation
+  const handleDisconnectCancel = () => {
+    setShowDisconnectConfirm(false);
+    setPendingDisconnectId(null);
+  };
+
+  // Confirm and execute disconnect
+  const handleDisconnectConfirm = async () => {
+    if (!pendingDisconnectId || !user?.activeWorkspaceId) {
+      setShowDisconnectConfirm(false);
+      setPendingDisconnectId(null);
       return;
     }
+
+    const connectionId = pendingDisconnectId;
+    setShowDisconnectConfirm(false);
+    setPendingDisconnectId(null);
 
     try {
       const response = await fetch("/api/v1/integrations/nango/disconnect", {
@@ -434,6 +454,38 @@ const IntegrationsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Disconnect Confirmation Modal */}
+      {showDisconnectConfirm && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]" 
+          onClick={handleDisconnectCancel}
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Disconnect Outlook</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to disconnect Outlook? You'll need to reconnect to sync emails and calendar events.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleDisconnectCancel}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDisconnectConfirm}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+              >
+                Disconnect
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

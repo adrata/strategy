@@ -502,7 +502,12 @@ function QuickAppSwitcher({
     (appSlug: string) => {
       onClose();
       if (appSlug !== currentApp) {
-        router.push(`/${appSlug}`);
+        // Special handling for Grand Central - navigate to integrations page
+        if (appSlug === 'grand-central') {
+          router.push(`/${appSlug}/integrations`);
+        } else {
+          router.push(`/${appSlug}`);
+        }
       }
     },
     [onClose, currentApp, router],
@@ -711,7 +716,12 @@ function FullAppSwitcher({
     (appSlug: string) => {
       onClose();
       if (appSlug !== currentApp) {
-        router.push(`/${appSlug}`);
+        // Special handling for Grand Central - navigate to integrations page
+        if (appSlug === 'grand-central') {
+          router.push(`/${appSlug}/integrations`);
+        } else {
+          router.push(`/${appSlug}`);
+        }
       }
     },
     [onClose, currentApp, router],
