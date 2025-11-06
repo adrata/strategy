@@ -8,6 +8,7 @@ import {
   ClockIcon,
   Cog6ToothIcon,
   ChatBubbleLeftRightIcon,
+  EnvelopeIcon,
   TableCellsIcon,
   ChartBarIcon,
   UsersIcon,
@@ -146,6 +147,18 @@ const platformApps: AdrataPlatformApp[] = [
     downloadSize: "0 MB",
     rating: 4.8,
     tags: ["Chat", "Communication", "Social"],
+  },
+  {
+    name: "Inbox",
+    slug: "inbox",
+    description: "Email management & organization.",
+    icon: EnvelopeIcon,
+    color: "#10B981",
+    shortcut: "7",
+    category: "communication",
+    downloadSize: "0 MB",
+    rating: 4.7,
+    tags: ["Email", "Communication", "Outlook", "Gmail"],
   },
 
   // 🏢 DEPARTMENTAL STANDALONE APPS - Complete Enterprise Suite

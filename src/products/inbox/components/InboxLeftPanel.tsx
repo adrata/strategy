@@ -1,0 +1,257 @@
+"use client";
+
+/**
+ * Inbox Left Panel Component
+ * 
+ * Left navigation panel for Inbox application with email cards.
+ * Similar structure to StacksLeftPanel with header, stats, and email cards.
+ */
+
+import React, { useState, useEffect } from 'react';
+import { useUnifiedAuth } from '@/platform/auth';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
+import { useInbox } from '../context/InboxProvider';
+import { EmailCard } from './EmailCard';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+
+export function InboxLeftPanel() {
+  const { user: authUser } = useUnifiedAuth();
+  const { ui } = useRevenueOS();
+  const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
+  const { 
+    emails, 
+    selectedEmail, 
+    stats, 
+    filters, 
+    loading, 
+    selectEmail, 
+    setFilters 
+  } = useInbox();
+
+  // State for user profile data
+  const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
+  const [searchQuery, setSearchQuery] = useState(filters.searchQuery);
+
+  // Get workspace slug from pathname
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const workspaceSlug = pathname.split('/').filter(Boolean)[0];
+
+  // Fetch user profile data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!authUser?.id) return;
+      
+      try {
+        const response = await fetch('/api/settings/user', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.settings) {
+            setUserProfile({
+              firstName: data.settings.firstName,
+              lastName: data.settings.lastName
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [authUser?.id]);
+
+  // Handle search with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters({ searchQuery });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, setFilters]);
+
+  const handleProfileClick = () => {
+    setIsProfilePanelVisible(!isProfilePanelVisible);
+  };
+
+  const handleUnreadToggle = () => {
+    setFilters({ unreadOnly: !filters.unreadOnly });
+  };
+
+  const handleProviderFilter = (provider: 'all' | 'outlook' | 'gmail') => {
+    setFilters({ provider });
+  };
+
+  return (
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
+      {/* Fixed Header Section */}
+      <div className="flex-shrink-0 pt-0 pr-2 pl-2">
+        {/* Header */}
+        <div className="mx-2 mt-4 mb-2">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden">
+              <span className="text-lg font-bold text-black">I</span>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-base font-semibold text-foreground">Inbox</h2>
+              <p className="text-xs text-muted">Email Management</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Box */}
+        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Total</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? '...' : stats.total}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Unread</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? '...' : stats.unread}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Outlook</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? '...' : stats.unreadOutlook}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Gmail</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? '...' : stats.unreadGmail}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mx-2 mb-3">
+          <div className="relative">
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted" />
+            <input
+              type="text"
+              placeholder="Type to search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="mx-2 mb-3 flex items-center justify-between">
+          <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
+            <input
+              type="checkbox"
+              checked={filters.unreadOnly}
+              onChange={handleUnreadToggle}
+              className="w-4 h-4 rounded border-border text-blue-600 focus:ring-blue-500"
+            />
+            <span>Unreads</span>
+          </label>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleProviderFilter('all')}
+              className={`px-2 py-1 text-xs rounded ${
+                filters.provider === 'all'
+                  ? 'bg-hover text-foreground'
+                  : 'text-muted hover:bg-panel-background'
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => handleProviderFilter('outlook')}
+              className={`px-2 py-1 text-xs rounded ${
+                filters.provider === 'outlook'
+                  ? 'bg-hover text-foreground'
+                  : 'text-muted hover:bg-panel-background'
+              }`}
+            >
+              Outlook
+            </button>
+            <button
+              onClick={() => handleProviderFilter('gmail')}
+              className={`px-2 py-1 text-xs rounded ${
+                filters.provider === 'gmail'
+                  ? 'bg-hover text-foreground'
+                  : 'text-muted hover:bg-panel-background'
+              }`}
+            >
+              Gmail
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Scrollable Email Cards Section */}
+      <div className="flex-1 overflow-y-auto invisible-scrollbar px-2">
+        {loading ? (
+          <div className="space-y-2">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="p-3 rounded-lg bg-loading-bg animate-pulse">
+                <div className="h-4 bg-loading-bg rounded mb-2" />
+                <div className="h-3 bg-loading-bg rounded mb-1" />
+                <div className="h-3 bg-loading-bg rounded w-3/4" />
+              </div>
+            ))}
+          </div>
+        ) : emails.length === 0 ? (
+          <div className="text-center py-8 text-muted text-sm">
+            {filters.searchQuery || filters.unreadOnly || filters.provider !== 'all'
+              ? 'No emails match your filters'
+              : 'No emails found'}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {emails.map((email) => (
+              <EmailCard
+                key={email.id}
+                email={email}
+                isSelected={selectedEmail?.id === email.id}
+                onClick={() => selectEmail(email)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Fixed Bottom Section - Profile Button */}
+      <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
+        <button
+          onClick={handleProfileClick}
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
+          title="Profile"
+        >
+          <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
+            <span className="text-sm font-medium text-gray-700">
+              {(userProfile?.firstName?.charAt(0) || authUser?.name?.charAt(0) || 'U').toUpperCase()}
+            </span>
+          </div>
+          <div className="flex-1 text-left">
+            <div className="text-sm font-medium text-foreground">
+              {userProfile?.firstName && userProfile?.lastName && userProfile.firstName.trim() && userProfile.lastName.trim()
+                ? `${userProfile.firstName.charAt(0).toUpperCase() + userProfile.firstName.slice(1)} ${userProfile.lastName.charAt(0).toUpperCase() + userProfile.lastName.slice(1)}` 
+                : authUser?.name ? authUser.name.charAt(0).toUpperCase() + authUser.name.slice(1) : 'User'}
+            </div>
+            <div className="text-xs text-muted">
+              {(() => {
+                const workspaceName = ui.activeWorkspace?.name || workspaceSlug || 'Workspace';
+                return workspaceName.charAt(0).toUpperCase() + workspaceName.slice(1);
+              })()}
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  );
+}
+

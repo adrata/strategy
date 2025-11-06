@@ -19,6 +19,7 @@ import {
   ChartBarIcon,
   SparklesIcon,
   ChatBubbleLeftRightIcon,
+  EnvelopeIcon,
   Squares2X2Icon,
   ClipboardDocumentCheckIcon,
   HomeIcon,
@@ -317,6 +318,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     // Check for stacks before adrata since /adrata/stacks should be stacks
     if (pathname.includes('/stacks')) return 'stacks';
     if (pathname.includes('/oasis')) return 'oasis';
+    if (pathname.includes('/inbox')) return 'inbox';
     if (pathname.includes('/workshop') || pathname.includes('/workbench')) return 'workshop';
     if (pathname.includes('/adrata')) return 'adrata';
     if (pathname.includes('/olympus')) return 'olympus';
@@ -869,6 +871,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <ChatBubbleLeftRightIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Oasis</span>
+            </button>
+
+            {/* Inbox */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'inbox' 
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-foreground hover:bg-hover'
+              }`}
+              onClick={() => handleNavigation("/inbox")}
+            >
+              <EnvelopeIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Inbox</span>
             </button>
 
             {/* API Keys */}

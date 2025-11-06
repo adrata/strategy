@@ -19,6 +19,8 @@ import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
 import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
 import { WorkbenchLeftPanel } from "@/app/[workspace]/workbench/components/WorkbenchLeftPanel";
+import { InboxLeftPanel } from "@/products/inbox/components/InboxLeftPanel";
+import { InboxProvider } from "@/products/inbox/context/InboxProvider";
 import { useUnifiedAuth } from "@/platform/auth";
 import { SettingsPopup } from "@/frontend/components/pipeline/SettingsPopup";
 import { useSettingsPopup } from "@/platform/ui/components/SettingsPopupContext";
@@ -175,6 +177,8 @@ function PipelineLayoutInner({
       return <OasisLeftPanel key="oasis-left-panel" />;
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel activeSubSection={stacksContext?.activeSubSection || 'stacks'} onSubSectionChange={stacksContext?.onSubSectionChange || (() => {})} />;
+    } else if (pathname.includes('/inbox')) {
+      return <InboxLeftPanel key="inbox-left-panel" />;
     } else if (pathname.includes('/workbench')) {
       return <WorkbenchLeftPanel key="workbench-left-panel" />;
     } else if (pathname.includes('/adrata') && !isPipelineRoute) {
@@ -276,6 +280,7 @@ function PipelineLayoutInner({
                                      pathname.includes('/workbench') || 
                                      pathname.includes('/adrata') ||
                                      pathname.includes('/stacks') ||
+                                     pathname.includes('/inbox') ||
                                      pathname.includes('/grand-central') ||
                                      pathname.includes('/api');
   
@@ -368,7 +373,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     if (segments.length >= 2) {
       const section = segments[1];
       // Validate it's a known section
-      const validSections = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'metrics', 'dashboard', 'chronicle', 'oasis', 'stacks', 'workbench', 'olympus', 'grand-central', 'tower', 'database', 'atrium', 'encode', 'particle', 'docs'];
+      const validSections = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'metrics', 'dashboard', 'chronicle', 'oasis', 'stacks', 'inbox', 'workbench', 'olympus', 'grand-central', 'tower', 'database', 'atrium', 'encode', 'particle', 'docs'];
       if (validSections.includes(section)) {
         return section;
       }
@@ -461,10 +466,11 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
                 <SprintProvider>
                   <OasisLayoutContext.Provider value={oasisLayoutContextValue}>
                     <OasisProvider>
-                      <ProfilePopupProvider>
-                        <SettingsPopupProvider>
-                          <ProfilePanelProvider>
-                            <PipelineLayoutInner
+                      <InboxProvider>
+                        <ProfilePopupProvider>
+                          <SettingsPopupProvider>
+                            <ProfilePanelProvider>
+                              <PipelineLayoutInner
                               currentSection={isNovaActive ? "nova" : currentSection}
                               onSectionChange={handleSectionChange}
                               isSpeedrunVisible={isSpeedrunVisible}
@@ -486,6 +492,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
                           </ProfilePanelProvider>
                         </SettingsPopupProvider>
                       </ProfilePopupProvider>
+                      </InboxProvider>
                     </OasisProvider>
                   </OasisLayoutContext.Provider>
                 </SprintProvider>
