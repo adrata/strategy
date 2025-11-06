@@ -6,7 +6,6 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useOasisMessages } from '@/products/oasis/hooks/useOasisMessages';
 import { useOasisTyping } from '@/products/oasis/hooks/useOasisTyping';
-import { useOasisDMs } from '@/products/oasis/hooks/useOasisDMs';
 import { VideoCallService } from '@/platform/services/video-call-service';
 import { 
   PaperAirplaneIcon,
@@ -66,40 +65,6 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   // Validate workspaceId is available before using hooks
   const isValidWorkspaceId = workspaceId && workspaceId.trim() !== '';
   
-  // Get DMs to resolve self-DM ID
-  // Only fetch DMs if we have a valid workspaceId to prevent initialization errors
-  const { dms } = useOasisDMs(isValidWorkspaceId ? workspaceId : '');
-  
-  // Resolve self-DM ID if selectedChannel.id is 'me-self-dm'
-  // This prevents API calls with the placeholder ID 'me-self-dm'
-  const resolvedDmId = React.useMemo(() => {
-    // Don't resolve if workspaceId is invalid or dms haven't loaded
-    if (!isValidWorkspaceId || !dms || dms.length === 0) {
-      if (selectedChannel?.type === 'dm' && selectedChannel.id === 'me-self-dm') {
-        return undefined; // Wait for DMs to load
-      }
-      return selectedChannel?.type === 'dm' ? selectedChannel.id : undefined;
-    }
-    
-    if (selectedChannel?.type === 'dm' && selectedChannel.id === 'me-self-dm') {
-      // Find self-DM (DM with no participants or only the current user)
-      const selfDM = dms.find((dm: any) => {
-        // Self-DM has no other participants (empty array) or only the current user
-        return dm.participants.length === 0 || 
-          (dm.participants.length === 1 && dm.participants[0]?.userId === authUser?.id);
-      });
-      
-      if (selfDM) {
-        console.log('✅ [OASIS CHAT PANEL] Resolved self-DM placeholder to real DM ID:', selfDM.id);
-        return selfDM.id;
-      }
-      // If self-DM not found yet, return undefined to prevent API call with placeholder ID
-      console.log('⏳ [OASIS CHAT PANEL] Self-DM not found in DMs list yet, waiting...');
-      return undefined;
-    }
-    return selectedChannel?.type === 'dm' ? selectedChannel.id : undefined;
-  }, [selectedChannel, dms, authUser?.id, isValidWorkspaceId]);
-  
   // Debug logging for message fetching and workspaceId resolution
   useEffect(() => {
     if (selectedChannel) {
@@ -110,7 +75,6 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
       console.log('🔍 [OASIS CHAT PANEL] Channel selected:', {
         type: selectedChannel.type,
         id: selectedChannel.id,
-        resolvedDmId,
         name: selectedChannel.name,
         dmWorkspaceId: selectedChannel.workspaceId,
         currentWorkspaceId: authUser?.activeWorkspaceId,
@@ -124,7 +88,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
         console.warn('⚠️ [OASIS CHAT PANEL] No valid workspaceId available, messages may not load');
       }
     }
-  }, [selectedChannel, workspaceId, isValidWorkspaceId, authUser?.activeWorkspaceId, resolvedDmId]);
+  }, [selectedChannel, workspaceId, isValidWorkspaceId, authUser?.activeWorkspaceId]);
   
   // Real data hooks - only call when we have a selected channel and valid workspaceId
   const { 
@@ -141,13 +105,13 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   } = useOasisMessages(
     isValidWorkspaceId ? workspaceId : '', // Pass empty string if invalid to trigger hook validation
     selectedChannel?.type === 'channel' ? selectedChannel.id : undefined,
-    resolvedDmId // Use resolved DM ID instead of selectedChannel.id
+    selectedChannel?.type === 'dm' ? selectedChannel.id : undefined
   );
   
   const { typingUsers, startTyping, stopTyping } = useOasisTyping(
     isValidWorkspaceId ? workspaceId : '',
     selectedChannel?.type === 'channel' ? selectedChannel.id : undefined,
-    resolvedDmId // Use resolved DM ID instead of selectedChannel.id
+    selectedChannel?.type === 'dm' ? selectedChannel.id : undefined
   );
   
   const [messageInput, setMessageInput] = useState('');
