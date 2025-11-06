@@ -29,6 +29,8 @@ import { EpicStoriesList } from './EpicStoriesList';
 import { StacksEpic } from './types';
 import { ErrorBoundary } from '@/frontend/components/ErrorBoundary';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
+import { DocumentViewer } from '@/app/[workspace]/workbench/components/DocumentViewer';
+import { WorkbenchDocument } from '@/app/[workspace]/workbench/types/document';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
@@ -203,6 +205,25 @@ export function StacksMiddlePanel({
     assignee: 'all'
   });
   const [selectedEpic, setSelectedEpic] = useState<StacksEpic | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<WorkbenchDocument | null>(null);
+  const [isDocumentLoading, setIsDocumentLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Clear document selection when navigating away from epics section
+  useEffect(() => {
+    if (activeSubSection !== 'epics') {
+      setSelectedDocument(null);
+      setSelectedEpic(null);
+      setIsEditMode(false);
+    }
+  }, [activeSubSection]);
+
+  // Clear document when epic is selected (they're mutually exclusive views)
+  useEffect(() => {
+    if (selectedEpic) {
+      setSelectedDocument(null);
+    }
+  }, [selectedEpic]);
 
   // Handle story detail view when storyId is provided
   useEffect(() => {
@@ -309,8 +330,77 @@ export function StacksMiddlePanel({
     );
   }
 
+  // Handle document selection from EpicsPage
+  const handleDocumentSelect = async (doc: { id: string; title: string; documentType: string }) => {
+    setIsDocumentLoading(true);
+    try {
+      // Fetch full document data from API
+      const response = await fetch(`/api/v1/documents/documents/${doc.id}`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedDocument(data.document as WorkbenchDocument);
+      } else {
+        console.error('Failed to fetch document:', response.statusText);
+        // Fallback: create a minimal document object
+        setSelectedDocument({
+          id: doc.id,
+          title: doc.title,
+          documentType: doc.documentType as WorkbenchDocument['documentType'],
+          fileType: 'application/json',
+          version: '1.0.0',
+          isEncrypted: false,
+          classification: 'internal',
+          requiresAuth: false,
+          tags: [],
+          isStarred: false,
+          isTemplate: false,
+          ownerId: '',
+          workspaceId: '',
+          viewCount: 0,
+          downloadCount: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          status: 'draft',
+        } as WorkbenchDocument);
+      }
+    } catch (error) {
+      console.error('Error fetching document:', error);
+    } finally {
+      setIsDocumentLoading(false);
+    }
+  };
+
   // Handle special sections that don't use the item list interface
   if (activeSubSection === 'epics') {
+    // If a document is selected, show DocumentViewer
+    if (selectedDocument) {
+      return (
+        <div className="h-full flex flex-col bg-background">
+          {isDocumentLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="flex flex-col items-center gap-4">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--primary)]"></div>
+                <p className="text-muted text-sm">Loading document...</p>
+              </div>
+            </div>
+          ) : (
+            <DocumentViewer
+              document={selectedDocument}
+              isEditMode={isEditMode}
+              onBack={() => setSelectedDocument(null)}
+              onToggleEditMode={() => setIsEditMode(!isEditMode)}
+            />
+          )}
+        </div>
+      );
+    }
+
     // If an epic is selected, show stories filtered by that epic
     if (selectedEpic) {
       return (
@@ -337,7 +427,10 @@ export function StacksMiddlePanel({
     // Otherwise show EpicsPage
     return (
       <div className="h-full flex flex-col bg-background">
-        <EpicsPage onEpicSelect={(epic) => setSelectedEpic(epic)} />
+        <EpicsPage 
+          onEpicSelect={(epic) => setSelectedEpic(epic)}
+          onDocumentSelect={handleDocumentSelect}
+        />
       </div>
     );
   }

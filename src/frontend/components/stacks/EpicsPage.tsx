@@ -45,9 +45,10 @@ interface CoreDocument {
 
 interface EpicsPageProps {
   onEpicSelect?: (epic: StacksEpic) => void;
+  onDocumentSelect?: (document: CoreDocument) => void;
 }
 
-export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
+export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
   const { ui } = useRevenueOS();
   const { user: authUser } = useUnifiedAuth();
   const pathname = usePathname();
@@ -376,8 +377,13 @@ export function EpicsPage({ onEpicSelect }: EpicsPageProps) {
                 <div
                   key={doc.id}
                   onClick={() => {
-                    const slug = generateSlug(doc.title, doc.id);
-                    router.push(`/${workspaceSlug}/workbench/${slug}`);
+                    if (onDocumentSelect) {
+                      onDocumentSelect(doc);
+                    } else {
+                      // Fallback to navigation if no callback provided
+                      const slug = generateSlug(doc.title, doc.id);
+                      router.push(`/${workspaceSlug}/workbench/${slug}`);
+                    }
                   }}
                   className="group p-4 bg-card rounded-lg border border-border hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
                 >
