@@ -89,19 +89,183 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
-    console.log('📧 Received verified Nango email webhook:', JSON.stringify(payloadObj, null, 2));
+    console.log('📧 Received verified Nango webhook:', JSON.stringify(payloadObj, null, 2));
     
-    // Extract webhook data
-    const { 
-      connectionId, 
-      provider, 
-      workspaceId, 
-      userId,
-      data 
-    } = payloadObj;
+    // Handle different webhook types
+    const webhookType = payloadObj.type; // 'auth' for connection events, 'sync' for sync events, etc.
+    const operation = payloadObj.operation; // 'creation', 'update', 'deletion', etc.
+    
+    // Step 6: Handle connection creation webhook (from diagram)
+    if (webhookType === 'auth' && operation === 'creation' && payloadObj.success === true) {
+      return await handleConnectionCreation(payloadObj);
+    }
+    
+    // Handle email sync webhooks (existing functionality)
+    if (webhookType === 'sync' || payloadObj.connectionId) {
+      return await handleEmailSync(payloadObj);
+    }
+    
+    // Unknown webhook type
+    console.warn(`⚠️ Unknown webhook type: ${webhookType}`);
+    return Response.json({ 
+      success: true, 
+      message: 'Webhook received but not processed',
+      type: webhookType
+    });
+    
+  } catch (error) {
+    console.error('❌ Error processing email webhook:', error);
+    
+    return Response.json({ 
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
+  }
+}
+
+/**
+ * Handle connection creation webhook (Step 6 from diagram)
+ * Updates pending connection with actual connectionId and sets status to active
+ */
+async function handleConnectionCreation(payload: any) {
+  try {
+    const { connectionId, providerConfigKey, endUser } = payload;
+    
+    if (!connectionId || !providerConfigKey) {
+      console.error('❌ Missing connectionId or providerConfigKey in connection creation webhook');
+      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+    
+    // Extract user ID and workspace ID from endUser tags
+    const workspaceId = endUser?.tags?.workspaceId;
+    const userId = endUser?.endUserId;
+    
+    if (!userId) {
+      console.error('❌ Missing endUserId in connection creation webhook');
+      return Response.json({ error: 'Missing endUserId' }, { status: 400 });
+    }
+    
+    console.log(`🔗 Processing connection creation webhook: ${connectionId} for user ${userId}`);
+    
+    // Find pending connection by matching user, workspace, and provider
+    // We use providerConfigKey to find the right connection
+    const pendingConnection = await prisma.grand_central_connections.findFirst({
+      where: {
+        userId,
+        ...(workspaceId && { workspaceId }),
+        providerConfigKey,
+        status: 'pending'
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+    
+    if (pendingConnection) {
+      // Update with actual connectionId and set to active
+      await prisma.grand_central_connections.update({
+        where: { id: pendingConnection.id },
+        data: {
+          nangoConnectionId: connectionId,
+          status: 'active',
+          lastSyncAt: new Date(),
+          metadata: {
+            ...(pendingConnection.metadata as any || {}),
+            connectedAt: new Date().toISOString(),
+            connectionId,
+            providerConfigKey
+          }
+        }
+      });
+      
+      console.log(`✅ Connection created and activated: ${connectionId}`);
+      
+      // Trigger initial email sync for this connection
+      try {
+        await UnifiedEmailSyncService.syncWorkspaceEmails(
+          pendingConnection.workspaceId,
+          pendingConnection.userId
+        );
+        console.log(`✅ Initial email sync triggered for connection: ${connectionId}`);
+      } catch (syncError) {
+        console.warn(`⚠️ Failed to trigger initial email sync:`, syncError);
+        // Don't fail the webhook if sync fails
+      }
+      
+      return Response.json({ 
+        success: true, 
+        message: 'Connection created and activated',
+        connectionId
+      });
+    } else {
+      // Connection not found in pending state - might already be active or doesn't exist
+      console.warn(`⚠️ No pending connection found for connectionId: ${connectionId}`);
+      
+      // Try to find by connectionId in case it was already updated
+      const existingConnection = await prisma.grand_central_connections.findUnique({
+        where: { nangoConnectionId: connectionId }
+      });
+      
+      if (existingConnection) {
+        console.log(`ℹ️ Connection ${connectionId} already exists and is ${existingConnection.status}`);
+        return Response.json({ 
+          success: true, 
+          message: 'Connection already exists',
+          connectionId,
+          status: existingConnection.status
+        });
+      }
+      
+      // Create new connection record if not found (fallback)
+      if (workspaceId) {
+        await prisma.grand_central_connections.create({
+          data: {
+            workspaceId,
+            userId,
+            provider: providerConfigKey === 'outlook' ? 'outlook' : providerConfigKey,
+            providerConfigKey,
+            nangoConnectionId: connectionId,
+            connectionName: `${providerConfigKey} Connection`,
+            status: 'active',
+            lastSyncAt: new Date(),
+            metadata: {
+              connectedAt: new Date().toISOString(),
+              connectionId,
+              createdViaWebhook: true
+            }
+          }
+        });
+        
+        console.log(`✅ Created new connection record from webhook: ${connectionId}`);
+        return Response.json({ 
+          success: true, 
+          message: 'Connection created from webhook',
+          connectionId
+        });
+      }
+      
+      return Response.json({ 
+        success: false, 
+        message: 'Connection not found and cannot create without workspaceId',
+        connectionId
+      }, { status: 404 });
+    }
+  } catch (error) {
+    console.error('❌ Error handling connection creation webhook:', error);
+    return Response.json({ 
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
+  }
+}
+
+/**
+ * Handle email sync webhooks (existing functionality)
+ */
+async function handleEmailSync(payload: any) {
+  try {
+    const { connectionId } = payload;
     
     if (!connectionId) {
-      console.error('❌ Missing connectionId in webhook payload');
+      console.error('❌ Missing connectionId in email sync webhook');
       return Response.json({ error: 'Missing connectionId' }, { status: 400 });
     }
     
@@ -141,10 +305,8 @@ export async function POST(request: NextRequest) {
       message: 'Email webhook processed',
       results: result
     });
-    
   } catch (error) {
-    console.error('❌ Error processing email webhook:', error);
-    
+    console.error('❌ Error handling email sync webhook:', error);
     return Response.json({ 
       error: 'Internal server error',
       message: error instanceof Error ? error.message : 'Unknown error'
@@ -165,7 +327,8 @@ export async function GET(request: NextRequest) {
   }
   
   return Response.json({ 
-    message: 'Nango Email Webhook Endpoint',
-    status: 'active'
+    message: 'Nango Webhook Endpoint',
+    status: 'active',
+    supports: ['connection_creation', 'email_sync']
   });
 }
