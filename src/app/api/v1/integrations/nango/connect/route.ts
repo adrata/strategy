@@ -10,15 +10,23 @@ export const dynamic = 'force-dynamic';
  * Initialize Nango client with error handling
  */
 function getNangoClient(): Nango {
-  const secretKey = process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY;
+  // Priority: Use NANGO_SECRET_KEY for production, NANGO_SECRET_KEY_DEV for development
+  // IMPORTANT: Make sure the secret key matches the environment where your integration exists
+  const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
   
   if (!secretKey) {
     throw new Error('NANGO_SECRET_KEY or NANGO_SECRET_KEY_DEV environment variable is not set');
   }
 
+  const host = process.env.NANGO_HOST || 'https://api.nango.dev';
+  
+  // Log which key is being used (first 12 chars only for security)
+  console.log(`🔑 [NANGO] Using secret key: ${secretKey.substring(0, 12)}... (from ${process.env.NANGO_SECRET_KEY ? 'NANGO_SECRET_KEY' : 'NANGO_SECRET_KEY_DEV'})`);
+  console.log(`🌐 [NANGO] Using host: ${host}`);
+
   return new Nango({
     secretKey,
-    host: process.env.NANGO_HOST || 'https://api.nango.dev'
+    host
   });
 }
 
