@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { NangoService } from '@/app/[workspace]/grand-central/services/NangoService';
+import { Nango } from '@nangohq/node';
 
 // Retry configuration
 const MAX_RETRIES = 3;
@@ -118,7 +118,7 @@ export class UnifiedEmailSyncService {
     provider: 'outlook' | 'gmail',
     workspaceId: string,
     userId: string,
-    connectionId: string
+    nangoConnectionId: string
   ): Promise<{ success: boolean; count: number; error?: string }> {
     const operation = provider === 'outlook' 
       ? 'outlook_read_emails' 
@@ -132,15 +132,79 @@ export class UnifiedEmailSyncService {
       ? { 
           top: 100, 
           filter: `receivedDateTime ge ${filterDate}`,
-          orderby: 'receivedDateTime desc'
+          orderby: 'receivedDateTime desc',
+          folder: 'inbox'
         }
       : {
           maxResults: 100,
           q: `after:${Math.floor(lastSync.getTime() / 1000)}`
         };
     
+    // Find the database connection record
+    const connection = await prisma.grand_central_connections.findFirst({
+      where: {
+        workspaceId,
+        userId,
+        provider,
+        nangoConnectionId,
+        status: 'active'
+      }
+    });
+    
+    if (!connection) {
+      throw new Error(`Active ${provider} connection not found for workspace ${workspaceId}`);
+    }
+    
+    // Initialize Nango client
+    const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
+    if (!secretKey) {
+      throw new Error('NANGO_SECRET_KEY or NANGO_SECRET_KEY_DEV environment variable is not set');
+    }
+    
+    const nango = new Nango({
+      secretKey,
+      host: process.env.NANGO_HOST || 'https://api.nango.dev'
+    });
+    
+    // Build endpoint with query parameters for Outlook
+    let endpoint = provider === 'outlook' 
+      ? '/v1.0/me/mailFolders/inbox/messages'
+      : '/gmail/v1/users/me/messages';
+    
+    // Add query parameters for Outlook
+    if (provider === 'outlook') {
+      const queryParams = new URLSearchParams();
+      if (params.top) queryParams.append('$top', params.top.toString());
+      if (params.filter) queryParams.append('$filter', params.filter);
+      if (params.orderby) queryParams.append('$orderby', params.orderby);
+      if (queryParams.toString()) {
+        endpoint += `?${queryParams.toString()}`;
+      }
+    } else {
+      // Gmail query parameters
+      const queryParams = new URLSearchParams();
+      if (params.maxResults) queryParams.append('maxResults', params.maxResults.toString());
+      if (params.q) queryParams.append('q', params.q);
+      if (queryParams.toString()) {
+        endpoint += `?${queryParams.toString()}`;
+      }
+    }
+    
+    // Call Nango proxy directly
     const result = await retryWithBackoff(
-      () => NangoService.executeOperation(operation, params, workspaceId, userId),
+      async () => {
+        const response = await nango.proxy({
+          providerConfigKey: connection.providerConfigKey,
+          connectionId: connection.nangoConnectionId,
+          endpoint,
+          method: 'GET'
+        });
+        
+        return {
+          success: true,
+          data: response.data
+        };
+      },
       `Email fetch from ${provider}`
     );
     
