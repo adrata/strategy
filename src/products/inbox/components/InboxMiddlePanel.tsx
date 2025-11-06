@@ -34,9 +34,15 @@ export function InboxMiddlePanel() {
         {/* Header */}
         <div className="flex-shrink-0 border-b border-border p-4">
           <div className="flex items-center gap-2 mb-2 text-sm text-muted">
-            <span>All Inboxes</span>
-            <span>&gt;</span>
             <span>Inbox</span>
+            {selectedEmail.subject && (
+              <>
+                <span>&gt;</span>
+                <span className="truncate max-w-md" title={selectedEmail.subject}>
+                  {selectedEmail.subject || '(No Subject)'}
+                </span>
+              </>
+            )}
           </div>
           
           {/* Email Header */}
@@ -201,8 +207,6 @@ export function InboxMiddlePanel() {
     <div className="h-full flex flex-col bg-background">
       <div className="flex-shrink-0 border-b border-border p-4">
         <div className="flex items-center gap-2 mb-2 text-sm text-muted">
-          <span>All Inboxes</span>
-          <span>&gt;</span>
           <span>Inbox</span>
         </div>
       </div>
