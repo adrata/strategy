@@ -29,7 +29,12 @@ NANGO_WEBHOOK_SECRET=your_webhook_secret_here
 NANGO_OUTLOOK_INTEGRATION_ID=outlook
 
 # Gmail Integration ID (if using Gmail)
-NANGO_GMAIL_INTEGRATION_ID=gmail
+# Common values: google-mail, gmail
+NANGO_GMAIL_INTEGRATION_ID=google-mail
+
+# Google Calendar Integration ID (if using Google Calendar)
+# Common values: google-calendar, calendar
+NANGO_GOOGLE_CALENDAR_INTEGRATION_ID=google-calendar
 ```
 
 ## How It Works
@@ -44,11 +49,16 @@ This keeps Integration IDs secure and allows you to change them without updating
 
 1. Go to https://app.nango.dev
 2. Navigate to **Integrations** tab
-3. Find your Outlook (or Gmail) integration
+3. Find your integration (Outlook, Gmail, or Google Calendar)
 4. The **Integration ID** is shown in the integration details
-5. Copy it and set it as `NANGO_OUTLOOK_INTEGRATION_ID` in Vercel
+5. Copy it and set the corresponding environment variable in Vercel:
+   - Outlook → `NANGO_OUTLOOK_INTEGRATION_ID`
+   - Gmail → `NANGO_GMAIL_INTEGRATION_ID`
+   - Google Calendar → `NANGO_GOOGLE_CALENDAR_INTEGRATION_ID`
 
-## Example
+## Examples
+
+### Outlook Integration
 
 If your Nango dashboard shows:
 - Integration Name: "Microsoft Outlook"
@@ -60,4 +70,30 @@ NANGO_OUTLOOK_INTEGRATION_ID=microsoft-outlook
 ```
 
 The frontend code will continue to send `provider: "outlook"`, and the backend will automatically map it to `microsoft-outlook`.
+
+### Gmail Integration
+
+If your Nango dashboard shows:
+- Integration Name: "Gmail"
+- Integration ID: `google-mail`
+
+Then set:
+```bash
+NANGO_GMAIL_INTEGRATION_ID=google-mail
+```
+
+The frontend code will send `provider: "gmail"`, and the backend will map it to `google-mail`.
+
+### Google Calendar Integration
+
+If your Nango dashboard shows:
+- Integration Name: "Google Calendar"
+- Integration ID: `google-calendar`
+
+Then set:
+```bash
+NANGO_GOOGLE_CALENDAR_INTEGRATION_ID=google-calendar
+```
+
+The frontend code will send `provider: "google-calendar"`, and the backend will map it to `google-calendar`.
 

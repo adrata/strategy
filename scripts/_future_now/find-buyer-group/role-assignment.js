@@ -536,6 +536,20 @@ class RoleAssignment {
   selectOptimalBuyerGroup(employees, buyerGroupSize) {
     const { min, max, ideal } = buyerGroupSize;
     
+    // Handle case where only 1 person is acceptable and available
+    if (min === 1 && employees.length === 1) {
+      const best = employees[0];
+      // Ensure they have a role (prefer decision maker if qualified)
+      if (!best.buyerGroupRole) {
+        if (this.isDecisionMaker(best.title, this.dealSize, best)) {
+          best.buyerGroupRole = 'decision';
+        } else {
+          best.buyerGroupRole = 'champion'; // Fallback to champion
+        }
+      }
+      return [best];
+    }
+    
     // Special handling for very small companies (1-3 employees)
     if (this.companyEmployees <= 3 && employees.length > 0) {
       // For 1-person companies, just return the best candidate
@@ -556,6 +570,24 @@ class RoleAssignment {
         }
         return employees;
       }
+    }
+    
+    // Handle case where we have limited candidates but min allows 1
+    if (min === 1 && employees.length < ideal && employees.length >= 1) {
+      // If we can't fill ideal, but have at least 1, return best candidates
+      const sorted = employees.sort((a, b) => 
+        (b.overallScore || 0) - (a.overallScore || 0)
+      );
+      
+      // Ensure at least one decision maker if possible
+      const decisionMakers = sorted.filter(e => e.buyerGroupRole === 'decision');
+      if (decisionMakers.length === 0 && sorted.length > 0) {
+        // Promote best candidate to decision maker
+        sorted[0].buyerGroupRole = 'decision';
+      }
+      
+      // Return up to available count, but at least 1
+      return sorted.slice(0, Math.min(employees.length, max));
     }
     
     // Group by role

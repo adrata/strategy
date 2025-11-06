@@ -226,6 +226,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   // Admin features restricted to ross and todd - define before use
   const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com'];
   
+  // Grand Central access for Victoria at TOP
+  const GRAND_CENTRAL_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'vleland@topengineersplus.com'];
+  
   const currentUserEmail = authUser?.email;
   const isDanoUser = currentUserEmail?.toLowerCase().includes('dano') || currentUserEmail === 'dano@retail-products.com';
   
@@ -1175,24 +1178,26 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 5. Grand Central - Restricted to admin users and not restricted users */}
+        {/* 5. Grand Central - Restricted to admin users and Victoria at TOP */}
         {(() => {
-          const isAuthorized = authUser?.email && ADMIN_EMAILS.includes(authUser.email);
-          return isAuthorized && !isRestrictedUser;
+          const isAuthorized = authUser?.email && GRAND_CENTRAL_EMAILS.includes(authUser.email);
+          // Allow Grand Central for Victoria even if she's restricted
+          const isVictoria = authUser?.email === 'vleland@topengineersplus.com';
+          return isAuthorized && (!isRestrictedUser || isVictoria);
         })() && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-foreground rounded-lg cursor-pointer hover:bg-hover transition-colors"
             onClick={() => {
-              console.log("🚉 Grand Central clicked - navigating to grand-central");
+              console.log("🚉 Grand Central clicked - navigating to grand-central/integrations");
               setIsProfileOpen(false);
-              handleNavigation("/adrata/grand-central");
+              handleNavigation("/adrata/grand-central/integrations");
             }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e['key'] === "Enter") {
                 setIsProfileOpen(false);
-                handleNavigation("/adrata/grand-central");
+                handleNavigation("/adrata/grand-central/integrations");
               }
             }}
           >
