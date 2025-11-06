@@ -311,14 +311,81 @@ const IntegrationsPage = () => {
       // Initialize Nango SDK (works with or without config)
       const nango = new Nango(Object.keys(nangoConfig).length > 0 ? nangoConfig : undefined);
       
-      // Store the connect instance to potentially close it programmatically
-      let connectInstance: any = null;
+      // Store popup window reference for closing attempts
+      let popupWindow: Window | null = null;
+      let messageHandlerCleanup: (() => void) | null = null;
+      
+      // Set up postMessage listener to detect when popup sends success message
+      // The Nango popup (api.nango.dev) sends postMessage when connection succeeds
+      const messageHandler = (event: MessageEvent) => {
+        // Only accept messages from Nango's domain
+        if (!event.origin.includes('nango.dev') && !event.origin.includes('api.nango.dev')) {
+          return;
+        }
+        
+        console.log('📧 [OAUTH] Received postMessage from popup:', {
+          origin: event.origin,
+          data: event.data,
+          source: event.source
+        });
+        
+        // Check for various Nango success messages
+        const isSuccessMessage = 
+          event.data?.type === 'nango-oauth-success' ||
+          event.data?.type === 'nango-connected' ||
+          event.data?.type === 'nango-auth-success' ||
+          (typeof event.data === 'string' && event.data.includes('connected')) ||
+          (event.data?.success === true) ||
+          (event.data?.event === 'nango:auth:success');
+        
+        if (isSuccessMessage) {
+          console.log('✅ [OAUTH] Connection success detected via postMessage, attempting to close popup...');
+          
+          // Try to close the popup via event.source
+          try {
+            if (event.source && typeof (event.source as Window).close === 'function') {
+              (event.source as Window).close();
+              console.log('✅ [OAUTH] Popup closed via event.source');
+            }
+          } catch (e) {
+            console.log('⚠️ [OAUTH] Could not close via event.source (cross-origin restriction):', e);
+          }
+          
+          // Try to close stored popup reference
+          try {
+            if (popupWindow && !popupWindow.closed) {
+              popupWindow.close();
+              console.log('✅ [OAUTH] Popup closed via stored reference');
+            }
+          } catch (e) {
+            console.log('⚠️ [OAUTH] Could not close via stored reference:', e);
+          }
+          
+          // Clean up message handler after successful close attempt
+          if (messageHandlerCleanup) {
+            messageHandlerCleanup();
+            messageHandlerCleanup = null;
+          }
+        }
+      };
+      
+      // Add message listener
+      window.addEventListener('message', messageHandler);
+      messageHandlerCleanup = () => {
+        window.removeEventListener('message', messageHandler);
+      };
       
       const connect = nango.openConnectUI({
         onEvent: (event) => {
+          console.log('📧 [OAUTH] Nango SDK event:', event.type, event);
+          
           if (event.type === 'close') {
             setConnectingProvider(null);
-            // User closed the modal
+            if (messageHandlerCleanup) {
+              messageHandlerCleanup();
+              messageHandlerCleanup = null;
+            }
+            console.log('📧 [OAUTH] User closed the modal');
           } else if (event.type === 'connect') {
             setConnectingProvider(null);
             const providerName = data.provider === 'gmail' ? 'Gmail' : data.provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
@@ -328,23 +395,30 @@ const IntegrationsPage = () => {
               message: `${providerName} successfully connected! ${actionText}`,
             });
             
-            // Try to close the popup immediately after connection
-            // The Nango SDK should handle this, but we try to force it
-            try {
-              // Check if connect instance has a close method
-              if (connectInstance && typeof connectInstance.close === 'function') {
-                connectInstance.close();
-              }
-            } catch (e) {
-              // Ignore errors - popup might close automatically
-            }
+            console.log('✅ [OAUTH] Connection successful, attempting to close popup...');
             
-            // Note: The Nango popup window cannot be programmatically closed due to
-            // browser cross-origin security restrictions. The popup shows Nango's
-            // success page ("You are now connected") which the user needs to manually close.
-            // This is a limitation of browser security, not our code.
-            // The Nango SDK should handle closing the popup automatically, but if it doesn't,
-            // the user can simply click the "You can close this window" button.
+            // The Nango SDK should close the popup automatically, but we try multiple methods
+            // Note: Due to browser cross-origin security, we cannot programmatically close
+            // windows from different origins. The SDK uses postMessage to communicate.
+            
+            // Try to close popup after a short delay to allow SDK to process
+            setTimeout(() => {
+              try {
+                // Check if we can access the popup window
+                if (popupWindow && !popupWindow.closed) {
+                  popupWindow.close();
+                  console.log('✅ [OAUTH] Popup closed via timeout');
+                }
+              } catch (e) {
+                console.log('⚠️ [OAUTH] Could not close popup (expected due to cross-origin):', e);
+              }
+              
+              // Clean up message handler
+              if (messageHandlerCleanup) {
+                messageHandlerCleanup();
+                messageHandlerCleanup = null;
+              }
+            }, 1000);
             
             // Reload connections after successful connection
             setTimeout(() => {
@@ -354,7 +428,10 @@ const IntegrationsPage = () => {
             }, 1000);
           } else if (event.type === 'error') {
             setConnectingProvider(null);
-            window.removeEventListener('message', messageHandler);
+            if (messageHandlerCleanup) {
+              messageHandlerCleanup();
+              messageHandlerCleanup = null;
+            }
             setOauthMessage({
               type: "error",
               message: event.error || "An error occurred during connection",
@@ -363,8 +440,12 @@ const IntegrationsPage = () => {
         },
       });
 
-      // Store the connect instance
-      connectInstance = connect;
+      // Note: The Nango SDK manages the popup window internally.
+      // Due to browser cross-origin security restrictions, we cannot directly
+      // access or close the popup window from our code. The SDK uses postMessage
+      // to communicate between the popup and parent window.
+      // The popup should close automatically when the 'connect' event fires,
+      // but if it doesn't, users can manually close it by clicking the button.
       
       // Set the session token to trigger the auth flow
       connect.setSessionToken(data.sessionToken);
