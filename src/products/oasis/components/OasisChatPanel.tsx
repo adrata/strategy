@@ -316,7 +316,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-4 flex flex-col justify-end">
+      <div className="flex-1 overflow-y-auto p-3 space-y-[15px] flex flex-col justify-end">
         {messagesLoading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
@@ -389,7 +389,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             </div>
             
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-sm font-medium text-foreground">{message.senderName || 'Unknown'}</span>
                 <span className="text-sm text-muted">{formatMessageTime(message.createdAt)}</span>
               </div>
@@ -466,13 +466,20 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             value={messageInput}
             onChange={(e) => {
               setMessageInput(e.target.value);
+              // Use optimized typing handlers (already debounced/throttled)
               if (e.target.value.trim()) {
-                startTyping();
+                startTyping(); // This is now the debounced handleTyping
               } else {
-                stopTyping();
+                stopTyping(); // This is now the debounced handleStopTyping
               }
             }}
             onBlur={() => stopTyping()}
+            onKeyDown={(e) => {
+              // Stop typing when Enter is pressed (message will be sent)
+              if (e.key === 'Enter' && !e.shiftKey) {
+                stopTyping();
+              }
+            }}
             placeholder={`Message ${selectedChannel.type === 'channel' ? `#${selectedChannel.name}` : selectedChannel.name}...`}
             className="w-full px-4 py-8 pr-20 border border-border rounded-lg focus:outline-none focus:border-muted text-sm bg-panel-background"
           />

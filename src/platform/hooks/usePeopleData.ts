@@ -45,7 +45,9 @@ export function usePeopleData(): UsePeopleDataReturn {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/v1/people?limit=10000', { credentials: 'include' });
+      // 🚀 PERFORMANCE: Use reasonable limit (500 records) instead of 10000
+      // This significantly improves load time for large datasets
+      const response = await fetch('/api/v1/people?limit=500', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch people: ${response.statusText}`);

@@ -7,6 +7,7 @@
 import React from "react";
 import Pusher from "pusher";
 import PusherClient from "pusher-js";
+import { pusherConnectionManager } from './pusher-connection-manager';
 
 // Server-side Pusher instance (for sending events)
 export const pusherServer = new Pusher({
@@ -224,6 +225,7 @@ export class PusherClientService {
 
   /**
    * Initialize Pusher client connection
+   * Uses connection manager for connection pooling and reuse
    */
   initialize(workspaceId: string, userId: string): void {
     if (typeof window === "undefined") {
@@ -234,39 +236,50 @@ export class PusherClientService {
     this['workspaceId'] = workspaceId;
     this['userId'] = userId;
 
-    // Initialize Pusher client
-    const pusherKey = process['env']['NEXT_PUBLIC_PUSHER_KEY'] || "";
-    const pusherCluster = process['env']['NEXT_PUBLIC_PUSHER_CLUSTER'] || "us2";
+    // Use connection manager for optimized connection reuse
+    const connection = pusherConnectionManager.getConnection(workspaceId, userId);
     
-    console.log(`🔍 [Pusher Client] Initializing with key: ${pusherKey ? 'SET' : 'MISSING'}, cluster: ${pusherCluster}`);
-    
-    pusherClient = new PusherClient(pusherKey, {
-      cluster: pusherCluster,
-      authEndpoint: "/api/pusher/auth",
-      auth: {
-        headers: {
-          "X-Workspace-ID": workspaceId,
-          "X-User-ID": userId,
+    if (connection) {
+      pusherClient = connection;
+      this['isConnected'] = connection.connection.state === 'connected';
+      
+      // Subscribe to connection state changes
+      pusherConnectionManager.subscribe((state) => {
+        this['isConnected'] = state.isConnected;
+      });
+      
+      console.log("🔗 [Pusher Client] Initialized using connection manager");
+    } else {
+      // Fallback to direct initialization if manager fails
+      console.warn("⚠️ [Pusher Client] Connection manager unavailable, using direct initialization");
+      const pusherKey = process['env']['NEXT_PUBLIC_PUSHER_KEY'] || "";
+      const pusherCluster = process['env']['NEXT_PUBLIC_PUSHER_CLUSTER'] || "us2";
+      
+      pusherClient = new PusherClient(pusherKey, {
+        cluster: pusherCluster,
+        authEndpoint: "/api/pusher/auth",
+        auth: {
+          headers: {
+            "X-Workspace-ID": workspaceId,
+            "X-User-ID": userId,
+          },
         },
-      },
-    });
+      });
 
-    // Connection events
-    pusherClient.connection.bind("connected", () => {
-      console.log("✅ Pusher connected");
-      this['isConnected'] = true;
-    });
+      pusherClient.connection.bind("connected", () => {
+        console.log("✅ Pusher connected");
+        this['isConnected'] = true;
+      });
 
-    pusherClient.connection.bind("disconnected", () => {
-      console.log("❌ Pusher disconnected");
-      this['isConnected'] = false;
-    });
+      pusherClient.connection.bind("disconnected", () => {
+        console.log("❌ Pusher disconnected");
+        this['isConnected'] = false;
+      });
 
-    pusherClient.connection.bind("error", (error: any) => {
-      console.error("❌ Pusher connection error:", error);
-    });
-
-    console.log("🔗 Pusher client initialized");
+      pusherClient.connection.bind("error", (error: any) => {
+        console.error("❌ Pusher connection error:", error);
+      });
+    }
   }
 
   /**
@@ -387,25 +400,57 @@ export class PusherClientService {
 
   /**
    * Subscribe to a specific channel with custom event handler
+   * Optimized with proper cleanup and duplicate prevention
    */
-  subscribeToChannel(channelName: string, eventName: string, onEvent: (data: any) => void): void {
+  subscribeToChannel(channelName: string, eventName: string, onEvent: (data: any) => void): () => void {
     if (!pusherClient) {
       console.error("❌ Pusher client not initialized");
-      return;
+      return () => {}; // Return no-op cleanup function
+    }
+
+    // Create unique key for this subscription
+    const subscriptionKey = `${channelName}-${eventName}`;
+    
+    // Check if already subscribed to avoid duplicates
+    if (this.channels.has(subscriptionKey)) {
+      console.log(`⚠️ [Pusher Client] Already subscribed to ${eventName} on channel: ${channelName}`);
+      // Return cleanup function that does nothing (already subscribed)
+      return () => {};
     }
 
     console.log(`🔍 [Pusher Client] Subscribing to ${eventName} on channel: ${channelName}`);
     
     const channel = pusherClient.subscribe(channelName);
-    this.channels.set(eventName, channel);
+    this.channels.set(subscriptionKey, channel);
 
-    // Bind custom event
-    channel.bind(eventName, (data: any) => {
-      console.log(`📡 [Pusher Client] ${eventName} received on channel ${channelName}:`, data);
-      onEvent(data);
-    });
+    // Bind custom event with error handling
+    const eventHandler = (data: any) => {
+      try {
+        console.log(`📡 [Pusher Client] ${eventName} received on channel ${channelName}:`, data);
+        onEvent(data);
+      } catch (error) {
+        console.error(`❌ [Pusher Client] Error in event handler for ${eventName}:`, error);
+      }
+    };
+    
+    channel.bind(eventName, eventHandler);
 
     console.log(`📡 Subscribed to ${eventName} on channel: ${channelName}`);
+
+    // Return cleanup function
+    return () => {
+      try {
+        console.log(`🧹 [Pusher Client] Unsubscribing from ${eventName} on channel: ${channelName}`);
+        channel.unbind(eventName, eventHandler);
+        this.channels.delete(subscriptionKey);
+        
+        // Only unsubscribe from channel if no more event handlers
+        // Note: Pusher-js doesn't have a way to check bound events, so we'll keep the channel
+        // The channel will be cleaned up when PusherClientService disconnects
+      } catch (error) {
+        console.error(`❌ [Pusher Client] Error unsubscribing from ${eventName}:`, error);
+      }
+    };
   }
 
   /**
