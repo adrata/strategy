@@ -326,8 +326,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   }
 
   const handleConversationClick = async (conversation: Conversation) => {
-    setSelectedChannel(conversation);
-    
     // Navigate to the conversation with human-readable URLs
     const currentPath = window.location.pathname;
     const segments = currentPath.split('/').filter(Boolean);
@@ -338,7 +336,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       return name.toLowerCase().replace(/\s+/g, '-');
     };
     
-    // Handle "Me" self-DM - create or find existing self-DM
+    // Handle "Me" self-DM - create or find existing self-DM BEFORE setting selectedChannel
     if (conversation.id === 'me-self-dm' && safeWorkspaceId && authUser?.id) {
       try {
         // First check if self-DM already exists
@@ -352,6 +350,14 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
           const selfDM = data.dms?.find((dm: any) => dm.participants.length === 0);
           
           if (selfDM) {
+            // Update conversation object with real DM ID before setting selectedChannel
+            const realConversation = {
+              ...conversation,
+              id: selfDM.id,
+              workspaceId: safeWorkspaceId
+            };
+            setSelectedChannel(realConversation);
+            
             // Use existing self-DM
             const slug = `${generateSlug('me')}-${selfDM.id}`;
             router.push(`/${workspaceSlug}/oasis/${slug}`);
@@ -372,6 +378,15 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         
         if (createResponse.ok) {
           const newDM = await createResponse.json();
+          
+          // Update conversation object with real DM ID before setting selectedChannel
+          const realConversation = {
+            ...conversation,
+            id: newDM.dm.id,
+            workspaceId: safeWorkspaceId
+          };
+          setSelectedChannel(realConversation);
+          
           const slug = `${generateSlug('me')}-${newDM.dm.id}`;
           router.push(`/${workspaceSlug}/oasis/${slug}`);
           return;
@@ -381,6 +396,9 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         // Fall through to regular navigation
       }
     }
+    
+    // For all other conversations, set selectedChannel normally
+    setSelectedChannel(conversation);
     
     // Save last conversation to localStorage
     if (safeWorkspaceId && conversation.id !== 'me-self-dm') {
