@@ -47,6 +47,21 @@
    - We can implement custom retry strategies
    - We can handle edge cases specific to our use case
 
+## How to Disable Nango's Built-in Sync
+
+To avoid conflicts with our custom sync, disable Nango's built-in email sync:
+
+1. Go to Nango Dashboard → Integrations → Outlook
+2. Find the "Syncs" section
+3. Disable or delete the "emails" sync
+4. Our custom sync will handle all email synchronization
+
+**Why**: Our custom sync provides:
+- Entity linking (people, companies, leads)
+- Action record creation
+- Custom date filtering and pagination
+- Better error handling and logging
+
 ### Disadvantages of Our Custom Approach:
 
 1. **More Code to Maintain**

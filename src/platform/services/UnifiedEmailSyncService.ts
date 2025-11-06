@@ -134,6 +134,8 @@ export class UnifiedEmailSyncService {
     userId: string,
     nangoConnectionId: string
   ): Promise<{ success: boolean; count: number; error?: string }> {
+    console.log(`📧 [EMAIL SYNC] Starting custom sync for ${provider} (connection: ${nangoConnectionId})`);
+    console.log(`📧 [EMAIL SYNC] NOTE: If Nango's built-in sync is also enabled, it may cause conflicts. Consider disabling it in Nango dashboard.`);
     const operation = provider === 'outlook' 
       ? 'outlook_read_emails' 
       : 'gmail_read_emails';
@@ -213,16 +215,24 @@ export class UnifiedEmailSyncService {
       (connection.metadata as any).connectedAt &&
       (new Date((connection.metadata as any).connectedAt).getTime() > Date.now() - 5 * 60 * 1000);
     
-    // For first-time syncs, recent reconnections, OR if we have lastSyncAt but no emails, fetch last 30 days
+    // CRITICAL: If we have suspiciously low email count, treat as incomplete first sync
+    // This ensures we catch up on missed emails even if some were synced
+    // Goal: We want ALL emails from Outlook, not just recent ones
+    const LOW_EMAIL_THRESHOLD = 50; // If we have fewer than 50 emails, treat as incomplete first sync
+    const hasLowEmailCount = existingEmailCount > 0 && existingEmailCount < LOW_EMAIL_THRESHOLD;
+    
+    // For first-time syncs, recent reconnections, OR if we have lastSyncAt but no emails, OR if email count is low, fetch last 30 days
     // For subsequent syncs, use last sync time minus 1 hour for safety window
     let filterDate: Date;
-    if (isFirstSync || connectionRecentlyActivated || hasNoEmailsButHasLastSync) {
-      // First sync, reconnection, or lastSyncAt exists but no emails: fetch last 30 days to catch up
+    if (isFirstSync || connectionRecentlyActivated || hasNoEmailsButHasLastSync || hasLowEmailCount) {
+      // First sync, reconnection, lastSyncAt exists but no emails, or low email count: fetch last 30 days to catch up
       const reason = hasNoEmailsButHasLastSync 
         ? 'lastSyncAt exists but no emails in DB' 
-        : isFirstSync 
-          ? 'First-time' 
-          : 'Reconnection';
+        : hasLowEmailCount
+          ? `Only ${existingEmailCount} emails found (threshold: ${LOW_EMAIL_THRESHOLD}) - fetching 30 days to ensure completeness`
+          : isFirstSync 
+            ? 'First-time' 
+            : 'Reconnection';
       filterDate = thirtyDaysAgo;
       console.log(`📧 [EMAIL SYNC] ${reason} sync detected for connection ${nangoConnectionId}, fetching last 30 days of emails`);
     } else {
