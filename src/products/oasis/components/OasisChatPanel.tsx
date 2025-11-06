@@ -201,11 +201,22 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
     e.preventDefault();
     if (!messageInput.trim()) return;
 
+    // Store message content before clearing
+    const messageContent = messageInput;
+    
+    // Clear input IMMEDIATELY for instant feedback
+    setMessageInput('');
+    
+    // Stop typing indicator immediately
+    stopTyping();
+
     try {
-      await sendMessage(messageInput);
-      setMessageInput('');
+      // Send message (optimistic update happens inside sendMessage)
+      await sendMessage(messageContent);
     } catch (error) {
       console.error('Failed to send message:', error);
+      // On error, restore the message input so user can retry
+      setMessageInput(messageContent);
     }
   };
 
