@@ -52,7 +52,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the connection in database
-    const connection = await prisma.grand_central_connections.findFirst({
+    // Try by database ID first, then by nangoConnectionId
+    let connection = await prisma.grand_central_connections.findFirst({
       where: {
         id: connectionId,
         workspaceId,
@@ -60,7 +61,23 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    // If not found by ID, try by nangoConnectionId
     if (!connection) {
+      connection = await prisma.grand_central_connections.findFirst({
+        where: {
+          nangoConnectionId: connectionId,
+          workspaceId,
+          userId: user.id
+        }
+      });
+    }
+
+    if (!connection) {
+      console.error(`❌ [NANGO DISCONNECT] Connection not found:`, {
+        connectionId,
+        workspaceId,
+        userId: user.id
+      });
       return NextResponse.json(
         { error: 'Connection not found' },
         { status: 404 }
