@@ -13,7 +13,6 @@ import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
 import { useInbox } from '../context/InboxProvider';
 import { EmailCard } from './EmailCard';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export function InboxLeftPanel() {
   const { user: authUser } = useUnifiedAuth();
@@ -52,16 +51,12 @@ export function InboxLeftPanel() {
   const { 
     emails, 
     selectedEmail, 
-    stats, 
-    filters, 
     loading, 
-    selectEmail, 
-    setFilters 
+    selectEmail
   } = inboxContext;
 
   // State for user profile data
   const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
-  const [searchQuery, setSearchQuery] = useState(filters.searchQuery);
 
   // Get workspace slug from pathname
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -94,25 +89,8 @@ export function InboxLeftPanel() {
     fetchUserProfile();
   }, [authUser?.id]);
 
-  // Handle search with debounce
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setFilters({ searchQuery });
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery, setFilters]);
-
   const handleProfileClick = () => {
     setIsProfilePanelVisible(!isProfilePanelVisible);
-  };
-
-  const handleUnreadToggle = () => {
-    setFilters({ unreadOnly: !filters.unreadOnly });
-  };
-
-  const handleProviderFilter = (provider: 'all' | 'outlook' | 'gmail') => {
-    setFilters({ provider });
   };
 
   return (
@@ -120,8 +98,8 @@ export function InboxLeftPanel() {
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header */}
-        <div className="mx-2 mt-4 mb-2">
-          <div className="flex items-center gap-3 mb-3">
+        <div className="mx-2 mt-4 mb-4">
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden">
               <span className="text-lg font-bold text-black">I</span>
             </div>
@@ -129,95 +107,6 @@ export function InboxLeftPanel() {
               <h2 className="text-base font-semibold text-foreground">Inbox</h2>
               <p className="text-xs text-muted">Email Management</p>
             </div>
-          </div>
-        </div>
-
-        {/* Stats Box */}
-        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-muted">Total</span>
-              <span className="text-xs font-semibold text-black">
-                {loading ? '...' : stats.total}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-muted">Unread</span>
-              <span className="text-xs font-semibold text-black">
-                {loading ? '...' : stats.unread}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-muted">Outlook</span>
-              <span className="text-xs font-semibold text-black">
-                {loading ? '...' : stats.unreadOutlook}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-muted">Gmail</span>
-              <span className="text-xs font-semibold text-black">
-                {loading ? '...' : stats.unreadGmail}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Search Bar */}
-        <div className="mx-2 mb-3">
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted" />
-            <input
-              type="text"
-              placeholder="Type to search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="mx-2 mb-3 flex items-center justify-between">
-          <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filters.unreadOnly}
-              onChange={handleUnreadToggle}
-              className="w-4 h-4 rounded border-border text-blue-600 focus:ring-blue-500"
-            />
-            <span>Unreads</span>
-          </label>
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleProviderFilter('all')}
-              className={`px-2 py-1 text-xs rounded ${
-                filters.provider === 'all'
-                  ? 'bg-hover text-foreground'
-                  : 'text-muted hover:bg-panel-background'
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => handleProviderFilter('outlook')}
-              className={`px-2 py-1 text-xs rounded ${
-                filters.provider === 'outlook'
-                  ? 'bg-hover text-foreground'
-                  : 'text-muted hover:bg-panel-background'
-              }`}
-            >
-              Outlook
-            </button>
-            <button
-              onClick={() => handleProviderFilter('gmail')}
-              className={`px-2 py-1 text-xs rounded ${
-                filters.provider === 'gmail'
-                  ? 'bg-hover text-foreground'
-                  : 'text-muted hover:bg-panel-background'
-              }`}
-            >
-              Gmail
-            </button>
           </div>
         </div>
       </div>
@@ -236,9 +125,7 @@ export function InboxLeftPanel() {
           </div>
         ) : emails.length === 0 ? (
           <div className="text-center py-8 text-muted text-sm">
-            {filters.searchQuery || filters.unreadOnly || filters.provider !== 'all'
-              ? 'No emails match your filters'
-              : 'No emails found'}
+            No emails found
           </div>
         ) : (
           <div className="space-y-2">

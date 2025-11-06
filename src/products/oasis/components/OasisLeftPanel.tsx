@@ -61,25 +61,19 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { data: acquisitionData } = useRevenueOS();
   
-  // Unified loading state - check auth first, then context
-  const [isContextLoading, setIsContextLoading] = React.useState(true);
+  // CRITICAL FIX: All hooks must be called unconditionally at the top level
+  // Never wrap hooks in try-catch or conditionals
+  const oasisContext = useOasis();
+  const layoutContext = useOasisLayout();
+  const { setIsProfilePanelVisible } = useProfilePanel();
+  const params = useParams();
   
-  // Add error boundary for context usage
-  let oasisContext;
-  try {
-    oasisContext = useOasis();
-    // Context loaded successfully
-    if (isContextLoading) {
-      setIsContextLoading(false);
-    }
-  } catch (error) {
-    console.error('Failed to get Oasis context:', error);
-    // Keep loading state if context fails
-  }
+  // Extract values from contexts (these may be null/undefined if context isn't ready)
+  const selectedChannel = layoutContext?.selectedChannel || null;
+  const setSelectedChannel = layoutContext?.setSelectedChannel || (() => {});
   
-  // Show skeleton only if auth is loading OR context is not ready yet
-  // Unified loading check prevents double rendering
-  const isLoading = authLoading || isContextLoading;
+  // Unified loading state - check auth first
+  const isLoading = authLoading;
   
   if (isLoading) {
     return (
@@ -120,22 +114,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       </div>
     );
   }
-  
-  // Get selectedChannel from OasisLayoutContext, not OasisProvider
-  // Add error handling for layout context
-  let selectedChannel: Conversation | null = null;
-  let setSelectedChannel: (channel: Conversation | null) => void = () => {};
-  
-  try {
-    const layoutContext = useOasisLayout();
-    selectedChannel = layoutContext.selectedChannel;
-    setSelectedChannel = layoutContext.setSelectedChannel;
-  } catch (error) {
-    console.error('Failed to get OasisLayout context:', error);
-    // Continue rendering with empty state - context will be available after provider mounts
-  }
-  const { setIsProfilePanelVisible } = useProfilePanel();
-  const params = useParams();
   
   // Get workspace ID from auth user or acquisition data
   const workspaceId = authUser?.activeWorkspaceId || acquisitionData?.auth?.authUser?.activeWorkspaceId || '';
