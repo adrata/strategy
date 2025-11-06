@@ -52,7 +52,7 @@ export class UnifiedEmailSyncService {
    * Sync emails from all connected providers for a workspace
    */
   static async syncWorkspaceEmails(workspaceId: string, userId: string) {
-    console.log(`📧 Starting email sync for workspace: ${workspaceId}`);
+    console.log(`📧 [EMAIL SYNC] Starting email sync for workspace: ${workspaceId}, user: ${userId}`);
     
     const connections = await prisma.grand_central_connections.findMany({
       where: {
@@ -62,16 +62,23 @@ export class UnifiedEmailSyncService {
       }
     });
     
+    console.log(`📧 [EMAIL SYNC] Found ${connections.length} active connection(s) for workspace ${workspaceId}`);
+    
     if (connections.length === 0) {
-      console.log(`📧 No active email connections found for workspace: ${workspaceId}`);
+      console.log(`📧 [EMAIL SYNC] No active email connections found for workspace: ${workspaceId}`);
       return [];
     }
+    
+    // Log connection details
+    connections.forEach(conn => {
+      console.log(`📧 [EMAIL SYNC] Connection: ${conn.provider}, ID: ${conn.nangoConnectionId}, ConfigKey: ${conn.providerConfigKey}`);
+    });
     
     const results = [];
     
     for (const connection of connections) {
       try {
-        console.log(`📧 Syncing emails from ${connection.provider}...`);
+        console.log(`📧 [EMAIL SYNC] Syncing emails from ${connection.provider} (connection: ${connection.nangoConnectionId})...`);
         
         const result = await this.syncProviderEmails(
           connection.provider as 'outlook' | 'gmail',
@@ -86,13 +93,20 @@ export class UnifiedEmailSyncService {
           ...result 
         });
         
-        console.log(`✅ ${connection.provider} sync completed: ${result.count} emails processed`);
+        console.log(`✅ [EMAIL SYNC] ${connection.provider} sync completed: ${result.count} emails processed`);
       } catch (error) {
-        console.error(`❌ Failed to sync ${connection.provider}:`, error);
+        console.error(`❌ [EMAIL SYNC] Failed to sync ${connection.provider}:`, error);
+        console.error(`❌ [EMAIL SYNC] Error details:`, {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined,
+          connectionId: connection.nangoConnectionId,
+          provider: connection.provider
+        });
         results.push({ 
           provider: connection.provider, 
           success: false, 
           error: error instanceof Error ? error.message : 'Unknown error',
+          errorStack: error instanceof Error ? error.stack : undefined,
           count: 0 
         });
       }
@@ -191,19 +205,41 @@ export class UnifiedEmailSyncService {
     }
     
     // Call Nango proxy directly
+    console.log(`📧 [EMAIL SYNC] Calling Nango proxy:`, {
+      providerConfigKey: connection.providerConfigKey,
+      connectionId: connection.nangoConnectionId,
+      endpoint,
+      method: 'GET'
+    });
+    
     const result = await retryWithBackoff(
       async () => {
-        const response = await nango.proxy({
-          providerConfigKey: connection.providerConfigKey,
-          connectionId: connection.nangoConnectionId,
-          endpoint,
-          method: 'GET'
-        });
-        
-        return {
-          success: true,
-          data: response.data
-        };
+        try {
+          const response = await nango.proxy({
+            providerConfigKey: connection.providerConfigKey,
+            connectionId: connection.nangoConnectionId,
+            endpoint,
+            method: 'GET'
+          });
+          
+          console.log(`📧 [EMAIL SYNC] Nango response received, data keys:`, Object.keys(response.data || {}));
+          console.log(`📧 [EMAIL SYNC] Response has 'value' key:`, 'value' in (response.data || {}));
+          console.log(`📧 [EMAIL SYNC] Response has 'messages' key:`, 'messages' in (response.data || {}));
+          
+          return {
+            success: true,
+            data: response.data
+          };
+        } catch (nangoError) {
+          console.error(`❌ [EMAIL SYNC] Nango proxy error:`, {
+            message: nangoError instanceof Error ? nangoError.message : 'Unknown error',
+            stack: nangoError instanceof Error ? nangoError.stack : undefined,
+            providerConfigKey: connection.providerConfigKey,
+            connectionId: connection.nangoConnectionId,
+            endpoint
+          });
+          throw nangoError;
+        }
       },
       `Email fetch from ${provider}`
     );
