@@ -24,12 +24,18 @@ export async function POST(request: NextRequest) {
       user.id
     );
 
-    console.log(`✅ [MANUAL SYNC] Sync completed:`, result);
+    console.log(`✅ [MANUAL SYNC] Sync completed:`, JSON.stringify(result, null, 2));
 
     return NextResponse.json({
       success: true,
       message: 'Email sync triggered successfully',
-      results: result
+      results: result,
+      summary: {
+        totalConnections: result.length,
+        successful: result.filter((r: any) => r.success !== false).length,
+        failed: result.filter((r: any) => r.success === false).length,
+        totalEmailsProcessed: result.reduce((sum: number, r: any) => sum + (r.count || 0), 0)
+      }
     });
   } catch (error) {
     console.error('❌ [MANUAL SYNC] Error:', error);
