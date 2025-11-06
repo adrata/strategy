@@ -42,14 +42,14 @@ async function main() {
     }
   });
 
-  const randomChannel = await prisma.oasisChannel.upsert({
-    where: { id: 'random-channel' },
+  const creativeChannel = await prisma.oasisChannel.upsert({
+    where: { id: 'creative-channel' },
     update: {},
     create: {
-      id: 'random-channel',
+      id: 'creative-channel',
       workspaceId: workspace.id,
-      name: 'random',
-      description: 'Random discussions and water cooler chat',
+      name: 'creative',
+      description: 'Creative ideas, inspiration, and innovative discussions',
       members: {
         create: {
           userId: user.id
@@ -77,7 +77,7 @@ async function main() {
       },
       {
         content: 'Anyone up for a coffee break? ☕',
-        channelId: randomChannel.id,
+        channelId: creativeChannel.id,
         senderId: user.id
       }
     ]
@@ -236,7 +236,7 @@ async function main() {
   console.log('📊 Summary:');
   console.log(`   - Workspace: ${workspace.name}`);
   console.log(`   - User: ${user.name}`);
-  console.log(`   - Oasis Channels: 2 (general, random)`);
+  console.log(`   - Oasis Channels: 2 (general, creative)`);
   console.log(`   - Sample Messages: 3`);
   console.log(`   - Stacks Project: 1`);
   console.log(`   - Epics: 1`);

@@ -12,7 +12,7 @@ const WELCOME_MESSAGES = {
   general: "Welcome to #general! This is where we share updates and announcements.",
   sell: "Welcome to #sell! Share your wins, strategies, and best practices here.",
   build: "Welcome to #build! Let's collaborate on product and engineering discussions.",
-  random: "Welcome to #random! Share memes, random thoughts, and anything off-topic here.",
+  creative: "Welcome to #creative! Share creative ideas, inspiration, and innovative discussions here.",
   wins: "Welcome to #wins! Celebrate your victories and successes here!"
 };
 

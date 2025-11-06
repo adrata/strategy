@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { usePusherRealTime } from '@/platform/services/pusher-real-time-service';
+import { usePusherRealTime, pusherClientService } from '@/platform/services/pusher-real-time-service';
 
 export interface OasisMessage {
   id: string;
@@ -80,8 +80,203 @@ export function useOasisMessages(
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
 
-  // Get Pusher real-time updates
+  // Get Pusher real-time updates from workspace channel
   const { lastUpdate } = usePusherRealTime(workspaceId, '');
+
+  // Subscribe to workspace channel for 'oasis-message' events (fallback)
+  useEffect(() => {
+    if (!workspaceId) return;
+
+    const workspaceChannelName = `workspace-${workspaceId}`;
+    console.log(`📡 [OASIS MESSAGES] Subscribing to workspace channel for oasis-message: ${workspaceChannelName}`);
+
+    // Subscribe to workspace channel for oasis-message events
+    pusherClientService.subscribeToChannel(
+      workspaceChannelName,
+      'oasis-message',
+      (event: any) => {
+        console.log(`📨 [OASIS MESSAGES] Received message on workspace channel ${workspaceChannelName}:`, event);
+        
+        // Check if this event is relevant to current channel/DM
+        const isRelevant = (channelId && event.channelId === channelId) || (dmId && event.dmId === dmId);
+        if (!isRelevant) return;
+
+        if (event.type === 'oasis_message_sent') {
+          // Add new message to the end (newest at bottom)
+          setMessages(prev => {
+            // Check if message already exists (avoid duplicates)
+            const exists = prev.some(msg => msg.id === event.payload.id);
+            if (exists) {
+              console.log(`⚠️ [OASIS MESSAGES] Message ${event.payload.id} already exists, skipping`);
+              return prev;
+            }
+            return [...prev, {
+              id: event.payload.id,
+              content: event.payload.content,
+              channelId: event.payload.channelId,
+              dmId: event.payload.dmId,
+              senderId: event.payload.senderId,
+              senderName: event.payload.senderName,
+              senderUsername: event.payload.senderUsername,
+              parentMessageId: event.payload.parentMessageId,
+              createdAt: event.payload.createdAt,
+              updatedAt: event.payload.updatedAt,
+              reactions: [],
+              threadCount: 0,
+              threadMessages: []
+            }];
+          });
+        } else if (event.type === 'oasis_message_edited') {
+          // Update existing message
+          setMessages(prev => 
+            prev.map(msg => 
+              msg.id === event.payload.id 
+                ? { ...msg, content: event.payload.content, updatedAt: event.payload.updatedAt }
+                : msg
+            )
+          );
+        } else if (event.type === 'oasis_message_deleted') {
+          // Remove message
+          setMessages(prev => prev.filter(msg => msg.id !== event.payload.messageId));
+        }
+      }
+    );
+
+    // Cleanup
+    return () => {
+      console.log(`📡 [OASIS MESSAGES] Unsubscribing from workspace channel: ${workspaceChannelName}`);
+    };
+  }, [workspaceId, channelId, dmId]);
+
+  // Subscribe to DM-specific channel for real-time updates
+  useEffect(() => {
+    if (!dmId || !workspaceId) return;
+
+    const dmChannelName = `oasis-dm-${dmId}`;
+    console.log(`📡 [OASIS MESSAGES] Subscribing to DM channel: ${dmChannelName}`);
+
+    // Subscribe to DM-specific channel
+    pusherClientService.subscribeToChannel(
+      dmChannelName,
+      'oasis-message',
+      (event: any) => {
+        console.log(`📨 [OASIS MESSAGES] Received message on DM channel ${dmChannelName}:`, event);
+        
+        // Check if this event is for the current DM
+        if (event.dmId === dmId) {
+          if (event.type === 'oasis_message_sent') {
+            // Add new message to the end (newest at bottom)
+            setMessages(prev => {
+              // Check if message already exists (avoid duplicates)
+              const exists = prev.some(msg => msg.id === event.payload.id);
+              if (exists) {
+                console.log(`⚠️ [OASIS MESSAGES] Message ${event.payload.id} already exists, skipping`);
+                return prev;
+              }
+              return [...prev, {
+                id: event.payload.id,
+                content: event.payload.content,
+                channelId: event.payload.channelId,
+                dmId: event.payload.dmId,
+                senderId: event.payload.senderId,
+                senderName: event.payload.senderName,
+                senderUsername: event.payload.senderUsername,
+                parentMessageId: event.payload.parentMessageId,
+                createdAt: event.payload.createdAt,
+                updatedAt: event.payload.updatedAt,
+                reactions: [],
+                threadCount: 0,
+                threadMessages: []
+              }];
+            });
+          } else if (event.type === 'oasis_message_edited') {
+            // Update existing message
+            setMessages(prev => 
+              prev.map(msg => 
+                msg.id === event.payload.id 
+                  ? { ...msg, content: event.payload.content, updatedAt: event.payload.updatedAt }
+                  : msg
+              )
+            );
+          } else if (event.type === 'oasis_message_deleted') {
+            // Remove message
+            setMessages(prev => prev.filter(msg => msg.id !== event.payload.messageId));
+          }
+        }
+      }
+    );
+
+    // Cleanup: unsubscribe when DM changes or component unmounts
+    return () => {
+      console.log(`📡 [OASIS MESSAGES] Unsubscribing from DM channel: ${dmChannelName}`);
+      // Note: pusherClientService doesn't have an unsubscribe method, but channels are managed internally
+      // The channel will be cleaned up when the component unmounts
+    };
+  }, [dmId, workspaceId]);
+
+  // Subscribe to channel-specific channel for real-time updates
+  useEffect(() => {
+    if (!channelId || !workspaceId) return;
+
+    const channelChannelName = `oasis-channel-${channelId}`;
+    console.log(`📡 [OASIS MESSAGES] Subscribing to channel: ${channelChannelName}`);
+
+    // Subscribe to channel-specific channel
+    pusherClientService.subscribeToChannel(
+      channelChannelName,
+      'oasis-message',
+      (event: any) => {
+        console.log(`📨 [OASIS MESSAGES] Received message on channel ${channelChannelName}:`, event);
+        
+        // Check if this event is for the current channel
+        if (event.channelId === channelId) {
+          if (event.type === 'oasis_message_sent') {
+            // Add new message to the end (newest at bottom)
+            setMessages(prev => {
+              // Check if message already exists (avoid duplicates)
+              const exists = prev.some(msg => msg.id === event.payload.id);
+              if (exists) {
+                console.log(`⚠️ [OASIS MESSAGES] Message ${event.payload.id} already exists, skipping`);
+                return prev;
+              }
+              return [...prev, {
+                id: event.payload.id,
+                content: event.payload.content,
+                channelId: event.payload.channelId,
+                dmId: event.payload.dmId,
+                senderId: event.payload.senderId,
+                senderName: event.payload.senderName,
+                senderUsername: event.payload.senderUsername,
+                parentMessageId: event.payload.parentMessageId,
+                createdAt: event.payload.createdAt,
+                updatedAt: event.payload.updatedAt,
+                reactions: [],
+                threadCount: 0,
+                threadMessages: []
+              }];
+            });
+          } else if (event.type === 'oasis_message_edited') {
+            // Update existing message
+            setMessages(prev => 
+              prev.map(msg => 
+                msg.id === event.payload.id 
+                  ? { ...msg, content: event.payload.content, updatedAt: event.payload.updatedAt }
+                  : msg
+              )
+            );
+          } else if (event.type === 'oasis_message_deleted') {
+            // Remove message
+            setMessages(prev => prev.filter(msg => msg.id !== event.payload.messageId));
+          }
+        }
+      }
+    );
+
+    // Cleanup: unsubscribe when channel changes or component unmounts
+    return () => {
+      console.log(`📡 [OASIS MESSAGES] Unsubscribing from channel: ${channelChannelName}`);
+    };
+  }, [channelId, workspaceId]);
 
   // Fetch messages with caching
   const fetchMessages = useCallback(async (reset = false) => {

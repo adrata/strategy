@@ -77,8 +77,8 @@ export async function GET(request: NextRequest) {
       isMember: channel.members.some(member => member.userId === userId)
     }));
 
-    // Custom sort order: general, sell, build, random, wins
-    const customOrder = ['general', 'sell', 'build', 'random', 'wins'];
+    // Custom sort order: general, sell, build, creative, wins
+    const customOrder = ['general', 'sell', 'build', 'creative', 'wins'];
     const sortedChannels = channelsWithStats.sort((a, b) => {
       const aIndex = customOrder.indexOf(a.name);
       const bIndex = customOrder.indexOf(b.name);
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
         { name: 'general', description: 'General discussion and announcements' },
         { name: 'sell', description: 'Sales strategies and customer conversations' },
         { name: 'build', description: 'Product development and engineering discussions' },
-        { name: 'random', description: 'Random thoughts, memes, and off-topic discussions' },
+        { name: 'creative', description: 'Creative ideas, inspiration, and innovative discussions' },
         { name: 'wins', description: 'Celebrate victories and success stories' }
       ];
 
