@@ -27,31 +27,32 @@ export function InboxMiddlePanel() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
 
+  // Sanitize HTML email content to prevent XSS attacks
+  // Must be called unconditionally to follow Rules of Hooks
+  const sanitizedHtml = useMemo(() => {
+    if (selectedEmail?.bodyHtml) {
+      return DOMPurify.sanitize(selectedEmail.bodyHtml, {
+        ALLOWED_TAGS: [
+          'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+          'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'pre', 'code', 'div', 'span',
+          'table', 'thead', 'tbody', 'tr', 'td', 'th', 'hr'
+        ],
+        ALLOWED_ATTR: [
+          'href', 'src', 'alt', 'title', 'class', 'style', 'width', 'height',
+          'align', 'valign', 'colspan', 'rowspan', 'border', 'cellpadding', 'cellspacing'
+        ],
+        ALLOW_DATA_ATTR: false,
+        // Allow safe email styling
+        ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+      });
+    }
+    return null;
+  }, [selectedEmail?.bodyHtml]);
+
   if (selectedEmail) {
     const fromParsed = parseEmailAddress(selectedEmail.from);
     const timestamp = formatEmailTimestamp(selectedEmail.receivedAt);
     const attachments = selectedEmail.attachments as any[] | null;
-
-    // Sanitize HTML email content to prevent XSS attacks
-    const sanitizedHtml = useMemo(() => {
-      if (selectedEmail.bodyHtml) {
-        return DOMPurify.sanitize(selectedEmail.bodyHtml, {
-          ALLOWED_TAGS: [
-            'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-            'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'pre', 'code', 'div', 'span',
-            'table', 'thead', 'tbody', 'tr', 'td', 'th', 'hr'
-          ],
-          ALLOWED_ATTR: [
-            'href', 'src', 'alt', 'title', 'class', 'style', 'width', 'height',
-            'align', 'valign', 'colspan', 'rowspan', 'border', 'cellpadding', 'cellspacing'
-          ],
-          ALLOW_DATA_ATTR: false,
-          // Allow safe email styling
-          ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
-        });
-      }
-      return null;
-    }, [selectedEmail.bodyHtml]);
 
     // Navigation helpers
     const currentIndex = emails.findIndex(e => e.id === selectedEmail.id);
