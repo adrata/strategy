@@ -234,6 +234,17 @@ export function InboxProvider({ children }: InboxProviderProps) {
     }
   }, [emails, selectedEmail, selectEmail]);
 
+  // Auto-refresh emails periodically (every 30 seconds) to catch new emails
+  useEffect(() => {
+    if (!user?.activeWorkspaceId) return;
+
+    const interval = setInterval(() => {
+      fetchEmails();
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [user?.activeWorkspaceId, fetchEmails]);
+
   const setFilters = useCallback((newFilters: Partial<InboxFilters>) => {
     setFiltersState(prev => ({ ...prev, ...newFilters }));
   }, []);
