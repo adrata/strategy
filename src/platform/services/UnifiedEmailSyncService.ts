@@ -160,6 +160,29 @@ export class UnifiedEmailSyncService {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     
+    // Step 4: Verify connection state - log connection details
+    console.log(`🔍 [EMAIL SYNC] Connection state verification:`, {
+      connectionId: connection.id,
+      nangoConnectionId: connection.nangoConnectionId,
+      provider,
+      providerConfigKey: connection.providerConfigKey,
+      status: connection.status,
+      lastSyncAt: connection.lastSyncAt ? new Date(connection.lastSyncAt).toISOString() : null,
+      createdAt: connection.createdAt ? new Date(connection.createdAt).toISOString() : null,
+      metadata: connection.metadata
+    });
+    
+    // Step 2: Fix date filter logic - check if emails exist in DB for this connection
+    // If connection has lastSyncAt but no emails exist, treat as first sync
+    const existingEmailCount = await prisma.email_messages.count({
+      where: {
+        workspaceId,
+        provider
+      }
+    });
+    
+    console.log(`📊 [EMAIL SYNC] Existing email count in database for ${provider}: ${existingEmailCount}`);
+    
     // Use connection.lastSyncAt if available, otherwise fall back to email-based lookup
     let lastSync: Date;
     let lastSyncSource: 'connection' | 'emails' | 'default';
@@ -181,18 +204,27 @@ export class UnifiedEmailSyncService {
     // Check if this is a first-time sync or reconnection
     const isFirstSync = lastSync.getTime() <= sevenDaysAgo.getTime();
     
+    // CRITICAL FIX: If connection has lastSyncAt but no emails exist in DB, treat as first sync
+    // This handles the case where lastSyncAt was set on connection creation but no emails were actually synced
+    const hasNoEmailsButHasLastSync = connection.lastSyncAt && existingEmailCount === 0;
+    
     // Also check if connection was recently activated (within last 5 minutes) - indicates reconnection
     const connectionRecentlyActivated = connection.metadata && 
       (connection.metadata as any).connectedAt &&
       (new Date((connection.metadata as any).connectedAt).getTime() > Date.now() - 5 * 60 * 1000);
     
-    // For first-time syncs or recent reconnections, fetch last 30 days of emails
+    // For first-time syncs, recent reconnections, OR if we have lastSyncAt but no emails, fetch last 30 days
     // For subsequent syncs, use last sync time minus 1 hour for safety window
     let filterDate: Date;
-    if (isFirstSync || connectionRecentlyActivated) {
-      // First sync or reconnection: fetch last 30 days to catch up
+    if (isFirstSync || connectionRecentlyActivated || hasNoEmailsButHasLastSync) {
+      // First sync, reconnection, or lastSyncAt exists but no emails: fetch last 30 days to catch up
+      const reason = hasNoEmailsButHasLastSync 
+        ? 'lastSyncAt exists but no emails in DB' 
+        : isFirstSync 
+          ? 'First-time' 
+          : 'Reconnection';
       filterDate = thirtyDaysAgo;
-      console.log(`📧 [EMAIL SYNC] ${isFirstSync ? 'First-time' : 'Reconnection'} sync detected for connection ${nangoConnectionId}, fetching last 30 days of emails`);
+      console.log(`📧 [EMAIL SYNC] ${reason} sync detected for connection ${nangoConnectionId}, fetching last 30 days of emails`);
     } else {
       // Subsequent sync: use last sync time minus 1 hour for safety window
       const lastSyncMinusOneHour = new Date(lastSync.getTime() - 60 * 60 * 1000);
@@ -340,6 +372,16 @@ export class UnifiedEmailSyncService {
           const result = await retryWithBackoff(
             async () => {
               try {
+                // Log the exact API call being made
+                console.log(`📡 [EMAIL SYNC] Making API call:`, {
+                  provider,
+                  folder: folderConfig.folder,
+                  page: pageCount + 1,
+                  endpoint,
+                  providerConfigKey: connection.providerConfigKey,
+                  connectionId: connection.nangoConnectionId
+                });
+                
                 const response = await nango.proxy({
                   providerConfigKey: connection.providerConfigKey,
                   connectionId: connection.nangoConnectionId,
@@ -348,6 +390,22 @@ export class UnifiedEmailSyncService {
                 });
                 
                 const responseData = response.data || response;
+                
+                // Step 1: Add comprehensive API response logging
+                console.log(`📡 [EMAIL SYNC] API Response received:`, {
+                  provider,
+                  folder: folderConfig.folder,
+                  page: pageCount + 1,
+                  responseType: typeof responseData,
+                  responseKeys: responseData ? Object.keys(responseData) : [],
+                  hasValue: provider === 'outlook' ? !!responseData.value : false,
+                  hasMessages: provider === 'gmail' ? !!responseData.messages : false,
+                  valueLength: provider === 'outlook' ? (Array.isArray(responseData.value) ? responseData.value.length : 'not array') : 'N/A',
+                  messagesLength: provider === 'gmail' ? (Array.isArray(responseData.messages) ? responseData.messages.length : 'not array') : 'N/A',
+                  hasNextLink: provider === 'outlook' ? !!responseData['@odata.nextLink'] : false,
+                  hasNextPageToken: provider === 'gmail' ? !!responseData.nextPageToken : false,
+                  responsePreview: JSON.stringify(responseData).substring(0, 500)
+                });
                 
                 // Return raw response data - we'll process it after fetching
                 return {
@@ -378,12 +436,25 @@ export class UnifiedEmailSyncService {
           );
           
           if (result.success && result.data) {
+            // Step 3: Add API response validation
             let emails: any[] = [];
             if (provider === 'outlook') {
+              // Validate Outlook response structure
+              if (!result.data.hasOwnProperty('value')) {
+                console.warn(`⚠️ [EMAIL SYNC] Outlook API response missing 'value' property. Response keys:`, Object.keys(result.data));
+                console.warn(`⚠️ [EMAIL SYNC] Full response:`, JSON.stringify(result.data).substring(0, 1000));
+              }
               emails = result.data.value || [];
+              console.log(`📧 [EMAIL SYNC] Outlook response: ${emails.length} emails found in 'value' array`);
             } else {
               // Gmail: messages.list returns { messages: [{ id, threadId }, ...], nextPageToken: ... }
+              // Validate Gmail response structure
+              if (!result.data.hasOwnProperty('messages')) {
+                console.warn(`⚠️ [EMAIL SYNC] Gmail API response missing 'messages' property. Response keys:`, Object.keys(result.data));
+                console.warn(`⚠️ [EMAIL SYNC] Full response:`, JSON.stringify(result.data).substring(0, 1000));
+              }
               const messageIds = result.data.messages || [];
+              console.log(`📧 [EMAIL SYNC] Gmail response: ${messageIds.length} message IDs found in 'messages' array`);
               
               // Gmail messages.list only returns IDs, we need to fetch full message details
               // Fetch full messages in batches to avoid rate limits
