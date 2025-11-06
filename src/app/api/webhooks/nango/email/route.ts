@@ -69,27 +69,29 @@ export async function POST(request: NextRequest) {
 
     // Get webhook secret from environment
     const webhookSecret = process.env.NANGO_WEBHOOK_SECRET;
-    if (!webhookSecret) {
-      console.error('❌ NANGO_WEBHOOK_SECRET not configured');
-      return Response.json({ error: 'Webhook secret not configured' }, { status: 500 });
-    }
-
-    // Verify webhook signature
-    const signature = request.headers.get('x-nango-signature');
-    if (!signature) {
-      console.error('❌ Missing webhook signature');
-      return Response.json({ error: 'Missing signature' }, { status: 401 });
-    }
-
+    
+    // Get payload first (needed for both signature verification and processing)
     const payload = await request.text();
     const payloadObj = JSON.parse(payload);
     
-    if (!verifyNangoSignature(payload, signature, webhookSecret)) {
-      console.error('❌ Invalid webhook signature');
-      return Response.json({ error: 'Invalid signature' }, { status: 401 });
+    // Verify webhook signature (if secret is configured)
+    if (webhookSecret) {
+      const signature = request.headers.get('x-nango-signature');
+      if (!signature) {
+        console.error('❌ Missing webhook signature (but NANGO_WEBHOOK_SECRET is set)');
+        return Response.json({ error: 'Missing signature' }, { status: 401 });
+      }
+      
+      if (!verifyNangoSignature(payload, signature, webhookSecret)) {
+        console.error('❌ Invalid webhook signature');
+        return Response.json({ error: 'Invalid signature' }, { status: 401 });
+      }
+      console.log('📧 Received verified Nango webhook:', JSON.stringify(payloadObj, null, 2));
+    } else {
+      // TEMPORARY: Allow webhooks without signature verification if secret not configured
+      console.warn('⚠️ NANGO_WEBHOOK_SECRET not configured - accepting webhook WITHOUT signature verification (NOT recommended for production)');
+      console.log('📧 Received Nango webhook (unverified):', JSON.stringify(payloadObj, null, 2));
     }
-
-    console.log('📧 Received verified Nango webhook:', JSON.stringify(payloadObj, null, 2));
     
     // Handle different webhook types
     const webhookType = payloadObj.type; // 'auth' for connection events, 'sync' for sync events, etc.
