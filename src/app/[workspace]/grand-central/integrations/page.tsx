@@ -35,10 +35,11 @@ const IntegrationsPage = () => {
   } | null>(null);
   const [connections, setConnections] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectingProvider, setConnectingProvider] = useState<'outlook' | 'gmail' | 'google-calendar' | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
   const [pendingDisconnectId, setPendingDisconnectId] = useState<string | null>(null);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   // Load connections from Nango API
   const loadConnections = useCallback(async () => {
@@ -225,7 +226,7 @@ const IntegrationsPage = () => {
       return;
     }
 
-    setIsConnecting(true);
+    setConnectingProvider(provider);
     setOauthMessage(null);
 
     try {
@@ -313,10 +314,10 @@ const IntegrationsPage = () => {
       const connect = nango.openConnectUI({
         onEvent: (event) => {
           if (event.type === 'close') {
-            setIsConnecting(false);
+            setConnectingProvider(null);
             // User closed the modal
           } else if (event.type === 'connect') {
-            setIsConnecting(false);
+            setConnectingProvider(null);
             const providerName = data.provider === 'gmail' ? 'Gmail' : data.provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
             const actionText = data.provider === 'google-calendar' ? 'Syncing calendar...' : 'Processing emails...';
             setOauthMessage({
@@ -330,7 +331,7 @@ const IntegrationsPage = () => {
               triggerEmailSync();
             }, 1000);
           } else if (event.type === 'error') {
-            setIsConnecting(false);
+            setConnectingProvider(null);
             setOauthMessage({
               type: "error",
               message: event.error || "An error occurred during connection",
@@ -374,7 +375,7 @@ const IntegrationsPage = () => {
         message: errorMessage,
         details: errorDetails || undefined
       });
-      setIsConnecting(false);
+      setConnectingProvider(null);
     }
   };
 
@@ -400,13 +401,12 @@ const IntegrationsPage = () => {
 
   // Confirm and execute disconnect
   const handleDisconnectConfirm = async () => {
-    if (!pendingDisconnectId || !user?.activeWorkspaceId) {
-      setShowDisconnectConfirm(false);
-      setPendingDisconnectId(null);
+    if (!pendingDisconnectId || !user?.activeWorkspaceId || isDisconnecting) {
       return;
     }
 
     const connectionId = pendingDisconnectId;
+    setIsDisconnecting(true);
     setShowDisconnectConfirm(false);
     setPendingDisconnectId(null);
 
@@ -430,7 +430,7 @@ const IntegrationsPage = () => {
           type: "success",
           message: `${providerName} disconnected successfully.`,
         });
-        loadConnections();
+        await loadConnections();
       } else {
         throw new Error("Failed to disconnect");
       }
@@ -440,6 +440,8 @@ const IntegrationsPage = () => {
         type: "error",
         message: "Failed to disconnect. Please try again.",
       });
+    } finally {
+      setIsDisconnecting(false);
     }
   };
 
@@ -504,7 +506,7 @@ const IntegrationsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Outlook Integration Card */}
           <div
             className={`p-6 border rounded-lg ${
@@ -605,10 +607,10 @@ const IntegrationsPage = () => {
               <div className="pt-4">
                 <Button
                   onClick={() => handleConnect('outlook')}
-                  disabled={isConnecting}
+                  disabled={connectingProvider !== null}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  {isConnecting ? "Connecting..." : "Connect Outlook"}
+                  {connectingProvider === 'outlook' ? "Connecting..." : "Connect Outlook"}
                 </Button>
               </div>
             )}
@@ -714,10 +716,10 @@ const IntegrationsPage = () => {
               <div className="pt-4">
                 <Button
                   onClick={() => handleConnect('gmail')}
-                  disabled={isConnecting}
+                  disabled={connectingProvider !== null}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  {isConnecting ? "Connecting..." : "Connect Gmail"}
+                  {connectingProvider === 'gmail' ? "Connecting..." : "Connect Gmail"}
                 </Button>
               </div>
             )}
@@ -725,7 +727,7 @@ const IntegrationsPage = () => {
 
           {/* Google Calendar Integration Card */}
           <div
-            className={`p-6 border rounded-lg ${
+            className={`p-6 border rounded-lg md:col-span-2 ${
               googleCalendarConnection?.status === 'active'
                 ? 'border-green-200 bg-green-50/50'
                 : 'border-border bg-background'
@@ -823,10 +825,10 @@ const IntegrationsPage = () => {
               <div className="pt-4">
                 <Button
                   onClick={() => handleConnect('google-calendar')}
-                  disabled={isConnecting}
+                  disabled={connectingProvider !== null}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  {isConnecting ? "Connecting..." : "Connect Google Calendar"}
+                  {connectingProvider === 'google-calendar' ? "Connecting..." : "Connect Google Calendar"}
                 </Button>
               </div>
             )}
@@ -857,9 +859,10 @@ const IntegrationsPage = () => {
               </button>
               <button
                 onClick={handleDisconnectConfirm}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+                disabled={isDisconnecting}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Disconnect
+                {isDisconnecting ? "Disconnecting..." : "Disconnect"}
               </button>
             </div>
           </div>
