@@ -196,7 +196,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 invisible-scrollbar">
+      <div className="flex-1 overflow-y-auto px-6 pt-[18px] pb-4 space-y-[14px] invisible-scrollbar">
         {messagesLoading ? (
           <div className="flex items-center justify-center py-8">
             <div className="text-muted">Loading messages...</div>
