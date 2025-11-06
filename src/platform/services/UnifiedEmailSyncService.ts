@@ -347,13 +347,41 @@ export class UnifiedEmailSyncService {
     
     // Store all emails
     let count = 0;
+    let errorCount = 0;
+    console.log(`📧 [EMAIL SYNC] Starting to store ${allEmails.length} emails...`);
+    
     for (const email of allEmails) {
       try {
         await this.storeEmailMessage(email, provider, workspaceId);
         count++;
+        if (count % 10 === 0) {
+          console.log(`📧 [EMAIL SYNC] Stored ${count}/${allEmails.length} emails so far...`);
+        }
       } catch (error) {
-        console.error(`❌ Failed to store email ${email.id}:`, error);
+        errorCount++;
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        console.error(`❌ [EMAIL SYNC] Failed to store email ${email.id || 'unknown'}:`, {
+          error: errorMessage,
+          stack: errorStack,
+          emailPreview: {
+            id: email.id,
+            subject: email.subject || email.payload?.headers?.find((h: any) => h.name === 'Subject')?.value,
+            from: email.from?.emailAddress?.address || email.payload?.headers?.find((h: any) => h.name === 'From')?.value
+          }
+        });
+        
+        // Log first few errors in detail for debugging
+        if (errorCount <= 3) {
+          console.error(`❌ [EMAIL SYNC] Email data that failed:`, JSON.stringify(email, null, 2).substring(0, 500));
+        }
       }
+    }
+    
+    console.log(`✅ [EMAIL SYNC] Successfully stored ${count} emails, ${errorCount} failed out of ${allEmails.length} total`);
+    
+    if (errorCount > 0) {
+      console.warn(`⚠️ [EMAIL SYNC] ${errorCount} emails failed to store out of ${allEmails.length} total`);
     }
     
     // Update last sync time
@@ -371,6 +399,40 @@ export class UnifiedEmailSyncService {
     workspaceId: string
   ) {
     const emailData = this.normalizeEmailData(email, provider);
+    
+    // Validate required fields
+    if (!emailData.messageId) {
+      throw new Error(`Missing messageId for email: ${JSON.stringify(email).substring(0, 200)}`);
+    }
+    
+    if (!emailData.from) {
+      throw new Error(`Missing from field for email ${emailData.messageId}`);
+    }
+    
+    // Ensure 'to' is an array and not empty (at least one recipient)
+    if (!Array.isArray(emailData.to) || emailData.to.length === 0) {
+      // If no 'to' recipients, try to extract from email data or use a placeholder
+      if (provider === 'outlook' && email.toRecipients) {
+        emailData.to = email.toRecipients.map((r: any) => r.emailAddress?.address).filter(Boolean);
+      } else if (provider === 'gmail' && email.payload?.headers) {
+        const toHeader = email.payload.headers.find((h: any) => h.name === 'To');
+        if (toHeader?.value) {
+          emailData.to = [toHeader.value];
+        }
+      }
+      
+      // If still empty, use a placeholder to avoid database constraint violation
+      if (!Array.isArray(emailData.to) || emailData.to.length === 0) {
+        console.warn(`⚠️ [EMAIL SYNC] Email ${emailData.messageId} has no 'to' recipients, using placeholder`);
+        emailData.to = ['unknown@example.com'];
+      }
+    }
+    
+    // Truncate 'from' field if too long (varchar(300) limit)
+    if (emailData.from.length > 300) {
+      console.warn(`⚠️ [EMAIL SYNC] Truncating 'from' field for email ${emailData.messageId} (was ${emailData.from.length} chars)`);
+      emailData.from = emailData.from.substring(0, 300);
+    }
     
     await prisma.email_messages.upsert({
       where: {
