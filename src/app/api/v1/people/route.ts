@@ -510,7 +510,7 @@ export async function GET(request: NextRequest) {
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';
           let nextAction = person.nextAction;
-          let nextActionDate = person.nextActionDate;
+          let nextActionDate: string | null | undefined = person.nextActionDate;
           
           // Auto-populate nextActionDate if missing (Skip Miller ProActive Selling timing)
           if (!nextActionDate) {
@@ -526,7 +526,7 @@ export async function GET(request: NextRequest) {
             else businessDaysToAdd = 14; // Cold: 2 weeks
             
             // Use business days calculation (skips weekends)
-            nextActionDate = addBusinessDays(new Date(lastActionDateForCalc), businessDaysToAdd);
+            nextActionDate = addBusinessDays(new Date(lastActionDateForCalc), businessDaysToAdd).toISOString();
           }
           
           // Auto-populate nextAction text if missing
@@ -591,7 +591,7 @@ export async function GET(request: NextRequest) {
           // Return original person data if computation fails
           return person;
         }
-      }));
+      });
 
       // Transform to use mainSeller terminology like speedrun
       const transformedPeople = enrichedPeople.map((person) => ({
