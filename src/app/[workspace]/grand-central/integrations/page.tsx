@@ -130,10 +130,30 @@ const IntegrationsPage = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        let errorData: any = {};
+        try {
+          const text = await response.text();
+          errorData = text ? JSON.parse(text) : {};
+        } catch (e) {
+          // If JSON parsing fails, use the text as error message
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
+        
         const errorMessage = errorData.error || `HTTP ${response.status}: Failed to initiate Outlook OAuth connection`;
-        const errorDetails = errorData.details ? ` (${errorData.details})` : '';
-        throw new Error(`${errorMessage}${errorDetails}`);
+        const errorDetails = errorData.details || errorData.message || '';
+        const debugInfo = errorData.debug ? JSON.stringify(errorData.debug, null, 2) : '';
+        
+        // Log full error for debugging
+        console.error('❌ [OAUTH] Backend error response:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorData,
+          errorMessage,
+          errorDetails,
+          debugInfo
+        });
+        
+        throw new Error(`${errorMessage}${errorDetails ? '\n\n' + errorDetails : ''}${debugInfo ? '\n\nDebug:\n' + debugInfo : ''}`);
       }
 
       const data = await response.json();
