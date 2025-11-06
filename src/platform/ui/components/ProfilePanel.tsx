@@ -906,7 +906,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   ? 'bg-slate-100 text-slate-700' 
                   : 'text-foreground hover:bg-hover'
               }`}
-              onClick={() => handleNavigation("/grand-central")}
+              onClick={() => handleNavigation("/grand-central/integrations")}
             >
               <PuzzlePieceIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Grand Central</span>

@@ -107,7 +107,7 @@ export function useKeyboardShortcuts(
           router.push("./olympus");
           break;
         case "navigate-to-grand-central":
-          router.push("./grand-central");
+          router.push("./grand-central/integrations");
           break;
         case "navigate-to-store":
           router.push("/store");
