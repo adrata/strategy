@@ -358,23 +358,45 @@ async function handleSyncWebhook(payload: any) {
     
     // If sync succeeded, trigger our custom email sync to process the new data
     console.log(`✅ Sync completed successfully, triggering email sync for connection: ${connectionId}`);
+    console.log(`📧 [WEBHOOK] Sync details:`, {
+      model,
+      syncName,
+      syncType,
+      modifiedAfter,
+      responseResults: responseResults ? JSON.stringify(responseResults).substring(0, 500) : null
+    });
+    
+    // IMPORTANT: Don't update lastSyncAt here - let the sync service handle it
+    // Updating it here with modifiedAfter might cause date filter issues
+    // The sync service will update lastSyncAt after successfully syncing emails
     
     const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
       connection.workspaceId,
       connection.userId
     );
     
-    // Store the modifiedAfter timestamp as a bookmark for future syncs
-    if (modifiedAfter) {
+    console.log(`📧 [WEBHOOK] Email sync result:`, {
+      totalConnections: result.length,
+      results: result.map((r: any) => ({
+        provider: r.provider,
+        success: r.success,
+        count: r.count,
+        fetched: r.fetched,
+        failed: r.failed
+      }))
+    });
+    
+    // Store sync metadata (but don't update lastSyncAt - let sync service do it)
+    if (modifiedAfter || responseResults) {
       await prisma.grand_central_connections.update({
         where: { id: connection.id },
         data: {
-          lastSyncAt: new Date(modifiedAfter),
           metadata: {
             ...(connection.metadata as any || {}),
             lastSyncBookmark: modifiedAfter,
             lastSyncType: syncType,
-            lastSyncResults: responseResults
+            lastSyncResults: responseResults,
+            lastNangoSync: new Date().toISOString()
           }
         }
       });
