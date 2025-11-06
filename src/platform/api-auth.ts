@@ -18,17 +18,28 @@ type AuthUser = {
 };
 
 /**
+ * JWT decode result type
+ */
+type JWTDecodeResult = {
+  decoded: any;
+  error: null;
+} | {
+  decoded: null;
+  error: 'TOKEN_EXPIRED' | 'INVALID_TOKEN' | 'NO_SECRET';
+};
+
+/**
  * Edge Runtime compatible JWT decoder
  * Note: This is a simplified version for Edge Runtime compatibility
  * In production, you should use a proper JWT library that supports Edge Runtime
  */
-function decodeJWT(token: string): any | null {
+function decodeJWT(token: string): JWTDecodeResult {
   try {
     const secret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || "dev-secret-key-change-in-production";
     
     if (!secret) {
       console.error("❌ [JWT] No JWT secret found in environment variables");
-      return null;
+      return { decoded: null, error: 'NO_SECRET' };
     }
     
     // Verify the JWT signature and decode the payload
@@ -42,12 +53,25 @@ function decodeJWT(token: string): any | null {
           currentTime: new Date().toISOString()
         });
       }
-      return null;
+      return { decoded: null, error: 'TOKEN_EXPIRED' };
     }
     
-    return decoded;
+    return { decoded, error: null };
   } catch (error) {
-    // Enhanced error logging for JWT verification
+    // Check if it's a TokenExpiredError specifically
+    if (error instanceof Error && error.name === 'TokenExpiredError') {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn("⚠️ [JWT] Token expired:", {
+          expiredAt: (error as any).expiredAt ? new Date((error as any).expiredAt).toISOString() : 'unknown',
+          currentTime: new Date().toISOString()
+        });
+      } else {
+        console.warn("⚠️ [JWT] Token expired");
+      }
+      return { decoded: null, error: 'TOKEN_EXPIRED' };
+    }
+    
+    // Enhanced error logging for other JWT verification failures
     if (process.env.NODE_ENV === 'development') {
       const errorDetails = error instanceof Error ? {
         message: error.message,
@@ -64,7 +88,7 @@ function decodeJWT(token: string): any | null {
       // Production: minimal logging
       console.warn("⚠️ [JWT] Verification failed:", error instanceof Error ? error.name : 'Unknown error');
     }
-    return null;
+    return { decoded: null, error: 'INVALID_TOKEN' };
   }
 }
 
@@ -78,18 +102,21 @@ export async function getSecureApiContext(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = decodeJWT(token);
+    const jwtResult = decodeJWT(token);
     
-    if (!decoded) {
-      return { user: null, error: 'Invalid token' };
+    if (!jwtResult.decoded) {
+      return { 
+        user: null, 
+        error: jwtResult.error === 'TOKEN_EXPIRED' ? 'Token expired' : 'Invalid token' 
+      };
     }
 
     return { 
       user: {
-        id: decoded.sub || decoded.id,
-        email: decoded.email,
-        name: decoded.name,
-        workspaceId: decoded.workspaceId
+        id: jwtResult.decoded.sub || jwtResult.decoded.id,
+        email: jwtResult.decoded.email,
+        name: jwtResult.decoded.name,
+        workspaceId: jwtResult.decoded.workspaceId
       },
       error: null
     };
@@ -98,9 +125,20 @@ export async function getSecureApiContext(request: NextRequest) {
   }
 }
 
-export async function getUnifiedAuthUser(
+/**
+ * Get unified auth user with error tracking
+ */
+export type UnifiedAuthResult = {
+  user: AuthUser;
+  error: null;
+} | {
+  user: null;
+  error: 'TOKEN_EXPIRED' | 'INVALID_TOKEN' | 'NO_AUTH';
+};
+
+export async function getUnifiedAuthUserWithError(
   req: NextRequest,
-): Promise<AuthUser | null> {
+): Promise<UnifiedAuthResult> {
   logger.api.auth("Checking authentication...");
 
   try {
@@ -111,6 +149,9 @@ export async function getUnifiedAuthUser(
     const hasCookies = !!cookieHeader;
     const cookieCount = cookieHeader ? cookieHeader.split(";").length : 0;
     const cookieNames = cookieHeader ? cookieHeader.split(";").map(c => c.trim().split("=")[0]).filter(Boolean) : [];
+    
+    // Track token expiration errors
+    let tokenExpired = false;
     
     // Try cookie-based authentication first (but don't block Authorization header check if it fails)
     if (cookieHeader) {
@@ -144,43 +185,56 @@ export async function getUnifiedAuthUser(
           // Not JSON, use as-is
         }
         
-        const decoded = decodeJWT(actualToken);
-        if (decoded) {
-          logger.auth.success(`Valid token for: ${decoded.email}`);
+        const jwtResult = decodeJWT(actualToken);
+        if (jwtResult.decoded) {
+          logger.auth.success(`Valid token for: ${jwtResult.decoded.email}`);
           // Log JWT workspace fields for debugging
           if (process.env.NODE_ENV === 'development') {
             console.log('🔍 [API AUTH] Decoded token workspace fields:', {
-              activeWorkspaceId: decoded.activeWorkspaceId,
-              workspaceId: decoded.workspaceId,
-              userId: decoded.userId || decoded.id || decoded.sub,
-              hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
-              email: decoded.email
+              activeWorkspaceId: jwtResult.decoded.activeWorkspaceId,
+              workspaceId: jwtResult.decoded.workspaceId,
+              userId: jwtResult.decoded.userId || jwtResult.decoded.id || jwtResult.decoded.sub,
+              hasWorkspace: !!(jwtResult.decoded.activeWorkspaceId || jwtResult.decoded.workspaceId),
+              email: jwtResult.decoded.email
             });
           }
           // Extract workspace info - prioritize activeWorkspaceId if available
-          const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
+          const workspaceId = jwtResult.decoded.activeWorkspaceId || jwtResult.decoded.workspaceId || "local-workspace";
           return {
-            id: decoded.userId || decoded.id || decoded.sub,
-            email: decoded.email,
-            name: decoded.name,
-            workspaceId: workspaceId,
-            activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
+            user: {
+              id: jwtResult.decoded.userId || jwtResult.decoded.id || jwtResult.decoded.sub,
+              email: jwtResult.decoded.email,
+              name: jwtResult.decoded.name,
+              workspaceId: workspaceId,
+              activeWorkspaceId: jwtResult.decoded.activeWorkspaceId || jwtResult.decoded.workspaceId,
+            },
+            error: null
           };
         } else {
-          logger.auth.error("JWT verification failed");
-          
-          // Enhanced error logging for JWT verification failures
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('⚠️ [API AUTH] JWT verification failed from cookies:', {
-              tokenLength: actualToken.length,
-              tokenPrefix: actualToken.substring(0, 20) + '...',
-              possibleCauses: [
-                'Token expired',
-                'Invalid signature',
-                'Invalid token format',
-                'Missing JWT secret'
-              ]
-            });
+          // Track if token expired
+          if (jwtResult.error === 'TOKEN_EXPIRED') {
+            tokenExpired = true;
+            logger.auth.error("JWT token expired");
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('⚠️ [API AUTH] JWT token expired from cookies');
+            }
+          } else {
+            logger.auth.error("JWT verification failed");
+            
+            // Enhanced error logging for JWT verification failures
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('⚠️ [API AUTH] JWT verification failed from cookies:', {
+                error: jwtResult.error,
+                tokenLength: actualToken.length,
+                tokenPrefix: actualToken.substring(0, 20) + '...',
+                possibleCauses: [
+                  'Token expired',
+                  'Invalid signature',
+                  'Invalid token format',
+                  'Missing JWT secret'
+                ]
+              });
+            }
           }
         }
       } else {
@@ -361,37 +415,50 @@ export async function getUnifiedAuthUser(
       }
       
       // Fall back to JWT token verification
-      const decoded = decodeJWT(token);
-      if (decoded) {
-        logger.auth.success(`Valid bearer token for: ${decoded.email}`);
+      const jwtResult = decodeJWT(token);
+      if (jwtResult.decoded) {
+        logger.auth.success(`Valid bearer token for: ${jwtResult.decoded.email}`);
         // Log JWT workspace fields for debugging
         if (process.env.NODE_ENV === 'development') {
           console.log('✅ [API AUTH] Successfully authenticated via Authorization header:', {
-            activeWorkspaceId: decoded.activeWorkspaceId,
-            workspaceId: decoded.workspaceId,
-            userId: decoded.userId || decoded.id || decoded.sub,
-            hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
-            email: decoded.email,
+            activeWorkspaceId: jwtResult.decoded.activeWorkspaceId,
+            workspaceId: jwtResult.decoded.workspaceId,
+            userId: jwtResult.decoded.userId || jwtResult.decoded.id || jwtResult.decoded.sub,
+            hasWorkspace: !!(jwtResult.decoded.activeWorkspaceId || jwtResult.decoded.workspaceId),
+            email: jwtResult.decoded.email,
             cookieAuthAttempted: hasCookies
           });
         }
         // Extract workspace info - prioritize activeWorkspaceId if available
-        const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
+        const workspaceId = jwtResult.decoded.activeWorkspaceId || jwtResult.decoded.workspaceId || "local-workspace";
         return {
-          id: decoded.userId || decoded.id || decoded.sub,
-          email: decoded.email,
-          name: decoded.name,
-          workspaceId: workspaceId,
-          activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
+          user: {
+            id: jwtResult.decoded.userId || jwtResult.decoded.id || jwtResult.decoded.sub,
+            email: jwtResult.decoded.email,
+            name: jwtResult.decoded.name,
+            workspaceId: workspaceId,
+            activeWorkspaceId: jwtResult.decoded.activeWorkspaceId || jwtResult.decoded.workspaceId,
+          },
+          error: null
         };
       } else {
-        logger.auth.error("Bearer token verification failed");
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('⚠️ [API AUTH] Authorization header Bearer token verification failed:', {
-            tokenLength: token.length,
-            tokenPrefix: token.substring(0, 20) + '...',
-            cookieAuthAttempted: hasCookies
-          });
+        // Track if token expired
+        if (jwtResult.error === 'TOKEN_EXPIRED') {
+          tokenExpired = true;
+          logger.auth.error("Bearer token expired");
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [API AUTH] Authorization header Bearer token expired');
+          }
+        } else {
+          logger.auth.error("Bearer token verification failed");
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [API AUTH] Authorization header Bearer token verification failed:', {
+              error: jwtResult.error,
+              tokenLength: token.length,
+              tokenPrefix: token.substring(0, 20) + '...',
+              cookieAuthAttempted: hasCookies
+            });
+          }
         }
       }
     }
@@ -407,7 +474,11 @@ export async function getUnifiedAuthUser(
       });
     }
     
-    return null;
+    // Return error based on what we found
+    if (tokenExpired) {
+      return { user: null, error: 'TOKEN_EXPIRED' };
+    }
+    return { user: null, error: 'NO_AUTH' };
   } catch (error) {
     // Check if it's a rate limit error - these should be re-thrown to be handled by caller
     if (error instanceof Error && error.message?.startsWith('RATE_LIMIT_EXCEEDED:')) {
@@ -425,7 +496,18 @@ export async function getUnifiedAuthUser(
       });
     }
     
-    // For all other errors, return null (authentication failed)
-    return null;
+    // For all other errors, return NO_AUTH
+    return { user: null, error: 'NO_AUTH' };
   }
+}
+
+/**
+ * Get unified auth user (backward-compatible wrapper)
+ * This maintains the original API while using the new error-aware implementation
+ */
+export async function getUnifiedAuthUser(
+  req: NextRequest,
+): Promise<AuthUser | null> {
+  const result = await getUnifiedAuthUserWithError(req);
+  return result.user;
 }

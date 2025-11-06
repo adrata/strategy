@@ -13,6 +13,8 @@ import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
 import { useInbox } from '../context/InboxProvider';
 import { EmailCard } from './EmailCard';
+import { EmailComposeModal } from './EmailComposeModal';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
 export function InboxLeftPanel() {
   const { user: authUser } = useUnifiedAuth();
@@ -57,7 +59,8 @@ export function InboxLeftPanel() {
   } = inboxContext;
 
   // State for user profile data
-  const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string; email?: string } | null>(null);
+  const [isComposeModalOpen, setIsComposeModalOpen] = useState(false);
 
   // Get workspace slug from pathname
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -78,7 +81,8 @@ export function InboxLeftPanel() {
           if (data.success && data.settings) {
             setUserProfile({
               firstName: data.settings.firstName,
-              lastName: data.settings.lastName
+              lastName: data.settings.lastName,
+              email: data.user?.email
             });
           }
         }
@@ -133,6 +137,17 @@ export function InboxLeftPanel() {
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Compose Button */}
+        <div className="mx-2 mb-4">
+          <button
+            onClick={() => setIsComposeModalOpen(true)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm"
+          >
+            <PencilSquareIcon className="w-4 h-4" />
+            <span>Compose</span>
+          </button>
         </div>
       </div>
 
@@ -193,6 +208,19 @@ export function InboxLeftPanel() {
           </div>
         </button>
       </div>
+
+      {/* Email Compose Modal */}
+      <EmailComposeModal
+        isOpen={isComposeModalOpen}
+        onClose={() => setIsComposeModalOpen(false)}
+        userEmail={userProfile?.email}
+        onSendSuccess={() => {
+          // Refresh emails after successful send
+          if (inboxContext?.refreshEmails) {
+            inboxContext.refreshEmails();
+          }
+        }}
+      />
     </div>
   );
 }

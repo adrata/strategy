@@ -335,9 +335,15 @@ export class WorkspaceDataRouter {
    */
   private static async getServerSideContext(request: NextRequest): Promise<WorkspaceContext> {
     try {
-      // Check if we're on server-side and have the required modules
-      if (typeof window !== 'undefined' || !prisma || !jwt) {
-        console.log("🔍 WorkspaceDataRouter: Not server-side or missing modules, returning demo fallback");
+      // Check if we're on server-side
+      if (typeof window !== 'undefined') {
+        console.log("🔍 WorkspaceDataRouter: Not server-side, returning demo fallback");
+        return this.getDemoFallback();
+      }
+      
+      // Verify JWT module is available
+      if (!jwt) {
+        console.log("🔍 WorkspaceDataRouter: JWT module not available, returning demo fallback");
         return this.getDemoFallback();
       }
       

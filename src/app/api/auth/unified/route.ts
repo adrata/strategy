@@ -244,8 +244,8 @@ async function handleLogin(credentials: any): Promise<any> {
   
   // Determine token expiration based on remember me setting
   const rememberMe = credentials.rememberMe === true;
-  const accessTokenExpiry = rememberMe ? '30d' : '1h'; // 30 days for remember me, 1 hour for normal
-  const refreshTokenExpiry = rememberMe ? '90d' : '7d'; // 90 days for remember me, 7 days for normal
+  const accessTokenExpiry = rememberMe ? '30d' : '7d'; // 30 days for remember me, 7 days for normal (increased from 1h)
+  const refreshTokenExpiry = rememberMe ? '90d' : '30d'; // 90 days for remember me, 30 days for normal (increased from 7d)
   
   // Generate tokens with appropriate expiration
   const token = jwt.sign(
@@ -266,7 +266,7 @@ async function handleLogin(credentials: any): Promise<any> {
   );
   
   // Calculate expiration time in milliseconds
-  const tokenExpiryMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000; // 30 days or 1 hour
+  const tokenExpiryMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000; // 30 days or 7 days
   
   return {
     success: true,
@@ -326,22 +326,28 @@ async function handleRefreshToken(refreshToken: string): Promise<any> {
       throw new Error('User not found');
     }
     
-    // Generate new token
+    // Determine token expiration based on rememberMe from refresh token
+    const rememberMe = decoded.rememberMe === true;
+    const accessTokenExpiry = rememberMe ? '30d' : '7d'; // Match login expiration
+    const tokenExpiryMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
+    
+    // Generate new token with appropriate expiration
     const newToken = jwt.sign(
       { 
         userId: user.id, 
         email: user.email, 
-        workspaceId: user.activeWorkspaceId || null 
+        workspaceId: user.activeWorkspaceId || null,
+        rememberMe: rememberMe
       },
       process['env']['NEXTAUTH_SECRET'] || "dev-secret-key-change-in-production",
-      { expiresIn: '1h' }
+      { expiresIn: accessTokenExpiry }
     );
     
     return {
       success: true,
       auth: {
         token: newToken,
-        expiresAt: new Date(Date.now() + 3600000).toISOString()
+        expiresAt: new Date(Date.now() + tokenExpiryMs).toISOString()
       }
     };
   } catch (error) {

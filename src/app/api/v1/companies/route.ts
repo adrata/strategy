@@ -415,7 +415,7 @@ export async function GET(request: NextRequest) {
             const topPerson = await prisma.people.findFirst({
               where: {
                 companyId: company.id,
-                workspaceId: workspaceId,
+                workspaceId: finalWorkspaceId,
                 deletedAt: null
               },
               select: {

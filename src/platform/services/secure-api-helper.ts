@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getUnifiedAuthUser } from '@/platform/api-auth';
+import { getUnifiedAuthUser, getUnifiedAuthUserWithError } from '@/platform/api-auth';
 import { validateWorkspaceAccess } from '@/platform/services/workspace-access-control';
 
 export interface SecureApiContext {
@@ -51,8 +51,9 @@ export async function getSecureApiContext(
       return { context: null };
     }
 
-    // 2. Authenticate user
-    const authUser = await getUnifiedAuthUser(request);
+    // 2. Authenticate user (with error tracking)
+    const authResult = await getUnifiedAuthUserWithError(request);
+    const authUser = authResult.user;
     
     if (process.env.NODE_ENV === 'development') {
       console.log('🔍 [SECURE API] getUnifiedAuthUser result:', {
@@ -61,6 +62,7 @@ export async function getSecureApiContext(
         email: authUser?.email,
         workspaceId: authUser?.workspaceId,
         activeWorkspaceId: (authUser as any)?.activeWorkspaceId,
+        error: authResult.error,
         requireAuth,
         requireWorkspaceAccess
       });
@@ -68,16 +70,20 @@ export async function getSecureApiContext(
     
     if (!authUser) {
       if (requireAuth) {
+        // Check if token expired specifically
+        const isTokenExpired = authResult.error === 'TOKEN_EXPIRED';
+        
         if (process.env.NODE_ENV === 'development') {
-          console.error('❌ [SECURE API] No authUser returned, returning 401');
+          console.error(`❌ [SECURE API] No authUser returned, returning 401${isTokenExpired ? ' (TOKEN_EXPIRED)' : ''}`);
         }
+        
         return {
           context: null,
           response: NextResponse.json(
             { 
               success: false, 
-              error: 'Authentication required',
-              code: 'AUTH_REQUIRED'
+              error: isTokenExpired ? 'Token expired' : 'Authentication required',
+              code: isTokenExpired ? 'TOKEN_EXPIRED' : 'AUTH_REQUIRED'
             },
             { status: 401 }
           )
