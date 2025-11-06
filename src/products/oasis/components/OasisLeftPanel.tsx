@@ -109,74 +109,101 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     }
   }, [safeWorkspaceId, autoCreateRossDMs]);
 
-  // Auto-select channel when channels load and no channel is selected
+  // Auto-select channel when channels/DMs load and no channel is selected
   useEffect(() => {
-    if (channels.length > 0 && !selectedChannel && !channelsLoading && !hasInitialSelection.current) {
-      // Check if we're on a specific channel URL
-      const currentPath = window.location.pathname;
-      const pathSegments = currentPath.split('/');
-      const oasisIndex = pathSegments.findIndex(segment => segment === 'oasis');
+    // Wait for both channels and DMs to finish loading before making a decision
+    const channelsReady = !channelsLoading && channels.length >= 0;
+    const dmsReady = !dmsLoading && dms.length >= 0;
+    
+    if (!channelsReady || !dmsReady || selectedChannel || hasInitialSelection.current) {
+      return;
+    }
+
+    // Check if we're on a specific channel URL
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath.split('/');
+    const oasisIndex = pathSegments.findIndex(segment => segment === 'oasis');
+    
+    // If we're on a specific conversation URL, try to restore it
+    if (oasisIndex !== -1 && pathSegments[oasisIndex + 1]) {
+      // Extract conversation ID from URL (format: name-id)
+      const conversationSlug = pathSegments[oasisIndex + 1];
+      const lastHyphenIndex = conversationSlug.lastIndexOf('-');
       
-      if (oasisIndex !== -1 && pathSegments[oasisIndex + 1]) {
-        // Extract conversation ID from URL (format: name-id)
-        const conversationSlug = pathSegments[oasisIndex + 1];
-        const lastHyphenIndex = conversationSlug.lastIndexOf('-');
+      if (lastHyphenIndex > 0) {
+        const conversationId = conversationSlug.substring(lastHyphenIndex + 1);
+        const conversationName = conversationSlug.substring(0, lastHyphenIndex);
         
-        if (lastHyphenIndex > 0) {
-          const conversationId = conversationSlug.substring(lastHyphenIndex + 1);
-          const conversationName = conversationSlug.substring(0, lastHyphenIndex);
+        console.log(`🔍 [OASIS LEFT PANEL] Restoring conversation from URL: ${conversationName}-${conversationId}`);
+        
+        // Find matching channel or DM
+        const matchingChannel = channels.find(channel => channel.id === conversationId);
+        const matchingDM = dms.find(dm => dm.id === conversationId);
+        
+        if (matchingChannel) {
+          console.log(`✅ [OASIS LEFT PANEL] Found matching channel: #${matchingChannel.name}`);
+          const conversation = {
+            id: matchingChannel.id,
+            name: matchingChannel.name,
+            type: 'channel' as const,
+            unread: matchingChannel.recentMessageCount,
+            isActive: true,
+            lastMessage: 'Channel created',
+            lastMessageTime: 'now',
+            isWorkspaceMember: true
+          };
+          setSelectedChannel(conversation);
+          hasInitialSelection.current = true;
+          return;
+        } else if (matchingDM) {
+          console.log(`✅ [OASIS LEFT PANEL] Found matching DM: ${matchingDM.id}`);
+          const participant = matchingDM.participants[0];
+          const getDisplayName = () => {
+            if (participant?.name && participant.name.trim()) return participant.name;
+            if (participant?.username && participant.username.trim()) return participant.username;
+            if (participant?.email) {
+              const emailPrefix = participant.email.split('@')[0];
+              if (emailPrefix) return emailPrefix;
+            }
+            return '';
+          };
           
-          // Find matching channel or DM
-          const matchingChannel = channels.find(channel => channel.id === conversationId);
-          const matchingDM = dms.find(dm => dm.id === conversationId);
-          
-          if (matchingChannel) {
-            const conversation = {
-              id: matchingChannel.id,
-              name: matchingChannel.name,
-              type: 'channel' as const,
-              unread: matchingChannel.recentMessageCount,
-              isActive: true,
-              lastMessage: 'Channel created',
-              lastMessageTime: 'now',
-              isWorkspaceMember: true
-            };
-            setSelectedChannel(conversation);
-            hasInitialSelection.current = true;
-            return;
-          } else if (matchingDM) {
-            const participant = matchingDM.participants[0];
-            const getDisplayName = () => {
-              if (participant?.name && participant.name.trim()) return participant.name;
-              if (participant?.username && participant.username.trim()) return participant.username;
-              if (participant?.email) {
-                const emailPrefix = participant.email.split('@')[0];
-                if (emailPrefix) return emailPrefix;
-              }
-              return '';
-            };
-            
-            const conversation = {
-              id: matchingDM.id,
-              name: getDisplayName(),
-              type: 'dm' as const,
-              unread: matchingDM.unreadCount || 0,
-              isActive: true,
-              lastMessage: matchingDM.lastMessage?.content || 'Started conversation',
-              lastMessageTime: matchingDM.lastMessage?.createdAt ? new Date(matchingDM.lastMessage.createdAt).toLocaleTimeString() : 'now',
-              status: 'online' as const,
-              isWorkspaceMember: true,
-              workspaceName: participant?.workspaceName, // Add workspace name for pill display
-              workspaceId: matchingDM.workspaceId // Add workspace ID for message fetching (for cross-workspace DMs)
-            };
-            setSelectedChannel(conversation);
-            hasInitialSelection.current = true;
+          const conversation = {
+            id: matchingDM.id,
+            name: getDisplayName(),
+            type: 'dm' as const,
+            unread: matchingDM.unreadCount || 0,
+            isActive: true,
+            lastMessage: matchingDM.lastMessage?.content || 'Started conversation',
+            lastMessageTime: matchingDM.lastMessage?.createdAt ? new Date(matchingDM.lastMessage.createdAt).toLocaleTimeString() : 'now',
+            status: 'online' as const,
+            isWorkspaceMember: true,
+            workspaceName: participant?.workspaceName, // Add workspace name for pill display
+            workspaceId: matchingDM.workspaceId // Add workspace ID for message fetching (for cross-workspace DMs)
+          };
+          setSelectedChannel(conversation);
+          hasInitialSelection.current = true;
+          return;
+        } else {
+          console.warn(`⚠️ [OASIS LEFT PANEL] Conversation ${conversationId} not found in channels or DMs`);
+          // If we're still loading, wait a bit and retry (data might not be loaded yet)
+          if (channelsLoading || dmsLoading) {
+            console.log(`⏳ [OASIS LEFT PANEL] Still loading, will retry...`);
             return;
           }
+          // If data is loaded but conversation not found, don't default to general
+          // This prevents redirecting away from a valid conversation URL
+          // The user might need to navigate manually if the conversation was deleted
+          console.warn(`❌ [OASIS LEFT PANEL] Conversation ${conversationId} not found after data loaded`);
+          return;
         }
       }
-      
-      // No URL match or no specific conversation, select #general or first channel
+    }
+    
+    // Only default to #general if we're on the base /oasis route (no specific conversation)
+    // This prevents redirecting away from a valid conversation URL
+    if (oasisIndex === -1 || !pathSegments[oasisIndex + 1]) {
+      console.log(`📌 [OASIS LEFT PANEL] No conversation in URL, defaulting to #general`);
       const generalChannel = channels.find(channel => channel.name === 'general');
       const targetChannel = generalChannel || channels[0];
       
@@ -195,7 +222,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         hasInitialSelection.current = true;
       }
     }
-  }, [channels, dms, channelsLoading, setSelectedChannel, selectedChannel]);
+  }, [channels, dms, channelsLoading, dmsLoading, setSelectedChannel, selectedChannel]);
 
   // Log channel conversion for debugging
   useEffect(() => {
