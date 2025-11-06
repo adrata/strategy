@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { OasisChatPanel } from "@/products/oasis/components/OasisChatPanel";
-import { OasisThreadView } from "@/products/oasis/components/OasisThreadView";
 import { VideoCallPanel } from "@/products/oasis/components/VideoCallPanel";
 import { useOasisLayout } from "@/app/[workspace]/(revenue-os)/layout";
 
@@ -12,11 +11,10 @@ interface OasisPageContentProps {
 }
 
 export function OasisPageContent({ conversationType, conversationId }: OasisPageContentProps) {
-  const [isThreadVisible, setIsThreadVisible] = useState(false);
   const { isVideoCallActive, videoCallRoom, setIsVideoCallActive, setVideoCallRoom } = useOasisLayout();
 
   // Note: Channel selection is handled by OasisLeftPanel based on URL parameters
-  // This component just renders the chat interface
+  // Thread view is now rendered in the right panel via layout, not as an overlay
 
   const handleEndVideoCall = () => {
     setIsVideoCallActive(false);
@@ -33,19 +31,11 @@ export function OasisPageContent({ conversationType, conversationId }: OasisPage
           onEndCall={handleEndVideoCall}
         />
       ) : (
-        <>
+        <div className="h-full overflow-hidden">
           {/* Main Content - Full Width Chat */}
-          <div className="h-full overflow-hidden">
-            <OasisChatPanel onShowThread={() => setIsThreadVisible(true)} />
-          </div>
-          
-          {/* Thread View - Overlays Right Panel */}
-          <OasisThreadView 
-            isVisible={isThreadVisible}
-            onClose={() => setIsThreadVisible(false)}
-            conversationName={conversationId || "Thread"}
-          />
-        </>
+          {/* Thread view is now rendered in the right panel slot via layout based on threadData context */}
+          <OasisChatPanel />
+        </div>
       )}
     </div>
   );

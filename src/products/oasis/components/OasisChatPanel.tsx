@@ -50,7 +50,7 @@ interface OasisChatPanelProps {
 // Mock data will be replaced with real data from hooks
 
 export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
-  const { activeSection, selectedChannel, setIsVideoCallActive, setVideoCallRoom } = useOasisLayout();
+  const { activeSection, selectedChannel, setIsVideoCallActive, setVideoCallRoom, setThreadData, setThreadNavigationStack } = useOasisLayout();
   const { user: authUser } = useUnifiedAuth();
   
   // Get workspace ID - use DM's workspaceId if available (for cross-workspace DMs), otherwise use auth user's workspace
@@ -417,6 +417,19 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
                   className="text-sm text-muted hover:text-foreground flex items-center gap-1"
                   onClick={(e) => {
                     e.stopPropagation();
+                    // Pass message data to thread view via context
+                    setThreadData({
+                      messageId: message.id,
+                      threadMessages: message.threadMessages || [],
+                      parentMessageId: message.parentMessageId,
+                      channelId: message.channelId,
+                      dmId: message.dmId
+                    });
+                    setThreadNavigationStack([{
+                      messageId: message.id,
+                      parentMessageId: message.parentMessageId,
+                      level: 1
+                    }]);
                     onShowThread?.();
                   }}
                 >

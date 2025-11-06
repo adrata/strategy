@@ -76,22 +76,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (!channelId && !dmId) {
+    // Allow parentMessageId queries without channelId/dmId (for nested thread fetching)
+    const parentMessageIdParam = searchParams.get('parentMessageId');
+    if (!channelId && !dmId && !parentMessageIdParam) {
       console.error('❌ [OASIS MESSAGES] Missing conversation ID in request:', {
         url: request.url,
         userId,
         workspaceId,
         channelId,
-        dmId
+        dmId,
+        parentMessageIdParam
       });
       return NextResponse.json(
         { 
-          error: 'Channel ID or DM ID required',
-          details: 'Either channelId or dmId parameter must be provided to fetch messages.'
+          error: 'Channel ID, DM ID, or parentMessageId required',
+          details: 'Either channelId, dmId, or parentMessageId parameter must be provided to fetch messages.'
         },
         { status: 400 }
       );
     }
+    
+    // Store parentMessageId for use in query building
+    const parentMessageId = parentMessageIdParam;
 
     if (channelId && dmId) {
       console.error('❌ [OASIS MESSAGES] Both channelId and dmId provided:', {
@@ -110,59 +116,96 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verify access to channel or DM
-    if (channelId) {
-      const channelWhereClause: any = {
-        id: channelId,
-        members: {
-          some: { userId: userId }
-        }
-      };
-      
-      // Only filter by workspace if NOT Ross
-      if (!isRoss) {
-        channelWhereClause.workspaceId = workspaceId;
-      }
-
-      const channel = await prisma.oasisChannel.findFirst({
-        where: channelWhereClause
-      });
-
-      if (!channel) {
-        console.error('❌ [OASIS MESSAGES] Channel access denied:', { channelId, userId, workspaceId });
-        return NextResponse.json({ error: 'Access denied or channel not found' }, { status: 403 });
-      }
-    }
-
-    if (dmId) {
-      // Allow access to DMs where user is a participant, regardless of workspace
-      // This enables cross-workspace conversations (e.g., Ross in Adrata messaging Ryan in Notary Everyday)
-      const dm = await prisma.oasisDirectMessage.findFirst({
-        where: {
-          id: dmId,
-          participants: {
-            some: { userId: userId }
-          }
-        },
-        select: {
-          id: true,
-          workspaceId: true,
-          participants: {
-            select: {
-              userId: true
+    // Allow parentMessageId queries without channel/dm verification (thread messages inherit parent's access)
+    // For parentMessageId-only queries, we'll verify access by checking the parent message
+    if (parentMessageId && !channelId && !dmId) {
+      // Verify user has access to the parent message
+      const parentMessage = await prisma.oasisMessage.findUnique({
+        where: { id: parentMessageId },
+        include: {
+          channel: {
+            include: {
+              members: {
+                where: { userId: userId }
+              }
+            }
+          },
+          dm: {
+            include: {
+              participants: {
+                where: { userId: userId }
+              }
             }
           }
         }
       });
 
-      if (!dm) {
-        console.error('❌ [OASIS MESSAGES] DM access denied:', { dmId, userId, workspaceId, isRoss });
-        return NextResponse.json({ error: 'Access denied or DM not found' }, { status: 403 });
+      if (!parentMessage) {
+        return NextResponse.json({ error: 'Parent message not found' }, { status: 404 });
       }
 
-      // Allow cross-workspace access - if user is a participant, they can view messages
-      // The workspaceId parameter is used for real-time channel subscriptions, but shouldn't block access
-      // Note: We still use the requested workspaceId for real-time updates, but allow message access
+      // Check if user has access via channel or DM
+      const hasChannelAccess = parentMessage.channel && parentMessage.channel.members.length > 0;
+      const hasDMAccess = parentMessage.dm && parentMessage.dm.participants.length > 0;
+
+      if (!hasChannelAccess && !hasDMAccess) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+    } else {
+      // Verify access to channel or DM (for regular message queries)
+      if (channelId) {
+        const channelWhereClause: any = {
+          id: channelId,
+          members: {
+            some: { userId: userId }
+          }
+        };
+        
+        // Only filter by workspace if NOT Ross
+        if (!isRoss) {
+          channelWhereClause.workspaceId = workspaceId;
+        }
+
+        const channel = await prisma.oasisChannel.findFirst({
+          where: channelWhereClause
+        });
+
+        if (!channel) {
+          console.error('❌ [OASIS MESSAGES] Channel access denied:', { channelId, userId, workspaceId });
+          return NextResponse.json({ error: 'Access denied or channel not found' }, { status: 403 });
+        }
+      }
+
+      if (dmId) {
+        // Allow access to DMs where user is a participant, regardless of workspace
+        // This enables cross-workspace conversations (e.g., Ross in Adrata messaging Ryan in Notary Everyday)
+        const dm = await prisma.oasisDirectMessage.findFirst({
+          where: {
+            id: dmId,
+            participants: {
+              some: { userId: userId }
+            }
+          },
+          select: {
+            id: true,
+            workspaceId: true,
+            participants: {
+              select: {
+                userId: true
+              }
+            }
+          }
+        });
+
+        if (!dm) {
+          console.error('❌ [OASIS MESSAGES] DM access denied:', { dmId, userId, workspaceId, isRoss });
+          return NextResponse.json({ error: 'Access denied or DM not found' }, { status: 403 });
+        }
+
+        // Allow cross-workspace access - if user is a participant, they can view messages
+        // The workspaceId parameter is used for real-time channel subscriptions, but shouldn't block access
+        // Note: We still use the requested workspaceId for real-time updates, but allow message access
+      }
     }
 
     // Validate dmId or channelId exists before querying (with try-catch)
@@ -274,9 +317,15 @@ export async function GET(request: NextRequest) {
     let messages: any[] = [];
     try {
       // Build where clause explicitly to avoid Prisma validation errors
-      const whereClause: any = {
-        parentMessageId: null // Only top-level messages, not thread replies
-      };
+      const whereClause: any = {};
+      
+      // Support fetching thread messages by parentMessageId
+      if (parentMessageId) {
+        whereClause.parentMessageId = parentMessageId;
+      } else {
+        // Only top-level messages if no parentMessageId specified
+        whereClause.parentMessageId = null;
+      }
       
       if (channelId) {
         whereClause.channelId = channelId;

@@ -61,13 +61,27 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { data: acquisitionData } = useRevenueOS();
   
+  // Unified loading state - check auth first, then context
+  const [isContextLoading, setIsContextLoading] = React.useState(true);
+  
   // Add error boundary for context usage
   let oasisContext;
   try {
     oasisContext = useOasis();
+    // Context loaded successfully
+    if (isContextLoading) {
+      setIsContextLoading(false);
+    }
   } catch (error) {
     console.error('Failed to get Oasis context:', error);
-    // Show skeleton loading state instead of error message
+    // Keep loading state if context fails
+  }
+  
+  // Show skeleton only if auth is loading OR context is not ready yet
+  // Unified loading check prevents double rendering
+  const isLoading = authLoading || isContextLoading;
+  
+  if (isLoading) {
     return (
       <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
         {/* Header Skeleton */}
@@ -135,9 +149,55 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   // If workspaceId is empty, hooks will fail or return empty data
   const safeWorkspaceId = workspaceId && workspaceId !== 'default' && workspaceId.trim() !== '' ? workspaceId : '';
   
-  // Real data hooks - only call if we have a valid workspaceId
+  // Real data hooks - only call if we have a valid workspaceId and not loading
+  // Unified loading check prevents duplicate skeleton rendering
   const { channels, loading: channelsLoading, createChannel } = useOasisChannels(safeWorkspaceId);
   const { dms, loading: dmsLoading, createDM } = useOasisDMs(safeWorkspaceId);
+  
+  // Combined loading state - if any data is loading, show skeleton
+  // This prevents showing skeleton then immediately showing real content
+  const isDataLoading = channelsLoading || dmsLoading;
+  
+  // If data is still loading after context is ready, show skeleton
+  if (isDataLoading && !isLoading) {
+    return (
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
+        {/* Header Skeleton */}
+        <div className="flex-shrink-0 p-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
+              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
+            </div>
+          </div>
+        </div>
+        
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto p-2 space-y-4">
+          <div className="space-y-2">
+            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
+          
+          <div className="border-t border-border pt-2 space-y-2">
+            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
   const { userCount, isConnected } = useOasisPresence(safeWorkspaceId);
   const { autoCreateRossDMs } = useAutoCreateRossDMs();
 

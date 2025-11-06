@@ -15,6 +15,7 @@ import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupConte
 import { SettingsPopupProvider } from "@/platform/ui/components/SettingsPopupContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
+import { OasisThreadView } from "@/products/oasis/components/OasisThreadView";
 import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
 import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
@@ -40,8 +41,8 @@ interface OasisLayoutContextType {
   setIsVideoCallActive: (active: boolean) => void;
   videoCallRoom: { id: string; name: string } | null;
   setVideoCallRoom: (room: { id: string; name: string } | null) => void;
-  threadData: { messageId: string; threadMessages: any[]; parentMessageId: string | null } | null;
-  setThreadData: (data: { messageId: string; threadMessages: any[]; parentMessageId: string | null } | null) => void;
+  threadData: { messageId: string; threadMessages: any[]; parentMessageId: string | null; channelId: string | null; dmId: string | null } | null;
+  setThreadData: (data: { messageId: string; threadMessages: any[]; parentMessageId: string | null; channelId: string | null; dmId: string | null } | null) => void;
   threadNavigationStack: Array<{ messageId: string; parentMessageId: string | null; level: number }>;
   setThreadNavigationStack: (stack: Array<{ messageId: string; parentMessageId: string | null; level: number }>) => void;
 }
@@ -122,6 +123,15 @@ function PipelineLayoutInner({
   const { isSettingsOpen, setIsSettingsOpen } = useSettingsPopup();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   const pathname = usePathname();
+  
+  // Get thread data from OasisLayoutContext if available
+  let threadData = null;
+  try {
+    const { threadData: td } = useOasisLayout();
+    threadData = td;
+  } catch (error) {
+    // Context not available, continue
+  }
   
   // Initialize profile panel state from sessionStorage on mount if needed
   useEffect(() => {
@@ -235,6 +245,11 @@ function PipelineLayoutInner({
 
   // Determine which right panel to show based on the current route
   const getRightPanel = () => {
+    // Check if thread view should be shown (for Oasis routes)
+    if (pathname.includes('/oasis') && threadData) {
+      return <OasisThreadView />;
+    }
+    
     // Only base Adrata app shows conversation list - all other apps (including /adrata/oasis, /adrata/stacks) show AI chat
     if (pathname.includes('/pinpoint/adrata') || isBaseAdrataRoute) {
       // Base Adrata routes - show conversation list (chat conversations)
@@ -428,6 +443,8 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   const [selectedChannel, setSelectedChannel] = useState<any | null>(null);
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
   const [videoCallRoom, setVideoCallRoom] = useState<{ id: string; name: string } | null>(null);
+  const [threadData, setThreadData] = useState<{ messageId: string; threadMessages: any[]; parentMessageId: string | null; channelId: string | null; dmId: string | null } | null>(null);
+  const [threadNavigationStack, setThreadNavigationStack] = useState<Array<{ messageId: string; parentMessageId: string | null; level: number }>>([]);
 
   const oasisLayoutContextValue = {
     activeSection,
@@ -437,7 +454,11 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     isVideoCallActive,
     setIsVideoCallActive,
     videoCallRoom,
-    setVideoCallRoom
+    setVideoCallRoom,
+    threadData,
+    setThreadData,
+    threadNavigationStack,
+    setThreadNavigationStack
   };
 
   // Handle section changes with proper navigation
