@@ -102,25 +102,50 @@ export async function POST(request: NextRequest) {
     }
     
     // Handle different webhook types
-    const webhookType = payloadObj.type; // 'auth' for connection events, 'sync' for sync events, etc.
-    const operation = payloadObj.operation; // 'creation', 'update', 'deletion', etc.
+    const webhookType = payloadObj.type; // 'auth' for connection events, 'sync' for sync events, 'forward' for external webhooks
+    const operation = payloadObj.operation; // 'creation', 'update', 'deletion', 'refresh', etc.
     
-    // Step 6: Handle connection creation webhook (from diagram)
+    // Handle connection creation webhook (Step 6 from Nango flow)
     if (webhookType === 'auth' && operation === 'creation' && payloadObj.success === true) {
       return await handleConnectionCreation(payloadObj);
     }
     
-    // Handle email sync webhooks (existing functionality)
-    if (webhookType === 'sync' || payloadObj.connectionId) {
+    // Handle connection refresh failures (token refresh errors)
+    if (webhookType === 'auth' && operation === 'refresh' && payloadObj.success === false) {
+      console.warn(`⚠️ Token refresh failed for connection: ${payloadObj.connectionId}`);
+      // Log the error but don't fail the webhook
+      return Response.json({ 
+        success: true, 
+        message: 'Token refresh failure logged',
+        connectionId: payloadObj.connectionId
+      });
+    }
+    
+    // Handle Nango sync webhooks (when sync execution finishes)
+    // These are sent when Nango syncs complete, whether successful or not
+    if (webhookType === 'sync') {
+      return await handleSyncWebhook(payloadObj);
+    }
+    
+    // Handle external webhook forwarding (e.g., from Microsoft Graph change notifications)
+    if (webhookType === 'forward' && payloadObj.from) {
+      return await handleExternalWebhook(payloadObj);
+    }
+    
+    // Handle generic email sync webhooks (legacy support)
+    if (payloadObj.connectionId && !webhookType) {
+      console.log('📧 Received legacy email sync webhook (no type specified)');
       return await handleEmailSync(payloadObj);
     }
     
-    // Unknown webhook type
-    console.warn(`⚠️ Unknown webhook type: ${webhookType}`);
+    // Unknown webhook type - log but don't fail
+    console.warn(`⚠️ Unknown webhook type: ${webhookType}, operation: ${operation}`);
+    console.log('📧 Full webhook payload:', JSON.stringify(payloadObj, null, 2));
     return Response.json({ 
       success: true, 
       message: 'Webhook received but not processed',
-      type: webhookType
+      type: webhookType,
+      operation: operation
     });
     
   } catch (error) {
@@ -268,7 +293,173 @@ async function handleConnectionCreation(payload: any) {
 }
 
 /**
- * Handle email sync webhooks (existing functionality)
+ * Handle Nango sync webhooks (type: "sync")
+ * These are sent when a Nango sync execution finishes
+ */
+async function handleSyncWebhook(payload: any) {
+  try {
+    const { connectionId, providerConfigKey, syncName, model, syncType, success, modifiedAfter, responseResults, error } = payload;
+    
+    if (!connectionId) {
+      console.error('❌ Missing connectionId in sync webhook');
+      return Response.json({ error: 'Missing connectionId' }, { status: 400 });
+    }
+    
+    console.log(`📧 Processing Nango sync webhook:`, {
+      connectionId,
+      syncName,
+      model,
+      syncType,
+      success,
+      modifiedAfter,
+      responseResults
+    });
+    
+    // Get connection details from database
+    const connection = await prisma.grand_central_connections.findUnique({
+      where: { nangoConnectionId: connectionId }
+    });
+    
+    if (!connection) {
+      console.error(`❌ Connection not found: ${connectionId}`);
+      return Response.json({ error: 'Connection not found' }, { status: 404 });
+    }
+    
+    if (connection.status !== 'active') {
+      console.log(`⏭️ Connection ${connectionId} is not active, skipping sync`);
+      return Response.json({ success: true, message: 'Connection not active' });
+    }
+    
+    // Only process email-related syncs
+    if (syncName && !syncName.toLowerCase().includes('email')) {
+      console.log(`⏭️ Sync ${syncName} is not email-related, skipping`);
+      return Response.json({ success: true, message: 'Not an email sync' });
+    }
+    
+    // If sync failed, log the error but don't trigger another sync
+    if (!success) {
+      console.error(`❌ Sync failed for connection ${connectionId}:`, error);
+      return Response.json({ 
+        success: true, 
+        message: 'Sync failure logged',
+        error: error
+      });
+    }
+    
+    // If sync succeeded, trigger our custom email sync to process the new data
+    console.log(`✅ Sync completed successfully, triggering email sync for connection: ${connectionId}`);
+    
+    const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
+      connection.workspaceId,
+      connection.userId
+    );
+    
+    // Store the modifiedAfter timestamp as a bookmark for future syncs
+    if (modifiedAfter) {
+      await prisma.grand_central_connections.update({
+        where: { id: connection.id },
+        data: {
+          lastSyncAt: new Date(modifiedAfter),
+          metadata: {
+            ...(connection.metadata as any || {}),
+            lastSyncBookmark: modifiedAfter,
+            lastSyncType: syncType,
+            lastSyncResults: responseResults
+          }
+        }
+      });
+    }
+    
+    console.log(`✅ Email sync triggered successfully from Nango sync webhook`);
+    
+    return Response.json({ 
+      success: true, 
+      message: 'Sync webhook processed and email sync triggered',
+      syncName,
+      syncType,
+      responseResults,
+      results: result
+    });
+  } catch (error) {
+    console.error('❌ Error handling sync webhook:', error);
+    return Response.json({ 
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
+  }
+}
+
+/**
+ * Handle external webhook forwarding (e.g., Microsoft Graph change notifications)
+ * These are forwarded by Nango when external APIs send webhooks
+ */
+async function handleExternalWebhook(payload: any) {
+  try {
+    const { connectionId, providerConfigKey, from, payload: externalPayload } = payload;
+    
+    console.log(`📧 Processing external webhook from ${from} for connection: ${connectionId}`);
+    
+    // Get connection details
+    const connection = await prisma.grand_central_connections.findUnique({
+      where: { nangoConnectionId: connectionId }
+    });
+    
+    if (!connection || connection.status !== 'active') {
+      console.log(`⏭️ Connection ${connectionId} not found or not active`);
+      return Response.json({ success: true, message: 'Connection not active' });
+    }
+    
+    // For Microsoft Graph change notifications, trigger email sync
+    if (from === 'microsoft' || from === 'outlook' || providerConfigKey === 'outlook') {
+      console.log(`📧 Microsoft Graph change notification received, triggering email sync`);
+      
+      const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
+        connection.workspaceId,
+        connection.userId
+      );
+      
+      return Response.json({ 
+        success: true, 
+        message: 'External webhook processed and email sync triggered',
+        from,
+        results: result
+      });
+    }
+    
+    // For Gmail push notifications
+    if (from === 'google' || from === 'gmail' || providerConfigKey === 'gmail') {
+      console.log(`📧 Gmail push notification received, triggering email sync`);
+      
+      const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
+        connection.workspaceId,
+        connection.userId
+      );
+      
+      return Response.json({ 
+        success: true, 
+        message: 'External webhook processed and email sync triggered',
+        from,
+        results: result
+      });
+    }
+    
+    console.log(`⏭️ External webhook from ${from} not processed (unknown provider)`);
+    return Response.json({ 
+      success: true, 
+      message: 'Webhook received but provider not supported',
+      from
+    });
+  } catch (error) {
+    console.error('❌ Error handling external webhook:', error);
+    return Response.json({ 
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
+  }
+}
+
+/**
+ * Handle email sync webhooks (legacy support)
  */
 async function handleEmailSync(payload: any) {
   try {
@@ -339,6 +530,13 @@ export async function GET(request: NextRequest) {
   return Response.json({ 
     message: 'Nango Webhook Endpoint',
     status: 'active',
-    supports: ['connection_creation', 'email_sync']
+    supports: [
+      'connection_creation', 
+      'connection_refresh',
+      'sync_completion',
+      'external_webhook_forwarding',
+      'email_sync'
+    ],
+    webhookTypes: ['auth', 'sync', 'forward']
   });
 }

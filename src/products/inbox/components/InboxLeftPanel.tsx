@@ -55,9 +55,11 @@ export function InboxLeftPanel() {
     selectedEmail, 
     stats,
     loading, 
-    selectEmail
+    refreshing,
+    selectEmail,
+    refreshEmails
   } = inboxContext;
-
+  
   // State for user profile data
   const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string; email?: string } | null>(null);
   const [isComposeModalOpen, setIsComposeModalOpen] = useState(false);
