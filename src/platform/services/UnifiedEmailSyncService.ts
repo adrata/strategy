@@ -231,10 +231,21 @@ export class UnifiedEmailSyncService {
             if (nextLink) {
               // Use the nextLink URL directly (it's a full URL from Microsoft Graph)
               // Extract the path and query from the nextLink
-              const url = new URL(nextLink);
-              endpoint = url.pathname + url.search;
-              // Remove the host part since Nango proxy expects relative paths
-              endpoint = endpoint.replace('https://graph.microsoft.com', '');
+              try {
+                const url = new URL(nextLink);
+                endpoint = url.pathname + url.search;
+                // Remove the host part since Nango proxy expects relative paths
+                endpoint = endpoint.replace('https://graph.microsoft.com', '');
+                // Ensure it starts with /v1.0 or /beta
+                if (!endpoint.startsWith('/v1.0') && !endpoint.startsWith('/beta')) {
+                  // If pathname doesn't include version, add it
+                  endpoint = '/v1.0' + endpoint;
+                }
+              } catch (urlError) {
+                console.error(`❌ [EMAIL SYNC] Invalid nextLink URL: ${nextLink}`, urlError);
+                nextLink = null;
+                break;
+              }
             } else {
               endpoint = `/v1.0/me/mailFolders/${folderConfig.folder}/messages`;
               queryParams = new URLSearchParams();
@@ -249,20 +260,37 @@ export class UnifiedEmailSyncService {
             }
             console.log(`📧 [EMAIL SYNC] Outlook endpoint (page ${pageCount + 1}): ${endpoint}`);
           } else {
-            // Gmail pagination
+            // Gmail pagination - messages.list returns message IDs, we'll need to fetch full details
+            // Note: messages.list doesn't support format parameter (that's for messages.get)
             endpoint = '/gmail/v1/users/me/messages';
             queryParams = new URLSearchParams();
             queryParams.append('maxResults', '100');
             if (nextLink) {
-              // Gmail uses pageToken for pagination
-              const url = new URL(nextLink);
-              const pageToken = url.searchParams.get('pageToken');
-              if (pageToken) {
+              // Gmail pagination - nextLink is just "pageToken=..." from previous iteration
+              if (nextLink.startsWith('pageToken=')) {
+                const pageToken = nextLink.replace('pageToken=', '');
                 queryParams.append('pageToken', pageToken);
+              } else {
+                // Try to parse as URL (legacy format)
+                try {
+                  const url = new URL(nextLink);
+                  const pageToken = url.searchParams.get('pageToken');
+                  if (pageToken) {
+                    queryParams.append('pageToken', pageToken);
+                  }
+                } catch (e) {
+                  console.warn(`⚠️ [EMAIL SYNC] Could not parse Gmail nextLink: ${nextLink}`);
+                }
               }
             }
             if (folderConfig.q) {
-              queryParams.append('q', `${folderConfig.q} in:${folderConfig.folder}`);
+              // Gmail query syntax: combine date filter with folder
+              const dateQuery = folderConfig.q;
+              const folderQuery = folderConfig.folder === 'inbox' ? 'in:inbox' : 'in:sent';
+              queryParams.append('q', `${dateQuery} ${folderQuery}`);
+            } else {
+              // Default to inbox if no query
+              queryParams.append('q', 'in:inbox');
             }
             endpoint += `?${queryParams.toString()}`;
             console.log(`📧 [EMAIL SYNC] Gmail endpoint (page ${pageCount + 1}): ${endpoint}`);
@@ -279,16 +307,24 @@ export class UnifiedEmailSyncService {
                 });
                 
                 const responseData = response.data || response;
-                const emailArray = responseData.value || responseData.messages || [];
-                console.log(`📧 [EMAIL SYNC] Found ${Array.isArray(emailArray) ? emailArray.length : 0} emails in ${folderConfig.folder} (page ${pageCount + 1})`);
                 
+                // Return raw response data - we'll process it after fetching
                 return {
                   success: true,
                   data: responseData
                 };
               } catch (nangoError) {
+                const errorMessage = nangoError instanceof Error ? nangoError.message : String(nangoError);
+                
+                // Check for rate limiting errors
+                if (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('quota')) {
+                  console.warn(`⚠️ [EMAIL SYNC] Rate limit detected, waiting longer before retry...`);
+                  // Wait longer for rate limits
+                  await new Promise(resolve => setTimeout(resolve, 5000));
+                }
+                
                 console.error(`❌ [EMAIL SYNC] Nango proxy error for ${folderConfig.folder} (page ${pageCount + 1}):`, {
-                  message: nangoError instanceof Error ? nangoError.message : 'Unknown error',
+                  message: errorMessage,
                   stack: nangoError instanceof Error ? nangoError.stack : undefined,
                   providerConfigKey: connection.providerConfigKey,
                   connectionId: connection.nangoConnectionId,
@@ -301,19 +337,102 @@ export class UnifiedEmailSyncService {
           );
           
           if (result.success && result.data) {
-            const emails = result.data.value || result.data.messages || [];
-            allEmails = allEmails.concat(emails);
+            let emails: any[] = [];
+            if (provider === 'outlook') {
+              emails = result.data.value || [];
+            } else {
+              // Gmail: messages.list returns { messages: [{ id, threadId }, ...], nextPageToken: ... }
+              const messageIds = result.data.messages || [];
+              
+              // Gmail messages.list only returns IDs, we need to fetch full message details
+              // Fetch full messages in batches to avoid rate limits
+              if (messageIds.length > 0) {
+                console.log(`📧 [EMAIL SYNC] Fetching full details for ${messageIds.length} Gmail messages...`);
+                
+                // Fetch full message details in parallel (batch of 10 at a time to avoid rate limits)
+                const batchSize = 10;
+                for (let i = 0; i < messageIds.length; i += batchSize) {
+                  const batch = messageIds.slice(i, i + batchSize);
+                  const batchPromises = batch.map(async (msg: any) => {
+                    try {
+                      const fullMessageResponse = await retryWithBackoff(
+                        async () => {
+                          const fullResponse = await nango.proxy({
+                            providerConfigKey: connection.providerConfigKey,
+                            connectionId: connection.nangoConnectionId,
+                            endpoint: `/gmail/v1/users/me/messages/${msg.id}?format=full`,
+                            method: 'GET'
+                          });
+                          return fullResponse.data || fullResponse;
+                        },
+                        `Gmail message get ${msg.id}`
+                      );
+                      return fullMessageResponse;
+                    } catch (error) {
+                      const errorMsg = error instanceof Error ? error.message : String(error);
+                      console.error(`❌ [EMAIL SYNC] Failed to fetch full Gmail message ${msg.id}:`, errorMsg);
+                      
+                      // Check for rate limits
+                      if (errorMsg.includes('rate limit') || errorMsg.includes('429') || errorMsg.includes('quota')) {
+                        console.warn(`⚠️ [EMAIL SYNC] Rate limit while fetching Gmail message ${msg.id}, waiting...`);
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        // Try once more after delay
+                        try {
+                          const retryResponse = await nango.proxy({
+                            providerConfigKey: connection.providerConfigKey,
+                            connectionId: connection.nangoConnectionId,
+                            endpoint: `/gmail/v1/users/me/messages/${msg.id}?format=full`,
+                            method: 'GET'
+                          });
+                          return retryResponse.data || retryResponse;
+                        } catch (retryError) {
+                          console.error(`❌ [EMAIL SYNC] Retry failed for Gmail message ${msg.id}`);
+                        }
+                      }
+                      
+                      // Return minimal message data if fetch fails
+                      return {
+                        id: msg.id,
+                        threadId: msg.threadId,
+                        snippet: '',
+                        payload: { headers: [] },
+                        labelIds: [],
+                        internalDate: String(Date.now())
+                      };
+                    }
+                  });
+                  
+                  const batchResults = await Promise.all(batchPromises);
+                  emails = emails.concat(batchResults.filter(Boolean));
+                  
+                  // Small delay between batches to avoid rate limits
+                  if (i + batchSize < messageIds.length) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                  }
+                }
+                
+                console.log(`✅ [EMAIL SYNC] Fetched full details for ${emails.length} Gmail messages`);
+              }
+            }
+            
+            if (emails.length > 0) {
+              allEmails = allEmails.concat(emails);
+            }
             
             // Get next page link
             if (provider === 'outlook') {
               // Microsoft Graph uses @odata.nextLink
               nextLink = result.data['@odata.nextLink'] || null;
+              if (nextLink) {
+                console.log(`📧 [EMAIL SYNC] Outlook has next page: ${nextLink.substring(0, 100)}...`);
+              }
             } else {
               // Gmail uses nextPageToken
               const nextPageToken = result.data.nextPageToken;
               if (nextPageToken) {
-                const baseUrl = `https://gmail.googleapis.com/gmail/v1/users/me/messages`;
-                nextLink = `${baseUrl}?pageToken=${nextPageToken}&maxResults=100`;
+                // Store just the token, we'll reconstruct the URL
+                nextLink = `pageToken=${nextPageToken}`;
+                console.log(`📧 [EMAIL SYNC] Gmail has next page token`);
               } else {
                 nextLink = null;
               }
@@ -475,37 +594,109 @@ export class UnifiedEmailSyncService {
     if (provider === 'outlook') {
       // For sent emails, receivedDateTime might not be set, so use sentDateTime as fallback
       const receivedDateTime = email.receivedDateTime || email.sentDateTime;
+      
+      // Validate and parse dates
+      let sentAt: Date;
+      let receivedAt: Date;
+      try {
+        sentAt = email.sentDateTime ? new Date(email.sentDateTime) : new Date();
+        receivedAt = receivedDateTime ? new Date(receivedDateTime) : sentAt;
+      } catch (e) {
+        console.warn(`⚠️ [EMAIL SYNC] Invalid date for email ${email.id}, using current date`);
+        sentAt = new Date();
+        receivedAt = new Date();
+      }
+      
+      // Extract email addresses safely
+      const extractEmailAddress = (recipient: any): string => {
+        if (!recipient) return '';
+        if (typeof recipient === 'string') return recipient;
+        if (recipient.emailAddress?.address) return recipient.emailAddress.address;
+        if (recipient.emailAddress?.name) return recipient.emailAddress.name;
+        return '';
+      };
+      
       return {
-        messageId: email.id,
-        threadId: email.conversationId,
+        messageId: email.id || String(Date.now()), // Fallback if missing
+        threadId: email.conversationId || null,
         subject: email.subject || '(No Subject)',
         body: email.body?.content || email.bodyPreview || '',
         bodyHtml: email.body?.contentType === 'html' ? email.body.content : null,
-        from: email.from?.emailAddress?.address || email.from?.emailAddress?.name || 'unknown@example.com',
-        to: email.toRecipients?.map((r: any) => r.emailAddress.address) || [],
-        cc: email.ccRecipients?.map((r: any) => r.emailAddress.address) || [],
-        bcc: email.bccRecipients?.map((r: any) => r.emailAddress.address) || [],
-        sentAt: new Date(email.sentDateTime),
-        receivedAt: new Date(receivedDateTime),
+        from: extractEmailAddress(email.from) || 'unknown@example.com',
+        to: (email.toRecipients || []).map(extractEmailAddress).filter(Boolean),
+        cc: (email.ccRecipients || []).map(extractEmailAddress).filter(Boolean),
+        bcc: (email.bccRecipients || []).map(extractEmailAddress).filter(Boolean),
+        sentAt,
+        receivedAt,
         isRead: email.isRead || false,
         isImportant: email.importance === 'high',
         attachments: email.attachments || [],
         labels: email.categories || []
       };
     } else {
-      // Gmail format
+      // Gmail format - handle both full messages and message IDs
+      // If we only have an ID, we can't get full details (would need separate API call)
+      // For now, use what we have from format=full
+      
+      const headers = email.payload?.headers || [];
+      const getHeader = (name: string): string => {
+        const header = headers.find((h: any) => h.name === name);
+        return header?.value || '';
+      };
+      
+      // Parse email addresses from headers (may contain "Name <email@domain.com>")
+      const parseEmailAddress = (headerValue: string): string[] => {
+        if (!headerValue) return [];
+        // Extract emails from strings like "Name <email@domain.com>" or just "email@domain.com"
+        const emailRegex = /[\w\.-]+@[\w\.-]+\.\w+/g;
+        return headerValue.match(emailRegex) || [];
+      };
+      
+      // Validate and parse dates
+      let sentAt: Date;
+      let receivedAt: Date;
+      try {
+        if (email.internalDate) {
+          const timestamp = parseInt(email.internalDate);
+          if (!isNaN(timestamp)) {
+            sentAt = new Date(timestamp);
+            receivedAt = new Date(timestamp);
+          } else {
+            throw new Error('Invalid timestamp');
+          }
+        } else {
+          // Try to parse from Date header
+          const dateHeader = getHeader('Date');
+          if (dateHeader) {
+            sentAt = new Date(dateHeader);
+            receivedAt = new Date(dateHeader);
+          } else {
+            sentAt = new Date();
+            receivedAt = new Date();
+          }
+        }
+      } catch (e) {
+        console.warn(`⚠️ [EMAIL SYNC] Invalid date for Gmail email ${email.id}, using current date`);
+        sentAt = new Date();
+        receivedAt = new Date();
+      }
+      
+      const toHeader = getHeader('To');
+      const ccHeader = getHeader('Cc');
+      const bccHeader = getHeader('Bcc');
+      
       return {
-        messageId: email.id,
-        threadId: email.threadId,
-        subject: email.payload?.headers?.find((h: any) => h.name === 'Subject')?.value || '(No Subject)',
-        body: email.snippet || '',
-        bodyHtml: null, // Gmail API requires separate call for full body
-        from: email.payload?.headers?.find((h: any) => h.name === 'From')?.value || 'unknown@example.com',
-        to: email.payload?.headers?.filter((h: any) => h.name === 'To').map((h: any) => h.value) || [],
-        cc: email.payload?.headers?.filter((h: any) => h.name === 'Cc').map((h: any) => h.value) || [],
-        bcc: email.payload?.headers?.filter((h: any) => h.name === 'Bcc').map((h: any) => h.value) || [],
-        sentAt: new Date(parseInt(email.internalDate)),
-        receivedAt: new Date(parseInt(email.internalDate)),
+        messageId: email.id || String(Date.now()), // Fallback if missing
+        threadId: email.threadId || null,
+        subject: getHeader('Subject') || '(No Subject)',
+        body: email.snippet || email.payload?.body?.data || '',
+        bodyHtml: null, // Gmail API requires separate call for full HTML body
+        from: parseEmailAddress(getHeader('From'))[0] || 'unknown@example.com',
+        to: parseEmailAddress(toHeader),
+        cc: parseEmailAddress(ccHeader),
+        bcc: parseEmailAddress(bccHeader),
+        sentAt,
+        receivedAt,
         isRead: !email.labelIds?.includes('UNREAD'),
         isImportant: email.labelIds?.includes('IMPORTANT') || false,
         attachments: email.payload?.parts?.filter((p: any) => p.filename) || [],
