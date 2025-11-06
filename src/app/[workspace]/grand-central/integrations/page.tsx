@@ -29,6 +29,7 @@ const IntegrationsPage = () => {
   const [oauthMessage, setOauthMessage] = useState<{
     type: "success" | "error";
     message: string;
+    details?: string;
   } | null>(null);
   const [connections, setConnections] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(false);
@@ -136,7 +137,11 @@ const IntegrationsPage = () => {
       const data = await response.json();
 
       if (!data.sessionToken) {
-        throw new Error(data.error || "Failed to get session token from backend");
+        // Show detailed error from backend if available
+        const errorMsg = data.error || "Failed to get session token from backend";
+        const errorDetails = data.details ? `\n\n${data.details}` : '';
+        const debugInfo = data.debug ? `\n\nDebug: ${JSON.stringify(data.debug, null, 2)}` : '';
+        throw new Error(`${errorMsg}${errorDetails}${debugInfo}`);
       }
 
       // Step 2: Use Nango frontend SDK to open connect UI
@@ -200,15 +205,25 @@ const IntegrationsPage = () => {
     } catch (error) {
       console.error("OAuth initiation error:", error);
       let errorMessage = "Failed to initiate connection.";
+      let errorDetails: string | null = null;
       
       if (error instanceof Error) {
         errorMessage = error.message;
         
+        // Extract details if present in the error message
+        const detailsMatch = error.message.match(/\n\n(.*?)(?:\n\nDebug:|$)/s);
+        if (detailsMatch) {
+          errorDetails = detailsMatch[1].trim();
+        }
+        
         // Provide user-friendly messages for common errors
         if (error.message.includes("Nango is not configured")) {
           errorMessage = "Nango is not configured. Please contact your administrator to set up the Nango integration.";
-        } else if (error.message.includes("not configured in Nango")) {
-          errorMessage = "Outlook integration is not configured in Nango. Please configure it in your Nango dashboard.";
+        } else if (error.message.includes("not configured in Nango") || error.message.includes("Integration does not exist")) {
+          errorMessage = "Outlook integration is not configured in Nango. Please check:";
+          errorDetails = error.message.includes("details:") 
+            ? error.message.split("details:")[1]?.trim() 
+            : "1. Verify NANGO_SECRET_KEY in Vercel matches the 'prod' environment secret key\n2. Ensure the integration is saved in Nango dashboard\n3. Check that Client ID and Secret are correctly entered";
         } else if (error.message.includes("NANGO_SECRET_KEY")) {
           errorMessage = "Nango configuration is missing. Please set up Nango environment variables.";
         }
@@ -217,6 +232,7 @@ const IntegrationsPage = () => {
       setOauthMessage({
         type: "error",
         message: errorMessage,
+        details: errorDetails || undefined
       });
       setIsConnecting(false);
     }
@@ -292,11 +308,20 @@ const IntegrationsPage = () => {
               : "bg-red-50 border-red-200 text-red-800"
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span>{oauthMessage.message}</span>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="font-medium">{oauthMessage.message}</div>
+              {oauthMessage.details && (
+                <div className={`mt-2 text-sm whitespace-pre-line ${
+                  oauthMessage.type === "success" ? "text-green-700" : "text-red-700"
+                }`}>
+                  {oauthMessage.details}
+                </div>
+              )}
+            </div>
             <button
               onClick={() => setOauthMessage(null)}
-              className="ml-4 text-muted hover:text-gray-700"
+              className="ml-4 text-muted hover:text-gray-700 flex-shrink-0"
             >
               ✕
             </button>
