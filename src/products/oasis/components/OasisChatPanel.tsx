@@ -389,22 +389,118 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             className="flex gap-3 group hover:bg-hover rounded-lg p-2 -m-2 cursor-pointer transition-colors"
             onMouseEnter={() => setHoveredMessage(message.id)}
             onMouseLeave={() => setHoveredMessage(null)}
-            onClick={() => {
+            onClick={async (e) => {
+              // Prevent event bubbling if clicking on interactive elements
+              if ((e.target as HTMLElement).closest('button')) {
+                return;
+              }
+              
               // If this message has thread replies, open thread view
-              if (message.threadCount > 0) {
-                setThreadData({
-                  messageId: message.id,
-                  threadMessages: message.threadMessages || [],
-                  parentMessageId: message.parentMessageId,
-                  channelId: message.channelId,
-                  dmId: message.dmId
-                });
-                setThreadNavigationStack([{
-                  messageId: message.id,
-                  parentMessageId: message.parentMessageId,
-                  level: 1
-                }]);
-                ui.setIsRightPanelVisible(true);
+              const hasThreads = (message.threadCount ?? 0) > 0;
+              console.log('🖱️ [OASIS CHAT PANEL] Message clicked:', {
+                messageId: message.id,
+                threadCount: message.threadCount,
+                hasThreads,
+                threadMessages: message.threadMessages?.length || 0
+              });
+              
+              if (hasThreads) {
+                console.log('🧵 [OASIS CHAT PANEL] Opening thread for message:', message.id, 'threadCount:', message.threadCount);
+                
+                try {
+                  // Fetch full thread messages from API
+                  const workspaceId = selectedChannel?.type === 'dm' && selectedChannel.workspaceId 
+                    ? selectedChannel.workspaceId 
+                    : authUser?.activeWorkspaceId || '';
+                  
+                  if (!workspaceId) {
+                    console.error('❌ [OASIS CHAT PANEL] No workspaceId available');
+                    return;
+                  }
+                  
+                  const params = new URLSearchParams({
+                    workspaceId,
+                    ...(message.channelId && { channelId: message.channelId }),
+                    ...(message.dmId && { dmId: message.dmId }),
+                    parentMessageId: message.id
+                  });
+                  
+                  console.log('📡 [OASIS CHAT PANEL] Fetching thread messages with params:', params.toString());
+                  
+                  const response = await fetch(`/api/v1/oasis/oasis/messages?${params}`, {
+                    credentials: 'include'
+                  });
+                  
+                  if (response.ok) {
+                    const data = await response.json();
+                    const threadMessages = data.messages || [];
+                    
+                    console.log('✅ [OASIS CHAT PANEL] Fetched thread messages:', threadMessages.length);
+                    
+                    const newThreadData = {
+                      messageId: message.id,
+                      threadMessages: threadMessages,
+                      parentMessageId: message.parentMessageId,
+                      channelId: message.channelId,
+                      dmId: message.dmId
+                    };
+                    
+                    console.log('📝 [OASIS CHAT PANEL] Setting thread data:', newThreadData);
+                    setThreadData(newThreadData);
+                    setThreadNavigationStack([{
+                      messageId: message.id,
+                      parentMessageId: message.parentMessageId,
+                      level: 1
+                    }]);
+                    
+                    // Explicitly show right panel
+                    console.log('👁️ [OASIS CHAT PANEL] Setting right panel visible');
+                    ui.setIsRightPanelVisible(true);
+                    
+                    // Double-check after a brief delay
+                    setTimeout(() => {
+                      console.log('🔍 [OASIS CHAT PANEL] Post-set timeout check:', {
+                        isRightPanelVisible: ui.isRightPanelVisible,
+                        threadData: newThreadData
+                      });
+                    }, 100);
+                    
+                    console.log('✅ [OASIS CHAT PANEL] Thread data set, right panel should be visible');
+                  } else {
+                    const errorText = await response.text();
+                    console.error('❌ [OASIS CHAT PANEL] Failed to fetch thread messages:', response.status, errorText);
+                    // Fallback to using message.threadMessages if API call fails
+                    setThreadData({
+                      messageId: message.id,
+                      threadMessages: message.threadMessages || [],
+                      parentMessageId: message.parentMessageId,
+                      channelId: message.channelId,
+                      dmId: message.dmId
+                    });
+                    setThreadNavigationStack([{
+                      messageId: message.id,
+                      parentMessageId: message.parentMessageId,
+                      level: 1
+                    }]);
+                    ui.setIsRightPanelVisible(true);
+                  }
+                } catch (error) {
+                  console.error('❌ [OASIS CHAT PANEL] Error fetching thread messages:', error);
+                  // Fallback to using message.threadMessages if API call fails
+                  setThreadData({
+                    messageId: message.id,
+                    threadMessages: message.threadMessages || [],
+                    parentMessageId: message.parentMessageId,
+                    channelId: message.channelId,
+                    dmId: message.dmId
+                  });
+                  setThreadNavigationStack([{
+                    messageId: message.id,
+                    parentMessageId: message.parentMessageId,
+                    level: 1
+                  }]);
+                  ui.setIsRightPanelVisible(true);
+                }
               }
               onShowThread?.();
             }}
@@ -445,24 +541,106 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
               {/* Thread indicator */}
               {message.threadCount > 0 && (
                 <button 
-                  className="text-sm text-muted hover:text-foreground flex items-center gap-1"
-                  onClick={(e) => {
+                  className="text-sm text-muted hover:text-foreground flex items-center gap-1 cursor-pointer"
+                  onClick={async (e) => {
                     e.stopPropagation();
-                    // Pass message data to thread view via context
-                    setThreadData({
-                      messageId: message.id,
-                      threadMessages: message.threadMessages || [],
-                      parentMessageId: message.parentMessageId,
-                      channelId: message.channelId,
-                      dmId: message.dmId
-                    });
-                    setThreadNavigationStack([{
-                      messageId: message.id,
-                      parentMessageId: message.parentMessageId,
-                      level: 1
-                    }]);
-                    // Explicitly show right panel when thread is opened
-                    ui.setIsRightPanelVisible(true);
+                    e.preventDefault();
+                    console.log('🧵 [OASIS CHAT PANEL] Thread button clicked for message:', message.id, 'threadCount:', message.threadCount);
+                    
+                    try {
+                      // Fetch full thread messages from API
+                      const workspaceId = selectedChannel?.type === 'dm' && selectedChannel.workspaceId 
+                        ? selectedChannel.workspaceId 
+                        : authUser?.activeWorkspaceId || '';
+                      
+                      if (!workspaceId) {
+                        console.error('❌ [OASIS CHAT PANEL] No workspaceId available');
+                        return;
+                      }
+                      
+                      const params = new URLSearchParams({
+                        workspaceId,
+                        ...(message.channelId && { channelId: message.channelId }),
+                        ...(message.dmId && { dmId: message.dmId }),
+                        parentMessageId: message.id
+                      });
+                      
+                      console.log('📡 [OASIS CHAT PANEL] Fetching thread messages with params:', params.toString());
+                      
+                      const response = await fetch(`/api/v1/oasis/oasis/messages?${params}`, {
+                        credentials: 'include'
+                      });
+                      
+                      if (response.ok) {
+                        const data = await response.json();
+                        const threadMessages = data.messages || [];
+                        
+                        console.log('✅ [OASIS CHAT PANEL] Fetched thread messages:', threadMessages.length);
+                        
+                        const newThreadData = {
+                          messageId: message.id,
+                          threadMessages: threadMessages,
+                          parentMessageId: message.parentMessageId,
+                          channelId: message.channelId,
+                          dmId: message.dmId
+                        };
+                        
+                        console.log('📝 [OASIS CHAT PANEL] Setting thread data:', newThreadData);
+                        setThreadData(newThreadData);
+                        setThreadNavigationStack([{
+                          messageId: message.id,
+                          parentMessageId: message.parentMessageId,
+                          level: 1
+                        }]);
+                        
+                        // Explicitly show right panel when thread is opened
+                        console.log('👁️ [OASIS CHAT PANEL] Setting right panel visible');
+                        ui.setIsRightPanelVisible(true);
+                        
+                        // Double-check after a brief delay
+                        setTimeout(() => {
+                          console.log('🔍 [OASIS CHAT PANEL] Post-set timeout check:', {
+                            isRightPanelVisible: ui.isRightPanelVisible,
+                            threadData: newThreadData
+                          });
+                        }, 100);
+                        
+                        console.log('✅ [OASIS CHAT PANEL] Thread data set, right panel should be visible');
+                      } else {
+                        const errorText = await response.text();
+                        console.error('❌ [OASIS CHAT PANEL] Failed to fetch thread messages:', response.status, errorText);
+                        // Fallback to using message.threadMessages if API call fails
+                        setThreadData({
+                          messageId: message.id,
+                          threadMessages: message.threadMessages || [],
+                          parentMessageId: message.parentMessageId,
+                          channelId: message.channelId,
+                          dmId: message.dmId
+                        });
+                        setThreadNavigationStack([{
+                          messageId: message.id,
+                          parentMessageId: message.parentMessageId,
+                          level: 1
+                        }]);
+                        ui.setIsRightPanelVisible(true);
+                      }
+                    } catch (error) {
+                      console.error('❌ [OASIS CHAT PANEL] Error fetching thread messages:', error);
+                      // Fallback to using message.threadMessages if API call fails
+                      setThreadData({
+                        messageId: message.id,
+                        threadMessages: message.threadMessages || [],
+                        parentMessageId: message.parentMessageId,
+                        channelId: message.channelId,
+                        dmId: message.dmId
+                      });
+                      setThreadNavigationStack([{
+                        messageId: message.id,
+                        parentMessageId: message.parentMessageId,
+                        level: 1
+                      }]);
+                      ui.setIsRightPanelVisible(true);
+                    }
                     onShowThread?.();
                   }}
                 >
