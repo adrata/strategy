@@ -249,50 +249,16 @@ async function handleConnectionCreation(payload: any) {
         });
       }
       
-      // Create new connection record if not found (fallback)
-      if (workspaceId) {
-        // Map providerConfigKey to provider name
-        // IMPORTANT: Outlook is working in production - maintain its mapping first
-        let provider = providerConfigKey;
-        if (providerConfigKey === 'outlook') {
-          // ⚠️ DO NOT CHANGE: Outlook is working in production
-          provider = 'outlook';
-        } else if (providerConfigKey === 'google-mail' || providerConfigKey === 'gmail') {
-          provider = 'gmail';
-        } else if (providerConfigKey === 'google-calendar') {
-          provider = 'google-calendar';
-        }
-        
-        await prisma.grand_central_connections.create({
-          data: {
-            workspaceId,
-            userId,
-            provider,
-            providerConfigKey,
-            nangoConnectionId: connectionId,
-            connectionName: `${providerConfigKey} Connection`,
-            status: 'active',
-            lastSyncAt: new Date(),
-            metadata: {
-              connectedAt: new Date().toISOString(),
-              connectionId,
-              createdViaWebhook: true
-            }
-          }
-        });
-        
-        console.log(`✅ Created new connection record from webhook: ${connectionId}`);
-        return Response.json({ 
-          success: true, 
-          message: 'Connection created from webhook',
-          connectionId
-        });
-      }
+      // DISABLED: Auto-creation fallback to prevent unwanted connections
+      // Connections should only be created when user explicitly initiates OAuth flow
+      // If no pending connection exists, this webhook should be ignored
+      console.warn(`⚠️ [WEBHOOK] No pending connection found for ${connectionId} (${providerConfigKey}). This connection was not initiated by the user. Ignoring webhook to prevent auto-connection.`);
       
       return Response.json({ 
         success: false, 
-        message: 'Connection not found and cannot create without workspaceId',
-        connectionId
+        message: 'Connection not found. Connections must be initiated by user action.',
+        connectionId,
+        ignored: true
       }, { status: 404 });
     }
   } catch (error) {
