@@ -56,6 +56,16 @@ export async function POST(request: NextRequest) {
     let nango: Nango;
     try {
       nango = getNangoClient();
+      
+      // Log comprehensive environment diagnostics
+      console.log(`🔍 [NANGO CONNECT] Environment diagnostics:`, {
+        hasSecretKey: !!process.env.NANGO_SECRET_KEY,
+        hasSecretKeyDev: !!process.env.NANGO_SECRET_KEY_DEV,
+        secretKeySource: process.env.NANGO_SECRET_KEY ? 'NANGO_SECRET_KEY' : 'NANGO_SECRET_KEY_DEV',
+        secretKeyPrefix: (process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV)?.substring(0, 12),
+        host: process.env.NANGO_HOST || 'https://api.nango.dev',
+        outlookIntegrationId: process.env.NANGO_OUTLOOK_INTEGRATION_ID || 'outlook (default)'
+      });
     } catch (nangoError) {
       console.error('Nango configuration error:', nangoError);
       return NextResponse.json(
@@ -127,7 +137,14 @@ export async function POST(request: NextRequest) {
       console.log(`🔍 [NANGO CONNECT] Looking for: "${nangoIntegrationId}"`);
       console.log(`🔍 [NANGO CONNECT] Integration exists: ${integrationExists}`);
       
-      if (!integrationExists && availableIntegrations.length > 0) {
+      if (availableIntegrations.length === 0) {
+        console.error(`❌ [NANGO CONNECT] No integrations found! This means:
+    1. NANGO_SECRET_KEY is for wrong environment (check Nango dashboard environment)
+    2. No integrations are configured in this Nango environment
+    3. Secret key doesn't have permission to list integrations
+    
+    Action needed: Verify NANGO_SECRET_KEY in Vercel matches the environment where Outlook is configured`);
+      } else if (!integrationExists && availableIntegrations.length > 0) {
         console.warn(`⚠️ [NANGO CONNECT] Integration "${nangoIntegrationId}" not found. Available: ${availableIntegrations.join(', ')}`);
       }
     } catch (verifyError: any) {
@@ -155,8 +172,10 @@ export async function POST(request: NextRequest) {
         allowed_integrations: [nangoIntegrationId],
       });
       
-      sessionToken = sessionResponse.token;
-      console.log(`✅ [NANGO CONNECT] Session token created successfully: ${sessionToken.substring(0, 20)}...`);
+      // Handle both response formats (token as property or direct value)
+      sessionToken = sessionResponse.token || sessionResponse;
+      console.log(`✅ [NANGO CONNECT] Session token created:`, sessionToken ? `${String(sessionToken).substring(0, 20)}...` : 'undefined');
+      console.log(`📋 [NANGO CONNECT] Full response structure:`, JSON.stringify(sessionResponse, null, 2));
     } catch (nangoError: any) {
       console.error('❌ [NANGO CONNECT] createConnectSession error:', {
         message: nangoError?.message,
