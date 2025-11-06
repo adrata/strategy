@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-<parameter name="get">UnifiedAuthUser } from '@/platform/api-auth';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/lib/prisma';
 
 // Required for static export (desktop build)
