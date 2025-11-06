@@ -149,18 +149,6 @@ export class UnifiedEmailSyncService {
     
     console.log(`📧 [EMAIL SYNC] Fetching emails since: ${filterDateISO} (last sync: ${lastSync.toISOString()})`);
     
-    const params = provider === 'outlook' 
-      ? { 
-          top: 100, 
-          filter: `receivedDateTime ge ${filterDateISO}`,
-          orderby: 'receivedDateTime desc',
-          folder: 'inbox'
-        }
-      : {
-          maxResults: 100,
-          q: `after:${Math.floor(filterDate.getTime() / 1000)}`
-        };
-    
     // Find the database connection record
     const connection = await prisma.grand_central_connections.findFirst({
       where: {
@@ -187,88 +175,96 @@ export class UnifiedEmailSyncService {
       host: process.env.NANGO_HOST || 'https://api.nango.dev'
     });
     
-    // Build endpoint with query parameters for Outlook
-    let endpoint = provider === 'outlook' 
-      ? '/v1.0/me/mailFolders/inbox/messages'
-      : '/gmail/v1/users/me/messages';
+    // Fetch emails from multiple folders (inbox for received, sentitems for sent)
+    const foldersToSync = provider === 'outlook' 
+      ? [
+          { folder: 'inbox', filter: `receivedDateTime ge ${filterDateISO}`, orderby: 'receivedDateTime desc' },
+          { folder: 'sentitems', filter: `sentDateTime ge ${filterDateISO}`, orderby: 'sentDateTime desc' }
+        ]
+      : [
+          { folder: 'inbox', q: `after:${Math.floor(filterDate.getTime() / 1000)}` },
+          { folder: 'sent', q: `after:${Math.floor(filterDate.getTime() / 1000)}` }
+        ];
     
-    // Add query parameters for Outlook
-    // Microsoft Graph API requires URL-encoded OData query parameters
-    if (provider === 'outlook') {
-      const queryParams = new URLSearchParams();
-      if (params.top) queryParams.append('$top', params.top.toString());
-      if (params.filter) {
-        // URL encode the filter parameter properly
-        queryParams.append('$filter', params.filter);
-      }
-      if (params.orderby) queryParams.append('$orderby', params.orderby);
-      if (queryParams.toString()) {
-        endpoint += `?${queryParams.toString()}`;
-      }
-      console.log(`📧 [EMAIL SYNC] Outlook endpoint with params: ${endpoint}`);
-    } else {
-      // Gmail query parameters
-      const queryParams = new URLSearchParams();
-      if (params.maxResults) queryParams.append('maxResults', params.maxResults.toString());
-      if (params.q) queryParams.append('q', params.q);
-      if (queryParams.toString()) {
-        endpoint += `?${queryParams.toString()}`;
-      }
-    }
+    let allEmails: any[] = [];
     
-    // Call Nango proxy directly
-    console.log(`📧 [EMAIL SYNC] Calling Nango proxy:`, {
-      providerConfigKey: connection.providerConfigKey,
-      connectionId: connection.nangoConnectionId,
-      endpoint,
-      method: 'GET'
-    });
-    
-    const result = await retryWithBackoff(
-      async () => {
-        try {
-          const response = await nango.proxy({
-            providerConfigKey: connection.providerConfigKey,
-            connectionId: connection.nangoConnectionId,
-            endpoint,
-            method: 'GET'
-          });
-          
-          const responseData = response.data || response;
-          console.log(`📧 [EMAIL SYNC] Nango response received, data keys:`, Object.keys(responseData));
-          console.log(`📧 [EMAIL SYNC] Response has 'value' key:`, 'value' in responseData);
-          console.log(`📧 [EMAIL SYNC] Response has 'messages' key:`, 'messages' in responseData);
-          
-          // Log email count for debugging
-          const emailArray = responseData.value || responseData.messages || [];
-          console.log(`📧 [EMAIL SYNC] Found ${Array.isArray(emailArray) ? emailArray.length : 0} emails in response`);
-          
-          return {
-            success: true,
-            data: responseData
-          };
-        } catch (nangoError) {
-          console.error(`❌ [EMAIL SYNC] Nango proxy error:`, {
-            message: nangoError instanceof Error ? nangoError.message : 'Unknown error',
-            stack: nangoError instanceof Error ? nangoError.stack : undefined,
-            providerConfigKey: connection.providerConfigKey,
-            connectionId: connection.nangoConnectionId,
-            endpoint
-          });
-          throw nangoError;
+    // Fetch from each folder
+    for (const folderConfig of foldersToSync) {
+      try {
+        let endpoint: string;
+        let queryParams: URLSearchParams;
+        
+        if (provider === 'outlook') {
+          endpoint = `/v1.0/me/mailFolders/${folderConfig.folder}/messages`;
+          queryParams = new URLSearchParams();
+          queryParams.append('$top', '100');
+          if (folderConfig.filter) {
+            queryParams.append('$filter', folderConfig.filter);
+          }
+          if (folderConfig.orderby) {
+            queryParams.append('$orderby', folderConfig.orderby);
+          }
+          endpoint += `?${queryParams.toString()}`;
+          console.log(`📧 [EMAIL SYNC] Outlook endpoint: ${endpoint}`);
+        } else {
+          endpoint = '/gmail/v1/users/me/messages';
+          queryParams = new URLSearchParams();
+          queryParams.append('maxResults', '100');
+          if (folderConfig.q) {
+            queryParams.append('q', `${folderConfig.q} in:${folderConfig.folder}`);
+          }
+          endpoint += `?${queryParams.toString()}`;
         }
-      },
-      `Email fetch from ${provider}`
-    );
-    
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to fetch emails from provider');
+        
+        console.log(`📧 [EMAIL SYNC] Fetching from ${folderConfig.folder} folder...`);
+        
+        const result = await retryWithBackoff(
+          async () => {
+            try {
+              const response = await nango.proxy({
+                providerConfigKey: connection.providerConfigKey,
+                connectionId: connection.nangoConnectionId,
+                endpoint,
+                method: 'GET'
+              });
+              
+              const responseData = response.data || response;
+              const emailArray = responseData.value || responseData.messages || [];
+              console.log(`📧 [EMAIL SYNC] Found ${Array.isArray(emailArray) ? emailArray.length : 0} emails in ${folderConfig.folder}`);
+              
+              return {
+                success: true,
+                data: responseData
+              };
+            } catch (nangoError) {
+              console.error(`❌ [EMAIL SYNC] Nango proxy error for ${folderConfig.folder}:`, {
+                message: nangoError instanceof Error ? nangoError.message : 'Unknown error',
+                stack: nangoError instanceof Error ? nangoError.stack : undefined,
+                providerConfigKey: connection.providerConfigKey,
+                connectionId: connection.nangoConnectionId,
+                endpoint
+              });
+              throw nangoError;
+            }
+          },
+          `Email fetch from ${provider} ${folderConfig.folder}`
+        );
+        
+        if (result.success && result.data) {
+          const emails = result.data.value || result.data.messages || [];
+          allEmails = allEmails.concat(emails);
+        }
+      } catch (error) {
+        console.error(`❌ [EMAIL SYNC] Failed to fetch from ${folderConfig.folder}:`, error);
+        // Continue with other folders even if one fails
+      }
     }
     
-    const emails = result.data?.value || result.data?.messages || [];
-    let count = 0;
+    console.log(`📧 [EMAIL SYNC] Total emails fetched: ${allEmails.length} (from ${foldersToSync.length} folders)`);
     
-    for (const email of emails) {
+    // Store all emails
+    let count = 0;
+    for (const email of allEmails) {
       try {
         await this.storeEmailMessage(email, provider, workspaceId);
         count++;
@@ -332,6 +328,8 @@ export class UnifiedEmailSyncService {
    */
   private static normalizeEmailData(email: any, provider: 'outlook' | 'gmail') {
     if (provider === 'outlook') {
+      // For sent emails, receivedDateTime might not be set, so use sentDateTime as fallback
+      const receivedDateTime = email.receivedDateTime || email.sentDateTime;
       return {
         messageId: email.id,
         threadId: email.conversationId,
@@ -343,7 +341,7 @@ export class UnifiedEmailSyncService {
         cc: email.ccRecipients?.map((r: any) => r.emailAddress.address) || [],
         bcc: email.bccRecipients?.map((r: any) => r.emailAddress.address) || [],
         sentAt: new Date(email.sentDateTime),
-        receivedAt: new Date(email.receivedDateTime),
+        receivedAt: new Date(receivedDateTime),
         isRead: email.isRead || false,
         isImportant: email.importance === 'high',
         attachments: email.attachments || [],
@@ -639,22 +637,46 @@ export class UnifiedEmailSyncService {
   
   /**
    * Get last sync time for a provider
-   * Returns the most recent email's receivedAt time, or 7 days ago if no emails exist
+   * Returns the most recent email's receivedAt or sentAt time, or 7 days ago if no emails exist
+   * This handles both incoming (receivedAt) and outgoing (sentAt) emails
    */
   private static async getLastSyncTime(workspaceId: string, provider: string): Promise<Date> {
-    const lastEmail = await prisma.email_messages.findFirst({
+    // Get the most recent email by either receivedAt or sentAt
+    const lastReceivedEmail = await prisma.email_messages.findFirst({
       where: {
         workspaceId,
         provider
       },
       orderBy: { receivedAt: 'desc' },
-      select: { receivedAt: true }
+      select: { receivedAt: true, sentAt: true }
     });
     
-    if (lastEmail?.receivedAt) {
+    const lastSentEmail = await prisma.email_messages.findFirst({
+      where: {
+        workspaceId,
+        provider
+      },
+      orderBy: { sentAt: 'desc' },
+      select: { receivedAt: true, sentAt: true }
+    });
+    
+    // Find the most recent timestamp from either received or sent emails
+    let mostRecentTime: Date | null = null;
+    
+    if (lastReceivedEmail?.receivedAt) {
+      mostRecentTime = lastReceivedEmail.receivedAt;
+    }
+    
+    if (lastSentEmail?.sentAt) {
+      if (!mostRecentTime || lastSentEmail.sentAt > mostRecentTime) {
+        mostRecentTime = lastSentEmail.sentAt;
+      }
+    }
+    
+    if (mostRecentTime) {
       // Subtract 5 minutes to account for any timing discrepancies
-      const lastSyncTime = new Date(lastEmail.receivedAt.getTime() - 5 * 60 * 1000);
-      console.log(`📧 [EMAIL SYNC] Last email received at: ${lastEmail.receivedAt.toISOString()}, using filter: ${lastSyncTime.toISOString()}`);
+      const lastSyncTime = new Date(mostRecentTime.getTime() - 5 * 60 * 1000);
+      console.log(`📧 [EMAIL SYNC] Most recent email at: ${mostRecentTime.toISOString()}, using filter: ${lastSyncTime.toISOString()}`);
       return lastSyncTime;
     }
     
