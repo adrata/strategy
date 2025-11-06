@@ -290,6 +290,7 @@ export class UnifiedEmailSyncService {
     // Microsoft Graph API OData filters: dates should be ISO 8601 strings in single quotes
     // Format: 'YYYY-MM-DDTHH:mm:ss.fffZ' (NO datetime prefix - Microsoft Graph doesn't use it)
     // IMPORTANT: Inbox always uses receivedDateTime, sent folder uses sentDateTime
+    // Reference: calendar-sync-service.ts uses same format: start/dateTime ge '${date.toISOString()}'
     const foldersToSync = provider === 'outlook' 
       ? [
           { folder: 'inbox', filter: `receivedDateTime ge '${filterDateISO}'`, orderby: 'receivedDateTime desc' },
