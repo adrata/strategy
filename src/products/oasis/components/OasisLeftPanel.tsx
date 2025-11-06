@@ -239,11 +239,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   // Unified loading state - check auth first
   const isLoading = authLoading;
   
-  console.log('🔍 [OASIS LEFT PANEL] Auth user:', authUser);
-  console.log('🔍 [OASIS LEFT PANEL] Acquisition data:', acquisitionData?.auth?.authUser);
-  console.log('🔍 [OASIS LEFT PANEL] URL params:', params);
-  console.log('🔍 [OASIS LEFT PANEL] Workspace ID:', workspaceId);
-  
   // NOW safe to have conditional returns - all hooks have been called
   if (isLoading) {
     return (
