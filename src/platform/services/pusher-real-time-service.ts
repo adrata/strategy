@@ -417,10 +417,17 @@ export class PusherClientService {
     let channel: any = null;
     let eventHandler: any = null;
     let cleanedUp = false;
+    let hasLoggedWarning = false;
+    let retryInterval: NodeJS.Timeout | null = null;
+    let connectionHandler: (() => void) | null = null;
 
-    const attemptSubscription = () => {
+    const attemptSubscription = (isRetry = false) => {
       if (!pusherClient) {
-        console.warn(`⏳ [Pusher Client] Pusher not ready, will retry subscription to ${eventName} on ${channelName}`);
+        // Only log warning once per subscription attempt, not on every retry
+        if (!hasLoggedWarning) {
+          console.warn(`⏳ [Pusher Client] Pusher not ready, will retry subscription to ${eventName} on ${channelName}`);
+          hasLoggedWarning = true;
+        }
         return false;
       }
 
@@ -447,13 +454,14 @@ export class PusherClientService {
     // Try immediate subscription
     if (!attemptSubscription()) {
       // If Pusher not ready, wait for connection and retry
-      const connectionHandler = () => {
+      connectionHandler = () => {
         if (!cleanedUp && pusherClient && pusherClient.connection.state === 'connected') {
           console.log(`🔄 [Pusher Client] Pusher connected, retrying subscription to ${eventName} on ${channelName}`);
-          attemptSubscription();
+          attemptSubscription(true);
           // Unbind after successful subscription
-          if (pusherClient) {
+          if (pusherClient && connectionHandler) {
             pusherClient.connection.unbind('connected', connectionHandler);
+            connectionHandler = null;
           }
         }
       };
@@ -462,19 +470,26 @@ export class PusherClientService {
       if (pusherClient) {
         pusherClient.connection.bind('connected', connectionHandler);
       } else {
-        // Retry every second until Pusher is available (max 10 attempts)
+        // Retry every 2 seconds until Pusher is available (max 10 attempts)
+        // Increased interval to reduce log frequency
         let retryCount = 0;
-        const retryInterval = setInterval(() => {
+        retryInterval = setInterval(() => {
           retryCount++;
           if (cleanedUp || retryCount > 10) {
-            clearInterval(retryInterval);
+            if (retryInterval) {
+              clearInterval(retryInterval);
+              retryInterval = null;
+            }
             return;
           }
           
-          if (attemptSubscription()) {
-            clearInterval(retryInterval);
+          if (attemptSubscription(true)) {
+            if (retryInterval) {
+              clearInterval(retryInterval);
+              retryInterval = null;
+            }
           }
-        }, 1000);
+        }, 2000);
       }
     }
 
@@ -482,6 +497,16 @@ export class PusherClientService {
     return () => {
       try {
         cleanedUp = true;
+        // Clear retry interval if it exists
+        if (retryInterval) {
+          clearInterval(retryInterval);
+          retryInterval = null;
+        }
+        // Unbind connection handler if it exists
+        if (pusherClient && connectionHandler) {
+          pusherClient.connection.unbind('connected', connectionHandler);
+          connectionHandler = null;
+        }
         console.log(`🧹 [Pusher Client] Unsubscribing from ${eventName} on channel: ${channelName}`);
         if (channel && eventHandler) {
           channel.unbind(eventName, eventHandler);
