@@ -251,11 +251,19 @@ async function handleConnectionCreation(payload: any) {
       
       // Create new connection record if not found (fallback)
       if (workspaceId) {
+        // Map providerConfigKey to provider name
+        let provider = providerConfigKey;
+        if (providerConfigKey === 'outlook') {
+          provider = 'outlook';
+        } else if (providerConfigKey === 'google-mail' || providerConfigKey === 'gmail') {
+          provider = 'gmail';
+        }
+        
         await prisma.grand_central_connections.create({
           data: {
             workspaceId,
             userId,
-            provider: providerConfigKey === 'outlook' ? 'outlook' : providerConfigKey,
+            provider,
             providerConfigKey,
             nangoConnectionId: connectionId,
             connectionName: `${providerConfigKey} Connection`,

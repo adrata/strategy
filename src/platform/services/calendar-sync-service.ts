@@ -162,14 +162,22 @@ export class CalendarSyncService {
   ): Promise<CalendarEvent[]> {
     try {
       // Map platform to Nango provider
-      const nangoProvider = platform === 'microsoft' ? 'outlook' : 'gmail';
+      // For Google, look for google-calendar connection (separate from gmail)
+      const nangoProvider = platform === 'microsoft' ? 'outlook' : 'google-calendar';
       
       // Find active Nango connection
       const connection = await prisma.grand_central_connections.findFirst({
         where: {
           workspaceId,
           userId,
-          provider: nangoProvider,
+          OR: platform === 'microsoft' 
+            ? [{ provider: 'outlook' }, { providerConfigKey: 'outlook' }]
+            : [
+                { provider: 'google-calendar' },
+                { providerConfigKey: 'google-calendar' },
+                // Fallback: try gmail connection if google-calendar not found (for backward compatibility)
+                { provider: 'gmail', providerConfigKey: 'gmail' }
+              ],
           status: 'active'
         }
       });
