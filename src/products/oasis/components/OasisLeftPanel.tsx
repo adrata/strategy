@@ -129,11 +129,15 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   
   // Real data hooks - only call if we have a valid workspaceId and not loading
   // Unified loading check prevents duplicate skeleton rendering
-  // CRITICAL: All hooks must be called before any conditional returns
+  // CRITICAL: All hooks must be called before any conditional returns (React Rules of Hooks)
   const { channels, loading: channelsLoading, createChannel } = useOasisChannels(safeWorkspaceId);
   const { dms, loading: dmsLoading, error: dmsError, createDM } = useOasisDMs(safeWorkspaceId);
   const { userCount, isConnected } = useOasisPresence(safeWorkspaceId);
   const { autoCreateRossDMs } = useAutoCreateRossDMs();
+  
+  // CRITICAL: Refs must be called before any conditional returns
+  const hasInitialSelection = useRef(false);
+  const hasAutoCreatedRossDMs = useRef(false);
   
   // Combined loading state - if any data is loading, show skeleton
   // This prevents showing skeleton then immediately showing real content
@@ -179,10 +183,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       </div>
     );
   }
-
-  // Ref to track if initial channel selection has been made
-  const hasInitialSelection = useRef(false);
-  const hasAutoCreatedRossDMs = useRef(false);
 
   // Auto-create DMs with Ross when component loads (only once per workspace)
   useEffect(() => {
