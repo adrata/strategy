@@ -92,12 +92,55 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // If still not found, try without workspace/user constraints (for debugging)
     if (!connection) {
-      console.error(`❌ [NANGO DISCONNECT] Connection not found:`, {
+      const anyConnection = await prisma.grand_central_connections.findFirst({
+        where: {
+          OR: [
+            { id: connectionId },
+            { nangoConnectionId: connectionId }
+          ]
+        }
+      });
+
+      if (anyConnection) {
+        console.error(`❌ [NANGO DISCONNECT] Connection found but belongs to different workspace/user:`, {
+          connectionId,
+          requestedWorkspaceId: workspaceId,
+          requestedUserId: user.id,
+          actualWorkspaceId: anyConnection.workspaceId,
+          actualUserId: anyConnection.userId,
+          provider: anyConnection.provider,
+          providerConfigKey: anyConnection.providerConfigKey
+        });
+        return NextResponse.json(
+          { error: 'Connection not found or access denied' },
+          { status: 404 }
+        );
+      }
+
+      // Log all connections for this workspace/user for debugging
+      const allConnections = await prisma.grand_central_connections.findMany({
+        where: {
+          workspaceId,
+          userId: user.id
+        },
+        select: {
+          id: true,
+          nangoConnectionId: true,
+          provider: true,
+          providerConfigKey: true,
+          status: true
+        }
+      });
+
+      console.error(`❌ [NANGO DISCONNECT] Connection not found. Available connections:`, {
         connectionId,
         workspaceId,
-        userId: user.id
+        userId: user.id,
+        availableConnections: allConnections
       });
+      
       return NextResponse.json(
         { error: 'Connection not found' },
         { status: 404 }

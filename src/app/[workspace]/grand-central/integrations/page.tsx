@@ -556,17 +556,30 @@ const IntegrationsPage = () => {
     (conn) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
   );
   
+  // Gmail connection: Must have provider='gmail' OR providerConfigKey='google-mail'/'gmail'
+  // EXCLUDE any connection that is explicitly a calendar connection
   const gmailConnection = connections.find(
-    (conn) => 
-      conn.provider === 'gmail' || 
-      conn.providerConfigKey === 'google-mail' ||
-      conn.providerConfigKey === 'gmail'
+    (conn) => {
+      const isGmail = (conn.provider === 'gmail' || 
+                       conn.providerConfigKey === 'google-mail' ||
+                       conn.providerConfigKey === 'gmail');
+      const isCalendar = (conn.provider === 'google-calendar' || 
+                         conn.providerConfigKey === 'google-calendar');
+      return isGmail && !isCalendar; // Explicitly exclude calendar connections
+    }
   );
   
+  // Google Calendar connection: Must have provider='google-calendar' OR providerConfigKey='google-calendar'
+  // EXCLUDE any connection that is explicitly a Gmail connection
   const googleCalendarConnection = connections.find(
-    (conn) => 
-      conn.provider === 'google-calendar' || 
-      conn.providerConfigKey === 'google-calendar'
+    (conn) => {
+      const isCalendar = (conn.provider === 'google-calendar' || 
+                         conn.providerConfigKey === 'google-calendar');
+      const isGmail = (conn.provider === 'gmail' || 
+                       conn.providerConfigKey === 'google-mail' ||
+                       conn.providerConfigKey === 'gmail');
+      return isCalendar && !isGmail; // Explicitly exclude Gmail connections
+    }
   );
 
   return (
