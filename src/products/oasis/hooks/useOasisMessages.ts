@@ -98,7 +98,10 @@ export function useOasisMessages(
         console.log(`📨 [OASIS MESSAGES] Received message on workspace channel ${workspaceChannelName}:`, event);
         
         // Check if this event is relevant to current channel/DM
-        const isRelevant = (channelId && event.channelId === channelId) || (dmId && event.dmId === dmId);
+        // Event structure: { type, payload, dmId, channelId, ... }
+        const eventChannelId = event.channelId || event.payload?.channelId;
+        const eventDmId = event.dmId || event.payload?.dmId;
+        const isRelevant = (channelId && eventChannelId === channelId) || (dmId && eventDmId === dmId);
         if (!isRelevant) return;
 
         if (event.type === 'oasis_message_sent') {
@@ -163,7 +166,9 @@ export function useOasisMessages(
         console.log(`📨 [OASIS MESSAGES] Received message on DM channel ${dmChannelName}:`, event);
         
         // Check if this event is for the current DM
-        if (event.dmId === dmId) {
+        // Event structure: { type, payload, dmId, channelId, ... }
+        const eventDmId = event.dmId || event.payload?.dmId;
+        if (eventDmId === dmId) {
           if (event.type === 'oasis_message_sent') {
             // Add new message to the end (newest at bottom)
             setMessages(prev => {
@@ -229,7 +234,9 @@ export function useOasisMessages(
         console.log(`📨 [OASIS MESSAGES] Received message on channel ${channelChannelName}:`, event);
         
         // Check if this event is for the current channel
-        if (event.channelId === channelId) {
+        // Event structure: { type, payload, dmId, channelId, ... }
+        const eventChannelId = event.channelId || event.payload?.channelId;
+        if (eventChannelId === channelId) {
           if (event.type === 'oasis_message_sent') {
             // Add new message to the end (newest at bottom)
             setMessages(prev => {
