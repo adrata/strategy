@@ -64,8 +64,8 @@ class SmartBuyerGroupPipeline {
       
       const params = this.companyIntel.calculateOptimalParameters(intelligence, this.dealSize);
       
-      // Stage 2: Wide Preview Search (cheap)
-      const previewEmployees = await this.executeStage('preview-search', async () => {
+      // Stage 2: Wide Preview Search (cheap) - with adaptive expansion
+      let previewEmployees = await this.executeStage('preview-search', async () => {
         return await this.previewSearch.discoverAllStakeholders(
           {
             linkedinUrl: intelligence.linkedinUrl,
@@ -79,6 +79,33 @@ class SmartBuyerGroupPipeline {
           this.options.usaOnly || false
         );
       });
+      
+      // Adaptive expansion: If we found very few employees, search more pages
+      const minEmployeesNeeded = Math.max(5, Math.floor((intelligence.employeeCount || 100) * 0.1));
+      if (previewEmployees.length < minEmployeesNeeded && previewEmployees.length < 50) {
+        const additionalPages = Math.min(5, Math.ceil((minEmployeesNeeded - previewEmployees.length) / 50));
+        if (additionalPages > 0) {
+          console.log(`📈 Found only ${previewEmployees.length} employees, expanding search by ${additionalPages} more pages...`);
+          const additionalEmployees = await this.previewSearch.discoverAllStakeholders(
+            {
+              linkedinUrl: intelligence.linkedinUrl,
+              website: intelligence.website,
+              companyName: intelligence.companyName
+            },
+            params.maxPreviewPages + additionalPages,
+            params.filteringLevel,
+            this.productCategory,
+            this.options.customFiltering || null,
+            this.options.usaOnly || false
+          );
+          
+          // Merge and deduplicate by ID
+          const existingIds = new Set(previewEmployees.map(e => e.id));
+          const newEmployees = additionalEmployees.filter(e => !existingIds.has(e.id));
+          previewEmployees = [...previewEmployees, ...newEmployees];
+          console.log(`✅ Expanded search found ${newEmployees.length} additional employees (total: ${previewEmployees.length})`);
+        }
+      }
       
       this.pipelineState.totalEmployees = previewEmployees.length;
       this.pipelineState.costs.preview = previewEmployees.length * 0.1; // $0.10 per preview
@@ -124,6 +151,15 @@ class SmartBuyerGroupPipeline {
           .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))
           .slice(0, 5);
         console.log(`🎯 Top 5 fallback: ${relevantEmployees.length} relevant candidates`);
+      }
+      
+      // Final safety net: if we still have 0, use ALL scored employees (we need at least 1)
+      if (relevantEmployees.length === 0 && scoredEmployees.length > 0) {
+        console.log('⚠️ All filters yielded 0 results, using ALL scored employees as fallback...');
+        relevantEmployees = scoredEmployees
+          .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))
+          .slice(0, Math.min(10, scoredEmployees.length)); // Take up to 10 best
+        console.log(`🎯 Final fallback: ${relevantEmployees.length} candidates (using all available)`);
       }
       
       console.log(`🎯 Final filtered to ${relevantEmployees.length} relevant candidates`);
@@ -276,17 +312,53 @@ class SmartBuyerGroupPipeline {
         return selected;
       });
       
+      // CRITICAL: Ensure we have at least 1 person in buyer group
+      if (initialBuyerGroup.length === 0 && aiValidatedEmployees.length > 0) {
+        console.log('⚠️ Buyer group is empty, adding best available candidate as decision maker...');
+        const bestCandidate = aiValidatedEmployees
+          .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))[0];
+        bestCandidate.buyerGroupRole = 'decision';
+        bestCandidate.roleConfidence = 70;
+        bestCandidate.roleReasoning = 'Added as fallback - only available candidate';
+        initialBuyerGroup.push(bestCandidate);
+        console.log(`✅ Added ${bestCandidate.name} as decision maker`);
+      }
+      
       // Stage 6: Cross-Functional Coverage (free)
       const { enhanced: crossFunctionalGroup, coverage } = await this.executeStage('cross-functional', async () => {
         const crossFunctional = new CrossFunctionalCoverage(this.dealSize);
         return crossFunctional.validate(initialBuyerGroup, aiValidatedEmployees);
       });
       
+      // CRITICAL: Final check - ensure we have at least 1 person
+      if (crossFunctionalGroup.length === 0 && aiValidatedEmployees.length > 0) {
+        console.log('⚠️ Cross-functional group is empty, adding best available candidate...');
+        const bestCandidate = aiValidatedEmployees
+          .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))[0];
+        bestCandidate.buyerGroupRole = 'decision';
+        bestCandidate.roleConfidence = 70;
+        bestCandidate.roleReasoning = 'Added as final fallback - only available candidate';
+        crossFunctionalGroup.push(bestCandidate);
+        console.log(`✅ Added ${bestCandidate.name} as decision maker`);
+      }
+      
+      // CRITICAL: Final safety check before profile collection
+      const groupToEnrich = crossFunctionalGroup.length > 0 ? crossFunctionalGroup : initialBuyerGroup;
+      if (groupToEnrich.length === 0 && aiValidatedEmployees.length > 0) {
+        console.log('⚠️ No buyer group members before profile collection, adding best candidate...');
+        const bestCandidate = aiValidatedEmployees
+          .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))[0];
+        bestCandidate.buyerGroupRole = 'decision';
+        bestCandidate.roleConfidence = 70;
+        bestCandidate.roleReasoning = 'Added as final safety fallback';
+        groupToEnrich.push(bestCandidate);
+        console.log(`✅ Added ${bestCandidate.name} as decision maker`);
+      }
+      
       // Stage 7: Collect Full Profiles (expensive - only for final group)
       const enrichedBuyerGroup = await this.executeStage('profile-collection', async () => {
         console.log(`🔍 Debug: crossFunctionalGroup =`, crossFunctionalGroup ? crossFunctionalGroup.length : 'undefined');
         console.log(`🔍 Debug: initialBuyerGroup =`, initialBuyerGroup ? initialBuyerGroup.length : 'undefined');
-        const groupToEnrich = crossFunctionalGroup || initialBuyerGroup || [];
         console.log(`🔍 Debug: groupToEnrich =`, groupToEnrich.length);
         return await this.collectFullProfiles(groupToEnrich);
       });
