@@ -142,8 +142,13 @@ export class UnifiedEmailSyncService {
     userId: string,
     nangoConnectionId: string
   ): Promise<{ success: boolean; count: number; error?: string }> {
-    console.log(`📧 [EMAIL SYNC] Starting custom sync for ${provider} (connection: ${nangoConnectionId})`);
+    console.log(`📧 [EMAIL SYNC] ========================================`);
+    console.log(`📧 [EMAIL SYNC] Starting custom EMAIL sync for ${provider}`);
+    console.log(`📧 [EMAIL SYNC] Connection: ${nangoConnectionId}`);
+    console.log(`📧 [EMAIL SYNC] Workspace: ${workspaceId}, User: ${userId}`);
+    console.log(`📧 [EMAIL SYNC] NOTE: This is EMAIL sync only. Calendar syncs are handled separately.`);
     console.log(`📧 [EMAIL SYNC] NOTE: If Nango's built-in sync is also enabled, it may cause conflicts. Consider disabling it in Nango dashboard.`);
+    console.log(`📧 [EMAIL SYNC] ========================================`);
     const operation = provider === 'outlook' 
       ? 'outlook_read_emails' 
       : 'gmail_read_emails';
