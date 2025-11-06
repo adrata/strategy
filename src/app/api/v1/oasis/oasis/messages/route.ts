@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
     let channelId: string | null = null;
     let dmId: string | null = null;
     let workspaceId: string | null = null;
+    let parentMessageIdParam: string | null = null;
     let limit = 50;
     let offset = 0;
     
@@ -28,6 +29,7 @@ export async function GET(request: NextRequest) {
       channelId = searchParams.get('channelId');
       dmId = searchParams.get('dmId');
       workspaceId = searchParams.get('workspaceId');
+      parentMessageIdParam = searchParams.get('parentMessageId');
       limit = parseInt(searchParams.get('limit') || '50', 10);
       offset = parseInt(searchParams.get('offset') || '0', 10);
     } catch (urlError) {
@@ -77,7 +79,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Allow parentMessageId queries without channelId/dmId (for nested thread fetching)
-    const parentMessageIdParam = searchParams.get('parentMessageId');
     if (!channelId && !dmId && !parentMessageIdParam) {
       console.error('❌ [OASIS MESSAGES] Missing conversation ID in request:', {
         url: request.url,
