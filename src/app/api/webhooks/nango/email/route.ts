@@ -257,6 +257,8 @@ async function handleConnectionCreation(payload: any) {
           provider = 'outlook';
         } else if (providerConfigKey === 'google-mail' || providerConfigKey === 'gmail') {
           provider = 'gmail';
+        } else if (providerConfigKey === 'google-calendar') {
+          provider = 'google-calendar';
         }
         
         await prisma.grand_central_connections.create({

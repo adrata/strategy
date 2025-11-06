@@ -11,6 +11,7 @@ import {
   Mail,
   Unplug,
   Loader2,
+  Calendar,
 } from "lucide-react";
 
 interface Connection {
@@ -53,14 +54,16 @@ const IntegrationsPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Filter to show Outlook and Gmail connections
+        // Filter to show Outlook, Gmail, and Google Calendar connections
         const emailConnections = (data.connections || []).filter(
           (conn: Connection) => 
             conn.provider === 'outlook' || 
             conn.provider === 'gmail' ||
+            conn.provider === 'google-calendar' ||
             conn.providerConfigKey === 'outlook' ||
             conn.providerConfigKey === 'google-mail' ||
-            conn.providerConfigKey === 'gmail'
+            conn.providerConfigKey === 'gmail' ||
+            conn.providerConfigKey === 'google-calendar'
         );
         setConnections(emailConnections);
       }
@@ -77,10 +80,11 @@ const IntegrationsPage = () => {
     const provider = urlParams.get("provider");
 
     if (success === "connected" && provider) {
-      const providerName = provider === 'gmail' ? 'Gmail' : 'Outlook';
+      const providerName = provider === 'gmail' ? 'Gmail' : provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
+      const actionText = provider === 'google-calendar' ? 'Syncing calendar...' : 'Processing emails...';
       setOauthMessage({
         type: "success",
-        message: `${providerName} successfully connected! Processing emails...`,
+        message: `${providerName} successfully connected! ${actionText}`,
       });
       window.history.replaceState({}, "", window.location.pathname);
       loadConnections();
@@ -208,8 +212,8 @@ const IntegrationsPage = () => {
     return () => clearInterval(interval);
   }, [isSyncing, loadConnections]);
 
-  // Handle Nango email connection (Outlook or Gmail)
-  const handleConnect = async (provider: 'outlook' | 'gmail' = 'outlook') => {
+  // Handle Nango connection (Outlook, Gmail, or Google Calendar)
+  const handleConnect = async (provider: 'outlook' | 'gmail' | 'google-calendar' = 'outlook') => {
     if (!user?.activeWorkspaceId) {
       setOauthMessage({
         type: "error",
@@ -310,10 +314,11 @@ const IntegrationsPage = () => {
             // User closed the modal
           } else if (event.type === 'connect') {
             setIsConnecting(false);
-            const providerName = data.provider === 'gmail' ? 'Gmail' : 'Outlook';
+            const providerName = data.provider === 'gmail' ? 'Gmail' : data.provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
+            const actionText = data.provider === 'google-calendar' ? 'Syncing calendar...' : 'Processing emails...';
             setOauthMessage({
               type: "success",
-              message: `${providerName} successfully connected! Processing emails...`,
+              message: `${providerName} successfully connected! ${actionText}`,
             });
             // Reload connections after successful connection
             setTimeout(() => {
@@ -417,7 +422,7 @@ const IntegrationsPage = () => {
 
       if (response.ok) {
         const connection = connections.find(c => c.id === connectionId);
-        const providerName = connection?.provider === 'gmail' ? 'Gmail' : 'Outlook';
+        const providerName = connection?.provider === 'gmail' ? 'Gmail' : connection?.provider === 'google-calendar' ? 'Google Calendar' : 'Outlook';
         setOauthMessage({
           type: "success",
           message: `${providerName} disconnected successfully.`,
@@ -444,6 +449,12 @@ const IntegrationsPage = () => {
       conn.provider === 'gmail' || 
       conn.providerConfigKey === 'google-mail' ||
       conn.providerConfigKey === 'gmail'
+  );
+  
+  const googleCalendarConnection = connections.find(
+    (conn) => 
+      conn.provider === 'google-calendar' || 
+      conn.providerConfigKey === 'google-calendar'
   );
 
   return (
