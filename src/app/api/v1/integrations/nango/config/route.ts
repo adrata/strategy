@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
     // Test Nango connection if secret key is available
     let nangoStatus = 'not_configured';
     let nangoError = null;
+    let availableIntegrations: string[] = [];
     
     if (secretKey) {
       try {
@@ -41,11 +42,17 @@ export async function GET(request: NextRequest) {
         });
         
         // Try to list providers to test connection
-        await nango.listProviders();
+        const providers = await nango.listProviders();
         nangoStatus = 'connected';
+        
+        // Extract integration IDs
+        availableIntegrations = providers.providers?.map((p: any) => p.unique_key || p.provider) || [];
+        
+        console.log(`✅ [NANGO CONFIG] Connected to Nango. Available integrations:`, availableIntegrations);
       } catch (error) {
         nangoStatus = 'error';
         nangoError = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`❌ [NANGO CONFIG] Connection test failed:`, error);
       }
     }
 
@@ -56,6 +63,10 @@ export async function GET(request: NextRequest) {
       // Expose public key and host for frontend SDK initialization
       publicKey: publicKey || null,
       host: host,
+      // Show available integrations for debugging
+      availableIntegrations,
+      // Check if Outlook integration is available
+      outlookIntegrationExists: availableIntegrations.includes('outlook'),
       timestamp: new Date().toISOString()
     });
   } catch (error) {

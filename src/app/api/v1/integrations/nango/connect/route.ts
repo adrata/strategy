@@ -94,10 +94,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Verify integration exists before creating session
+    let integrationExists = false;
+    try {
+      console.log(`🔍 [NANGO CONNECT] Verifying integration "${nangoIntegrationId}" exists...`);
+      const providers = await nango.listProviders();
+      integrationExists = providers.providers?.some((p: any) => 
+        p.unique_key === nangoIntegrationId || p.provider === nangoIntegrationId
+      ) || false;
+      
+      console.log(`🔍 [NANGO CONNECT] Available integrations:`, providers.providers?.map((p: any) => p.unique_key || p.provider));
+      console.log(`🔍 [NANGO CONNECT] Integration "${nangoIntegrationId}" exists: ${integrationExists}`);
+    } catch (verifyError: any) {
+      console.warn(`⚠️ [NANGO CONNECT] Could not verify integration (non-critical):`, verifyError?.message);
+      // Continue anyway - createConnectSession will fail if integration doesn't exist
+    }
+
     // Create a connect session using Nango (correct method per Nango docs)
     let sessionToken: string;
     try {
       console.log(`📧 [NANGO CONNECT] Creating connect session for provider: ${provider} (Integration ID: ${nangoIntegrationId}), user: ${user.id}`);
+      console.log(`📧 [NANGO CONNECT] Nango host: ${process.env.NANGO_HOST || 'https://api.nango.dev'}`);
+      console.log(`📧 [NANGO CONNECT] Secret key prefix: ${(process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY || '').substring(0, 8)}...`);
       
       const sessionResponse = await nango.createConnectSession({
         end_user: {
@@ -119,13 +137,18 @@ export async function POST(request: NextRequest) {
         message: nangoError?.message,
         response: nangoError?.response?.data,
         status: nangoError?.response?.status,
+        statusText: nangoError?.response?.statusText,
         provider,
-        userId: user.id
+        nangoIntegrationId,
+        userId: user.id,
+        host: process.env.NANGO_HOST || 'https://api.nango.dev',
+        integrationExists
       });
       
       // Check if it's a provider configuration error
       const errorMessage = nangoError?.message || nangoError?.response?.data?.message || 'Unknown error';
       const errorStatus = nangoError?.response?.status || 500;
+      const errorData = nangoError?.response?.data;
       
       if (errorStatus === 400 || errorMessage?.includes('provider') || errorMessage?.includes('not found') || errorMessage?.includes('integration')) {
         return NextResponse.json(
@@ -133,10 +156,21 @@ export async function POST(request: NextRequest) {
             error: `Integration "${nangoIntegrationId}" is not configured in Nango. Please check:`,
             details: [
               `1. Verify the Integration ID in your Nango dashboard matches "${nangoIntegrationId}"`,
-              `2. Set the environment variable NANGO_OUTLOOK_INTEGRATION_ID (or NANGO_GMAIL_INTEGRATION_ID) in Vercel`,
-              `3. Check that the integration is properly configured with Client ID and Secret in Nango dashboard`,
-              `4. Error from Nango: ${errorMessage}`
-            ].join('\n')
+              `2. Check that you're using the correct Nango environment (dashboard shows "prod")`,
+              `3. Verify NANGO_SECRET_KEY in Vercel matches the "prod" environment secret key`,
+              `4. Ensure the integration is saved in Nango dashboard (click "Save" if you see unsaved changes)`,
+              `5. Check that Client ID and Client Secret are correctly entered in Nango`,
+              `6. Verify scopes are configured in Nango dashboard`,
+              `7. Error from Nango: ${errorMessage}`,
+              errorData ? `8. Full error: ${JSON.stringify(errorData)}` : ''
+            ].filter(Boolean).join('\n'),
+            debug: {
+              nangoIntegrationId,
+              host: process.env.NANGO_HOST || 'https://api.nango.dev',
+              integrationExists,
+              errorStatus,
+              errorMessage
+            }
           },
           { status: 400 }
         );
