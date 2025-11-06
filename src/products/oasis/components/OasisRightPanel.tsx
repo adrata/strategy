@@ -187,7 +187,7 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto invisible-scrollbar">
         {activeTab === 'members' && (
           <div className="p-4">
             <div className="mb-4">

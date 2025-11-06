@@ -237,7 +237,7 @@ export function OasisMiddlePanel({
         </div>
 
         {/* Channels List */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto invisible-scrollbar p-4">
           <div className="space-y-2">
             {filteredChannels.map((channel) => (
               <button
@@ -294,7 +294,7 @@ export function OasisMiddlePanel({
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto invisible-scrollbar p-4 space-y-4">
           {messages.map((message) => (
             <div key={message.id} className="flex gap-3">
               <div className="flex-shrink-0">

@@ -254,7 +254,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
         </div>
         
         {/* Messages Skeleton */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-4">
+        <div className="flex-1 overflow-y-auto invisible-scrollbar p-3 space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex gap-3 px-2">
               <div className="w-10 h-10 bg-loading-bg rounded animate-pulse" />
@@ -329,7 +329,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-[15px] flex flex-col justify-end">
+      <div className="flex-1 overflow-y-auto invisible-scrollbar p-3 space-y-[15px] flex flex-col justify-end">
         {messagesLoading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
