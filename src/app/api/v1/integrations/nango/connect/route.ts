@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
       });
       
       sessionToken = sessionResponse.token;
-      console.log(`✅ [NANGO CONNECT] Session token created successfully`);
+      console.log(`✅ [NANGO CONNECT] Session token created successfully: ${sessionToken.substring(0, 20)}...`);
     } catch (nangoError: any) {
       console.error('❌ [NANGO CONNECT] createConnectSession error:', {
         message: nangoError?.message,
@@ -216,6 +216,7 @@ export async function POST(request: NextRequest) {
     // Store pending session in database (connectionId will come from webhook)
     // Use the actual Nango Integration ID for providerConfigKey
     try {
+      console.log(`💾 [NANGO CONNECT] Saving connection to database...`);
       await prisma.grand_central_connections.create({
         data: {
           workspaceId,
@@ -232,7 +233,13 @@ export async function POST(request: NextRequest) {
           }
         }
       });
+      console.log(`✅ [NANGO CONNECT] Connection saved to database successfully`);
     } catch (dbError: any) {
+      console.error(`❌ [NANGO CONNECT] Database error:`, {
+        code: dbError?.code,
+        message: dbError?.message,
+        meta: dbError?.meta
+      });
       // If connection already exists, update it
       if (dbError?.code === 'P2002') {
         await prisma.grand_central_connections.updateMany({
@@ -258,10 +265,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ 
+    console.log(`📤 [NANGO CONNECT] Sending response with session token`);
+    const response = NextResponse.json({ 
       sessionToken,
       provider
     });
+    console.log(`✅ [NANGO CONNECT] Response sent successfully`);
+    return response;
   } catch (error) {
     console.error('Error initiating OAuth flow:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
