@@ -434,49 +434,86 @@ export class UnifiedEmailSyncService {
    * Create action records for emails (unified timeline)
    */
   private static async createEmailActions(workspaceId: string) {
-    const emailsWithoutActions = await prisma.email_messages.findMany({
+    // Find emails with linked people that might need actions
+    const emailsWithPeople = await prisma.email_messages.findMany({
       where: {
         workspaceId,
-        personId: { not: null },
-        NOT: {
-          actions: {
-            some: {}
-          }
-        }
+        personId: { not: null }
       },
       take: 1000 // Process in batches
     });
     
+    if (emailsWithPeople.length === 0) {
+      return { created: 0 };
+    }
+    
+    // Find the workspace user to assign actions to
+    const workspaceUser = await prisma.workspace_users.findFirst({
+      where: {
+        workspaceId,
+        isActive: true
+      }
+    });
+    
+    if (!workspaceUser) {
+      console.warn(`⚠️ No active workspace user found for workspace: ${workspaceId}`);
+      return { created: 0 };
+    }
+    
+    // Get all existing EMAIL actions for people in this workspace to avoid duplicates
+    // Actions are matched by personId, subject, and completedAt
+    const personIds = [...new Set(emailsWithPeople.map(e => e.personId!).filter(Boolean))];
+    const existingActions = await prisma.actions.findMany({
+      where: {
+        workspaceId,
+        personId: { in: personIds },
+        type: 'EMAIL'
+      },
+      select: {
+        personId: true,
+        subject: true,
+        completedAt: true
+      }
+    });
+    
+    // Create a Set of action keys for fast lookup
+    const actionKeys = new Set(
+      existingActions.map(a => `${a.personId}|${a.subject}|${a.completedAt?.getTime()}`)
+    );
+    
     let created = 0;
     
-    for (const email of emailsWithoutActions) {
-      if (email.personId) {
-        // Find the workspace user to assign the action to
-        const workspaceUser = await prisma.workspace_users.findFirst({
-          where: {
+    for (const email of emailsWithPeople) {
+      if (!email.personId) continue;
+      
+      // Check if action already exists
+      const actionKey = `${email.personId}|${email.subject}|${email.receivedAt.getTime()}`;
+      if (actionKeys.has(actionKey)) {
+        continue; // Action already exists
+      }
+      
+      try {
+        await prisma.actions.create({
+          data: {
             workspaceId,
-            isActive: true
+            userId: workspaceUser.userId,
+            companyId: email.companyId,
+            personId: email.personId,
+            type: 'EMAIL',
+            subject: email.subject,
+            description: email.body.substring(0, 500),
+            status: 'COMPLETED',
+            completedAt: email.receivedAt,
+            createdAt: email.receivedAt,
+            updatedAt: email.receivedAt
           }
         });
+        created++;
         
-        if (workspaceUser) {
-          await prisma.actions.create({
-            data: {
-              workspaceId,
-              userId: workspaceUser.userId,
-              companyId: email.companyId,
-              personId: email.personId,
-              type: 'EMAIL',
-              subject: email.subject,
-              description: email.body.substring(0, 500),
-              status: 'COMPLETED',
-              completedAt: email.receivedAt,
-              createdAt: email.receivedAt,
-              updatedAt: email.receivedAt
-            }
-          });
-          created++;
-        }
+        // Add to set to avoid duplicates in this batch
+        actionKeys.add(actionKey);
+      } catch (error) {
+        console.error(`❌ Failed to create action for email ${email.id}:`, error);
       }
     }
     
@@ -511,16 +548,58 @@ export class UnifiedEmailSyncService {
    * Get email statistics for a workspace
    */
   static async getEmailStats(workspaceId: string) {
-    const [total, linked, withActions] = await Promise.all([
+    const [total, linked] = await Promise.all([
       prisma.email_messages.count({ where: { workspaceId } }),
-      prisma.email_messages.count({ where: { workspaceId, personId: { not: null } } }),
-      prisma.email_messages.count({
-        where: {
-          workspaceId,
-          actions: { some: {} }
-        }
-      })
+      prisma.email_messages.count({ where: { workspaceId, personId: { not: null } } })
     ]);
+    
+    // Count emails that have corresponding actions
+    // Actions are matched by personId, subject, and completedAt
+    const emailsWithPeople = await prisma.email_messages.findMany({
+      where: {
+        workspaceId,
+        personId: { not: null }
+      },
+      select: {
+        personId: true,
+        subject: true,
+        receivedAt: true
+      },
+      take: 10000 // Reasonable limit for stats
+    });
+    
+    if (emailsWithPeople.length === 0) {
+      return {
+        total,
+        linked,
+        withActions: 0,
+        linkRate: total > 0 ? Math.round((linked / total) * 100) : 0,
+        actionRate: 0
+      };
+    }
+    
+    // Get all EMAIL actions for people in this workspace
+    const personIds = [...new Set(emailsWithPeople.map(e => e.personId!).filter(Boolean))];
+    const actionMatches = await prisma.actions.findMany({
+      where: {
+        workspaceId,
+        type: 'EMAIL',
+        personId: { in: personIds }
+      },
+      select: {
+        personId: true,
+        subject: true,
+        completedAt: true
+      }
+    });
+    
+    const actionKeys = new Set(
+      actionMatches.map(a => `${a.personId}|${a.subject}|${a.completedAt?.getTime()}`)
+    );
+    
+    const withActions = emailsWithPeople.filter(email => 
+      actionKeys.has(`${email.personId}|${email.subject}|${email.receivedAt.getTime()}`)
+    ).length;
     
     return {
       total,
