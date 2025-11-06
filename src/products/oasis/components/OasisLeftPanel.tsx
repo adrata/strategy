@@ -448,9 +448,12 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     return '?';
   };
 
+  // Don't show "Me" self-DM for Adrata AI user
+  const isAdrataAI = authUser?.email === 'ai@adrata.com';
+  
   const dmConversations: Conversation[] = [
-    // Add "Me" self-DM at the top
-    {
+    // Add "Me" self-DM at the top (except for Adrata AI)
+    ...(!isAdrataAI ? [{
       id: 'me-self-dm',
       name: 'Me',
       type: 'dm' as const,
@@ -461,7 +464,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       status: 'online' as const,
       isWorkspaceMember: true,
       workspaceName: currentWorkspaceName // Add workspace name for pill display
-    },
+    }] : []),
     // Add other DMs - filter out DMs with no valid participant data
     ...dms
       .filter(dm => {
