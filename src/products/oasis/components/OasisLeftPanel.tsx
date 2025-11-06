@@ -93,100 +93,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showAddDMModal, setShowAddDMModal] = useState(false);
   
-  // Unified loading state - check auth first
-  const isLoading = authLoading;
-  
-  console.log('🔍 [OASIS LEFT PANEL] Auth user:', authUser);
-  console.log('🔍 [OASIS LEFT PANEL] Acquisition data:', acquisitionData?.auth?.authUser);
-  console.log('🔍 [OASIS LEFT PANEL] URL params:', params);
-  console.log('🔍 [OASIS LEFT PANEL] Workspace ID:', workspaceId);
-  
-  // NOW safe to have conditional returns - all hooks have been called
-  if (isLoading) {
-    return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
-        {/* Header Skeleton */}
-        <div className="flex-shrink-0 p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
-            <div className="space-y-2">
-              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
-              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
-            </div>
-          </div>
-        </div>
-        
-        {/* Content Skeleton */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-4">
-          <div className="space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
-          </div>
-          
-          <div className="border-t border-border pt-2 space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
-  // Combined loading state - if any data is loading, show skeleton
-  // This prevents showing skeleton then immediately showing real content
-  const isDataLoading = channelsLoading || dmsLoading;
-  
-  // If data is still loading after context is ready, show skeleton
-  if (isDataLoading && !isLoading) {
-    return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
-        {/* Header Skeleton */}
-        <div className="flex-shrink-0 p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
-            <div className="space-y-2">
-              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
-              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
-            </div>
-          </div>
-        </div>
-        
-        {/* Content Skeleton */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-4">
-          <div className="space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
-          </div>
-          
-          <div className="border-t border-border pt-2 space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // CRITICAL: All useEffect hooks must be called before any conditional returns (React Rules of Hooks)
   // Auto-create DMs with Ross when component loads (only once per workspace)
   useEffect(() => {
     if (safeWorkspaceId && !hasAutoCreatedRossDMs.current) {
@@ -288,7 +195,113 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         hasInitialSelection.current = true;
       }
     }
-  }, [channels, dms, channelsLoading, setSelectedChannel]);
+  }, [channels, dms, channelsLoading, setSelectedChannel, selectedChannel]);
+
+  // Log channel conversion for debugging
+  useEffect(() => {
+    if (!channelsLoading) {
+      if (channels.length > 0) {
+        const channelNames = channels.map(c => `#${c.name}`).join(', ');
+        console.log(`🔄 [OASIS LEFT PANEL] Converted ${channels.length} channels: ${channelNames}`);
+      } else {
+        console.log('⚠️ [OASIS LEFT PANEL] No channels available to display');
+      }
+    }
+  }, [channels, channelsLoading]);
+  
+  // Unified loading state - check auth first
+  const isLoading = authLoading;
+  
+  console.log('🔍 [OASIS LEFT PANEL] Auth user:', authUser);
+  console.log('🔍 [OASIS LEFT PANEL] Acquisition data:', acquisitionData?.auth?.authUser);
+  console.log('🔍 [OASIS LEFT PANEL] URL params:', params);
+  console.log('🔍 [OASIS LEFT PANEL] Workspace ID:', workspaceId);
+  
+  // NOW safe to have conditional returns - all hooks have been called
+  if (isLoading) {
+    return (
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
+        {/* Header Skeleton */}
+        <div className="flex-shrink-0 p-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
+              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
+            </div>
+          </div>
+        </div>
+        
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto p-2 space-y-4">
+          <div className="space-y-2">
+            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
+          
+          <div className="border-t border-border pt-2 space-y-2">
+            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Combined loading state - if any data is loading, show skeleton
+  // This prevents showing skeleton then immediately showing real content
+  const isDataLoading = channelsLoading || dmsLoading;
+  
+  // If data is still loading after context is ready, show skeleton
+  if (isDataLoading && !isLoading) {
+    return (
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
+        {/* Header Skeleton */}
+        <div className="flex-shrink-0 p-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
+              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
+            </div>
+          </div>
+        </div>
+        
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto p-2 space-y-4">
+          <div className="space-y-2">
+            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
+          
+          <div className="border-t border-border pt-2 space-y-2">
+            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleConversationClick = async (conversation: Conversation) => {
     setSelectedChannel(conversation);
@@ -417,18 +430,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     isWorkspaceMember: true,
     isPrivate: channel.isPrivate === true
   }));
-
-  // Log channel conversion for debugging
-  useEffect(() => {
-    if (!channelsLoading) {
-      if (channels.length > 0) {
-        const channelNames = channels.map(c => `#${c.name}`).join(', ');
-        console.log(`🔄 [OASIS LEFT PANEL] Converted ${channels.length} channels: ${channelNames}`);
-      } else {
-        console.log('⚠️ [OASIS LEFT PANEL] No channels available to display');
-      }
-    }
-  }, [channels, channelsLoading]);
 
   // Get current workspace name for the "Me" pill - use authUser workspaces, not acquisitionData
   const currentWorkspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || 'Adrata';
