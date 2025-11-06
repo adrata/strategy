@@ -156,6 +156,15 @@ export function InboxProvider({ children }: InboxProviderProps) {
     }
   }, [user?.activeWorkspaceId, filters]);
 
+  const selectEmail = useCallback((email: EmailMessage | null) => {
+    setSelectedEmail(email);
+    
+    // Mark as read when selected
+    if (email && !email.isRead) {
+      markAsRead(email.id, true);
+    }
+  }, []);
+
   useEffect(() => {
     fetchEmails();
   }, [fetchEmails]);
@@ -166,15 +175,6 @@ export function InboxProvider({ children }: InboxProviderProps) {
       selectEmail(emails[0]);
     }
   }, [emails, selectedEmail, selectEmail]);
-
-  const selectEmail = useCallback((email: EmailMessage | null) => {
-    setSelectedEmail(email);
-    
-    // Mark as read when selected
-    if (email && !email.isRead) {
-      markAsRead(email.id, true);
-    }
-  }, []);
 
   const markAsRead = useCallback(async (emailId: string, isRead: boolean) => {
     try {
