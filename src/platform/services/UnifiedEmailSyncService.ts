@@ -138,27 +138,7 @@ export class UnifiedEmailSyncService {
       ? 'outlook_read_emails' 
       : 'gmail_read_emails';
     
-    // Get last sync time to only fetch new emails
-    // Always look back at least 1 hour to ensure we don't miss any emails due to timing issues
-    // This creates a safety window that accounts for clock skew, processing delays, etc.
-    const lastSync = await this.getLastSyncTime(workspaceId, provider);
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    
-    // Use the earlier of: (last sync - 1 hour) or 1 hour ago
-    // This ensures we always have at least a 1-hour lookback window
-    const lastSyncMinusOneHour = new Date(lastSync.getTime() - 60 * 60 * 1000);
-    const filterDate = lastSyncMinusOneHour < oneHourAgo ? lastSyncMinusOneHour : oneHourAgo;
-    
-    // But don't go back more than 24 hours
-    const finalFilterDate = filterDate < oneDayAgo ? oneDayAgo : filterDate;
-    
-    // Format date for Microsoft Graph API (ISO 8601 format)
-    const filterDateISO = finalFilterDate.toISOString();
-    
-    console.log(`📧 [EMAIL SYNC] Fetching emails since: ${filterDateISO} (last sync: ${lastSync.toISOString()}, window: 1 hour)`);
-    
-    // Find the database connection record
+    // Find the database connection record first (needed for reconnection detection)
     const connection = await prisma.grand_central_connections.findFirst({
       where: {
         workspaceId,
@@ -172,6 +152,44 @@ export class UnifiedEmailSyncService {
     if (!connection) {
       throw new Error(`Active ${provider} connection not found for workspace ${workspaceId}`);
     }
+    
+    // Get last sync time to only fetch new emails
+    // Always look back at least 1 hour to ensure we don't miss any emails due to timing issues
+    // This creates a safety window that accounts for clock skew, processing delays, etc.
+    const lastSync = await this.getLastSyncTime(workspaceId, provider);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    
+    // Check if this is a first-time sync or reconnection
+    // If lastSync is 7+ days ago, treat it as a first sync or reconnection
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const isFirstSync = lastSync.getTime() <= sevenDaysAgo.getTime();
+    
+    // Also check if connection was recently activated (within last 5 minutes) - indicates reconnection
+    const connectionRecentlyActivated = connection.metadata && 
+      (connection.metadata as any).connectedAt &&
+      (new Date((connection.metadata as any).connectedAt).getTime() > Date.now() - 5 * 60 * 1000);
+    
+    // For first-time syncs or recent reconnections, fetch last 30 days of emails
+    // For subsequent syncs, use last sync time minus 1 hour for safety window
+    let filterDate: Date;
+    if (isFirstSync || connectionRecentlyActivated) {
+      // First sync or reconnection: fetch last 30 days to catch up
+      filterDate = thirtyDaysAgo;
+      console.log(`📧 [EMAIL SYNC] ${isFirstSync ? 'First-time' : 'Reconnection'} sync detected, fetching last 30 days of emails`);
+    } else {
+      // Subsequent sync: use last sync time minus 1 hour for safety window
+      const lastSyncMinusOneHour = new Date(lastSync.getTime() - 60 * 60 * 1000);
+      filterDate = lastSyncMinusOneHour < oneHourAgo ? lastSyncMinusOneHour : oneHourAgo;
+    }
+    
+    // Don't go back more than 30 days (reasonable limit for performance)
+    const finalFilterDate = filterDate < thirtyDaysAgo ? thirtyDaysAgo : filterDate;
+    
+    // Format date for Microsoft Graph API (ISO 8601 format)
+    const filterDateISO = finalFilterDate.toISOString();
+    
+    console.log(`📧 [EMAIL SYNC] Fetching emails since: ${filterDateISO} (last sync: ${lastSync.toISOString()}, ${isFirstSync || connectionRecentlyActivated ? '30-day window' : '1-hour window'})`);
     
     // Initialize Nango client
     const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
