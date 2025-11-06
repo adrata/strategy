@@ -139,19 +139,26 @@ export class UnifiedEmailSyncService {
       : 'gmail_read_emails';
     
     // Get last sync time to only fetch new emails
+    // Use a more lenient approach: fetch last 24 hours OR since last sync, whichever is more recent
     const lastSync = await this.getLastSyncTime(workspaceId, provider);
-    const filterDate = lastSync.toISOString();
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const filterDate = lastSync > oneDayAgo ? lastSync : oneDayAgo;
+    
+    // Format date for Microsoft Graph API (ISO 8601 format)
+    const filterDateISO = filterDate.toISOString();
+    
+    console.log(`📧 [EMAIL SYNC] Fetching emails since: ${filterDateISO} (last sync: ${lastSync.toISOString()})`);
     
     const params = provider === 'outlook' 
       ? { 
           top: 100, 
-          filter: `receivedDateTime ge ${filterDate}`,
+          filter: `receivedDateTime ge ${filterDateISO}`,
           orderby: 'receivedDateTime desc',
           folder: 'inbox'
         }
       : {
           maxResults: 100,
-          q: `after:${Math.floor(lastSync.getTime() / 1000)}`
+          q: `after:${Math.floor(filterDate.getTime() / 1000)}`
         };
     
     // Find the database connection record
@@ -186,14 +193,19 @@ export class UnifiedEmailSyncService {
       : '/gmail/v1/users/me/messages';
     
     // Add query parameters for Outlook
+    // Microsoft Graph API requires URL-encoded OData query parameters
     if (provider === 'outlook') {
       const queryParams = new URLSearchParams();
       if (params.top) queryParams.append('$top', params.top.toString());
-      if (params.filter) queryParams.append('$filter', params.filter);
+      if (params.filter) {
+        // URL encode the filter parameter properly
+        queryParams.append('$filter', params.filter);
+      }
       if (params.orderby) queryParams.append('$orderby', params.orderby);
       if (queryParams.toString()) {
         endpoint += `?${queryParams.toString()}`;
       }
+      console.log(`📧 [EMAIL SYNC] Outlook endpoint with params: ${endpoint}`);
     } else {
       // Gmail query parameters
       const queryParams = new URLSearchParams();
@@ -622,6 +634,7 @@ export class UnifiedEmailSyncService {
   
   /**
    * Get last sync time for a provider
+   * Returns the most recent email's receivedAt time, or 7 days ago if no emails exist
    */
   private static async getLastSyncTime(workspaceId: string, provider: string): Promise<Date> {
     const lastEmail = await prisma.email_messages.findFirst({
@@ -629,11 +642,21 @@ export class UnifiedEmailSyncService {
         workspaceId,
         provider
       },
-      orderBy: { receivedAt: 'desc' }
+      orderBy: { receivedAt: 'desc' },
+      select: { receivedAt: true }
     });
     
+    if (lastEmail?.receivedAt) {
+      // Subtract 5 minutes to account for any timing discrepancies
+      const lastSyncTime = new Date(lastEmail.receivedAt.getTime() - 5 * 60 * 1000);
+      console.log(`📧 [EMAIL SYNC] Last email received at: ${lastEmail.receivedAt.toISOString()}, using filter: ${lastSyncTime.toISOString()}`);
+      return lastSyncTime;
+    }
+    
     // Default to 7 days ago if no previous sync
-    return lastEmail?.receivedAt || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const defaultDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    console.log(`📧 [EMAIL SYNC] No previous emails found, using default date: ${defaultDate.toISOString()}`);
+    return defaultDate;
   }
   
   /**
