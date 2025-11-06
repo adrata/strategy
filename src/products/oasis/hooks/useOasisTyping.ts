@@ -4,8 +4,9 @@
  * Manages typing indicators with real-time updates
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePusherRealTime, pusherClientService } from '@/platform/services/pusher-real-time-service';
+import { useDebouncedTyping } from '@/products/oasis/utils/useDebouncedTyping';
 
 export interface TypingUser {
   userId: string;
@@ -21,6 +22,7 @@ export function useOasisTyping(
 ) {
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const typingApiCallRef = useRef<{ lastCall: number; pending: boolean }>({ lastCall: 0, pending: false });
 
   // Get Pusher real-time updates from workspace channel
   const { lastUpdate } = usePusherRealTime(workspaceId, '');
@@ -32,14 +34,17 @@ export function useOasisTyping(
     const workspaceChannelName = `workspace-${workspaceId}`;
     console.log(`📡 [OASIS TYPING] Subscribing to workspace channel for typing events: ${workspaceChannelName}`);
 
-    pusherClientService.subscribeToChannel(
+    const unsubscribeWorkspace = pusherClientService.subscribeToChannel(
       workspaceChannelName,
       'oasis-event',
       (event: any) => {
         console.log(`⌨️ [OASIS TYPING] Received typing event on workspace channel:`, event);
         
         // Check if this event is relevant to current channel/DM
-        const isRelevant = (channelId && event.channelId === channelId) || (dmId && event.dmId === dmId);
+        // Event structure: { type, payload, dmId, channelId, ... }
+        const eventChannelId = event.channelId || event.payload?.channelId;
+        const eventDmId = event.dmId || event.payload?.dmId;
+        const isRelevant = (channelId && eventChannelId === channelId) || (dmId && eventDmId === dmId);
         if (!isRelevant) return;
 
         if (event.type === 'oasis_user_typing') {
@@ -64,6 +69,7 @@ export function useOasisTyping(
 
     return () => {
       console.log(`📡 [OASIS TYPING] Unsubscribing from workspace channel: ${workspaceChannelName}`);
+      if (unsubscribeWorkspace) unsubscribeWorkspace();
     };
   }, [workspaceId, channelId, dmId]);
 
@@ -74,13 +80,15 @@ export function useOasisTyping(
     const dmChannelName = `oasis-dm-${dmId}`;
     console.log(`📡 [OASIS TYPING] Subscribing to DM channel for typing events: ${dmChannelName}`);
 
-    pusherClientService.subscribeToChannel(
+    const unsubscribeDM = pusherClientService.subscribeToChannel(
       dmChannelName,
       'oasis-event',
       (event: any) => {
         console.log(`⌨️ [OASIS TYPING] Received typing event on DM channel:`, event);
         
-        if (event.dmId === dmId) {
+        // Event structure: { type, payload, dmId, channelId, ... }
+        const eventDmId = event.dmId || event.payload?.dmId;
+        if (eventDmId === dmId) {
           if (event.type === 'oasis_user_typing') {
             setTypingUsers(prev => {
               const existing = prev.find(u => u.userId === event.payload.userId);
@@ -104,6 +112,7 @@ export function useOasisTyping(
 
     return () => {
       console.log(`📡 [OASIS TYPING] Unsubscribing from DM channel: ${dmChannelName}`);
+      if (unsubscribeDM) unsubscribeDM();
     };
   }, [dmId, workspaceId]);
 
@@ -114,13 +123,15 @@ export function useOasisTyping(
     const channelChannelName = `oasis-channel-${channelId}`;
     console.log(`📡 [OASIS TYPING] Subscribing to channel for typing events: ${channelChannelName}`);
 
-    pusherClientService.subscribeToChannel(
+    const unsubscribeChannel = pusherClientService.subscribeToChannel(
       channelChannelName,
       'oasis-event',
       (event: any) => {
         console.log(`⌨️ [OASIS TYPING] Received typing event on channel:`, event);
         
-        if (event.channelId === channelId) {
+        // Event structure: { type, payload, dmId, channelId, ... }
+        const eventChannelId = event.channelId || event.payload?.channelId;
+        if (eventChannelId === channelId) {
           if (event.type === 'oasis_user_typing') {
             setTypingUsers(prev => {
               const existing = prev.find(u => u.userId === event.payload.userId);
@@ -144,16 +155,30 @@ export function useOasisTyping(
 
     return () => {
       console.log(`📡 [OASIS TYPING] Unsubscribing from channel: ${channelChannelName}`);
+      if (unsubscribeChannel) unsubscribeChannel();
     };
   }, [channelId, workspaceId]);
 
-  // Send typing indicator
-  const startTyping = useCallback(async () => {
-    if (isTyping) return;
+  // Optimized typing API call with throttling
+  const sendTypingEvent = useCallback(async (isTypingValue: boolean) => {
+    const now = Date.now();
+    const minTimeBetweenCalls = 2000; // 2 seconds minimum between API calls
+    
+    // Throttle: Don't send if called too recently
+    if (typingApiCallRef.current.pending) {
+      return;
+    }
+    
+    const timeSinceLastCall = now - typingApiCallRef.current.lastCall;
+    if (timeSinceLastCall < minTimeBetweenCalls && isTypingValue) {
+      // Skip if within throttle window (only for start typing, always send stop)
+      return;
+    }
+
+    typingApiCallRef.current.pending = true;
+    typingApiCallRef.current.lastCall = now;
 
     try {
-      setIsTyping(true);
-      
       const response = await fetch('/api/v1/oasis/oasis/typing', {
         method: 'POST',
         headers: {
@@ -163,72 +188,62 @@ export function useOasisTyping(
           workspaceId,
           channelId,
           dmId,
-          isTyping: true
+          isTyping: isTypingValue
         }),
       });
 
       if (!response.ok) {
         console.error('Failed to send typing indicator');
+      } else {
+        console.log(`✅ [OASIS TYPING] ${isTypingValue ? 'Started' : 'Stopped'} typing indicator`);
       }
     } catch (err) {
-      console.error('❌ [OASIS TYPING] Start typing error:', err);
+      console.error('❌ [OASIS TYPING] Typing API error:', err);
+    } finally {
+      typingApiCallRef.current.pending = false;
     }
-  }, [workspaceId, channelId, dmId, isTyping]);
+  }, [workspaceId, channelId, dmId]);
 
-  // Stop typing indicator
+  // Optimized start typing with debouncing
+  const startTyping = useCallback(async () => {
+    if (isTyping) return;
+    setIsTyping(true);
+    await sendTypingEvent(true);
+  }, [isTyping, sendTypingEvent]);
+
+  // Optimized stop typing (always send immediately)
   const stopTyping = useCallback(async () => {
     if (!isTyping) return;
+    setIsTyping(false);
+    await sendTypingEvent(false);
+  }, [isTyping, sendTypingEvent]);
 
-    try {
-      setIsTyping(false);
-      
-      const response = await fetch('/api/v1/oasis/oasis/typing', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          workspaceId,
-          channelId,
-          dmId,
-          isTyping: false
-        }),
-      });
+  // Debounced typing handler
+  const { handleTyping, handleStopTyping, resetTyping } = useDebouncedTyping({
+    onStartTyping: startTyping,
+    onStopTyping: stopTyping,
+    debounceMs: 300, // 300ms debounce before sending "typing"
+    throttleMs: 2000, // Max 1 event per 2 seconds
+    autoStopMs: 3000 // Auto-stop after 3 seconds
+  });
 
-      if (!response.ok) {
-        console.error('Failed to send stop typing indicator');
-      }
-    } catch (err) {
-      console.error('❌ [OASIS TYPING] Stop typing error:', err);
-    }
-  }, [workspaceId, channelId, dmId, isTyping]);
-
-  // Note: Typing updates are now handled via direct channel subscriptions above
-
-  // Auto-stop typing after 3 seconds of inactivity
+  // Reset typing when conversation changes
   useEffect(() => {
-    if (isTyping) {
-      const timer = setTimeout(() => {
-        stopTyping();
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isTyping, stopTyping]);
+    resetTyping();
+  }, [channelId, dmId, resetTyping]);
 
   // Clean up typing indicator on unmount
   useEffect(() => {
     return () => {
-      if (isTyping) {
-        stopTyping();
-      }
+      resetTyping();
     };
-  }, [isTyping, stopTyping]);
+  }, [resetTyping]);
 
   return {
     typingUsers,
     isTyping,
-    startTyping,
-    stopTyping
+    startTyping: handleTyping, // Use debounced handler
+    stopTyping: handleStopTyping, // Use debounced handler
+    resetTyping
   };
 }

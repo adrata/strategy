@@ -450,38 +450,39 @@ export async function GET(request: NextRequest) {
         mergeCorePersonWithWorkspace(person, person.corePerson || null)
       );
 
+      // 🚀 PERFORMANCE FIX: Fetch all last actions in a single query instead of N+1 queries
+      const personIds = peopleWithCore.map(p => p.id);
+      const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
+      
+      // Get all last actions for all people in one query
+      const allLastActions = await prisma.actions.findMany({
+        where: {
+          personId: { in: personIds },
+          deletedAt: null,
+          status: 'COMPLETED'
+        },
+        orderBy: { completedAt: 'desc' },
+        select: {
+          personId: true,
+          subject: true,
+          completedAt: true,
+          type: true,
+          createdAt: true
+        }
+      });
+
+      // Create a map of personId -> last action (only meaningful actions, most recent first)
+      const lastActionsMap = new Map<string, typeof allLastActions[0]>();
+      for (const action of allLastActions) {
+        if (isMeaningfulAction(action.type) && !lastActionsMap.has(action.personId)) {
+          lastActionsMap.set(action.personId, action);
+        }
+      }
+
       // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
-      const enrichedPeople = await Promise.all(peopleWithCore.map(async (person) => {
+      const enrichedPeople = peopleWithCore.map((person) => {
         try {
-          const lastAction = await prisma.actions.findFirst({
-            where: { 
-              personId: person.id, 
-              deletedAt: null,
-              status: 'COMPLETED'
-            },
-            orderBy: { completedAt: 'desc' },
-            select: { 
-              subject: true, 
-              completedAt: true, 
-              type: true,
-              createdAt: true
-            }
-          });
-          
-          // Import isMeaningfulAction function
-          const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
-          
-          // DEBUG: Log the person data to see what we're working with
-          console.log(`🔍 [V1 PEOPLE API] Processing person ${person.id}:`, {
-            name: person.fullName,
-            lastAction: person.lastAction,
-            lastActionDate: person.lastActionDate,
-            nextAction: person.nextAction,
-            nextActionDate: person.nextActionDate,
-            hasLastActionFromDB: !!lastAction,
-            lastActionType: lastAction?.type,
-            lastActionSubject: lastAction?.subject
-          });
+          const lastAction = lastActionsMap.get(person.id);
           
           // Calculate lastActionTime for leads table display using meaningful actions (copy from speedrun)
           let lastActionTime = 'Never';

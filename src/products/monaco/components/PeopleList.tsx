@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Person } from "../types";
 import CountryFlag from "@/platform/ui/components/monaco/CountryFlag";
 import { IntelligentStageProgression } from "../../speedrun/IntelligentStageProgression";
@@ -22,12 +22,15 @@ export const PeopleList: React.FC<PeopleListProps> = ({
   getRankingDescription,
   getInitials,
 }) => {
+  // 🚀 PERFORMANCE: Memoize sorted people list to avoid re-sorting on every render
+  const sortedPeople = useMemo(() => {
+    return [...people].sort((a, b) => getRankNumber(a) - getRankNumber(b));
+  }, [people, getRankNumber]);
+
   return (
     <div className="space-y-4">
       {/* Sort people by seniority */}
-      {[...people]
-        .sort((a, b) => getRankNumber(a) - getRankNumber(b))
-        .map((person, index) => {
+      {sortedPeople.map((person, index) => {
           const isHighlighted = highlightedRecords.includes(person.id);
           
           // Get contextual activity insight
