@@ -102,9 +102,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (validMessageIds.length === 0) {
+      console.error('❌ [OASIS READ RECEIPT] No valid messages found:', {
+        requestedMessageIds: messageIds,
+        invalidMessageIds,
+        channelId,
+        dmId,
+        workspaceId,
+        userId
+      });
       return NextResponse.json({ 
         error: 'No valid messages found',
-        invalidMessageIds 
+        invalidMessageIds,
+        details: 'The provided message IDs do not exist or do not belong to the specified channel/DM'
       }, { status: 400 });
     }
 

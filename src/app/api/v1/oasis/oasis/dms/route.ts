@@ -112,15 +112,56 @@ export async function GET(request: NextRequest) {
     });
 
     // Deduplicate DMs by participant combination
+    // Prefer DMs with actual messages over DMs with only AI welcome messages
     const uniqueDMs = filteredDMs.filter((dm, index, self) => {
       const otherParticipants = dm.participants.filter(p => p.userId !== userId);
       const participantIds = otherParticipants.map(p => p.userId).sort().join(',');
       
-      return index === self.findIndex(d => {
+      // Find all DMs with the same participants
+      const duplicates = self.filter(d => {
         const dOtherParticipants = d.participants.filter(p => p.userId !== userId);
         const dParticipantIds = dOtherParticipants.map(p => p.userId).sort().join(',');
         return dParticipantIds === participantIds;
       });
+      
+      // If there are duplicates, prefer DMs with user messages over AI welcome messages
+      if (duplicates.length > 1) {
+        // Sort by message priority:
+        // 1. DMs with user messages (not AI welcome messages)
+        // 2. DMs with most recent messages
+        // 3. DMs with any messages
+        // 4. DMs with no messages
+        const sorted = duplicates.sort((a, b) => {
+          const aLastMsg = a.messages[0];
+          const bLastMsg = b.messages[0];
+          
+          // Check if messages are AI welcome messages
+          const aIsAIWelcome = aLastMsg && 
+            aLastMsg.sender?.email === 'ai@adrata.com' && 
+            aLastMsg.content?.includes("I'm Adrata");
+          const bIsAIWelcome = bLastMsg && 
+            bLastMsg.sender?.email === 'ai@adrata.com' && 
+            bLastMsg.content?.includes("I'm Adrata");
+          
+          // Prefer DMs with user messages over AI welcome messages
+          if (!aIsAIWelcome && bIsAIWelcome) return -1;
+          if (aIsAIWelcome && !bIsAIWelcome) return 1;
+          
+          // If one has messages and the other doesn't, prefer the one with messages
+          if (aLastMsg && !bLastMsg) return -1;
+          if (!aLastMsg && bLastMsg) return 1;
+          if (!aLastMsg && !bLastMsg) return 0;
+          
+          // Both have messages, compare dates
+          return new Date(bLastMsg.createdAt).getTime() - new Date(aLastMsg.createdAt).getTime();
+        });
+        
+        // Keep only the first one (best priority)
+        return dm.id === sorted[0].id;
+      }
+      
+      // No duplicates, keep this DM
+      return true;
     });
 
     // Get unread message counts for each DM
@@ -318,38 +359,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if DM already exists with these participants
-    // For self-DM, check for DM with only the current user
-    const existingDmQuery: any = {
-      workspaceId,
-      participants: {
-        every: {
-          userId: { in: uniqueParticipantIds }
+    // Check if DM already exists with these exact participants
+    // We need to find a DM where:
+    // 1. All our participants are in the DM
+    // 2. The DM has no additional participants
+    // 3. The DM is in the same workspace
+    const allExistingDms = await prisma.oasisDirectMessage.findMany({
+      where: {
+        workspaceId,
+        participants: {
+          some: {
+            userId: { in: uniqueParticipantIds }
+          }
         }
-      }
-    };
-
-    if (participantIds.length === 0) {
-      // Self-DM: check for DM with only current user
-      existingDmQuery.participants = {
-        every: {
-          userId: userId
-        }
-      };
-    }
-
-    const existingDm = await prisma.oasisDirectMessage.findFirst({
-      where: existingDmQuery,
+      },
       include: {
         participants: true
       }
     });
 
-    // For self-DM, match if participant count is 1 (just the user)
-    // For regular DM, match if participant count matches
-    const matches = participantIds.length === 0
-      ? existingDm && existingDm.participants.length === 1 && existingDm.participants[0].userId === userId
-      : existingDm && existingDm.participants.length === uniqueParticipantIds.length;
+    // Find exact match by comparing participant sets
+    const existingDm = allExistingDms.find(dm => {
+      const dmParticipantIds = dm.participants.map(p => p.userId).sort();
+      const requestedParticipantIds = [...uniqueParticipantIds].sort();
+      
+      // Check if arrays are equal
+      return dmParticipantIds.length === requestedParticipantIds.length &&
+        dmParticipantIds.every((id, index) => id === requestedParticipantIds[index]);
+    });
+
+    const matches = !!existingDm;
 
     if (matches && existingDm) {
       return NextResponse.json({
