@@ -153,16 +153,32 @@ export class UnifiedEmailSyncService {
       throw new Error(`Active ${provider} connection not found for workspace ${workspaceId}`);
     }
     
-    // Get last sync time to only fetch new emails
-    // Always look back at least 1 hour to ensure we don't miss any emails due to timing issues
-    // This creates a safety window that accounts for clock skew, processing delays, etc.
-    const lastSync = await this.getLastSyncTime(workspaceId, provider);
+    // CRITICAL FIX: Use connection-specific lastSyncAt instead of querying all emails
+    // This ensures each connection tracks its own sync state independently
+    // Without this, multiple connections of the same provider share sync state incorrectly
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    
+    // Use connection.lastSyncAt if available, otherwise fall back to email-based lookup
+    let lastSync: Date;
+    let lastSyncSource: 'connection' | 'emails' | 'default';
+    
+    if (connection.lastSyncAt) {
+      // Use the connection's own last sync time (connection-specific)
+      lastSync = new Date(connection.lastSyncAt);
+      lastSyncSource = 'connection';
+      console.log(`📧 [EMAIL SYNC] Using connection-specific lastSyncAt: ${lastSync.toISOString()} for connection ${nangoConnectionId}`);
+    } else {
+      // Fallback: query emails for this specific connection if possible
+      // For now, use provider-wide query but log that we're doing so
+      const emailBasedLastSync = await this.getLastSyncTime(workspaceId, provider, nangoConnectionId);
+      lastSync = emailBasedLastSync;
+      lastSyncSource = 'emails';
+      console.log(`📧 [EMAIL SYNC] Connection has no lastSyncAt, using email-based lookup: ${lastSync.toISOString()}`);
+    }
     
     // Check if this is a first-time sync or reconnection
-    // If lastSync is 7+ days ago, treat it as a first sync or reconnection
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const isFirstSync = lastSync.getTime() <= sevenDaysAgo.getTime();
     
     // Also check if connection was recently activated (within last 5 minutes) - indicates reconnection
@@ -176,11 +192,12 @@ export class UnifiedEmailSyncService {
     if (isFirstSync || connectionRecentlyActivated) {
       // First sync or reconnection: fetch last 30 days to catch up
       filterDate = thirtyDaysAgo;
-      console.log(`📧 [EMAIL SYNC] ${isFirstSync ? 'First-time' : 'Reconnection'} sync detected, fetching last 30 days of emails`);
+      console.log(`📧 [EMAIL SYNC] ${isFirstSync ? 'First-time' : 'Reconnection'} sync detected for connection ${nangoConnectionId}, fetching last 30 days of emails`);
     } else {
       // Subsequent sync: use last sync time minus 1 hour for safety window
       const lastSyncMinusOneHour = new Date(lastSync.getTime() - 60 * 60 * 1000);
       filterDate = lastSyncMinusOneHour < oneHourAgo ? lastSyncMinusOneHour : oneHourAgo;
+      console.log(`📧 [EMAIL SYNC] Incremental sync for connection ${nangoConnectionId}, using 1-hour window from last sync`);
     }
     
     // Don't go back more than 30 days (reasonable limit for performance)
@@ -189,7 +206,8 @@ export class UnifiedEmailSyncService {
     // Format date for Microsoft Graph API (ISO 8601 format)
     const filterDateISO = finalFilterDate.toISOString();
     
-    console.log(`📧 [EMAIL SYNC] Fetching emails since: ${filterDateISO} (last sync: ${lastSync.toISOString()}, ${isFirstSync || connectionRecentlyActivated ? '30-day window' : '1-hour window'})`);
+    console.log(`📧 [EMAIL SYNC] Connection ${nangoConnectionId} (${provider}): Fetching emails since ${filterDateISO}`);
+    console.log(`📧 [EMAIL SYNC] Last sync source: ${lastSyncSource}, Last sync time: ${lastSync.toISOString()}, Window: ${isFirstSync || connectionRecentlyActivated ? '30-day' : '1-hour'}`);
     
     // Initialize Nango client
     const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
@@ -204,15 +222,28 @@ export class UnifiedEmailSyncService {
     
     // Fetch emails from multiple folders (inbox for received, sentitems for sent)
     // OData filters require dates to be in single quotes
+    // IMPORTANT: Inbox always uses receivedDateTime, sent folder uses sentDateTime
     const foldersToSync = provider === 'outlook' 
       ? [
           { folder: 'inbox', filter: `receivedDateTime ge '${filterDateISO}'`, orderby: 'receivedDateTime desc' },
           { folder: 'sentitems', filter: `sentDateTime ge '${filterDateISO}'`, orderby: 'sentDateTime desc' }
         ]
       : [
-          { folder: 'inbox', q: `after:${Math.floor(filterDate.getTime() / 1000)}` },
-          { folder: 'sent', q: `after:${Math.floor(filterDate.getTime() / 1000)}` }
+          { folder: 'inbox', q: `after:${Math.floor(finalFilterDate.getTime() / 1000)}` },
+          { folder: 'sent', q: `after:${Math.floor(finalFilterDate.getTime() / 1000)}` }
         ];
+    
+    // Log the exact date filters being used
+    console.log(`📧 [EMAIL SYNC] Date filter configuration:`);
+    console.log(`   - Filter date: ${filterDateISO}`);
+    console.log(`   - Filter date (Unix timestamp for Gmail): ${Math.floor(finalFilterDate.getTime() / 1000)}`);
+    foldersToSync.forEach(folder => {
+      if (provider === 'outlook') {
+        console.log(`   - ${folder.folder}: ${folder.filter}`);
+      } else {
+        console.log(`   - ${folder.folder}: ${folder.q}`);
+      }
+    });
     
     let allEmails: any[] = [];
     
@@ -222,6 +253,10 @@ export class UnifiedEmailSyncService {
         let nextLink: string | null = null;
         let pageCount = 0;
         const maxPages = 50; // Safety limit: max 50 pages (5000 emails per folder)
+        let folderEmailCount = 0; // Track emails per folder
+        let consecutiveEmptyPages = 0; // Track consecutive empty pages for better pagination logic
+        
+        console.log(`📧 [EMAIL SYNC] Starting pagination for ${folderConfig.folder} folder (provider: ${provider})`);
         
         do {
           let endpoint: string;
@@ -259,6 +294,9 @@ export class UnifiedEmailSyncService {
               endpoint += `?${queryParams.toString()}`;
             }
             console.log(`📧 [EMAIL SYNC] Outlook endpoint (page ${pageCount + 1}): ${endpoint}`);
+            if (pageCount === 0) {
+              console.log(`📧 [EMAIL SYNC] Date filter: ${folderConfig.filter || 'none'}`);
+            }
           } else {
             // Gmail pagination - messages.list returns message IDs, we'll need to fetch full details
             // Note: messages.list doesn't support format parameter (that's for messages.get)
@@ -294,6 +332,9 @@ export class UnifiedEmailSyncService {
             }
             endpoint += `?${queryParams.toString()}`;
             console.log(`📧 [EMAIL SYNC] Gmail endpoint (page ${pageCount + 1}): ${endpoint}`);
+            if (pageCount === 0) {
+              console.log(`📧 [EMAIL SYNC] Gmail query: ${queryParams.get('q') || 'none'}`);
+            }
           }
           
           const result = await retryWithBackoff(
@@ -415,8 +456,17 @@ export class UnifiedEmailSyncService {
               }
             }
             
+            // Log page results
+            console.log(`📧 [EMAIL SYNC] Page ${pageCount + 1} of ${folderConfig.folder}: Found ${emails.length} emails`);
+            
             if (emails.length > 0) {
               allEmails = allEmails.concat(emails);
+              folderEmailCount += emails.length;
+              consecutiveEmptyPages = 0; // Reset empty page counter
+              console.log(`📧 [EMAIL SYNC] Page ${pageCount + 1} summary: ${emails.length} emails added, ${folderEmailCount} total in ${folderConfig.folder} folder`);
+            } else {
+              consecutiveEmptyPages++;
+              console.log(`📧 [EMAIL SYNC] Page ${pageCount + 1} returned 0 emails (consecutive empty pages: ${consecutiveEmptyPages})`);
             }
             
             // Get next page link
@@ -425,6 +475,8 @@ export class UnifiedEmailSyncService {
               nextLink = result.data['@odata.nextLink'] || null;
               if (nextLink) {
                 console.log(`📧 [EMAIL SYNC] Outlook has next page: ${nextLink.substring(0, 100)}...`);
+              } else {
+                console.log(`📧 [EMAIL SYNC] Outlook pagination complete: No @odata.nextLink found`);
               }
             } else {
               // Gmail uses nextPageToken
@@ -435,6 +487,7 @@ export class UnifiedEmailSyncService {
                 console.log(`📧 [EMAIL SYNC] Gmail has next page token`);
               } else {
                 nextLink = null;
+                console.log(`📧 [EMAIL SYNC] Gmail pagination complete: No nextPageToken found`);
               }
             }
             
@@ -443,19 +496,34 @@ export class UnifiedEmailSyncService {
             // Safety check: don't fetch more than maxPages
             if (pageCount >= maxPages) {
               console.log(`⚠️ [EMAIL SYNC] Reached max pages (${maxPages}) for ${folderConfig.folder}, stopping pagination`);
+              console.log(`📧 [EMAIL SYNC] Pagination stopped reason: Max pages limit reached`);
               nextLink = null;
             }
             
-            // If no more emails, stop
+            // Improved pagination continuation logic: Don't stop on first empty page if we haven't fetched many emails
+            // Continue until we get 2-3 consecutive empty pages or hit max pages
             if (emails.length === 0) {
-              nextLink = null;
+              // Only stop if we've had multiple consecutive empty pages OR if we've already fetched a reasonable amount
+              if (consecutiveEmptyPages >= 2) {
+                console.log(`📧 [EMAIL SYNC] Pagination stopped reason: ${consecutiveEmptyPages} consecutive empty pages`);
+                nextLink = null;
+              } else if (folderEmailCount >= 100) {
+                // If we've fetched 100+ emails and get an empty page, it's likely the end
+                console.log(`📧 [EMAIL SYNC] Pagination stopped reason: Empty page after fetching ${folderEmailCount} emails`);
+                nextLink = null;
+              } else {
+                // Continue to next page even if this one was empty (might be sparse results)
+                console.log(`📧 [EMAIL SYNC] Continuing pagination despite empty page (only ${folderEmailCount} emails fetched so far, ${consecutiveEmptyPages} empty pages)`);
+              }
             }
           } else {
+            console.log(`❌ [EMAIL SYNC] Page ${pageCount + 1} fetch failed or returned no data`);
             nextLink = null;
           }
         } while (nextLink);
         
-        console.log(`✅ [EMAIL SYNC] Completed fetching from ${folderConfig.folder}: ${allEmails.length} total emails so far`);
+        console.log(`✅ [EMAIL SYNC] Completed fetching from ${folderConfig.folder}: ${folderEmailCount} emails from this folder, ${allEmails.length} total emails so far`);
+        console.log(`📧 [EMAIL SYNC] Pagination summary for ${folderConfig.folder}: ${pageCount} pages fetched, ${folderEmailCount} emails found`);
       } catch (error) {
         console.error(`❌ [EMAIL SYNC] Failed to fetch from ${folderConfig.folder}:`, error);
         // Continue with other folders even if one fails
@@ -464,10 +532,19 @@ export class UnifiedEmailSyncService {
     
     console.log(`📧 [EMAIL SYNC] Total emails fetched: ${allEmails.length} (from ${foldersToSync.length} folders)`);
     
+    // Get previous email count BEFORE storing (for comparison)
+    const previousEmailCount = await prisma.email_messages.count({
+      where: {
+        workspaceId,
+        provider
+      }
+    });
+    
     // Store all emails
     let count = 0;
     let errorCount = 0;
     console.log(`📧 [EMAIL SYNC] Starting to store ${allEmails.length} emails...`);
+    console.log(`📧 [EMAIL SYNC] Previous email count in database: ${previousEmailCount}`);
     
     for (const email of allEmails) {
       try {
@@ -497,16 +574,46 @@ export class UnifiedEmailSyncService {
       }
     }
     
+    // Step 5: Add Sync Verification Summary
     console.log(`✅ [EMAIL SYNC] Successfully stored ${count} emails, ${errorCount} failed out of ${allEmails.length} total`);
+    
+    // Get current email count after storing
+    const currentEmailCount = await prisma.email_messages.count({
+      where: {
+        workspaceId,
+        provider
+      }
+    });
+    
+    // Calculate new emails added (current - previous)
+    const newEmailsAdded = currentEmailCount - previousEmailCount;
+    
+    // Comprehensive sync summary
+    console.log(`📊 [EMAIL SYNC] Sync Verification Summary:`);
+    console.log(`   - Provider: ${provider}`);
+    console.log(`   - Total emails fetched from API: ${allEmails.length}`);
+    console.log(`   - Emails stored successfully: ${count}`);
+    console.log(`   - Emails failed to store: ${errorCount}`);
+    console.log(`   - Previous total emails in database: ${previousEmailCount}`);
+    console.log(`   - New emails added this sync: ${newEmailsAdded}`);
+    console.log(`   - Success rate: ${allEmails.length > 0 ? Math.round((count / allEmails.length) * 100) : 0}%`);
     
     if (errorCount > 0) {
       console.warn(`⚠️ [EMAIL SYNC] ${errorCount} emails failed to store out of ${allEmails.length} total`);
+      console.warn(`⚠️ [EMAIL SYNC] This may indicate data validation issues or API response format problems`);
     }
     
-    // Update last sync time
-    await this.updateLastSyncTime(workspaceId, provider);
+    if (allEmails.length === 0) {
+      console.warn(`⚠️ [EMAIL SYNC] No emails were fetched from the API. This could indicate:`);
+      console.warn(`   - Date filter is too restrictive`);
+      console.warn(`   - No emails exist in the specified date range`);
+      console.warn(`   - API connection or authentication issues`);
+    }
     
-    return { success: true, count };
+    // Update last sync time - CRITICAL: Update the connection record, not just rely on email timestamps
+    await this.updateLastSyncTime(workspaceId, provider, nangoConnectionId, count > 0);
+    
+    return { success: true, count, fetched: allEmails.length, failed: errorCount };
   }
   
   /**
@@ -975,8 +1082,23 @@ export class UnifiedEmailSyncService {
    * Get last sync time for a provider
    * Returns the most recent email's receivedAt or sentAt time, or 7 days ago if no emails exist
    * This handles both incoming (receivedAt) and outgoing (sentAt) emails
+   * 
+   * NOTE: This is a fallback method. The primary method should use connection.lastSyncAt
+   * This method queries all emails for a provider, which can cause issues with multiple connections
+   * 
+   * @param workspaceId - Workspace ID
+   * @param provider - Provider name ('outlook' or 'gmail')
+   * @param nangoConnectionId - Optional connection ID for connection-specific lookup (future enhancement)
    */
-  private static async getLastSyncTime(workspaceId: string, provider: string): Promise<Date> {
+  private static async getLastSyncTime(
+    workspaceId: string, 
+    provider: string, 
+    nangoConnectionId?: string
+  ): Promise<Date> {
+    // TODO: Future enhancement - query emails filtered by connection metadata
+    // For now, this queries all emails for the provider (fallback only)
+    // The main sync logic should use connection.lastSyncAt instead
+    
     // Get the most recent email by either receivedAt or sentAt
     const lastReceivedEmail = await prisma.email_messages.findFirst({
       where: {
@@ -1011,7 +1133,10 @@ export class UnifiedEmailSyncService {
     
     if (mostRecentTime) {
       // Return the exact time - the sync function will create a 1-hour safety window
-      console.log(`📧 [EMAIL SYNC] Most recent email at: ${mostRecentTime.toISOString()}`);
+      console.log(`📧 [EMAIL SYNC] Most recent email at: ${mostRecentTime.toISOString()} (provider-wide query, not connection-specific)`);
+      if (nangoConnectionId) {
+        console.warn(`⚠️ [EMAIL SYNC] Using provider-wide email query for connection ${nangoConnectionId}. Connection should have lastSyncAt set.`);
+      }
       return mostRecentTime;
     }
     
@@ -1022,11 +1147,47 @@ export class UnifiedEmailSyncService {
   }
   
   /**
-   * Update last sync time (handled by storing emails)
+   * Update last sync time for a connection
+   * CRITICAL: This updates the connection record's lastSyncAt field
+   * This ensures each connection tracks its own sync state independently
+   * 
+   * @param workspaceId - Workspace ID
+   * @param provider - Provider name
+   * @param nangoConnectionId - Connection ID to update
+   * @param syncSuccessful - Whether the sync was successful (only update if true)
    */
-  private static async updateLastSyncTime(workspaceId: string, provider: string) {
-    // This is handled by the email storage itself
-    // Could add a separate sync tracking table if needed
+  private static async updateLastSyncTime(
+    workspaceId: string, 
+    provider: string, 
+    nangoConnectionId: string,
+    syncSuccessful: boolean = true
+  ) {
+    if (!syncSuccessful) {
+      console.log(`📧 [EMAIL SYNC] Sync was not successful, not updating lastSyncAt for connection ${nangoConnectionId}`);
+      return;
+    }
+    
+    try {
+      // Update the connection record's lastSyncAt field
+      // This is the source of truth for when this specific connection last synced
+      await prisma.grand_central_connections.updateMany({
+        where: {
+          workspaceId,
+          provider,
+          nangoConnectionId,
+          status: 'active'
+        },
+        data: {
+          lastSyncAt: new Date(),
+          updatedAt: new Date()
+        }
+      });
+      
+      console.log(`✅ [EMAIL SYNC] Updated lastSyncAt for connection ${nangoConnectionId} (${provider})`);
+    } catch (error) {
+      console.error(`❌ [EMAIL SYNC] Failed to update lastSyncAt for connection ${nangoConnectionId}:`, error);
+      // Don't throw - this is not critical enough to fail the sync
+    }
   }
   
   /**
