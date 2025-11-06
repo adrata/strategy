@@ -635,6 +635,172 @@ class SmartBuyerGroupPipeline {
   }
 
   /**
+   * Calculate churn prediction based on average time in role
+   * @param {Array} experience - Array of experience records from Coresignal
+   * @param {number} currentMonthsInRole - Current months in role
+   * @returns {object} Churn prediction data
+   */
+  calculateChurnPrediction(experience = [], currentMonthsInRole = 0) {
+    if (!Array.isArray(experience) || experience.length === 0) {
+      return {
+        averageTimeInRoleMonths: null,
+        predictedDepartureMonths: null,
+        churnRiskScore: 50, // Medium risk if no data
+        churnRiskLevel: 'medium',
+        predictedDepartureDate: null,
+        reasoning: 'Insufficient experience data for churn prediction'
+      };
+    }
+
+    // Calculate average time in each role (excluding current role)
+    const completedRoles = experience.filter(exp => 
+      exp.active_experience === 0 && exp.duration_months && exp.duration_months > 0
+    );
+
+    if (completedRoles.length === 0) {
+      // If no completed roles, use industry averages or default
+      const defaultAverageMonths = 24; // 2 years default
+      const monthsUntilDeparture = Math.max(0, defaultAverageMonths - currentMonthsInRole);
+      const churnRiskScore = currentMonthsInRole >= defaultAverageMonths ? 70 : 30;
+      
+      return {
+        averageTimeInRoleMonths: defaultAverageMonths,
+        predictedDepartureMonths: monthsUntilDeparture,
+        churnRiskScore: churnRiskScore,
+        churnRiskLevel: churnRiskScore >= 60 ? 'high' : churnRiskScore >= 40 ? 'medium' : 'low',
+        predictedDepartureDate: monthsUntilDeparture > 0 
+          ? new Date(Date.now() + monthsUntilDeparture * 30 * 24 * 60 * 60 * 1000).toISOString()
+          : null,
+        reasoning: `No completed roles found, using industry default (${defaultAverageMonths} months). Current: ${currentMonthsInRole} months.`
+      };
+    }
+
+    // Calculate average time in role from completed positions
+    const totalMonths = completedRoles.reduce((sum, exp) => sum + (exp.duration_months || 0), 0);
+    const averageTimeInRoleMonths = Math.round(totalMonths / completedRoles.length);
+
+    // Predict departure: average time - current time = months until likely departure
+    const predictedDepartureMonths = Math.max(0, averageTimeInRoleMonths - currentMonthsInRole);
+
+    // Calculate churn risk score (0-100)
+    // Higher score = higher risk of leaving soon
+    let churnRiskScore = 50; // Base score
+    
+    if (currentMonthsInRole >= averageTimeInRoleMonths) {
+      // Already past average - high risk
+      churnRiskScore = 70 + Math.min(20, (currentMonthsInRole - averageTimeInRoleMonths) / 2);
+    } else if (currentMonthsInRole >= averageTimeInRoleMonths * 0.8) {
+      // Approaching average - medium-high risk
+      churnRiskScore = 55 + ((currentMonthsInRole / averageTimeInRoleMonths) * 15);
+    } else {
+      // Well below average - low risk
+      churnRiskScore = 30 + ((currentMonthsInRole / averageTimeInRoleMonths) * 20);
+    }
+
+    // Adjust for number of roles (more roles = higher churn tendency)
+    if (completedRoles.length >= 5) {
+      churnRiskScore += 10; // Job hopper
+    } else if (completedRoles.length >= 3) {
+      churnRiskScore += 5;
+    }
+
+    // Cap at 0-100
+    churnRiskScore = Math.max(0, Math.min(100, Math.round(churnRiskScore)));
+
+    // Determine risk level
+    let churnRiskLevel = 'low';
+    if (churnRiskScore >= 60) churnRiskLevel = 'high';
+    else if (churnRiskScore >= 40) churnRiskLevel = 'medium';
+
+    // Calculate predicted departure date
+    const predictedDepartureDate = predictedDepartureMonths > 0
+      ? new Date(Date.now() + predictedDepartureMonths * 30 * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+
+    // Determine refresh priority and schedule based on risk level
+    // Red (High Risk): Daily refresh - people likely to leave soon
+    // Orange (Medium): Weekly refresh
+    // Green (Low Risk): Monthly refresh - standard Coresignal refresh rate
+    const refreshSchedule = this.calculateRefreshSchedule(churnRiskScore, churnRiskLevel, predictedDepartureMonths);
+
+    return {
+      averageTimeInRoleMonths: averageTimeInRoleMonths,
+      predictedDepartureMonths: predictedDepartureMonths,
+      churnRiskScore: churnRiskScore,
+      churnRiskLevel: churnRiskLevel,
+      predictedDepartureDate: predictedDepartureDate,
+      reasoning: `Average time in role: ${averageTimeInRoleMonths} months. Current: ${currentMonthsInRole} months. Predicted departure in ${predictedDepartureMonths} months.`,
+      completedRolesCount: completedRoles.length,
+      // Refresh scheduling
+      refreshPriority: refreshSchedule.priority,
+      refreshColor: refreshSchedule.color,
+      refreshFrequency: refreshSchedule.frequency,
+      nextRefreshDate: refreshSchedule.nextRefreshDate,
+      lastRefreshDate: new Date().toISOString() // Set to now on initial calculation
+    };
+  }
+
+  /**
+   * Calculate refresh schedule based on churn risk
+   * @param {number} churnRiskScore - Churn risk score (0-100)
+   * @param {string} churnRiskLevel - Risk level (low/medium/high)
+   * @param {number} predictedDepartureMonths - Months until predicted departure
+   * @returns {object} Refresh schedule configuration
+   */
+  calculateRefreshSchedule(churnRiskScore, churnRiskLevel, predictedDepartureMonths) {
+    const now = new Date();
+    
+    // Red (High Risk): Daily refresh
+    // - Risk score >= 60
+    // - OR predicted departure within 3 months
+    if (churnRiskScore >= 60 || (predictedDepartureMonths !== null && predictedDepartureMonths <= 3)) {
+      const nextRefresh = new Date(now);
+      nextRefresh.setDate(nextRefresh.getDate() + 1); // Tomorrow
+      
+      return {
+        priority: 'high',
+        color: 'red',
+        frequency: 'daily',
+        frequencyDays: 1,
+        nextRefreshDate: nextRefresh.toISOString(),
+        reasoning: 'High churn risk - refresh daily to catch departures early'
+      };
+    }
+    
+    // Orange (Medium Risk): Weekly refresh
+    // - Risk score 40-59
+    // - OR predicted departure within 6 months
+    if (churnRiskScore >= 40 || (predictedDepartureMonths !== null && predictedDepartureMonths <= 6)) {
+      const nextRefresh = new Date(now);
+      nextRefresh.setDate(nextRefresh.getDate() + 7); // 1 week
+      
+      return {
+        priority: 'medium',
+        color: 'orange',
+        frequency: 'weekly',
+        frequencyDays: 7,
+        nextRefreshDate: nextRefresh.toISOString(),
+        reasoning: 'Medium churn risk - refresh weekly to monitor changes'
+      };
+    }
+    
+    // Green (Low Risk): Monthly refresh (standard Coresignal rate)
+    // - Risk score < 40
+    // - Predicted departure > 6 months away
+    const nextRefresh = new Date(now);
+    nextRefresh.setMonth(nextRefresh.getMonth() + 1); // 1 month
+    
+    return {
+      priority: 'low',
+      color: 'green',
+      frequency: 'monthly',
+      frequencyDays: 30,
+      nextRefreshDate: nextRefresh.toISOString(),
+      reasoning: 'Low churn risk - monthly refresh aligns with Coresignal update cycle'
+    };
+  }
+
+  /**
    * Extract email from Coresignal data
    * @param {object} fullProfile - Full Coresignal profile data
    * @returns {string|null} Best email found (only real emails, not @coresignal.temp)
@@ -1297,6 +1463,11 @@ class SmartBuyerGroupPipeline {
         const totalExperienceMonths = coresignalData.total_experience_duration_months || 0;
         const yearsExperience = Math.floor(totalExperienceMonths / 12);
         const yearsAtCompany = currentExperience.duration_months ? Math.floor(currentExperience.duration_months / 12) : 0;
+        const monthsAtCompany = currentExperience.duration_months || 0;
+        const monthsInCurrentRole = currentExperience.duration_months || 0;
+        
+        // Calculate churn prediction: average time in role vs current time
+        const churnPrediction = this.calculateChurnPrediction(experience, monthsInCurrentRole);
         
         // Determine influence level based on scores and role
         const influenceScore = member.scores?.influence || 0;
@@ -1329,10 +1500,16 @@ class SmartBuyerGroupPipeline {
           challenges: this.generateChallenges(member.title, member.department, intelligence.industry),
           opportunities: this.generateOpportunities(member.title, member.department, intelligence.industry),
           intelligenceSummary: this.generateIntelligenceSummary(member, intelligence),
+          churnPrediction: churnPrediction,
           lastUpdated: new Date().toISOString()
         };
 
         if (existingPerson) {
+          // Preserve existing customFields
+          const existingCustomFields = existingPerson.customFields && typeof existingPerson.customFields === 'object' 
+            ? existingPerson.customFields 
+            : {};
+          
           // Update existing person with comprehensive intelligence data
           await this.prisma.people.update({
             where: { id: existingPerson.id },
@@ -1367,9 +1544,45 @@ class SmartBuyerGroupPipeline {
               totalExperienceMonths: totalExperienceMonths,
               yearsExperience: yearsExperience,
               yearsAtCompany: yearsAtCompany,
+              yearsInRole: Math.floor(monthsInCurrentRole / 12),
               currentCompany: currentExperience.company_name,
               currentRole: member.title,
               industryExperience: currentExperience.company_industry,
+              // Churn prediction and refresh scheduling (stored in customFields for easy querying)
+              customFields: {
+                ...existingCustomFields,
+                churnPrediction: {
+                  averageTimeInRoleMonths: churnPrediction.averageTimeInRoleMonths,
+                  predictedDepartureMonths: churnPrediction.predictedDepartureMonths,
+                  churnRiskScore: churnPrediction.churnRiskScore,
+                  churnRiskLevel: churnPrediction.churnRiskLevel,
+                  predictedDepartureDate: churnPrediction.predictedDepartureDate,
+                  reasoning: churnPrediction.reasoning,
+                  completedRolesCount: churnPrediction.completedRolesCount,
+                  // Refresh scheduling
+                  refreshPriority: churnPrediction.refreshPriority,
+                  refreshColor: churnPrediction.refreshColor,
+                  refreshFrequency: churnPrediction.refreshFrequency,
+                  refreshFrequencyDays: churnPrediction.refreshFrequencyDays,
+                  nextRefreshDate: churnPrediction.nextRefreshDate,
+                  lastRefreshDate: churnPrediction.lastRefreshDate
+                }
+              },
+              // Direct fields for easy querying and filtering
+              dataLastVerified: new Date(), // Set to now when data is fresh
+              // Store refresh info in aiIntelligence for quick access (merge with existing)
+              aiIntelligence: {
+                ...(existingPerson?.aiIntelligence && typeof existingPerson.aiIntelligence === 'object' ? existingPerson.aiIntelligence : {}),
+                ...aiIntelligence,
+                refreshStatus: {
+                  priority: churnPrediction.refreshPriority,
+                  color: churnPrediction.refreshColor,
+                  frequency: churnPrediction.refreshFrequency,
+                  nextRefreshDate: churnPrediction.nextRefreshDate,
+                  lastRefreshDate: churnPrediction.lastRefreshDate
+                }
+              },
+              aiLastUpdated: new Date(),
               // LinkedIn data
               linkedinConnections: coresignalData.connections_count,
               linkedinFollowers: coresignalData.followers_count,
@@ -1431,9 +1644,42 @@ class SmartBuyerGroupPipeline {
               totalExperienceMonths: totalExperienceMonths,
               yearsExperience: yearsExperience,
               yearsAtCompany: yearsAtCompany,
+              yearsInRole: Math.floor(monthsInCurrentRole / 12),
               currentCompany: currentExperience.company_name,
               currentRole: member.title,
               industryExperience: currentExperience.company_industry,
+              // Churn prediction and refresh scheduling (stored in customFields for easy querying)
+              customFields: {
+                churnPrediction: {
+                  averageTimeInRoleMonths: churnPrediction.averageTimeInRoleMonths,
+                  predictedDepartureMonths: churnPrediction.predictedDepartureMonths,
+                  churnRiskScore: churnPrediction.churnRiskScore,
+                  churnRiskLevel: churnPrediction.churnRiskLevel,
+                  predictedDepartureDate: churnPrediction.predictedDepartureDate,
+                  reasoning: churnPrediction.reasoning,
+                  completedRolesCount: churnPrediction.completedRolesCount,
+                  // Refresh scheduling
+                  refreshPriority: churnPrediction.refreshPriority,
+                  refreshColor: churnPrediction.refreshColor,
+                  refreshFrequency: churnPrediction.refreshFrequency,
+                  refreshFrequencyDays: churnPrediction.refreshFrequencyDays,
+                  nextRefreshDate: churnPrediction.nextRefreshDate,
+                  lastRefreshDate: churnPrediction.lastRefreshDate
+                }
+              },
+              // Direct fields for easy querying
+              dataLastVerified: new Date(), // Set to now when data is fresh
+              // Store refresh info in aiIntelligence for quick access
+              aiIntelligence: {
+                ...aiIntelligence,
+                refreshStatus: {
+                  priority: churnPrediction.refreshPriority,
+                  color: churnPrediction.refreshColor,
+                  frequency: churnPrediction.refreshFrequency,
+                  nextRefreshDate: churnPrediction.nextRefreshDate,
+                  lastRefreshDate: churnPrediction.lastRefreshDate
+                }
+              },
               // LinkedIn data
               linkedinConnections: coresignalData.connections_count,
               linkedinFollowers: coresignalData.followers_count,

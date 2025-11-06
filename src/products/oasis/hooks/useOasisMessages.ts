@@ -90,8 +90,8 @@ export function useOasisMessages(
     const workspaceChannelName = `workspace-${workspaceId}`;
     console.log(`📡 [OASIS MESSAGES] Subscribing to workspace channel for oasis-message: ${workspaceChannelName}`);
 
-    // Subscribe to workspace channel for oasis-message events
-    pusherClientService.subscribeToChannel(
+    // Subscribe to workspace channel for oasis-message events with cleanup
+    const unsubscribeWorkspace = pusherClientService.subscribeToChannel(
       workspaceChannelName,
       'oasis-message',
       (event: any) => {
@@ -148,6 +148,7 @@ export function useOasisMessages(
     // Cleanup
     return () => {
       console.log(`📡 [OASIS MESSAGES] Unsubscribing from workspace channel: ${workspaceChannelName}`);
+      if (unsubscribeWorkspace) unsubscribeWorkspace();
     };
   }, [workspaceId, channelId, dmId]);
 
@@ -158,8 +159,8 @@ export function useOasisMessages(
     const dmChannelName = `oasis-dm-${dmId}`;
     console.log(`📡 [OASIS MESSAGES] Subscribing to DM channel: ${dmChannelName}`);
 
-    // Subscribe to DM-specific channel
-    pusherClientService.subscribeToChannel(
+    // Subscribe to DM-specific channel with cleanup
+    const unsubscribeDM = pusherClientService.subscribeToChannel(
       dmChannelName,
       'oasis-message',
       (event: any) => {
@@ -214,8 +215,7 @@ export function useOasisMessages(
     // Cleanup: unsubscribe when DM changes or component unmounts
     return () => {
       console.log(`📡 [OASIS MESSAGES] Unsubscribing from DM channel: ${dmChannelName}`);
-      // Note: pusherClientService doesn't have an unsubscribe method, but channels are managed internally
-      // The channel will be cleaned up when the component unmounts
+      if (unsubscribeDM) unsubscribeDM();
     };
   }, [dmId, workspaceId]);
 
@@ -226,8 +226,8 @@ export function useOasisMessages(
     const channelChannelName = `oasis-channel-${channelId}`;
     console.log(`📡 [OASIS MESSAGES] Subscribing to channel: ${channelChannelName}`);
 
-    // Subscribe to channel-specific channel
-    pusherClientService.subscribeToChannel(
+    // Subscribe to channel-specific channel with cleanup
+    const unsubscribeChannel = pusherClientService.subscribeToChannel(
       channelChannelName,
       'oasis-message',
       (event: any) => {
@@ -282,6 +282,7 @@ export function useOasisMessages(
     // Cleanup: unsubscribe when channel changes or component unmounts
     return () => {
       console.log(`📡 [OASIS MESSAGES] Unsubscribing from channel: ${channelChannelName}`);
+      if (unsubscribeChannel) unsubscribeChannel();
     };
   }, [channelId, workspaceId]);
 
@@ -711,7 +712,7 @@ export function useOasisMessages(
   };
 
   // Mark messages as read
-  const markAsRead = async (messageIds: string[]) => {
+  const markAsRead = useCallback(async (messageIds: string[]) => {
     if (!messageIds || messageIds.length === 0) {
       return; // No messages to mark as read
     }
@@ -750,7 +751,7 @@ export function useOasisMessages(
       // Don't throw - just log the error so it doesn't break the UI
       console.error('❌ [OASIS MESSAGES] Mark as read error:', error);
     }
-  };
+  }, [workspaceId, channelId, dmId]);
 
   // Mark messages as read when they are displayed
   useEffect(() => {
@@ -780,7 +781,205 @@ export function useOasisMessages(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceId, channelId, dmId]);
 
-  // Listen for real-time updates
+  // Subscribe to workspace channel for 'oasis-event' events (reactions, read receipts)
+  useEffect(() => {
+    if (!workspaceId) return;
+
+    const workspaceChannelName = `workspace-${workspaceId}`;
+    console.log(`📡 [OASIS MESSAGES] Subscribing to workspace channel for oasis-event (reactions): ${workspaceChannelName}`);
+
+    const unsubscribeWorkspaceEvents = pusherClientService.subscribeToChannel(
+      workspaceChannelName,
+      'oasis-event',
+      (event: any) => {
+        console.log(`📨 [OASIS MESSAGES] Received event on workspace channel ${workspaceChannelName}:`, event);
+        
+        // Check if this event is relevant to current channel/DM
+        const eventChannelId = event.channelId || event.payload?.channelId;
+        const eventDmId = event.dmId || event.payload?.dmId;
+        const isRelevant = (channelId && eventChannelId === channelId) || (dmId && eventDmId === dmId);
+        if (!isRelevant) return;
+
+        if (event.type === 'oasis_reaction_added') {
+          // Add reaction - use payload structure
+          const reactionData = event.payload;
+          setMessages(prev => 
+            prev.map(msg => {
+              if (msg.id === reactionData.messageId) {
+                // Check if reaction already exists (avoid duplicates)
+                const existingReaction = msg.reactions.find(
+                  r => r.emoji === reactionData.emoji && r.userId === reactionData.userId
+                );
+                if (existingReaction) return msg;
+                
+                return {
+                  ...msg,
+                  reactions: [...msg.reactions, {
+                    id: reactionData.id,
+                    emoji: reactionData.emoji,
+                    userId: reactionData.userId,
+                    userName: reactionData.userName,
+                    createdAt: reactionData.createdAt
+                  }]
+                };
+              }
+              return msg;
+            })
+          );
+        } else if (event.type === 'oasis_reaction_removed') {
+          // Remove reaction
+          const reactionData = event.payload;
+          setMessages(prev => 
+            prev.map(msg => 
+              msg.id === reactionData.messageId 
+                ? { 
+                    ...msg, 
+                    reactions: msg.reactions.filter(
+                      r => !(r.emoji === reactionData.emoji && r.userId === reactionData.userId)
+                    )
+                  }
+                : msg
+            )
+          );
+        }
+      }
+    );
+
+    return () => {
+      console.log(`📡 [OASIS MESSAGES] Unsubscribing from workspace events channel: ${workspaceChannelName}`);
+      if (unsubscribeWorkspaceEvents) unsubscribeWorkspaceEvents();
+    };
+  }, [workspaceId, channelId, dmId]);
+
+  // Subscribe to DM-specific channel for 'oasis-event' events (reactions)
+  useEffect(() => {
+    if (!dmId || !workspaceId) return;
+
+    const dmChannelName = `oasis-dm-${dmId}`;
+    console.log(`📡 [OASIS MESSAGES] Subscribing to DM channel for oasis-event (reactions): ${dmChannelName}`);
+
+    const unsubscribeDMEvents = pusherClientService.subscribeToChannel(
+      dmChannelName,
+      'oasis-event',
+      (event: any) => {
+        console.log(`📨 [OASIS MESSAGES] Received event on DM channel ${dmChannelName}:`, event);
+        
+        const eventDmId = event.dmId || event.payload?.dmId;
+        if (eventDmId === dmId) {
+          if (event.type === 'oasis_reaction_added') {
+            const reactionData = event.payload;
+            setMessages(prev => 
+              prev.map(msg => {
+                if (msg.id === reactionData.messageId) {
+                  const existingReaction = msg.reactions.find(
+                    r => r.emoji === reactionData.emoji && r.userId === reactionData.userId
+                  );
+                  if (existingReaction) return msg;
+                  
+                  return {
+                    ...msg,
+                    reactions: [...msg.reactions, {
+                      id: reactionData.id,
+                      emoji: reactionData.emoji,
+                      userId: reactionData.userId,
+                      userName: reactionData.userName,
+                      createdAt: reactionData.createdAt
+                    }]
+                  };
+                }
+                return msg;
+              })
+            );
+          } else if (event.type === 'oasis_reaction_removed') {
+            const reactionData = event.payload;
+            setMessages(prev => 
+              prev.map(msg => 
+                msg.id === reactionData.messageId 
+                  ? { 
+                      ...msg, 
+                      reactions: msg.reactions.filter(
+                        r => !(r.emoji === reactionData.emoji && r.userId === reactionData.userId)
+                      )
+                    }
+                  : msg
+              )
+            );
+          }
+        }
+      }
+    );
+
+    return () => {
+      console.log(`📡 [OASIS MESSAGES] Unsubscribing from DM events channel: ${dmChannelName}`);
+      if (unsubscribeDMEvents) unsubscribeDMEvents();
+    };
+  }, [dmId, workspaceId]);
+
+  // Subscribe to channel-specific channel for 'oasis-event' events (reactions)
+  useEffect(() => {
+    if (!channelId || !workspaceId) return;
+
+    const channelChannelName = `oasis-channel-${channelId}`;
+    console.log(`📡 [OASIS MESSAGES] Subscribing to channel for oasis-event (reactions): ${channelChannelName}`);
+
+    const unsubscribeChannelEvents = pusherClientService.subscribeToChannel(
+      channelChannelName,
+      'oasis-event',
+      (event: any) => {
+        console.log(`📨 [OASIS MESSAGES] Received event on channel ${channelChannelName}:`, event);
+        
+        const eventChannelId = event.channelId || event.payload?.channelId;
+        if (eventChannelId === channelId) {
+          if (event.type === 'oasis_reaction_added') {
+            const reactionData = event.payload;
+            setMessages(prev => 
+              prev.map(msg => {
+                if (msg.id === reactionData.messageId) {
+                  const existingReaction = msg.reactions.find(
+                    r => r.emoji === reactionData.emoji && r.userId === reactionData.userId
+                  );
+                  if (existingReaction) return msg;
+                  
+                  return {
+                    ...msg,
+                    reactions: [...msg.reactions, {
+                      id: reactionData.id,
+                      emoji: reactionData.emoji,
+                      userId: reactionData.userId,
+                      userName: reactionData.userName,
+                      createdAt: reactionData.createdAt
+                    }]
+                  };
+                }
+                return msg;
+              })
+            );
+          } else if (event.type === 'oasis_reaction_removed') {
+            const reactionData = event.payload;
+            setMessages(prev => 
+              prev.map(msg => 
+                msg.id === reactionData.messageId 
+                  ? { 
+                      ...msg, 
+                      reactions: msg.reactions.filter(
+                        r => !(r.emoji === reactionData.emoji && r.userId === reactionData.userId)
+                      )
+                    }
+                  : msg
+              )
+            );
+          }
+        }
+      }
+    );
+
+    return () => {
+      console.log(`📡 [OASIS MESSAGES] Unsubscribing from channel events: ${channelChannelName}`);
+      if (unsubscribeChannelEvents) unsubscribeChannelEvents();
+    };
+  }, [channelId, workspaceId]);
+
+  // Listen for real-time updates (fallback for lastUpdate mechanism)
   useEffect(() => {
     if (lastUpdate?.type === 'oasis-message' || lastUpdate?.type === 'oasis-event') {
       const event = lastUpdate.payload;
@@ -792,7 +991,11 @@ export function useOasisMessages(
       ) {
         if (event.type === 'oasis_message_sent') {
           // Add new message to the end (newest at bottom)
-          setMessages(prev => [...prev, event]);
+          setMessages(prev => {
+            const exists = prev.some(msg => msg.id === event.id);
+            if (exists) return prev;
+            return [...prev, event];
+          });
         } else if (event.type === 'oasis_message_edited') {
           // Update existing message
           setMessages(prev => 
@@ -805,28 +1008,8 @@ export function useOasisMessages(
         } else if (event.type === 'oasis_message_deleted') {
           // Remove message
           setMessages(prev => prev.filter(msg => msg.id !== event.messageId));
-        } else if (event.type === 'oasis_reaction_added') {
-          // Add reaction
-          setMessages(prev => 
-            prev.map(msg => 
-              msg.id === event.messageId 
-                ? { ...msg, reactions: [...msg.reactions, event] }
-                : msg
-            )
-          );
-        } else if (event.type === 'oasis_reaction_removed') {
-          // Remove reaction
-          setMessages(prev => 
-            prev.map(msg => 
-              msg.id === event.messageId 
-                ? { 
-                    ...msg, 
-                    reactions: msg.reactions.filter(r => !(r.emoji === event.emoji))
-                  }
-                : msg
-            )
-          );
         }
+        // Note: Reactions are now handled via direct channel subscriptions above
       }
     }
   }, [lastUpdate, channelId, dmId]);

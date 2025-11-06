@@ -278,6 +278,12 @@ class BuyerGroupUploader {
     if (engagementScore >= 80) engagementLevel = 'high';
     else if (engagementScore >= 60) engagementLevel = 'medium';
 
+    // Extract churn prediction from member data if available
+    const churnPrediction = member.churnPrediction || 
+                           (member.fullProfile?.churnPrediction) ||
+                           (member.customFields?.churnPrediction) ||
+                           null;
+
     const aiIntelligence = {
       influenceLevel,
       engagementLevel,
@@ -285,8 +291,20 @@ class BuyerGroupUploader {
       influenceScore,
       primaryRole: member.title,
       department: member.department,
+      churnPrediction: churnPrediction,
       lastUpdated: new Date().toISOString()
     };
+
+    // Add refresh status if churn prediction exists
+    if (churnPrediction && churnPrediction.refreshColor) {
+      aiIntelligence.refreshStatus = {
+        priority: churnPrediction.refreshPriority,
+        color: churnPrediction.refreshColor,
+        frequency: churnPrediction.refreshFrequency,
+        nextRefreshDate: churnPrediction.nextRefreshDate,
+        lastRefreshDate: churnPrediction.lastRefreshDate
+      };
+    }
 
     const personData = {
       workspaceId: workspaceId,
@@ -307,6 +325,7 @@ class BuyerGroupUploader {
       enrichedData: aiIntelligence,
       aiIntelligence: aiIntelligence,
       aiLastUpdated: new Date(),
+      dataLastVerified: new Date(), // Set to now when uploading fresh data
       influenceScore: influenceScore,
       decisionPower: decisionPower,
       engagementScore: engagementScore,
@@ -331,10 +350,57 @@ class BuyerGroupUploader {
       enrichmentSources: ['coresignal', 'lusha'],
       enrichmentVersion: '2.1.0',
       dataSources: ['coresignal', 'lusha'],
-      aiConfidence: member.roleConfidence ? member.roleConfidence / 100 : 0.8
+      aiConfidence: member.roleConfidence ? member.roleConfidence / 100 : 0.8,
+      // Churn prediction and refresh scheduling
+      customFields: churnPrediction ? {
+        churnPrediction: {
+          averageTimeInRoleMonths: churnPrediction.averageTimeInRoleMonths,
+          predictedDepartureMonths: churnPrediction.predictedDepartureMonths,
+          churnRiskScore: churnPrediction.churnRiskScore,
+          churnRiskLevel: churnPrediction.churnRiskLevel,
+          predictedDepartureDate: churnPrediction.predictedDepartureDate,
+          reasoning: churnPrediction.reasoning,
+          completedRolesCount: churnPrediction.completedRolesCount,
+          refreshPriority: churnPrediction.refreshPriority,
+          refreshColor: churnPrediction.refreshColor,
+          refreshFrequency: churnPrediction.refreshFrequency,
+          refreshFrequencyDays: churnPrediction.refreshFrequencyDays,
+          nextRefreshDate: churnPrediction.nextRefreshDate,
+          lastRefreshDate: churnPrediction.lastRefreshDate || new Date().toISOString()
+        }
+      } : undefined
     };
 
     if (existingPerson) {
+      // Preserve existing customFields
+      const existingCustomFields = existingPerson.customFields && typeof existingPerson.customFields === 'object'
+        ? existingPerson.customFields
+        : {};
+      
+      // Merge churn prediction into existing customFields
+      if (churnPrediction) {
+        personData.customFields = {
+          ...existingCustomFields,
+          churnPrediction: {
+            averageTimeInRoleMonths: churnPrediction.averageTimeInRoleMonths,
+            predictedDepartureMonths: churnPrediction.predictedDepartureMonths,
+            churnRiskScore: churnPrediction.churnRiskScore,
+            churnRiskLevel: churnPrediction.churnRiskLevel,
+            predictedDepartureDate: churnPrediction.predictedDepartureDate,
+            reasoning: churnPrediction.reasoning,
+            completedRolesCount: churnPrediction.completedRolesCount,
+            refreshPriority: churnPrediction.refreshPriority,
+            refreshColor: churnPrediction.refreshColor,
+            refreshFrequency: churnPrediction.refreshFrequency,
+            refreshFrequencyDays: churnPrediction.refreshFrequencyDays,
+            nextRefreshDate: churnPrediction.nextRefreshDate,
+            lastRefreshDate: churnPrediction.lastRefreshDate || new Date().toISOString()
+          }
+        };
+      } else {
+        personData.customFields = existingCustomFields;
+      }
+      
       await this.prisma.people.update({
         where: { id: existingPerson.id },
         data: personData
