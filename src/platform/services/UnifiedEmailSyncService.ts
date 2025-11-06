@@ -292,14 +292,15 @@ export class UnifiedEmailSyncService {
     });
     
     // Fetch emails from multiple folders (inbox for received, sentitems for sent)
-    // Microsoft Graph API OData filters: dates should be ISO 8601 strings in single quotes
-    // Format: 'YYYY-MM-DDTHH:mm:ss.fffZ' (NO datetime prefix - Microsoft Graph doesn't use it)
+    // Microsoft Graph API OData filters: dates should be ISO 8601 strings WITHOUT quotes
+    // Format: YYYY-MM-DDTHH:mm:ss.fffZ (NO quotes - Microsoft Graph doesn't accept them in OData filters)
     // IMPORTANT: Inbox always uses receivedDateTime, sent folder uses sentDateTime
-    // Reference: calendar-sync-service.ts uses same format: start/dateTime ge '${date.toISOString()}'
+    // Reference: Microsoft Graph API documentation requires dates without quotes in $filter
+    // The API treats quoted dates as Edm.String instead of Edm.DateTimeOffset, causing 400 errors
     const foldersToSync = provider === 'outlook' 
       ? [
-          { folder: 'inbox', filter: `receivedDateTime ge '${filterDateISO}'`, orderby: 'receivedDateTime desc' },
-          { folder: 'sentitems', filter: `sentDateTime ge '${filterDateISO}'`, orderby: 'sentDateTime desc' }
+          { folder: 'inbox', filter: `receivedDateTime ge ${filterDateISO}`, orderby: 'receivedDateTime desc' },
+          { folder: 'sentitems', filter: `sentDateTime ge ${filterDateISO}`, orderby: 'sentDateTime desc' }
         ]
       : [
           { folder: 'inbox', q: `after:${Math.floor(finalFilterDate.getTime() / 1000)}` },
