@@ -650,7 +650,7 @@ const IntegrationsPage = () => {
                 <Button
                   onClick={() => handleConnect('outlook')}
                   disabled={connectingProvider !== null}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-40"
                 >
                   {connectingProvider === 'outlook' ? "Connecting..." : "Connect Outlook"}
                 </Button>
@@ -759,7 +759,7 @@ const IntegrationsPage = () => {
                 <Button
                   onClick={() => handleConnect('gmail')}
                   disabled={connectingProvider !== null}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-40"
                 >
                   {connectingProvider === 'gmail' ? "Connecting..." : "Connect Gmail"}
                 </Button>
@@ -868,7 +868,7 @@ const IntegrationsPage = () => {
                 <Button
                   onClick={() => handleConnect('google-calendar')}
                   disabled={connectingProvider !== null}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-40"
                 >
                   {connectingProvider === 'google-calendar' ? "Connecting..." : "Connect Google Calendar"}
                 </Button>
