@@ -64,99 +64,99 @@ export function InboxMiddlePanel() {
 
     return (
       <div className="h-full flex flex-col bg-background">
-        {/* Header - Similar to Speedrun Sprint View */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-border bg-background">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              {/* Avatar */}
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-lg font-semibold text-blue-700">
+        {/* Header - Modern shadcn style */}
+        <div className="flex-shrink-0 px-6 py-4 border-b border-border/50 bg-card">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              {/* Avatar with gradient */}
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                <span className="text-sm font-semibold text-white">
                   {getSenderInitials()}
                 </span>
               </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-xl font-semibold text-foreground truncate">
+                  <h1 className="text-lg font-semibold text-foreground truncate">
                     {selectedEmail.subject || '(No Subject)'}
                   </h1>
                   {selectedEmail.isImportant && (
-                    <StarIcon className="w-5 h-5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                    <StarIcon className="w-4 h-4 text-amber-500 fill-amber-500 flex-shrink-0" />
                   )}
                 </div>
-                <div className="flex items-center gap-3 text-sm text-muted">
-                  <span>{fromParsed.name || fromParsed.email}</span>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="font-medium">{fromParsed.name || fromParsed.email}</span>
                   {fromParsed.name && (
-                    <span className="text-muted">&lt;{fromParsed.email}&gt;</span>
+                    <span className="text-muted-foreground/60">&lt;{fromParsed.email}&gt;</span>
                   )}
-                  <span>•</span>
+                  <span className="text-muted-foreground/40">•</span>
                   <span>{timestamp}</span>
                   {currentIndex >= 0 && (
                     <>
-                      <span>•</span>
-                      <span>Email {currentIndex + 1} of {emails.length}</span>
+                      <span className="text-muted-foreground/40">•</span>
+                      <span className="text-muted-foreground/60">{currentIndex + 1} of {emails.length}</span>
                     </>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
+            {/* Action Buttons - shadcn style */}
+            <div className="flex items-center gap-1 flex-shrink-0">
               {/* Navigation */}
-              <button
-                onClick={handleNavigatePrevious}
-                disabled={!canNavigatePrevious}
-                className="p-2 hover:bg-hover rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                title="Previous email"
-              >
-                <ChevronLeftIcon className="w-5 h-5 text-muted" />
-              </button>
-              <button
-                onClick={handleNavigateNext}
-                disabled={!canNavigateNext}
-                className="p-2 hover:bg-hover rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                title="Next email"
-              >
-                <ChevronRightIcon className="w-5 h-5 text-muted" />
-              </button>
+              <div className="flex items-center gap-0.5 mr-2">
+                <button
+                  onClick={handleNavigatePrevious}
+                  disabled={!canNavigatePrevious}
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9"
+                  title="Previous email"
+                >
+                  <ChevronLeftIcon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleNavigateNext}
+                  disabled={!canNavigateNext}
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9"
+                  title="Next email"
+                >
+                  <ChevronRightIcon className="w-4 h-4" />
+                </button>
+              </div>
               
               {/* Email Actions */}
-              <div className="flex items-center gap-1 ml-2 border-l border-border pl-2">
+              <div className="flex items-center gap-1 border-l border-border/50 pl-2">
                 <button
                   onClick={() => markAsRead(selectedEmail.id, !selectedEmail.isRead)}
-                  className="px-3 py-2 text-sm bg-hover hover:bg-panel-background rounded transition-colors"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 px-3"
                   title={selectedEmail.isRead ? 'Mark as Unread' : 'Mark as Read'}
                 >
-                  {selectedEmail.isRead ? 'Mark as Unread' : 'Mark as Read'}
+                  <EnvelopeIcon className="w-4 h-4 mr-1.5" />
+                  {selectedEmail.isRead ? 'Unread' : 'Read'}
                 </button>
                 <button 
-                  className="px-3 py-2 text-sm bg-hover hover:bg-panel-background rounded transition-colors flex items-center gap-1"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 px-3"
                   title="Reply"
                 >
-                  <ArrowUturnLeftIcon className="w-4 h-4" />
+                  <ArrowUturnLeftIcon className="w-4 h-4 mr-1.5" />
                   Reply
                 </button>
                 <button 
-                  className="px-3 py-2 text-sm bg-hover hover:bg-panel-background rounded transition-colors flex items-center gap-1"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 w-9"
                   title="Forward"
                 >
                   <ArrowUturnRightIcon className="w-4 h-4" />
-                  Forward
                 </button>
                 <button 
-                  className="px-3 py-2 text-sm bg-hover hover:bg-panel-background rounded transition-colors flex items-center gap-1"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-9 w-9"
                   title="Archive"
                 >
                   <ArchiveBoxIcon className="w-4 h-4" />
-                  Archive
                 </button>
                 <button 
-                  className="px-3 py-2 text-sm bg-hover hover:bg-panel-background rounded transition-colors flex items-center gap-1 text-red-600"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-destructive hover:text-destructive-foreground h-9 w-9"
                   title="Delete"
                 >
                   <TrashIcon className="w-4 h-4" />
-                  Delete
                 </button>
               </div>
             </div>

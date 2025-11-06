@@ -160,6 +160,13 @@ export function InboxProvider({ children }: InboxProviderProps) {
     fetchEmails();
   }, [fetchEmails]);
 
+  // Auto-select first email when emails load
+  useEffect(() => {
+    if (emails.length > 0 && !selectedEmail) {
+      selectEmail(emails[0]);
+    }
+  }, [emails, selectedEmail, selectEmail]);
+
   const selectEmail = useCallback((email: EmailMessage | null) => {
     setSelectedEmail(email);
     
