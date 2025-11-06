@@ -140,28 +140,34 @@ const IntegrationsPage = () => {
       }
 
       // Step 2: Use Nango frontend SDK to open connect UI
-      // Initialize Nango with public key and host if available
+      // Nango frontend SDK can be initialized without config (publicKey is optional)
+      // We fetch it from our secure API endpoint for better customization if available
       const nangoConfig: any = {};
       
-      // Try to get public key from environment (if exposed to frontend) or API
+      // Optionally fetch public key and host from our secure API endpoint
+      // This allows customization without exposing env vars to frontend
       try {
         const configResponse = await fetch('/api/v1/integrations/nango/config', {
           credentials: 'include'
         });
         if (configResponse.ok) {
           const config = await configResponse.json();
+          // Public key is optional but recommended for custom branding
           if (config.publicKey) {
             nangoConfig.publicKey = config.publicKey;
           }
-          if (config.host) {
+          // Host is optional (defaults to https://api.nango.dev)
+          if (config.host && config.host !== 'https://api.nango.dev') {
             nangoConfig.host = config.host;
           }
         }
       } catch (configError) {
+        // Non-critical: Nango SDK works without config
         console.warn('Could not fetch Nango config, using defaults:', configError);
       }
 
-      const nango = new Nango(nangoConfig);
+      // Initialize Nango SDK (works with or without config)
+      const nango = new Nango(Object.keys(nangoConfig).length > 0 ? nangoConfig : undefined);
       
       const connect = nango.openConnectUI({
         onEvent: (event) => {
