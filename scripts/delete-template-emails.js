@@ -15,7 +15,7 @@ async function deleteTemplateEmails() {
       select: {
         id: true,
         subject: true,
-        fromEmail: true,
+        from: true,
         messageId: true,
         provider: true
       }
@@ -24,7 +24,7 @@ async function deleteTemplateEmails() {
     console.log(`📧 Found ${emails.length} emails to delete:\n`);
     emails.forEach((email, i) => {
       console.log(`${i + 1}. ${email.subject || '(No Subject)'}`);
-      console.log(`   From: ${email.fromEmail}`);
+      console.log(`   From: ${email.from}`);
       console.log(`   Message ID: ${email.messageId}`);
       console.log(`   Provider: ${email.provider || 'None'}`);
       console.log('');
