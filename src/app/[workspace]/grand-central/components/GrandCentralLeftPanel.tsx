@@ -86,84 +86,24 @@ export function GrandCentralLeftPanel() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="mx-2 mb-3 p-3 bg-panel-background rounded-lg">
-          <div className="text-xs text-muted space-y-1">
-            <div className="flex justify-between">
-              <span>APIs:</span>
-              <span className="font-medium">16</span>
-            </div>
-            <div className="flex justify-between">
-              <span>MCPs:</span>
-              <span className="font-medium">0</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Connectors:</span>
-              <span className="font-medium">500+</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Navigation Sections */}
       <div className="flex-1 space-y-1 p-2">
-        {/* APIs Section */}
+        {/* All Integrations Section */}
         <button
-          onClick={() => window.location.href = `/${workspace}/grand-central/apis`}
+          onClick={() => window.location.href = `/${workspace}/grand-central/integrations`}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-            currentTab === 'apis'
+            pathname.includes('/integrations')
               ? 'bg-hover text-foreground'
               : 'hover:bg-panel-background text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="font-medium text-sm">APIs</span>
-            <span className="text-sm text-muted">
-              16
-            </span>
+            <span className="font-medium text-sm">All Integrations</span>
           </div>
           <div className="text-xs text-muted mt-1">
-            REST and GraphQL endpoints
-          </div>
-        </button>
-
-        {/* MCPs Section */}
-        <button
-          onClick={() => window.location.href = `/${workspace}/grand-central/mcps`}
-          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-            currentTab === 'mcps'
-              ? 'bg-hover text-foreground'
-              : 'hover:bg-panel-background text-gray-700'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-sm">MCPs</span>
-            <span className="text-sm text-muted">
-              0
-            </span>
-          </div>
-          <div className="text-xs text-muted mt-1">
-            Model Context Protocol servers
-          </div>
-        </button>
-
-        {/* All Connectors Section */}
-        <button
-          onClick={() => window.location.href = `/${workspace}/grand-central/connectors`}
-          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-            currentTab === 'all-connectors'
-              ? 'bg-hover text-foreground'
-              : 'hover:bg-panel-background text-gray-700'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-sm">All Connectors</span>
-            <span className="text-sm text-muted">
-              500+
-            </span>
-          </div>
-          <div className="text-xs text-muted mt-1">
-            Browse and manage integrations
+            Connect your email accounts
           </div>
         </button>
       </div>
