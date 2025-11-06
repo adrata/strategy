@@ -19,7 +19,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export function InboxMiddlePanel() {
-  const { selectedEmail, markAsRead } = useInbox();
+  const { selectedEmail, markAsRead, loading } = useInbox();
 
   if (selectedEmail) {
     const fromParsed = parseEmailAddress(selectedEmail.from);
@@ -202,7 +202,27 @@ export function InboxMiddlePanel() {
     );
   }
 
-  // Empty state
+  // Empty state - show loading skeleton only when actually loading
+  if (loading) {
+    return (
+      <div className="h-full flex flex-col bg-background">
+        <div className="flex-shrink-0 border-b border-border p-4">
+          <div className="flex items-center gap-2 mb-2 text-sm text-muted">
+            <span>Inbox</span>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="space-y-2">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="h-4 bg-loading-bg rounded animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state - no email selected
   return (
     <div className="h-full flex flex-col bg-background">
       <div className="flex-shrink-0 border-b border-border p-4">
@@ -210,11 +230,9 @@ export function InboxMiddlePanel() {
           <span>Inbox</span>
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-2">
-          {[...Array(12)].map((_, i) => (
-            <div key={i} className="h-4 bg-loading-bg rounded animate-pulse" />
-          ))}
+      <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted text-sm">Select an email to view its contents</p>
         </div>
       </div>
     </div>

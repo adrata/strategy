@@ -51,6 +51,7 @@ export function InboxLeftPanel() {
   const { 
     emails, 
     selectedEmail, 
+    stats,
     loading, 
     selectEmail
   } = inboxContext;
@@ -98,14 +99,38 @@ export function InboxLeftPanel() {
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header */}
-        <div className="mx-2 mt-4 mb-4">
-          <div className="flex items-center gap-3">
+        <div className="mx-2 mt-4 mb-2">
+          <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden">
               <span className="text-lg font-bold text-black">I</span>
             </div>
             <div className="flex-1">
               <h2 className="text-base font-semibold text-foreground">Inbox</h2>
               <p className="text-xs text-muted">Email Management</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Box */}
+        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Total</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? '...' : stats.total}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Unread</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? '...' : stats.unread}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Urgent</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? '...' : stats.urgent}
+              </span>
             </div>
           </div>
         </div>

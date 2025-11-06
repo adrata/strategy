@@ -45,8 +45,7 @@ export interface InboxFilters {
 interface InboxStats {
   total: number;
   unread: number;
-  unreadOutlook: number;
-  unreadGmail: number;
+  urgent: number;
 }
 
 interface InboxContextType {
@@ -78,8 +77,7 @@ export function InboxProvider({ children }: InboxProviderProps) {
   const [stats, setStats] = useState<InboxStats>({
     total: 0,
     unread: 0,
-    unreadOutlook: 0,
-    unreadGmail: 0
+    urgent: 0
   });
   const [filters, setFiltersState] = useState<InboxFilters>({
     unreadOnly: false,
@@ -140,14 +138,12 @@ export function InboxProvider({ children }: InboxProviderProps) {
       // Calculate stats
       const total = fetchedEmails.length;
       const unread = fetchedEmails.filter(e => !e.isRead).length;
-      const unreadOutlook = fetchedEmails.filter(e => !e.isRead && e.provider === 'outlook').length;
-      const unreadGmail = fetchedEmails.filter(e => !e.isRead && e.provider === 'gmail').length;
+      const urgent = fetchedEmails.filter(e => e.isImportant).length;
 
       setStats({
         total,
         unread,
-        unreadOutlook,
-        unreadGmail
+        urgent
       });
     } catch (error) {
       console.error('❌ Error fetching emails:', error);
