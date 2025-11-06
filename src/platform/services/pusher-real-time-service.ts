@@ -401,13 +401,9 @@ export class PusherClientService {
   /**
    * Subscribe to a specific channel with custom event handler
    * Optimized with proper cleanup and duplicate prevention
+   * Waits for Pusher connection before subscribing
    */
   subscribeToChannel(channelName: string, eventName: string, onEvent: (data: any) => void): () => void {
-    if (!pusherClient) {
-      console.error("❌ Pusher client not initialized");
-      return () => {}; // Return no-op cleanup function
-    }
-
     // Create unique key for this subscription
     const subscriptionKey = `${channelName}-${eventName}`;
     
@@ -418,35 +414,79 @@ export class PusherClientService {
       return () => {};
     }
 
-    console.log(`🔍 [Pusher Client] Subscribing to ${eventName} on channel: ${channelName}`);
-    
-    const channel = pusherClient.subscribe(channelName);
-    this.channels.set(subscriptionKey, channel);
+    let channel: any = null;
+    let eventHandler: any = null;
+    let cleanedUp = false;
 
-    // Bind custom event with error handling
-    const eventHandler = (data: any) => {
-      try {
-        console.log(`📡 [Pusher Client] ${eventName} received on channel ${channelName}:`, data);
-        onEvent(data);
-      } catch (error) {
-        console.error(`❌ [Pusher Client] Error in event handler for ${eventName}:`, error);
+    const attemptSubscription = () => {
+      if (!pusherClient) {
+        console.warn(`⏳ [Pusher Client] Pusher not ready, will retry subscription to ${eventName} on ${channelName}`);
+        return false;
       }
-    };
-    
-    channel.bind(eventName, eventHandler);
 
-    console.log(`📡 Subscribed to ${eventName} on channel: ${channelName}`);
+      console.log(`🔍 [Pusher Client] Subscribing to ${eventName} on channel: ${channelName}`);
+      
+      channel = pusherClient.subscribe(channelName);
+      this.channels.set(subscriptionKey, channel);
+
+      // Bind custom event with error handling
+      eventHandler = (data: any) => {
+        try {
+          console.log(`📡 [Pusher Client] ${eventName} received on channel ${channelName}:`, data);
+          onEvent(data);
+        } catch (error) {
+          console.error(`❌ [Pusher Client] Error in event handler for ${eventName}:`, error);
+        }
+      };
+      
+      channel.bind(eventName, eventHandler);
+      console.log(`📡 Subscribed to ${eventName} on channel: ${channelName}`);
+      return true;
+    };
+
+    // Try immediate subscription
+    if (!attemptSubscription()) {
+      // If Pusher not ready, wait for connection and retry
+      const connectionHandler = () => {
+        if (!cleanedUp && pusherClient && pusherClient.connection.state === 'connected') {
+          console.log(`🔄 [Pusher Client] Pusher connected, retrying subscription to ${eventName} on ${channelName}`);
+          attemptSubscription();
+          // Unbind after successful subscription
+          if (pusherClient) {
+            pusherClient.connection.unbind('connected', connectionHandler);
+          }
+        }
+      };
+
+      // Wait for connection
+      if (pusherClient) {
+        pusherClient.connection.bind('connected', connectionHandler);
+      } else {
+        // Retry every second until Pusher is available (max 10 attempts)
+        let retryCount = 0;
+        const retryInterval = setInterval(() => {
+          retryCount++;
+          if (cleanedUp || retryCount > 10) {
+            clearInterval(retryInterval);
+            return;
+          }
+          
+          if (attemptSubscription()) {
+            clearInterval(retryInterval);
+          }
+        }, 1000);
+      }
+    }
 
     // Return cleanup function
     return () => {
       try {
+        cleanedUp = true;
         console.log(`🧹 [Pusher Client] Unsubscribing from ${eventName} on channel: ${channelName}`);
-        channel.unbind(eventName, eventHandler);
+        if (channel && eventHandler) {
+          channel.unbind(eventName, eventHandler);
+        }
         this.channels.delete(subscriptionKey);
-        
-        // Only unsubscribe from channel if no more event handlers
-        // Note: Pusher-js doesn't have a way to check bound events, so we'll keep the channel
-        // The channel will be cleaned up when PusherClientService disconnects
       } catch (error) {
         console.error(`❌ [Pusher Client] Error unsubscribing from ${eventName}:`, error);
       }
