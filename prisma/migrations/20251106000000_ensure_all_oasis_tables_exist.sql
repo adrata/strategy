@@ -3,15 +3,15 @@
 -- Safe to run multiple times (uses IF NOT EXISTS)
 
 -- 1. OasisChannel - Communication channels within workspaces
+-- Matches streamlined schema (no createdById field)
 CREATE TABLE IF NOT EXISTS "OasisChannel" (
     "id" TEXT NOT NULL,
     "workspaceId" VARCHAR(30) NOT NULL,
     "name" VARCHAR(100) NOT NULL,
-    "description" TEXT,
+    "description" VARCHAR(500),
     "isPrivate" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdById" VARCHAR(30),
 
     CONSTRAINT "OasisChannel_pkey" PRIMARY KEY ("id")
 );
@@ -82,16 +82,13 @@ CREATE TABLE IF NOT EXISTS "OasisReadReceipt" (
 );
 
 -- 8. OasisExternalConnection - External connections for Oasis
+-- Matches streamlined schema structure
 CREATE TABLE IF NOT EXISTS "OasisExternalConnection" (
     "id" TEXT NOT NULL,
-    "workspaceId" VARCHAR(30) NOT NULL,
     "userId" VARCHAR(30) NOT NULL,
-    "provider" VARCHAR(50) NOT NULL,
-    "externalUserId" VARCHAR(255) NOT NULL,
-    "accessToken" TEXT,
-    "refreshToken" TEXT,
-    "expiresAt" TIMESTAMP(3),
-    "metadata" JSONB,
+    "externalUserId" VARCHAR(30) NOT NULL,
+    "externalWorkspaceId" VARCHAR(30) NOT NULL,
+    "status" VARCHAR(50) NOT NULL DEFAULT 'pending',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -138,8 +135,10 @@ CREATE INDEX IF NOT EXISTS "OasisReadReceipt_messageId_idx" ON "OasisReadReceipt
 CREATE INDEX IF NOT EXISTS "OasisReadReceipt_readAt_idx" ON "OasisReadReceipt"("readAt");
 
 -- OasisExternalConnection indexes
-CREATE UNIQUE INDEX IF NOT EXISTS "OasisExternalConnection_provider_externalUserId_workspaceId_key" ON "OasisExternalConnection"("provider", "externalUserId", "workspaceId");
-CREATE INDEX IF NOT EXISTS "OasisExternalConnection_workspaceId_idx" ON "OasisExternalConnection"("workspaceId");
+CREATE UNIQUE INDEX IF NOT EXISTS "OasisExternalConnection_userId_externalUserId_externalWorkspaceId_key" ON "OasisExternalConnection"("userId", "externalUserId", "externalWorkspaceId");
+CREATE INDEX IF NOT EXISTS "OasisExternalConnection_externalUserId_idx" ON "OasisExternalConnection"("externalUserId");
+CREATE INDEX IF NOT EXISTS "OasisExternalConnection_externalWorkspaceId_idx" ON "OasisExternalConnection"("externalWorkspaceId");
+CREATE INDEX IF NOT EXISTS "OasisExternalConnection_status_idx" ON "OasisExternalConnection"("status");
 CREATE INDEX IF NOT EXISTS "OasisExternalConnection_userId_idx" ON "OasisExternalConnection"("userId");
 
 -- ===========================================
@@ -156,15 +155,6 @@ BEGIN
         ALTER TABLE "OasisChannel" 
         ADD CONSTRAINT "OasisChannel_workspaceId_fkey" 
         FOREIGN KEY ("workspaceId") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-    END IF;
-
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.table_constraints 
-        WHERE constraint_name = 'OasisChannel_createdById_fkey'
-    ) THEN
-        ALTER TABLE "OasisChannel" 
-        ADD CONSTRAINT "OasisChannel_createdById_fkey" 
-        FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
     END IF;
 END $$;
 
@@ -314,11 +304,11 @@ DO $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.table_constraints 
-        WHERE constraint_name = 'OasisExternalConnection_workspaceId_fkey'
+        WHERE constraint_name = 'OasisExternalConnection_externalWorkspaceId_fkey'
     ) THEN
         ALTER TABLE "OasisExternalConnection" 
-        ADD CONSTRAINT "OasisExternalConnection_workspaceId_fkey" 
-        FOREIGN KEY ("workspaceId") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        ADD CONSTRAINT "OasisExternalConnection_externalWorkspaceId_fkey" 
+        FOREIGN KEY ("externalWorkspaceId") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
     END IF;
 
     IF NOT EXISTS (
@@ -328,6 +318,15 @@ BEGIN
         ALTER TABLE "OasisExternalConnection" 
         ADD CONSTRAINT "OasisExternalConnection_userId_fkey" 
         FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'OasisExternalConnection_externalUserId_fkey'
+    ) THEN
+        ALTER TABLE "OasisExternalConnection" 
+        ADD CONSTRAINT "OasisExternalConnection_externalUserId_fkey" 
+        FOREIGN KEY ("externalUserId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
     END IF;
 END $$;
 
