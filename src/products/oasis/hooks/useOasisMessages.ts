@@ -575,7 +575,8 @@ export function useOasisMessages(
       setHasMore(true);
       fetchMessages(true);
     }
-  }, [workspaceId, channelId, dmId, fetchMessages]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceId, channelId, dmId]);
 
   // Listen for real-time updates
   useEffect(() => {
