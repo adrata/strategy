@@ -40,6 +40,15 @@ export function useOasisChannels(workspaceId: string) {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('❌ [OASIS CHANNELS] API error:', errorData);
+        
+        // Handle migration required error gracefully
+        if (errorData.code === 'MIGRATION_REQUIRED' || response.status === 503) {
+          setError('Database migration required. Please contact support.');
+          setChannels([]);
+          setLoading(false);
+          return;
+        }
+        
         throw new Error(`Failed to fetch channels: ${response.status} ${errorData.error || response.statusText}`);
       }
 

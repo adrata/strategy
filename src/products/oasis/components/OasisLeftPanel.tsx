@@ -129,8 +129,11 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   
   // Real data hooks - only call if we have a valid workspaceId and not loading
   // Unified loading check prevents duplicate skeleton rendering
+  // CRITICAL: All hooks must be called before any conditional returns
   const { channels, loading: channelsLoading, createChannel } = useOasisChannels(safeWorkspaceId);
-  const { dms, loading: dmsLoading, createDM } = useOasisDMs(safeWorkspaceId);
+  const { dms, loading: dmsLoading, error: dmsError, createDM } = useOasisDMs(safeWorkspaceId);
+  const { userCount, isConnected } = useOasisPresence(safeWorkspaceId);
+  const { autoCreateRossDMs } = useAutoCreateRossDMs();
   
   // Combined loading state - if any data is loading, show skeleton
   // This prevents showing skeleton then immediately showing real content
@@ -176,8 +179,6 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       </div>
     );
   }
-  const { userCount, isConnected } = useOasisPresence(safeWorkspaceId);
-  const { autoCreateRossDMs } = useAutoCreateRossDMs();
 
   // Ref to track if initial channel selection has been made
   const hasInitialSelection = useRef(false);
@@ -624,16 +625,23 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         <div className="p-2 border-t border-border">
           <div className="flex items-center justify-between px-2 py-1 mb-2">
             <h3 className="text-xs font-medium text-muted uppercase tracking-wide">Direct Messages</h3>
-            <button 
-              onClick={handleAddDM}
-              className="text-muted hover:text-foreground transition-colors"
-              title="Add DM"
-            >
-              <PlusIcon className="w-4 h-4" />
-            </button>
+            {!dmsError && (
+              <button 
+                onClick={handleAddDM}
+                className="text-muted hover:text-foreground transition-colors"
+                title="Add DM"
+              >
+                <PlusIcon className="w-4 h-4" />
+              </button>
+            )}
           </div>
           <div className="space-y-1">
-            {dmsLoading ? (
+            {dmsError ? (
+              <div className="px-2 py-3 text-xs text-muted text-center border border-border rounded-md bg-background/50">
+                <div className="text-red-500 font-medium mb-1">Database Migration Required</div>
+                <div className="text-muted">Please contact support to resolve this issue.</div>
+              </div>
+            ) : dmsLoading ? (
               <div className="space-y-1">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="flex gap-2 px-2 py-1.5">

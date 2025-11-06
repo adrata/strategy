@@ -55,6 +55,15 @@ export function useOasisDMs(workspaceId: string) {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('❌ [OASIS DMS] API error:', errorData);
+        
+        // Handle migration required error gracefully
+        if (errorData.code === 'MIGRATION_REQUIRED' || response.status === 503) {
+          setError('Database migration required. Please contact support.');
+          setDms([]);
+          setLoading(false);
+          return;
+        }
+        
         throw new Error(`Failed to fetch DMs: ${response.status} ${errorData.error || response.statusText}`);
       }
 
@@ -146,6 +155,7 @@ export function useOasisDMs(workspaceId: string) {
       // Refresh DMs when there are message updates
       fetchDMs();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastUpdate]);
 
   return {
