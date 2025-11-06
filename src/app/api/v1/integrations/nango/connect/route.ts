@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
      */
     function getNangoIntegrationId(provider: string): string {
       const mapping: Record<string, string> = {
+        // Outlook: Default to 'outlook' if env var not set (matches common Nango Integration ID)
         'outlook': process.env.NANGO_OUTLOOK_INTEGRATION_ID || 'outlook',
         'gmail': process.env.NANGO_GMAIL_INTEGRATION_ID || 'gmail',
         'google': process.env.NANGO_GOOGLE_INTEGRATION_ID || 'gmail',
