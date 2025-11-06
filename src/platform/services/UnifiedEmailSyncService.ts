@@ -233,7 +233,14 @@ export class UnifiedEmailSyncService {
     }
     
     // Don't go back more than 30 days (reasonable limit for performance)
-    const finalFilterDate = filterDate < thirtyDaysAgo ? thirtyDaysAgo : filterDate;
+    let finalFilterDate = filterDate < thirtyDaysAgo ? thirtyDaysAgo : filterDate;
+    
+    // CRITICAL: Ensure date is not in the future (can happen with bad data)
+    const now = new Date();
+    if (finalFilterDate > now) {
+      console.warn(`⚠️ [EMAIL SYNC] Filter date ${finalFilterDate.toISOString()} is in the future! Using 30 days ago instead.`);
+      finalFilterDate = thirtyDaysAgo;
+    }
     
     // Format date for Microsoft Graph API (ISO 8601 format)
     const filterDateISO = finalFilterDate.toISOString();
@@ -262,12 +269,13 @@ export class UnifiedEmailSyncService {
     });
     
     // Fetch emails from multiple folders (inbox for received, sentitems for sent)
-    // OData filters require dates to be in single quotes
+    // OData filters require dates to be formatted with 'datetime' prefix for DateTimeOffset
+    // Format: datetime'YYYY-MM-DDTHH:mm:ss.fffZ'
     // IMPORTANT: Inbox always uses receivedDateTime, sent folder uses sentDateTime
     const foldersToSync = provider === 'outlook' 
       ? [
-          { folder: 'inbox', filter: `receivedDateTime ge '${filterDateISO}'`, orderby: 'receivedDateTime desc' },
-          { folder: 'sentitems', filter: `sentDateTime ge '${filterDateISO}'`, orderby: 'sentDateTime desc' }
+          { folder: 'inbox', filter: `receivedDateTime ge datetime'${filterDateISO}'`, orderby: 'receivedDateTime desc' },
+          { folder: 'sentitems', filter: `sentDateTime ge datetime'${filterDateISO}'`, orderby: 'sentDateTime desc' }
         ]
       : [
           { folder: 'inbox', q: `after:${Math.floor(finalFilterDate.getTime() / 1000)}` },
