@@ -302,8 +302,11 @@ function PipelineLayoutInner({
 
   // Ensure right panel is visible when thread is opened
   useEffect(() => {
-    if (pathname.includes('/oasis') && threadData && !ui.isRightPanelVisible) {
-      ui.setIsRightPanelVisible(true);
+    if (pathname.includes('/oasis') && threadData) {
+      // Always ensure right panel is visible when threadData exists
+      if (!ui.isRightPanelVisible) {
+        ui.setIsRightPanelVisible(true);
+      }
     }
   }, [pathname, threadData, ui.isRightPanelVisible, ui.setIsRightPanelVisible]);
   

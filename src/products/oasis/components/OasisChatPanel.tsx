@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
 import { useUnifiedAuth } from "@/platform/auth";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useOasisMessages } from '@/products/oasis/hooks/useOasisMessages';
 import { useOasisTyping } from '@/products/oasis/hooks/useOasisTyping';
 import { VideoCallService } from '@/platform/services/video-call-service';
@@ -52,6 +53,7 @@ interface OasisChatPanelProps {
 export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   const { activeSection, selectedChannel, setIsVideoCallActive, setVideoCallRoom, setThreadData, setThreadNavigationStack } = useOasisLayout();
   const { user: authUser } = useUnifiedAuth();
+  const { ui } = useRevenueOS();
   
   // Get workspace ID - use DM's workspaceId if available (for cross-workspace DMs), otherwise use auth user's workspace
   // This is critical for Ross to see messages from DMs in other workspaces (like Ryan's DM from Notary Everyday)
@@ -387,7 +389,25 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             className="flex gap-3 group hover:bg-hover rounded-lg p-2 -m-2 cursor-pointer transition-colors"
             onMouseEnter={() => setHoveredMessage(message.id)}
             onMouseLeave={() => setHoveredMessage(null)}
-            onClick={() => onShowThread?.()}
+            onClick={() => {
+              // If this message has thread replies, open thread view
+              if (message.threadCount > 0) {
+                setThreadData({
+                  messageId: message.id,
+                  threadMessages: message.threadMessages || [],
+                  parentMessageId: message.parentMessageId,
+                  channelId: message.channelId,
+                  dmId: message.dmId
+                });
+                setThreadNavigationStack([{
+                  messageId: message.id,
+                  parentMessageId: message.parentMessageId,
+                  level: 1
+                }]);
+                ui.setIsRightPanelVisible(true);
+              }
+              onShowThread?.();
+            }}
           >
             <div className="flex-shrink-0">
               <div className="w-10 h-10 bg-background border border-border rounded flex items-center justify-center">
@@ -441,6 +461,8 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
                       parentMessageId: message.parentMessageId,
                       level: 1
                     }]);
+                    // Explicitly show right panel when thread is opened
+                    ui.setIsRightPanelVisible(true);
                     onShowThread?.();
                   }}
                 >

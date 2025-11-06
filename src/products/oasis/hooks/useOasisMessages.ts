@@ -605,7 +605,7 @@ export function useOasisMessages(
       return data.message;
     } catch (err) {
       // Remove optimistic message on error
-      setMessages(prev => prev.filter(msg => msg.id === tempId));
+      setMessages(prev => prev.filter(msg => msg.id !== tempId));
       console.error('❌ [OASIS MESSAGES] Send error:', err);
       setError(err instanceof Error ? err.message : 'Failed to send message');
       throw err;
