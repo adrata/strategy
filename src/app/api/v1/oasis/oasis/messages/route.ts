@@ -58,17 +58,53 @@ export async function GET(request: NextRequest) {
     const ROSS_EMAIL = 'ross@adrata.com';
     const isRoss = userId === ROSS_USER_ID || userEmail === ROSS_EMAIL;
 
-    // Validate required parameters upfront
-    if (!workspaceId) {
+    // Validate required parameters upfront with detailed error messages
+    if (!workspaceId || workspaceId.trim() === '') {
+      console.error('❌ [OASIS MESSAGES] Missing workspaceId in request:', {
+        url: request.url,
+        userId,
+        channelId,
+        dmId
+      });
       return NextResponse.json(
-        { error: 'Workspace ID required' },
+        { 
+          error: 'Workspace ID required',
+          details: 'The workspaceId parameter is missing or empty. Please provide a valid workspace ID.'
+        },
         { status: 400 }
       );
     }
 
     if (!channelId && !dmId) {
+      console.error('❌ [OASIS MESSAGES] Missing conversation ID in request:', {
+        url: request.url,
+        userId,
+        workspaceId,
+        channelId,
+        dmId
+      });
       return NextResponse.json(
-        { error: 'Channel ID or DM ID required' },
+        { 
+          error: 'Channel ID or DM ID required',
+          details: 'Either channelId or dmId parameter must be provided to fetch messages.'
+        },
+        { status: 400 }
+      );
+    }
+
+    if (channelId && dmId) {
+      console.error('❌ [OASIS MESSAGES] Both channelId and dmId provided:', {
+        url: request.url,
+        userId,
+        workspaceId,
+        channelId,
+        dmId
+      });
+      return NextResponse.json(
+        { 
+          error: 'Invalid request',
+          details: 'Cannot specify both channelId and dmId. Please provide only one.'
+        },
         { status: 400 }
       );
     }

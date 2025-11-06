@@ -376,7 +376,9 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
               {coreDocs.map((doc) => (
                 <div
                   key={doc.id}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     if (onDocumentSelect) {
                       onDocumentSelect(doc);
                     } else {

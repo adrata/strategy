@@ -54,28 +54,45 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   
   // Get workspace ID - use DM's workspaceId if available (for cross-workspace DMs), otherwise use auth user's workspace
   // This is critical for Ross to see messages from DMs in other workspaces (like Ryan's DM from Notary Everyday)
+  // Add fallback to ensure we always have a valid workspaceId
   const workspaceId = selectedChannel?.type === 'dm' && selectedChannel.workspaceId 
     ? selectedChannel.workspaceId 
     : authUser?.activeWorkspaceId || '';
   
-  // Debug logging for message fetching
+  // Validate workspaceId is available before using hooks
+  const isValidWorkspaceId = workspaceId && workspaceId.trim() !== '';
+  
+  // Debug logging for message fetching and workspaceId resolution
   useEffect(() => {
-    if (selectedChannel?.type === 'dm') {
-      console.log('🔍 [OASIS CHAT PANEL] DM selected:', {
-        dmId: selectedChannel.id,
-        dmName: selectedChannel.name,
+    if (selectedChannel) {
+      const resolvedWorkspaceId = selectedChannel?.type === 'dm' && selectedChannel.workspaceId 
+        ? selectedChannel.workspaceId 
+        : authUser?.activeWorkspaceId;
+      
+      console.log('🔍 [OASIS CHAT PANEL] Channel selected:', {
+        type: selectedChannel.type,
+        id: selectedChannel.id,
+        name: selectedChannel.name,
         dmWorkspaceId: selectedChannel.workspaceId,
         currentWorkspaceId: authUser?.activeWorkspaceId,
+        resolvedWorkspaceId: resolvedWorkspaceId,
         finalWorkspaceId: workspaceId,
-        isDifferentWorkspace: selectedChannel.workspaceId !== authUser?.activeWorkspaceId
+        isValidWorkspaceId,
+        isDifferentWorkspace: selectedChannel.workspaceId && selectedChannel.workspaceId !== authUser?.activeWorkspaceId
       });
+      
+      if (!isValidWorkspaceId) {
+        console.warn('⚠️ [OASIS CHAT PANEL] No valid workspaceId available, messages may not load');
+      }
     }
-  }, [selectedChannel, workspaceId, authUser?.activeWorkspaceId]);
+  }, [selectedChannel, workspaceId, isValidWorkspaceId, authUser?.activeWorkspaceId]);
   
-  // Real data hooks - only call when we have a selected channel
+  // Real data hooks - only call when we have a selected channel and valid workspaceId
   const { 
     messages: realMessages, 
     loading: messagesLoading, 
+    error: messagesError,
+    refetch: refetchMessages,
     sendMessage, 
     editMessage, 
     deleteMessage, 
@@ -83,13 +100,13 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
     removeReaction,
     markAsRead
   } = useOasisMessages(
-    workspaceId,
+    isValidWorkspaceId ? workspaceId : '', // Pass empty string if invalid to trigger hook validation
     selectedChannel?.type === 'channel' ? selectedChannel.id : undefined,
     selectedChannel?.type === 'dm' ? selectedChannel.id : undefined
   );
   
   const { typingUsers, startTyping, stopTyping } = useOasisTyping(
-    workspaceId,
+    isValidWorkspaceId ? workspaceId : '',
     selectedChannel?.type === 'channel' ? selectedChannel.id : undefined,
     selectedChannel?.type === 'dm' ? selectedChannel.id : undefined
   );
@@ -311,6 +328,30 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
                 </div>
               </div>
             ))}
+          </div>
+        ) : messagesError ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center max-w-md">
+              <div className="text-red-500 mb-4">
+                <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <p className="text-lg font-medium text-foreground mb-2">
+                Failed to load messages
+              </p>
+              <p className="text-sm text-muted mb-4">
+                {messagesError.includes('Failed to fetch') || messagesError.includes('ERR_NAME_NOT_RESOLVED')
+                  ? 'Unable to connect to the server. Please check your connection and try again.'
+                  : messagesError}
+              </p>
+              <button
+                onClick={() => refetchMessages()}
+                className="px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
+              >
+                Retry
+              </button>
+            </div>
           </div>
         ) : realMessages.length === 0 ? (
           <div className="flex items-center justify-center py-8">

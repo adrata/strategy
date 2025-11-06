@@ -112,10 +112,20 @@ export function useOasisMessages(
       setError(null);
 
       // Validate workspaceId is provided
-      if (!workspaceId) {
+      if (!workspaceId || workspaceId.trim() === '') {
         const errorMsg = 'Workspace ID is required to fetch messages';
         console.error('❌ [OASIS MESSAGES]', errorMsg);
         setError(errorMsg);
+        setLoading(false);
+        return;
+      }
+
+      // Validate conversation ID is provided
+      if (!channelId && !dmId) {
+        const errorMsg = 'Channel ID or DM ID is required to fetch messages';
+        console.error('❌ [OASIS MESSAGES]', errorMsg);
+        setError(errorMsg);
+        setLoading(false);
         return;
       }
 
@@ -137,98 +147,163 @@ export function useOasisMessages(
         reset
       });
 
-      const response = await fetch(`/api/v1/oasis/oasis/messages?${params}`, {
-        credentials: 'include'
-      });
+      // Retry logic with exponential backoff for network errors
+      const maxRetries = 3;
+      let lastError: Error | null = null;
       
-      if (!response.ok) {
-        // Get error details from response if available
-        let errorMessage = 'Failed to fetch messages';
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
-        }
-        
-        console.error(`❌ [OASIS MESSAGES] Fetch failed: ${response.status} ${errorMessage}`, {
-          url: `/api/v1/oasis/oasis/messages?${params}`,
-          channelId,
-          dmId,
-          workspaceId,
-          status: response.status
-        });
-        
-        throw new Error(`${errorMessage} (${response.status})`);
-      }
-
-      const data = await response.json();
-      
-      console.log('✅ [OASIS MESSAGES] Received response:', {
-        messageCount: data.messages?.length || 0,
-        hasMore: data.hasMore,
-        workspaceId,
-        channelId,
-        dmId
-      });
-      
-      // Validate response structure
-      if (!data || !Array.isArray(data.messages)) {
-        console.error('❌ [OASIS MESSAGES] Invalid response format:', data);
-        throw new Error('Invalid response from server');
-      }
-      
-      if (reset) {
-        setMessages(data.messages || []);
-        setOffset(50);
-        
-        // Check if conversation is empty and trigger initial greeting
-        if (data.messages.length === 0 && workspaceId) {
-          try {
-            const aiResponse = await fetch('/api/v1/oasis/oasis/ai-response', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              credentials: 'include',
-              body: JSON.stringify({
-                channelId,
-                dmId,
-                workspaceId,
-                isInitial: true
-              }),
-            });
-
-            if (aiResponse.ok) {
-              const aiMessage = await aiResponse.json();
-              // Add initial greeting to messages
-              setMessages([aiMessage]);
+          // Create timeout abort controller
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+          
+          const response = await fetch(`/api/v1/oasis/oasis/messages?${params}`, {
+            credentials: 'include',
+            signal: controller.signal
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            // Get error details from response if available
+            let errorMessage = 'Failed to fetch messages';
+            try {
+              const errorData = await response.json();
+              errorMessage = errorData.error || errorMessage;
+            } catch {
+              // If response is not JSON, use status text
+              errorMessage = response.statusText || errorMessage;
             }
-          } catch (aiError) {
-            console.warn('Failed to create initial greeting:', aiError);
+            
+            console.error(`❌ [OASIS MESSAGES] Fetch failed: ${response.status} ${errorMessage}`, {
+              url: `/api/v1/oasis/oasis/messages?${params}`,
+              channelId,
+              dmId,
+              workspaceId,
+              status: response.status,
+              attempt: attempt + 1
+            });
+            
+            // For server errors (5xx), retry. For client errors (4xx), don't retry
+            if (response.status >= 500 && attempt < maxRetries - 1) {
+              lastError = new Error(`${errorMessage} (${response.status})`);
+              const delay = Math.min(1000 * Math.pow(2, attempt), 5000); // Exponential backoff, max 5s
+              console.log(`⏳ [OASIS MESSAGES] Retrying in ${delay}ms... (attempt ${attempt + 1}/${maxRetries})`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              continue;
+            }
+            
+            throw new Error(`${errorMessage} (${response.status})`);
+          }
+
+          const data = await response.json();
+          
+          // Success - break out of retry loop
+          lastError = null;
+      
+          console.log('✅ [OASIS MESSAGES] Received response:', {
+            messageCount: data.messages?.length || 0,
+            hasMore: data.hasMore,
+            workspaceId,
+            channelId,
+            dmId
+          });
+          
+          // Validate response structure
+          if (!data || !Array.isArray(data.messages)) {
+            console.error('❌ [OASIS MESSAGES] Invalid response format:', data);
+            throw new Error('Invalid response from server');
+          }
+      
+          if (reset) {
+            setMessages(data.messages || []);
+            setOffset(50);
+            
+            // Check if conversation is empty and trigger initial greeting
+            if (data.messages.length === 0 && workspaceId) {
+              try {
+                const aiResponse = await fetch('/api/v1/oasis/oasis/ai-response', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  credentials: 'include',
+                  body: JSON.stringify({
+                    channelId,
+                    dmId,
+                    workspaceId,
+                    isInitial: true
+                  }),
+                });
+
+                if (aiResponse.ok) {
+                  const aiMessage = await aiResponse.json();
+                  // Add initial greeting to messages
+                  setMessages([aiMessage]);
+                }
+              } catch (aiError) {
+                console.warn('Failed to create initial greeting:', aiError);
+              }
+            }
+            
+            // Cache the messages
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem(cacheKey, JSON.stringify({
+                messages: data.messages,
+                timestamp: Date.now(),
+                conversationId,
+                conversationType
+              }));
+            }
+          } else {
+            setMessages(prev => [...prev, ...data.messages]);
+            setOffset(prev => prev + 50);
+          }
+          
+          setHasMore(data.hasMore);
+          break; // Success, exit retry loop
+          
+        } catch (fetchError: any) {
+          // Detect network errors
+          const isNetworkError = fetchError instanceof TypeError && 
+            (fetchError.message.includes('Failed to fetch') || 
+             fetchError.message.includes('ERR_NAME_NOT_RESOLVED') ||
+             fetchError.message.includes('NetworkError') ||
+             fetchError.name === 'TypeError');
+          
+          lastError = fetchError instanceof Error ? fetchError : new Error(String(fetchError));
+          
+          if (isNetworkError && attempt < maxRetries - 1) {
+            const delay = Math.min(1000 * Math.pow(2, attempt), 5000); // Exponential backoff, max 5s
+            console.warn(`⚠️ [OASIS MESSAGES] Network error, retrying in ${delay}ms... (attempt ${attempt + 1}/${maxRetries}):`, fetchError.message);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+          
+          // If this is the last attempt or not a network error, throw
+          if (attempt === maxRetries - 1 || !isNetworkError) {
+            throw lastError;
           }
         }
-        
-        // Cache the messages
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem(cacheKey, JSON.stringify({
-            messages: data.messages,
-            timestamp: Date.now(),
-            conversationId,
-            conversationType
-          }));
-        }
-      } else {
-        setMessages(prev => [...prev, ...data.messages]);
-        setOffset(prev => prev + 50);
       }
       
-      setHasMore(data.hasMore);
+      // If we exhausted retries and still have an error
+      if (lastError) {
+        throw lastError;
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch messages';
-      console.error('❌ [OASIS MESSAGES] Error fetching messages:', errorMessage, err);
-      setError(errorMessage);
+      
+      // Improve error messages for network errors
+      let userFriendlyError = errorMessage;
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('ERR_NAME_NOT_RESOLVED')) {
+        userFriendlyError = 'Unable to connect to the server. Please check your connection and try again.';
+      } else if (errorMessage.includes('timeout')) {
+        userFriendlyError = 'Request timed out. Please try again.';
+      }
+      
+      console.error('❌ [OASIS MESSAGES] Error fetching messages:', userFriendlyError, err);
+      setError(userFriendlyError);
       // Set empty messages on error to prevent UI stuck state
       if (reset) {
         setMessages([]);
