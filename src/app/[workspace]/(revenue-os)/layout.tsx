@@ -148,6 +148,33 @@ function PipelineLayoutInner({
     }
   }, [pathname, threadData, oasisLayoutContext]);
   
+  // Memoize right panel to ensure it updates when threadData changes
+  const rightPanel = React.useMemo(() => {
+    // Check if thread view should be shown (for Oasis routes)
+    if (pathname.includes('/oasis') && threadData) {
+      return <OasisThreadView key={`thread-${threadData.messageId}`} />;
+    }
+    
+    // Only base Adrata app shows conversation list - all other apps (including /adrata/oasis, /adrata/stacks) show AI chat
+    if (pathname.includes('/pinpoint/adrata') || isBaseAdrataRoute) {
+      // Base Adrata routes - show conversation list (chat conversations)
+      return <ConversationsListGrouped />;
+    } else if (pathname.includes('/stacks')) {
+      // Stacks - show detail panel if item selected, otherwise AI chat
+      if (stacksContext?.selectedItem) {
+        return <StacksDetailPanel item={stacksContext.selectedItem} />;
+      } else {
+        return <RightPanel />; // AI chat for Stacks
+      }
+    } else if (pathname.includes('/inbox')) {
+      // Inbox - show AI chat
+      return <RightPanel />;
+    } else {
+      // All other apps (RevenueOS, Oasis, Workbench, /adrata/oasis, /adrata/stacks, etc.) - show AI chat
+      return <RightPanel />;
+    }
+  }, [pathname, threadData, isBaseAdrataRoute, stacksContext?.selectedItem]);
+  
   // Initialize profile panel state from sessionStorage on mount if needed
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -265,32 +292,7 @@ function PipelineLayoutInner({
                             !pathname.includes('/workbench') &&
                             !pathname.includes('/workbench');
 
-  // Determine which right panel to show based on the current route
-  const getRightPanel = () => {
-    // Check if thread view should be shown (for Oasis routes)
-    if (pathname.includes('/oasis') && threadData) {
-      return <OasisThreadView />;
-    }
-    
-    // Only base Adrata app shows conversation list - all other apps (including /adrata/oasis, /adrata/stacks) show AI chat
-    if (pathname.includes('/pinpoint/adrata') || isBaseAdrataRoute) {
-      // Base Adrata routes - show conversation list (chat conversations)
-      return <ConversationsListGrouped />;
-    } else if (pathname.includes('/stacks')) {
-      // Stacks - show detail panel if item selected, otherwise AI chat
-      if (stacksContext?.selectedItem) {
-        return <StacksDetailPanel item={stacksContext.selectedItem} />;
-      } else {
-        return <RightPanel />; // AI chat for Stacks
-      }
-    } else if (pathname.includes('/inbox')) {
-      // Inbox - show AI chat
-      return <RightPanel />;
-    } else {
-      // All other apps (RevenueOS, Oasis, Workbench, /adrata/oasis, /adrata/stacks, etc.) - show AI chat
-      return <RightPanel />;
-    }
-  };
+  // Right panel is now memoized above to ensure reactivity to threadData changes
   
   // Determine right panel visibility based on route
   // Show right panel if thread is open, or based on route/UI state
@@ -388,7 +390,7 @@ function PipelineLayoutInner({
         thinLeftPanel={null}
         leftPanel={getLeftPanel()}
         middlePanel={isNovaActive ? <NovaBrowser /> : children}
-        rightPanel={getRightPanel()}
+        rightPanel={rightPanel}
         profilePanel={
           <ProfilePanel
             user={pipelineUser}
