@@ -454,6 +454,7 @@ const IntegrationsPage = () => {
                     size="sm"
                     variant="destructive"
                     onClick={() => handleDisconnect(outlookConnection.id)}
+                    className="text-white"
                   >
                     <Unplug className="h-4 w-4 mr-1" />
                     Disconnect
