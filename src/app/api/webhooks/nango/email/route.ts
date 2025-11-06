@@ -370,6 +370,14 @@ async function handleSyncWebhook(payload: any) {
     // Updating it here with modifiedAfter might cause date filter issues
     // The sync service will update lastSyncAt after successfully syncing emails
     
+    console.log(`📧 [WEBHOOK] Triggering custom email sync with:`, {
+      workspaceId: connection.workspaceId,
+      userId: connection.userId,
+      connectionId: connection.id,
+      nangoConnectionId: connection.nangoConnectionId,
+      provider: connection.provider
+    });
+    
     const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
       connection.workspaceId,
       connection.userId
