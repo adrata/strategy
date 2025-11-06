@@ -1190,14 +1190,16 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             onClick={() => {
               console.log("🚉 Grand Central clicked - navigating to grand-central/integrations");
               setIsProfileOpen(false);
-              handleNavigation("/adrata/grand-central/integrations");
+              // Use relative path to ensure it works with current workspace
+              handleNavigation("./grand-central/integrations");
             }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e['key'] === "Enter") {
                 setIsProfileOpen(false);
-                handleNavigation("/adrata/grand-central/integrations");
+                // Use relative path to ensure it works with current workspace
+                handleNavigation("./grand-central/integrations");
               }
             }}
           >
