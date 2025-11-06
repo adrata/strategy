@@ -139,15 +139,24 @@ export class UnifiedEmailSyncService {
       : 'gmail_read_emails';
     
     // Get last sync time to only fetch new emails
-    // Use a more lenient approach: fetch last 24 hours OR since last sync, whichever is more recent
+    // Always look back at least 1 hour to ensure we don't miss any emails due to timing issues
+    // This creates a safety window that accounts for clock skew, processing delays, etc.
     const lastSync = await this.getLastSyncTime(workspaceId, provider);
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const filterDate = lastSync > oneDayAgo ? lastSync : oneDayAgo;
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    
+    // Use the earlier of: (last sync - 1 hour) or 1 hour ago
+    // This ensures we always have at least a 1-hour lookback window
+    const lastSyncMinusOneHour = new Date(lastSync.getTime() - 60 * 60 * 1000);
+    const filterDate = lastSyncMinusOneHour < oneHourAgo ? lastSyncMinusOneHour : oneHourAgo;
+    
+    // But don't go back more than 24 hours
+    const finalFilterDate = filterDate < oneDayAgo ? oneDayAgo : filterDate;
     
     // Format date for Microsoft Graph API (ISO 8601 format)
-    const filterDateISO = filterDate.toISOString();
+    const filterDateISO = finalFilterDate.toISOString();
     
-    console.log(`📧 [EMAIL SYNC] Fetching emails since: ${filterDateISO} (last sync: ${lastSync.toISOString()})`);
+    console.log(`📧 [EMAIL SYNC] Fetching emails since: ${filterDateISO} (last sync: ${lastSync.toISOString()}, window: 1 hour)`);
     
     // Find the database connection record
     const connection = await prisma.grand_central_connections.findFirst({
@@ -176,10 +185,11 @@ export class UnifiedEmailSyncService {
     });
     
     // Fetch emails from multiple folders (inbox for received, sentitems for sent)
+    // OData filters require dates to be in single quotes
     const foldersToSync = provider === 'outlook' 
       ? [
-          { folder: 'inbox', filter: `receivedDateTime ge ${filterDateISO}`, orderby: 'receivedDateTime desc' },
-          { folder: 'sentitems', filter: `sentDateTime ge ${filterDateISO}`, orderby: 'sentDateTime desc' }
+          { folder: 'inbox', filter: `receivedDateTime ge '${filterDateISO}'`, orderby: 'receivedDateTime desc' },
+          { folder: 'sentitems', filter: `sentDateTime ge '${filterDateISO}'`, orderby: 'sentDateTime desc' }
         ]
       : [
           { folder: 'inbox', q: `after:${Math.floor(filterDate.getTime() / 1000)}` },
@@ -674,10 +684,9 @@ export class UnifiedEmailSyncService {
     }
     
     if (mostRecentTime) {
-      // Subtract 5 minutes to account for any timing discrepancies
-      const lastSyncTime = new Date(mostRecentTime.getTime() - 5 * 60 * 1000);
-      console.log(`📧 [EMAIL SYNC] Most recent email at: ${mostRecentTime.toISOString()}, using filter: ${lastSyncTime.toISOString()}`);
-      return lastSyncTime;
+      // Return the exact time - the sync function will create a 1-hour safety window
+      console.log(`📧 [EMAIL SYNC] Most recent email at: ${mostRecentTime.toISOString()}`);
+      return mostRecentTime;
     }
     
     // Default to 7 days ago if no previous sync
