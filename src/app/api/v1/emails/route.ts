@@ -1,12 +1,11 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Email API Endpoint
  * 
  * Provides access to email messages with filtering by person, company, or workspace.
@@ -14,10 +13,18 @@ export const dynamic = 'force-dynamic';;
  */
 export async function GET(request: NextRequest) {
   try {
-    // Authenticate user
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Authenticate and authorize user using secure API helper
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
     
     const { searchParams } = new URL(request.url);
@@ -32,7 +39,7 @@ export async function GET(request: NextRequest) {
     
     // Validate limit
     if (limit > 100) {
-      return Response.json({ error: 'Limit cannot exceed 100' }, { status: 400 });
+      return createErrorResponse('Limit cannot exceed 100', 'INVALID_LIMIT', 400);
     }
     
     // Build where clause
@@ -46,20 +53,12 @@ export async function GET(request: NextRequest) {
       where.personId = personId;
     }
     
+    // Use workspaceId from query params or context
     if (workspaceId) {
       where.workspaceId = workspaceId;
     } else {
-      // If no workspace specified, get user's active workspace
-      const user = await prisma.users.findUnique({
-        where: { id: session.user.id },
-        select: { activeWorkspaceId: true }
-      });
-      
-      if (user?.activeWorkspaceId) {
-        where.workspaceId = user.activeWorkspaceId;
-      } else {
-        return Response.json({ error: 'No active workspace found' }, { status: 400 });
-      }
+      // Use workspaceId from authenticated context
+      where.workspaceId = context.workspaceId;
     }
     
     if (provider && ['outlook', 'gmail'].includes(provider)) {
@@ -123,7 +122,7 @@ export async function GET(request: NextRequest) {
       updatedAt: email.updatedAt
     }));
     
-    return Response.json({
+    return createSuccessResponse({
       emails: transformedEmails,
       pagination: {
         total,
@@ -134,18 +133,23 @@ export async function GET(request: NextRequest) {
       filters: {
         companyId,
         personId,
-        workspaceId,
+        workspaceId: workspaceId || context.workspaceId,
         provider
       }
+    }, {
+      userId: context.userId,
+      workspaceId: context.workspaceId
     });
     
   } catch (error) {
     console.error('❌ Error fetching emails:', error);
     
-    return Response.json({ 
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Internal server error',
+      'EMAIL_FETCH_ERROR',
+      500,
+      error instanceof Error ? error.message : 'Unknown error'
+    );
   }
 }
 
@@ -154,10 +158,18 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    // Authenticate user
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Authenticate and authorize user using secure API helper
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
     
     const body = await request.json();
@@ -177,9 +189,11 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!workspaceId || !provider || !messageId || !subject || !from || !to) {
-      return Response.json({ 
-        error: 'Missing required fields: workspaceId, provider, messageId, subject, from, to' 
-      }, { status: 400 });
+      return createErrorResponse(
+        'Missing required fields: workspaceId, provider, messageId, subject, from, to',
+        'MISSING_REQUIRED_FIELDS',
+        400
+      );
     }
     
     // Create email message
@@ -218,17 +232,21 @@ export async function POST(request: NextRequest) {
       }
     });
     
-    return Response.json({
-      success: true,
+    return createSuccessResponse({
       email
+    }, {
+      userId: context.userId,
+      workspaceId: context.workspaceId
     });
     
   } catch (error) {
     console.error('❌ Error creating email:', error);
     
-    return Response.json({ 
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Internal server error',
+      'EMAIL_CREATE_ERROR',
+      500,
+      error instanceof Error ? error.message : 'Unknown error'
+    );
   }
 }

@@ -117,7 +117,9 @@ export function InboxProvider({ children }: InboxProviderProps) {
       }
 
       const data = await response.json();
-      let fetchedEmails: EmailMessage[] = data.emails || [];
+      // Handle both old format (direct) and new format (wrapped in data)
+      const emailsData = data.data || data;
+      let fetchedEmails: EmailMessage[] = emailsData.emails || [];
 
       // Apply filters
       if (filters.unreadOnly) {

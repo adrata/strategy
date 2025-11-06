@@ -177,9 +177,15 @@ async function createDemoEmails() {
   try {
     console.log('📧 Creating demo emails for production...\n');
 
-    // Get the first active workspace (or use a specific workspace)
+    // Get the Adrata workspace specifically
     const workspace = await prisma.workspaces.findFirst({
-      where: { isActive: true },
+      where: { 
+        isActive: true,
+        OR: [
+          { name: 'Adrata' },
+          { slug: 'adrata' }
+        ]
+      },
       select: { id: true, name: true, slug: true }
     });
 
@@ -190,7 +196,7 @@ async function createDemoEmails() {
 
     console.log(`✅ Using workspace: ${workspace.name} (${workspace.id})\n`);
 
-    // Check if demo emails already exist
+    // Check if demo emails already exist and delete them
     const existingEmails = await prisma.email_messages.findMany({
       where: {
         workspaceId: workspace.id,
@@ -201,9 +207,16 @@ async function createDemoEmails() {
     });
 
     if (existingEmails.length > 0) {
-      console.log(`⚠️  Found ${existingEmails.length} existing demo email(s). Skipping creation.`);
-      console.log('   To recreate, delete existing emails first.\n');
-      return;
+      console.log(`⚠️  Found ${existingEmails.length} existing demo email(s). Deleting them first...`);
+      await prisma.email_messages.deleteMany({
+        where: {
+          workspaceId: workspace.id,
+          subject: {
+            in: DEMO_EMAILS.map(e => e.subject)
+          }
+        }
+      });
+      console.log(`✅ Deleted ${existingEmails.length} existing demo email(s)\n`);
     }
 
     // Create demo emails
