@@ -22,8 +22,8 @@ export const AI_MODELS: AIModel[] = [
   },
   {
     id: "adrata-s1",
-    name: "Adrata S1",
-    displayName: "Adrata S1 (Sales Strategy)",
+    name: "Adrata",
+    displayName: "Adrata (Sales Strategy)",
     version: "Intelligent Sales Context",
     provider: "Adrata",
     openRouterModelId: undefined // Uses intelligent routing with smart sales context
