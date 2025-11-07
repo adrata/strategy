@@ -14,13 +14,11 @@
     },
     {
       "path": "/api/cron/data-refresh",
-      "schedule": "0 2 * * *",
-      "description": "Daily data refresh for high-risk contacts"
+      "schedule": "0 2 * * *"
     },
     {
       "path": "/api/cron/enrich-all-workspaces",
-      "schedule": "0 2 * * 0",
-      "description": "Weekly enrichment for all workspace customers"
+      "schedule": "0 2 * * 0"
     }
   ],
   "functions": {
