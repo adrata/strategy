@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { webResearchService } from '@/platform/ai/services/WebResearchService';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
-export const runtime = 'edge'; // Vercel Edge runtime for fast responses
+// Using Node.js runtime (not edge) because getSecureApiContext requires jsonwebtoken which needs Node.js stream module
 export const maxDuration = 60; // Maximum 60 seconds for web search
 
 export async function POST(request: NextRequest) {
