@@ -1,11 +1,10 @@
 /**
- * Script to move all "in-progress" items to backlog for adrata workspace
+ * Script to move all "deep-backlog" items to "backlog" for adrata workspace
  * 
- * This script:
- * 1. Finds all stories and tasks with status "in-progress" in the adrata workspace
- * 2. Updates them to "backlog" status (which puts them in backlog below the line)
+ * This script moves items from deep-backlog to backlog status so they appear
+ * in the regular backlog section (below the line) instead of deep backlog.
  * 
- * Usage: npx tsx scripts/move-in-progress-to-backlog.ts
+ * Usage: npx tsx scripts/move-deep-backlog-to-backlog.ts
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -14,17 +13,17 @@ const prisma = new PrismaClient();
 
 // Adrata workspace ID
 const ADRATA_WORKSPACE_ID = '01K7464TNANHQXPCZT1FYX205V';
-const IN_PROGRESS_STATUS = 'in-progress';
-const BACKLOG_STATUS = 'backlog'; // Regular backlog (below the line)
+const DEEP_BACKLOG_STATUS = 'deep-backlog';
+const BACKLOG_STATUS = 'backlog';
 
-async function moveInProgressToBacklog() {
-  console.log('🚀 Starting migration: Moving in-progress items to backlog for adrata workspace...\n');
+async function moveDeepBacklogToBacklog() {
+  console.log('🚀 Starting migration: Moving deep-backlog items to backlog for adrata workspace...\n');
 
   try {
-    // Find all stories with "in-progress" status in adrata workspace
-    const inProgressStories = await prisma.stacksStory.findMany({
+    // Find all stories with "deep-backlog" status in adrata workspace
+    const deepBacklogStories = await prisma.stacksStory.findMany({
       where: {
-        status: IN_PROGRESS_STATUS,
+        status: DEEP_BACKLOG_STATUS,
         project: {
           workspaceId: ADRATA_WORKSPACE_ID
         }
@@ -41,10 +40,10 @@ async function moveInProgressToBacklog() {
       }
     });
 
-    // Find all tasks with "in-progress" status in adrata workspace
-    const inProgressTasks = await prisma.stacksTask.findMany({
+    // Find all tasks with "deep-backlog" status in adrata workspace
+    const deepBacklogTasks = await prisma.stacksTask.findMany({
       where: {
-        status: IN_PROGRESS_STATUS,
+        status: DEEP_BACKLOG_STATUS,
         project: {
           workspaceId: ADRATA_WORKSPACE_ID
         }
@@ -61,15 +60,15 @@ async function moveInProgressToBacklog() {
       }
     });
 
-    console.log(`📊 Found ${inProgressStories.length} stories and ${inProgressTasks.length} tasks with "in-progress" status\n`);
+    console.log(`📊 Found ${deepBacklogStories.length} stories and ${deepBacklogTasks.length} tasks with "deep-backlog" status\n`);
 
     // Update stories
-    if (inProgressStories.length > 0) {
+    if (deepBacklogStories.length > 0) {
       console.log('📝 Updating stories...');
       const storyUpdateResult = await prisma.stacksStory.updateMany({
         where: {
           id: {
-            in: inProgressStories.map(s => s.id)
+            in: deepBacklogStories.map(s => s.id)
           }
         },
         data: {
@@ -81,18 +80,18 @@ async function moveInProgressToBacklog() {
       console.log(`✅ Updated ${storyUpdateResult.count} stories to "backlog" status\n`);
       
       // Log details
-      inProgressStories.forEach(story => {
+      deepBacklogStories.forEach(story => {
         console.log(`   - Story: "${story.title}" (${story.id})`);
       });
     }
 
     // Update tasks
-    if (inProgressTasks.length > 0) {
+    if (deepBacklogTasks.length > 0) {
       console.log('\n📝 Updating tasks...');
       const taskUpdateResult = await prisma.stacksTask.updateMany({
         where: {
           id: {
-            in: inProgressTasks.map(t => t.id)
+            in: deepBacklogTasks.map(t => t.id)
           }
         },
         data: {
@@ -103,19 +102,19 @@ async function moveInProgressToBacklog() {
       console.log(`✅ Updated ${taskUpdateResult.count} tasks to "backlog" status\n`);
       
       // Log details
-      inProgressTasks.forEach(task => {
+      deepBacklogTasks.forEach(task => {
         console.log(`   - Task: "${task.title}" (${task.id})`);
       });
     }
 
-    const totalUpdated = inProgressStories.length + inProgressTasks.length;
+    const totalUpdated = deepBacklogStories.length + deepBacklogTasks.length;
     
     if (totalUpdated === 0) {
-      console.log('ℹ️  No items found with "in-progress" status. Nothing to update.');
+      console.log('ℹ️  No items found with "deep-backlog" status. Nothing to update.');
     } else {
       console.log(`\n✅ Migration complete! Updated ${totalUpdated} items total:`);
-      console.log(`   - ${inProgressStories.length} stories`);
-      console.log(`   - ${inProgressTasks.length} tasks`);
+      console.log(`   - ${deepBacklogStories.length} stories`);
+      console.log(`   - ${deepBacklogTasks.length} tasks`);
       console.log(`\nAll items have been moved to "backlog" status and will appear in the backlog below the line.`);
     }
 
@@ -128,7 +127,7 @@ async function moveInProgressToBacklog() {
 }
 
 // Run the migration
-moveInProgressToBacklog()
+moveDeepBacklogToBacklog()
   .then(() => {
     console.log('\n✨ Script completed successfully!');
     process.exit(0);

@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import { useUnifiedAuth } from '@/platform/auth/hooks/useUnifiedAuth';
+import { useUnifiedAuth } from '@/platform/auth';
 import { StacksStory } from './types';
 import { STACK_STATUS } from './constants';
 
