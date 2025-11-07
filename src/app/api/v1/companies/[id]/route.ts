@@ -471,6 +471,43 @@ export async function PATCH(
       }
     }
 
+    // Sync regular address fields to HQ fields for consistency (1:1 mapping)
+    // This ensures both field sets stay in sync and eliminates confusion
+    if ('address' in updateData && updateData.address !== undefined) {
+      updateData.hqStreet = updateData.address;
+      console.log(`🔄 [FIELD SYNC] Synced address -> hqStreet: ${updateData.address}`);
+    }
+    if ('city' in updateData && updateData.city !== undefined) {
+      updateData.hqCity = updateData.city;
+      console.log(`🔄 [FIELD SYNC] Synced city -> hqCity: ${updateData.city}`);
+    }
+    if ('state' in updateData && updateData.state !== undefined) {
+      updateData.hqState = updateData.state;
+      console.log(`🔄 [FIELD SYNC] Synced state -> hqState: ${updateData.state}`);
+    }
+    if ('postalCode' in updateData && updateData.postalCode !== undefined) {
+      updateData.hqZipcode = updateData.postalCode;
+      console.log(`🔄 [FIELD SYNC] Synced postalCode -> hqZipcode: ${updateData.postalCode}`);
+    }
+    
+    // Also sync HQ fields to regular fields for backward compatibility
+    if ('hqStreet' in updateData && updateData.hqStreet !== undefined && !('address' in updateData)) {
+      updateData.address = updateData.hqStreet;
+      console.log(`🔄 [FIELD SYNC] Synced hqStreet -> address: ${updateData.hqStreet}`);
+    }
+    if ('hqCity' in updateData && updateData.hqCity !== undefined && !('city' in updateData)) {
+      updateData.city = updateData.hqCity;
+      console.log(`🔄 [FIELD SYNC] Synced hqCity -> city: ${updateData.hqCity}`);
+    }
+    if ('hqState' in updateData && updateData.hqState !== undefined && !('state' in updateData)) {
+      updateData.state = updateData.hqState;
+      console.log(`🔄 [FIELD SYNC] Synced hqState -> state: ${updateData.hqState}`);
+    }
+    if ('hqZipcode' in updateData && updateData.hqZipcode !== undefined && !('postalCode' in updateData)) {
+      updateData.postalCode = updateData.hqZipcode;
+      console.log(`🔄 [FIELD SYNC] Synced hqZipcode -> postalCode: ${updateData.hqZipcode}`);
+    }
+
     console.log(`🔍 [COMPANY API AUDIT] Database update preparation:`, {
       companyId: id,
       updateData,

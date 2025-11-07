@@ -629,10 +629,46 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-muted w-32">Headquarters:</span>
+              <span className="text-sm text-muted w-32">HQ City:</span>
               <InlineEditField
-                value={mergedRecord?.hqFullAddress || `${mergedRecord?.hqCity || ''}${mergedRecord?.hqCity && mergedRecord?.hqState ? ', ' : ''}${mergedRecord?.hqState || ''}`}
-                field="hqFullAddress"
+                value={mergedRecord?.hqCity || mergedRecord?.city || ''}
+                field="hqCity"
+                onSave={handleSave}
+                recordId={companyId}
+                recordType="companies"
+                onSuccess={handleSuccess}
+                className="text-sm font-medium text-foreground"
+              />
+            </div>
+            <div className="flex items-center">
+              <span className="text-sm text-muted w-32">HQ State:</span>
+              <InlineEditField
+                value={mergedRecord?.hqState || mergedRecord?.state || ''}
+                field="hqState"
+                onSave={handleSave}
+                recordId={companyId}
+                recordType="companies"
+                onSuccess={handleSuccess}
+                className="text-sm font-medium text-foreground"
+              />
+            </div>
+            <div className="flex items-center">
+              <span className="text-sm text-muted w-32">HQ Street:</span>
+              <InlineEditField
+                value={mergedRecord?.hqStreet || mergedRecord?.address || ''}
+                field="hqStreet"
+                onSave={handleSave}
+                recordId={companyId}
+                recordType="companies"
+                onSuccess={handleSuccess}
+                className="text-sm font-medium text-foreground"
+              />
+            </div>
+            <div className="flex items-center">
+              <span className="text-sm text-muted w-32">HQ Zipcode:</span>
+              <InlineEditField
+                value={mergedRecord?.hqZipcode || mergedRecord?.postalCode || ''}
+                field="hqZipcode"
                 onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"

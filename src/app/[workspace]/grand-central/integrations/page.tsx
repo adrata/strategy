@@ -12,6 +12,12 @@ import {
   Unplug,
   Loader2,
   Calendar,
+  Video,
+  Mic,
+  MessageSquare,
+  ExternalLink,
+  Copy,
+  Check,
 } from "lucide-react";
 
 interface Connection {
@@ -24,6 +30,12 @@ interface Connection {
   metadata: any;
   lastSyncAt?: string;
   createdAt: string;
+}
+
+interface IntegrationCategory {
+  id: string;
+  name: string;
+  description: string;
 }
 
 const IntegrationsPage = () => {
@@ -40,6 +52,26 @@ const IntegrationsPage = () => {
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
   const [pendingDisconnectId, setPendingDisconnectId] = useState<string | null>(null);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [selectedIntegration, setSelectedIntegration] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState('');
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Define integration categories
+  const categories: IntegrationCategory[] = [
+    { id: 'all', name: 'All Integrations', description: 'View all available integrations' },
+    { id: 'email', name: 'Email', description: 'Email sync and management' },
+    { id: 'calendar', name: 'Calendar', description: 'Calendar and scheduling' },
+    { id: 'meetings', name: 'Meeting Notes', description: 'Meeting transcription and notes' },
+  ];
+
+  // Copy to clipboard helper
+  const copyToClipboard = (text: string, field: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   // Load connections from Nango API
   const loadConnections = useCallback(async () => {
@@ -55,18 +87,17 @@ const IntegrationsPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Filter to show Outlook, Gmail, and Google Calendar connections
-        const emailConnections = (data.connections || []).filter(
+        // Filter to show all supported integrations
+        const supportedProviders = [
+          'outlook', 'gmail', 'google-calendar', 'google-mail',
+          'zoom', 'fireflies', 'otter', 'microsoft-teams'
+        ];
+        const filteredConnections = (data.connections || []).filter(
           (conn: Connection) => 
-            conn.provider === 'outlook' || 
-            conn.provider === 'gmail' ||
-            conn.provider === 'google-calendar' ||
-            conn.providerConfigKey === 'outlook' ||
-            conn.providerConfigKey === 'google-mail' ||
-            conn.providerConfigKey === 'gmail' ||
-            conn.providerConfigKey === 'google-calendar'
+            supportedProviders.includes(conn.provider) ||
+            supportedProviders.includes(conn.providerConfigKey)
         );
-        setConnections(emailConnections);
+        setConnections(filteredConnections);
       }
     } catch (error) {
       console.error("Failed to load connections:", error);
@@ -552,6 +583,147 @@ const IntegrationsPage = () => {
     }
   };
 
+  // Render meeting integration card helper
+  const renderMeetingIntegrationCard = (config: {
+    id: string;
+    name: string;
+    description: string;
+    icon: any;
+    authType: 'oauth' | 'api-key';
+    setupUrl: string;
+    docUrl: string;
+    scopes?: string[];
+    instructions: string[];
+  }) => {
+    const connection = connections.find(
+      (conn) => conn.provider === config.id || conn.providerConfigKey === config.id
+    );
+    const Icon = config.icon;
+
+    const handleSetup = () => {
+      if (config.authType === 'api-key') {
+        setSelectedIntegration(config.id);
+        setShowApiKeyModal(true);
+      } else {
+        // OAuth flow
+        handleConnect(config.id as any);
+      }
+    };
+
+    return (
+      <div
+        key={config.id}
+        className={`p-6 border rounded-lg ${
+          connection?.status === 'active'
+            ? 'border-green-200 bg-green-50/50'
+            : 'border-border bg-background'
+        }`}
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <div
+              className={`p-3 rounded-lg ${
+                connection?.status === 'active' ? 'bg-green-100' : 'bg-hover'
+              }`}
+            >
+              <Icon
+                className={`h-6 w-6 ${
+                  connection?.status === 'active' ? 'text-green-600' : 'text-foreground'
+                }`}
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-lg font-semibold text-foreground">{config.name}</h3>
+                {connection?.status === 'active' && (
+                  <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                    Connected
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-muted">{config.description}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Connection Status */}
+        {connection ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              <span className="text-sm font-medium text-green-600">Connected</span>
+            </div>
+            {connection.lastSyncAt && (
+              <p className="text-xs text-muted">
+                Last sync: {new Date(connection.lastSyncAt).toLocaleString()}
+              </p>
+            )}
+            <div className="flex gap-2 pt-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleDisconnect(connection.id)}
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
+              >
+                <Unplug className="h-4 w-4 mr-1" />
+                Disconnect
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Setup Instructions */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                <ExternalLink className="h-4 w-4" />
+                Setup Instructions
+              </h4>
+              <ol className="text-xs text-blue-800 space-y-1 list-decimal list-inside">
+                {config.instructions.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
+              <div className="flex gap-2 mt-3">
+                <a
+                  href={config.setupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:text-blue-700 underline flex items-center gap-1"
+                >
+                  Open {config.name} Settings <ExternalLink className="h-3 w-3" />
+                </a>
+                <a
+                  href={config.docUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:text-blue-700 underline flex items-center gap-1"
+                >
+                  View API Docs <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </div>
+
+            {/* Connect Button */}
+            <Button
+              onClick={handleSetup}
+              disabled={connectingProvider === config.id}
+              className={`bg-blue-600 hover:bg-blue-700 text-white w-full ${
+                connectingProvider === config.id ? 'opacity-75 cursor-not-allowed' : ''
+              }`}
+            >
+              {connectingProvider === config.id 
+                ? "Connecting..." 
+                : config.authType === 'api-key'
+                ? "Enter API Key"
+                : `Connect ${config.name}`
+              }
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const outlookConnection = connections.find(
     (conn) => conn.provider === 'outlook' || conn.providerConfigKey === 'outlook'
   );
@@ -587,11 +759,30 @@ const IntegrationsPage = () => {
       {/* Header */}
       <div className="p-6 border-b border-border">
         <h1 className="text-2xl font-bold text-foreground mb-2">
-          Integrations
+          Grand Central Integrations
         </h1>
         <p className="text-muted">
-          Connect your email accounts to automatically sync incoming and outgoing emails in real-time
+          Connect your apps and services to automatically sync data in real-time
         </p>
+      </div>
+
+      {/* Category Tabs */}
+      <div className="border-b border-border bg-background">
+        <div className="flex gap-1 px-6 overflow-x-auto">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                selectedCategory === category.id
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-muted hover:text-foreground'
+              }`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* OAuth Success/Error Message */}
@@ -626,7 +817,15 @@ const IntegrationsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        {/* Email Category */}
+        {(selectedCategory === 'all' || selectedCategory === 'email') && (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              Email Integrations
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Outlook Integration Card */}
           <div
             className={`p-6 border rounded-lg ${
@@ -848,6 +1047,18 @@ const IntegrationsPage = () => {
               </div>
             )}
           </div>
+            </div>
+          </div>
+        )}
+
+        {/* Calendar Category */}
+        {(selectedCategory === 'all' || selectedCategory === 'calendar') && (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Calendar Integrations
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           {/* Google Calendar Integration Card */}
           <div
@@ -959,7 +1170,98 @@ const IntegrationsPage = () => {
               </div>
             )}
           </div>
-        </div>
+            </div>
+          </div>
+        )}
+
+        {/* Meeting Notes Category */}
+        {(selectedCategory === 'all' || selectedCategory === 'meetings') && (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Video className="h-5 w-5" />
+              Meeting Notes & Transcription
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              {/* Zoom Integration Card */}
+              {renderMeetingIntegrationCard({
+                id: 'zoom',
+                name: 'Zoom',
+                description: 'Access meeting recordings and AI-generated transcripts',
+                icon: Video,
+                authType: 'oauth',
+                setupUrl: 'https://marketplace.zoom.us/',
+                docUrl: 'https://developers.zoom.us/docs/api/',
+                scopes: ['meeting:read', 'recording:read', 'cloud_recording:read'],
+                instructions: [
+                  'Go to Zoom App Marketplace',
+                  'Click "Develop" → "Build App"',
+                  'Choose "Server-to-Server OAuth" app type',
+                  'Fill in app details and get your credentials',
+                  'Add the required scopes for recordings and transcripts',
+                  'Click "Connect" below and authorize the app'
+                ]
+              })}
+
+              {/* Fireflies.ai Integration Card */}
+              {renderMeetingIntegrationCard({
+                id: 'fireflies',
+                name: 'Fireflies.ai',
+                description: 'AI-powered meeting transcription and notes',
+                icon: Mic,
+                authType: 'api-key',
+                setupUrl: 'https://fireflies.ai/integrations',
+                docUrl: 'https://docs.fireflies.ai/',
+                instructions: [
+                  'Log in to your Fireflies.ai account',
+                  'Go to Settings → Integrations',
+                  'Find the "API Key" section',
+                  'Click "Generate API Key" or copy your existing key',
+                  'Paste the API key below to connect'
+                ]
+              })}
+
+              {/* Otter.ai Integration Card */}
+              {renderMeetingIntegrationCard({
+                id: 'otter',
+                name: 'Otter.ai',
+                description: 'Real-time meeting transcription and notes',
+                icon: MessageSquare,
+                authType: 'api-key',
+                setupUrl: 'https://otter.ai/apps',
+                docUrl: 'https://developer.otter.ai/',
+                instructions: [
+                  'Log in to your Otter.ai account',
+                  'Navigate to Settings → Integrations',
+                  'Look for "API Access" or "Developer" section',
+                  'Generate or copy your API key',
+                  'Enter the API key below to connect'
+                ]
+              })}
+
+              {/* Microsoft Teams Meetings Card */}
+              {renderMeetingIntegrationCard({
+                id: 'microsoft-teams',
+                name: 'Microsoft Teams',
+                description: 'Teams meeting recordings and transcripts via Microsoft Graph',
+                icon: Video,
+                authType: 'oauth',
+                setupUrl: 'https://portal.azure.com/',
+                docUrl: 'https://learn.microsoft.com/en-us/graph/api/resources/call-records-api-overview',
+                scopes: ['CallRecords.Read.All', 'OnlineMeetings.Read.All'],
+                instructions: [
+                  'Your Microsoft account is already configured for email',
+                  'Additional permissions needed for Teams recordings',
+                  'Go to Azure Portal → App Registrations',
+                  'Add API permissions: CallRecords.Read.All, OnlineMeetings.Read.All',
+                  'Admin consent required for these permissions',
+                  'Click "Connect" below to authorize'
+                ]
+              })}
+
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Disconnect Confirmation Modal */}
@@ -972,9 +1274,9 @@ const IntegrationsPage = () => {
             className="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4" 
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Disconnect Email Account</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Disconnect Integration</h3>
             <p className="text-sm text-gray-600 mb-6">
-              Are you sure you want to disconnect this email account? You'll need to reconnect to sync emails.
+              Are you sure you want to disconnect this integration? You'll need to reconnect to sync data.
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -989,6 +1291,127 @@ const IntegrationsPage = () => {
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isDisconnecting ? "Disconnecting..." : "Disconnect"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* API Key Input Modal */}
+      {showApiKeyModal && selectedIntegration && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]" 
+          onClick={() => {
+            setShowApiKeyModal(false);
+            setSelectedIntegration(null);
+            setApiKey('');
+          }}
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl p-6 max-w-lg mx-4 w-full" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Connect {selectedIntegration === 'fireflies' ? 'Fireflies.ai' : selectedIntegration === 'otter' ? 'Otter.ai' : selectedIntegration}
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Enter your API key to connect this integration.
+            </p>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                API Key
+              </label>
+              <input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="Enter your API key"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Your API key is encrypted and stored securely.
+              </p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+              <h4 className="text-xs font-semibold text-blue-900 mb-1">Where to find your API key:</h4>
+              <ul className="text-xs text-blue-800 space-y-1 list-disc list-inside">
+                {selectedIntegration === 'fireflies' && (
+                  <>
+                    <li>Go to Fireflies.ai Settings</li>
+                    <li>Navigate to Integrations</li>
+                    <li>Find "API Key" section</li>
+                    <li>Generate or copy your API key</li>
+                  </>
+                )}
+                {selectedIntegration === 'otter' && (
+                  <>
+                    <li>Go to Otter.ai Settings</li>
+                    <li>Navigate to Integrations or Developer section</li>
+                    <li>Generate or copy your API key</li>
+                  </>
+                )}
+              </ul>
+            </div>
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowApiKeyModal(false);
+                  setSelectedIntegration(null);
+                  setApiKey('');
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (!apiKey.trim()) {
+                    setOauthMessage({
+                      type: 'error',
+                      message: 'Please enter an API key'
+                    });
+                    return;
+                  }
+
+                  try {
+                    const response = await fetch('/api/v1/integrations/api-key/connect', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      credentials: 'include',
+                      body: JSON.stringify({
+                        provider: selectedIntegration,
+                        apiKey: apiKey.trim(),
+                        workspaceId: user?.activeWorkspaceId
+                      })
+                    });
+
+                    if (response.ok) {
+                      setOauthMessage({
+                        type: 'success',
+                        message: `${selectedIntegration === 'fireflies' ? 'Fireflies.ai' : 'Otter.ai'} connected successfully!`
+                      });
+                      setShowApiKeyModal(false);
+                      setSelectedIntegration(null);
+                      setApiKey('');
+                      loadConnections();
+                    } else {
+                      const error = await response.json();
+                      throw new Error(error.message || 'Failed to connect');
+                    }
+                  } catch (error) {
+                    setOauthMessage({
+                      type: 'error',
+                      message: error instanceof Error ? error.message : 'Failed to connect integration'
+                    });
+                  }
+                }}
+                disabled={!apiKey.trim()}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Connect
               </button>
             </div>
           </div>

@@ -751,19 +751,19 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         </div>
       </div>
 
-      {/* Location Information */}
+      {/* Location Information - Headquarters */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Location Information</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Headquarters Location</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left Column - Basic Location */}
+          {/* Left Column - Headquarters Address */}
           <div className="bg-background p-4 rounded-lg border border-border">
-            <h4 className="font-medium text-foreground mb-3">Primary Address</h4>
+            <h4 className="font-medium text-foreground mb-3">Address Details</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-muted w-24">Address:</span>
+                <span className="text-sm text-muted w-24">Street:</span>
                 <InlineEditField
-                  value={mergedRecord?.address || ''}
-                  field="address"
+                  value={mergedRecord?.hqStreet || mergedRecord?.address || ''}
+                  field="hqStreet"
                   onSave={onSave}
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
@@ -774,24 +774,36 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">City:</span>
                 <InlineEditField
-                  value={city || mergedRecord?.city || ''}
-                  field="city"
+                  value={mergedRecord?.hqCity || city || mergedRecord?.city || ''}
+                  field="hqCity"
                   onSave={onSave}
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
-                  onSuccess={(message) => handleFieldSuccess('city', city || mergedRecord?.city || '', message)}
+                  onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">State:</span>
                 <InlineEditField
-                  value={state || mergedRecord?.state || ''}
-                  field="state"
+                  value={mergedRecord?.hqState || state || mergedRecord?.state || ''}
+                  field="hqState"
                   onSave={onSave}
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
-                  onSuccess={(message) => handleFieldSuccess('state', state || mergedRecord?.state || '', message)}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-foreground"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-muted w-24">Zipcode:</span>
+                <InlineEditField
+                  value={mergedRecord?.hqZipcode || mergedRecord?.postalCode || ''}
+                  field="hqZipcode"
+                  onSave={onSave}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
+                  onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
               </div>
@@ -807,83 +819,35 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   className="text-sm font-medium text-foreground"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Right Column - Full Address */}
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Full Address</h4>
+            <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-muted w-24">Postal Code:</span>
+                <span className="text-sm text-muted w-24">Full Address:</span>
                 <InlineEditField
-                  value={mergedRecord?.postalCode || ''}
-                  field="postalCode"
+                  value={mergedRecord?.hqFullAddress || ''}
+                  field="hqFullAddress"
                   onSave={onSave}
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-foreground"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column - Headquarters */}
-          <div className="bg-background p-4 rounded-lg border border-border">
-            <h4 className="font-medium text-foreground mb-3">Headquarters</h4>
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <span className="text-sm text-muted w-24">HQ Street:</span>
-                <InlineEditField
-                  value={record?.hqStreet || ''}
-                  field="hqStreet"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-foreground"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-muted w-24">HQ City:</span>
-                <InlineEditField
-                  value={record?.hqCity || ''}
-                  field="hqCity"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-foreground"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-muted w-24">HQ State:</span>
-                <InlineEditField
-                  value={record?.hqState || ''}
-                  field="hqState"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-foreground"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-muted w-24">HQ Zip:</span>
-                <InlineEditField
-                  value={record?.hqZipcode || ''}
-                  field="hqZipcode"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-foreground"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-muted w-24">HQ Full:</span>
-                <InlineEditField
-                  value={record?.hqFullAddress || ''}
-                  field="hqFullAddress"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
                   type="textarea"
+                  className="text-sm font-medium text-foreground"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-muted w-24">Location:</span>
+                <InlineEditField
+                  value={mergedRecord?.hqLocation || ''}
+                  field="hqLocation"
+                  onSave={onSave}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
+                  onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
               </div>

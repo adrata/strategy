@@ -180,10 +180,14 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
     }
   };
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or channel changes
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [realMessages]);
+    // Use setTimeout to ensure DOM is updated before scrolling
+    const timer = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [realMessages, selectedChannel?.id]);
 
   // Mark messages as read when they are viewed
   useEffect(() => {
@@ -329,7 +333,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto invisible-scrollbar p-3 space-y-[15px] flex flex-col justify-end">
+      <div className="flex-1 overflow-y-auto invisible-scrollbar p-3 space-y-[15px] flex flex-col">
         {messagesLoading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (

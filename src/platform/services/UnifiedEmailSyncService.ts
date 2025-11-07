@@ -950,18 +950,22 @@ export class UnifiedEmailSyncService {
   
   /**
    * Auto-link emails to people and companies
+   * Enhanced to link company emails even when person isn't found
    */
   private static async linkEmailsToEntities(workspaceId: string) {
     const unlinkedEmails = await prisma.email_messages.findMany({
       where: {
         workspaceId,
-        personId: null,
-        companyId: null
+        OR: [
+          { personId: null },
+          { companyId: null }
+        ]
       },
       take: 1000 // Process in batches
     });
     
-    let linked = 0;
+    let linkedToPerson = 0;
+    let linkedToCompany = 0;
     
     for (const email of unlinkedEmails) {
       // Extract email addresses
@@ -969,33 +973,83 @@ export class UnifiedEmailSyncService {
         email.from,
         ...email.to,
         ...email.cc
-      ].filter(Boolean);
+      ].filter(Boolean).map(e => e.toLowerCase().trim());
+      
+      let personId = email.personId;
+      let companyId = email.companyId;
       
       // Find matching person
-      const person = await prisma.people.findFirst({
-        where: {
-          workspaceId,
-          OR: [
-            { email: { in: emailAddresses } },
-            { workEmail: { in: emailAddresses } },
-            { personalEmail: { in: emailAddresses } }
-          ]
+      if (!personId) {
+        const person = await prisma.people.findFirst({
+          where: {
+            workspaceId,
+            OR: [
+              { email: { in: emailAddresses } },
+              { workEmail: { in: emailAddresses } },
+              { personalEmail: { in: emailAddresses } }
+            ]
+          },
+          include: {
+            company: {
+              select: {
+                id: true
+              }
+            }
+          }
+        });
+        
+        if (person) {
+          personId = person.id;
+          if (!companyId && person.companyId) {
+            companyId = person.companyId;
+          }
         }
-      });
+      }
       
-      if (person) {
+      // If no person found, try to link to company by email domain
+      if (!companyId && emailAddresses.length > 0) {
+        // Extract domains from email addresses
+        const domains = emailAddresses
+          .map(e => {
+            const match = e.match(/@([^@]+)$/);
+            return match ? match[1] : null;
+          })
+          .filter(Boolean);
+        
+        if (domains.length > 0) {
+          const company = await prisma.companies.findFirst({
+            where: {
+              workspaceId,
+              OR: [
+                { domain: { in: domains } },
+                { website: { contains: domains[0] } },
+                { email: { in: emailAddresses } }
+              ]
+            }
+          });
+          
+          if (company) {
+            companyId = company.id;
+          }
+        }
+      }
+      
+      // Update email if we found links
+      if (personId !== email.personId || companyId !== email.companyId) {
         await prisma.email_messages.update({
           where: { id: email.id },
           data: {
-            personId: person.id,
-            companyId: person.companyId
+            personId: personId || null,
+            companyId: companyId || null
           }
         });
-        linked++;
+        
+        if (personId) linkedToPerson++;
+        if (companyId) linkedToCompany++;
       }
     }
     
-    return { linked };
+    return { linked: linkedToPerson, linkedToCompany };
   }
 
   /**
@@ -1187,6 +1241,22 @@ export class UnifiedEmailSyncService {
       }
       
       try {
+        // Build description with email details
+        const emailDetails = [];
+        emailDetails.push(`From: ${email.from}`);
+        if (email.to && email.to.length > 0) {
+          emailDetails.push(`To: ${email.to.join(', ')}`);
+        }
+        if (email.cc && email.cc.length > 0) {
+          emailDetails.push(`CC: ${email.cc.join(', ')}`);
+        }
+        if (email.threadId) {
+          emailDetails.push(`Thread: ${email.threadId}`);
+        }
+        emailDetails.push(`\n${email.body.substring(0, 400)}`);
+        
+        const description = emailDetails.join('\n');
+
         await prisma.actions.create({
           data: {
             workspaceId,
@@ -1194,8 +1264,8 @@ export class UnifiedEmailSyncService {
             companyId: email.companyId,
             personId: email.personId,
             type: 'EMAIL',
-            subject: email.subject,
-            description: email.body.substring(0, 500),
+            subject: email.subject || '(No Subject)',
+            description: description,
             status: 'COMPLETED',
             completedAt: email.receivedAt,
             createdAt: email.receivedAt,

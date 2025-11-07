@@ -5,6 +5,7 @@
  * Implements double-waterfall approach for cost efficiency
  */
 
+const fetch = require('node-fetch');
 const { CompanyIntelligence } = require('./company-intelligence');
 const { PreviewSearch } = require('./preview-search');
 const { SmartScoring } = require('./smart-scoring');
@@ -15,6 +16,9 @@ const { ResearchReport } = require('./research-report');
 const { AIReasoning } = require('./ai-reasoning');
 const { BuyerGroupSizing } = require('./buyer-group-sizing');
 const { extractDomain, createUniqueId, delay } = require('./utils');
+
+// Import sophisticated multi-source email verification system
+const { MultiSourceVerifier } = require('../../../src/platform/pipelines/modules/core/MultiSourceVerifier');
 
 class SmartBuyerGroupPipeline {
   constructor(options = {}) {
@@ -33,6 +37,16 @@ class SmartBuyerGroupPipeline {
     
     // Initialize AI reasoning if API key is available
     this.aiReasoning = process.env.ANTHROPIC_API_KEY ? new AIReasoning(process.env.ANTHROPIC_API_KEY) : null;
+    
+    // Initialize multi-source email verifier
+    this.emailVerifier = new MultiSourceVerifier({
+      ZEROBOUNCE_API_KEY: process.env.ZEROBOUNCE_API_KEY,
+      MYEMAILVERIFIER_API_KEY: process.env.MYEMAILVERIFIER_API_KEY,
+      PROSPEO_API_KEY: process.env.PROSPEO_API_KEY,
+      PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
+      PEOPLE_DATA_LABS_API_KEY: process.env.PEOPLE_DATA_LABS_API_KEY,
+      TIMEOUT: 30000
+    });
     
     // Pipeline state
     this.pipelineState = {
@@ -363,24 +377,29 @@ class SmartBuyerGroupPipeline {
         return await this.collectFullProfiles(groupToEnrich);
       });
       
+      // Stage 7.5: Multi-Source Email Verification & Discovery
+      const emailVerifiedBuyerGroup = await this.executeStage('email-verification', async () => {
+        return await this.verifyAndEnrichEmails(enrichedBuyerGroup, intelligence);
+      });
+      
       this.pipelineState.costs.collect = enrichedBuyerGroup.length * 1.0; // $1.00 per collect
-      this.pipelineState.costs.total = this.pipelineState.costs.preview + this.pipelineState.costs.collect;
+      this.pipelineState.costs.email = emailVerifiedBuyerGroup.reduce((sum, m) => sum + (m.emailVerificationCost || 0), 0);
       
       // Stage 8: Cohesion Validation (free)
       const cohesion = await this.executeStage('cohesion-validation', async () => {
-        return this.cohesionValidator.validate(enrichedBuyerGroup || []);
+        return this.cohesionValidator.validate(emailVerifiedBuyerGroup || []);
       });
       
       // Stage 8.5: AI Buyer Group Validation (optional - only if ANTHROPIC_API_KEY exists)
-      let aiValidatedBuyerGroup = enrichedBuyerGroup;
+      let aiValidatedBuyerGroup = emailVerifiedBuyerGroup;
       let aiValidationResults = null;
-      if (this.aiReasoning && enrichedBuyerGroup && enrichedBuyerGroup.length > 0) {
+      if (this.aiReasoning && emailVerifiedBuyerGroup && emailVerifiedBuyerGroup.length > 0) {
         const aiValidation = await this.executeStage('ai-buyer-group-validation', async () => {
           console.log('🤖 Running AI buyer group validation...');
           
           try {
             const validation = await this.aiReasoning.validateBuyerGroup(
-              enrichedBuyerGroup, 
+              emailVerifiedBuyerGroup, 
               {
                 companyName: intelligence.companyName,
                 companySize: intelligence.employeeCount,
@@ -414,15 +433,15 @@ class SmartBuyerGroupPipeline {
       
       // Stage 9: Generate Research Report (free)
       const report = await this.executeStage('report-generation', async () => {
-        console.log(`🔍 Debug: enrichedBuyerGroup =`, enrichedBuyerGroup ? enrichedBuyerGroup.length : 'undefined');
-        console.log(`🔍 Debug: enrichedBuyerGroup type =`, typeof enrichedBuyerGroup);
-        console.log(`🔍 Debug: enrichedBuyerGroup || [] =`, (enrichedBuyerGroup || []).length);
+        console.log(`🔍 Debug: emailVerifiedBuyerGroup =`, emailVerifiedBuyerGroup ? emailVerifiedBuyerGroup.length : 'undefined');
+        console.log(`🔍 Debug: emailVerifiedBuyerGroup type =`, typeof emailVerifiedBuyerGroup);
+        console.log(`🔍 Debug: emailVerifiedBuyerGroup || [] =`, (emailVerifiedBuyerGroup || []).length);
         
         try {
           return this.reportGenerator.generate({
             intelligence,
             previewEmployees,
-            buyerGroup: aiValidatedBuyerGroup || enrichedBuyerGroup || [],
+            buyerGroup: aiValidatedBuyerGroup || emailVerifiedBuyerGroup || [],
             coverage,
             cohesion,
             costs: this.pipelineState.costs,
@@ -438,10 +457,13 @@ class SmartBuyerGroupPipeline {
         }
       });
       
-      // Stage 10: Lusha Phone Enrichment
-      const phoneEnrichedBuyerGroup = await this.executeStage('lusha-phone-enrichment', async () => {
-        return await this.enrichBuyerGroupWithLusha(enrichedBuyerGroup);
+      // Stage 10: Multi-Source Phone Verification & Enrichment
+      const phoneEnrichedBuyerGroup = await this.executeStage('phone-verification', async () => {
+        return await this.verifyAndEnrichPhones(emailVerifiedBuyerGroup, intelligence);
       });
+      
+      this.pipelineState.costs.phone = phoneEnrichedBuyerGroup.reduce((sum, m) => sum + (m.phoneVerificationCost || 0), 0);
+      this.pipelineState.costs.total = this.pipelineState.costs.preview + this.pipelineState.costs.collect + this.pipelineState.costs.email + this.pipelineState.costs.phone;
       
       // Stage 11: Database Persistence (conditional)
       if (!this.options.skipDatabase) {
@@ -801,6 +823,181 @@ class SmartBuyerGroupPipeline {
   }
 
   /**
+   * Verify and enrich emails for buyer group members using multi-source verification
+   * @param {Array} buyerGroup - Buyer group members
+   * @param {object} intelligence - Company intelligence data
+   * @returns {Array} Buyer group with verified/discovered emails
+   */
+  async verifyAndEnrichEmails(buyerGroup, intelligence) {
+    console.log(`📧 Verifying and enriching emails for ${buyerGroup.length} members...`);
+    
+    const enrichedGroup = [];
+    let totalCost = 0;
+    let emailsVerified = 0;
+    let emailsDiscovered = 0;
+    
+    for (const member of buyerGroup) {
+      try {
+        // Extract existing email from Coresignal data
+        const coresignalEmail = this.extractEmailFromCoresignal(member.fullProfile);
+        const existingEmail = coresignalEmail || (member.email && !member.email.includes('@coresignal.temp') ? member.email : null);
+        
+        const companyDomain = intelligence.website ? extractDomain(intelligence.website) : null;
+        
+        let verifiedEmail = null;
+        let emailConfidence = 0;
+        let emailVerificationDetails = [];
+        let verificationCost = 0;
+        
+        if (existingEmail) {
+          // Verify existing email with multi-layer verification
+          console.log(`   ✅ Verifying existing email: ${existingEmail}`);
+          
+          const verification = await this.emailVerifier.verifyEmailMultiLayer(
+            existingEmail,
+            member.name,
+            companyDomain
+          );
+          
+          if (verification.valid) {
+            verifiedEmail = existingEmail;
+            emailConfidence = verification.confidence;
+            emailVerificationDetails = verification.validationDetails || [];
+            emailsVerified++;
+            
+            // Estimate cost: $0.001 for ZeroBounce or $0.003 for MyEmailVerifier
+            verificationCost = 0.003; // Conservative estimate
+          } else {
+            console.log(`   ⚠️ Email validation failed (${verification.confidence}% confidence), trying discovery...`);
+          }
+        }
+        
+        // If no email or validation failed, try to discover email
+        if (!verifiedEmail) {
+          console.log(`   🔍 Discovering email for ${member.name}...`);
+          
+          // Use Prospeo for email discovery if available
+          if (process.env.PROSPEO_API_KEY) {
+            try {
+              const prospeoResult = await this.discoverEmailWithProspeo(
+                member.name,
+                intelligence.companyName,
+                companyDomain
+              );
+              
+              if (prospeoResult && prospeoResult.email) {
+                verifiedEmail = prospeoResult.email;
+                emailConfidence = prospeoResult.confidence || 80;
+                emailVerificationDetails = prospeoResult.verificationDetails || [];
+                verificationCost = 0.0198; // Prospeo cost per verified email
+                emailsDiscovered++;
+                
+                console.log(`   ✅ Discovered email: ${verifiedEmail} (${emailConfidence}% confidence)`);
+              }
+            } catch (error) {
+              console.log(`   ⚠️ Email discovery failed: ${error.message}`);
+            }
+          }
+        }
+        
+        totalCost += verificationCost;
+        
+        enrichedGroup.push({
+          ...member,
+          email: verifiedEmail || existingEmail || member.email,
+          emailVerified: !!verifiedEmail,
+          emailConfidence: emailConfidence,
+          emailVerificationDetails: emailVerificationDetails,
+          emailVerificationCost: verificationCost,
+          emailSource: verifiedEmail ? (existingEmail ? 'verified' : 'discovered') : 'unverified'
+        });
+        
+        // Rate limiting
+        await delay(100);
+        
+      } catch (error) {
+        console.error(`   ❌ Failed to verify/discover email for ${member.name}:`, error.message);
+        // Keep member with original email data
+        enrichedGroup.push({
+          ...member,
+          emailVerified: false,
+          emailConfidence: 0,
+          emailVerificationError: error.message
+        });
+      }
+    }
+    
+    console.log(`✅ Email verification complete:`);
+    console.log(`   - Verified: ${emailsVerified} emails`);
+    console.log(`   - Discovered: ${emailsDiscovered} emails`);
+    console.log(`   - Total cost: $${totalCost.toFixed(4)}`);
+    
+    return enrichedGroup;
+  }
+  
+  /**
+   * Discover email using Prospeo Email Finder
+   * @param {string} name - Person's full name
+   * @param {string} companyName - Company name
+   * @param {string} companyDomain - Company domain
+   * @returns {object|null} Email discovery result
+   */
+  async discoverEmailWithProspeo(name, companyName, companyDomain) {
+    if (!process.env.PROSPEO_API_KEY) {
+      return null;
+    }
+    
+    try {
+      // Parse name for API
+      const nameParts = name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts[nameParts.length - 1] || '';
+      
+      const response = await fetch('https://api.prospeo.io/email-finder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-KEY': process.env.PROSPEO_API_KEY.trim()
+        },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          company_domain: companyDomain
+        }),
+        timeout: 15000
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.email && data.email.email) {
+          const isValid = data.email.verification?.result === 'deliverable';
+          const confidence = isValid ? 85 : 50;
+          
+          return {
+            email: data.email.email,
+            confidence: confidence,
+            isValid: isValid,
+            pattern: data.email.email_pattern,
+            verificationDetails: [{
+              layer: 'Prospeo',
+              status: data.email.verification?.result || 'unknown',
+              confidence: confidence,
+              reasoning: `Discovered via Prospeo: ${data.email.verification?.result || 'found'}`
+            }]
+          };
+        }
+      } else {
+        console.log(`   ⚠️ Prospeo API error: ${response.status}`);
+      }
+    } catch (error) {
+      console.log(`   ⚠️ Prospeo discovery error: ${error.message}`);
+    }
+    
+    return null;
+  }
+  
+  /**
    * Extract email from Coresignal data
    * @param {object} fullProfile - Full Coresignal profile data
    * @returns {string|null} Best email found (only real emails, not @coresignal.temp)
@@ -860,40 +1057,173 @@ class SmartBuyerGroupPipeline {
   }
 
   /**
-   * Enrich buyer group with Lusha phone data
+   * Verify and enrich phone numbers for buyer group members using multi-source verification
    * @param {Array} buyerGroup - Buyer group members
-   * @returns {Array} Enriched buyer group
+   * @param {object} intelligence - Company intelligence data
+   * @returns {Array} Buyer group with verified/discovered phone numbers
    */
-  async enrichBuyerGroupWithLusha(buyerGroup) {
-    const apiKey = process.env.LUSHA_API_KEY;
-    if (!apiKey) {
-      console.log('⚠️ LUSHA_API_KEY not found, skipping phone enrichment');
-      return buyerGroup;
-    }
+  async verifyAndEnrichPhones(buyerGroup, intelligence) {
+    console.log(`📞 Verifying and enriching phone numbers for ${buyerGroup.length} members...`);
     
-    console.log(`📞 Enriching ${buyerGroup.length} members with Lusha phone data...`);
+    const enrichedGroup = [];
+    let totalCost = 0;
+    let phonesVerified = 0;
+    let phonesDiscovered = 0;
     
     for (const member of buyerGroup) {
-      if (member.linkedinUrl) {
-        const phoneData = await this.enrichWithLushaLinkedIn(member.linkedinUrl, apiKey);
-        if (phoneData) {
-          member.phone1 = phoneData.phone1;
-          member.phone1Type = phoneData.phone1Type;
-          member.phone1Verified = phoneData.phone1Verified;
-          member.phone2 = phoneData.phone2;
-          member.phone2Type = phoneData.phone2Type;
-          member.directDialPhone = phoneData.directDialPhone;
-          member.mobilePhone = phoneData.mobilePhone;
-          member.workPhone = phoneData.workPhone;
-          member.phoneEnrichmentSource = phoneData.phoneEnrichmentSource;
-          member.phoneEnrichmentDate = phoneData.phoneEnrichmentDate;
-          member.phoneDataQuality = phoneData.phoneDataQuality;
+      try {
+        // Extract existing phone from Coresignal data
+        const coresignalPhone = this.extractPhoneFromCoresignal(member.fullProfile);
+        const existingPhone = coresignalPhone || member.phone || member.mobilePhone || member.workPhone;
+        
+        let verifiedPhone = null;
+        let phoneConfidence = 0;
+        let phoneVerificationDetails = [];
+        let verificationCost = 0;
+        let phoneType = 'unknown';
+        let phoneMetadata = {};
+        
+        if (existingPhone) {
+          // Verify existing phone with multi-source verification
+          console.log(`   ✅ Verifying existing phone: ${existingPhone}`);
+          
+          const verification = await this.emailVerifier.verifyPhone(
+            existingPhone,
+            member.name,
+            intelligence.companyName,
+            member.linkedinUrl
+          );
+          
+          if (verification.valid) {
+            verifiedPhone = existingPhone;
+            phoneConfidence = verification.confidence;
+            phoneVerificationDetails = verification.verificationDetails || [];
+            phonesVerified++;
+            
+            // Determine phone type from verification sources
+            phoneType = this.extractPhoneType(verification.verificationDetails);
+            phoneMetadata = verification.metadata || {};
+            
+            // Estimate cost: Lusha (~$0.01) + Twilio (~$0.005) + PDL (~$0.01) + Prospeo (~$0.02)
+            verificationCost = 0.045; // Conservative estimate for multi-source
+          } else {
+            console.log(`   ⚠️ Phone validation failed (${verification.confidence}% confidence), trying discovery...`);
+          }
         }
+        
+        // If no phone or validation failed, try to discover phone
+        if (!verifiedPhone && member.linkedinUrl) {
+          console.log(`   🔍 Discovering phone for ${member.name}...`);
+          
+          // Use Lusha LinkedIn enrichment for phone discovery
+          if (process.env.LUSHA_API_KEY) {
+            try {
+              const lushaResult = await this.enrichWithLushaLinkedIn(member.linkedinUrl, process.env.LUSHA_API_KEY);
+              
+              if (lushaResult && (lushaResult.phone1 || lushaResult.mobilePhone || lushaResult.directDialPhone)) {
+                // Pick best phone (prioritize direct dial > mobile > work)
+                verifiedPhone = lushaResult.directDialPhone || lushaResult.mobilePhone || lushaResult.phone1;
+                phoneConfidence = lushaResult.phoneDataQuality || 75;
+                phoneType = this.determineLushaPhoneType(lushaResult);
+                phoneVerificationDetails = [{
+                  source: 'Lusha',
+                  verified: true,
+                  confidence: phoneConfidence,
+                  reasoning: `Discovered via Lusha LinkedIn enrichment: ${phoneType}`
+                }];
+                verificationCost = 0.01; // Lusha LinkedIn lookup cost
+                phonesDiscovered++;
+                
+                console.log(`   ✅ Discovered phone: ${verifiedPhone} (${phoneConfidence}% confidence)`);
+              }
+            } catch (error) {
+              console.log(`   ⚠️ Phone discovery failed: ${error.message}`);
+            }
+          }
+        }
+        
+        totalCost += verificationCost;
+        
+        enrichedGroup.push({
+          ...member,
+          phone: verifiedPhone || existingPhone || member.phone,
+          phone1: verifiedPhone || existingPhone,
+          phoneVerified: !!verifiedPhone,
+          phoneConfidence: phoneConfidence,
+          phoneVerificationDetails: phoneVerificationDetails,
+          phoneVerificationCost: verificationCost,
+          phoneSource: verifiedPhone ? (existingPhone ? 'verified' : 'discovered') : 'unverified',
+          phoneType: phoneType,
+          phoneMetadata: phoneMetadata,
+          // Keep existing Lusha data structure for backward compatibility
+          mobilePhone: member.mobilePhone || (phoneType === 'mobile' ? verifiedPhone : null),
+          workPhone: member.workPhone || (phoneType === 'work' ? verifiedPhone : null),
+          directDialPhone: member.directDialPhone || (phoneType === 'direct' ? verifiedPhone : null)
+        });
+        
+        // Rate limiting
+        await delay(500);
+        
+      } catch (error) {
+        console.error(`   ❌ Failed to verify/discover phone for ${member.name}:`, error.message);
+        // Keep member with original phone data
+        enrichedGroup.push({
+          ...member,
+          phoneVerified: false,
+          phoneConfidence: 0,
+          phoneVerificationError: error.message
+        });
       }
-      await delay(500); // Rate limiting
     }
     
-    return buyerGroup;
+    console.log(`✅ Phone verification complete:`);
+    console.log(`   - Verified: ${phonesVerified} phones`);
+    console.log(`   - Discovered: ${phonesDiscovered} phones`);
+    console.log(`   - Total cost: $${totalCost.toFixed(4)}`);
+    
+    return enrichedGroup;
+  }
+  
+  /**
+   * Extract phone type from verification details
+   * @param {Array} verificationDetails - Verification details from multi-source
+   * @returns {string} Phone type: direct, mobile, work, or unknown
+   */
+  extractPhoneType(verificationDetails) {
+    if (!verificationDetails || verificationDetails.length === 0) {
+      return 'unknown';
+    }
+    
+    // Check each source for phone type information
+    for (const detail of verificationDetails) {
+      if (detail.metadata?.lineType) {
+        return detail.metadata.lineType;
+      }
+      if (detail.reasoning?.toLowerCase().includes('direct')) {
+        return 'direct';
+      }
+      if (detail.reasoning?.toLowerCase().includes('mobile')) {
+        return 'mobile';
+      }
+      if (detail.reasoning?.toLowerCase().includes('work')) {
+        return 'work';
+      }
+    }
+    
+    return 'unknown';
+  }
+  
+  /**
+   * Determine phone type from Lusha data
+   * @param {object} lushaData - Lusha enrichment result
+   * @returns {string} Phone type
+   */
+  determineLushaPhoneType(lushaData) {
+    if (lushaData.directDialPhone) return 'direct';
+    if (lushaData.mobilePhone) return 'mobile';
+    if (lushaData.workPhone) return 'work';
+    if (lushaData.phone1Type) return lushaData.phone1Type;
+    return 'unknown';
   }
 
   /**
@@ -1526,14 +1856,18 @@ class SmartBuyerGroupPipeline {
               decisionPower: decisionPower,
               engagementScore: engagementScore,
               lastEnriched: new Date(),
+              // Email data with verification
+              email: email,
+              emailVerified: member.emailVerified || false,
+              emailConfidence: member.emailConfidence || 0,
               // Phone data from Coresignal
               phone: coresignalPhone || member.phone,
               // Phone data (streamlined schema - only basic phone fields)
               mobilePhone: member.mobilePhone,
               workPhone: member.workPhone,
-              phoneVerified: member.phone1Verified || false,
-              phoneConfidence: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
-              phoneQualityScore: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
+              phoneVerified: member.phoneVerified || member.phone1Verified || false,
+              phoneConfidence: member.phoneConfidence || (member.phoneDataQuality ? member.phoneDataQuality / 100 : 0),
+              phoneQualityScore: member.phoneConfidence || (member.phoneDataQuality ? member.phoneDataQuality / 100 : 0),
               // Intelligence fields for person record tabs
               influenceLevel: influenceLevel,
               engagementLevel: engagementLevel,
@@ -1615,6 +1949,8 @@ class SmartBuyerGroupPipeline {
               title: member.title,
               department: member.department,
               email: email,
+              emailVerified: member.emailVerified || false,
+              emailConfidence: member.emailConfidence || 0,
               phone: coresignalPhone || member.phone,
               linkedinUrl: member.linkedinUrl,
               buyerGroupRole: member.buyerGroupRole,
@@ -1631,9 +1967,9 @@ class SmartBuyerGroupPipeline {
               // Phone data (streamlined schema - only basic phone fields)
               mobilePhone: member.mobilePhone,
               workPhone: member.workPhone,
-              phoneVerified: member.phone1Verified || false,
-              phoneConfidence: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
-              phoneQualityScore: member.phoneDataQuality ? member.phoneDataQuality / 100 : undefined,
+              phoneVerified: member.phoneVerified || member.phone1Verified || false,
+              phoneConfidence: member.phoneConfidence || (member.phoneDataQuality ? member.phoneDataQuality / 100 : 0),
+              phoneQualityScore: member.phoneConfidence || (member.phoneDataQuality ? member.phoneDataQuality / 100 : 0),
               // Intelligence fields for person record tabs
               influenceLevel: influenceLevel,
               engagementLevel: engagementLevel,

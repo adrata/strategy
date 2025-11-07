@@ -39,6 +39,7 @@ export interface OpenRouterRequest {
     documentContext: string;
     systemContext: string;
   };
+  preferredModel?: string; // OpenRouter model ID to use (e.g., "openai/gpt-4o")
 }
 
 export interface OpenRouterResponse {
@@ -137,6 +138,18 @@ export class OpenRouterService {
       capabilities: ['text', 'vision', 'reasoning'],
       reliability: 0.99,
       speed: 0.85
+    }],
+    ['openai/gpt-5', {
+      id: 'gpt-5',
+      name: 'GPT-5',
+      provider: 'OpenAI',
+      costPerMillionInput: 5.0,
+      costPerMillionOutput: 15.0,
+      maxTokens: 8192,
+      contextWindow: 128000,
+      capabilities: ['text', 'vision', 'reasoning', 'general'],
+      reliability: 0.99,
+      speed: 0.9
     }],
     
     // Complex models for advanced queries
@@ -296,7 +309,35 @@ export class OpenRouterService {
         };
       }
 
-      // Analyze query complexity
+      // Check if a specific model is preferred
+      if (sanitizedRequest.preferredModel) {
+        // Validate the model exists
+        if (!this.models.has(sanitizedRequest.preferredModel)) {
+          console.warn(`⚠️ [OPENROUTER] Preferred model ${sanitizedRequest.preferredModel} not found, falling back to intelligent routing`);
+        } else {
+          // Use the preferred model directly
+          const complexity = this.analyzeQueryComplexity(sanitizedRequest);
+          console.log(`🎯 [OPENROUTER] Using preferred model: ${sanitizedRequest.preferredModel}`);
+          
+          try {
+            const response = await this.callOpenRouter(sanitizedRequest.preferredModel, sanitizedRequest, complexity);
+            
+            // Cache successful response
+            this.responseCache.set(cacheKey, response);
+            
+            // Track costs
+            this.trackCost(sanitizedRequest.preferredModel, response.cost);
+            
+            console.log(`✅ [OPENROUTER] Success with preferred model ${sanitizedRequest.preferredModel} (${response.processingTime}ms)`);
+            return response;
+          } catch (error) {
+            console.warn(`⚠️ [OPENROUTER] Preferred model ${sanitizedRequest.preferredModel} failed, falling back to intelligent routing:`, error);
+            // Fall through to intelligent routing
+          }
+        }
+      }
+
+      // Analyze query complexity for intelligent routing
       const complexity = this.analyzeQueryComplexity(sanitizedRequest);
       console.log('🧠 [OPENROUTER] Query complexity:', complexity);
 

@@ -23,30 +23,30 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, trend, color = 'default' }: MetricCardProps) {
   const colorClasses = {
-    default: 'bg-white border-gray-200',
-    green: 'bg-green-50 border-green-200',
-    yellow: 'bg-yellow-50 border-yellow-200',
-    red: 'bg-red-50 border-red-200'
+    default: 'bg-hover border-border',
+    green: 'bg-success/10 border-success',
+    yellow: 'bg-warning/10 border-warning',
+    red: 'bg-error/10 border-error'
   };
 
   const textColorClasses = {
-    default: 'text-gray-900',
-    green: 'text-green-900',
-    yellow: 'text-yellow-900',
-    red: 'text-red-900'
+    default: 'text-foreground',
+    green: 'text-success',
+    yellow: 'text-warning',
+    red: 'text-error'
   };
 
   return (
     <div className={`p-4 rounded-lg border ${colorClasses[color]}`}>
-      <div className="text-xs font-medium text-gray-500 mb-1">{title}</div>
+      <div className="text-xs font-medium text-muted mb-1">{title}</div>
       <div className={`text-2xl font-bold ${textColorClasses[color]} mb-1`}>
         {value}
       </div>
       {subtitle && (
-        <div className="text-xs text-gray-500 flex items-center gap-1">
-          {trend === 'up' && <span className="text-green-600">↗</span>}
-          {trend === 'down' && <span className="text-red-600">↘</span>}
-          {trend === 'stable' && <span className="text-gray-400">→</span>}
+        <div className="text-xs text-muted flex items-center gap-1">
+          {trend === 'up' && <span className="text-success">↗</span>}
+          {trend === 'down' && <span className="text-error">↘</span>}
+          {trend === 'stable' && <span className="text-muted">→</span>}
           {subtitle}
         </div>
       )}
@@ -203,7 +203,7 @@ export function StacksMetrics() {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="text-gray-500">Loading metrics...</div>
+        <div className="text-muted">Loading metrics...</div>
       </div>
     );
   }

@@ -113,6 +113,7 @@ model workspaces {
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
   people                    people[]
+  reminders                 reminders[]
   research_data             research_data[]
   user_roles                user_roles[]
   users                     users[]
@@ -122,6 +123,11 @@ model workspaces {
   workshopDocuments workshopDocument[]
   workshopFolders   workshopFolder[]
   api_keys          api_keys[]
+  user_goals        user_goals[]
+
+  // Meeting transcripts and documents
+  meeting_transcripts meeting_transcripts[]
+  documents           documents[]
 
   @@index([slug])
   @@index([isActive])
@@ -163,8 +169,11 @@ model users {
   grand_central_workflows                                               grand_central_workflows[]
   main_seller_people                                                    people[]                    @relation("MainSellerPeople")
   person_co_sellers                                                     person_co_sellers[]
+  reminders                                                             reminders[]                 @relation("UserReminders")
   reset_tokens                                                          reset_tokens[]
   user_roles                                                            user_roles[]
+  meeting_transcripts                                                   meeting_transcripts[]
+  documents                                                             documents[]
   workspaces                                                            workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
   workspace_users                                                       workspace_users[]
   api_keys                                                              api_keys[]
@@ -178,6 +187,7 @@ model users {
   workshopCommentsCreated     workshopComment[]
   workshopActivitiesPerformed workshopActivity[]
   stacksComments              StacksComment[]
+  user_goals                  user_goals[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -341,119 +351,120 @@ model core_companies {
 
 /// Company/organization data
 model companies {
-  id                     String             @id @default(ulid()) @db.VarChar(30)
-  workspaceId            String             @db.VarChar(30)
-  coreCompanyId          String?            @db.VarChar(30)
-  name                   String             @db.VarChar(255)
-  nameOverride           String?            @db.VarChar(255)
-  industryOverride       String?            @db.VarChar(100)
-  websiteOverride        String?            @db.VarChar(500)
-  legalName              String?            @db.VarChar(255)
-  tradingName            String?            @db.VarChar(255)
-  localName              String?            @db.VarChar(255)
+  id                     String                @id @default(ulid()) @db.VarChar(30)
+  workspaceId            String                @db.VarChar(30)
+  coreCompanyId          String?               @db.VarChar(30)
+  name                   String                @db.VarChar(255)
+  nameOverride           String?               @db.VarChar(255)
+  industryOverride       String?               @db.VarChar(100)
+  websiteOverride        String?               @db.VarChar(500)
+  legalName              String?               @db.VarChar(255)
+  tradingName            String?               @db.VarChar(255)
+  localName              String?               @db.VarChar(255)
   description            String?
-  website                String?            @db.VarChar(500)
-  email                  String?            @db.VarChar(300)
-  phone                  String?            @db.VarChar(50)
-  fax                    String?            @db.VarChar(50)
+  website                String?               @db.VarChar(500)
+  email                  String?               @db.VarChar(300)
+  phone                  String?               @db.VarChar(50)
+  fax                    String?               @db.VarChar(50)
   address                String?
-  city                   String?            @db.VarChar(100)
-  state                  String?            @db.VarChar(100)
-  country                String?            @db.VarChar(100)
-  postalCode             String?            @db.VarChar(20)
-  industry               String?            @db.VarChar(100)
-  sector                 String?            @db.VarChar(100)
-  size                   String?            @db.VarChar(100)
-  revenue                Decimal?           @db.Decimal(15, 2)
-  currency               String?            @default("USD") @db.VarChar(3)
+  city                   String?               @db.VarChar(100)
+  state                  String?               @db.VarChar(100)
+  country                String?               @db.VarChar(100)
+  postalCode             String?               @db.VarChar(20)
+  industry               String?               @db.VarChar(100)
+  sector                 String?               @db.VarChar(100)
+  size                   String?               @db.VarChar(100)
+  revenue                Decimal?              @db.Decimal(15, 2)
+  currency               String?               @default("USD") @db.VarChar(3)
   employeeCount          Int?
   foundedYear            Int?
-  registrationNumber     String?            @db.VarChar(100)
-  taxId                  String?            @db.VarChar(100)
-  vatNumber              String?            @db.VarChar(100)
-  domain                 String?            @db.VarChar(255)
-  logoUrl                String?            @db.VarChar(500)
-  status                 CompanyStatus?     @default(ACTIVE)
-  additionalStatuses     String[]           @default([])
-  priority               CompanyPriority?   @default(MEDIUM)
-  tags                   String[]           @default([])
+  registrationNumber     String?               @db.VarChar(100)
+  taxId                  String?               @db.VarChar(100)
+  vatNumber              String?               @db.VarChar(100)
+  domain                 String?               @db.VarChar(255)
+  logoUrl                String?               @db.VarChar(500)
+  status                 CompanyStatus?        @default(ACTIVE)
+  additionalStatuses     String[]              @default([])
+  priority               CompanyPriority?      @default(MEDIUM)
+  tags                   String[]              @default([])
   customFields           Json?
   notes                  String?
   lastAction             String?
-  lastActionDate         DateTime?          @db.Timestamp(6)
+  lastActionDate         DateTime?             @db.Timestamp(6)
   nextAction             String?
-  nextActionDate         DateTime?          @db.Timestamp(6)
+  nextActionDate         DateTime?             @db.Timestamp(6)
+  directionalIntelligence String?
   actionStatus           String?
-  globalRank             Int?               @default(0)
-  createdAt              DateTime           @default(now())
-  updatedAt              DateTime           @updatedAt
-  entityId               String?            @db.VarChar(30)
+  globalRank             Int?                  @default(0)
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  entityId               String?               @db.VarChar(30)
   deletedAt              DateTime?
-  mainSellerId           String?            @db.VarChar(30)
+  mainSellerId           String?               @db.VarChar(30)
   actualCloseDate        DateTime?
   expectedCloseDate      DateTime?
-  opportunityAmount      Decimal?           @db.Decimal(15, 2)
+  opportunityAmount      Decimal?              @db.Decimal(15, 2)
   opportunityProbability Float?
-  opportunityStage       String?            @db.VarChar(50)
+  opportunityStage       String?               @db.VarChar(50)
   acquisitionDate        DateTime?
-  activeJobPostings      Int?               @default(0)
-  businessChallenges     String[]           @default([])
-  businessPriorities     String[]           @default([])
+  activeJobPostings      Int?                  @default(0)
+  businessChallenges     String[]              @default([])
+  businessPriorities     String[]              @default([])
   companyIntelligence    Json?
   companyUpdates         Json?
-  competitiveAdvantages  String[]           @default([])
-  competitors            String[]           @default([])
-  confidence             Float?             @default(0)
-  decisionTimeline       String?            @db.VarChar(100)
-  digitalMaturity        Int?               @default(0)
-  facebookUrl            String?            @db.VarChar(500)
-  githubUrl              String?            @db.VarChar(500)
-  growthOpportunities    String[]           @default([])
-  hqCity                 String?            @db.VarChar(100)
-  hqCountryIso2          String?            @db.VarChar(2)
-  hqCountryIso3          String?            @db.VarChar(3)
-  hqFullAddress          String?            @db.VarChar(500)
-  hqLocation             String?            @db.VarChar(200)
-  hqRegion               String[]           @default([])
-  hqState                String?            @db.VarChar(100)
-  hqStreet               String?            @db.VarChar(200)
-  hqZipcode              String?            @db.VarChar(20)
-  instagramUrl           String?            @db.VarChar(500)
-  isPublic               Boolean?           @default(false)
-  keyInfluencers         String?            @db.VarChar(200)
+  competitiveAdvantages  String[]              @default([])
+  competitors            String[]              @default([])
+  confidence             Float?                @default(0)
+  decisionTimeline       String?               @db.VarChar(100)
+  digitalMaturity        Int?                  @default(0)
+  facebookUrl            String?               @db.VarChar(500)
+  githubUrl              String?               @db.VarChar(500)
+  growthOpportunities    String[]              @default([])
+  hqCity                 String?               @db.VarChar(100)
+  hqCountryIso2          String?               @db.VarChar(2)
+  hqCountryIso3          String?               @db.VarChar(3)
+  hqFullAddress          String?               @db.VarChar(500)
+  hqLocation             String?               @db.VarChar(200)
+  hqRegion               String[]              @default([])
+  hqState                String?               @db.VarChar(100)
+  hqStreet               String?               @db.VarChar(200)
+  hqZipcode              String?               @db.VarChar(20)
+  instagramUrl           String?               @db.VarChar(500)
+  isPublic               Boolean?              @default(false)
+  keyInfluencers         String?               @db.VarChar(200)
   lastFundingAmount      BigInt?
   lastFundingDate        DateTime?
   lastVerified           DateTime?
   linkedinFollowers      Int?
-  linkedinUrl            String?            @db.VarChar(500)
-  marketPosition         String?            @db.VarChar(100)
-  marketThreats          String[]           @default([])
-  naicsCodes             String[]           @default([])
-  numTechnologiesUsed    Int?               @default(0)
-  parentCompanyDomain    String?            @db.VarChar(200)
-  parentCompanyName      String?            @db.VarChar(200)
-  sicCodes               String[]           @default([])
-  sources                String[]           @default([])
-  stockSymbol            String?            @db.VarChar(20)
-  strategicInitiatives   String[]           @default([])
-  successMetrics         String[]           @default([])
-  techStack              String[]           @default([])
-  technologiesUsed       String[]           @default([])
+  linkedinUrl            String?               @db.VarChar(500)
+  marketPosition         String?               @db.VarChar(100)
+  marketThreats          String[]              @default([])
+  naicsCodes             String[]              @default([])
+  numTechnologiesUsed    Int?                  @default(0)
+  parentCompanyDomain    String?               @db.VarChar(200)
+  parentCompanyName      String?               @db.VarChar(200)
+  sicCodes               String[]              @default([])
+  sources                String[]              @default([])
+  stockSymbol            String?               @db.VarChar(20)
+  strategicInitiatives   String[]              @default([])
+  successMetrics         String[]              @default([])
+  techStack              String[]              @default([])
+  technologiesUsed       String[]              @default([])
   twitterFollowers       Int?
-  twitterUrl             String?            @db.VarChar(500)
-  youtubeUrl             String?            @db.VarChar(500)
+  twitterUrl             String?               @db.VarChar(500)
+  youtubeUrl             String?               @db.VarChar(500)
   nextActionReasoning    String?
-  nextActionPriority     String?            @db.VarChar(20)
-  nextActionType         String?            @db.VarChar(50)
+  nextActionPriority     String?               @db.VarChar(20)
+  nextActionType         String?               @db.VarChar(50)
   nextActionUpdatedAt    DateTime?
   acquisitionHistory     Json?
-  aiConfidence           Float?             @default(0)
+  aiConfidence           Float?                @default(0)
   aiIntelligence         Json?
   aiLastUpdated          DateTime?
   dataLastVerified       DateTime?
   dataQualityBreakdown   Json?
-  dataQualityScore       Float?             @default(0)
-  dataSources            String[]           @default([])
+  dataQualityScore       Float?                @default(0)
+  dataSources            String[]              @default([])
   employeeCountChange    Json?
   employeeReviewsScore   Json?
   executiveArrivals      Json?
@@ -462,16 +473,18 @@ model companies {
   jobPostingsChange      Json?
   productReviewsScore    Json?
   revenueRange           Json?
-  linkedinnavigatorurl   String?            @db.VarChar(500)
-  linkedinNavigatorUrl   String?            @db.VarChar(500)
+  linkedinnavigatorurl   String?               @db.VarChar(500)
+  linkedinNavigatorUrl   String?               @db.VarChar(500)
   descriptionEnriched    String?
   actions                actions[]
-  mainSeller             users?             @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
-  workspace              workspaces         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  coreCompany            core_companies?    @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
+  mainSeller             users?                @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
+  workspace              workspaces            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  coreCompany            core_companies?       @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
   emails                 email_messages[]
   people                 people[]
   workshopDocuments      workshopDocument[]
+  meeting_transcripts    meeting_transcripts[]
+  documents              documents[]
 
   @@index([workspaceId])
   @@index([coreCompanyId])
@@ -589,6 +602,7 @@ model people {
   lastActionDate         DateTime?           @db.Timestamp(6)
   nextAction             String?
   nextActionDate         DateTime?           @db.Timestamp(6)
+  directionalIntelligence String?
   actionStatus           String?
   engagementScore        Float?              @default(0)
   globalRank             Int?                @default(0)
@@ -673,6 +687,7 @@ model people {
   totalExperienceMonths  Int?
   actions                actions[]
   emails                 email_messages[]
+  documents              documents[]
   company                companies?          @relation(fields: [companyId], references: [id])
   mainSeller             users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
   workspace              workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -756,6 +771,33 @@ model actions {
   @@index([workspaceId, createdAt])
 }
 
+/// Reminders for people and companies
+model reminders {
+  id          String     @id @default(ulid()) @db.VarChar(30)
+  workspaceId String     @db.VarChar(30)
+  userId      String     @db.VarChar(30)
+  entityType  String     @db.VarChar(20) // 'people' or 'companies'
+  entityId    String     @db.VarChar(30)
+  reminderAt  DateTime   @db.Timestamp(6)
+  note        String?
+  isCompleted Boolean    @default(false)
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  user        users      @relation("UserReminders", fields: [userId], references: [id], onDelete: Cascade)
+  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([reminderAt])
+  @@index([isCompleted])
+  @@index([workspaceId, reminderAt])
+  @@index([workspaceId, userId, isCompleted])
+  @@index([workspaceId, entityType, entityId])
+}
+
 /// System audit trail for compliance
 model audit_logs {
   id          String     @id @default(ulid())
@@ -837,20 +879,21 @@ model research_data {
 
 /// Grand Central Integration Hub Models
 model grand_central_connections {
-  id                String     @id @default(ulid())
-  workspaceId       String     @db.VarChar(30)
-  userId            String     @db.VarChar(30)
-  provider          String     @db.VarChar(100)
-  providerConfigKey String     @db.VarChar(100)
-  nangoConnectionId String     @unique @db.VarChar(100)
-  connectionName    String?    @db.VarChar(255)
-  metadata          Json       @default("{}")
-  status            String     @default("active") @db.VarChar(50)
-  lastSyncAt        DateTime?
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  user              users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace         workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id                  String                @id @default(ulid())
+  workspaceId         String                @db.VarChar(30)
+  userId              String                @db.VarChar(30)
+  provider            String                @db.VarChar(100)
+  providerConfigKey   String                @db.VarChar(100)
+  nangoConnectionId   String                @unique @db.VarChar(100)
+  connectionName      String?               @db.VarChar(255)
+  metadata            Json                  @default("{}")
+  status              String                @default("active") @db.VarChar(50)
+  lastSyncAt          DateTime?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  user                users                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace           workspaces            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  meeting_transcripts meeting_transcripts[]
 
   @@index([workspaceId, status])
   @@index([userId])
@@ -889,6 +932,93 @@ model grand_central_executions {
   @@index([workflowId])
   @@index([workspaceId, status])
   @@index([startedAt])
+}
+
+/// Meeting Transcripts & Notes from Meeting Notetaking Services
+model meeting_transcripts {
+  id                String    @id @default(ulid())
+  workspaceId       String    @db.VarChar(30)
+  userId            String?   @db.VarChar(30)
+  connectionId      String    @db.VarChar(30)
+  provider          String    @db.VarChar(50) // zoom, fireflies, otter, microsoft-teams
+  externalMeetingId String    @db.VarChar(255) // Provider's meeting/recording ID
+  meetingTitle      String?   @db.VarChar(500)
+  meetingDate       DateTime?
+  duration          Int? // Duration in seconds
+  participants      Json?     @default("[]") // Array of participant names/emails
+  transcript        String?   @db.Text // Full transcript text
+  summary           String?   @db.Text // AI-generated summary (if available)
+  keyPoints         Json?     @default("[]") // Array of key discussion points
+  actionItems       Json?     @default("[]") // Array of action items extracted from meeting
+  metadata          Json      @default("{}") // Provider-specific metadata, recording URL, etc.
+  linkedCompanyId   String?   @db.VarChar(30) // Linked to companies table
+  linkedPeopleIds   Json?     @default("[]") // Array of people IDs mentioned in meeting
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  workspace  workspaces                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user       users?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  company    companies?                @relation(fields: [linkedCompanyId], references: [id], onDelete: SetNull)
+  connection grand_central_connections @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, externalMeetingId, workspaceId])
+  @@index([workspaceId, meetingDate])
+  @@index([workspaceId, provider])
+  @@index([linkedCompanyId])
+  @@index([userId])
+  @@index([connectionId])
+}
+
+/// Documents - Track proposals, contracts, and other sales documents
+model documents {
+  id          String  @id @default(ulid())
+  workspaceId String  @db.VarChar(30)
+  userId      String  @db.VarChar(30)
+  companyId   String  @db.VarChar(30)
+  personId    String? @db.VarChar(30)
+
+  // Document details
+  documentType String  @db.VarChar(50) // proposal, contract, quote, case-study, presentation
+  title        String  @db.VarChar(500)
+  description  String? @db.Text
+
+  // File info
+  fileUrl  String? @db.VarChar(500)
+  fileSize Int? // bytes
+  fileType String? @db.VarChar(50)
+
+  // Status tracking
+  status        String    @default("draft") @db.VarChar(50) // draft, sent, viewed, downloaded, signed
+  sentAt        DateTime?
+  firstViewedAt DateTime?
+  lastViewedAt  DateTime?
+  viewCount     Int       @default(0)
+  signedAt      DateTime?
+
+  // Value tracking
+  proposedValue Decimal? @db.Decimal(15, 2)
+  currency      String?  @default("USD") @db.VarChar(3)
+
+  // Integration
+  externalId String? @db.VarChar(255)
+  provider   String? @db.VarChar(50) // docusign, pandadoc, proposify
+
+  // Metadata
+  metadata Json @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company   companies  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  person    people?    @relation(fields: [personId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, sentAt])
+  @@index([companyId, status])
+  @@index([documentType, status])
+  @@index([status])
+  @@index([workspaceId, documentType])
 }
 
 /// Oasis - Team Communication (Slack-like)
@@ -1511,6 +1641,61 @@ model workshopActivity {
   @@index([activityType])
   @@index([createdAt])
   @@index([performedById])
+}
+
+/// User Goals Tracking for Smart Checklist and AI Recommendations
+model user_goals {
+  id                      String    @id @default(ulid())
+  userId                  String
+  workspaceId             String
+  
+  // Revenue & Sales Goals
+  quarterlyRevenueGoal    Decimal?  @db.Decimal(15, 2)
+  yearlyRevenueGoal       Decimal?  @db.Decimal(15, 2)
+  quarterlyDealCount      Int?
+  monthlyActivityGoal     Int?
+  currentQuarterRevenue   Decimal?  @default(0) @db.Decimal(15, 2)
+  currentYearRevenue      Decimal?  @default(0) @db.Decimal(15, 2)
+  
+  // Pipeline Goals
+  pipelineValueGoal       Decimal?  @db.Decimal(15, 2)
+  currentPipelineValue    Decimal?  @default(0) @db.Decimal(15, 2)
+  avgDealSizeGoal         Decimal?  @db.Decimal(15, 2)
+  winRateGoal             Decimal?  @db.Decimal(5, 2)
+  
+  // Activity Goals
+  weeklyOutreachGoal      Int?
+  weeklyMeetingsGoal      Int?
+  weeklyCallsGoal         Int?
+  weeklyEmailsGoal        Int?
+  
+  // Custom Goals (flexible for user-defined goals)
+  customGoals             Json?     @default("[]")
+  
+  // Goal Period
+  goalPeriod              String?   @default("quarterly") @db.VarChar(20)
+  goalStartDate           DateTime?
+  goalEndDate             DateTime?
+  
+  // Progress Tracking
+  lastCalculated          DateTime?
+  progressPercentage      Decimal?  @default(0) @db.Decimal(5, 2)
+  isOnTrack               Boolean?  @default(true)
+  daysRemaining           Int?
+  
+  // System Fields
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  
+  // Relations
+  user                    users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace               workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, workspaceId])
+  @@index([userId])
+  @@index([workspaceId])
+  @@index([goalPeriod])
+  @@index([isOnTrack])
 }
 
 enum UserRole {

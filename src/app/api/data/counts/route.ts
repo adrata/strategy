@@ -111,32 +111,26 @@ export async function GET(request: NextRequest) {
     
     try {
       [peopleCounts, companiesCounts, speedrunPeopleCount, speedrunCompaniesCount, speedrunPeopleNoActionsCount, speedrunCompaniesNoActionsCount] = await Promise.all([
-        // Get people counts by status
+        // Get people counts by status - Only show records where user is main seller (exclude unassigned)
         prisma.people.groupBy({
           by: ['status'],
           where: {
             workspaceId,
             deletedAt: null, // Only count non-deleted records
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
+            mainSellerId: userId // Only count records where user is the main seller
           },
           _count: { id: true }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching people counts:', error);
           return [];
         }),
-        // Get companies counts by status
+        // Get companies counts by status - Only show records where user is main seller (exclude unassigned)
         prisma.companies.groupBy({
           by: ['status'],
           where: {
             workspaceId,
             deletedAt: null, // Only count non-deleted records
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
+            mainSellerId: userId // Only count records where user is the main seller
           },
           _count: { id: true }
         }).catch((error) => {
@@ -238,17 +232,14 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {} as Record<string, number>);
 
-    // 🚀 LEADS: Include companies with 0 people in leads count
+    // 🚀 LEADS: Include companies with 0 people in leads count - Only show records where user is main seller
     let companiesWithNoPeopleCount = 0;
     try {
       companiesWithNoPeopleCount = await prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
-          OR: [
-            { mainSellerId: userId },
-            { mainSellerId: null }
-          ],
+          mainSellerId: userId, // Only count records where user is the main seller
           AND: [
             { people: { none: {} } }, // Companies with 0 people
             {
@@ -265,17 +256,14 @@ export async function GET(request: NextRequest) {
       companiesWithNoPeopleCount = 0;
     }
 
-    // 🚀 PROSPECTS: Include companies with 0 people and PROSPECT status
+    // 🚀 PROSPECTS: Include companies with 0 people and PROSPECT status - Only show records where user is main seller
     let companiesProspectsCount = 0;
     try {
       companiesProspectsCount = await prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
-          OR: [
-            { mainSellerId: userId },
-            { mainSellerId: null }
-          ],
+          mainSellerId: userId, // Only count records where user is the main seller
           AND: [
             { people: { none: {} } }, // Companies with 0 people
             { status: 'PROSPECT' as any }
@@ -301,17 +289,14 @@ export async function GET(request: NextRequest) {
       totalNoActions: speedrunPeopleNoActionsCount + speedrunCompaniesNoActionsCount
     });
 
-    // 🚀 CLIENTS: Count people with CLIENT status (primary or additionalStatuses)
+    // 🚀 CLIENTS: Count people with CLIENT status (primary or additionalStatuses) - Only show records where user is main seller
     let clientsWithAdditionalStatusCount = 0;
     try {
       clientsWithAdditionalStatusCount = await prisma.people.count({
         where: {
           workspaceId,
           deletedAt: null,
-          OR: [
-            { mainSellerId: userId },
-            { mainSellerId: null }
-          ],
+          mainSellerId: userId, // Only count records where user is the main seller
           AND: [
             { additionalStatuses: { has: 'CLIENT' } },
             { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
@@ -323,17 +308,14 @@ export async function GET(request: NextRequest) {
       clientsWithAdditionalStatusCount = 0;
     }
 
-    // Also count companies with CLIENT in additionalStatuses
+    // Also count companies with CLIENT in additionalStatuses - Only show records where user is main seller
     let companiesClientsWithAdditionalStatusCount = 0;
     try {
       companiesClientsWithAdditionalStatusCount = await prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
-          OR: [
-            { mainSellerId: userId },
-            { mainSellerId: null }
-          ],
+          mainSellerId: userId, // Only count records where user is the main seller
           AND: [
             { additionalStatuses: { has: 'CLIENT' } },
             { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
