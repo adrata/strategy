@@ -455,85 +455,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
             </div>
           </div>
 
-          {/* Churn Prediction Card */}
+          {/* Churn Risk Badge - Compact Pill Style */}
           {churnPrediction && churnPrediction.refreshColor && (
-            <div className="bg-background p-4 rounded-lg border" style={{
-              borderColor: churnPrediction.refreshColor === 'red' ? '#ef4444' : 
-                          churnPrediction.refreshColor === 'orange' ? '#f97316' : '#22c55e',
-              backgroundColor: churnPrediction.refreshColor === 'red' ? '#fef2f2' :
-                              churnPrediction.refreshColor === 'orange' ? '#fff7ed' : '#f0fdf4'
-            }}>
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-foreground flex items-center gap-2">
-                  <span style={{
-                    fontSize: '20px'
-                  }}>
-                    {churnPrediction.refreshColor === 'red' ? '🔴' :
-                     churnPrediction.refreshColor === 'orange' ? '🟠' : '🟢'}
-                  </span>
-                  Churn Risk Indicator
-                </h4>
-                <div className="text-right">
-                  {record?.customFields?.churnPrediction?.churnRiskScore && (
-                    <div className="text-2xl font-bold" style={{
-                      color: churnPrediction.refreshColor === 'red' ? '#dc2626' :
-                            churnPrediction.refreshColor === 'orange' ? '#ea580c' : '#16a34a'
-                    }}>
-                      {record.customFields.churnPrediction.churnRiskScore}
-                    </div>
-                  )}
-                  <div className="text-xs text-muted">Risk Score</div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted">Risk Level:</span>
-                  <span className="text-sm font-semibold" style={{
-                    color: churnPrediction.refreshColor === 'red' ? '#dc2626' :
-                          churnPrediction.refreshColor === 'orange' ? '#ea580c' : '#16a34a'
-                  }}>
-                    {churnPrediction.refreshColor === 'red' ? 'HIGH - Leaving This Month' :
-                     churnPrediction.refreshColor === 'orange' ? 'MEDIUM - Leaving This Quarter' : 'LOW - Stable Role'}
-                  </span>
-                </div>
-                
-                {record?.customFields?.churnPrediction?.predictedDepartureMonths !== null &&
-                 record?.customFields?.churnPrediction?.predictedDepartureMonths !== undefined && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted">Predicted Departure:</span>
-                    <span className="text-sm font-medium text-foreground">
-                      {record.customFields.churnPrediction.predictedDepartureMonths === 0 
-                        ? 'May leave anytime'
-                        : `~${record.customFields.churnPrediction.predictedDepartureMonths} month(s)`}
-                    </span>
-                  </div>
-                )}
-                
-                {record?.customFields?.churnPrediction?.averageTimeInRoleMonths && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted">Avg Time in Role:</span>
-                    <span className="text-sm text-foreground">
-                      {record.customFields.churnPrediction.averageTimeInRoleMonths} months
-                    </span>
-                  </div>
-                )}
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted">Monitoring:</span>
-                  <span className="text-sm font-medium text-foreground">
-                    {churnPrediction.refreshFrequency || 'Monthly'} refresh
-                  </span>
-                </div>
-                
-                {record?.customFields?.churnPrediction?.reasoning && (
-                  <div className="mt-3 pt-3 border-t border-border">
-                    <p className="text-xs text-muted italic">
-                      {record.customFields.churnPrediction.reasoning}
-                    </p>
-                  </div>
-                )}
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted">Churn Risk:</span>
+              <ChurnRiskBadge churnPrediction={churnPrediction} variant="detailed" />
             </div>
           )}
 
