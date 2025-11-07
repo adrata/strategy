@@ -1071,7 +1071,7 @@ export async function POST(request: NextRequest) {
           companyRank: body.companyRank || 0,
           workspaceId: context.workspaceId,
           companyId: body.companyId,
-          mainSellerId: body.mainSellerId || (context.workspaceId === '01K7464TNANHQXPCZT1FYX205V' ? '01K7B327HWN9G6KGWA97S1TK43' : body.mainSellerId), // Auto-assign Dan for Adrata workspace
+          mainSellerId: body.mainSellerId || context.userId, // Auto-assign current user as main seller
           createdAt: new Date(),
           updatedAt: new Date(),
         },

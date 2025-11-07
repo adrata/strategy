@@ -77,10 +77,10 @@ class CompleteBuyerGroupWithEnrichment {
   }
 
   async getCompaniesNeedingBuyerGroups() {
-    return await this.prisma.companies.findMany({
+    const companies = await this.prisma.companies.findMany({
       where: {
         workspaceId: this.workspaceId,
-        deletedAt: null,
+        deletedAt: null, // CRITICAL: Only get non-deleted companies
         OR: [{ website: { not: null } }, { linkedinUrl: { not: null } }],
         people: {
           none: {
@@ -96,20 +96,31 @@ class CompleteBuyerGroupWithEnrichment {
         linkedinUrl: true,
         industry: true,
         employeeCount: true,
-        revenue: true
+        revenue: true,
+        deletedAt: true // Include to double-check
       },
       orderBy: { name: 'asc' }
     });
+    
+    // Double-check: Filter out any soft-deleted companies (safety check)
+    return companies.filter(c => !c.deletedAt);
   }
 
   async runBuyerGroupDiscovery(companies) {
     console.log(`\n🔍 Running buyer group discovery for ${companies.length} companies...`);
 
-    for (let i = 0; i < companies.length; i++) {
-      const company = companies[i];
-      console.log(`\n📊 Processing ${i + 1}/${companies.length}: ${company.name}`);
+      for (let i = 0; i < companies.length; i++) {
+        const company = companies[i];
+        
+        // Skip if company is soft-deleted
+        if (company.deletedAt) {
+          console.log(`\n⏭️  Skipping ${company.name} (soft-deleted)`);
+          continue;
+        }
+        
+        console.log(`\n📊 Processing ${i + 1}/${companies.length}: ${company.name}`);
 
-      try {
+        try {
         // Try standard pipeline first
         const identifier = company.website || company.linkedinUrl || company.name;
         const pipeline = new SmartBuyerGroupPipeline({
