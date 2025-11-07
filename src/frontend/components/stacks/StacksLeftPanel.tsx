@@ -48,7 +48,7 @@ const navigationItems: NavigationItem[] = [
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
     description: 'Prioritized work queue',
-    getCount: (stats) => stats.upNextCount // Backlog equals up next count (all backlog items are in up next)
+    getCount: (stats) => stats.backlogCount // Backlog = Up Next items + Backlog items (below the line)
   },
   {
     id: 'epics',
@@ -261,20 +261,25 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO
         ).length;
 
+        // Backlog items = items with status 'backlog' (below the line)
+        const backlogItemsCount = allItems.filter((item: any) => 
+          item.status === STACK_STATUS.BACKLOG
+        ).length;
+
         // Workstream = items with any workstream board column status
         const workstreamCount = allItems.filter((item: any) => 
           WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])
         ).length;
 
-        // Backlog = all items in up next (user requirement: all backlog items are in up next)
-        // So backlog count equals upNextCount
-        const backlogCount = upNextCount;
+        // Backlog count = Up Next items + Backlog items (both appear in backlog view)
+        const backlogCount = upNextCount + backlogItemsCount;
 
         console.log('📊 [StacksLeftPanel] Final counts:', { 
           total, 
           active, 
           completed, 
-          upNextCount, 
+          upNextCount,
+          backlogItemsCount,
           workstreamCount, 
           backlogCount, 
           epicsCount,
@@ -337,14 +342,18 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO
         ).length;
 
+        // Backlog items = items with status 'backlog' (below the line)
+        const backlogItemsCount = allItems.filter((item: any) => 
+          item.status === STACK_STATUS.BACKLOG
+        ).length;
+
       // Workstream = items with any workstream board column status
       const workstreamCount = allItems.filter((item: any) => 
         WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])
       ).length;
 
-      // Backlog = all items in up next (user requirement: all backlog items are in up next)
-      // So backlog count equals upNextCount
-      const backlogCount = upNextCount;
+      // Backlog count = Up Next items + Backlog items (both appear in backlog view)
+      const backlogCount = upNextCount + backlogItemsCount;
 
       // Update stats
       setStats(prev => ({
