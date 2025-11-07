@@ -197,17 +197,6 @@ export function ConversationHeader({
             <ClockIcon className="w-5 h-5" />
           </button>
           
-          {/* Direct Messages Button - only show when not on Oasis and user has Oasis access */}
-          {showChatIcon && hasOasis && onToggleDirectMessages && (
-            <button
-              onClick={onToggleDirectMessages}
-              className="w-7 h-7 text-muted cursor-pointer hover:text-foreground transition-colors flex items-center justify-center"
-              title="Direct Messages"
-            >
-              <ChatBubbleLeftIcon className="w-5 h-5" />
-            </button>
-          )}
-          
           <XMarkIcon 
             className="w-6 h-6 text-muted cursor-pointer hover:text-foreground transition-colors" 
             title="Close" 
