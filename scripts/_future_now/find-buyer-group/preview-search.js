@@ -95,6 +95,24 @@ class PreviewSearch {
   }
 
   /**
+   * Normalize LinkedIn URL (remove -com, -inc suffixes)
+   * @param {string} linkedinUrl - LinkedIn URL
+   * @returns {string} Normalized URL
+   */
+  normalizeLinkedInUrl(linkedinUrl) {
+    if (!linkedinUrl) return linkedinUrl;
+    // Extract company ID from URL
+    const match = linkedinUrl.match(/linkedin\.com\/company\/([^\/\?]+)/);
+    if (match) {
+      let companyId = match[1];
+      // Remove common suffixes
+      companyId = companyId.replace(/-(com|inc|llc|ltd|corp)$/i, '');
+      return `https://www.linkedin.com/company/${companyId}`;
+    }
+    return linkedinUrl;
+  }
+
+  /**
    * Build Coresignal query based on available company identifiers
    * @param {object} companyData - Company data with linkedinUrl, website, companyName
    * @returns {object} Coresignal Elasticsearch query
@@ -102,10 +120,15 @@ class PreviewSearch {
   buildCoresignalQuery(companyData) {
     const { linkedinUrl, website, companyName } = companyData;
     
-    // Priority 1: LinkedIn URL (most precise)
+    // Priority 1: LinkedIn URL (most precise) - with normalization
     if (linkedinUrl) {
-      console.log(`🎯 Using LinkedIn URL for precise matching: ${linkedinUrl}`);
-      return {
+      // Normalize LinkedIn URL to handle variations
+      const normalizedLinkedIn = this.normalizeLinkedInUrl(linkedinUrl);
+      const originalLinkedIn = linkedinUrl;
+      
+      console.log(`🎯 Using LinkedIn URL for precise matching: ${normalizedLinkedIn}`);
+      
+      const linkedinQuery = {
         query: {
           bool: {
             must: [{
@@ -114,9 +137,13 @@ class PreviewSearch {
                 query: {
                   bool: {
                     must: [
-                      { term: { "experience.active_experience": 1 } },
-                      { match: { "experience.company_linkedin_url": linkedinUrl } }
-                    ]
+                      { term: { "experience.active_experience": 1 } }
+                    ],
+                    should: [
+                      { match: { "experience.company_linkedin_url": normalizedLinkedIn } },
+                      { match: { "experience.company_linkedin_url": originalLinkedIn } }
+                    ],
+                    minimum_should_match: 1
                   }
                 }
               }
@@ -124,58 +151,79 @@ class PreviewSearch {
           }
         }
       };
+      
+      // If we also have company name, add it as a should clause for better matching
+      if (companyName) {
+        linkedinQuery.query.bool.should = [
+          { match_phrase: { "experience.company_name": companyName } },
+          { match: { "experience.company_name": { query: companyName, fuzziness: "AUTO" } } }
+        ];
+        linkedinQuery.query.bool.minimum_should_match = 0; // Optional boost
+      }
+      
+      return linkedinQuery;
     }
     
-    // Priority 2: Website domain
+    // Priority 2: Website domain - with multiple domain variations
     if (website) {
       const domain = this.extractDomain(website);
       console.log(`🌐 Using website domain for matching: ${domain}`);
+      
+      const domainVariations = [domain];
+      
+      // Add www variant
+      if (!domain.startsWith('www.')) {
+        domainVariations.push(`www.${domain}`);
+      } else {
+        domainVariations.push(domain.replace(/^www\./, ''));
+      }
+      
+      // Add parent domain if subdomain
+      if (domain.split('.').length > 2) {
+        const parentDomain = domain.split('.').slice(-2).join('.');
+        domainVariations.push(parentDomain);
+      }
+      
       return {
         query: {
           bool: {
-            must: [{
-              nested: {
-                path: "experience",
-                query: {
-                  bool: {
-                    must: [
-                      { term: { "experience.active_experience": 1 } },
-                      { match: { "experience.company_website": domain } }
-                    ]
-                  }
-                }
-              }
-            }]
+            must: [
+              { term: { "experience.active_experience": 1 } }
+            ],
+            should: domainVariations.map(d => ({
+              match: { "experience.company_website": d }
+            })),
+            minimum_should_match: 1
           }
         }
       };
     }
     
-    // Fallback: Company name
+    // Fallback: Company name with enhanced matching
     console.log(`📝 Using company name for matching: ${companyName}`);
+    
+    // Generate company name variations for better matching
+    const nameVariations = this.generateCompanyNameVariations(companyName);
+    
     return {
       query: {
         bool: {
-          must: [{
-            nested: {
-              path: "experience",
-              query: {
-                bool: {
-                  must: [
-                    { term: { "experience.active_experience": 1 } },
-                    {
-                      bool: {
-                        should: [
-                          { match: { "experience.company_name": companyName } },
-                          { match_phrase: { "experience.company_name": companyName } }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }]
+          must: [
+            { term: { "experience.active_experience": 1 } }
+          ],
+          should: [
+            // Exact match (highest priority)
+            { match_phrase: { "experience.company_name": companyName } },
+            // Fuzzy match
+            { match: { "experience.company_name": { query: companyName, fuzziness: "AUTO" } } },
+            // Try variations
+            ...nameVariations.map(variation => ({
+              match: { "experience.company_name": variation }
+            })),
+            // Try without common suffixes
+            { match: { "experience.company_name": companyName.replace(/\s+(inc|llc|ltd|corp|corporation|company|co)\.?$/i, '') } }
+          ],
+          minimum_should_match: 1
         }
       }
     };
@@ -529,6 +577,46 @@ class PreviewSearch {
     
     // Default to exclude if we have some location data but it doesn't match USA
     return false;
+  }
+
+  /**
+   * Generate company name variations for better matching
+   * @param {string} companyName - Original company name
+   * @returns {Array} Array of name variations
+   */
+  generateCompanyNameVariations(companyName) {
+    if (!companyName) return [];
+    
+    const variations = [];
+    const normalized = companyName.trim();
+    
+    // Remove common suffixes
+    const withoutSuffix = normalized.replace(/\s+(inc|llc|ltd|corp|corporation|company|co|plc|gmbh)\.?$/i, '').trim();
+    if (withoutSuffix && withoutSuffix !== normalized) {
+      variations.push(withoutSuffix);
+    }
+    
+    // Add common suffixes
+    const suffixes = ['Inc', 'LLC', 'Ltd', 'Corp', 'Corporation', 'Company', 'Co'];
+    suffixes.forEach(suffix => {
+      if (!normalized.toLowerCase().includes(suffix.toLowerCase())) {
+        variations.push(`${normalized} ${suffix}`);
+      }
+    });
+    
+    // Handle abbreviations (e.g., "TOP Engineers Plus" -> "TOP")
+    const words = normalized.split(/\s+/);
+    if (words.length > 2) {
+      // Try first word only if it's an acronym (all caps)
+      if (words[0].match(/^[A-Z]{2,}$/)) {
+        variations.push(words[0]);
+      }
+      // Try first two words
+      variations.push(words.slice(0, 2).join(' '));
+    }
+    
+    // Remove duplicates and empty strings
+    return [...new Set(variations.filter(v => v && v.length > 2))];
   }
 
   /**

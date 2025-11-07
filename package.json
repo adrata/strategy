@@ -109,6 +109,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",
     "@anthropic-ai/sdk": "^0.62.0",
+    "@deepgram/sdk": "^4.11.2",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
@@ -284,6 +285,10 @@
     "cookie": "^1.0.2",
     "nanoid": "^3.3.8",
     "tmp": "^0.2.4",
-    "dompurify": "^3.2.7"
+    "dompurify": "^3.2.7",
+    "rimraf": "^6.0.1",
+    "@humanwhocodes/config-array": "^0.14.0",
+    "@humanwhocodes/object-schema": "^2.0.4",
+    "@xmldom/xmldom": "^0.9.8"
   }
 }

@@ -119,6 +119,9 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     } else if (pathname.includes('/stacks/build/pipeline')) {
       console.log('✅ [StacksContainer] Setting: stacks-build');
       onSubSectionChange('stacks-build');
+    } else if (pathname.includes('/stacks/stories')) {
+      console.log('✅ [StacksContainer] Setting: stories');
+      onSubSectionChange('stories');
     } else if (pathname.includes('/stacks')) {
       console.log('✅ [StacksContainer] Default: epics');
       onSubSectionChange('epics');

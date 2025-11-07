@@ -3,6 +3,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { XMarkIcon, MicrophoneIcon } from "@heroicons/react/24/outline";
 import { AIBrainIcon } from './PulseIcon';
+import { 
+  DeepgramRecognitionService, 
+  getDeepgramService, 
+  type TranscriptionResult,
+  type AudioQuality 
+} from '@/platform/services/deepgram-recognition';
+import { voiceMonitoring } from '@/platform/services/voice-monitoring';
+import { voiceInterruptionHandler } from '@/platform/services/voice-interruption-handler';
+
+// Web Speech API types
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: any) => any) | null;
+  onresult: ((this: SpeechRecognition, ev: any) => any) | null;
+  start(): void;
+  stop(): void;
+}
+
+interface Window {
+  webkitSpeechRecognition: any;
+  SpeechRecognition: any;
+}
 
 interface VoiceModeModalProps {
   isOpen: boolean;
@@ -18,345 +44,305 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
   const [interimTranscript, setInterimTranscript] = useState('');
   const [confidence, setConfidence] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [aiResponse, setAiResponse] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isSending, setIsSending] = useState(false);
-  const [conversation, setConversation] = useState<{ role: 'user' | 'assistant', content: string }[]>([]);
   const [audioLevel, setAudioLevel] = useState(0);
-  const [audioQuality, setAudioQuality] = useState<'good' | 'fair' | 'poor'>('good');
-  const [snr, setSNR] = useState<number>(0); // Signal-to-Noise Ratio
+  const [audioQuality, setAudioQuality] = useState<'excellent' | 'good' | 'fair' | 'poor'>('good');
+  const [useWebSpeechFallback, setUseWebSpeechFallback] = useState(false);
   
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const animationRef = useRef<number | null>(null);
-  const isSupported = typeof window !== 'undefined' && 'webkitSpeechRecognition' in window;
+  const deepgramServiceRef = useRef<DeepgramRecognitionService | null>(null);
+  const webSpeechRecognitionRef = useRef<SpeechRecognition | null>(null);
+  const finalTranscriptRef = useRef<string>('');
+  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
+  const transcriptStartTimeRef = useRef<number>(0);
+  
+  const isSupported = typeof window !== 'undefined' && DeepgramRecognitionService.isSupported();
+  const webSpeechSupported = typeof window !== 'undefined' && 'webkitSpeechRecognition' in window;
 
-  // Enhanced audio monitoring with SNR calculation
+  // Main effect: Start/stop Deepgram or Web Speech recognition
   useEffect(() => {
-    if (!isListening || !isOpen) return;
+    if (!isOpen) return;
 
-    const setupAudioMonitoring = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-            // Advanced constraints for better quality
-            sampleRate: 48000,
-            channelCount: 1
-          } 
-        });
-
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaStreamSource(stream);
-        const analyser = audioContext.createAnalyser();
-        
-        // Increase FFT size for better frequency resolution
-        analyser.fftSize = 4096;
-        analyser.smoothingTimeConstant = 0.8;
-        
-        source.connect(analyser);
-
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        
-        const monitorAudio = () => {
-          analyser.getByteFrequencyData(dataArray);
-          
-          // Calculate speech frequency range (300Hz - 3400Hz)
-          const speechStart = Math.floor(300 * analyser.fftSize / audioContext.sampleRate);
-          const speechEnd = Math.floor(3400 * analyser.fftSize / audioContext.sampleRate);
-          
-          // Calculate noise frequency range (outside speech)
-          const noiseStart = Math.floor(50 * analyser.fftSize / audioContext.sampleRate);
-          const noiseEnd = Math.floor(8000 * analyser.fftSize / audioContext.sampleRate);
-          
-          // Calculate average levels
-          let speechLevel = 0;
-          let noiseLevel = 0;
-          
-          for (let i = speechStart; i < speechEnd; i++) {
-            speechLevel += dataArray[i];
-          }
-          speechLevel /= (speechEnd - speechStart);
-          
-          for (let i = noiseStart; i < noiseEnd; i++) {
-            if (i < speechStart || i > speechEnd) {
-              noiseLevel += dataArray[i];
-            }
-          }
-          noiseLevel /= (noiseEnd - noiseStart - (speechEnd - speechStart));
-          
-          // Calculate SNR (Signal-to-Noise Ratio)
-          const calculatedSNR = speechLevel / (noiseLevel + 1);
-          setSNR(calculatedSNR);
-          
-          // Determine audio quality
-          if (calculatedSNR > 3) {
-            setAudioQuality('good');
-          } else if (calculatedSNR > 1.5) {
-            setAudioQuality('fair');
-          } else {
-            setAudioQuality('poor');
-          }
-          
-          // Update audio level for visualization
-          const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-          setAudioLevel(average / 255);
-          
-          animationRef.current = requestAnimationFrame(monitorAudio);
-        };
-
-        monitorAudio();
-        audioContextRef.current = audioContext;
-        streamRef.current = stream;
-
-      } catch (error) {
-        console.error('Error setting up audio monitoring:', error);
+    // Set up interruption handling for mobile
+    voiceInterruptionHandler.startMonitoring(
+      // onInterruption
+      () => {
+        console.log('📱 Interruption detected - pausing voice');
+        if (isListening) {
+          stopListening();
+        }
+      },
+      // onResume
+      () => {
+        console.log('📱 Resuming after interruption');
+        // Don't auto-resume - let user restart manually
       }
-    };
-
-    setupAudioMonitoring();
+    );
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close();
-      }
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
+      stopListening();
+      voiceInterruptionHandler.stopMonitoring();
     };
-  }, [isListening, isOpen]);
+  }, [isOpen]);
 
-  // Advanced speech recognition setup
-  useEffect(() => {
-    if (!isSupported || !isOpen) return;
+  // Start listening with Deepgram (with Web Speech fallback)
+  const startListening = async () => {
+    if (isListening) return;
 
-    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    recognitionRef.current = new SpeechRecognition();
-    
-    const recognition = recognitionRef.current;
-    let finalTranscriptAccumulator = '';
-    let restartTimeout: NodeJS.Timeout | null = null;
-    
-    // Advanced configuration
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 3;
-    recognition.lang = 'en-US';
+    setTranscript('');
+    setInterimTranscript('');
+    setError(null);
+    finalTranscriptRef.current = '';
 
-    // Create speech grammar list for custom vocabulary
-    if ('SpeechGrammarList' in window) {
-      const SpeechGrammarList = (window as any).SpeechGrammarList || (window as any).webkitSpeechGrammarList;
-      const grammarList = new SpeechGrammarList();
-      
-      // Define custom vocabulary with high weight
-      const grammar = '#JSGF V1.0; grammar adrata; public <phrase> = Adrata | Hey Adrata | Hi Adrata ;';
-      grammarList.addFromString(grammar, 1.0); // Weight of 1.0 (highest priority)
-      
-      recognition.grammars = grammarList;
-    }
+    // Start monitoring session
+    const engine = useWebSpeechFallback ? 'web-speech' : 'deepgram';
+    sessionIdRef.current = voiceMonitoring.startSession(undefined, engine);
 
-    recognition.onstart = () => {
-      setIsListening(true);
-      setError(null);
-      if (onListeningChange) onListeningChange(true);
-    };
+    try {
+      // Try Deepgram first
+      if (!useWebSpeechFallback) {
+        try {
+          const service = getDeepgramService();
+          deepgramServiceRef.current = service;
 
-    recognition.onresult = (event) => {
-      let finalTranscript = '';
-      let interimTranscript = '';
-      let bestConfidence = 0;
+          await service.startListening(
+            // onTranscript
+            (result: TranscriptionResult) => {
+              if (process.env.NODE_ENV === 'development') {
+                console.log('🎤 Deepgram transcript:', {
+                  text: result.transcript,
+                  confidence: result.confidence,
+                  isFinal: result.isFinal
+                });
+              }
 
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        const alternatives = Array.from(result);
-        
-        // Enhanced alternative selection with context awareness
-        const scoredAlternatives = alternatives.map(alt => {
-          let score = alt.confidence;
-          const text = alt.transcript.toLowerCase();
-          
-          // Boost score if it contains expected phrases
-          if (text.includes('hey') || text.includes('hi') || text.includes('hello')) {
-            score *= 1.3; // 30% boost for greetings
-          }
-          
-          // Boost score for "adrata" variations (even if misspelled)
-          const adrataVariations = ['adrata', 'edrata', 'adra', 'edra', 'a drata', 'ah drata'];
-          if (adrataVariations.some(v => text.includes(v))) {
-            score *= 1.5; // 50% boost for Adrata mentions
-          }
-          
-          // Penalize if audio quality is poor but confidence is suspiciously high
-          if (audioQuality === 'poor' && alt.confidence > 0.9) {
-            score *= 0.8; // Reduce overconfident results in poor audio
-          }
-          
-          // Boost if SNR is good
-          if (snr > 3) {
-            score *= 1.1;
-          }
-          
-          return { ...alt, adjustedScore: score };
-        });
-        
-        // Sort by adjusted score
-        const bestAlternative = scoredAlternatives.reduce((best, current) => 
-          current.adjustedScore > best.adjustedScore ? current : best
-        );
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🎯 Speech alternatives with context scoring:', scoredAlternatives.map(alt => ({
-            text: alt.transcript,
-            originalConfidence: alt.confidence,
-            adjustedScore: alt.adjustedScore,
-            selected: alt === bestAlternative
-          })));
-        }
-        
-        if (result.isFinal) {
-          finalTranscript += bestAlternative.transcript;
-          bestConfidence = Math.max(bestConfidence, bestAlternative.confidence);
-          
-          // Dynamic confidence threshold based on audio quality
-          const confidenceThreshold = audioQuality === 'good' ? 0.7 : 
-                                       audioQuality === 'fair' ? 0.6 : 0.5;
-          
-          if (bestConfidence > confidenceThreshold) {
-            finalTranscriptAccumulator += finalTranscript + ' ';
-          } else {
-            if (process.env.NODE_ENV === 'development') {
-              console.warn(`⚠️ Low confidence result (${bestConfidence.toFixed(2)}) in ${audioQuality} audio - ignored`);
+              if (result.isFinal) {
+                // Track recognition accuracy
+                voiceMonitoring.trackRecognition(result.confidence, {
+                  engine: 'deepgram',
+                  transcriptLength: result.transcript.length,
+                  audioQuality
+                });
+
+                // Track latency
+                if (transcriptStartTimeRef.current > 0) {
+                  const latency = Date.now() - transcriptStartTimeRef.current;
+                  voiceMonitoring.trackLatency(latency, {
+                    engine: 'deepgram'
+                  });
+                }
+
+                // Accumulate final transcript
+                finalTranscriptRef.current += result.transcript + ' ';
+                setTranscript(finalTranscriptRef.current.trim());
+                setInterimTranscript('');
+                setConfidence(result.confidence);
+
+                // Reset silence timeout
+                if (silenceTimeoutRef.current) {
+                  clearTimeout(silenceTimeoutRef.current);
+                }
+
+                // Set new silence timeout to process accumulated transcript
+                silenceTimeoutRef.current = setTimeout(() => {
+                  if (finalTranscriptRef.current.trim()) {
+                    handleVoiceInput(finalTranscriptRef.current.trim());
+                    finalTranscriptRef.current = '';
+                  }
+                }, 1500);
+
+              } else {
+                // Show interim results
+                setInterimTranscript(result.transcript);
+                transcriptStartTimeRef.current = Date.now();
+              }
+            },
+            // onError
+            (error: Error) => {
+              console.error('Deepgram error:', error);
+              
+              // Track error
+              voiceMonitoring.trackError('deepgram_error', {
+                message: error.message,
+                engine: 'deepgram'
+              });
+              
+              // Try Web Speech API fallback if available
+              if (webSpeechSupported && !useWebSpeechFallback) {
+                console.log('🔄 Falling back to Web Speech API');
+                setUseWebSpeechFallback(true);
+                setError('Using fallback recognition mode...');
+                setTimeout(() => startWithWebSpeech(), 500);
+              } else {
+                setError('Voice recognition error. Please try again.');
+                setIsListening(false);
+                if (onListeningChange) onListeningChange(false);
+              }
+            },
+            // onAudioQuality
+            (quality: AudioQuality) => {
+              setAudioQuality(quality.level);
+              setAudioLevel(quality.audioLevel);
+              
+              // Track audio quality (sample every 5 seconds to avoid spam)
+              if (Math.random() < 0.2) { // 20% sampling
+                const qualityScore = quality.level === 'excellent' ? 1.0 :
+                                    quality.level === 'good' ? 0.8 :
+                                    quality.level === 'fair' ? 0.5 : 0.2;
+                voiceMonitoring.trackAudioQuality(qualityScore, {
+                  snr: quality.snr,
+                  audioLevel: quality.audioLevel
+                });
+              }
             }
+          );
+
+          setIsListening(true);
+          if (onListeningChange) onListeningChange(true);
+          console.log('✅ Deepgram listening started (Nova-2 model)');
+
+        } catch (deepgramError) {
+          console.error('Failed to initialize Deepgram:', deepgramError);
+          
+          // Fall back to Web Speech API if Deepgram fails to initialize
+          if (webSpeechSupported) {
+            console.log('🔄 Deepgram unavailable, using Web Speech API');
+            setUseWebSpeechFallback(true);
+            startWithWebSpeech();
+          } else {
+            throw new Error('Voice recognition not available. Please check your API configuration.');
           }
-        } else {
-          interimTranscript += bestAlternative.transcript;
         }
+      } else {
+        // Use Web Speech API directly
+        startWithWebSpeech();
       }
 
-      // Enhanced fixAdrata with phonetic matching
-      const fixAdrata = (text: string) => {
-        return text
-          // Exact matches
-          .replace(/\bedrada\b/gi, 'Adrata')
-          .replace(/\badrata\b/gi, 'Adrata')
-          // Phonetic variations
-          .replace(/\bed\s*ra\s*ta\b/gi, 'Adrata')
-          .replace(/\bad\s*ra\s*ta\b/gi, 'Adrata')
-          .replace(/\bedra\b/gi, 'Adrata')
-          .replace(/\badra\b/gi, 'Adrata')
-          .replace(/\ba\s*drata\b/gi, 'Adrata')
-          .replace(/\bah\s*drata\b/gi, 'Adrata')
-          .replace(/\behdrata\b/gi, 'Adrata')
-          .replace(/\bahdrata\b/gi, 'Adrata')
-          // Greeting variations with proper capitalization
-          .replace(/\bhey,?\s+adrata\b/gi, 'Hey, Adrata')
-          .replace(/\bhey,?\s+edrada\b/gi, 'Hey, Adrata')
-          .replace(/\bhey,?\s+edra\b/gi, 'Hey, Adrata')
-          .replace(/\bhey,?\s+adra\b/gi, 'Hey, Adrata')
-          .replace(/\bhi,?\s+adrata\b/gi, 'Hi, Adrata')
-          .replace(/\bhello,?\s+adrata\b/gi, 'Hello, Adrata');
-      };
-
-      // Update display with accumulated + current (with corrections)
-      const fullTranscript = fixAdrata((finalTranscriptAccumulator + interimTranscript).trim());
-      setTranscript(fullTranscript);
-      setInterimTranscript(fixAdrata(interimTranscript));
-      
-      // Keep confidence for internal use
-      setConfidence(bestConfidence);
-      
-      // Clear any existing restart timeout
-      if (restartTimeout) {
-        clearTimeout(restartTimeout);
-      }
-      
-      // Adaptive timeout based on audio quality
-      const silenceTimeout = audioQuality === 'good' ? 2000 : 
-                            audioQuality === 'fair' ? 2500 : 3000;
-      
-      restartTimeout = setTimeout(() => {
-        if (finalTranscriptAccumulator.trim()) {
-          recognition.stop();
-          handleVoiceInput(fixAdrata(finalTranscriptAccumulator.trim()));
-          finalTranscriptAccumulator = '';
-        }
-      }, silenceTimeout);
-    };
-
-    recognition.onend = () => {
+    } catch (error) {
+      console.error('Failed to start listening:', error);
+      setError(error instanceof Error ? error.message : 'Failed to start voice recognition');
       setIsListening(false);
       if (onListeningChange) onListeningChange(false);
-      
-      // Don't automatically restart - let the timeout handle it
-      if (restartTimeout) {
-        clearTimeout(restartTimeout);
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-      if (onListeningChange) onListeningChange(false);
-      
-      if (restartTimeout) {
-        clearTimeout(restartTimeout);
-      }
-      
-      switch (event.error) {
-        case 'not-allowed':
-          setError('Microphone access denied. Please allow microphone access and try again.');
-          break;
-        case 'no-speech':
-          // Don't show error for no-speech, just keep waiting
-          if (recognition && isOpen) {
-            setTimeout(() => recognition.start(), 100);
-          }
-          break;
-        case 'audio-capture':
-          setError('Microphone not found. Please check your microphone connection.');
-          break;
-        case 'network':
-          setError('Network error. Please check your internet connection.');
-          break;
-        default:
-          setError('Speech recognition error. Please try again.');
-      }
-    };
-
-    if (isOpen) {
-      recognition.start();
-    }
-
-    return () => {
-      if (restartTimeout) {
-        clearTimeout(restartTimeout);
-      }
-      if (recognition) {
-        recognition.stop();
-      }
-    };
-  }, [isSupported, isOpen, onListeningChange]);
-
-  const startListening = () => {
-    if (recognitionRef.current && !isListening) {
-      setTranscript('');
-      setInterimTranscript('');
-      setError(null);
-      setAiResponse('');
-      recognitionRef.current.start();
     }
   };
 
-  const stopListening = () => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
+  // Web Speech API fallback
+  const startWithWebSpeech = () => {
+    if (!webSpeechSupported) {
+      setError('Voice recognition is not supported in this browser.');
+      return;
+    }
+
+    try {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      const recognition = new SpeechRecognition() as SpeechRecognition;
+      webSpeechRecognitionRef.current = recognition;
+
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setError(null);
+        if (onListeningChange) onListeningChange(true);
+        console.log('✅ Web Speech API listening started');
+      };
+
+      recognition.onresult = (event: any) => {
+        let interim = '';
+        let final = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            final += transcript + ' ';
+          } else {
+            interim += transcript;
+          }
+        }
+
+        if (final) {
+          finalTranscriptRef.current += final;
+          setTranscript(finalTranscriptRef.current.trim());
+          setInterimTranscript('');
+
+          // Reset silence timeout
+          if (silenceTimeoutRef.current) {
+            clearTimeout(silenceTimeoutRef.current);
+          }
+
+          silenceTimeoutRef.current = setTimeout(() => {
+            if (finalTranscriptRef.current.trim()) {
+              handleVoiceInput(finalTranscriptRef.current.trim());
+              finalTranscriptRef.current = '';
+            }
+          }, 2000);
+        } else {
+          setInterimTranscript(interim);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('Web Speech error:', event.error);
+        if (event.error !== 'no-speech') {
+          setError('Voice recognition error. Please try again.');
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        if (onListeningChange) onListeningChange(false);
+      };
+
+      recognition.start();
+
+    } catch (error) {
+      console.error('Web Speech API error:', error);
+      setError('Failed to start voice recognition.');
+      setIsListening(false);
+      if (onListeningChange) onListeningChange(false);
+    }
+  };
+
+  // Stop listening
+  const stopListening = async () => {
+    if (!isListening) return;
+
+    try {
+      // Clear silence timeout
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+        silenceTimeoutRef.current = null;
+      }
+
+      // Stop Deepgram
+      if (deepgramServiceRef.current) {
+        await deepgramServiceRef.current.stopListening();
+        deepgramServiceRef.current = null;
+      }
+
+      // Stop Web Speech
+      if (webSpeechRecognitionRef.current) {
+        webSpeechRecognitionRef.current.stop();
+        webSpeechRecognitionRef.current = null;
+      }
+
+      // End monitoring session
+      if (sessionIdRef.current) {
+        const sessionStats = voiceMonitoring.endSession();
+        if (process.env.NODE_ENV === 'development' && sessionStats) {
+          console.log('📊 Voice session stats:', sessionStats);
+        }
+        sessionIdRef.current = null;
+      }
+
+      setIsListening(false);
+      if (onListeningChange) onListeningChange(false);
+      console.log('🛑 Listening stopped');
+
+    } catch (error) {
+      console.error('Error stopping listening:', error);
     }
   };
 
@@ -376,31 +362,20 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
     }
   };
 
-  const handleSendToChat = () => {
-    if (conversation.length > 0) {
-      onLogToChat(conversation);
-    }
-    onClose();
-    resetState();
-  };
-
   const resetState = () => {
     setTranscript('');
     setInterimTranscript('');
     setError(null);
     setIsListening(false);
     setIsProcessing(false);
-    setIsSending(false);
-    setAiResponse('');
-    setConversation([]);
     setConfidence(0);
     setAudioLevel(0);
+    setUseWebSpeechFallback(false);
+    finalTranscriptRef.current = '';
   };
 
-  const handleClose = () => {
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
+  const handleClose = async () => {
+    await stopListening();
     onClose();
     resetState();
   };
@@ -452,13 +427,17 @@ export function VoiceModeModal({ isOpen, onClose, onLogToChat, processMessageWit
           {isListening && (
             <div className="flex items-center gap-2 text-xs text-muted mb-2">
               <div className={`w-2 h-2 rounded-full ${
-                audioQuality === 'good' ? 'bg-green-500' : 
+                audioQuality === 'excellent' || audioQuality === 'good' ? 'bg-green-500' : 
                 audioQuality === 'fair' ? 'bg-yellow-500' : 'bg-red-500'
               }`}></div>
               <span>
-                {audioQuality === 'good' ? 'Clear audio' : 
+                {audioQuality === 'excellent' ? 'Excellent audio quality' :
+                 audioQuality === 'good' ? 'Clear audio' : 
                  audioQuality === 'fair' ? 'Some noise detected' : 'Noisy environment'}
               </span>
+              {useWebSpeechFallback && (
+                <span className="text-xs text-yellow-600">(Fallback mode)</span>
+              )}
             </div>
           )}
 

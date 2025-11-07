@@ -196,23 +196,29 @@ export function useSpeedrunDataLoader() {
 
       console.log(`🔄 [TRANSFORMED] ${transformedData.length} speedrun people`);
 
-      // 🏆 DATA IS ALREADY RANKED by the unified API using new ranking system
-      console.log(`🏆 [SPEEDRUN] Data is already ranked by unified API, no additional ranking needed`);
+      // 🏆 SMART COUNTDOWN RANKING: 50 → 1 (start at 50, work down to #1 top prospect)
+      // The API returns data in optimal order, we number in reverse for countdown effect
+      console.log(`🏆 [SPEEDRUN] Assigning countdown ranks ${transformedData.length} → 1 for gamified display`);
       
-      // The unified API has already applied the new unified ranking system
-      // Just convert to the expected format
-      const rankedData: RankedSpeedrunPerson[] = transformedData.map((person, index) => ({
-        ...person,
-        winningScore: {
-          totalScore: index + 1, // Use position in the already-ranked list
-          rank: (index + 1).toString(),
-          confidence: 0.9,
-          winFactors: [`Unified ranking position: ${index + 1}`],
-          urgencyLevel: index < 5 ? "Critical" : index < 15 ? "High" : "Medium",
-          bestContactTime: "Morning",
-          dealPotential: Math.max(0, 100 - (index * 3))
-        }
-      }));
+      const totalRecords = transformedData.length;
+      const rankedData: RankedSpeedrunPerson[] = transformedData.map((person, index) => {
+        const countdownRank = totalRecords - index; // Countdown: 50, 49, 48... 3, 2, 1
+        
+        return {
+          ...person,
+          globalRank: countdownRank, // Countdown display rank
+          rank: countdownRank, // Fallback field
+          winningScore: {
+            totalScore: person.winningScore?.totalScore || (100 - index * 2), // Preserve original score if exists
+            rank: countdownRank.toString(), // Countdown rank string
+            confidence: person.winningScore?.confidence || 0.9,
+            winFactors: person.winningScore?.winFactors || [`Priority rank: ${countdownRank}`],
+            urgencyLevel: countdownRank <= 5 ? "Critical" : countdownRank <= 15 ? "High" : "Medium",
+            bestContactTime: person.winningScore?.bestContactTime || "Morning",
+            dealPotential: Math.max(0, countdownRank * 2) // Higher rank = higher potential
+          }
+        };
+      });
 
       console.log(`🏆 [RANKED] ${rankedData.length} ranked speedrun people`);
 

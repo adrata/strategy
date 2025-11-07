@@ -26,6 +26,7 @@ import { AddStacksModal } from './AddStacksModal';
 import { StoryDetailView } from './StoryDetailView';
 import { EpicsPage } from './EpicsPage';
 import { EpicStoriesList } from './EpicStoriesList';
+import { StacksStoriesList } from './StacksStoriesList';
 import { StacksEpic } from './types';
 import { ErrorBoundary } from '@/frontend/components/ErrorBoundary';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
@@ -166,10 +167,10 @@ const mockFutures: StacksItem[] = [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'todo': return 'bg-hover text-gray-800';
+    case 'todo': return 'bg-hover text-foreground';
     case 'in-progress': return 'bg-blue-100 text-blue-800';
     case 'done': return 'bg-green-100 text-green-800';
-    default: return 'bg-hover text-gray-800';
+    default: return 'bg-hover text-foreground';
   }
 };
 
@@ -512,7 +513,7 @@ export function StacksMiddlePanel({
             </div>
             <button
               onClick={handleCreateItem}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-hover text-foreground border border-border rounded-md hover:bg-panel-background transition-colors"
             >
               <PlusIcon className="h-4 w-4" />
               New {activeSubSection.slice(0, -1)}
@@ -615,7 +616,7 @@ export function StacksMiddlePanel({
             <div className="flex items-center gap-3">
                 <button
                   onClick={handleCreateItem}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-hover text-foreground border border-border rounded-md hover:bg-panel-background transition-colors"
                 >
                   <PlusIcon className="h-4 w-4" />
                   Add Stacks
@@ -674,6 +675,15 @@ export function StacksMiddlePanel({
     return <StacksBacklogList onItemClick={onItemClick} />;
   }
 
+  // Handle stories section - show all stories in list view
+  if (activeSubSection === 'stories') {
+    return (
+      <div className="h-full flex flex-col bg-background">
+        <StacksStoriesList onItemClick={onItemClick} />
+      </div>
+    );
+  }
+
   // Default fallback for other sections
   return (
     <div className="h-full flex flex-col bg-background">
@@ -690,7 +700,7 @@ export function StacksMiddlePanel({
           </div>
           <button
             onClick={handleCreateItem}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-hover text-foreground border border-border rounded-md hover:bg-panel-background transition-colors"
           >
             <PlusIcon className="h-4 w-4" />
             New Task

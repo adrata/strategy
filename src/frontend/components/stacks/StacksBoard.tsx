@@ -1082,7 +1082,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         {/* Flag icon in top right */}
                         {card.isFlagged && (
                           <div className="absolute top-[9px] right-2">
-                            <FlagIcon className="h-4 w-4 text-red-500" />
+                            <FlagIcon className="h-4 w-4 text-error-text" />
                           </div>
                         )}
                         
@@ -1090,7 +1090,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                           <div className="flex items-start gap-2 mb-1">
                             {/* Bug pill for bug type */}
                             {(card.originalType === 'bug' || card.tags?.includes('bug')) && (
-                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0">
+                              <span className="bg-error-bg text-error-text px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0">
                                 bug
                               </span>
                             )}

@@ -439,7 +439,7 @@ export function PipelineTable({
                     key={record.id}
                     className={`cursor-pointer transition-colors h-table-row border-b relative ${
                       isCompleted 
-                        ? 'bg-green-100 border-green-300 hover:bg-green-100' 
+                        ? 'bg-green-50/50 border-green-200/50 hover:bg-green-50/70 dark:bg-green-950/20 dark:border-green-900/30 dark:hover:bg-green-950/30' 
                         : 'hover:bg-panel-background border-border'
                     }`}
                     onClick={() => onRecordClick(record)}
@@ -465,7 +465,8 @@ export function PipelineTable({
                             displayRank = '✓';
                           } else {
                             // For speedrun, show actual globalRank (1-50 per user)
-                            displayRank = record['globalRank'] || record['rank'] || (index + 1);
+                            // Never fall back to array index, use - if no rank
+                            displayRank = record['globalRank'] || record['rank'] || record['winningScore']?.rank || '-';
                           }
                         } else {
                           // For other sections, keep hierarchical ranking if available

@@ -537,18 +537,40 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     );
   }
 
-  const handleCompanyClick = () => {
+  const handleCompanyClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     const companyName = getCurrentCompanyName();
     if (companyName && companyName !== '-') {
       // Use companyId if available, otherwise fall back to searching by name
       if (companyId) {
         // Navigate to the actual company record using workspace-aware navigation
-        navigateToPipelineItem('companies', companyId, companyName);
+        try {
+          navigateToPipelineItem('companies', companyId, companyName);
+        } catch (error) {
+          console.error('Error navigating to company:', error);
+          // Fallback to search navigation if navigateToPipelineItem fails
+          const currentPath = window.location.pathname;
+          const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+          if (workspaceMatch) {
+            const workspaceSlug = workspaceMatch[1];
+            window.location.href = `/${workspaceSlug}/companies?search=${encodeURIComponent(companyName)}`;
+          } else {
+            window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+          }
+        }
       } else {
         // Fallback: search for company by name and navigate to first result
-        // This is less ideal but maintains functionality
         console.warn('No companyId provided, falling back to search navigation');
-        window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+        const currentPath = window.location.pathname;
+        const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+        if (workspaceMatch) {
+          const workspaceSlug = workspaceMatch[1];
+          window.location.href = `/${workspaceSlug}/companies?search=${encodeURIComponent(companyName)}`;
+        } else {
+          window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+        }
       }
     }
   };
