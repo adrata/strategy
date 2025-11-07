@@ -22,9 +22,10 @@ const { extractDomain, createUniqueId } = require('./utils');
 const TOP_WORKSPACE_ID = '01K75ZD7DWHG1XF16HAF2YVKCK';
 
 class TOPBuyerGroupRunner {
-  constructor() {
+  constructor(options = {}) {
     this.prisma = new PrismaClient();
     this.workspaceId = TOP_WORKSPACE_ID;
+    this.mainSellerId = options.mainSellerId || null; // 🏆 FIX: Store mainSellerId for assigning people
     
     // TOP-specific configuration
     this.config = {
@@ -142,6 +143,7 @@ class TOPBuyerGroupRunner {
       // Initialize pipeline with TOP configuration
       const pipeline = new SmartBuyerGroupPipeline({
         workspaceId: this.workspaceId,
+        mainSellerId: this.mainSellerId, // 🏆 FIX: Pass mainSellerId so people appear in counts
         dealSize: this.config.dealSize,
         productCategory: this.config.productCategory,
         customFiltering: this.config.customFiltering,

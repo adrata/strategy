@@ -24,6 +24,7 @@ class SmartBuyerGroupPipeline {
   constructor(options = {}) {
     this.prisma = options.prisma || new (require('@prisma/client').PrismaClient)();
     this.workspaceId = options.workspaceId;
+    this.mainSellerId = options.mainSellerId || null; // 🏆 FIX: Store mainSellerId for assigning people
     this.dealSize = options.dealSize || 150000;
     this.productCategory = options.productCategory || 'sales';
     this.targetCompany = options.targetCompany || options.linkedinUrl;
@@ -1982,6 +1983,8 @@ class SmartBuyerGroupPipeline {
             where: { id: existingPerson.id },
             data: {
               companyId: company.id, // Ensure company link
+              // 🏆 FIX: Set mainSellerId if provided, otherwise preserve existing
+              mainSellerId: this.mainSellerId || existingPerson.mainSellerId,
               buyerGroupRole: member.buyerGroupRole,
               isBuyerGroupMember: true,
               buyerGroupOptimized: true,
@@ -2079,6 +2082,8 @@ class SmartBuyerGroupPipeline {
             data: {
               workspaceId: this.workspaceId,
               companyId: company.id, // Link to company
+              // 🏆 FIX: Set mainSellerId when creating new person
+              mainSellerId: this.mainSellerId,
               firstName: firstName,
               lastName: lastName,
               fullName: member.name,

@@ -52,7 +52,10 @@ class TOPMissingBuyerGroupsRunner {
 
         try {
           const identifier = company.website || company.linkedinUrl || company.name;
-          const runner = new TOPBuyerGroupRunner();
+          // 🏆 FIX: Pass mainSellerId if available (optional for TOP, but needed for proper counts)
+          const runner = new TOPBuyerGroupRunner({
+            mainSellerId: process.env.TOP_USER_ID || null // Can be set via environment variable
+          });
           
           const result = await runner.run(identifier, {
             skipDatabase: false,

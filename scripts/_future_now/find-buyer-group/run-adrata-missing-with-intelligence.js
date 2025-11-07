@@ -55,7 +55,7 @@ class AdrataIntelligenceRunner {
           const identifier = company.website || company.linkedinUrl || company.name;
           const pipeline = new SmartBuyerGroupPipeline({
             workspaceId: this.workspaceId,
-            userId: DAN_USER_ID,
+            mainSellerId: DAN_USER_ID, // 🏆 FIX: Pass userId as mainSellerId so people appear in counts
             dealSize: 50000,
             productCategory: 'sales',
             usaOnly: false

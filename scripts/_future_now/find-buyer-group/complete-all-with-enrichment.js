@@ -125,7 +125,7 @@ class CompleteBuyerGroupWithEnrichment {
         const identifier = company.website || company.linkedinUrl || company.name;
         const pipeline = new SmartBuyerGroupPipeline({
           workspaceId: this.workspaceId,
-          userId: this.userId,
+          mainSellerId: this.userId, // 🏆 FIX: Pass userId as mainSellerId so people appear in counts
           dealSize: this.workspaceId === TOP_WORKSPACE_ID ? 300000 : 50000,
           productCategory: this.workspaceId === TOP_WORKSPACE_ID ? 'engineering-services' : 'sales',
           usaOnly: this.workspaceId === TOP_WORKSPACE_ID
