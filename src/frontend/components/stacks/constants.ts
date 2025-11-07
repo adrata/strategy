@@ -15,7 +15,8 @@ export const STACK_STATUS = {
   QA2: 'qa2',
   SHIPPED: 'shipped',
   DONE: 'done',
-  DEEP_BACKLOG: 'deep-backlog',
+  BACKLOG: 'backlog', // Below the line (regular backlog)
+  DEEP_BACKLOG: 'deep-backlog', // Deep backlog (archived)
   REVIEW: 'review', // Legacy status
 } as const;
 
@@ -72,7 +73,8 @@ export const STATUS_WORKFLOW: Record<StackStatus, StackStatus | null> = {
   [STACK_STATUS.QA2]: STACK_STATUS.SHIPPED,
   [STACK_STATUS.SHIPPED]: null, // End of workflow
   [STACK_STATUS.DONE]: null, // End of workflow
-  [STACK_STATUS.DEEP_BACKLOG]: STACK_STATUS.UP_NEXT,
+  [STACK_STATUS.BACKLOG]: STACK_STATUS.UP_NEXT, // Can move from backlog to up-next
+  [STACK_STATUS.DEEP_BACKLOG]: STACK_STATUS.BACKLOG, // Can move from deep backlog to backlog
   [STACK_STATUS.REVIEW]: STACK_STATUS.IN_PROGRESS, // Legacy status
 };
 
@@ -86,6 +88,7 @@ export const STATUS_LABELS: Record<StackStatus, string> = {
   [STACK_STATUS.QA2]: 'QA2',
   [STACK_STATUS.SHIPPED]: 'Shipped',
   [STACK_STATUS.DONE]: 'Done',
+  [STACK_STATUS.BACKLOG]: 'Backlog',
   [STACK_STATUS.DEEP_BACKLOG]: 'Deep Backlog',
   [STACK_STATUS.REVIEW]: 'Review',
 };

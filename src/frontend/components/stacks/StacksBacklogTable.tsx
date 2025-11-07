@@ -469,11 +469,13 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     position: { x: number; y: number };
     itemId: string;
     isUpNext?: boolean;
+    itemStatus?: string | null;
   }>({
     isVisible: false,
     position: { x: 0, y: 0 },
     itemId: '',
-    isUpNext: false
+    isUpNext: false,
+    itemStatus: null
   });
 
   const handleSearchChange = (query: string) => {
@@ -725,8 +727,9 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Filter and sort items
   const filteredItems = items
     .filter(item => {
-      // Include deep-backlog items in backlog view (they appear below the line)
-      // Don't filter them out - they should show in the "Below the Line" section
+      // Include backlog and deep-backlog items in backlog view
+      // backlog items appear in "Below the Line" section
+      // deep-backlog items appear in "Deep Backlog" section
       
       // Exclude workstream board statuses from backlog view
       // Items with these statuses should only appear on the workstream board
@@ -807,27 +810,44 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     });
   }, [items.length, filteredItems.length, filters, searchQuery]);
 
-  // Separate items into "Up Next" (status='up-next' or 'todo') and other items
+  // Separate items into three sections:
+  // 1. "Up Next" (status='up-next' or 'todo')
+  // 2. "Below the Line" / "Backlog" (status='backlog')
+  // 3. "Deep Backlog" (status='deep-backlog')
   const upNextItems = filteredItems.filter(item => 
     item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO
   );
-  const otherItems = filteredItems.filter(item => 
-    item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO
+  const backlogItems = filteredItems.filter(item => 
+    item.status === STACK_STATUS.BACKLOG
   );
+  const deepBacklogItems = filteredItems.filter(item => 
+    item.status === STACK_STATUS.DEEP_BACKLOG
+  );
+  // Combine backlog and deep backlog for "otherItems" (for backward compatibility)
+  const otherItems = [...backlogItems, ...deepBacklogItems];
   
   // Debug: If filtering removed everything, show all items for debugging
-  const itemsToDisplay = filteredItems.length > 0 ? { upNextItems, otherItems } : {
+  const itemsToDisplay = filteredItems.length > 0 ? { 
+    upNextItems, 
+    backlogItems, 
+    deepBacklogItems,
+    otherItems 
+  } : {
     upNextItems: items.filter(item => item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO),
+    backlogItems: items.filter(item => item.status === STACK_STATUS.BACKLOG),
+    deepBacklogItems: items.filter(item => item.status === STACK_STATUS.DEEP_BACKLOG),
     otherItems: items.filter(item => item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO)
   };
 
   const handleContextMenu = (e: React.MouseEvent, itemId: string, isUpNext?: boolean) => {
     e.preventDefault();
+    const item = items.find(i => i.id === itemId);
     setContextMenu({
       isVisible: true,
       position: { x: e.clientX, y: e.clientY },
       itemId,
-      isUpNext: isUpNext || false
+      isUpNext: isUpNext || false,
+      itemStatus: item?.status || null
     });
   };
 
@@ -992,11 +1012,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     const item = items.find(i => i.id === contextMenu.itemId);
     if (!item) return;
 
-    // Change status from 'up-next'/'todo' to 'deep-backlog' to move below the line
-    // Items with 'deep-backlog' status stay in backlog but appear below the line (not in Up Next)
+    // Change status from 'up-next'/'todo' to 'backlog' to move below the line
+    // Items with 'backlog' status appear in the "Below the Line" section (regular backlog)
     // This keeps them in the backlog view but not on the workstream board
     const newStatus = item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO 
-      ? STACK_STATUS.DEEP_BACKLOG 
+      ? STACK_STATUS.BACKLOG 
       : item.status;
 
     // Optimistic update
@@ -1624,8 +1644,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   </>
                 )}
 
-                {/* Divider Line */}
-                {itemsToDisplay.upNextItems.length > 0 && itemsToDisplay.otherItems.length > 0 && (
+                {/* Divider Line - Between Up Next and Backlog */}
+                {itemsToDisplay.upNextItems.length > 0 && (itemsToDisplay.backlogItems.length > 0 || itemsToDisplay.deepBacklogItems.length > 0) && (
                   <div className="relative my-8">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-border"></div>
@@ -1636,16 +1656,51 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   </div>
                 )}
 
-                {/* Backlog Section */}
-                {itemsToDisplay.otherItems.length > 0 && (
+                {/* Backlog Section (Below the Line) */}
+                {itemsToDisplay.backlogItems.length > 0 && (
                   <>
                     <div className="mb-3">
                       <h3 className="text-sm font-semibold text-foreground mb-1">Backlog</h3>
-                      <div className="text-xs text-muted">{itemsToDisplay.otherItems.length} items</div>
+                      <div className="text-xs text-muted">{itemsToDisplay.backlogItems.length} items</div>
                     </div>
                     
                     <div className="space-y-2">
-                      {itemsToDisplay.otherItems.map((item, index) => (
+                      {itemsToDisplay.backlogItems.map((item, index) => (
+                        <BacklogItemComponent
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          isUpNext={false}
+                          onItemClick={onItemClick}
+                          onContextMenu={handleContextMenu}
+                          isBug={isBug}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Deep Backlog Section */}
+                {itemsToDisplay.deepBacklogItems.length > 0 && (
+                  <>
+                    {(itemsToDisplay.backlogItems.length > 0 || itemsToDisplay.upNextItems.length > 0) && (
+                      <div className="relative my-8">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-border"></div>
+                        </div>
+                        <div className="relative flex justify-center">
+                          <span className="bg-background px-2 text-xs text-muted">Deep Backlog</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="mb-3">
+                      <h3 className="text-sm font-semibold text-foreground mb-1">Deep Backlog</h3>
+                      <div className="text-xs text-muted">{itemsToDisplay.deepBacklogItems.length} items</div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {itemsToDisplay.deepBacklogItems.map((item, index) => (
                         <BacklogItemComponent
                           key={item.id}
                           item={item}
@@ -1672,7 +1727,9 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                         <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-panel-background text-foreground rounded text-xs font-semibold">
                           {(activeItem.status === 'up-next' || activeItem.status === 'todo')
                             ? String.fromCharCode(65 + itemsToDisplay.upNextItems.findIndex(i => i.id === activeItem.id))
-                            : `B${itemsToDisplay.otherItems.findIndex(i => i.id === activeItem.id) + 1}`}
+                            : activeItem.status === STACK_STATUS.BACKLOG
+                            ? `B${itemsToDisplay.backlogItems.findIndex(i => i.id === activeItem.id) + 1}`
+                            : `DB${itemsToDisplay.deepBacklogItems.findIndex(i => i.id === activeItem.id) + 1}`}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-medium text-foreground truncate">
@@ -1701,9 +1758,9 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         onMoveBelowTheLine={handleMoveBelowTheLine}
         showMoveBelowTheLine={contextMenu.isUpNext === true}
         onMoveToUpNext={handleMoveToUpNext}
-        showMoveToUpNext={contextMenu.isUpNext === false}
+        showMoveToUpNext={contextMenu.isUpNext === false && contextMenu.itemStatus !== STACK_STATUS.DEEP_BACKLOG}
         onMoveToDeepBacklog={handleMoveToDeepBacklog}
-        showMoveToDeepBacklog={contextMenu.isUpNext === false}
+        showMoveToDeepBacklog={contextMenu.isUpNext === false && contextMenu.itemStatus === STACK_STATUS.BACKLOG}
         onDelete={handleDelete}
       />
     </div>
