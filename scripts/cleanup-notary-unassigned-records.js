@@ -14,7 +14,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // Dano's user ID in Notary Everyday workspace
-const DANO_USER_ID = '01K1VBYYV7TRPY04NW4TW4XWRB';
+const DANO_USER_ID = '01K7DP7QHQ7WATZAJAXCGANBYJ';
 
 async function findNotaryEverydayWorkspace() {
   console.log('🔍 Finding Notary Everyday workspace...');
