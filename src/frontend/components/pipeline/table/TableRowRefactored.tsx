@@ -26,6 +26,11 @@ export interface TableRowRefactoredProps {
   className?: string;
   isSelected?: boolean;
   isHoverable?: boolean;
+  // Inline editing support
+  recordType?: string;
+  onUpdate?: (recordId: string, field: string, value: string) => Promise<boolean>;
+  onSuccess?: (message: string) => void;
+  onError?: (message: string) => void;
 }
 
 export function TableRowRefactored({ 
@@ -35,7 +40,11 @@ export function TableRowRefactored({
   onCellClick,
   className = '',
   isSelected = false,
-  isHoverable = true
+  isHoverable = true,
+  recordType = 'record',
+  onUpdate,
+  onSuccess,
+  onError,
 }: TableRowRefactoredProps) {
   
   // Handle row click
@@ -79,15 +88,21 @@ export function TableRowRefactored({
           );
         }
 
-        // Use TableCell component for standard rendering
+        // Use TableCell component for standard rendering with inline editing support
+        const cellValue = typeof value === 'object' ? JSON.stringify(value) : String(value || '');
+        const recordId = record.id || record._id || '';
+        
         return (
           <TableCell
             key={column.key}
-            value={value}
-            type={column.type}
-            format={column.format}
-            onClick={() => handleCellClick(column)}
+            value={cellValue}
+            field={column.key}
+            recordId={recordId}
+            recordType={recordType}
             className={column.width ? `w-${column.width}` : ''}
+            onUpdate={onUpdate || (async () => false)}
+            onSuccess={onSuccess}
+            onError={onError}
           />
         );
       })}

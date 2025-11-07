@@ -443,12 +443,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                     { value: 'SUPERFAN', label: 'Superfan' }
                   ]}
                   className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    (prospectData.status || prospectData.stage) === 'LEAD' ? 'bg-warning/10 text-warning' :
-                    (prospectData.status || prospectData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary' :
-                    (prospectData.status || prospectData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info' :
-                    (prospectData.status || prospectData.stage) === 'CLIENT' ? 'bg-success/10 text-success' :
-                    (prospectData.status || prospectData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info' :
-                    'bg-hover text-foreground'
+                    (prospectData.status || prospectData.stage) === 'LEAD' ? 'bg-warning/10 text-warning border border-warning' :
+                    (prospectData.status || prospectData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary border border-primary' :
+                    (prospectData.status || prospectData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info border border-info' :
+                    (prospectData.status || prospectData.stage) === 'CLIENT' ? 'bg-success/10 text-success border border-success' :
+                    (prospectData.status || prospectData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info border border-info' :
+                    'bg-hover text-foreground border border-border'
                   }`}
                 />
               </div>
@@ -538,11 +538,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                     { value: 'User', label: 'User' }
                   ]}
                   className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    prospectData.buyerGroupRole === 'Decision Maker' ? 'bg-error/10 text-error' :
-                    prospectData.buyerGroupRole === 'Champion' ? 'bg-success/10 text-success' :
-                    prospectData.buyerGroupRole === 'Blocker' ? 'bg-warning/10 text-warning' :
-                    prospectData.buyerGroupRole === '-' ? 'bg-hover text-foreground' :
-                    'bg-hover text-foreground'
+                    prospectData.buyerGroupRole === 'Decision Maker' ? 'bg-error/10 text-error border border-error' :
+                    prospectData.buyerGroupRole === 'Champion' ? 'bg-success/10 text-success border border-success' :
+                    prospectData.buyerGroupRole === 'Blocker' ? 'bg-warning/10 text-warning border border-warning' :
+                    prospectData.buyerGroupRole === '-' ? 'bg-hover text-foreground border border-border' :
+                    'bg-hover text-foreground border border-border'
                   }`}
                 />
               </div>

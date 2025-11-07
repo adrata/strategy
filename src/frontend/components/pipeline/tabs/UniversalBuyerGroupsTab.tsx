@@ -9,6 +9,7 @@ import { safeSetItem, safeGetItem } from '@/platform/utils/storage/safeLocalStor
 import { calculateRiskAssessment, getRiskPillStyles, generateRiskDescription, CareerData, RiskAssessment } from '@/platform/utils/riskAssessment';
 import { generateSlug } from '@/platform/utils/url-utils';
 import { BuyerGroupOptimizer } from '@/platform/services/buyer-group/buyer-group-optimizer';
+import { getRoleLabel, getRoleColorClasses } from '@/platform/constants/buyer-group-roles';
 
 interface UniversalBuyerGroupsTabProps {
   record: any;
@@ -704,14 +705,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                     <span className={`px-2 py-1 text-xs rounded-full ${getRiskPillStyles(riskAssessment.level)}`}>
                       {riskAssessment.level}
                     </span>
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      member.role === 'Decision Maker' ? 'bg-error/10 text-error' :
-                      member.role === 'Champion' ? 'bg-success/10 text-success' :
-                      member.role === 'Blocker' ? 'bg-warning/10 text-warning' :
-                      member.role === 'Stakeholder' ? 'bg-primary/10 text-primary' :
-                      'bg-hover text-foreground'
-                    }`}>
-                      {member.role}
+                    <span className={`px-2 py-1 text-xs rounded-full ${getRoleColorClasses(member.role)}`}>
+                      {getRoleLabel(member.role)}
                     </span>
                     {/* ADD THIS - Buyer Group Status Badge */}
                     {member.buyerGroupStatus && (

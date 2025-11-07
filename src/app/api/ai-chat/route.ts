@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
       enableVoiceResponse,
       selectedVoiceId,
       useOpenRouter = true, // New parameter to control routing
-      pageContext // New parameter for page context
+      pageContext, // New parameter for page context
+      selectedAIModel // Selected AI model from frontend
     } = body;
 
     console.log('🤖 [AI CHAT] Processing request:', {
@@ -237,7 +238,14 @@ export async function POST(request: NextRequest) {
     // Route to OpenRouter or fallback to Claude
     if (shouldUseOpenRouter) {
       try {
-        console.log('🌐 [AI CHAT] Using OpenRouter with intelligent routing');
+        // Determine preferred model from selectedAIModel
+        const preferredModel = selectedAIModel?.openRouterModelId || undefined;
+        
+        if (preferredModel) {
+          console.log('🌐 [AI CHAT] Using OpenRouter with preferred model:', preferredModel);
+        } else {
+          console.log('🌐 [AI CHAT] Using OpenRouter with intelligent routing');
+        }
         
         // Generate OpenRouter response with sanitized input and workspace context
         const openRouterResponse = await openRouterService.generateResponse({
@@ -255,7 +263,8 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString()
           },
           pageContext,
-          workspaceContext // Pass the comprehensive workspace context
+          workspaceContext, // Pass the comprehensive workspace context
+          preferredModel // Pass the preferred model if specified
         });
 
         // Record cost

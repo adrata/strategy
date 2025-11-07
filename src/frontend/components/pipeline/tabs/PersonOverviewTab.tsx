@@ -379,12 +379,12 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                     { value: 'SUPERFAN', label: 'Superfan' }
                   ]}
                   className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    (personData.status || personData.stage) === 'LEAD' ? 'bg-warning/10 text-warning' :
-                    (personData.status || personData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary' :
-                    (personData.status || personData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info' :
-                    (personData.status || personData.stage) === 'CLIENT' ? 'bg-success/10 text-success' :
-                    (personData.status || personData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info' :
-                    'bg-hover text-foreground'
+                    (personData.status || personData.stage) === 'LEAD' ? 'bg-warning/10 text-warning border border-warning' :
+                    (personData.status || personData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary border border-primary' :
+                    (personData.status || personData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info border border-info' :
+                    (personData.status || personData.stage) === 'CLIENT' ? 'bg-success/10 text-success border border-success' :
+                    (personData.status || personData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info border border-info' :
+                    'bg-hover text-foreground border border-border'
                   }`}
                 />
               </div>

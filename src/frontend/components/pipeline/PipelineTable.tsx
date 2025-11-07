@@ -213,15 +213,57 @@ export function PipelineTable({
   const workspaceId = authUser?.activeWorkspaceId || '';
   const workspaceName = authUser?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
   
+  // Success message state
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
   // Table editing functionality
   const { updateRecord, deleteRecord } = useTableEdit({
     onSuccess: (message) => {
       console.log('✅ Table edit success:', message);
-      // Optionally show a toast notification
+      // Show success message at the top
+      setSuccessMessage(message);
+      // Auto-hide after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+      
+      // Trigger data refresh event to update the table
+      window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+        detail: {
+          section: section,
+          fromSection: section,
+          reason: 'table-cell-edit'
+        }
+      }));
+      
+      // Dispatch cache invalidation event for Next.js and SWR cache
+      window.dispatchEvent(new CustomEvent('cache-invalidated', {
+        detail: {
+          recordType: section,
+          reason: 'table-cell-edit'
+        }
+      }));
+      
+      // Clear sessionStorage caches for this section
+      if (typeof window !== 'undefined') {
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const key = sessionStorage.key(i);
+          if (key && (key.includes(`adrata-${section}`) || key.includes(`cached-${section}`))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => sessionStorage.removeItem(key));
+        console.log(`🗑️ [CACHE] Cleared ${keysToRemove.length} sessionStorage cache entries for ${section}`);
+      }
     },
     onError: (message) => {
       console.error('❌ Table edit error:', message);
-      // Optionally show an error toast
+      // Show error message
+      setSuccessMessage(`❌ ${message}`);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
     },
   });
 
@@ -406,12 +448,25 @@ export function PipelineTable({
   }
   
   return (
-    <div 
-      key={`pipeline-table-${section}-${visibleColumns?.join('-')}`} 
-      className="bg-background border border-border flex flex-col relative rounded-md" 
-      style={{ height: `${tableHeight}px` }}
-    >
-      {/* Table container */}
+    <>
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[10000] bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-2">
+          <div className="flex items-center">
+            <svg className="h-4 w-4 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-green-700 font-medium">{successMessage}</p>
+          </div>
+        </div>
+      )}
+      
+      <div 
+        key={`pipeline-table-${section}-${visibleColumns?.join('-')}`} 
+        className="bg-background border border-border flex flex-col relative rounded-md" 
+        style={{ height: `${tableHeight}px` }}
+      >
+        {/* Table container */}
       <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
         <table className="w-full table-auto border-collapse mb-0">
           
@@ -511,5 +566,6 @@ export function PipelineTable({
         />
       )}
     </div>
+    </>
   );
 }

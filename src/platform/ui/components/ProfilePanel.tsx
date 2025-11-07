@@ -40,6 +40,17 @@ import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 import { CalendarView } from "./CalendarView";
 import { NotesEditor } from "./NotesEditor";
 
+// Safe import of useOasis - not critical for profile panel functionality
+let useOasis: any = () => ({
+  getTotalUnreadCount: () => 0,
+});
+try {
+  const oasisModule = require("@/products/oasis/context/OasisProvider");
+  useOasis = oasisModule.useOasis;
+} catch (e) {
+  // OasisProvider not available, use default implementation
+}
+
 interface ProfilePanelProps {
   user: { name: string; lastName?: string };
   company: string;
@@ -310,6 +321,15 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     lastResetDate,
     streak
   } = useChecklist(userId, workspaceId);
+
+  // Get unread count from Oasis context
+  let oasisUnreadCount = 0;
+  try {
+    const { getTotalUnreadCount } = useOasis();
+    oasisUnreadCount = getTotalUnreadCount();
+  } catch (e) {
+    // Not in OasisProvider context, keep count at 0
+  }
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
@@ -735,8 +755,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               onClick={handleHomeClick}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'main'
-                  ? 'bg-gray-100 text-foreground'
-                  : 'bg-transparent hover:bg-gray-50 text-foreground'
+                  ? 'bg-hover text-foreground'
+                  : 'bg-transparent hover:bg-hover text-foreground'
               }`}
               title="Home"
               aria-label="Go to home"
@@ -749,8 +769,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'calendar'
-                  ? 'bg-gray-100 text-foreground'
-                  : 'bg-transparent hover:bg-gray-50 text-foreground'
+                  ? 'bg-hover text-foreground'
+                  : 'bg-transparent hover:bg-hover text-foreground'
               }`}
               title="Calendar"
               aria-label="Calendar view"
@@ -800,7 +820,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       </div>
 
       {/* App Navigation */}
-      <div className="flex-1 p-3 space-y-4 overflow-hidden flex flex-col">
+      <div className={`flex-1 overflow-hidden flex flex-col ${viewMode === 'notes' ? '' : 'p-3 space-y-4'}`}>
         {/* Get Started Section */}
         {viewMode === 'main' && (
           <div className="space-y-1">
@@ -884,6 +904,11 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <ChatBubbleLeftRightIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Oasis</span>
+              {oasisUnreadCount > 0 && (
+                <span className="ml-auto w-5 h-5 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded-full flex items-center justify-center">
+                  {oasisUnreadCount}
+                </span>
+              )}
             </button>
 
             {/* API Keys */}
@@ -951,7 +976,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         {viewMode === 'notes' && (
           <div className="h-full flex flex-col flex-1 min-h-0">
             {/* Header with Notes title and status */}
-            <div className="flex items-center justify-between mb-4 px-1 flex-shrink-0">
+            <div className="flex items-center justify-between mb-4 px-4 pt-3 flex-shrink-0">
               <h2 className="text-xl font-semibold text-foreground" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
                 Notes
               </h2>
@@ -978,7 +1003,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </div>
             
             {/* Search Bar - Below Notes header and status */}
-            <div className="flex-shrink-0 px-1 pb-3 mb-1">
+            <div className="flex-shrink-0 px-4 pb-3 mb-1">
               <input
                 type="text"
                 value={notesSearchQuery}
@@ -989,7 +1014,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </div>
             
             {/* Notes Editor - Endless scroll without header */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden px-4">
               <NotesEditor
                 value={notesContent}
                 onChange={setNotesContent}

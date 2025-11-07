@@ -15,6 +15,10 @@
 
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
+const fetch = require('node-fetch');
+
+// Import sophisticated multi-source verification system
+const { MultiSourceVerifier } = require('../../../src/platform/pipelines/modules/core/MultiSourceVerifier');
 
 class CompanyEnrichment {
   constructor() {
@@ -33,14 +37,33 @@ class CompanyEnrichment {
       alreadyEnriched: 0,
       successfullyEnriched: 0,
       failedEnrichment: 0,
+      contactsDiscovered: 0,
+      emailsVerified: 0,
+      phonesVerified: 0,
       creditsUsed: {
         search: 0,
-        collect: 0
+        collect: 0,
+        employeePreview: 0,
+        email: 0,
+        phone: 0
       },
       errors: [],
       processedCompanies: [],
       startTime: new Date().toISOString()
     };
+    
+    // Initialize multi-source email & phone verifier
+    this.emailVerifier = new MultiSourceVerifier({
+      ZEROBOUNCE_API_KEY: process.env.ZEROBOUNCE_API_KEY,
+      MYEMAILVERIFIER_API_KEY: process.env.MYEMAILVERIFIER_API_KEY,
+      PROSPEO_API_KEY: process.env.PROSPEO_API_KEY,
+      LUSHA_API_KEY: process.env.LUSHA_API_KEY,
+      TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+      TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+      PEOPLE_DATA_LABS_API_KEY: process.env.PEOPLE_DATA_LABS_API_KEY,
+      PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
+      TIMEOUT: 30000
+    });
 
     if (!this.apiKey) {
       console.error('❌ CORESIGNAL_API_KEY environment variable is required');
@@ -343,10 +366,23 @@ class CompanyEnrichment {
       console.log(`   🔍 Match confidence: ${matchResult.confidence}%`);
       
       if (matchResult.confidence >= 90) {
-        await this.updateCompanyWithCoresignalData(company, coresignalCompanyId, profileData, matchResult);
-        console.log(`   ✅ Successfully enriched: ${company.name}`);
+        // NEW: Discover key contacts at this company
+        const keyContacts = await this.discoverKeyContacts(profileData, company);
+        
+        // NEW: Verify emails and phones for discovered contacts
+        const verifiedContacts = await this.verifyContactInformation(keyContacts, company);
+        
+        await this.updateCompanyWithCoresignalData(company, coresignalCompanyId, profileData, matchResult, verifiedContacts);
+        console.log(`   ✅ Successfully enriched: ${company.name} (${verifiedContacts.length} contacts)`);
         this.results.successfullyEnriched++;
-        return { status: 'success', company: company.name, coresignalId: coresignalCompanyId, confidence: matchResult.confidence };
+        this.results.contactsDiscovered += verifiedContacts.length;
+        return { 
+          status: 'success', 
+          company: company.name, 
+          coresignalId: coresignalCompanyId, 
+          confidence: matchResult.confidence,
+          contactsFound: verifiedContacts.length
+        };
       } else {
         console.log(`   ⚠️ Low confidence match (${matchResult.confidence}%): ${company.name}`);
         this.results.failedEnrichment++;
@@ -374,7 +410,258 @@ class CompanyEnrichment {
     }
   }
 
-  async updateCompanyWithCoresignalData(company, coresignalId, profileData, matchResult) {
+  /**
+   * Discover key contacts at the company (C-level, VPs, Directors)
+   */
+  async discoverKeyContacts(companyProfileData, company) {
+    console.log(`   👥 Discovering key contacts...`);
+    
+    const companyLinkedInUrl = companyProfileData.linkedin_url || company.linkedinUrl;
+    if (!companyLinkedInUrl) {
+      console.log(`   ⚠️ No LinkedIn URL available for contact discovery`);
+      return [];
+    }
+    
+    try {
+      // Search for C-level and VP-level contacts
+      const searchQuery = {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "nested": {
+                  "path": "experience",
+                  "query": {
+                    "bool": {
+                      "must": [
+                        {
+                          "match": {
+                            "experience.company_linkedin_url": companyLinkedInUrl
+                          }
+                        },
+                        {
+                          "term": {
+                            "experience.active_experience": 1
+                          }
+                        }
+                      ],
+                      "should": [
+                        { "match": { "experience.position_title": "CEO" } },
+                        { "match": { "experience.position_title": "CFO" } },
+                        { "match": { "experience.position_title": "CTO" } },
+                        { "match": { "experience.position_title": "COO" } },
+                        { "match": { "experience.position_title": "VP" } },
+                        { "match": { "experience.position_title": "Vice President" } },
+                        { "match": { "experience.position_title": "Director" } }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      };
+      
+      const searchResponse = await fetch('https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl/preview?items_per_page=10', {
+        method: 'POST',
+        headers: {
+          'apikey': this.apiKey,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(searchQuery)
+      });
+      
+      if (!searchResponse.ok) {
+        throw new Error(`Contact discovery failed: ${searchResponse.status}`);
+      }
+      
+      const contacts = await searchResponse.json();
+      this.results.creditsUsed.employeePreview++;
+      
+      const contactArray = Array.isArray(contacts) ? contacts : [];
+      console.log(`   ✅ Found ${contactArray.length} key contacts`);
+      
+      return contactArray.slice(0, 5); // Limit to top 5 key contacts
+      
+    } catch (error) {
+      console.error(`   ❌ Failed to discover contacts: ${error.message}`);
+      return [];
+    }
+  }
+  
+  /**
+   * Verify contact information (emails & phones) using multi-source verification
+   */
+  async verifyContactInformation(contacts, company) {
+    if (contacts.length === 0) {
+      return [];
+    }
+    
+    console.log(`   📧📞 Verifying contact information for ${contacts.length} contacts...`);
+    
+    const verifiedContacts = [];
+    const companyDomain = this.extractDomain(company.website);
+    
+    for (const contact of contacts) {
+      try {
+        const contactData = {
+          name: contact.full_name || contact.name,
+          title: contact.active_experience_title || contact.title,
+          department: contact.active_experience_department || contact.department,
+          linkedinUrl: contact.linkedin_url,
+          email: null,
+          phone: null
+        };
+        
+        // Verify/discover email
+        const emailResult = await this.verifyOrDiscoverEmail(contact, companyDomain);
+        if (emailResult) {
+          contactData.email = emailResult.email;
+          contactData.emailVerified = emailResult.verified;
+          contactData.emailConfidence = emailResult.confidence;
+          this.results.emailsVerified += emailResult.verified ? 1 : 0;
+          this.results.creditsUsed.email += emailResult.cost || 0;
+        }
+        
+        // Verify/discover phone
+        const phoneResult = await this.verifyOrDiscoverPhone(contact, company.name);
+        if (phoneResult) {
+          contactData.phone = phoneResult.phone;
+          contactData.phoneVerified = phoneResult.verified;
+          contactData.phoneConfidence = phoneResult.confidence;
+          contactData.phoneType = phoneResult.phoneType;
+          this.results.phonesVerified += phoneResult.verified ? 1 : 0;
+          this.results.creditsUsed.phone += phoneResult.cost || 0;
+        }
+        
+        verifiedContacts.push(contactData);
+        
+        // Rate limiting
+        await this.delay(200);
+        
+      } catch (error) {
+        console.error(`   ⚠️ Failed to verify contact: ${error.message}`);
+      }
+    }
+    
+    console.log(`   ✅ Verified ${verifiedContacts.length} contacts (${this.results.emailsVerified} emails, ${this.results.phonesVerified} phones)`);
+    return verifiedContacts;
+  }
+  
+  /**
+   * Verify or discover email for a contact
+   */
+  async verifyOrDiscoverEmail(contact, companyDomain) {
+    const existingEmail = contact.primary_professional_email || contact.professional_emails_collection?.[0]?.professional_email;
+    
+    if (existingEmail && existingEmail.includes('@')) {
+      // Verify existing email
+      try {
+        const verification = await this.emailVerifier.verifyEmailMultiLayer(
+          existingEmail,
+          contact.full_name || contact.name,
+          companyDomain
+        );
+        
+        if (verification.valid) {
+          return {
+            email: existingEmail,
+            verified: true,
+            confidence: verification.confidence,
+            cost: 0.003
+          };
+        }
+      } catch (error) {
+        console.log(`   ⚠️ Email verification error: ${error.message}`);
+      }
+    }
+    
+    // Try to discover email using Prospeo
+    if (process.env.PROSPEO_API_KEY && companyDomain) {
+      try {
+        const nameParts = (contact.full_name || contact.name || '').trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts[nameParts.length - 1] || '';
+        
+        const response = await fetch('https://api.prospeo.io/email-finder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-KEY': process.env.PROSPEO_API_KEY.trim()
+          },
+          body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            company_domain: companyDomain
+          }),
+          timeout: 15000
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.email && data.email.email) {
+            return {
+              email: data.email.email,
+              verified: true,
+              confidence: 85,
+              cost: 0.0198
+            };
+          }
+        }
+      } catch (error) {
+        console.log(`   ⚠️ Email discovery error: ${error.message}`);
+      }
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Verify or discover phone for a contact
+   */
+  async verifyOrDiscoverPhone(contact, companyName) {
+    // Try to discover phone using Lusha LinkedIn enrichment
+    if (process.env.LUSHA_API_KEY && contact.linkedin_url) {
+      try {
+        const response = await fetch(`https://api.lusha.com/v2/person?linkedinUrl=${encodeURIComponent(contact.linkedin_url)}`, {
+          method: 'GET',
+          headers: {
+            'api_key': process.env.LUSHA_API_KEY.trim(),
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.contact && data.contact.data && data.contact.data.phoneNumbers && data.contact.data.phoneNumbers.length > 0) {
+            const phones = data.contact.data.phoneNumbers;
+            const directDial = phones.find(p => p.phoneType === 'direct' || p.phoneType === 'direct_dial');
+            const mobile = phones.find(p => p.phoneType === 'mobile');
+            const work = phones.find(p => p.phoneType === 'work' || p.phoneType === 'office');
+            
+            const bestPhone = directDial || mobile || work || phones[0];
+            
+            return {
+              phone: bestPhone.number,
+              verified: true,
+              confidence: 75,
+              phoneType: bestPhone.phoneType,
+              cost: 0.01
+            };
+          }
+        }
+      } catch (error) {
+        console.log(`   ⚠️ Phone discovery error: ${error.message}`);
+      }
+    }
+    
+    return null;
+  }
+  
+  async updateCompanyWithCoresignalData(company, coresignalId, profileData, matchResult, verifiedContacts = []) {
     const enrichedData = {
       coresignalId: coresignalId,
       coresignalData: profileData,
@@ -382,7 +669,20 @@ class CompanyEnrichment {
       enrichmentSource: 'coresignal',
       matchConfidence: matchResult.confidence,
       matchFactors: matchResult.factors,
-      matchReasoning: matchResult.reasoning
+      matchReasoning: matchResult.reasoning,
+      keyContacts: verifiedContacts.map(contact => ({
+        name: contact.name,
+        title: contact.title,
+        department: contact.department,
+        email: contact.email,
+        emailVerified: contact.emailVerified || false,
+        emailConfidence: contact.emailConfidence || 0,
+        phone: contact.phone,
+        phoneVerified: contact.phoneVerified || false,
+        phoneConfidence: contact.phoneConfidence || 0,
+        phoneType: contact.phoneType || 'unknown',
+        linkedinUrl: contact.linkedinUrl
+      }))
     };
 
     // Calculate data quality score
@@ -516,7 +816,7 @@ class CompanyEnrichment {
   }
 
   printResults() {
-    console.log('\n📊 Notary Everyday Companies Enrichment Results:');
+    console.log('\n📊 Company Enrichment Results:');
     console.log('='.repeat(60));
     console.log(`Total Companies: ${this.results.totalCompanies}`);
     console.log(`Companies with Websites: ${this.results.withWebsites}`);
@@ -524,9 +824,17 @@ class CompanyEnrichment {
     console.log(`Already Enriched: ${this.results.alreadyEnriched}`);
     console.log(`Successfully Enriched: ${this.results.successfullyEnriched}`);
     console.log(`Failed Enrichment: ${this.results.failedEnrichment}`);
-    console.log(`Credits Used - Search: ${this.results.creditsUsed.search}`);
-    console.log(`Credits Used - Collect: ${this.results.creditsUsed.collect}`);
-    console.log(`Total Credits Used: ${this.results.creditsUsed.search + this.results.creditsUsed.collect}`);
+    console.log(`\n👥 Contact Discovery:`);
+    console.log(`Contacts Discovered: ${this.results.contactsDiscovered}`);
+    console.log(`Emails Verified: ${this.results.emailsVerified}`);
+    console.log(`Phones Verified: ${this.results.phonesVerified}`);
+    console.log(`\n💳 Credits Used:`);
+    console.log(`Search: ${this.results.creditsUsed.search}`);
+    console.log(`Collect: ${this.results.creditsUsed.collect}`);
+    console.log(`Employee Preview: ${this.results.creditsUsed.employeePreview}`);
+    console.log(`Email Verification: $${this.results.creditsUsed.email.toFixed(4)}`);
+    console.log(`Phone Verification: $${this.results.creditsUsed.phone.toFixed(4)}`);
+    console.log(`Total Credits: ${this.results.creditsUsed.search + this.results.creditsUsed.collect + this.results.creditsUsed.employeePreview} + $${(this.results.creditsUsed.email + this.results.creditsUsed.phone).toFixed(4)}`);
     
     if (this.results.errors.length > 0) {
       console.log(`\n❌ Errors (${this.results.errors.length}):`);
@@ -570,6 +878,10 @@ class CompanyEnrichment {
   }
 }
 
-// Run the enrichment
-const enrichment = new CompanyEnrichment();
-enrichment.run().catch(console.error);
+// CLI execution
+if (require.main === module) {
+  const enrichment = new CompanyEnrichment();
+  enrichment.run().catch(console.error);
+}
+
+module.exports = CompanyEnrichment;

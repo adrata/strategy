@@ -22,6 +22,11 @@ export interface BaseTableProps {
   emptyState?: React.ReactNode;
   loading?: boolean;
   loadingRows?: number;
+  // Inline editing support
+  recordType?: string;
+  onUpdate?: (recordId: string, field: string, value: string) => Promise<boolean>;
+  onSuccess?: (message: string) => void;
+  onError?: (message: string) => void;
 }
 
 export function BaseTable({
@@ -36,7 +41,11 @@ export function BaseTable({
   className = '',
   emptyState,
   loading = false,
-  loadingRows = 5
+  loadingRows = 5,
+  recordType = 'record',
+  onUpdate,
+  onSuccess,
+  onError,
 }: BaseTableProps) {
 
   // Render loading skeleton
@@ -97,6 +106,10 @@ export function BaseTable({
             onClick={onRowClick}
             onCellClick={onCellClick}
             isSelected={selectedRecord?.id === record.id}
+            recordType={recordType}
+            onUpdate={onUpdate}
+            onSuccess={onSuccess}
+            onError={onError}
           />
         ))}
       </tbody>

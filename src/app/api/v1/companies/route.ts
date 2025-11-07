@@ -405,8 +405,17 @@ export async function GET(request: NextRequest) {
             else if (rank <= 500) businessDaysToAdd = 7; // Nurture: 1 week
             else businessDaysToAdd = 14; // Cold: 2 weeks
             
-            // Use business days calculation (skips weekends)
-            nextActionDate = addBusinessDays(new Date(lastActionDateForCalc), businessDaysToAdd);
+            // Calculate next action date from last action or creation date
+            const calculatedDate = addBusinessDays(new Date(lastActionDateForCalc), businessDaysToAdd);
+            
+            // Ensure next action date is always in the future
+            const now = new Date();
+            if (calculatedDate.getTime() < now.getTime()) {
+              // If calculated date is in the past, calculate from now instead
+              nextActionDate = addBusinessDays(now, businessDaysToAdd);
+            } else {
+              nextActionDate = calculatedDate;
+            }
           }
           
           // Auto-populate nextAction text if missing

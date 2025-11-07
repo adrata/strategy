@@ -7,6 +7,7 @@ import { authFetch, apiPost } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
+import { SetReminderModal } from './SetReminderModal';
 import { AddPersonToCompanyModal } from './AddPersonToCompanyModal';
 import { AddCompanyModal } from '@/platform/ui/components/AddCompanyModal';
 import { CompanySelector } from './CompanySelector';
@@ -395,6 +396,7 @@ export function UniversalRecordTemplate({
     showMessage,
   } = useInlineEdit();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isSetReminderModalOpen, setIsSetReminderModalOpen] = useState(false);
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [isAddActionModalOpen, setIsAddActionModalOpen] = useState(false);
   const [isAddPersonModalOpen, setIsAddPersonModalOpen] = useState(false);
@@ -887,6 +889,38 @@ export function UniversalRecordTemplate({
   };
 
   // Handle record updates
+  // Handle saving a reminder
+  const handleSaveReminder = async (reminderAt: Date, note?: string) => {
+    try {
+      const workspaceId = record?.workspaceId || '';
+      const entityType = recordType === 'people' || recordType === 'leads' || recordType === 'prospects' 
+        ? 'people' 
+        : 'companies';
+      
+      const result = await authFetch('/api/v1/reminders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entityType,
+          entityId: record?.id,
+          reminderAt: reminderAt.toISOString(),
+          note: note || null,
+        }),
+      });
+
+      if (result.success) {
+        showMessage('Reminder set successfully!');
+      } else {
+        throw new Error(result.error || 'Failed to save reminder');
+      }
+    } catch (error) {
+      console.error('Failed to save reminder:', error);
+      throw error;
+    }
+  };
+
   const handleUpdateSubmit = async (updatedData: any, actionData?: any) => {
     try {
       setLoading(true);
@@ -3851,11 +3885,26 @@ export function UniversalRecordTemplate({
       <button
         key="update-record"
         onClick={() => setIsUpdateModalOpen(true)}
-        className="px-3 py-1.5 text-sm bg-background text-gray-700 border border-border rounded-md hover:bg-panel-background transition-colors"
+        className="px-3 py-1.5 text-sm bg-hover text-foreground border border-border rounded-md hover:bg-panel-background hover:border-primary/50 transition-colors"
       >
         {updateButtonText}
       </button>
     );
+
+    // Set Reminder button - only for people and companies
+    if (recordType === 'people' || recordType === 'companies' || 
+        recordType === 'leads' || recordType === 'prospects') {
+      buttons.push(
+        <button
+          key="set-reminder"
+          onClick={() => setIsSetReminderModalOpen(true)}
+          className="px-3 py-1.5 text-sm bg-hover text-foreground border border-border rounded-md hover:bg-panel-background hover:border-primary/50 transition-colors flex items-center gap-1.5"
+        >
+          <ClockIcon className="w-4 h-4" />
+          <span>Set Reminder</span>
+        </button>
+      );
+    }
 
     // Snooze button - only for speedrun records
     if (recordType === 'speedrun') {
@@ -4585,7 +4634,7 @@ export function UniversalRecordTemplate({
             {/* Minimal Avatar with Rank */}
             <div className="relative group">
               <div 
-                className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:border-[var(--primary)] transition-colors"
+                className="w-10 h-10 bg-hover border border-border rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:border-[var(--primary)] transition-colors"
                 onClick={handleProfileClick}
                 title="Click to open profile"
               >
@@ -4596,7 +4645,7 @@ export function UniversalRecordTemplate({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-sm font-semibold text-gray-700">
+                  <span className="text-sm font-semibold text-foreground">
                     {(() => {
                       console.log(`🔍 [RANK DEBUG] Record rank:`, record?.rank, 'RecordIndex:', recordIndex, 'RecordType:', recordType, 'Record:', record);
                       // 🎯 FIX: For speedrun records, use sequential rank from navigation, not database rank
@@ -4684,6 +4733,15 @@ export function UniversalRecordTemplate({
         onUpdate={handleUpdateSubmit}
         onDelete={handleDeleteRecord}
         initialTab={activeTab}
+      />
+
+      {/* Set Reminder Modal */}
+      <SetReminderModal
+        isOpen={isSetReminderModalOpen}
+        onClose={() => setIsSetReminderModalOpen(false)}
+        onSave={handleSaveReminder}
+        recordName={getDisplayName()}
+        recordType={recordType === 'people' || recordType === 'leads' || recordType === 'prospects' ? 'people' : 'companies'}
       />
 
       {/* Add Note Modal */}
