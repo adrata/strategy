@@ -11,6 +11,16 @@
     {
       "path": "/api/cron/check-reminders",
       "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/data-refresh",
+      "schedule": "0 2 * * *",
+      "description": "Daily data refresh for high-risk contacts"
+    },
+    {
+      "path": "/api/cron/enrich-all-workspaces",
+      "schedule": "0 2 * * 0",
+      "description": "Weekly enrichment for all workspace customers"
     }
   ],
   "functions": {
@@ -31,6 +41,18 @@
     },
     "src/app/api/cron/check-reminders/route.ts": {
       "maxDuration": 60
+    },
+    "src/app/api/cron/data-refresh/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/cron/enrich-all-workspaces/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/webhooks/coresignal-realtime/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/ai/notifications/route.ts": {
+      "maxDuration": 30
     }
   },
   "headers": [
