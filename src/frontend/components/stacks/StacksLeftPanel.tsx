@@ -37,13 +37,6 @@ interface NavigationItem {
 
 const navigationItems: NavigationItem[] = [
   {
-    id: 'epics',
-    label: 'Epics',
-    icon: EyeIcon,
-    description: 'Epics and strategy',
-    getCount: (stats) => stats.epicsCount || 0 // Epics count
-  },
-  {
     id: 'workstream',
     label: 'Workstream',
     icon: QueueListIcon,
@@ -56,6 +49,24 @@ const navigationItems: NavigationItem[] = [
     icon: ClipboardDocumentListIcon,
     description: 'Prioritized work queue',
     getCount: (stats) => stats.upNextCount // Backlog equals up next count (all backlog items are in up next)
+  },
+  {
+    id: 'epics',
+    label: 'Epics',
+    icon: EyeIcon,
+    description: 'Epics and strategy',
+    getCount: (stats) => stats.epicsCount || 0 // Epics count
+  },
+  {
+    id: 'stories',
+    label: 'Stories',
+    icon: ClipboardDocumentListIcon,
+    description: 'All stories list',
+    getCount: (stats) => {
+      // Count all stories (not tasks/bugs)
+      // This will be calculated from the stories API
+      return stats.total || 0;
+    }
   },
   {
     id: 'metrics',
@@ -467,7 +478,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           {/* Company Icon */}
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden" style={{ filter: 'none' }}>
-              <span className="text-lg font-bold text-black">S</span>
+              <span className="text-lg font-bold text-foreground">S</span>
             </div>
             <div className="flex-1">
               <h2 className="text-base font-semibold text-foreground">Stacks</h2>
@@ -481,19 +492,19 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Total Items</span>
-              <span className="text-xs font-semibold text-black">
+              <span className="text-xs font-semibold text-foreground">
                 {statsLoading ? '...' : stats.total}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Active</span>
-              <span className="text-xs font-semibold text-black">
+              <span className="text-xs font-semibold text-foreground">
                 {statsLoading ? '...' : stats.active}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Completed</span>
-              <span className="text-xs font-semibold text-black">
+              <span className="text-xs font-semibold text-foreground">
                 {statsLoading ? '...' : stats.completed}
               </span>
             </div>
@@ -522,7 +533,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                   isActive
                     ? 'bg-hover text-foreground'
-                    : 'hover:bg-panel-background text-gray-700'
+                    : 'hover:bg-panel-background text-foreground'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
                 aria-describedby={`${item.id}-description`}
@@ -557,7 +568,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           title="Profile"
         >
           <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-foreground">
               {(userProfile?.firstName?.charAt(0) || authUser?.name?.charAt(0) || 'U').toUpperCase()}
             </span>
           </div>

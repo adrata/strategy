@@ -132,15 +132,24 @@ async function calculateChurnForWorkspace(workspaceId: string) {
     green: 0
   };
 
-  // Get people with Coresignal data
+  // Get people with Coresignal data - prioritize buyer group members
   const people = await prisma.people.findMany({
     where: {
       workspaceId,
       deletedAt: null,
       customFields: {
         not: null
-      }
+      },
+      // Prioritize buyer group members for churn prediction
+      OR: [
+        { isBuyerGroupMember: true },
+        { customFields: { path: ['coresignalData'], not: null } }
+      ]
     },
+    orderBy: [
+      { isBuyerGroupMember: 'desc' }, // Buyer group members first
+      { dataLastVerified: 'asc' } // Then by last verification date
+    ],
     take: 200 // Limit per workspace per cron run
   });
 

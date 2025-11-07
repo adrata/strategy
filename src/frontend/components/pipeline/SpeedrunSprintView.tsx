@@ -365,59 +365,56 @@ export function SpeedrunSprintView() {
     const sprintStartRank = currentSprintIndex * SPRINT_SIZE + 1;
     const sprintEndRank = (currentSprintIndex + 1) * SPRINT_SIZE;
     
-    // Separate active and completed records
-    const activeRecords = filteredData.filter((record: any) => !safeCompletedRecords.includes(record.id));
-    
-    // Filter completed records to only include those in the current sprint based on rank
-    const allCompletedRecords = filteredData.filter((record: any) => safeCompletedRecords.includes(record.id));
-    const sortedCompletedRecords = allCompletedRecords.sort((a: any, b: any) => {
+    // Sort all records by rank first
+    const sortedAllRecords = [...filteredData].sort((a: any, b: any) => {
       const rankA = a.globalRank || a.rank || 999999;
       const rankB = b.globalRank || b.rank || 999999;
       return rankA - rankB;
     });
     
-    // Only include completed records whose rank falls within current sprint boundaries
-    const completedRecordsInSprint = sortedCompletedRecords.filter((record: any) => {
+    // Get all records that belong to this sprint based on rank (regardless of completion status)
+    const allRecordsInSprint = sortedAllRecords.filter((record: any) => {
       const rank = record.globalRank || record.rank || 999999;
       return rank >= sprintStartRank && rank <= sprintEndRank;
     });
     
-    // Calculate array-based sprint boundaries for slicing active records
-    const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
-    const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
+    // Separate active and completed records within this sprint
+    const activeInSprint = allRecordsInSprint.filter((record: any) => !safeCompletedRecords.includes(record.id));
+    const completedInSprint = allRecordsInSprint.filter((record: any) => safeCompletedRecords.includes(record.id));
     
-    // Get active records for this sprint based on their strategic rank
-    // Sort active records by their globalRank to ensure proper order
-    const sortedActiveRecords = activeRecords.sort((a: any, b: any) => {
+    // Sort completed records by rank
+    const sortedCompletedInSprint = completedInSprint.sort((a: any, b: any) => {
       const rankA = a.globalRank || a.rank || 999999;
       const rankB = b.globalRank || b.rank || 999999;
       return rankA - rankB;
     });
     
-    const activeInSprint = sortedActiveRecords.slice(sprintStartIndex, sprintEndIndex);
+    // Sort active records by rank
+    const sortedActiveInSprint = activeInSprint.sort((a: any, b: any) => {
+      const rankA = a.globalRank || a.rank || 999999;
+      const rankB = b.globalRank || b.rank || 999999;
+      return rankA - rankB;
+    });
     
-    // Always show completed records at the bottom, but limit total to SPRINT_SIZE
-    const maxActiveSlots = SPRINT_SIZE - completedRecordsInSprint.length;
-    const finalActiveInSprint = activeInSprint.slice(0, Math.max(0, maxActiveSlots));
-    const completedInSprint = completedRecordsInSprint;
-    
-    // Combine active first, then completed
-    const sprintData = [...finalActiveInSprint, ...completedInSprint];
+    // Combine active first, then completed at the bottom
+    const sprintData = [...sortedActiveInSprint, ...sortedCompletedInSprint];
     
     console.log(`🏃‍♂️ [SPRINT ${currentSprintIndex + 1}] Sprint data:`, {
       sprintIndex: currentSprintIndex,
-      activeInSprint: finalActiveInSprint.length,
-      completedInSprint: completedInSprint.length,
+      sprintStartRank,
+      sprintEndRank,
+      activeInSprint: sortedActiveInSprint.length,
+      completedInSprint: sortedCompletedInSprint.length,
       totalInSprint: sprintData.length,
-      maxActiveSlots,
-      activeRecords: finalActiveInSprint.map((r: any) => ({ 
-        name: r.name, 
-        rank: r.rank,
-        displayRank: r.rank
+      activeRecords: sortedActiveInSprint.map((r: any) => ({ 
+        id: r.id,
+        name: r.name || r.fullName, 
+        rank: r.globalRank || r.rank,
       })),
-      completedRecords: completedInSprint.map((r: any) => ({ 
-        name: r.name, 
-        rank: r.rank 
+      completedRecords: sortedCompletedInSprint.map((r: any) => ({ 
+        id: r.id,
+        name: r.name || r.fullName, 
+        rank: r.globalRank || r.rank 
       }))
     });
     
@@ -527,10 +524,13 @@ export function SpeedrunSprintView() {
     return () => window.removeEventListener('speedrun-view-change', handleViewChange as EventListener);
   }, []);
 
-  // Clear selected record when sprint changes
+  // Clear selected record and refresh data when sprint changes
   useEffect(() => {
     setSelectedRecord(null);
-  }, [currentSprintIndex]);
+    // Refresh data when sprint changes to ensure we have the latest rankings
+    console.log(`🔄 [SPEEDRUN SPRINT] Sprint changed to ${currentSprintIndex + 1}, refreshing data`);
+    refresh();
+  }, [currentSprintIndex, refresh]);
 
   // Auto-select first record when data loads and no record is selected
   useEffect(() => {
@@ -1142,9 +1142,14 @@ export function SpeedrunSprintView() {
           // Advance to next sprint
           if (hasNextSprint) {
             console.log(`🏃‍♂️ [SPRINT] Advancing from Sprint ${currentSprintNumber} to Sprint ${currentSprintNumber + 1}`);
-            setCurrentSprintIndex(currentSprintIndex + 1);
-            // Reset the modal shown flag for the new sprint
-            sprintCompletionModalShownFor.current = null;
+            // Refresh data to get updated rankings before advancing
+            refresh();
+            // Advance to next sprint after a brief delay to allow data refresh
+            setTimeout(() => {
+              setCurrentSprintIndex(currentSprintIndex + 1);
+              // Reset the modal shown flag for the new sprint
+              sprintCompletionModalShownFor.current = null;
+            }, 100);
           } else {
             // No more sprints, go back to speedrun list
             navigateToPipeline('speedrun');

@@ -644,6 +644,13 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
       // Get workspace context
       const { workspaceId, userId } = await WorkspaceDataRouter.getApiParams();
       
+      // Determine if this is a company or person based on ID format
+      // Companies use ULID (string), People use numeric IDs
+      const isCompany = typeof selectedPerson.id === 'string' && selectedPerson.id.length > 20;
+      const recordIdField = isCompany ? 'companyId' : 'personId';
+      
+      console.log(`🔍 [SPEEDRUN] Saving action for ${isCompany ? 'company' : 'person'}: ${selectedPerson.name} (ID: ${selectedPerson.id})`);
+      
       // Save action log to backend using central v1 API
       const response = await fetch('/api/v1/actions', {
         method: 'POST',
@@ -651,7 +658,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          personId: selectedPerson.id,
+          [recordIdField]: selectedPerson.id.toString(),
           type: actionData.type,
           subject: `${actionData.type} - ${selectedPerson.name}`,
           description: actionData.notes,

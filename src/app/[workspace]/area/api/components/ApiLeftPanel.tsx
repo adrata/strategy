@@ -79,7 +79,7 @@ export function ApiLeftPanel() {
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                   isActive
                     ? 'bg-hover text-foreground'
-                    : 'hover:bg-panel-background text-gray-700'
+                    : 'hover:bg-panel-background text-foreground'
                 }`}
               >
                 <div className="flex items-center gap-3">

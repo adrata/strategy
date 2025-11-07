@@ -1017,7 +1017,7 @@ function PipelineSections({
               className={`w-full text-left px-3 py-2 pl-8 rounded-lg transition-colors ${
                     activeSection === section.id
                       ? 'bg-hover text-foreground'
-                      : 'hover:bg-panel-background text-gray-700'
+                      : 'hover:bg-panel-background text-foreground'
               }`}
             >
               <div className="flex items-center justify-between">

@@ -537,7 +537,7 @@ export function OverviewTab({
                   person['status'] === "Opportunity"
                     ? "bg-[#EEF2FF] text-[#3730A3] border border-[#A5B4FC]"
                     : person['status'] === "Customer"
-                      ? "bg-green-100 text-green-800"
+                      ? "bg-green-50/70 text-green-700 dark:bg-green-900/20 dark:text-green-400"
                       : person['status'] === "Prospect"
                         ? "bg-[#EFF6FF] text-[#1E40AF] border border-[#93C5FD]"
                         : person['status'] === "New" || person['status'] === "Lead"

@@ -1,0 +1,44 @@
+[
+  {
+    "company": {
+      "name": "Test Company",
+      "domain": "testcompany.com",
+      "companyId": "test-company-id"
+    },
+    "executive": {
+      "role": "CFO",
+      "name": "John Doe",
+      "title": "Chief Financial Officer",
+      "email": "john.doe@testcompany.com",
+      "phone": "+1-555-123-4567",
+      "linkedinUrl": "https://linkedin.com/in/johndoe"
+    },
+    "verification": {
+      "overall": {
+        "confidence": 95,
+        "verified": true
+      },
+      "person": {
+        "verified": true,
+        "confidence": 95
+      },
+      "email": {
+        "valid": true,
+        "confidence": 90
+      },
+      "phone": {
+        "valid": true,
+        "confidence": 85
+      },
+      "employment": {
+        "isCurrent": true,
+        "confidence": 90
+      }
+    },
+    "metadata": {
+      "timestamp": "2025-11-07T14:56:26.812Z",
+      "pipelineVersion": "2.0.0-function-based",
+      "executionTime": 1000
+    }
+  }
+]

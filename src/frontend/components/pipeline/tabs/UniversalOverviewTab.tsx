@@ -477,7 +477,50 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const recordData = React.useMemo(() => ({
     // Basic info - Database fields first, then CoreSignal fallback - no fallback to '-'
     name: record?.fullName || record?.name || coresignalData.full_name || null,
-    title: record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || null,
+    title: (() => {
+      // First try database fields
+      if (record?.jobTitle || record?.title) {
+        return record?.jobTitle || record?.title;
+      }
+      
+      // Get company name from record for matching
+      const recordCompanyName = typeof record?.company === 'string' 
+        ? record.company 
+        : (record?.company?.name || record?.companyName);
+      
+      // Try to find title from company-matched work experience
+      if (coresignalData.experience && Array.isArray(coresignalData.experience) && recordCompanyName) {
+        // Normalize company name for matching (case-insensitive, remove common suffixes)
+        const normalizeCompanyName = (name: string) => {
+          if (!name) return '';
+          return name.toLowerCase()
+            .replace(/\s+(inc|llc|ltd|corp|corporation|company|co)\.?$/i, '')
+            .trim();
+        };
+        
+        const normalizedRecordCompany = normalizeCompanyName(recordCompanyName);
+        
+        // Find experience entry that matches the company
+        const matchedExperience = coresignalData.experience.find((exp: any) => {
+          if (!exp.company_name) return false;
+          const normalizedExpCompany = normalizeCompanyName(exp.company_name);
+          // Check for exact match or if one contains the other
+          return normalizedExpCompany === normalizedRecordCompany ||
+                 normalizedExpCompany.includes(normalizedRecordCompany) ||
+                 normalizedRecordCompany.includes(normalizedExpCompany);
+        });
+        
+        if (matchedExperience?.position_title) {
+          return matchedExperience.position_title;
+        }
+      }
+      
+      // Fallback to active experience title or first experience title
+      return coresignalData.active_experience_title || 
+             coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || 
+             coresignalData.experience?.[0]?.position_title || 
+             null;
+    })(),
     email: (() => {
       const emailValue = record?.email || record?.workEmail || coresignalData.primary_professional_email || null;
       console.log(`🔍 [OVERVIEW TAB] Email extraction:`, {

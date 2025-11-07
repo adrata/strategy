@@ -27,26 +27,90 @@ export interface SpeechOptions {
   model_id?: string;
 }
 
-// Predefined voices with the IDs you provided
+// Professional voices for Adrata AI - Gender-neutral descriptive names
 export const ADRATA_VOICES: ElevenLabsVoice[] = [
   {
     voice_id: "FpvROcY4IGWevepmBWO2",
-    name: "French Voice",
+    name: "French Elegant",
     language: "French",
-    description: "Professional French voice for Adrata AI responses",
+    description: "Professional French voice with elegant tone",
     is_default: true
   },
   {
     voice_id: "wo6udizrrtpIxWGp2qJk", 
-    name: "Irish Voice",
+    name: "Irish Warm",
     language: "Irish",
-    description: "Warm Irish voice for Adrata AI responses"
+    description: "Warm Irish voice with friendly cadence"
+  },
+  {
+    voice_id: "21m00Tcm4TlvDq8ikWAM",
+    name: "American Calm",
+    language: "English (American)",
+    description: "Calm, professional American voice"
+  },
+  {
+    voice_id: "pNInz6obpgDQGcFmaJgB",
+    name: "American Confident",
+    language: "English (American)",
+    description: "Deep, confident American voice"
+  },
+  {
+    voice_id: "ErXwobaYiN019PkySvjV",
+    name: "American Articulate",
+    language: "English (American)",
+    description: "Well-rounded, articulate American voice"
+  },
+  {
+    voice_id: "EXAVITQu4vr4xnSDxMaL",
+    name: "American Friendly",
+    language: "English (American)",
+    description: "Soft, friendly American voice"
+  },
+  {
+    voice_id: "TxGEqnHWrfWFTfGW9XjX",
+    name: "American Energetic",
+    language: "English (American)",
+    description: "Young, energetic American voice"
+  },
+  {
+    voice_id: "VR6AewLTigWG4xSOukaG",
+    name: "American Bold",
+    language: "English (American)",
+    description: "Strong, commanding American voice"
+  },
+  {
+    voice_id: "pqHfZKP75CvOlQylNhV4",
+    name: "American Steady",
+    language: "English (American)",
+    description: "Trustworthy, steady American voice"
+  },
+  {
+    voice_id: "N2lVS1w4EtoT3dr4eOWO",
+    name: "British Professional",
+    language: "English (British)",
+    description: "Professional British voice with clear diction"
+  },
+  {
+    voice_id: "XB0fDUnXU5powFXDhCwa",
+    name: "British Articulate",
+    language: "English (British)",
+    description: "Clear, articulate British voice"
+  },
+  {
+    voice_id: "IKne3meq5aSn9XLyUdCD",
+    name: "Australian Casual",
+    language: "English (Australian)",
+    description: "Casual, friendly Australian voice"
   }
 ];
 
 export class ElevenLabsVoiceService {
   private apiKey: string | null;
   private baseUrl = 'https://api.elevenlabs.io/v1';
+  private requestQueue: Array<() => Promise<void>> = [];
+  private isProcessingQueue: boolean = false;
+  private lastRequestTime: number = 0;
+  private minRequestInterval: number = 100; // Minimum 100ms between requests
   
   constructor() {
     // Get API key from environment or local storage
@@ -86,12 +150,20 @@ export class ElevenLabsVoiceService {
   }
 
   /**
-   * Convert text to speech using Eleven Labs API
+   * Convert text to speech using Eleven Labs API with rate limiting
    */
   async textToSpeech(options: SpeechOptions): Promise<ArrayBuffer> {
     if (!this.apiKey) {
       throw new Error('Eleven Labs API key not configured');
     }
+
+    // Rate limiting: Ensure minimum interval between requests
+    const now = Date.now();
+    const timeSinceLastRequest = now - this.lastRequestTime;
+    if (timeSinceLastRequest < this.minRequestInterval) {
+      await new Promise(resolve => setTimeout(resolve, this.minRequestInterval - timeSinceLastRequest));
+    }
+    this.lastRequestTime = Date.now();
 
     const voiceId = options.voice_id || this.getDefaultVoice().voice_id;
     
@@ -106,22 +178,47 @@ export class ElevenLabsVoiceService {
       }
     };
 
-    const response = await fetch(`${this.baseUrl}/text-to-speech/${voiceId}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'audio/mpeg',
-        'Content-Type': 'application/json',
-        'xi-api-key': this.apiKey
-      },
-      body: JSON.stringify(requestBody)
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': this.apiKey
+        },
+        body: JSON.stringify(requestBody)
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Eleven Labs API error: ${response.status} - ${errorText}`);
+      // Handle rate limiting (429)
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('retry-after');
+        const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 5000;
+        console.warn(`⚠️ Rate limited by ElevenLabs, retrying after ${waitTime}ms`);
+        throw new Error(`Rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds.`);
+      }
+
+      // Handle quota exceeded (402)
+      if (response.status === 402) {
+        console.error('❌ ElevenLabs quota exceeded');
+        throw new Error('Voice quota exceeded. Please upgrade your ElevenLabs plan.');
+      }
+
+      // Handle other errors
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ ElevenLabs API error:', response.status, errorText);
+        throw new Error(`Eleven Labs API error: ${response.status} - ${errorText}`);
+      }
+
+      return response.arrayBuffer();
+      
+    } catch (error) {
+      // Re-throw with more context
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Failed to generate speech');
     }
-
-    return response.arrayBuffer();
   }
 
   /**

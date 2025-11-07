@@ -195,7 +195,7 @@ export function TableRow({
           key={record.id || index} 
           className={`cursor-pointer transition-colors h-table-row border-b relative ${
             isCompleted 
-              ? 'bg-green-100 border-green-300 hover:bg-green-100' 
+              ? 'bg-green-50/50 border-green-200/50 hover:bg-green-50/70 dark:bg-green-950/20 dark:border-green-900/30 dark:hover:bg-green-950/30' 
               : 'hover:bg-panel-background border-border'
           }`}
           onClick={handleRowClick}
@@ -1147,7 +1147,7 @@ export function TableRow({
         <tr
           className={`cursor-pointer transition-colors h-table-row border-b relative ${
             section === 'speedrun' && isCompleted 
-              ? 'bg-green-100 border-green-300 hover:bg-green-100' 
+              ? 'bg-green-50/50 border-green-200/50 hover:bg-green-50/70 dark:bg-green-950/20 dark:border-green-900/30 dark:hover:bg-green-950/30' 
               : 'hover:bg-panel-background border-border'
           }`}
           onClick={handleRowClick}
@@ -1165,7 +1165,7 @@ export function TableRow({
             return false;
           })();
           
-          const displayValue = isCompleted ? '✓' : String(record['globalRank'] || record['rank'] || (index + 1));
+          const displayValue = isCompleted ? '✓' : String(record['globalRank'] || record['rank'] || record['winningScore']?.rank || '-');
           
           return (
             <TableCell

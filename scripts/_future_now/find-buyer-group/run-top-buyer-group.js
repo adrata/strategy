@@ -152,16 +152,54 @@ class TOPBuyerGroupRunner {
         skipDatabase: options.skipDatabase || false
       });
 
-      // Create company object from identifier
-      const company = {
-        name: this.extractCompanyName(companyIdentifier),
-        linkedinUrl: companyIdentifier.includes('linkedin.com') ? companyIdentifier : null,
-        website: companyIdentifier.includes('http') && !companyIdentifier.includes('linkedin.com') 
-          ? companyIdentifier 
-          : null
-      };
+      // ENHANCED: Try to get workspace-specific company data first
+      let company = null;
+      try {
+        const dbCompany = await this.prisma.companies.findFirst({
+          where: {
+            workspaceId: this.workspaceId,
+            OR: [
+              companyIdentifier.includes('linkedin.com') 
+                ? { linkedinUrl: { contains: companyIdentifier } } 
+                : undefined,
+              companyIdentifier.includes('http') && !companyIdentifier.includes('linkedin.com')
+                ? { website: { contains: companyIdentifier } }
+                : undefined,
+              { name: { contains: this.extractCompanyName(companyIdentifier), mode: 'insensitive' } }
+            ].filter(Boolean)
+          }
+        });
+        
+        if (dbCompany) {
+          console.log(`✅ Found workspace-specific company: ${dbCompany.name}`);
+          company = {
+            id: dbCompany.id,
+            name: dbCompany.name,
+            linkedinUrl: dbCompany.linkedinUrl,
+            website: dbCompany.website,
+            industry: dbCompany.industry, // TOP workspace-specific industry
+            employeeCount: dbCompany.employeeCount, // TOP workspace-specific data
+            revenue: dbCompany.revenue,
+            // This ensures the pipeline uses TOP's workspace company data as context
+          };
+          console.log(`   📊 Using TOP workspace data: industry=${dbCompany.industry || 'N/A'}, employees=${dbCompany.employeeCount || 'N/A'}`);
+        }
+      } catch (error) {
+        console.log(`⚠️  Could not fetch workspace company: ${error.message}`);
+      }
+      
+      // Fallback: Create company object from identifier if not found in workspace
+      if (!company) {
+        company = {
+          name: this.extractCompanyName(companyIdentifier),
+          linkedinUrl: companyIdentifier.includes('linkedin.com') ? companyIdentifier : null,
+          website: companyIdentifier.includes('http') && !companyIdentifier.includes('linkedin.com') 
+            ? companyIdentifier 
+            : null
+        };
+      }
 
-      // Run the discovery pipeline
+      // Run the discovery pipeline with workspace-specific company data
       const result = await pipeline.run(company);
 
       if (!result || !result.buyerGroup) {

@@ -12,6 +12,20 @@ DATABASE_URL="postgresql://username:password@localhost:5432/adrata"
 CORESIGNAL_API_KEY="your_coresignal_api_key_here"
 ANTHROPIC_API_KEY="your_anthropic_api_key_here"
 
+# Voice Recognition (Required for voice features)
+NEXT_PUBLIC_DEEPGRAM_API_KEY="your_deepgram_api_key_here"
+
+# Text-to-Speech (Optional)
+NEXT_PUBLIC_ELEVEN_LABS_API_KEY="your_elevenlabs_api_key_here"
+
+# AI Web Search (Required for AI to access real-time web information)
+PERPLEXITY_API_KEY="your_perplexity_api_key_here"
+
+# Alternative Search APIs (Optional)
+GOOGLE_SEARCH_API_KEY="your_google_api_key_here"
+GOOGLE_SEARCH_ENGINE_ID="your_search_engine_id_here"
+SERP_API_KEY="your_serp_api_key_here"
+
 # Optional: Webhook Configuration
 CORESIGNAL_WEBHOOK_SECRET="your_webhook_secret_here"
 
@@ -38,6 +52,26 @@ BATCH_DELAY_MS=3000
 1. Sign up at [Anthropic](https://console.anthropic.com)
 2. Create an API key
 3. Add it to your `.env` file as `ANTHROPIC_API_KEY`
+
+### Deepgram API Key (Voice Recognition)
+1. Sign up at [Deepgram](https://console.deepgram.com)
+2. Get $200 free credit
+3. Create an API key from the dashboard
+4. Add it to your `.env` file as `NEXT_PUBLIC_DEEPGRAM_API_KEY`
+5. Pricing: $0.0043/minute (pay-as-you-go)
+
+### ElevenLabs API Key (Optional - Text-to-Speech)
+1. Sign up at [ElevenLabs](https://elevenlabs.io)
+2. Create an API key
+3. Add it to your `.env` file as `NEXT_PUBLIC_ELEVEN_LABS_API_KEY`
+4. Free tier includes 10,000 characters/month
+
+### Perplexity API Key (AI Web Search)
+1. Sign up at [Perplexity](https://www.perplexity.ai/settings/api)
+2. Create an API key
+3. Add it to your `.env` file as `PERPLEXITY_API_KEY`
+4. Enables AI to search web for real-time information
+5. Required for queries like "latest news about X"
 
 ## Webhook Setup (Optional)
 

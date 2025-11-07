@@ -16,6 +16,25 @@
   - Enhanced company matching validation
   - Better error diagnostics
 
+### Workspace-Specific Company Data Context
+- **TOP Workspace**: Uses TOP workspace company data (industry, employeeCount, revenue) as primary context
+- **Adrata Workspace**: Uses Dan's Adrata workspace company data as primary context
+- **Implementation**: 
+  - Company intelligence module queries workspace-specific database first
+  - Merges workspace data with Coresignal data
+  - Ensures proper context for each workspace throughout discovery
+- **Benefit**: Better accuracy, workspace-specific insights
+
+### Comprehensive Retry System
+- **Retry Failed Companies**: New script to retry failed companies with multiple approaches
+- **Complete All Buyer Groups**: Comprehensive system that:
+  - Waits for initial runs to finish
+  - Finds all failed companies
+  - Retries with enhanced methods (up to 3 iterations)
+  - Uses Perplexity as final fallback
+  - Continues until 100% coverage or max iterations
+- **Benefit**: Ensures maximum coverage, handles edge cases
+
 ## ✅ Completed Fixes
 
 ### 1. CustomFields Prisma Issue - FIXED

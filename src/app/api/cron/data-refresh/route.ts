@@ -189,31 +189,100 @@ async function refreshPriorityGroup(workspaceId: string, color: string) {
 
   for (const person of needingRefresh) {
     try {
-      // For now, just update the refresh date
-      // In production, would call Coresignal API here
+      stats.checked++;
       
-      const nextRefresh = calculateNextRefreshDate(color);
+      // Get Coresignal ID from person data
+      const customFields = (person.customFields as any) || {};
+      const coresignalId = customFields.coresignalId || customFields.coresignalData?.id;
       
+      if (!coresignalId) {
+        console.log(`   ⚠️ No Coresignal ID for ${person.fullName}, skipping refresh`);
+        continue;
+      }
+      
+      // Fetch fresh data from Coresignal
+      const freshData = await fetchFreshCoresignalData(coresignalId);
+      
+      if (!freshData) {
+        console.log(`   ⚠️ Could not fetch fresh data for ${person.fullName}`);
+        // Still update refresh date to avoid retrying immediately
+        const nextRefresh = calculateNextRefreshDate(color);
+        await prisma.people.update({
+          where: { id: person.id },
+          data: {
+            customFields: {
+              ...customFields,
+              churnPrediction: {
+                ...(customFields.churnPrediction || {}),
+                lastRefreshDate: now.toISOString(),
+                nextRefreshDate: nextRefresh.toISOString()
+              }
+            },
+            dataLastVerified: now
+          }
+        });
+        continue;
+      }
+      
+      // Detect changes
+      const changes = detectDataChanges(person, freshData);
+      
+      // Update person with fresh data
+      const updatedCustomFields = {
+        ...customFields,
+        coresignalData: freshData,
+        churnPrediction: {
+          ...(customFields.churnPrediction || {}),
+          lastRefreshDate: now.toISOString(),
+          nextRefreshDate: calculateNextRefreshDate(color).toISOString()
+        },
+        changeHistory: [
+          ...(customFields.changeHistory || []),
+          ...changes.map(c => ({
+            ...c,
+            detectedAt: now.toISOString()
+          }))
+        ],
+        lastChangeDetected: changes.length > 0 ? now.toISOString() : customFields.lastChangeDetected,
+        hasUnnotifiedChanges: changes.length > 0 ? true : (customFields.hasUnnotifiedChanges || false)
+      };
+      
+      // Check for critical changes (company/title change)
+      const criticalChange = changes.some(c => c.critical === true);
+      
+      if (criticalChange) {
+        console.log(`   🚨 CRITICAL CHANGE detected for ${person.fullName}`);
+        // Update churn prediction to RED for critical changes
+        updatedCustomFields.churnPrediction = {
+          ...updatedCustomFields.churnPrediction,
+          refreshColor: 'red',
+          refreshPriority: 'high',
+          refreshFrequency: 'daily',
+          nextRefreshDate: calculateNextRefreshDate('red').toISOString()
+        };
+      }
+      
+      // Update person record
       await prisma.people.update({
         where: { id: person.id },
         data: {
-          customFields: {
-            ...(person.customFields as any || {}),
-            churnPrediction: {
-              ...((person.customFields as any)?.churnPrediction || {}),
-              lastRefreshDate: now.toISOString(),
-              nextRefreshDate: nextRefresh.toISOString()
-            }
-          },
-          dataLastVerified: now
+          customFields: updatedCustomFields,
+          dataLastVerified: now,
+          // Update experience fields if changed
+          ...(getUpdatedPersonFields(person, freshData, changes))
         }
       });
       
-      stats.checked++;
       stats.refreshed++;
+      if (changes.length > 0) {
+        stats.changes += changes.length;
+        console.log(`   ✅ Refreshed ${person.fullName}: ${changes.length} changes detected`);
+      } else {
+        console.log(`   ✅ Refreshed ${person.fullName}: No changes`);
+      }
       
-    } catch (error) {
-      console.error(`   ❌ Error refreshing ${person.fullName}:`, error);
+    } catch (error: any) {
+      console.error(`   ❌ Error refreshing ${person.fullName}:`, error.message);
     }
   }
 
@@ -242,5 +311,163 @@ function getColorEmoji(color: string): string {
     green: '🟢'
   };
   return emojis[color] || '⚪';
+}
+
+/**
+ * Fetch fresh data from Coresignal API
+ */
+async function fetchFreshCoresignalData(coresignalId: string) {
+  const apiKey = process.env.CORESIGNAL_API_KEY;
+  if (!apiKey) {
+    console.error('   ❌ CORESIGNAL_API_KEY not found');
+    return null;
+  }
+
+  try {
+    // Try person_multi_source/collect first
+    let response = await fetch(`https://api.coresignal.com/cdapi/v2/person_multi_source/collect/${coresignalId}`, {
+      method: 'GET',
+      headers: {
+        'apikey': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+    // Try employee_multi_source/collect as fallback
+    if (response.status === 404) {
+      response = await fetch(`https://api.coresignal.com/cdapi/v2/employee_multi_source/collect/${coresignalId}`, {
+        method: 'GET',
+        headers: {
+          'apikey': apiKey,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        return await response.json();
+      }
+    }
+
+    return null;
+  } catch (error: any) {
+    console.error(`   ❌ Coresignal API error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Detect changes between existing and fresh data
+ */
+function detectDataChanges(person: any, freshData: any): any[] {
+  const changes: any[] = [];
+  const customFields = (person.customFields as any) || {};
+  const oldData = customFields.coresignalData || {};
+  const oldExperience = oldData.experience?.find((exp: any) => exp.active_experience === 1) || oldData.experience?.[0];
+  const newExperience = freshData.experience?.find((exp: any) => exp.active_experience === 1) || freshData.experience?.[0];
+
+  if (!newExperience) return changes;
+
+  // Company change (CRITICAL)
+  if (oldExperience?.company_name && newExperience.company_name && 
+      oldExperience.company_name !== newExperience.company_name) {
+    changes.push({
+      field: 'company',
+      oldValue: oldExperience.company_name,
+      newValue: newExperience.company_name,
+      critical: true
+    });
+  }
+
+  // Title change (CRITICAL)
+  if (oldExperience?.position_title && newExperience.position_title &&
+      oldExperience.position_title !== newExperience.position_title) {
+    changes.push({
+      field: 'title',
+      oldValue: oldExperience.position_title,
+      newValue: newExperience.position_title,
+      critical: true
+    });
+  }
+
+  // Active status change (CRITICAL)
+  if (oldExperience?.active_experience === 1 && newExperience.active_experience === 0) {
+    changes.push({
+      field: 'active_experience',
+      oldValue: 'Active',
+      newValue: 'Inactive',
+      critical: true
+    });
+  }
+
+  // Email change
+  if (freshData.email && person.email && freshData.email !== person.email) {
+    changes.push({
+      field: 'email',
+      oldValue: person.email,
+      newValue: freshData.email,
+      critical: false
+    });
+  }
+
+  // LinkedIn connections change (engagement signal)
+  const oldConnections = oldData.connections_count;
+  if (freshData.connections_count && oldConnections && 
+      Math.abs(freshData.connections_count - oldConnections) > 100) {
+    changes.push({
+      field: 'connections',
+      oldValue: oldConnections,
+      newValue: freshData.connections_count,
+      critical: false
+    });
+  }
+
+  return changes;
+}
+
+/**
+ * Get updated person fields based on fresh data
+ */
+function getUpdatedPersonFields(person: any, freshData: any, changes: any[]): any {
+  const updates: any = {};
+  const newExperience = freshData.experience?.find((exp: any) => exp.active_experience === 1) || freshData.experience?.[0];
+
+  // Update title if changed
+  const titleChange = changes.find(c => c.field === 'title');
+  if (titleChange && newExperience?.position_title) {
+    updates.jobTitle = newExperience.position_title;
+    updates.title = newExperience.position_title;
+    updates.currentRole = newExperience.position_title;
+  }
+
+  // Update email if changed
+  const emailChange = changes.find(c => c.field === 'email');
+  if (emailChange && freshData.email) {
+    updates.email = freshData.email;
+  }
+
+  // Update LinkedIn connections
+  if (freshData.connections_count) {
+    updates.linkedinConnections = freshData.connections_count;
+  }
+
+  if (freshData.followers_count) {
+    updates.linkedinFollowers = freshData.followers_count;
+  }
+
+  // Update experience months if available
+  if (newExperience?.duration_months) {
+    updates.yearsInRole = Math.floor(newExperience.duration_months / 12);
+  }
+
+  if (freshData.total_experience_duration_months) {
+    updates.totalExperienceMonths = freshData.total_experience_duration_months;
+    updates.yearsExperience = Math.floor(freshData.total_experience_duration_months / 12);
+  }
+
+  return updates;
 }
 

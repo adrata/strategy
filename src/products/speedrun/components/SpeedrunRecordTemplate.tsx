@@ -356,7 +356,7 @@ export function SpeedrunRecordTemplate({
     <div className="h-full flex flex-col">
       {/* Success Message */}
       {successMessage && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 mx-4 mt-2">
+        <div className="bg-green-50/70 border border-green-200/50 text-green-700 dark:bg-green-900/20 dark:border-green-700/30 dark:text-green-400 px-4 py-3 rounded mb-4 mx-4 mt-2">
           <div className="flex items-center">
             <span className="text-sm font-medium">{successMessage}</span>
           </div>
