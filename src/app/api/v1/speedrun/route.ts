@@ -61,10 +61,7 @@ export async function GET(request: NextRequest) {
               workspaceId: context.workspaceId,
               deletedAt: null,
               companyId: { not: null },
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
+              mainSellerId: context.userId // Only assigned to this user
             }
           }),
           prisma.people.count({
@@ -72,10 +69,7 @@ export async function GET(request: NextRequest) {
               workspaceId: context.workspaceId,
               deletedAt: null,
               globalRank: { not: null },
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
+              mainSellerId: context.userId // Only assigned to this user
             }
           }),
           prisma.people.count({
@@ -84,10 +78,7 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               companyId: { not: null },
               globalRank: { not: null },
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
+              mainSellerId: context.userId // Only assigned to this user
             }
           })
         ]);
@@ -114,18 +105,12 @@ export async function GET(request: NextRequest) {
             workspaceId: context.workspaceId,
             deletedAt: null,
             globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
-            OR: [
-              { mainSellerId: context.userId },
-              { mainSellerId: null }
-            ],
+            mainSellerId: context.userId, // Only companies assigned to this user
             // Only companies with 0 people
             people: {
               none: {
                 deletedAt: null,
-                OR: [
-                  { mainSellerId: context.userId },
-                  { mainSellerId: null }
-                ]
+                mainSellerId: context.userId // Only people assigned to this user
               }
             }
           },
@@ -162,10 +147,7 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
             globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
-            OR: [
-              { mainSellerId: context.userId },
-              { mainSellerId: null }
-            ]
+            mainSellerId: context.userId // Only people assigned to this user
           },
           select: {
             id: true,
