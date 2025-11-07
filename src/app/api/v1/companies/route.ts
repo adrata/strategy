@@ -806,7 +806,12 @@ export async function POST(request: NextRequest) {
       globalRank: globalRank,
       createdAt: new Date(),
       updatedAt: new Date(),
-      ...(coreCompanyId && { coreCompanyId: coreCompanyId })
+      ...(coreCompanyId && { coreCompanyId: coreCompanyId }),
+      // Include optional fields if provided and non-empty
+      ...(body.website && body.website.trim() && { website: body.website }),
+      ...(body.email && body.email.trim() && { email: body.email.trim() }),
+      ...(body.notes && body.notes.trim() && { notes: body.notes.trim() }),
+      ...(body.linkedin && body.linkedin.trim() && { linkedinUrl: body.linkedin.trim() })
     };
 
     // Always set mainSellerId to current user

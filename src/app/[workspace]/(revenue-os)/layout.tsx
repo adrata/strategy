@@ -102,6 +102,26 @@ function PipelineLayoutInner({
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   const pathname = usePathname();
   
+  // Get Stacks context at the top level to avoid hooks order issues
+  const stacksContext = useStacks();
+  
+  // Check if this is a base /adrata route (not pipeline routes) - define early for use below
+  const isBaseAdrataRoute = pathname.includes('/adrata') && 
+                            !pathname.includes('/speedrun') && 
+                            !pathname.includes('/leads') && 
+                            !pathname.includes('/prospects') && 
+                            !pathname.includes('/opportunities') &&
+                            !pathname.includes('/people') &&
+                            !pathname.includes('/companies') &&
+                            !pathname.includes('/partners') &&
+                            !pathname.includes('/sellers') &&
+                            !pathname.includes('/customers') &&
+                            !pathname.includes('/stacks') &&
+                            !pathname.includes('/oasis') &&
+                            !pathname.includes('/inbox') &&
+                            !pathname.includes('/workbench') &&
+                            !pathname.includes('/workbench');
+  
   // Get thread data from OasisLayoutContext if available
   // Use a hook-like pattern to ensure reactivity
   let threadData = null;
@@ -163,9 +183,6 @@ function PipelineLayoutInner({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount
-  
-  // Get Stacks context at the top level to avoid hooks order issues
-  const stacksContext = useStacks();
 
   // Get user data for profile panel
   const pipelineUser = authUser || { name: "User", email: "" };
@@ -252,23 +269,6 @@ function PipelineLayoutInner({
       );
     }
   };
-
-  // Check if this is a base /adrata route (not pipeline routes) - define early for use below
-  const isBaseAdrataRoute = pathname.includes('/adrata') && 
-                            !pathname.includes('/speedrun') && 
-                            !pathname.includes('/leads') && 
-                            !pathname.includes('/prospects') && 
-                            !pathname.includes('/opportunities') &&
-                            !pathname.includes('/people') &&
-                            !pathname.includes('/companies') &&
-                            !pathname.includes('/partners') &&
-                            !pathname.includes('/sellers') &&
-                            !pathname.includes('/customers') &&
-                            !pathname.includes('/stacks') &&
-                            !pathname.includes('/oasis') &&
-                            !pathname.includes('/inbox') &&
-                            !pathname.includes('/workbench') &&
-                            !pathname.includes('/workbench');
 
   // Right panel is now memoized above to ensure reactivity to threadData changes
   

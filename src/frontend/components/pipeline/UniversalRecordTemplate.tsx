@@ -2125,7 +2125,8 @@ export function UniversalRecordTemplate({
           'linkedinUrl': 'linkedinUrl',
           'linkedinNavigatorUrl': 'linkedinNavigatorUrl',
           'address': 'address',
-          'postalCode': 'postalCode'
+          'postalCode': 'postalCode',
+          'engagementPriority': 'priority'  // Map engagementPriority to priority for database consistency
         };
       }
       
@@ -2802,6 +2803,17 @@ export function UniversalRecordTemplate({
     // Optionally refresh the record data
     if (onRecordUpdate) {
       await onRecordUpdate(record.id);
+    }
+    
+    // Switch to the people tab if we're on a company record
+    if (recordType === 'companies') {
+      const validTabs = (customTabs || getTabsForRecordType(recordType, record));
+      const peopleTab = validTabs.find(tab => tab.id === 'people');
+      if (peopleTab) {
+        setActiveTab('people');
+        // Update URL to reflect the tab change
+        updateURLTab('people');
+      }
     }
     
     // Show success message
@@ -3722,20 +3734,26 @@ export function UniversalRecordTemplate({
       }
       
       // Show success message
-      showMessage('Record moved to trash successfully!', 'success');
+      const recordTypeLabel = recordType === 'companies' ? 'Company' : recordType === 'people' ? 'Person' : 'Record';
+      showMessage(`${recordTypeLabel} deleted successfully!`, 'success');
       
-      // Navigate back to the list page after a brief delay
-      setTimeout(() => {
+      // Navigate back to the list page immediately using onBack callback
+      // This ensures we navigate to the correct list page and don't try to reload the deleted record
+      if (onBack) {
+        console.log(`🔄 [UniversalRecordTemplate] Navigating back to list page using onBack callback`);
+        onBack();
+      } else {
+        // Fallback: Navigate manually if onBack is not provided
         const currentPath = window.location.pathname;
-        const pathParts = currentPath.split('/');
+        const pathParts = currentPath.split('/').filter(part => part.length > 0);
         const workspaceIndex = pathParts.findIndex(part => part.length > 0);
-        const workspace = pathParts[workspaceIndex];
+        const workspace = pathParts[workspaceIndex] || pathParts[0];
         
-        // Construct the list page URL
+        // Construct the list page URL - ensure we use the correct route structure
         const listPageUrl = `/${workspace}/${recordType}`;
         console.log(`🔄 [UniversalRecordTemplate] Redirecting to list page: ${listPageUrl}`);
         router.push(listPageUrl);
-      }, 500);
+      }
     } catch (error) {
       console.error('❌ [UniversalRecordTemplate] Error deleting record:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete record. Please try again.';

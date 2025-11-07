@@ -225,7 +225,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     // Contact Information - Database fields first, then CoreSignal fallback
     email: record?.email || coresignalData.primary_professional_email || null,
     phone: record?.phone || coresignalData.phone || null,
-    linkedin: record?.linkedin || coresignalData.linkedin_url || null,
+    linkedin: record?.linkedinUrl || record?.linkedin || coresignalData.linkedin_url || null,
     linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
     bio: record?.bio || null,
     linkedinConnectionDate: record?.linkedinConnectionDate || null,

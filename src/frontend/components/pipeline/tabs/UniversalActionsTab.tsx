@@ -4,6 +4,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
 import { InlineEditField } from '../InlineEditField';
+import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 interface ActionEvent {
   id: string;
@@ -417,12 +418,33 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         }
       }));
 
-      // Show all actions - no filtering by action type
-      // (The meaningful filter is only used for Last Action column, not the Actions tab)
-      console.log('🔍 [ACTIONS] Showing all actions:', {
+      // Filter to meaningful action types only (matches Last Action column filtering)
+      // This filters out system actions like "record created", "record updated", etc.
+      console.log('🔍 [ACTIONS] Before filtering:', {
         totalEvents: activityEvents.length,
         eventTypes: activityEvents.map(e => e.metadata?.type),
         sampleEvent: activityEvents[0]
+      });
+
+      activityEvents = activityEvents.filter(event => {
+        // Check both metadata.type and direct type field
+        const eventType = event.metadata?.type || event.type;
+        const isMeaningful = eventType && isMeaningfulAction(eventType);
+        
+        if (!isMeaningful) {
+          console.log('🔍 [ACTIONS] Filtering out non-meaningful action:', {
+            eventType: eventType,
+            title: event.title,
+            id: event.id
+          });
+        }
+        
+        return isMeaningful;
+      });
+
+      console.log('🔍 [ACTIONS] After filtering to meaningful actions:', {
+        filteredEvents: activityEvents.length,
+        filteredTypes: activityEvents.map(e => e.metadata?.type)
       });
       
       // Cache the data

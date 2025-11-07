@@ -50,6 +50,23 @@ export function CompleteActionModal({
   const personSearchRef = useRef<HTMLInputElement>(null);
   const isSubmittingRef = useRef<boolean>(false);
   
+  // Store the original personId/companyId from props to preserve them even if user changes person in form
+  // This ensures actions are always associated with the correct person when modal is opened from a record
+  const originalPersonIdRef = useRef<string | undefined>(personId);
+  const originalCompanyIdRef = useRef<string | undefined>(companyId);
+  
+  // Update refs when props change (when modal opens with a new record)
+  useEffect(() => {
+    if (isOpen && personId) {
+      originalPersonIdRef.current = personId;
+      console.log('🔒 [CompleteActionModal] Locking personId to original:', personId);
+    }
+    if (isOpen && companyId) {
+      originalCompanyIdRef.current = companyId;
+      console.log('🔒 [CompleteActionModal] Locking companyId to original:', companyId);
+    }
+  }, [isOpen, personId, companyId]);
+  
   // Get section-specific colors
   const categoryColors = getCategoryColors(section);
   
@@ -338,9 +355,32 @@ export function CompleteActionModal({
     isSubmittingRef.current = true;
     console.log('✅ [CompleteActionModal] Submitting action...');
 
-    // Call the submit handler
-    console.log('📤 [CompleteActionModal] Calling onSubmit with formData:', formData);
-    onSubmit(formData);
+    // CRITICAL FIX: Use original personId/companyId from props if they exist
+    // This ensures actions are always associated with the correct person when modal is opened from a record
+    // Even if the user searched and selected a different person in the form
+    const finalActionData: ActionLogData = {
+      ...formData,
+      // Use original personId if it was provided (modal opened from a person record)
+      // Otherwise use the personId from formData (user searched and selected a person)
+      personId: originalPersonIdRef.current || formData.personId,
+      // Use original companyId if it was provided (modal opened from a company record)
+      // Otherwise use the companyId from formData
+      companyId: originalCompanyIdRef.current || formData.companyId
+    };
+    
+    console.log('🔒 [CompleteActionModal] Using locked personId/companyId:', {
+      originalPersonId: originalPersonIdRef.current,
+      originalCompanyId: originalCompanyIdRef.current,
+      formDataPersonId: formData.personId,
+      formDataCompanyId: formData.companyId,
+      finalPersonId: finalActionData.personId,
+      finalCompanyId: finalActionData.companyId,
+      personName: formData.person
+    });
+
+    // Call the submit handler with the corrected data
+    console.log('📤 [CompleteActionModal] Calling onSubmit with finalActionData:', finalActionData);
+    onSubmit(finalActionData);
     console.log('📤 [CompleteActionModal] onSubmit called successfully');
 
     // Reset guard immediately since onSubmit is synchronous

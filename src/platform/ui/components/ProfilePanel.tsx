@@ -834,19 +834,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Workbench</span>
             </button>
 
-            {/* Adrata */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'adrata' 
-                  ? 'bg-slate-100 text-slate-700' 
-                  : 'text-foreground hover:bg-hover'
-              }`}
-              onClick={() => handleNavigation("/adrata")}
-            >
-              <SparklesIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Adrata</span>
-            </button>
-
             {/* Inbox */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -884,6 +871,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <ChatBubbleLeftRightIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Oasis</span>
+            </button>
+
+            {/* Adrata */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'adrata' 
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-foreground hover:bg-hover'
+              }`}
+              onClick={() => handleNavigation("/adrata")}
+            >
+              <SparklesIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Adrata</span>
             </button>
 
             {/* API Keys */}

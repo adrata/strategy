@@ -368,6 +368,33 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
             <h4 className="font-medium text-foreground mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
+                <span className="text-sm text-muted w-24">Stage:</span>
+                <InlineEditField
+                  value={personData.status || personData.stage || 'LEAD'}
+                  field="status"
+                  onSave={onSave}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'LEAD', label: 'Lead' },
+                    { value: 'PROSPECT', label: 'Prospect' },
+                    { value: 'OPPORTUNITY', label: 'Opportunity' },
+                    { value: 'CLIENT', label: 'Client' },
+                    { value: 'SUPERFAN', label: 'Superfan' }
+                  ]}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                    (personData.status || personData.stage) === 'LEAD' ? 'bg-warning/10 text-warning' :
+                    (personData.status || personData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary' :
+                    (personData.status || personData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info' :
+                    (personData.status || personData.stage) === 'CLIENT' ? 'bg-success/10 text-success' :
+                    (personData.status || personData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info' :
+                    'bg-hover text-foreground'
+                  }`}
+                />
+              </div>
+              <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Name:</span>
                 <InlineEditField
                   value={personData.name}

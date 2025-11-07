@@ -142,10 +142,7 @@ export async function GET(request: NextRequest) {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
         ...(includeAllUsers ? {} : {
-          OR: [
-            { mainSellerId: context.userId },
-            { mainSellerId: null }
-          ]
+          mainSellerId: context.userId // Only show leads assigned to the current user
         })
       };
 
@@ -310,10 +307,7 @@ export async function GET(request: NextRequest) {
               where: {
                 workspaceId: context.workspaceId,
                 deletedAt: null,
-                OR: [
-                  { mainSellerId: context.userId },
-                  { mainSellerId: null }
-                ],
+                mainSellerId: context.userId, // Only show companies assigned to the current user
                 AND: [
                   { people: { none: {} } }, // Companies with 0 people
                   {
@@ -345,10 +339,7 @@ export async function GET(request: NextRequest) {
               where: {
                 workspaceId: context.workspaceId,
                 deletedAt: null,
-                OR: [
-                  { mainSellerId: context.userId },
-                  { mainSellerId: null }
-                ],
+                mainSellerId: context.userId, // Only show companies assigned to the current user
                 AND: [
                   { people: { none: {} } },
                   { status: 'PROSPECT' }
@@ -616,10 +607,7 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            OR: [
-              { mainSellerId: context.userId },
-              { mainSellerId: null }
-            ],
+            mainSellerId: context.userId, // Only show companies assigned to the current user
             AND: [
               { people: { none: {} } }, // Companies with 0 people
               {
@@ -714,10 +702,7 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            OR: [
-              { mainSellerId: context.userId },
-              { mainSellerId: null }
-            ],
+            mainSellerId: context.userId, // Only show companies assigned to the current user
             AND: [
               { people: { none: {} } }, // Companies with 0 people
               { status: 'PROSPECT' }
