@@ -55,12 +55,12 @@ export function VoiceSettings({ className = "" }: VoiceSettingsProps) {
     setIsTestingVoice(voice.voice_id);
     
     try {
-      const testMessage = `Hello! This is the ${voice.name} speaking. I'm ready to help you with your tasks.`;
+      const testMessage = `Hello, I'm ${voice.name}. I'm your AI assistant ready to help you achieve more with Adrata. How can I assist you today?`;
       await elevenLabsVoice.speak(testMessage, voice.voice_id);
     } catch (error) {
       console.error('Failed to test voice:', error);
     } finally {
-      setTimeout(() => setIsTestingVoice(null), 2000);
+      setTimeout(() => setIsTestingVoice(null), 3000);
     }
   };
 
@@ -121,15 +121,18 @@ export function VoiceSettings({ className = "" }: VoiceSettingsProps) {
         <label className="text-sm font-medium text-gray-700">
           Select Voice
         </label>
+        <p className="text-xs text-muted">
+          Click the voice card to select it, then click "Preview" to hear it
+        </p>
         
         <div className="space-y-2">
           {ADRATA_VOICES.map((voice) => (
             <div
               key={voice.voice_id}
-              className={`p-3 border rounded-lg cursor-pointer transition-all ${
+              className={`p-3 border rounded-lg transition-all ${
                 selectedVoice['voice_id'] === voice.voice_id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-border hover:border-border'
+                  ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 shadow-sm'
+                  : 'border-border hover:border-blue-300 dark:hover:border-blue-700 cursor-pointer'
               }`}
               onClick={() => handleVoiceChange(voice)}
             >
@@ -138,16 +141,16 @@ export function VoiceSettings({ className = "" }: VoiceSettingsProps) {
                   <div className="flex items-center space-x-2">
                     <h4 className="font-medium text-foreground">{voice.name}</h4>
                     {voice['is_default'] && (
-                      <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
+                      <span className="px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded">
                         Default
                       </span>
                     )}
                     {selectedVoice['voice_id'] === voice['voice_id'] && (
-                      <CheckIcon className="w-4 h-4 text-blue-600" />
+                      <CheckIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     )}
                   </div>
                   <p className="text-sm text-muted mt-1">{voice.description}</p>
-                  <p className="text-xs text-muted mt-1">Language: {voice.language}</p>
+                  <p className="text-xs text-muted mt-1">{voice.language}</p>
                 </div>
                 
                 <button
@@ -156,15 +159,23 @@ export function VoiceSettings({ className = "" }: VoiceSettingsProps) {
                     testVoice(voice);
                   }}
                   disabled={!apiKey || isTestingVoice === voice.voice_id}
-                  className={`px-3 py-1 text-sm rounded transition-colors ${
+                  className={`ml-3 px-4 py-2 text-sm rounded-md font-medium transition-colors whitespace-nowrap ${
                     !apiKey 
-                      ? 'bg-hover text-muted cursor-not-allowed'
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       : isTestingVoice === voice.voice_id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-hover text-gray-700 hover:bg-loading-bg'
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                        : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
                   }`}
                 >
-                  {isTestingVoice === voice.voice_id ? 'Playing...' : 'Test'}
+                  {isTestingVoice === voice.voice_id ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Playing...
+                    </span>
+                  ) : 'Preview'}
                 </button>
               </div>
             </div>
@@ -189,14 +200,14 @@ export function VoiceSettings({ className = "" }: VoiceSettingsProps) {
       </div>
 
       {/* Instructions */}
-      <div className="p-4 bg-blue-50 rounded-lg">
-        <h4 className="text-sm font-medium text-blue-900 mb-2">How to Use Voice Features</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Click the power button (⚡) next to the chat input to activate voice</li>
-          <li>• When active, Adrata will speak responses and listen for your voice</li>
-          <li>• Use the volume controls (+/-) to adjust speech volume</li>
-          <li>• Click the mute button to disable speech output</li>
-          <li>• Speak clearly after Adrata finishes speaking</li>
+      <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <h4 className="text-sm font-medium text-blue-900 dark:text-blue-400 mb-2">How to Use Voice Features</h4>
+        <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1.5">
+          <li>• Click a voice card to select it as your AI voice</li>
+          <li>• Click "Preview" button to hear a sample of that voice</li>
+          <li>• Selected voice will be used for all AI responses</li>
+          <li>• Click the "Voice" button in the chat to start voice conversations</li>
+          <li>• The AI will respond using your selected voice</li>
         </ul>
       </div>
     </div>

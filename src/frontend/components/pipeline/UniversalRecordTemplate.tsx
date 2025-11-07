@@ -4832,7 +4832,21 @@ export function UniversalRecordTemplate({
         personName={record?.fullName || record?.name || 'Unknown'}
         companyName={record?.company?.name || record?.company || ''}
         personId={['leads', 'people', 'prospects', 'speedrun'].includes(recordType) ? record?.id : undefined}
-        companyId={recordType === 'companies' ? record?.id : (record?.companyId || record?.company?.id)}
+        companyId={(() => {
+          // Only include companyId if it's a valid company ID (not just a string name)
+          // For companies record type, use the record ID
+          if (recordType === 'companies') {
+            return record?.id;
+          }
+          // For other record types, only use companyId if it exists and is a valid ID format
+          // Company IDs are typically ULIDs (26 chars) or numeric strings
+          const companyId = record?.companyId || record?.company?.id;
+          // Only return companyId if it exists and looks like a valid ID (not just a company name string)
+          if (companyId && typeof companyId === 'string' && (companyId.length > 10 || /^[0-9]+$/.test(companyId))) {
+            return companyId;
+          }
+          return undefined;
+        })()}
         section={recordType}
         isLoading={loading}
       />
@@ -6615,9 +6629,14 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
     }
 
     try {
-      console.log('💾 [NOTES] Starting save for:', { recordId: record.id, recordType, contentLength: notesContent.length });
-      setSaveStatus('saving');
+      // Only set saving status if not already saving to prevent status flickering
+      if (saveStatus !== 'saving') {
+        setSaveStatus('saving');
+      }
       setHasUnsavedChanges(false);
+      
+      // Suppress console logs during autosave to reduce noise (only log errors)
+      // console.log('💾 [NOTES] Starting save for:', { recordId: record.id, recordType, contentLength: notesContent.length });
       
       // Add notes to pending saves to prevent record prop sync from overwriting
       setPendingSaves(prev => new Set(prev).add('notes'));
@@ -6644,13 +6663,17 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
       }
 
       const result = await response.json();
-      console.log('✅ [NOTES] Save result:', result);
+      // Suppress success logs during autosave to reduce noise
+      // console.log('✅ [NOTES] Save result:', result);
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to save notes');
       }
 
-      setSaveStatus('saved');
+      // Only update status if it's not already saved to prevent unnecessary re-renders
+      if (saveStatus !== 'saved') {
+        setSaveStatus('saved');
+      }
       setLastSavedAt(new Date());
       setLastSavedNotes(notesContent);
       lastSavedTimestampRef.current = Date.now(); // Track when notes were saved
@@ -6661,6 +6684,13 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
         clearTimeout(typingTimeoutRef.current);
         typingTimeoutRef.current = null;
       }
+      
+      // Clear saved status after 2 seconds to reduce visual distraction
+      setTimeout(() => {
+        if (saveStatus === 'saved' && notesContent === lastSavedNotes) {
+          setSaveStatus('idle');
+        }
+      }, 2000);
       
       // Update sessionStorage cache to prevent stale data on navigation
       if (typeof window !== 'undefined' && record?.id) {

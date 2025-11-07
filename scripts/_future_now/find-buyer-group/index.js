@@ -98,9 +98,9 @@ class SmartBuyerGroupPipeline {
       if (previewEmployees.length === 0) {
         console.log('⚠️ No employees found with primary identifiers, trying alternatives...');
         
-        // Try company name search if we have LinkedIn/website but no results
+        // Strategy 1: Try company name search if we have LinkedIn/website but no results
         if (intelligence.companyName && !intelligence.linkedinUrl && !intelligence.website) {
-          console.log('🔍 Trying company name search...');
+          console.log('🔍 Strategy 1: Trying company name search...');
           const nameEmployees = await this.previewSearch.discoverAllStakeholders(
             {
               companyName: intelligence.companyName,
@@ -119,12 +119,12 @@ class SmartBuyerGroupPipeline {
           }
         }
         
-        // Try parent domain if subdomain
+        // Strategy 2: Try parent domain if subdomain
         if (previewEmployees.length === 0 && intelligence.website) {
           const domain = intelligence.website.replace(/^https?:\/\//, '').split('/')[0];
           if (domain.split('.').length > 2) {
             const parentDomain = domain.split('.').slice(-2).join('.');
-            console.log(`🔍 Trying parent domain: ${parentDomain}...`);
+            console.log(`🔍 Strategy 2: Trying parent domain: ${parentDomain}...`);
             const parentEmployees = await this.previewSearch.discoverAllStakeholders(
               {
                 linkedinUrl: intelligence.linkedinUrl,
@@ -141,6 +141,59 @@ class SmartBuyerGroupPipeline {
               previewEmployees = parentEmployees;
               console.log(`✅ Found ${previewEmployees.length} employees via parent domain`);
             }
+          }
+        }
+        
+        // Strategy 3: Try LinkedIn company search by name if we have company name
+        if (previewEmployees.length === 0 && intelligence.companyName && !intelligence.linkedinUrl) {
+          console.log('🔍 Strategy 3: Trying LinkedIn company search by name...');
+          try {
+            // Search for company on LinkedIn via Coresignal company search
+            const companySearchResult = await this.companyIntel.searchCompanyByName(intelligence.companyName);
+            if (companySearchResult && companySearchResult.linkedin_url) {
+              console.log(`✅ Found LinkedIn URL: ${companySearchResult.linkedin_url}`);
+              const linkedinEmployees = await this.previewSearch.discoverAllStakeholders(
+                {
+                  linkedinUrl: companySearchResult.linkedin_url,
+                  website: intelligence.website,
+                  companyName: intelligence.companyName
+                },
+                params.maxPreviewPages,
+                params.filteringLevel,
+                this.productCategory,
+                this.options.customFiltering || null,
+                this.options.usaOnly || false
+              );
+              if (linkedinEmployees.length > 0) {
+                previewEmployees = linkedinEmployees;
+                intelligence.linkedinUrl = companySearchResult.linkedin_url; // Update intelligence
+                console.log(`✅ Found ${previewEmployees.length} employees via LinkedIn company search`);
+              }
+            }
+          } catch (error) {
+            console.log(`⚠️ LinkedIn company search failed: ${error.message}`);
+          }
+        }
+        
+        // Strategy 4: Try company name variations (if we have name but no results)
+        if (previewEmployees.length === 0 && intelligence.companyName) {
+          console.log('🔍 Strategy 4: Trying company name variations...');
+          // Remove filtering to cast wider net
+          const variationEmployees = await this.previewSearch.discoverAllStakeholders(
+            {
+              companyName: intelligence.companyName,
+              linkedinUrl: intelligence.linkedinUrl,
+              website: intelligence.website
+            },
+            params.maxPreviewPages + 2, // Search more pages
+            'none', // No filtering
+            this.productCategory,
+            this.options.customFiltering || null,
+            this.options.usaOnly || false
+          );
+          if (variationEmployees.length > 0) {
+            previewEmployees = variationEmployees;
+            console.log(`✅ Found ${previewEmployees.length} employees via name variations`);
           }
         }
       }
@@ -1821,7 +1874,29 @@ class SmartBuyerGroupPipeline {
       
       // 2. Create/update People records for ALL buyer group members
       console.log(`👥 Creating/updating People records for ${buyerGroup.length} members...`);
+      
+      // CRITICAL: Validate all employees are from the correct company before saving
+      const validatedMembers = [];
+      const rejectedMembers = [];
+      
       for (const member of buyerGroup) {
+        // Validate employee is from correct company
+        const validation = this.validateEmployeeCompany(member, intelligence, company);
+        if (!validation.isValid) {
+          console.log(`❌ REJECTED: ${member.name} - ${validation.reason}`);
+          rejectedMembers.push({ member, reason: validation.reason });
+          continue; // Skip invalid employees
+        }
+        validatedMembers.push(member);
+      }
+      
+      if (rejectedMembers.length > 0) {
+        console.log(`⚠️ Rejected ${rejectedMembers.length} employees for company mismatch`);
+        console.log(`   Continuing with ${validatedMembers.length} validated employees`);
+      }
+      
+      // Only save validated members
+      for (const member of validatedMembers) {
         const nameParts = member.name.split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
@@ -2114,7 +2189,7 @@ class SmartBuyerGroupPipeline {
           companySize: intelligence.employeeCount?.toString(),
             cohesionScore: report.cohesionAnalysis?.overallScore || 0,
             overallConfidence: report.qualityMetrics?.averageConfidence || 0,
-          totalMembers: buyerGroup.length,
+          totalMembers: validatedMembers.length,
           processingTime: Date.now() - this.pipelineState.startTime,
           metadata: {
             report: report,
@@ -2139,7 +2214,7 @@ class SmartBuyerGroupPipeline {
       
       // 4. Create BuyerGroupMembers records (for relationship tracking)
       try {
-      const memberRecords = buyerGroup.map(member => {
+      const memberRecords = validatedMembers.map(member => {
         // Extract email from Coresignal data (prioritize real emails from fullProfile)
         const coresignalEmail = this.extractEmailFromCoresignal(member.fullProfile);
         const email = coresignalEmail || (member.email && !member.email.includes('@coresignal.temp') ? member.email : null);
@@ -2169,13 +2244,192 @@ class SmartBuyerGroupPipeline {
       
       console.log('✅ Buyer group saved to database successfully');
       console.log(`   - Company: ${company.name} (${company.id})`);
-      console.log(`   - People records: ${buyerGroup.length} created/updated`);
+      console.log(`   - People records: ${validatedMembers.length} created/updated (${rejectedMembers.length} rejected)`);
       console.log(`   - Buyer group: ${buyerGroupRecord.id}`);
+      
+      // Log quality metrics
+      if (rejectedMembers.length > 0) {
+        console.log(`\n⚠️ Quality Check: ${rejectedMembers.length} employees rejected for company mismatch`);
+        rejectedMembers.forEach(({ member, reason }) => {
+          console.log(`   - ${member.name}: ${reason}`);
+        });
+      } else {
+        console.log(`\n✅ Quality Check: All ${validatedMembers.length} employees validated as correct company`);
+      }
       
     } catch (error) {
       console.error('❌ Failed to save buyer group to database:', error.message);
       throw error;
     }
+  }
+
+  /**
+   * Validate that employee is from the correct company
+   * CRITICAL: Ensures data quality by verifying company match
+   * @param {object} member - Buyer group member
+   * @param {object} intelligence - Company intelligence
+   * @param {object} company - Database company record
+   * @returns {object} Validation result with isValid and reason
+   */
+  validateEmployeeCompany(member, intelligence, company) {
+    const coresignalData = member.fullProfile || {};
+    const experience = coresignalData.experience || [];
+    const currentExperience = experience.find(exp => exp.active_experience === 1) || experience[0] || {};
+    
+    if (!currentExperience || !currentExperience.company_name) {
+      return {
+        isValid: false,
+        reason: 'No current company experience found in Coresignal data'
+      };
+    }
+    
+    const employeeCompanyName = (currentExperience.company_name || '').toLowerCase();
+    const targetCompanyName = (intelligence.companyName || company.name || '').toLowerCase();
+    
+    // Normalize company names for comparison
+    const normalize = (name) => {
+      return name
+        .toLowerCase()
+        .replace(/\b(inc|llc|ltd|corp|corporation|company|co)\b/g, '')
+        .replace(/[^a-z0-9]/g, '')
+        .trim();
+    };
+    
+    const normalizedEmployee = normalize(employeeCompanyName);
+    const normalizedTarget = normalize(targetCompanyName);
+    
+    // Check 1: Exact match
+    if (normalizedEmployee === normalizedTarget) {
+      return { isValid: true, reason: 'Exact company name match' };
+    }
+    
+    // Check 2: Contains match (e.g., "GitLab Inc" contains "GitLab")
+    if (normalizedEmployee.includes(normalizedTarget) || normalizedTarget.includes(normalizedEmployee)) {
+      return { isValid: true, reason: 'Company name contains match' };
+    }
+    
+    // Check 3: LinkedIn URL match (strongest signal)
+    const employeeLinkedIn = (currentExperience.company_linkedin_url || '').toLowerCase();
+    const targetLinkedIn = (intelligence.linkedinUrl || company.linkedinUrl || '').toLowerCase();
+    
+    if (employeeLinkedIn && targetLinkedIn) {
+      // Normalize LinkedIn URLs (remove -com, -inc suffixes)
+      const normalizeLinkedIn = (url) => {
+        const match = url.match(/linkedin\.com\/company\/([^\/\?]+)/);
+        if (match) {
+          return match[1].replace(/-(com|inc|llc|ltd|corp)$/i, '').toLowerCase();
+        }
+        return url.toLowerCase();
+      };
+      
+      const normalizedEmployeeLinkedIn = normalizeLinkedIn(employeeLinkedIn);
+      const normalizedTargetLinkedIn = normalizeLinkedIn(targetLinkedIn);
+      
+      if (normalizedEmployeeLinkedIn === normalizedTargetLinkedIn) {
+        return { isValid: true, reason: 'LinkedIn URL match' };
+      }
+    }
+    
+    // Check 4: Website domain match
+    const employeeWebsite = (currentExperience.company_website || '').toLowerCase();
+    const targetWebsite = (intelligence.website || company.website || '').toLowerCase();
+    
+    if (employeeWebsite && targetWebsite) {
+      const extractDomain = (url) => {
+        if (!url) return '';
+        return url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase();
+      };
+      
+      const employeeDomain = extractDomain(employeeWebsite);
+      const targetDomain = extractDomain(targetWebsite);
+      
+      if (employeeDomain === targetDomain) {
+        return { isValid: true, reason: 'Website domain match' };
+      }
+      
+      // Check parent domain match
+      if (employeeDomain.split('.').length > 2 && targetDomain.split('.').length > 2) {
+        const employeeRoot = employeeDomain.split('.').slice(-2).join('.');
+        const targetRoot = targetDomain.split('.').slice(-2).join('.');
+        if (employeeRoot === targetRoot) {
+          return { isValid: true, reason: 'Parent domain match' };
+        }
+      }
+    }
+    
+    // Check 5: Fuzzy name similarity (last resort)
+    const similarity = this.calculateNameSimilarity(employeeCompanyName, targetCompanyName);
+    if (similarity > 0.85) {
+      return { isValid: true, reason: `High name similarity (${(similarity * 100).toFixed(1)}%)` };
+    }
+    
+    // Reject if no match found
+    return {
+      isValid: false,
+      reason: `Company mismatch: Employee at "${employeeCompanyName}" but target is "${targetCompanyName}" (similarity: ${(similarity * 100).toFixed(1)}%)`
+    };
+  }
+
+  /**
+   * Calculate name similarity (Levenshtein-based)
+   * @param {string} name1 - First name
+   * @param {string} name2 - Second name
+   * @returns {number} Similarity score (0-1)
+   */
+  calculateNameSimilarity(name1, name2) {
+    if (!name1 || !name2) return 0;
+    
+    const normalize = (name) => {
+      return name
+        .toLowerCase()
+        .replace(/\b(inc|llc|ltd|corp|corporation|company|co)\b/g, '')
+        .replace(/[^a-z0-9]/g, '')
+        .trim();
+    };
+    
+    const norm1 = normalize(name1);
+    const norm2 = normalize(name2);
+    
+    if (norm1 === norm2) return 1.0;
+    if (norm1.includes(norm2) || norm2.includes(norm1)) return 0.8;
+    
+    // Simple Levenshtein distance
+    const longer = norm1.length > norm2.length ? norm1 : norm2;
+    const shorter = norm1.length > norm2.length ? norm2 : norm1;
+    if (longer.length === 0) return 1.0;
+    
+    const distance = this.levenshteinDistance(longer, shorter);
+    return 1 - (distance / longer.length);
+  }
+
+  /**
+   * Calculate Levenshtein distance
+   * @param {string} str1 - First string
+   * @param {string} str2 - Second string
+   * @returns {number} Distance
+   */
+  levenshteinDistance(str1, str2) {
+    const matrix = [];
+    for (let i = 0; i <= str2.length; i++) {
+      matrix[i] = [i];
+    }
+    for (let j = 0; j <= str1.length; j++) {
+      matrix[0][j] = j;
+    }
+    for (let i = 1; i <= str2.length; i++) {
+      for (let j = 1; j <= str1.length; j++) {
+        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1
+          );
+        }
+      }
+    }
+    return matrix[str2.length][str1.length];
   }
 
   /**

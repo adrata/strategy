@@ -183,7 +183,7 @@ export function EnhancedEmailPreview({
       case "introduction":
         return "text-blue-600 bg-blue-100 dark:bg-blue-900/30";
       case "follow-up":
-        return "text-green-600 bg-green-100 dark:bg-green-900/30";
+        return "text-green-700 bg-green-50/70 dark:bg-green-900/20 dark:text-green-400";
       case "meeting-request":
         return "text-purple-600 bg-purple-100 dark:bg-purple-900/30";
       case "breakup":

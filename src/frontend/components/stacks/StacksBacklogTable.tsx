@@ -144,12 +144,12 @@ function BacklogItemComponent({
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-2 mb-1">
             {itemIsBug && (
-              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0">
+              <span className="bg-error-bg text-error-text px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0">
                 bug
               </span>
             )}
             {item.isFlagged && (
-              <FlagIcon className="h-4 w-4 text-red-500 flex-shrink-0" />
+              <FlagIcon className="h-4 w-4 text-error-text flex-shrink-0" />
             )}
             <h4 className="text-sm font-medium text-foreground truncate">
               {item.title}
@@ -725,10 +725,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Filter and sort items
   const filteredItems = items
     .filter(item => {
-      // Exclude deep-backlog items from regular backlog view
-      if (item.status === STACK_STATUS.DEEP_BACKLOG) {
-        return false;
-      }
+      // Include deep-backlog items in backlog view (they appear below the line)
+      // Don't filter them out - they should show in the "Below the Line" section
       
       // Exclude workstream board statuses from backlog view
       // Items with these statuses should only appear on the workstream board
@@ -994,10 +992,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     const item = items.find(i => i.id === contextMenu.itemId);
     if (!item) return;
 
-    // Change status from 'up-next'/'todo' to 'in-progress' to move below the line
-    // Items with status other than 'up-next' or 'todo' go to the Backlog section
+    // Change status from 'up-next'/'todo' to 'deep-backlog' to move below the line
+    // Items with 'deep-backlog' status stay in backlog but appear below the line (not in Up Next)
+    // This keeps them in the backlog view but not on the workstream board
     const newStatus = item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO 
-      ? STACK_STATUS.IN_PROGRESS 
+      ? STACK_STATUS.DEEP_BACKLOG 
       : item.status;
 
     // Optimistic update

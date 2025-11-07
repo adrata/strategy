@@ -122,7 +122,7 @@ export function LeadDetailsHeader({
         {/* Complete button */}
         <button
           onClick={() => onComplete(person.id)}
-          className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-300 dark:border-green-700 rounded-lg font-medium hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 border border-green-200/50 dark:border-green-700/30 rounded-lg font-medium hover:bg-green-100/70 dark:hover:bg-green-900/30 transition-colors"
         >
           <span className="text-sm opacity-70">⌘</span>
           <span className="text-sm opacity-70">↵</span>
