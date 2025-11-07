@@ -1116,79 +1116,79 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             <h3 className="text-lg font-semibold text-foreground mb-4">Company Information</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Company Name *
                 </label>
                 <input
                   type="text"
                   value={formData.name || ''}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder="Enter company name"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Legal Name
                 </label>
                 <input
                   type="text"
                   value={formData.legalName || ''}
                   onChange={(e) => handleInputChange('legalName', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Trading Name
                 </label>
                 <input
                   type="text"
                   value={formData.tradingName || ''}
                   onChange={(e) => handleInputChange('tradingName', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Website
                 </label>
                 <input
                   type="url"
                   value={formData.website || ''}
                   onChange={(e) => handleInputChange('website', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Email
                 </label>
                 <input
                   type="email"
                   value={formData.email || ''}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Phone
                 </label>
                 <input
                   type="tel"
                   value={formData.phone || ''}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
@@ -1201,7 +1201,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={formData.description || ''}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder=""
               />
             </div>
@@ -1212,39 +1212,39 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             <h3 className="text-lg font-semibold text-foreground mb-4">Business Details</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Industry
                 </label>
                 <input
                   type="text"
                   value={formData.industry || ''}
                   onChange={(e) => handleInputChange('industry', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Sector
                 </label>
                 <input
                   type="text"
                   value={formData.sector || ''}
                   onChange={(e) => handleInputChange('sector', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Company Size
                 </label>
                 <select
                   value={formData.size || ''}
                   onChange={(e) => handleInputChange('size', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 >
                   <option value="">-</option>
                   <option value="1-10">1-10 employees</option>
@@ -1256,21 +1256,21 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Total Employees
                 </label>
                 <input
                   type="number"
                   value={formData.employeeCount || ''}
                   onChange={(e) => handleInputChange('employeeCount', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Revenue
                 </label>
                 <input
@@ -1278,18 +1278,18 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   step="0.01"
                   value={formData.revenue || ''}
                   onChange={(e) => handleInputChange('revenue', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Currency
                 </label>
                 <select
                   value={formData.currency || 'USD'}
                   onChange={(e) => handleInputChange('currency', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -1308,7 +1308,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 max="2024"
                 value={formData.foundedYear || ''}
                 onChange={(e) => handleInputChange('foundedYear', e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder=""
               />
             </div>
@@ -1325,58 +1325,58 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={formData.address || ''}
                 onChange={(e) => handleInputChange('address', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder=""
               />
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   City
                 </label>
                 <input
                   type="text"
                   value={formData.city || ''}
                   onChange={(e) => handleInputChange('city', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   State
                 </label>
                 <input
                   type="text"
                   value={formData.state || ''}
                   onChange={(e) => handleInputChange('state', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Country
                 </label>
                 <input
                   type="text"
                   value={formData.country || ''}
                   onChange={(e) => handleInputChange('country', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Postal Code
                 </label>
                 <input
                   type="text"
                   value={formData.postalCode || ''}
                   onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder=""
                 />
               </div>
@@ -1388,13 +1388,13 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             <h3 className="text-lg font-semibold text-foreground mb-4">Status & Tracking</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Status
                 </label>
                 <select
                   value={formData.status || 'ACTIVE'}
                   onChange={(e) => handleInputChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 >
                   <option value="ACTIVE">Active</option>
                   <option value="INACTIVE">Inactive</option>
@@ -1404,13 +1404,13 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Priority
                 </label>
                 <select
                   value={formData.priority || 'MEDIUM'}
                   onChange={(e) => handleInputChange('priority', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 >
                   <option value="LOW">Low</option>
                   <option value="MEDIUM">Medium</option>
@@ -1426,7 +1426,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 type="text"
                 value={Array.isArray(formData.tags) ? formData.tags.join(', ') : ''}
                 onChange={(e) => handleInputChange('tags', e.target.value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag))}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder=""
               />
             </div>
@@ -1443,31 +1443,31 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 type="text"
                 value={formData.lastAction || ''}
                 onChange={(e) => handleInputChange('lastAction', e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder=""
               />
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Last Action Date
                 </label>
                 <input
                   type="date"
                   value={formData.lastActionDate || ''}
                   onChange={(e) => handleInputChange('lastActionDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Next Action Date
                 </label>
                 <input
                   type="date"
                   value={formData.nextActionDate || ''}
                   onChange={(e) => handleInputChange('nextActionDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 />
               </div>
             </div>
@@ -1479,7 +1479,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 type="text"
                 value={formData.nextAction || ''}
                 onChange={(e) => handleInputChange('nextAction', e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder=""
               />
             </div>
@@ -1916,7 +1916,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               <select
                 value={actionData.actionType}
                 onChange={(e) => setActionData(prev => ({ ...prev, actionType: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
               >
                 <option value="update">Record Update</option>
                 <option value="call">Phone Call</option>
@@ -1937,7 +1937,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={actionData.notes}
                 onChange={(e) => setActionData(prev => ({ ...prev, notes: e.target.value }))}
                 rows={3}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder="What happened? What was discussed?"
               />
             </div>
@@ -1950,7 +1950,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 type="text"
                 value={actionData.nextAction}
                 onChange={(e) => setActionData(prev => ({ ...prev, nextAction: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 placeholder="What should happen next?"
               />
             </div>
@@ -2121,7 +2121,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 <select
                   value={actionData.actionType}
                   onChange={(e) => setActionData(prev => ({ ...prev, actionType: e.target.value }))}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 >
                   <option value="call">Phone Call</option>
                   <option value="email">Email Sent</option>
@@ -2141,7 +2141,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={actionData.notes}
                   onChange={(e) => setActionData(prev => ({ ...prev, notes: e.target.value }))}
                   rows={4}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder="What happened? What was discussed?"
                 />
               </div>
@@ -2154,7 +2154,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   type="text"
                   value={actionData.nextAction}
                   onChange={(e) => setActionData(prev => ({ ...prev, nextAction: e.target.value }))}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                   placeholder="What should happen next?"
                 />
               </div>
@@ -2167,7 +2167,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   type="date"
                   value={actionData.nextActionDate}
                   onChange={(e) => setActionData(prev => ({ ...prev, nextActionDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-colors"
                 />
               </div>
             </div>

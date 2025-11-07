@@ -196,11 +196,12 @@ export function ChatInput({
             <div className="absolute right-2 top-2 z-10">
               <button
                 onClick={onVoiceModeClick}
-              className={`relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border transition-all duration-200 cursor-pointer ${
-                isVoiceModeActive || isModalListening
-                  ? 'bg-blue-100 text-blue-700 border-blue-300 shadow-sm'
-                  : 'bg-background text-muted border-border hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600'
-              }`}
+                className={`relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border border-border hover:border-border hover:bg-hover transition-colors cursor-pointer ${
+                  isVoiceModeActive || isModalListening
+                    ? 'bg-blue-100 text-blue-700 border-blue-300 shadow-sm'
+                    : 'text-foreground'
+                }`}
+                style={{ backgroundColor: isVoiceModeActive || isModalListening ? undefined : 'var(--panel-background)', filter: isVoiceModeActive || isModalListening ? undefined : 'brightness(1.05)' }}
               >
                 <RiVoiceAiFill className="w-4 h-4" />
                 <span className="font-medium text-xs">Voice Mode</span>

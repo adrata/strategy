@@ -96,7 +96,8 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
       <div className={`flex items-center gap-2 ${className}`}>
         <button
           onClick={onAddFiles}
-          className="relative flex items-center gap-2 bg-panel-background text-foreground rounded-lg px-3 py-1.5 text-sm border border-border hover:border-border hover:bg-hover transition-colors cursor-pointer"
+          className="relative flex items-center gap-2 text-foreground rounded-lg px-3 py-1.5 text-sm border border-border hover:border-border hover:bg-hover transition-colors cursor-pointer"
+          style={{ backgroundColor: 'var(--panel-background)', filter: 'brightness(1.05)' }}
         >
           {/* File icon */}
           <DocumentIcon className="w-4 h-4" />

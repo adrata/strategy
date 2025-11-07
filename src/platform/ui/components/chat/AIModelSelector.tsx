@@ -132,9 +132,6 @@ export function AIModelSelector({ selectedModel, onModelChange, className = "" }
           <div className="p-2">
             {Object.entries(groupedModels).map(([provider, models]) => (
               <div key={provider} className="mb-2 last:mb-0">
-                <div className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wide">
-                  {provider}
-                </div>
                 {models.map((model) => (
                   <button
                     key={model.id}
