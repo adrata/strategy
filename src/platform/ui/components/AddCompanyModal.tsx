@@ -8,6 +8,7 @@ import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
 import { useUnifiedAuth } from '@/platform/auth';
 import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
+import { AddPersonToCompanyModal } from '@/frontend/components/pipeline/AddPersonToCompanyModal';
 
 interface AddCompanyModalProps {
   isOpen: boolean;
@@ -49,6 +50,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const [showAddPeopleModal, setShowAddPeopleModal] = useState(false);
+  const [createdCompany, setCreatedCompany] = useState<{id: string, name: string} | null>(null);
 
   // Reset form and state when modal opens or closes
   useEffect(() => {
@@ -65,6 +68,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         state: ""
       });
       setErrorMessage('');
+      setShowAddPeopleModal(false);
+      setCreatedCompany(null);
     } else {
       // Clear any previous error when opening
       console.log('🔄 [AddCompanyModal] Clearing error state on modal open');
@@ -202,8 +207,12 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           }
         }));
         
-        // Call callback to close modal, show success message, and refresh list
+        // Call callback to notify parent
         onCompanyAdded(result.data);
+        
+        // Show add people modal instead of closing immediately
+        setCreatedCompany({ id: result.data.id, name: result.data.name || formData.name });
+        setShowAddPeopleModal(true);
       } else {
         const errorMsg = result?.error || result?.message || 'Failed to create company';
         console.error('❌ [AddCompanyModal] Company creation failed:', {
@@ -254,6 +263,12 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
     } else {
       console.log('⏸️ [AddCompanyModal] Cannot close - submission in progress');
     }
+  };
+
+  const handleFinalClose = () => {
+    setShowAddPeopleModal(false);
+    setCreatedCompany(null);
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -515,6 +530,20 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           )}
         </form>
       </div>
+
+      {/* Add People Modal */}
+      {showAddPeopleModal && createdCompany && (
+        <AddPersonToCompanyModal
+          isOpen={showAddPeopleModal}
+          onClose={handleFinalClose}
+          companyId={createdCompany.id}
+          companyName={createdCompany.name}
+          onPersonAdded={(person) => {
+            console.log('Person added to company:', person);
+            // Keep modal open to allow adding more people
+          }}
+        />
+      )}
     </div>
   );
 }
