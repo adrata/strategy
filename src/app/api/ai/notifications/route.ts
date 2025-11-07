@@ -9,7 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSecureApiContext } from '@/platform/api/auth';
+import { getSecureApiContext } from '@/platform/services/secure-api-helper';
 
 export const dynamic = 'force-dynamic';
 

@@ -2,6 +2,20 @@
 **Date:** November 6, 2025  
 **Status:** ✅ Ready for Production
 
+## Latest Updates (2025)
+
+### Enhanced Failure Handling
+- **30% Failure Rate Analysis**: Failures typically occur when:
+  - No employees found in Coresignal (company not in database)
+  - Wrong company matched (LinkedIn URL ambiguity)
+  - Very small companies with limited data
+  - Company name/domain mismatches
+- **Solutions Implemented**:
+  - Alternative identifier search (name, parent domain)
+  - Perplexity AI research fallback for failed companies
+  - Enhanced company matching validation
+  - Better error diagnostics
+
 ## ✅ Completed Fixes
 
 ### 1. CustomFields Prisma Issue - FIXED

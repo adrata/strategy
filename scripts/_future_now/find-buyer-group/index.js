@@ -94,9 +94,60 @@ class SmartBuyerGroupPipeline {
         );
       });
       
+      // ENHANCED: Try alternative company identifiers if no employees found
+      if (previewEmployees.length === 0) {
+        console.log('⚠️ No employees found with primary identifiers, trying alternatives...');
+        
+        // Try company name search if we have LinkedIn/website but no results
+        if (intelligence.companyName && !intelligence.linkedinUrl && !intelligence.website) {
+          console.log('🔍 Trying company name search...');
+          const nameEmployees = await this.previewSearch.discoverAllStakeholders(
+            {
+              companyName: intelligence.companyName,
+              linkedinUrl: null,
+              website: null
+            },
+            params.maxPreviewPages,
+            'none', // No filtering for name search
+            this.productCategory,
+            this.options.customFiltering || null,
+            this.options.usaOnly || false
+          );
+          if (nameEmployees.length > 0) {
+            previewEmployees = nameEmployees;
+            console.log(`✅ Found ${previewEmployees.length} employees via company name search`);
+          }
+        }
+        
+        // Try parent domain if subdomain
+        if (previewEmployees.length === 0 && intelligence.website) {
+          const domain = intelligence.website.replace(/^https?:\/\//, '').split('/')[0];
+          if (domain.split('.').length > 2) {
+            const parentDomain = domain.split('.').slice(-2).join('.');
+            console.log(`🔍 Trying parent domain: ${parentDomain}...`);
+            const parentEmployees = await this.previewSearch.discoverAllStakeholders(
+              {
+                linkedinUrl: intelligence.linkedinUrl,
+                website: `https://${parentDomain}`,
+                companyName: intelligence.companyName
+              },
+              params.maxPreviewPages,
+              params.filteringLevel,
+              this.productCategory,
+              this.options.customFiltering || null,
+              this.options.usaOnly || false
+            );
+            if (parentEmployees.length > 0) {
+              previewEmployees = parentEmployees;
+              console.log(`✅ Found ${previewEmployees.length} employees via parent domain`);
+            }
+          }
+        }
+      }
+      
       // Adaptive expansion: If we found very few employees, search more pages
       const minEmployeesNeeded = Math.max(5, Math.floor((intelligence.employeeCount || 100) * 0.1));
-      if (previewEmployees.length < minEmployeesNeeded && previewEmployees.length < 50) {
+      if (previewEmployees.length < minEmployeesNeeded && previewEmployees.length < 50 && previewEmployees.length > 0) {
         const additionalPages = Math.min(5, Math.ceil((minEmployeesNeeded - previewEmployees.length) / 50));
         if (additionalPages > 0) {
           console.log(`📈 Found only ${previewEmployees.length} employees, expanding search by ${additionalPages} more pages...`);
@@ -174,6 +225,17 @@ class SmartBuyerGroupPipeline {
           .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))
           .slice(0, Math.min(10, scoredEmployees.length)); // Take up to 10 best
         console.log(`🎯 Final fallback: ${relevantEmployees.length} candidates (using all available)`);
+      }
+      
+      // CRITICAL: If we have NO employees at all, this is a failure case
+      // The pipeline will handle this later, but we log it here
+      if (previewEmployees.length === 0) {
+        console.log('⚠️ WARNING: No employees found in Coresignal for this company');
+        console.log('   This may indicate:');
+        console.log('   - Company not in Coresignal database');
+        console.log('   - Wrong company matched');
+        console.log('   - Very small company with no LinkedIn presence');
+        console.log('   - Company name/domain mismatch');
       }
       
       console.log(`🎯 Final filtered to ${relevantEmployees.length} relevant candidates`);
