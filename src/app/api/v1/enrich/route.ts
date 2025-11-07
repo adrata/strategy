@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getSecureApiContext, createSuccessResponse, createErrorResponse } from '@/platform/api/auth';
+import { getSecureApiContext, createSuccessResponse, createErrorResponse } from '@/platform/services/secure-api-helper';
 
 const prisma = new PrismaClient();
 

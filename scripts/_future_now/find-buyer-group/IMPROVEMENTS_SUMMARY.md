@@ -69,6 +69,29 @@ The improvements are ready for testing. Key things to verify:
 3. ✅ Preview search expands when needed
 4. ✅ Fallback mechanisms work correctly
 
+### 5. **Alternative Company Identifier Search**
+- **Location**: `index.js` Stage 2 (after initial preview search)
+- **What it does**: When primary search finds 0 employees, tries alternative identifiers:
+  - Company name search (if only name available)
+  - Parent domain search (for subdomains like sketchup.trimble.com → trimble.com)
+- **Benefit**: Recovers from company matching failures and identifier mismatches
+
+### 6. **Enhanced Failure Diagnostics**
+- **Location**: `index.js` Stage 2 (after preview search)
+- **What it does**: Logs detailed warnings when no employees found, explaining possible causes
+- **Benefit**: Better understanding of why companies fail, enabling targeted fixes
+
+### 7. **Perplexity AI Research Fallback**
+- **Location**: `run-top-enhanced-all.js` - Enhanced runner
+- **What it does**: When Coresignal completely fails, uses Perplexity AI to research executives
+- **Benefit**: Provides buyer groups even when company not in Coresignal database
+- **Requires**: `PERPLEXITY_API_KEY` environment variable
+
+### 8. **Skip Recently Successful Companies**
+- **Location**: `run-top-enhanced-all.js` - Enhanced runner
+- **What it does**: Automatically skips companies that were successful in recent batch
+- **Benefit**: Avoids re-processing companies that already have buyer groups
+
 ## 🚀 Ready for Production
 
 All improvements are in place and the pipeline now guarantees:
@@ -76,4 +99,7 @@ All improvements are in place and the pipeline now guarantees:
 - **Single person = decision maker** (enforced in 3 places)
 - **Smart search expansion** (when needed)
 - **Multiple safety nets** (throughout pipeline)
+- **Alternative identifier search** (when primary fails)
+- **Perplexity fallback** (when Coresignal fails completely)
+- **Skip successful companies** (avoid re-processing)
 
