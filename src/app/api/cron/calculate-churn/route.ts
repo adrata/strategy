@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
     
-    if (cronSecret && authHeader !== \`Bearer \${cronSecret}\`) {
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    console.log(\`📊 [CHURN CRON] Found \${workspaces.length} active workspaces\`);
+    console.log(`📊 [CHURN CRON] Found ${workspaces.length} active workspaces`);
 
     const results = {
       workspaces: workspaces.length,
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     // Process each workspace
     for (const workspace of workspaces) {
       try {
-        console.log(\`📦 [CHURN CRON] Processing: \${workspace.name}\`);
+        console.log(`📦 [CHURN CRON] Processing: ${workspace.name}`);
         
         const workspaceResult = await calculateChurnForWorkspace(workspace.id);
         
@@ -75,10 +75,10 @@ export async function GET(request: NextRequest) {
         results.orange += workspaceResult.orange;
         results.green += workspaceResult.green;
         
-        console.log(\`✅ [CHURN CRON] \${workspace.name}: \${workspaceResult.calculated} calculated\`);
+        console.log(`✅ [CHURN CRON] ${workspace.name}: ${workspaceResult.calculated} calculated`);
         
       } catch (error: any) {
-        console.error(\`❌ [CHURN CRON] Error in \${workspace.name}:\`, error);
+        console.error(`❌ [CHURN CRON] Error in ${workspace.name}:`, error);
         results.errors.push({
           workspaceId: workspace.id,
           workspaceName: workspace.name,
@@ -91,17 +91,17 @@ export async function GET(request: NextRequest) {
     const minutes = Math.floor(duration / 60);
     const seconds = duration % 60;
 
-    console.log(\`\\n✅ [CHURN CRON] Completed in \${minutes}m \${seconds}s\`);
-    console.log(\`   Total: \${results.totalPeople}\`);
-    console.log(\`   Calculated: \${results.calculated}\`);
-    console.log(\`   🔴 Red: \${results.red}\`);
-    console.log(\`   🟠 Orange: \${results.orange}\`);
-    console.log(\`   🟢 Green: \${results.green}\`);
+    console.log(`\n✅ [CHURN CRON] Completed in ${minutes}m ${seconds}s`);
+    console.log(`   Total: ${results.totalPeople}`);
+    console.log(`   Calculated: ${results.calculated}`);
+    console.log(`   🔴 Red: ${results.red}`);
+    console.log(`   🟠 Orange: ${results.orange}`);
+    console.log(`   🟢 Green: ${results.green}`);
 
     return NextResponse.json({
       success: true,
-      message: \`Churn predictions calculated for \${results.calculated} people across \${workspaces.length} workspaces\`,
-      duration: \`\${minutes}m \${seconds}s\`,
+      message: `Churn predictions calculated for ${results.calculated} people across ${workspaces.length} workspaces`,
+      duration: `${minutes}m ${seconds}s`,
       results
     });
 
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: error.message,
-        duration: \`\${duration}s\`
+        duration: `${duration}s`
       },
       { status: 500 }
     );
@@ -176,7 +176,7 @@ async function calculateChurnForWorkspace(workspaceId: string) {
       else if (churnPrediction.refreshColor === 'green') stats.green++;
       
     } catch (error) {
-      console.error(\`   ❌ Error calculating churn for \${person.fullName}:\`, error);
+      console.error(`   ❌ Error calculating churn for ${person.fullName}:`, error);
     }
   }
 
