@@ -278,7 +278,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           total, 
           active, 
           completed, 
-          upNextCount,
+          upNextCount, 
           backlogItemsCount,
           workstreamCount, 
           backlogCount, 

@@ -1146,9 +1146,9 @@ export function SpeedrunSprintView() {
             refresh();
             // Advance to next sprint after a brief delay to allow data refresh
             setTimeout(() => {
-              setCurrentSprintIndex(currentSprintIndex + 1);
-              // Reset the modal shown flag for the new sprint
-              sprintCompletionModalShownFor.current = null;
+            setCurrentSprintIndex(currentSprintIndex + 1);
+            // Reset the modal shown flag for the new sprint
+            sprintCompletionModalShownFor.current = null;
             }, 100);
           } else {
             // No more sprints, go back to speedrun list
