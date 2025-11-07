@@ -1188,6 +1188,19 @@ export function PipelineLeftPanelStandalone({
         return;
       }
       
+      // Check if this is Justin user - allow ProfilePanel access
+      const isJustin = authUser?.email?.toLowerCase().includes('justin') ||
+                       authUser?.name?.toLowerCase().includes('justin');
+      
+      // Allow Justin to access ProfilePanel
+      if (isJustin) {
+        console.log('🔘 Opening ProfilePanel for Justin');
+        const newState = !isProfilePanelVisible;
+        console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+        setIsProfilePanelVisible(newState);
+        return;
+      }
+      
       // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
       const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
       const userRestrictions = authUser?.id && authUser?.email ? 
