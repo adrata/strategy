@@ -909,13 +909,13 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     { value: 'CLIENT', label: 'Client' },
                     { value: 'SUPERFAN', label: 'Superfan' }
                   ]}
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    (recordData.status || recordData.stage) === 'LEAD' ? 'bg-warning/10 text-warning border border-warning' :
-                    (recordData.status || recordData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary border border-primary' :
-                    (recordData.status || recordData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info border border-info' :
-                    (recordData.status || recordData.stage) === 'CLIENT' ? 'bg-success/10 text-success border border-success' :
-                    (recordData.status || recordData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info border border-info' :
-                    'bg-hover text-foreground border border-border'
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
+                    (recordData.status || recordData.stage) === 'LEAD' ? 'bg-warning/20 text-warning border-warning/50' :
+                    (recordData.status || recordData.stage) === 'PROSPECT' ? 'bg-primary/20 text-primary border-primary/50' :
+                    (recordData.status || recordData.stage) === 'OPPORTUNITY' ? 'bg-info/20 text-info border-info/50' :
+                    (recordData.status || recordData.stage) === 'CLIENT' ? 'bg-success/20 text-success border-success/50' :
+                    (recordData.status || recordData.stage) === 'SUPERFAN' ? 'bg-info/20 text-info border-info/50' :
+                    'bg-hover/50 text-foreground border-border'
                   }`}
                 />
               </div>
