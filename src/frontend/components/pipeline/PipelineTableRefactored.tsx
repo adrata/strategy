@@ -88,11 +88,11 @@ function getNextActionTiming(record: PipelineRecord) {
   if (nextActionTiming) {
     // All timing pills now use light gray color
     if (nextActionTiming === 'Now') {
-      return { text: nextActionTiming, color: 'bg-primary/10 text-primary' }; // Highlight "Now" differently
+      return { text: nextActionTiming, color: 'bg-primary/20 text-primary border-primary/50' }; // Highlight "Now" differently
     } else if (nextActionTiming === 'Overdue') {
-      return { text: nextActionTiming, color: 'bg-error/10 text-error' };
+      return { text: nextActionTiming, color: 'bg-error/20 text-error border-error/50' };
     } else if (nextActionTiming === 'Due soon') {
-      return { text: nextActionTiming, color: 'bg-warning/10 text-warning' };
+      return { text: nextActionTiming, color: 'bg-warning/20 text-warning border-warning/50' };
     } else if (nextActionTiming === 'Today') {
       return { text: nextActionTiming, color: 'bg-hover text-foreground' };
     } else if (nextActionTiming === 'Tomorrow') {
@@ -555,7 +555,7 @@ export function PipelineTable({
                         const state = record['hqState'] || record['state'] || record['location'] || '-';
                         if (state !== '-' && section === 'speedrun') {
                           // Speedrun: Show state with purple pills
-                          cellContent = <span className="rounded-full px-4 py-1 text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">{state}</span>;
+                          cellContent = <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border bg-purple-100 text-purple-800 border-purple-300">{state}</span>;
                         } else {
                           // Other sections: Plain text
                           cellContent = state;
@@ -650,15 +650,15 @@ export function PipelineTable({
                         if (stageValue !== '-' && section === 'speedrun') {
                           // Speedrun: Show stage with colored pills
                           const stageColors: Record<string, string> = {
-                            'LEAD': 'bg-warning/10 text-warning border-warning',
-                            'PROSPECT': 'bg-primary/10 text-primary border-primary',
-                            'OPPORTUNITY': 'bg-info/10 text-info border-info',
-                            'CUSTOMER': 'bg-success/10 text-success border-success',
-                            'CLIENT': 'bg-success/10 text-success border-success',
-                            'SUPERFAN': 'bg-info/10 text-info border-info'
+                            'LEAD': 'bg-warning/20 text-warning border-warning/50',
+                            'PROSPECT': 'bg-primary/20 text-primary border-primary/50',
+                            'OPPORTUNITY': 'bg-info/20 text-info border-info/50',
+                            'CUSTOMER': 'bg-success/20 text-success border-success/50',
+                            'CLIENT': 'bg-success/20 text-success border-success/50',
+                            'SUPERFAN': 'bg-info/20 text-info border-info/50'
                           };
-                          const colorClass = stageColors[stageValue.toUpperCase()] || 'bg-hover text-foreground border-border';
-                          cellContent = <span className={`inline-flex items-center rounded-full px-4 py-1 text-xs font-medium ${colorClass} border`}>{stageValue}</span>;
+                          const colorClass = stageColors[stageValue.toUpperCase()] || 'bg-hover/50 text-foreground border-border';
+                          cellContent = <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border ${colorClass}`}>{stageValue}</span>;
                         } else {
                           // Other sections: Plain text
                           cellContent = stageValue;
@@ -807,13 +807,13 @@ export function PipelineTable({
                             return (
                               <div className="flex items-center gap-2">
                                 {isStatus ? (
-                                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${pillData.color}`}>
+                                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${pillData.color}`}>
                                     <span className="text-xs">{pillData.icon}</span>
                                     {pillData.text}
                                   </span>
                                 ) : (
                                   <>
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${pillData.color}`}>
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap border ${pillData.color}`}>
                                       {pillData.text}
                                     </span>
                                     <span className="text-sm text-muted font-normal truncate max-w-32">

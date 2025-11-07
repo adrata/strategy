@@ -973,7 +973,7 @@ function PipelineSections({
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">{section.name}</span>
-            <span className="text-sm text-muted">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-hover/50 text-foreground border border-border">
               {typeof section['count'] === 'number' ? section.count.toLocaleString() : 
                typeof section['count'] === 'string' && !isNaN(Number(section.count)) ? Number(section.count).toLocaleString() : 
                section.count}
@@ -1022,7 +1022,7 @@ function PipelineSections({
             >
               <div className="flex items-center justify-between">
                 <span className="font-medium text-sm">{section.name}</span>
-                <span className="text-sm text-muted">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-hover/50 text-foreground border border-border">
                   {typeof section['count'] === 'number' ? section.count.toLocaleString() : 
                    typeof section['count'] === 'string' && !isNaN(Number(section.count)) ? Number(section.count).toLocaleString() : 
                    section.count}

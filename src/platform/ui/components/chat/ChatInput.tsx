@@ -204,7 +204,7 @@ export function ChatInput({
                 style={{ backgroundColor: isVoiceModeActive || isModalListening ? undefined : 'var(--panel-background)', filter: isVoiceModeActive || isModalListening ? undefined : 'brightness(1.05)' }}
               >
                 <RiVoiceAiFill className="w-4 h-4" />
-                <span className="font-medium text-xs">Voice Mode</span>
+                <span className="font-medium text-xs">Voice</span>
               </button>
             </div>
           )}

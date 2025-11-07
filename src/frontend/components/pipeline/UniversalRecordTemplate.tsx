@@ -4094,7 +4094,7 @@ export function UniversalRecordTemplate({
             <button
               key="advance-to-prospect"
               onClick={handleAdvanceToProspect}
-              className="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
+              className="px-3 py-1.5 text-sm bg-primary/10 text-primary border border-primary/20 rounded-md hover:bg-primary/20 transition-colors"
             >
               Advance to Prospect
             </button>
