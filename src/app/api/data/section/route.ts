@@ -1584,14 +1584,27 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // 🚀 FIX: Speedrun count is limited to top 50 people with companies
-          totalCount = Math.min(50, await prisma.people.count({
+          // 🚀 FIX: Speedrun count should match the actual API response (up to 50 records)
+          // Count people with ranks 1-50 + companies with ranks 1-50 and 0 people
+          const speedrunPeopleCount = await prisma.people.count({
             where: {
               workspaceId,
               deletedAt: null,
-              companyId: { not: null }
+              companyId: { not: null },
+              globalRank: { not: null, gte: 1, lte: 50 },
+              mainSellerId: userId
             }
-          }));
+          });
+          const speedrunCompaniesCount = await prisma.companies.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              globalRank: { not: null, gte: 1, lte: 50 },
+              people: { none: {} },
+              mainSellerId: userId
+            }
+          });
+          totalCount = Math.min(50, speedrunPeopleCount + speedrunCompaniesCount);
           break;
         case 'sellers':
           // Use same logic as counts API (sellers table without user filters)

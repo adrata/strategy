@@ -3,30 +3,37 @@
 /**
  * Stacks Stories List View
  * 
- * Displays all stories in a table format, similar to the Leads list view
+ * Displays all stories in a sidebar-style list, similar to Oasis channels
+ * Works with left panel (list) and right panel (details) layout
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { useUnifiedAuth } from '@/platform/auth';
+import { useStacks } from '@/products/stacks/context/StacksProvider';
 import { StacksStory } from './types';
 import { STACK_STATUS } from './constants';
 
 interface StacksStoriesListProps {
   onItemClick: (item: any) => void;
+  selectedItem?: any;
 }
 
-export function StacksStoriesList({ onItemClick }: StacksStoriesListProps) {
+export function StacksStoriesList({ onItemClick, selectedItem }: StacksStoriesListProps) {
   const { user: authUser } = useUnifiedAuth();
   const pathname = usePathname();
   const workspaceSlug = pathname.split('/').filter(Boolean)[0];
   const workspaceId = authUser?.activeWorkspaceId;
+  const stacksContext = useStacks();
   
   const [stories, setStories] = useState<StacksStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<string>('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  
+  // Use selectedItem from context if not provided as prop
+  const currentSelectedItem = selectedItem || stacksContext?.selectedItem;
 
   // Fetch all stories
   useEffect(() => {
@@ -162,143 +169,91 @@ export function StacksStoriesList({ onItemClick }: StacksStoriesListProps) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-background">
+    <div className="h-full flex flex-col bg-background border-r border-border" style={{ width: '320px', minWidth: '320px', maxWidth: '320px' }}>
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-border">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Stories</h1>
-            <p className="text-sm text-muted mt-1">
-              All stories ({filteredAndSortedStories.length})
-            </p>
-          </div>
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-foreground">Stories</h2>
+          <p className="text-xs text-muted mt-1">
+            {filteredAndSortedStories.length} {filteredAndSortedStories.length === 1 ? 'story' : 'stories'}
+          </p>
         </div>
 
         {/* Search */}
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search stories..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-            />
-          </div>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search stories..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          />
         </div>
       </div>
 
-      {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <table className="w-full border-collapse">
-          <thead className="bg-panel-background sticky top-0 z-10">
-            <tr>
-              <th
-                className="px-4 py-3 text-left text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer hover:bg-hover"
-                onClick={() => handleSort('title')}
-              >
-                Title
-                {sortField === 'title' && (
-                  <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th
-                className="px-4 py-3 text-left text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer hover:bg-hover"
-                onClick={() => handleSort('status')}
-              >
-                Status
-                {sortField === 'status' && (
-                  <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th
-                className="px-4 py-3 text-left text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer hover:bg-hover"
-                onClick={() => handleSort('priority')}
-              >
-                Priority
-                {sortField === 'priority' && (
-                  <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th
-                className="px-4 py-3 text-left text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer hover:bg-hover"
-                onClick={() => handleSort('assignee')}
-              >
-                Assignee
-                {sortField === 'assignee' && (
-                  <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th
-                className="px-4 py-3 text-left text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer hover:bg-hover"
-                onClick={() => handleSort('createdAt')}
-              >
-                Created
-                {sortField === 'createdAt' && (
-                  <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                )}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-background divide-y divide-border">
-            {filteredAndSortedStories.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted">
-                  {searchQuery ? 'No stories found matching your search' : 'No stories found'}
-                </td>
-              </tr>
-            ) : (
-              filteredAndSortedStories.map((story) => (
-                <tr
+      {/* Stories List */}
+      <div className="flex-1 overflow-y-auto">
+        {filteredAndSortedStories.length === 0 ? (
+          <div className="px-4 py-8 text-center text-muted">
+            <p className="text-sm">
+              {searchQuery ? 'No stories found matching your search' : 'No stories found'}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-1 p-2">
+            {filteredAndSortedStories.map((story) => {
+              const isSelected = currentSelectedItem?.id === story.id;
+              
+              return (
+                <button
                   key={story.id}
-                  onClick={() => onItemClick(story)}
-                  className="hover:bg-panel-background cursor-pointer transition-colors"
+                  onClick={() => {
+                    onItemClick(story);
+                    // Also update context
+                    if (stacksContext?.onItemClick) {
+                      stacksContext.onItemClick(story);
+                    }
+                  }}
+                  className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
+                    isSelected
+                      ? 'bg-hover text-foreground border border-border'
+                      : 'hover:bg-panel-background text-foreground'
+                  }`}
                 >
-                  <td className="px-4 py-3">
-                    <div className="text-sm font-medium text-foreground">
-                      {story.title || 'Untitled'}
-                    </div>
-                    {story.description && (
-                      <div className="text-xs text-muted mt-1 line-clamp-1">
-                        {story.description}
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-foreground truncate">
+                        {story.title || 'Untitled'}
                       </div>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(story.status)}`}>
+                      {story.description && (
+                        <div className="text-xs text-muted mt-1 line-clamp-2">
+                          {story.description}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(story.status)}`}>
                       {story.status || 'todo'}
                     </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`text-sm font-medium ${getPriorityColor(story.priority)}`}>
+                    <span className={`text-xs font-medium ${getPriorityColor(story.priority)}`}>
                       {story.priority || 'medium'}
                     </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="text-sm text-foreground">
-                      {story.assignee
-                        ? typeof story.assignee === 'object'
-                          ? `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || story.assignee.email || 'Unassigned'
-                          : story.assignee
-                        : 'Unassigned'}
+                  </div>
+                  
+                  {story.assignee && (
+                    <div className="text-xs text-muted mt-2">
+                      {typeof story.assignee === 'object'
+                        ? `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || story.assignee.email || 'Unassigned'
+                        : story.assignee}
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="text-sm text-muted">
-                      {story.createdAt
-                        ? new Date(story.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        : '-'}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

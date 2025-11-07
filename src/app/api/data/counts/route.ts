@@ -163,7 +163,9 @@ export async function GET(request: NextRequest) {
           console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
           return 0;
         }),
-        // Get speedrun people with no meaningful actions count
+        // Get speedrun people with no meaningful actions TODAY count
+        // 🏆 FIX: Count people where lastActionDate is null OR before today OR (today but not meaningful action)
+        // If lastActionDate is today AND lastAction is meaningful, they're NOT "Ready"
         prisma.people.count({
           where: {
             workspaceId,
@@ -172,18 +174,40 @@ export async function GET(request: NextRequest) {
             globalRank: { not: null, gte: 1, lte: 50 },
             mainSellerId: userId,
             OR: [
-              { lastAction: null },
-              { lastAction: 'No action taken' },
-              { lastAction: 'Record created' },
-              { lastAction: 'Company record created' },
-              { lastAction: 'Record added' }
+              { lastActionDate: null },
+              { 
+                lastActionDate: {
+                  lt: new Date(new Date().setHours(0, 0, 0, 0)) // Before today = Ready
+                }
+              },
+              {
+                // Action today but not meaningful = Still Ready
+                AND: [
+                  { 
+                    lastActionDate: {
+                      gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                      lt: new Date(new Date().setHours(23, 59, 59, 999))
+                    }
+                  },
+                  {
+                    OR: [
+                      { lastAction: null },
+                      { lastAction: 'No action taken' },
+                      { lastAction: 'Record created' },
+                      { lastAction: 'Company record created' },
+                      { lastAction: 'Record added' }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun people with no actions count:', error);
           return 0;
         }),
-        // Get speedrun companies with no meaningful actions count
+        // Get speedrun companies with no meaningful actions TODAY count
+        // 🏆 FIX: Count companies where lastActionDate is null OR before today OR (today but not meaningful action)
         prisma.companies.count({
           where: {
             workspaceId,
@@ -192,11 +216,32 @@ export async function GET(request: NextRequest) {
             people: { none: {} },
             mainSellerId: userId,
             OR: [
-              { lastAction: null },
-              { lastAction: 'No action taken' },
-              { lastAction: 'Record created' },
-              { lastAction: 'Company record created' },
-              { lastAction: 'Record added' }
+              { lastActionDate: null },
+              { 
+                lastActionDate: {
+                  lt: new Date(new Date().setHours(0, 0, 0, 0)) // Before today = Ready
+                }
+              },
+              {
+                // Action today but not meaningful = Still Ready
+                AND: [
+                  { 
+                    lastActionDate: {
+                      gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                      lt: new Date(new Date().setHours(23, 59, 59, 999))
+                    }
+                  },
+                  {
+                    OR: [
+                      { lastAction: null },
+                      { lastAction: 'No action taken' },
+                      { lastAction: 'Record created' },
+                      { lastAction: 'Company record created' },
+                      { lastAction: 'Record added' }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         }).catch((error) => {

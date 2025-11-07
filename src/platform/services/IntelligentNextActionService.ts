@@ -52,14 +52,20 @@ export class IntelligentNextActionService {
 
   /**
    * Generate intelligent next action using Claude API
+   * @param baseDate - Optional date to use as base for next action calculation (if action was taken today)
    */
-  public async generateNextAction(entityId: string, entityType: 'person' | 'company'): Promise<NextActionRecommendation | null> {
+  public async generateNextAction(entityId: string, entityType: 'person' | 'company', baseDate?: Date | null): Promise<NextActionRecommendation | null> {
     try {
       // Get action context
       const context = await this.getActionContext(entityId, entityType);
       
       if (!context) {
         return null;
+      }
+
+      // 🏆 FIX: If baseDate is provided (action taken today), override lastContactDate in context
+      if (baseDate) {
+        context.entityInfo.lastContactDate = baseDate;
       }
 
       // Call Claude API for intelligent recommendation
@@ -809,12 +815,22 @@ Focus on the most strategic next move that will advance the relationship through
 
   /**
    * Update nextAction when a new action is created
+   * 🏆 FIX: When action is completed today, recalculate nextActionDate from TODAY, not old lastActionDate
    */
   public async updateNextActionOnNewAction(action: any): Promise<void> {
     try {
+      // 🏆 FIX: If action was completed today, use TODAY as the base date for next action calculation
+      const actionDate = action.completedAt ? new Date(action.completedAt) : new Date();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const actionDateOnly = new Date(actionDate);
+      actionDateOnly.setHours(0, 0, 0, 0);
+      const isActionToday = actionDateOnly.getTime() === today.getTime();
+      
       // Update nextAction for person if action has personId
       if (action.personId) {
-        await this.generateNextAction(action.personId, 'person');
+        // 🏆 FIX: Pass today's date if action was taken today to ensure nextActionDate is calculated correctly
+        await this.generateNextAction(action.personId, 'person', isActionToday ? today : null);
         
         // 🚀 COMPANY-PEOPLE LINKAGE: Also update company if person has one
         try {
@@ -823,7 +839,7 @@ Focus on the most strategic next move that will advance the relationship through
             select: { companyId: true }
           });
           if (person?.companyId) {
-            await this.generateNextAction(person.companyId, 'company');
+            await this.generateNextAction(person.companyId, 'company', isActionToday ? today : null);
             console.log(`✅ [NEXT ACTION] Updated company nextAction due to person action: ${person.companyId}`);
           }
         } catch (error) {
@@ -833,7 +849,8 @@ Focus on the most strategic next move that will advance the relationship through
 
       // Update nextAction for company if action has companyId
       if (action.companyId) {
-        await this.generateNextAction(action.companyId, 'company');
+        // 🏆 FIX: Pass today's date if action was taken today to ensure nextActionDate is calculated correctly
+        await this.generateNextAction(action.companyId, 'company', isActionToday ? today : null);
         
         // 🚀 COMPANY-PEOPLE LINKAGE: Also update key people at the company
         try {
@@ -845,7 +862,7 @@ Focus on the most strategic next move that will advance the relationship through
           });
           
           for (const person of keyPeople) {
-            await this.generateNextAction(person.id, 'person');
+            await this.generateNextAction(person.id, 'person', isActionToday ? today : null);
           }
           console.log(`✅ [NEXT ACTION] Updated ${keyPeople.length} key people nextActions due to company action: ${action.companyId}`);
         } catch (error) {

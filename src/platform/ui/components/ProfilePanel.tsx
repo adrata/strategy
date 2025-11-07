@@ -887,7 +887,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   ? 'bg-slate-100 text-slate-700' 
                   : 'text-foreground hover:bg-hover'
               }`}
-              onClick={() => handleNavigation("/stacks")}
+              onClick={() => handleNavigation("/stacks/workstream")}
             >
               <Squares2X2Icon className="w-4 h-4 mr-3" />
               <span className="font-medium">Stacks</span>

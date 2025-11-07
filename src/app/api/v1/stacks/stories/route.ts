@@ -67,10 +67,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause
+    // Note: This query returns ALL stories (both epic-connected via epochId and standalone stories)
+    // Bugs are stored in stacksTask table with type='bug', so they are automatically excluded
     const where: any = {
       project: {
         workspaceId: workspaceId
       }
+      // epochId is optional - if not provided, returns all stories (epic-connected + standalone)
+      // if provided, filters to only stories for that epic
     };
 
     // Note: category field doesn't exist in StacksStory schema yet

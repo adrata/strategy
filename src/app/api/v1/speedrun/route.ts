@@ -226,7 +226,13 @@ export async function GET(request: NextRequest) {
         // Sort by globalRank to maintain unified ranking
         allRecords.sort((a, b) => a.globalRank - b.globalRank);
         
-        speedrunRecords = allRecords.slice(0, 50); // Take top 50
+        // 🏆 FIX: Assign sequential ranks (1, 2, 3, ...) to prevent duplicate #1s
+        // After sorting, reassign ranks sequentially to ensure each rank appears only once
+        speedrunRecords = allRecords.slice(0, 50).map((record, index) => ({
+          ...record,
+          displayRank: index + 1, // Sequential rank: 1, 2, 3, ..., 50
+          globalRank: record.globalRank // Keep original for sorting, but use displayRank for UI
+        }));
         
       } catch (error) {
         console.error('❌ Error fetching Speedrun records:', error);
@@ -468,7 +474,8 @@ export async function GET(request: NextRequest) {
 
         return {
           id: record.id,
-          // Remove redundant 'rank' field - table will use index-based ranking for Speedrun
+          // 🏆 FIX: Use displayRank for UI (sequential 1, 2, 3, ...) instead of globalRank (which can have duplicates)
+          rank: record.displayRank || record.globalRank, // Use displayRank for UI display
           name: record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown',
           title: record.jobTitle || 'Unknown Title',
           email: record.email || '',
@@ -477,7 +484,8 @@ export async function GET(request: NextRequest) {
           linkedinUrl: record.linkedinUrl || '',
           linkedinNavigatorUrl: record.linkedinNavigatorUrl || null, // Include linkedinNavigatorUrl field
           status: record.status || 'Unknown',
-          globalRank: record.globalRank, // Keep for metadata, but table won't use for display
+          globalRank: record.globalRank, // Keep original for sorting/metadata
+          displayRank: record.displayRank, // Sequential rank for UI (1, 2, 3, ...)
           lastAction: lastAction || null,
           lastActionDate: lastActionDate || null,
           lastActionTime: lastActionTime,

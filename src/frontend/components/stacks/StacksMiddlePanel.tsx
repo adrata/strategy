@@ -675,11 +675,12 @@ export function StacksMiddlePanel({
     return <StacksBacklogList onItemClick={onItemClick} />;
   }
 
-  // Handle stories section - show all stories in list view
+  // Handle stories section - show all stories in sidebar list view (left panel style)
+  // The right panel will show story details when a story is selected
   if (activeSubSection === 'stories') {
     return (
       <div className="h-full flex flex-col bg-background">
-        <StacksStoriesList onItemClick={onItemClick} />
+        <StacksStoriesList onItemClick={onItemClick} selectedItem={selectedItem} />
       </div>
     );
   }
