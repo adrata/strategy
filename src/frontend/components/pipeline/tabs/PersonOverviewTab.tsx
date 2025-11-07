@@ -380,13 +380,13 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                     { value: 'CLIENT', label: 'Client' },
                     { value: 'SUPERFAN', label: 'Superfan' }
                   ]}
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    (personData.status || personData.stage) === 'LEAD' ? 'bg-warning/10 text-warning border border-warning' :
-                    (personData.status || personData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary border border-primary' :
-                    (personData.status || personData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info border border-info' :
-                    (personData.status || personData.stage) === 'CLIENT' ? 'bg-success/10 text-success border border-success' :
-                    (personData.status || personData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info border border-info' :
-                    'bg-hover text-foreground border border-border'
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
+                    (personData.status || personData.stage) === 'LEAD' ? 'bg-warning/20 text-warning border-warning/50' :
+                    (personData.status || personData.stage) === 'PROSPECT' ? 'bg-primary/20 text-primary border-primary/50' :
+                    (personData.status || personData.stage) === 'OPPORTUNITY' ? 'bg-info/20 text-info border-info/50' :
+                    (personData.status || personData.stage) === 'CLIENT' ? 'bg-success/20 text-success border-success/50' :
+                    (personData.status || personData.stage) === 'SUPERFAN' ? 'bg-info/20 text-info border-info/50' :
+                    'bg-hover/50 text-foreground border-border'
                   }`}
                 />
               </div>
@@ -499,16 +499,16 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted">Buyer Group Member:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.isBuyerGroupMember ? 'bg-success-bg text-success-text' : 'bg-hover text-foreground'
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
+                  personData.isBuyerGroupMember ? 'bg-success/20 text-success border-success/50' : 'bg-hover/50 text-foreground border-border'
                 }`}>
                   {personData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted">Buyer Group Optimized:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.buyerGroupOptimized ? 'bg-success-bg text-success-text' : 'bg-hover text-foreground'
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
+                  personData.buyerGroupOptimized ? 'bg-success/20 text-success border-success/50' : 'bg-hover/50 text-foreground border-border'
                 }`}>
                   {personData.buyerGroupOptimized ? 'Yes' : 'No'}
                 </span>

@@ -35,28 +35,22 @@ export function ChurnRiskBadge({
   const color = churnPrediction.refreshColor;
   const score = churnPrediction.churnRiskScore || 0;
   
-  // Color schemes
+  // Color schemes using theme-aware colors
   const colors = {
     red: {
-      bg: '#fef2f2',
-      border: '#fecaca',
-      text: '#dc2626',
+      classes: 'bg-error-bg text-error-text border-error-border',
       icon: '🔴',
       label: 'High Risk',
       description: 'Leaving this month'
     },
     orange: {
-      bg: '#fff7ed',
-      border: '#fed7aa',
-      text: '#ea580c',
+      classes: 'bg-warning-bg text-warning-text border-warning-border',
       icon: '🟠',
       label: 'Medium Risk',
       description: 'Leaving this quarter'
     },
     green: {
-      bg: '#f0fdf4',
-      border: '#bbf7d0',
-      text: '#16a34a',
+      classes: 'bg-success-bg text-success-text border-success-border',
       icon: '🟢',
       label: 'Low Risk',
       description: 'Stable role'
@@ -69,12 +63,7 @@ export function ChurnRiskBadge({
   if (variant === 'compact') {
     return (
       <div 
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border cursor-help"
-        style={{
-          backgroundColor: colorScheme.bg,
-          borderColor: colorScheme.border,
-          color: colorScheme.text
-        }}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border cursor-help ${colorScheme.classes}`}
         title={showTooltip ? `${colorScheme.label}: ${colorScheme.description}. Score: ${score}/100` : undefined}
       >
         <span>{colorScheme.icon}</span>
@@ -87,12 +76,7 @@ export function ChurnRiskBadge({
   if (variant === 'detailed') {
     return (
       <div 
-        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border"
-        style={{
-          backgroundColor: colorScheme.bg,
-          borderColor: colorScheme.border,
-          color: colorScheme.text
-        }}
+        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border ${colorScheme.classes}`}
       >
         <span className="text-base">{colorScheme.icon}</span>
         <span className="font-semibold">{score}</span>
@@ -105,17 +89,13 @@ export function ChurnRiskBadge({
   // Full variant - expanded card for detail views
   return (
     <div 
-      className="p-4 rounded-lg border"
-      style={{
-        backgroundColor: colorScheme.bg,
-        borderColor: colorScheme.border
-      }}
+      className={`p-4 rounded-lg border ${colorScheme.classes}`}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <span className="text-2xl">{colorScheme.icon}</span>
           <div>
-            <div className="font-semibold text-sm" style={{ color: colorScheme.text }}>
+            <div className="font-semibold text-sm">
               {colorScheme.label}
             </div>
             <div className="text-xs text-muted">
@@ -124,7 +104,7 @@ export function ChurnRiskBadge({
           </div>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-bold" style={{ color: colorScheme.text }}>
+          <div className="text-3xl font-bold">
             {score}
           </div>
           <div className="text-xs text-muted">Risk Score</div>
@@ -151,7 +131,7 @@ export function ChurnRiskBadge({
       )}
       
       {churnPrediction.reasoning && (
-        <div className="mt-3 pt-3 border-t" style={{ borderColor: colorScheme.border }}>
+        <div className={`mt-3 pt-3 border-t ${color === 'red' ? 'border-error-border' : color === 'orange' ? 'border-warning-border' : 'border-success-border'}`}>
           <p className="text-xs text-muted italic">{churnPrediction.reasoning}</p>
         </div>
       )}
@@ -170,22 +150,17 @@ export function ChurnRiskPill({ churnPrediction }: { churnPrediction: ChurnPredi
   const color = churnPrediction.refreshColor;
   const score = churnPrediction.churnRiskScore || 0;
   
-  const styles = {
-    red: { bg: '#fee2e2', text: '#dc2626', border: '#fecaca' },
-    orange: { bg: '#ffedd5', text: '#ea580c', border: '#fed7aa' },
-    green: { bg: '#dcfce7', text: '#16a34a', border: '#bbf7d0' }
+  const colorClasses = {
+    red: 'bg-error-bg text-error-text border-error-border',
+    orange: 'bg-warning-bg text-warning-text border-warning-border',
+    green: 'bg-success-bg text-success-text border-success-border'
   };
 
-  const style = styles[color];
+  const classes = colorClasses[color] || 'bg-hover/50 text-foreground border-border';
 
   return (
     <span 
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border"
-      style={{
-        backgroundColor: style.bg,
-        color: style.text,
-        borderColor: style.border
-      }}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${classes}`}
       title={`Churn risk: ${score}/100`}
     >
       {color === 'red' ? '🔴' : color === 'orange' ? '🟠' : '🟢'}
