@@ -116,10 +116,7 @@ async function fixSpeedrunRanking(workspaceId, userId) {
         where: {
           workspaceId,
           deletedAt: null,
-          OR: [
-            { mainSellerId: userId },
-            { mainSellerId: null }
-          ]
+          mainSellerId: userId // Only people assigned to this user
         },
         include: { company: true },
         orderBy: [
@@ -131,10 +128,7 @@ async function fixSpeedrunRanking(workspaceId, userId) {
         where: {
           workspaceId,
           deletedAt: null,
-          OR: [
-            { mainSellerId: userId },
-            { mainSellerId: null }
-          ],
+          mainSellerId: userId, // Only companies assigned to this user
           // Only companies WITHOUT people
           people: {
             none: {
