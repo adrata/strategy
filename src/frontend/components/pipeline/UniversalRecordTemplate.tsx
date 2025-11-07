@@ -6631,7 +6631,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
     try {
       // Only set saving status if not already saving to prevent status flickering
       if (saveStatus !== 'saving') {
-        setSaveStatus('saving');
+      setSaveStatus('saving');
       }
       setHasUnsavedChanges(false);
       
@@ -6672,7 +6672,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
 
       // Only update status if it's not already saved to prevent unnecessary re-renders
       if (saveStatus !== 'saved') {
-        setSaveStatus('saved');
+      setSaveStatus('saved');
       }
       setLastSavedAt(new Date());
       setLastSavedNotes(notesContent);

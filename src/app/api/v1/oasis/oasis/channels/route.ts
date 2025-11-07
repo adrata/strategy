@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
         { name: 'general', description: 'General discussion and announcements' },
         { name: 'sell', description: 'Sales strategies and customer conversations' },
         { name: 'build', description: 'Product development and engineering discussions' },
-        { name: 'creative', description: 'Creative ideas, inspiration, and innovative discussions' },
+        { name: 'imagine', description: 'Creative ideas, inspiration, and innovative discussions' },
         { name: 'wins', description: 'Celebrate victories and success stories' }
       ];
 

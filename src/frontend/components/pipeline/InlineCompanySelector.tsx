@@ -547,7 +547,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
       if (companyId) {
         // Navigate to the actual company record using workspace-aware navigation
         try {
-          navigateToPipelineItem('companies', companyId, companyName);
+        navigateToPipelineItem('companies', companyId, companyName);
         } catch (error) {
           console.error('Error navigating to company:', error);
           // Fallback to search navigation if navigateToPipelineItem fails
@@ -569,7 +569,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
           const workspaceSlug = workspaceMatch[1];
           window.location.href = `/${workspaceSlug}/companies?search=${encodeURIComponent(companyName)}`;
         } else {
-          window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+        window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
         }
       }
     }
