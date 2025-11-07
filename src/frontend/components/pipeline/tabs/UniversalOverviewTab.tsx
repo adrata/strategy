@@ -7,6 +7,131 @@ import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField'
 import { authFetch } from '@/platform/api-fetch';
 import { useUnifiedAuth } from '@/platform/auth';
 import { formatUrlForDisplay, getUrlDisplayName } from '@/platform/utils/urlFormatter';
+import { DatePicker } from '@/platform/ui/components/DatePicker';
+import { ClockIcon } from '@heroicons/react/24/outline';
+
+// Helper function to format future dates as "In 2 weeks"
+function formatNextActionDate(dateString: string | Date | null | undefined): string {
+  if (!dateString) return 'No date set';
+  
+  try {
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+    if (isNaN(date.getTime())) return 'Invalid date';
+    
+    const now = new Date();
+    const diffMs = date.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return 'Overdue';
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays <= 7) return `In ${diffDays} day${diffDays > 1 ? 's' : ''}`;
+    if (diffDays <= 14) {
+      const weeks = Math.floor(diffDays / 7);
+      return `In ${weeks} week${weeks > 1 ? 's' : ''}`;
+    }
+    if (diffDays <= 30) {
+      const weeks = Math.ceil(diffDays / 7);
+      return `In ${weeks} week${weeks > 1 ? 's' : ''}`;
+    }
+    if (diffDays <= 90) {
+      const months = Math.floor(diffDays / 30);
+      return `In ${months} month${months > 1 ? 's' : ''}`;
+    }
+    return date.toLocaleDateString();
+  } catch (error) {
+    return 'Invalid date';
+  }
+}
+
+// NextActionDateField component with date/time picker
+function NextActionDateField({
+  value,
+  field,
+  onSave,
+  recordId,
+  recordType,
+  onSuccess,
+  className = ''
+}: {
+  value: string | null;
+  field: string;
+  onSave: (field: string, value: string | any, recordId: string, recordType: string) => Promise<void>;
+  recordId: string;
+  recordType: string;
+  onSuccess?: (message: string) => void;
+  className?: string;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(value ? new Date(value) : null);
+  const [selectedTime, setSelectedTime] = useState<string>(value ? new Date(value).toTimeString().slice(0, 5) : '09:00');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!selectedDate) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // Combine date and time
+      const dateTime = new Date(selectedDate);
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      dateTime.setHours(hours, minutes, 0, 0);
+      
+      await onSave(field, dateTime.toISOString(), recordId, recordType);
+      onSuccess?.('Next action date updated successfully!');
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating next action date:', error);
+      onSuccess?.('Error updating date. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <div className="flex items-center gap-2">
+        <DatePicker
+          value={selectedDate}
+          onChange={setSelectedDate}
+          className="px-3 py-1 rounded-md border border-border bg-background text-foreground"
+        />
+        <input
+          type="time"
+          value={selectedTime}
+          onChange={(e) => setSelectedTime(e.target.value)}
+          className="px-2 py-1 rounded-md border border-border bg-background text-foreground text-xs"
+        />
+        <button
+          onClick={handleSave}
+          disabled={isSaving || !selectedDate}
+          className="px-2 py-1 text-xs bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-50"
+        >
+          ✓
+        </button>
+        <button
+          onClick={() => setIsEditing(false)}
+          className="px-2 py-1 text-xs bg-hover text-foreground rounded-md hover:bg-panel-background"
+        >
+          ✕
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setIsEditing(true)}
+      className={`${className} cursor-pointer hover:bg-panel-background transition-colors flex items-center gap-1`}
+    >
+      <ClockIcon className="w-3 h-3" />
+      {formatNextActionDate(value)}
+    </button>
+  );
+}
 
 interface UniversalOverviewTabProps {
   recordType: string;
@@ -1059,15 +1184,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Next Action:</span>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <InlineEditField
+                  <NextActionDateField
                     value={recordData.nextActionDate || null}
                     field="nextActionDate"
                     onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
-                    className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-foreground"
-                    fieldType="date"
+                    className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-foreground border border-border"
                   />
                   <InlineEditField
                     value={recordData.nextAction || null}

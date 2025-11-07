@@ -3871,6 +3871,21 @@ export function UniversalRecordTemplate({
       );
     }
 
+    // Set Reminder button - FIRST BUTTON for all record types
+    if (recordType === 'people' || recordType === 'companies' || 
+        recordType === 'leads' || recordType === 'prospects') {
+      buttons.push(
+        <button
+          key="set-reminder"
+          onClick={() => setIsSetReminderModalOpen(true)}
+          className="px-3 py-1.5 text-sm bg-hover text-foreground border border-border rounded-md hover:bg-panel-background hover:border-primary/50 transition-colors flex items-center gap-1.5"
+        >
+          <ClockIcon className="w-4 h-4" />
+          <span>Set Reminder</span>
+        </button>
+      );
+    }
+
     // Update Record button - for all record types
     const updateButtonText = recordType === 'leads' ? 'Update Lead' : 
                             recordType === 'prospects' ? 'Update Prospect' :
@@ -3890,21 +3905,6 @@ export function UniversalRecordTemplate({
         {updateButtonText}
       </button>
     );
-
-    // Set Reminder button - only for people and companies
-    if (recordType === 'people' || recordType === 'companies' || 
-        recordType === 'leads' || recordType === 'prospects') {
-      buttons.push(
-        <button
-          key="set-reminder"
-          onClick={() => setIsSetReminderModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-hover text-foreground border border-border rounded-md hover:bg-panel-background hover:border-primary/50 transition-colors flex items-center gap-1.5"
-        >
-          <ClockIcon className="w-4 h-4" />
-          <span>Set Reminder</span>
-        </button>
-      );
-    }
 
     // Snooze button - only for speedrun records
     if (recordType === 'speedrun') {
@@ -4007,28 +4007,29 @@ export function UniversalRecordTemplate({
         );
       } else {
         // On individual record page: Show "Add Action" button first (no shortcut), then "Start Speedrun" with shortcut
-        // Add Action button - CATEGORY COLORED BUTTON (matching section colors)
-        const categoryColors = getCategoryColors(recordType);
-        buttons.push(
-          <button
-            key="add-action"
-            onClick={() => setIsAddActionModalOpen(true)}
-            className="px-3 py-1.5 text-sm rounded-md transition-colors"
-            style={{
-              backgroundColor: categoryColors.bg,
-              color: categoryColors.primary,
-              border: `1px solid ${categoryColors.border}`
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = categoryColors.bgHover;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = categoryColors.bg;
-            }}
-          >
-            Add Action
-          </button>
-        );
+      // Add Action button - THEME-AWARE BUTTON (works in both light and dark mode)
+      const getAddActionButtonClasses = (recordType: string) => {
+        // Use theme-aware colors that work in both light and dark mode
+        if (recordType === 'leads') {
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-warning/10 text-warning border border-warning hover:bg-warning/20';
+        } else if (recordType === 'prospects') {
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-primary/10 text-primary border border-primary hover:bg-primary/20';
+        } else if (recordType === 'opportunities') {
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-info/10 text-info border border-info hover:bg-info/20';
+        } else {
+          // Default theme-aware styling
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-panel-background text-foreground border border-border hover:bg-hover';
+        }
+      };
+      buttons.push(
+        <button
+          key="add-action"
+          onClick={() => setIsAddActionModalOpen(true)}
+          className={getAddActionButtonClasses(recordType)}
+        >
+          Add Action
+        </button>
+      );
         
         // Start/Continue Speedrun button - blue styling
         const buttonText = hasCompletedRecords ? 'Continue Speedrun' : 'Start Speedrun';
@@ -4069,7 +4070,7 @@ export function UniversalRecordTemplate({
             <button
               key="advance-to-prospect"
               onClick={handleAdvanceToProspect}
-              className="px-3 py-1.5 text-sm bg-panel-background text-foreground border border-border rounded-md hover:bg-hover transition-colors"
+              className="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
             >
               Advance to Prospect
             </button>
@@ -4093,7 +4094,7 @@ export function UniversalRecordTemplate({
             <button
               key="advance-to-prospect"
               onClick={handleAdvanceToProspect}
-              className="px-3 py-1.5 text-sm bg-panel-background text-foreground border border-border rounded-md hover:bg-hover transition-colors"
+              className="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
             >
               Advance to Prospect
             </button>
@@ -4112,24 +4113,25 @@ export function UniversalRecordTemplate({
       }
       }
 
-      // Add Action button - CATEGORY COLORED BUTTON (matching section colors)
-      const categoryColors = getCategoryColors(recordType);
+      // Add Action button - THEME-AWARE BUTTON (works in both light and dark mode)
+      const getAddActionButtonClasses = (recordType: string) => {
+        // Use theme-aware colors that work in both light and dark mode
+        if (recordType === 'leads') {
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-warning/10 text-warning border border-warning hover:bg-warning/20';
+        } else if (recordType === 'prospects') {
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-primary/10 text-primary border border-primary hover:bg-primary/20';
+        } else if (recordType === 'opportunities') {
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-info/10 text-info border border-info hover:bg-info/20';
+        } else {
+          // Default theme-aware styling
+          return 'px-3 py-1.5 text-sm rounded-md transition-colors bg-panel-background text-foreground border border-border hover:bg-hover';
+        }
+      };
       buttons.push(
         <button
           key="add-action"
           onClick={() => setIsAddActionModalOpen(true)}
-          className="px-3 py-1.5 text-sm rounded-md transition-colors"
-          style={{
-            backgroundColor: categoryColors.bg,
-            color: categoryColors.primary,
-            border: `1px solid ${categoryColors.border}`
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = categoryColors.bgHover;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = categoryColors.bg;
-          }}
+          className={getAddActionButtonClasses(recordType)}
         >
           Add Action ({getCommonShortcut('SUBMIT')})
         </button>
