@@ -785,12 +785,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     { value: 'SUPERFAN', label: 'Superfan' }
                   ]}
                   className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    (recordData.status || recordData.stage) === 'LEAD' ? 'bg-warning/10 text-warning' :
-                    (recordData.status || recordData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary' :
-                    (recordData.status || recordData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info' :
-                    (recordData.status || recordData.stage) === 'CLIENT' ? 'bg-success/10 text-success' :
-                    (recordData.status || recordData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info' :
-                    'bg-hover text-foreground'
+                    (recordData.status || recordData.stage) === 'LEAD' ? 'bg-warning/10 text-warning border border-warning' :
+                    (recordData.status || recordData.stage) === 'PROSPECT' ? 'bg-primary/10 text-primary border border-primary' :
+                    (recordData.status || recordData.stage) === 'OPPORTUNITY' ? 'bg-info/10 text-info border border-info' :
+                    (recordData.status || recordData.stage) === 'CLIENT' ? 'bg-success/10 text-success border border-success' :
+                    (recordData.status || recordData.stage) === 'SUPERFAN' ? 'bg-info/10 text-info border border-info' :
+                    'bg-hover text-foreground border border-border'
                   }`}
                 />
               </div>
@@ -902,7 +902,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   <div className="flex items-center">
                     <span className="text-sm text-muted w-24">Role:</span>
                     <InlineEditField
-                      value={record.buyerGroupRole || 'Stakeholder'}
+                      value={record.buyerGroupRole || null}
                       field="buyerGroupRole"
                       onSave={onSave}
                       recordId={record.id}
@@ -928,7 +928,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Decision Power:</span>
                 <InlineEditField
-                  value={record.customFields?.decisionPower || '70'}
+                  value={record.customFields?.decisionPower || record.decisionPower || null}
                   field="decisionPower"
                   onSave={onSave}
                   recordId={record.id}
@@ -940,7 +940,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Engagement Level:</span>
                 <InlineEditField
-                  value={record.customFields?.engagementLevel || 'Medium'}
+                  value={record.customFields?.engagementLevel || record.engagementLevel || null}
                   field="engagementLevel"
                   onSave={onSave}
                   recordId={record.id}
@@ -1033,7 +1033,17 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <span className="text-sm text-muted w-24">Last Action:</span>
                 <div className="flex items-center gap-2">
                   <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-foreground">
-                    {getTimingLabel(recordData.lastContact)}
+                    {(() => {
+                      // Only show timing if there's a meaningful action (not just "Record created")
+                      const lastAction = recordData.lastAction || record.lastAction;
+                      const isEmptyAction = !lastAction || 
+                        lastAction === '-' || 
+                        lastAction === 'No action' ||
+                        lastAction === 'Record created' ||
+                        lastAction === 'Company record created';
+                      
+                      return isEmptyAction ? 'Never' : getTimingLabel(recordData.lastContact);
+                    })()}
                   </span>
                   <InlineEditField
                     value={recordData.lastAction || '-'}
@@ -1048,10 +1058,17 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Next Action:</span>
-                <div className="flex items-center gap-2">
-                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-foreground">
-                    {getTimingLabel(recordData.nextActionDate)}
-                  </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <InlineEditField
+                    value={recordData.nextActionDate || null}
+                    field="nextActionDate"
+                    onSave={onSave}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-hover text-foreground"
+                    fieldType="date"
+                  />
                   <InlineEditField
                     value={recordData.nextAction || null}
                     field="nextAction"

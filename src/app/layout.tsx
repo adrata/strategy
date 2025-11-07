@@ -230,7 +230,7 @@ export default function RootLayout({
                       '--border': '#2d2e36',
                       '--muted': '#bbbbbb',
                       '--muted-light': '#444444',
-                      '--loading-bg': '#e5e7eb',
+                      '--loading-bg': '#3d3d40',
                       '--hover': '#232326',
                       '--button-text': '#171717',
                       '--button-background': '#ffffff',

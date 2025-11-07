@@ -17,6 +17,10 @@
 
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
+const fetch = require('node-fetch');
+
+// Import sophisticated multi-source verification system
+const { MultiSourceVerifier } = require('../../../src/platform/pipelines/modules/core/MultiSourceVerifier');
 
 class OptimalBuyerGroupFinder {
   constructor(options = {}) {
@@ -82,14 +86,32 @@ class OptimalBuyerGroupFinder {
       totalCandidates: 0,
       qualifiedBuyers: 0,
       optimalBuyerGroups: [],
+      emailsVerified: 0,
+      phonesVerified: 0,
       creditsUsed: {
         search: 0,
         collect: 0,
-        person_search: 0
+        person_search: 0,
+        preview_search: 0,
+        email: 0,
+        phone: 0
       },
       errors: [],
       startTime: new Date().toISOString()
     };
+    
+    // Initialize multi-source email & phone verifier
+    this.emailVerifier = new MultiSourceVerifier({
+      ZEROBOUNCE_API_KEY: process.env.ZEROBOUNCE_API_KEY,
+      MYEMAILVERIFIER_API_KEY: process.env.MYEMAILVERIFIER_API_KEY,
+      PROSPEO_API_KEY: process.env.PROSPEO_API_KEY,
+      LUSHA_API_KEY: process.env.LUSHA_API_KEY,
+      TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+      TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+      PEOPLE_DATA_LABS_API_KEY: process.env.PEOPLE_DATA_LABS_API_KEY,
+      PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
+      TIMEOUT: 30000
+    });
 
     if (!this.apiKey) {
       console.error('❌ CORESIGNAL_API_KEY environment variable is required');
@@ -143,6 +165,10 @@ class OptimalBuyerGroupFinder {
         finalCompanies = await this.sampleBuyerGroupQuality(scoredCompanies);
         console.log(`📊 Phase 2 completed: Analyzed buyer group quality for ${finalCompanies.length} companies`);
       }
+      
+      // Step 5.5: Verify contact information for top candidates
+      console.log(`📧📞 Verifying contact information for top candidates...`);
+      finalCompanies = await this.verifyTopCandidateContacts(finalCompanies);
       
       // Step 6: Filter and rank by final buyer readiness score
       const qualifiedBuyers = finalCompanies
@@ -1032,6 +1058,175 @@ Return ONLY valid JSON:
   }
 
   /**
+   * Verify contact information for top candidate companies
+   */
+  async verifyTopCandidateContacts(companies) {
+    const enrichedCompanies = [];
+    
+    for (const company of companies.slice(0, 20)) { // Limit to top 20 for cost efficiency
+      try {
+        if (!company.buyerGroupQuality || !company.buyerGroupQuality.sample_employees) {
+          enrichedCompanies.push(company);
+          continue;
+        }
+        
+        const sampleEmployees = company.buyerGroupQuality.sample_employees || [];
+        const companyDomain = this.extractDomain(company.company_website);
+        
+        console.log(`   📧📞 Verifying contacts for ${company.company_name} (${sampleEmployees.length} employees)...`);
+        
+        const verifiedEmployees = [];
+        
+        for (const employee of sampleEmployees.slice(0, 5)) { // Verify top 5 employees
+          const verifiedContact = await this.verifyEmployeeContact(employee, company, companyDomain);
+          verifiedEmployees.push({
+            ...employee,
+            ...verifiedContact
+          });
+          
+          await this.delay(200);
+        }
+        
+        enrichedCompanies.push({
+          ...company,
+          buyerGroupQuality: {
+            ...company.buyerGroupQuality,
+            verified_contacts: verifiedEmployees
+          }
+        });
+        
+      } catch (error) {
+        console.error(`   ⚠️ Failed to verify contacts for ${company.company_name}:`, error.message);
+        enrichedCompanies.push(company);
+      }
+    }
+    
+    // Add remaining companies without contact verification
+    enrichedCompanies.push(...companies.slice(20));
+    
+    return enrichedCompanies;
+  }
+  
+  /**
+   * Verify email and phone for a single employee
+   */
+  async verifyEmployeeContact(employee, company, companyDomain) {
+    const verifiedContact = {
+      email: null,
+      emailVerified: false,
+      emailConfidence: 0,
+      phone: null,
+      phoneVerified: false,
+      phoneConfidence: 0,
+      phoneType: 'unknown'
+    };
+    
+    // Verify/discover email
+    if (employee.email && employee.email.includes('@')) {
+      try {
+        const verification = await this.emailVerifier.verifyEmailMultiLayer(
+          employee.email,
+          employee.full_name || employee.name,
+          companyDomain
+        );
+        
+        if (verification.valid) {
+          verifiedContact.email = employee.email;
+          verifiedContact.emailVerified = true;
+          verifiedContact.emailConfidence = verification.confidence;
+          this.results.emailsVerified++;
+          this.results.creditsUsed.email += 0.003;
+        }
+      } catch (error) {
+        console.log(`   ⚠️ Email verification error: ${error.message}`);
+      }
+    } else if (companyDomain && process.env.PROSPEO_API_KEY) {
+      // Discover email using Prospeo
+      try {
+        const nameParts = (employee.full_name || employee.name || '').trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts[nameParts.length - 1] || '';
+        
+        const response = await fetch('https://api.prospeo.io/email-finder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-KEY': process.env.PROSPEO_API_KEY.trim()
+          },
+          body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            company_domain: companyDomain
+          }),
+          timeout: 15000
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.email && data.email.email) {
+            verifiedContact.email = data.email.email;
+            verifiedContact.emailVerified = true;
+            verifiedContact.emailConfidence = 85;
+            this.results.emailsVerified++;
+            this.results.creditsUsed.email += 0.0198;
+          }
+        }
+      } catch (error) {
+        console.log(`   ⚠️ Email discovery error: ${error.message}`);
+      }
+    }
+    
+    // Verify/discover phone
+    if (employee.linkedin_url && process.env.LUSHA_API_KEY) {
+      try {
+        const response = await fetch(`https://api.lusha.com/v2/person?linkedinUrl=${encodeURIComponent(employee.linkedin_url)}`, {
+          method: 'GET',
+          headers: {
+            'api_key': process.env.LUSHA_API_KEY.trim(),
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.contact && data.contact.data && data.contact.data.phoneNumbers && data.contact.data.phoneNumbers.length > 0) {
+            const phones = data.contact.data.phoneNumbers;
+            const directDial = phones.find(p => p.phoneType === 'direct' || p.phoneType === 'direct_dial');
+            const mobile = phones.find(p => p.phoneType === 'mobile');
+            const work = phones.find(p => p.phoneType === 'work' || p.phoneType === 'office');
+            
+            const bestPhone = directDial || mobile || work || phones[0];
+            
+            verifiedContact.phone = bestPhone.number;
+            verifiedContact.phoneVerified = true;
+            verifiedContact.phoneConfidence = 75;
+            verifiedContact.phoneType = bestPhone.phoneType;
+            this.results.phonesVerified++;
+            this.results.creditsUsed.phone += 0.01;
+          }
+        }
+      } catch (error) {
+        console.log(`   ⚠️ Phone discovery error: ${error.message}`);
+      }
+    }
+    
+    return verifiedContact;
+  }
+  
+  /**
+   * Extract domain from website URL
+   */
+  extractDomain(website) {
+    if (!website) return null;
+    try {
+      const url = new URL(website.startsWith('http') ? website : `https://${website}`);
+      return url.hostname.replace('www.', '');
+    } catch (error) {
+      return null;
+    }
+  }
+  
+  /**
    * Load progress from file
    */
   async loadProgress() {
@@ -1153,7 +1348,15 @@ if (require.main === module) {
       console.log(`✅ Optimal Buyer Groups: ${results.optimalBuyerGroups.length}`);
       console.log(`📈 Total Candidates: ${results.totalCandidates}`);
       console.log(`🎯 Qualified Buyers: ${results.qualifiedBuyers}`);
-      console.log(`💳 Credits Used: ${results.creditsUsed.search} search, ${results.creditsUsed.collect} collect`);
+      console.log(`\n📧📞 Contact Verification:`);
+      console.log(`Emails Verified: ${results.emailsVerified}`);
+      console.log(`Phones Verified: ${results.phonesVerified}`);
+      console.log(`\n💳 Credits Used:`);
+      console.log(`Search: ${results.creditsUsed.search}`);
+      console.log(`Collect: ${results.creditsUsed.collect}`);
+      console.log(`Preview: ${results.creditsUsed.preview_search || 0}`);
+      console.log(`Email Verification: $${results.creditsUsed.email.toFixed(4)}`);
+      console.log(`Phone Verification: $${results.creditsUsed.phone.toFixed(4)}`);
       console.log(`⏱️ Processing Time: ${Math.round(results.processingTime / 1000)}s`);
       
       if (results.optimalBuyerGroups.length > 0) {

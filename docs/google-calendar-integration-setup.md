@@ -167,3 +167,5 @@ After setting the environment variable and testing:
 3. Verify calendar events appear in timeline/calendar views
 4. Consider adding automatic calendar sync scheduling if needed
 
+
+

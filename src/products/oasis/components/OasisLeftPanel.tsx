@@ -240,85 +240,29 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const isLoading = authLoading;
   
   // NOW safe to have conditional returns - all hooks have been called
+  // Hide left panel completely during initial auth loading to avoid showing odd empty skeleton
   if (isLoading) {
-    return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
-        {/* Header Skeleton */}
-        <div className="flex-shrink-0 p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
-            <div className="space-y-2">
-              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
-              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
-            </div>
-          </div>
-        </div>
-        
-        {/* Content Skeleton */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-4">
-          <div className="space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
-          </div>
-          
-          <div className="border-t border-border pt-2 space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
   
-  // Combined loading state - if any data is loading, show skeleton
+  // Combined loading state - if any data is loading, show minimal loading state
   // This prevents showing skeleton then immediately showing real content
   const isDataLoading = channelsLoading || dmsLoading;
   
-  // If data is still loading after context is ready, show skeleton
+  // If data is still loading after context is ready, show minimal loading state
   if (isDataLoading && !isLoading) {
     return (
       <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
-        {/* Header Skeleton */}
+        {/* Minimal loading state - just show header with loading indicator */}
         <div className="flex-shrink-0 p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
-            <div className="space-y-2">
-              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
-              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
+            <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center">
+              <div className="w-4 h-4 border-2 border-muted border-t-foreground rounded-full animate-spin" />
             </div>
-          </div>
-        </div>
-        
-        {/* Content Skeleton */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-4">
-          <div className="space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
-          </div>
-          
-          <div className="border-t border-border pt-2 space-y-2">
-            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
-                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
-              </div>
-            ))}
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Oasis</h2>
+              <p className="text-xs text-muted">Loading...</p>
+            </div>
           </div>
         </div>
       </div>

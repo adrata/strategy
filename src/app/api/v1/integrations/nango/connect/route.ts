@@ -93,12 +93,15 @@ export async function POST(request: NextRequest) {
         'google': process.env.NANGO_GOOGLE_INTEGRATION_ID || 'gmail',
         'google-calendar': process.env.NANGO_GOOGLE_CALENDAR_INTEGRATION_ID || 'google-calendar',
         'calendar': process.env.NANGO_GOOGLE_CALENDAR_INTEGRATION_ID || 'google-calendar',
+        // Meeting notetaking integrations
+        'zoom': process.env.NANGO_ZOOM_INTEGRATION_ID || 'zoom',
+        'microsoft-teams': process.env.NANGO_TEAMS_INTEGRATION_ID || 'microsoft-teams',
       };
 
       const integrationId = mapping[provider.toLowerCase()];
       
       if (!integrationId) {
-        throw new Error(`Unknown provider: ${provider}. Supported providers: outlook, gmail, google-calendar`);
+        throw new Error(`Unknown provider: ${provider}. Supported providers: outlook, gmail, google-calendar, zoom, microsoft-teams`);
       }
 
       // Safety check: Ensure Outlook mapping is never empty

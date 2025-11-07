@@ -1292,8 +1292,8 @@ export function PipelineLeftPanelStandalone({
         <div className="mx-2 mt-4 mb-2">
           {/* Company Icon */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 overflow-hidden" style={{ filter: 'none' }}>
-              <span className="text-lg font-bold text-black">
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-hover border border-border overflow-hidden" style={{ filter: 'none' }}>
+              <span className="text-lg font-bold text-foreground">
                 {(() => {
                   const companyName = (workspace?.name || workspaceName || "Adrata").trim();
                   // Special handling for specific companies
@@ -1322,11 +1322,11 @@ export function PipelineLeftPanelStandalone({
         </div>
 
         {/* Executive Performance Dashboard */}
-        <div className="mx-2 mb-4 p-3 bg-white rounded-lg border border-gray-200">
+        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Revenue</span>
-              <span className="text-xs font-semibold text-black">
+              <span className="text-xs font-semibold text-foreground">
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
@@ -1356,7 +1356,7 @@ export function PipelineLeftPanelStandalone({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Workstream</span>
-              <span className="text-xs font-semibold text-black">
+              <span className="text-xs font-semibold text-foreground">
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
@@ -1389,7 +1389,7 @@ export function PipelineLeftPanelStandalone({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Coverage</span>
-              <span className="text-xs font-semibold text-black">
+              <span className="text-xs font-semibold text-foreground">
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
@@ -1452,8 +1452,8 @@ export function PipelineLeftPanelStandalone({
           className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-700">{user?.initial || (authUser?.name ? authUser.name.charAt(0).toUpperCase() : 'U')}</span>
+          <div className="w-8 h-8 bg-hover border border-border rounded-xl flex items-center justify-center">
+            <span className="text-sm font-medium text-foreground">{user?.initial || (authUser?.name ? authUser.name.charAt(0).toUpperCase() : 'U')}</span>
           </div>
           <div className="flex-1 text-left">
             <div className="text-sm font-medium text-foreground">

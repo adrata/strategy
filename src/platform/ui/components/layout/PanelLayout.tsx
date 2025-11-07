@@ -91,7 +91,8 @@ export function PanelLayout({
   // Divider logic: always a 1px line, 100% height, with a wider responsive hit area
   const dividerHitArea = 8; // Reduced for more precise cursor alignment
   const dividerLineWidth = 1;
-  const dividerLineColor = dragging ? "#3B82F6" : hovering ? "#6B7280" : "#e5e7eb";
+  // Use CSS variables for theme-aware colors (matches horizontal borders)
+  const dividerLineColor = dragging ? "var(--accent)" : hovering ? "var(--muted)" : "var(--border)";
   
   // Simple divider styles without visual effects
   const dividerStyle = {
@@ -595,7 +596,7 @@ export function PanelLayout({
                 style={{
                   width: dividerLineWidth,
                   height: "100%",
-                  background: leftDragging ? "#3B82F6" : leftHovering ? "#6B7280" : "#e5e7eb",
+                  background: leftDragging ? "var(--accent)" : leftHovering ? "var(--muted)" : "var(--border)",
                 }}
               />
             </div>

@@ -122,6 +122,7 @@ model workspaces {
   workshopDocuments workshopDocument[]
   workshopFolders   workshopFolder[]
   api_keys          api_keys[]
+  user_goals        user_goals[]
 
   @@index([slug])
   @@index([isActive])
@@ -178,6 +179,7 @@ model users {
   workshopVersionsCreated     workshopVersion[]
   workshopCommentsCreated     workshopComment[]
   workshopActivitiesPerformed workshopActivity[]
+  user_goals                  user_goals[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -382,6 +384,7 @@ model companies {
   lastActionDate         DateTime?          @db.Timestamp(6)
   nextAction             String?
   nextActionDate         DateTime?          @db.Timestamp(6)
+  directionalIntelligence String?
   actionStatus           String?
   globalRank             Int?               @default(0)
   createdAt              DateTime           @default(now())
@@ -587,6 +590,7 @@ model people {
   lastActionDate         DateTime?           @db.Timestamp(6)
   nextAction             String?
   nextActionDate         DateTime?           @db.Timestamp(6)
+  directionalIntelligence String?
   actionStatus           String?
   engagementScore        Float?              @default(0)
   globalRank             Int?                @default(0)
@@ -1508,6 +1512,61 @@ model workshopActivity {
   @@index([activityType])
   @@index([createdAt])
   @@index([performedById])
+}
+
+/// User Goals Tracking for Smart Checklist and AI Recommendations
+model user_goals {
+  id                      String    @id @default(ulid())
+  userId                  String
+  workspaceId             String
+  
+  // Revenue & Sales Goals
+  quarterlyRevenueGoal    Decimal?  @db.Decimal(15, 2)
+  yearlyRevenueGoal       Decimal?  @db.Decimal(15, 2)
+  quarterlyDealCount      Int?
+  monthlyActivityGoal     Int?
+  currentQuarterRevenue   Decimal?  @default(0) @db.Decimal(15, 2)
+  currentYearRevenue      Decimal?  @default(0) @db.Decimal(15, 2)
+  
+  // Pipeline Goals
+  pipelineValueGoal       Decimal?  @db.Decimal(15, 2)
+  currentPipelineValue    Decimal?  @default(0) @db.Decimal(15, 2)
+  avgDealSizeGoal         Decimal?  @db.Decimal(15, 2)
+  winRateGoal             Decimal?  @db.Decimal(5, 2)
+  
+  // Activity Goals
+  weeklyOutreachGoal      Int?
+  weeklyMeetingsGoal      Int?
+  weeklyCallsGoal         Int?
+  weeklyEmailsGoal        Int?
+  
+  // Custom Goals (flexible for user-defined goals)
+  customGoals             Json?     @default("[]")
+  
+  // Goal Period
+  goalPeriod              String?   @default("quarterly") @db.VarChar(20)
+  goalStartDate           DateTime?
+  goalEndDate             DateTime?
+  
+  // Progress Tracking
+  lastCalculated          DateTime?
+  progressPercentage      Decimal?  @default(0) @db.Decimal(5, 2)
+  isOnTrack               Boolean?  @default(true)
+  daysRemaining           Int?
+  
+  // System Fields
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  
+  // Relations
+  user                    users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace               workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, workspaceId])
+  @@index([userId])
+  @@index([workspaceId])
+  @@index([goalPeriod])
+  @@index([isOnTrack])
 }
 
 enum UserRole {

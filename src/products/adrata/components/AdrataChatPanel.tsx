@@ -96,7 +96,7 @@ export function AdrataChatPanel() {
         console.warn('Failed to load saved AI model:', e);
       }
     }
-    return AI_MODELS.find(m => m.provider === 'Adrata') || AI_MODELS[0] || { id: 'adrata-advanced', name: 'Adrata Advanced', provider: 'Adrata' };
+    return AI_MODELS.find(m => m.id === 'auto') || AI_MODELS[0] || { id: 'auto', name: 'Auto', displayName: 'Auto', version: 'Intelligent Routing', provider: 'Auto' };
   });
 
   const { activeSubApp } = ui;
@@ -671,7 +671,7 @@ export function AdrataChatPanel() {
             timestamp: new Date().toISOString(),
             sessionId: `adrata-session-${Date.now()}`
           },
-          selectedModel: selectedAIModel.id
+          selectedAIModel // Pass selected AI model to API
         })
       });
 

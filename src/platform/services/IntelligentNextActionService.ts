@@ -1,14 +1,19 @@
 import { PrismaClient } from '@prisma/client';
+import { UserGoalsService } from './UserGoalsService';
 
 const prisma = new PrismaClient();
 
 export interface NextActionRecommendation {
-  action: string;
+  action: string;  // Single sentence tactical action
+  directionalIntelligence: string;  // NEW: 2-4 sentence strategic guidance
   date: Date;
   reasoning: string;
   priority: 'high' | 'medium' | 'low';
   type: 'linkedin_connection_request' | 'email_conversation' | 'phone_call' | 'linkedin_inmail' | 'meeting_scheduled';
   context: string;
+  afmStage?: string;  // NEW: AcquisitionOS stage
+  urfScore?: number;  // NEW: RetentionOS score
+  goalAlignment?: string;  // NEW: How this aligns with user goals
   updatedAt: Date;
 }
 
@@ -42,7 +47,7 @@ export class IntelligentNextActionService {
 
   constructor(config: { workspaceId: string; userId: string }) {
     this.config = config;
-    this.claudeApiKey = process.env.ANTHROPIC_API_KEY || '';
+    this.claudeApiKey = process.env['ANTHROPIC_API_KEY'] || '';
   }
 
   /**
@@ -246,7 +251,10 @@ export class IntelligentNextActionService {
     }
 
     try {
-      const prompt = this.buildClaudePrompt(context);
+      // Get user goals context for goal-aligned recommendations
+      const goalContext = await UserGoalsService.getGoalContextForAI(this.config.userId, this.config.workspaceId);
+      
+      const prompt = this.buildClaudePrompt(context, goalContext);
       
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -286,7 +294,7 @@ export class IntelligentNextActionService {
   /**
    * Build comprehensive prompt for Claude with AcquisitionOS framework
    */
-  private buildClaudePrompt(context: ActionContext): string {
+  private buildClaudePrompt(context: ActionContext, goalContext?: string): string {
     const recentActionsText = context.recentActions
       .map(action => `- ${action.type}: ${action.subject} (${action.createdAt.toISOString().split('T')[0]})`)
       .join('\n');
@@ -317,6 +325,8 @@ CONTACT INFORMATION:
 
 RECENT ACTIONS (most recent first):
 ${recentActionsText}
+
+${goalContext || 'USER GOALS: Not set yet.'}
 
 ACQUISITIONOS FRAMEWORK - STAGE-BASED STRATEGY:
 
@@ -363,13 +373,28 @@ ACQUISITIONOS STRATEGY RULES:
 RESPONSE FORMAT:
 Respond in this exact JSON format:
 {
-  "action": "Specific, actionable description based on AcquisitionOS stage",
+  "action": "Single sentence tactical action (e.g., 'Schedule discovery call with John Smith')",
+  "directionalIntelligence": "2-4 sentence strategic guidance explaining AFM stage, why this matters, what it achieves, and how it compresses time. Include goal alignment if relevant.",
   "type": "action_type",
   "reasoning": "Detailed explanation using AcquisitionOS framework principles",
   "priority": "high|medium|low",
+  "afmStage": "Generate|Initiate|Educate|Build|Justify|Negotiate",
   "daysFromNow": 2,
   "expectedOutcome": "What you expect to achieve with this action",
   "followUpStrategy": "How to follow up if this action doesn't get a response"
+}
+
+EXAMPLE RESPONSE:
+{
+  "action": "Schedule stakeholder mapping call with DataCorp",
+  "directionalIntelligence": "DataCorp is in Build stage (AFM) with Champion identified but incomplete stakeholder mapping. This call will identify Decision Makers and Blockers, critical for moving to Justify stage. Focus on uncovering who controls budget and timeline. Compressing this discovery phase from weeks to days is key to faster close.",
+  "type": "phone_call",
+  "reasoning": "Multiple touchpoints completed but stakeholder structure still unclear. Need to map buying group.",
+  "priority": "high",
+  "afmStage": "Build",
+  "daysFromNow": 1,
+  "expectedOutcome": "Complete stakeholder map with decision authority levels",
+  "followUpStrategy": "If no response in 2 days, reach out via Champion"
 }
 
 Focus on the most strategic next move that will advance the relationship through the AcquisitionOS stages toward a closed deal.`;
@@ -442,10 +467,13 @@ Focus on the most strategic next move that will advance the relationship through
 
       return {
         action: parsed.action,
+        directionalIntelligence: parsed.directionalIntelligence || `${parsed.action}. ${enhancedReasoning}`,
         date: nextDate,
         reasoning: enhancedReasoning,
         priority: parsed.priority || 'medium',
         type: parsed.type,
+        afmStage: parsed.afmStage,
+        goalAlignment: parsed.goalAlignment,
         context: `AI-generated recommendation for ${context.entityInfo.name} - ${context.entityInfo.company || 'Unknown Company'}`,
         updatedAt: new Date()
       };
@@ -497,13 +525,23 @@ Focus on the most strategic next move that will advance the relationship through
         if (topPerson) {
           if (topPerson.nextAction) {
             // Person has a next action - use it
+            const afmStage = this.mapStatusToAFMStage(companyStatus);
+            const directionalIntelligence = this.generateDirectionalIntelligence(
+              `Engage ${topPerson.fullName} - ${topPerson.nextAction}`,
+              `Focus on highest-ranked person at ${context.entityInfo.name}`,
+              afmStage,
+              context
+            );
+            
             return {
               action: `Engage ${topPerson.fullName} - ${topPerson.nextAction}`,
+              directionalIntelligence,
               date: nextDate,
               reasoning: `Focus on highest-ranked person (${topPerson.globalRank}) at ${context.entityInfo.name}`,
               priority: topPerson.globalRank && topPerson.globalRank <= 50 ? 'high' : 
                        topPerson.globalRank && topPerson.globalRank <= 200 ? 'medium' : 'low',
               type: 'person_engagement' as any,
+              afmStage,
               context: `Person-focused action for ${context.entityInfo.name}`,
               updatedAt: new Date()
             };
@@ -519,13 +557,23 @@ Focus on the most strategic next move that will advance the relationship through
                 personContext.recentActions[0]
               );
               
+              const afmStage = this.mapStatusToAFMStage(companyStatus);
+              const directionalIntelligence = this.generateDirectionalIntelligence(
+                `Engage ${topPerson.fullName} - ${personAction.action}`,
+                `Focus on highest-ranked person at ${context.entityInfo.name}`,
+                afmStage,
+                context
+              );
+              
               return {
                 action: `Engage ${topPerson.fullName} - ${personAction.action}`,
+                directionalIntelligence,
                 date: nextDate,
                 reasoning: `Focus on highest-ranked person (${topPerson.globalRank}) at ${context.entityInfo.name}`,
                 priority: topPerson.globalRank && topPerson.globalRank <= 50 ? 'high' : 
                          topPerson.globalRank && topPerson.globalRank <= 200 ? 'medium' : 'low',
                 type: personAction.type as any,
+                afmStage,
                 context: `Person-focused action for ${context.entityInfo.name}`,
                 updatedAt: new Date()
               };
@@ -545,12 +593,23 @@ Focus on the most strategic next move that will advance the relationship through
     const priority = context.globalRank && context.globalRank <= 50 ? 'high' : 
                     context.globalRank && context.globalRank <= 200 ? 'medium' : 'low';
 
+    // Generate directional intelligence for fallback action
+    const afmStage = this.mapStatusToAFMStage(companyStatus);
+    const directionalIntelligence = this.generateDirectionalIntelligence(
+      stageAction.action,
+      stageAction.reasoning,
+      afmStage,
+      context
+    );
+
     return {
       action: stageAction.action,
+      directionalIntelligence,
       date: nextDate,
       reasoning: stageAction.reasoning,
       priority,
       type: stageAction.type as any,
+      afmStage,
       context: `AcquisitionOS ${companyStatus} stage action for ${context.entityInfo.name}`,
       updatedAt: new Date()
     };
@@ -712,12 +771,13 @@ Focus on the most strategic next move that will advance the relationship through
   ): Promise<void> {
     try {
       if (entityType === 'person') {
-        // People table has all the fields
+        // People table has all the fields including directionalIntelligence
         await prisma.people.update({
           where: { id: entityId },
           data: {
             nextAction: recommendation.action,
             nextActionDate: recommendation.date,
+            directionalIntelligence: recommendation.directionalIntelligence,
             nextActionReasoning: recommendation.reasoning,
             nextActionPriority: recommendation.priority,
             nextActionType: recommendation.type,
@@ -725,13 +785,17 @@ Focus on the most strategic next move that will advance the relationship through
           }
         });
       } else {
-        // Companies table only has basic fields
+        // Companies table has directionalIntelligence field now
         await prisma.companies.update({
           where: { id: entityId },
           data: {
             nextAction: recommendation.action,
-            nextActionDate: recommendation.date
-            // Remove: nextActionReasoning, nextActionPriority, nextActionType, nextActionUpdatedAt
+            nextActionDate: recommendation.date,
+            directionalIntelligence: recommendation.directionalIntelligence,
+            nextActionReasoning: recommendation.reasoning,
+            nextActionPriority: recommendation.priority,
+            nextActionType: recommendation.type,
+            nextActionUpdatedAt: recommendation.updatedAt
           }
         });
       }
@@ -827,5 +891,56 @@ Focus on the most strategic next move that will advance the relationship through
     }
 
     console.log(`✅ Batch updated nextActions for ${people.length} people and ${companies.length} companies`);
+  }
+  
+  /**
+   * Map company status to AFM stage
+   */
+  private mapStatusToAFMStage(status: string | null): string {
+    const mapping: Record<string, string> = {
+      'LEAD': 'Generate',
+      'PROSPECT': 'Initiate',
+      'OPPORTUNITY': 'Build',
+      'CLIENT': 'Retention',
+      'SUPERFAN': 'Evangelize'
+    };
+    return mapping[status || 'LEAD'] || 'Generate';
+  }
+  
+  /**
+   * Generate directional intelligence (strategic guidance) for action
+   */
+  private generateDirectionalIntelligence(
+    action: string,
+    reasoning: string,
+    afmStage: string,
+    context: ActionContext
+  ): string {
+    const entityName = context.entityInfo.name;
+    const company = context.entityInfo.company || 'their company';
+    const title = context.entityInfo.title || 'contact';
+    const rankInfo = context.globalRank && context.globalRank <= 50 ? 
+      ` This is a high-priority contact (Rank #${context.globalRank}) requiring immediate attention.` : '';
+    
+    // Stage-specific strategic guidance
+    const stageGuidance: Record<string, string> = {
+      'Generate': `${entityName} is in Generate stage (AFM). The goal is to identify Champions and assess pain levels. ${action} will help determine if they have decision-making authority and genuine pain worth solving. Focus on qualifying quickly to avoid wasting time on low-fit prospects.${rankInfo}`,
+      
+      'Initiate': `${entityName} at ${company} is in Initiate stage (AFM). ${title} has been identified as a potential Champion. ${action} will help convert their pain to interest by deploying Big Idea positioning and mapping the organizational structure. The faster we identify stakeholders and decision criteria, the faster we compress time-to-close.${rankInfo}`,
+      
+      'Educate': `${entityName} is in Educate stage (AFM). The Champion's pain is validated. ${action} will establish credibility and position you as an internal thought leader they trust. Research organizational priorities and equip the Champion with insights that make them indispensable internally. This builds the foundation for becoming their go-to advisor.${rankInfo}`,
+      
+      'Build': `${entityName} at ${company} is in Build stage (AFM). Champion is engaged and pain is quantified. ${action} will validate stakeholder pain, map the buying group, and strengthen the Champion's internal position. Focus on making them the hero who solves everyone's pain. This is the critical phase where deals either accelerate or stall.${rankInfo}`,
+      
+      'Justify': `${entityName} is in Justify stage (AFM). ${action} will help position the solution as strategic fit and collaborate on the business case. The Champion needs to present co-built solution to leadership. Provide tools, ROI quantification, and Executive Summary to support their internal pitch. Speed here determines if this closes this quarter.${rankInfo}`,
+      
+      'Negotiate': `${entityName} at ${company} is in Negotiate stage (AFM). ${action} will help secure buying committee alignment and remove procurement friction. Map individual motivations of all decision-makers and create tailored messaging. The goal is to compress legal/procurement from months to weeks.${rankInfo}`,
+      
+      'Retention': `${entityName} is an existing customer. ${action} will maintain engagement and prevent churn. Monitor URF score and ensure Process + Technology + Emotion balance is maintained. Strong retention creates expansion opportunities.${rankInfo}`,
+      
+      'Evangelize': `${entityName} is a customer advocate (Evangelize stage). ${action} will strengthen their evangelism and create expansion opportunities. Leverage their success story for case studies and referrals. High URF score (81+) means they're primed for expansion.${rankInfo}`
+    };
+    
+    return stageGuidance[afmStage] || `${entityName}: ${action}. ${reasoning}${rankInfo}`;
   }
 }

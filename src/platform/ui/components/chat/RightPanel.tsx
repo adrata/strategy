@@ -191,7 +191,7 @@ export function RightPanel() {
         console.warn('Failed to load saved AI model:', e);
       }
     }
-    return AI_MODELS.find(m => m.provider === 'Adrata') || AI_MODELS[0] || { id: 'adrata-advanced', name: 'Adrata Advanced', provider: 'Adrata' };
+    return AI_MODELS.find(m => m.id === 'auto') || AI_MODELS[0] || { id: 'auto', name: 'Auto', displayName: 'Auto', version: 'Intelligent Routing', provider: 'Auto' };
   });
 
   // Voice settings disabled for now
@@ -1847,6 +1847,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           enableVoiceResponse: false,
           selectedVoiceId: 'default',
           useOpenRouter: true, // Enable OpenRouter intelligent routing
+          selectedAIModel, // Pass selected AI model to API
           // Enhanced context for smarter responses
           context: {
             currentUrl: window.location.href,
