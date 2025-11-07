@@ -611,7 +611,11 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
   };
 
   const getStateColor = (state: string) => {
-    if (!state) return 'bg-hover text-foreground';
+    if (!state) return 'bg-hover text-foreground border border-border';
+    // Handle "ready" state specifically
+    if (state.toLowerCase() === 'ready') {
+      return 'bg-success/10 text-success border border-success';
+    }
     return 'bg-info/10 text-info border border-info';
   };
 
@@ -620,7 +624,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
       
 
       {/* Stats Header */}
-      <div className="flex-shrink-0 p-3 border-b border-border bg-panel-background">
+      <div className="flex-shrink-0 p-3 border-b border-border" style={{ backgroundColor: 'var(--panel-background)', filter: 'brightness(1.1)' }}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-red-600">{doneContacts.length}</span>
@@ -881,10 +885,10 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           )}
                         </button>
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          action['priority'] === 'critical' ? 'bg-error/10 text-error' :
-                          action['priority'] === 'high' ? 'bg-error/10 text-error' :
-                          action['priority'] === 'medium' ? 'bg-warning/10 text-warning' :
-                          'bg-hover text-foreground'
+                          action['priority'] === 'critical' ? 'bg-error/10 text-error border border-error' :
+                          action['priority'] === 'high' ? 'bg-error/10 text-error border border-error' :
+                          action['priority'] === 'medium' ? 'bg-warning/10 text-warning border border-warning' :
+                          'bg-hover text-foreground border border-border'
                         }`}>
                           {action.priority}
                         </span>
@@ -967,9 +971,9 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                               {event.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                              event['type'] === 'demo' ? 'bg-info/10 text-info' :
-                              event['type'] === 'call' ? 'bg-success/10 text-success' :
-                              'bg-hover text-foreground'
+                              event['type'] === 'demo' ? 'bg-info/10 text-info border border-info' :
+                              event['type'] === 'call' ? 'bg-success/10 text-success border border-success' :
+                              'bg-hover text-foreground border border-border'
                             }`}>
                               {event.type}
                             </span>

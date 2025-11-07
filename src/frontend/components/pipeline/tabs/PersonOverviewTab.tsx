@@ -6,6 +6,7 @@ import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { getPhoneDisplayValue } from '@/platform/utils/phone-validator';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 import { authFetch } from '@/platform/api-fetch';
+import { ChurnRiskBadge } from '@/frontend/components/pipeline/ChurnRiskBadge';
 
 interface PersonOverviewTabProps {
   recordType: string;
@@ -141,11 +142,12 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   };
 
   // Memoize data extraction to prevent expensive recalculations on every render
-  const { coresignalData, coresignalProfile, enrichedData, personData } = useMemo(() => {
+  const { coresignalData, coresignalProfile, enrichedData, personData, churnPrediction } = useMemo(() => {
     // Extract CoreSignal data from the correct location
     const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
     const coresignalProfile = record?.customFields?.coresignalProfile || {};
     const enrichedData = record?.customFields?.enrichedData || {};
+    const churnPrediction = record?.customFields?.churnPrediction || record?.aiIntelligence?.refreshStatus || null;
     
     // Extract comprehensive person data from database first, then CoreSignal fallback - no fallback to '-'
     const personData = {
@@ -213,7 +215,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     seniority: record.seniority ?? record.customFields?.seniority ?? 'Mid-level'
   };
 
-  return { coresignalData, coresignalProfile, enrichedData, personData };
+    return { coresignalData, coresignalProfile, enrichedData, personData, churnPrediction };
   }, [record]);
 
   // Debug logging removed for cleaner console
@@ -452,6 +454,14 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               </div>
             </div>
           </div>
+
+          {/* Churn Risk Badge - Compact Pill Style */}
+          {churnPrediction && churnPrediction.refreshColor && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted">Churn Risk:</span>
+              <ChurnRiskBadge churnPrediction={churnPrediction} variant="detailed" />
+            </div>
+          )}
 
           {/* Intelligence Data Card */}
           <div className="bg-background p-4 rounded-lg border border-border">
