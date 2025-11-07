@@ -52,18 +52,28 @@ export function CompleteActionModal({
   
   // Store the original personId/companyId from props to preserve them even if user changes person in form
   // This ensures actions are always associated with the correct person when modal is opened from a record
-  const originalPersonIdRef = useRef<string | undefined>(personId);
-  const originalCompanyIdRef = useRef<string | undefined>(companyId);
+  const originalPersonIdRef = useRef<string | undefined>(undefined);
+  const originalCompanyIdRef = useRef<string | undefined>(undefined);
   
-  // Update refs when props change (when modal opens with a new record)
+  // Update refs when modal opens with a new record (preserve the personId/companyId from props)
   useEffect(() => {
-    if (isOpen && personId) {
-      originalPersonIdRef.current = personId;
-      console.log('🔒 [CompleteActionModal] Locking personId to original:', personId);
-    }
-    if (isOpen && companyId) {
-      originalCompanyIdRef.current = companyId;
-      console.log('🔒 [CompleteActionModal] Locking companyId to original:', companyId);
+    if (isOpen) {
+      // When modal opens, capture the personId/companyId from props
+      if (personId) {
+        originalPersonIdRef.current = personId;
+        console.log('🔒 [CompleteActionModal] Locking personId to original:', personId);
+      } else {
+        // If no personId provided, clear the ref (allows user to select any person)
+        originalPersonIdRef.current = undefined;
+      }
+      
+      if (companyId) {
+        originalCompanyIdRef.current = companyId;
+        console.log('🔒 [CompleteActionModal] Locking companyId to original:', companyId);
+      } else {
+        // If no companyId provided, clear the ref
+        originalCompanyIdRef.current = undefined;
+      }
     }
   }, [isOpen, personId, companyId]);
   

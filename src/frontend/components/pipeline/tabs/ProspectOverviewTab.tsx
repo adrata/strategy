@@ -338,58 +338,63 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     }
   };
 
-  // Generate wants and needs based on role and industry
-  const generateWantsAndNeeds = () => {
-    const role = (prospectData.title || '').toLowerCase();
-    const industry = (prospectData.industry || '').toLowerCase();
-    const department = (prospectData.department || '').toLowerCase();
+  // Get real wants and needs from intelligence data - only show if we have real data
+  const getRealWantsAndNeeds = () => {
+    // Check for Monaco enrichment data (real intelligence)
+    const monacoEnrichment = record?.customFields?.monacoEnrichment;
+    const personIntel = monacoEnrichment?.personIntelligence;
     
-    const wants = [];
-    const needs = [];
+    // Check for AI-generated intelligence
+    const aiIntelligence = record?.customFields?.aiIntelligence;
     
-    // Role-based wants and needs
-    if (role.includes('director') || role.includes('vp') || role.includes('vice president')) {
-      wants.push('Strategic solutions that drive business growth');
-      wants.push('ROI-focused technology investments');
-      wants.push('Competitive advantage in their market');
-      needs.push('Executive-level decision support');
-      needs.push('Strategic planning tools');
-    } else if (role.includes('manager') || role.includes('supervisor')) {
-      wants.push('Operational efficiency improvements');
-      wants.push('Team productivity tools');
-      wants.push('Process automation solutions');
-      needs.push('Management reporting capabilities');
-      needs.push('Team collaboration tools');
-    } else {
-      wants.push('User-friendly technology solutions');
-      wants.push('Improved workflow efficiency');
-      wants.push('Better integration with existing systems');
-      needs.push('Training and support resources');
-      needs.push('Reliable technical solutions');
+    // Check for manually entered intelligence data
+    const manualIntelligence = record?.customFields?.intelligence;
+    
+    const wants: string[] = [];
+    const needs: string[] = [];
+    
+    // Priority 1: Monaco enrichment (most reliable)
+    if (personIntel) {
+      if (personIntel.motivations && Array.isArray(personIntel.motivations) && personIntel.motivations.length > 0) {
+        wants.push(...personIntel.motivations.map((m: any) => typeof m === 'string' ? m : String(m)));
+      }
+      if (personIntel.painPoints && Array.isArray(personIntel.painPoints) && personIntel.painPoints.length > 0) {
+        needs.push(...personIntel.painPoints.map((p: any) => typeof p === 'string' ? p : String(p)));
+      }
     }
     
-    // Industry-based wants and needs
-    if (industry.includes('technology') || industry.includes('software')) {
-      wants.push('Cutting-edge technology solutions');
-      wants.push('Scalable and flexible platforms');
-      needs.push('Technical expertise and support');
-      needs.push('Integration capabilities');
-    } else if (industry.includes('healthcare')) {
-      wants.push('Compliance-focused solutions');
-      wants.push('Patient data security');
-      needs.push('HIPAA-compliant systems');
-      needs.push('Regulatory compliance support');
-    } else if (industry.includes('finance') || industry.includes('banking')) {
-      wants.push('Financial data security');
-      wants.push('Regulatory compliance');
-      needs.push('Audit trail capabilities');
-      needs.push('Risk management tools');
+    // Priority 2: AI-generated intelligence
+    if (aiIntelligence) {
+      if (aiIntelligence.wants && Array.isArray(aiIntelligence.wants) && aiIntelligence.wants.length > 0) {
+        wants.push(...aiIntelligence.wants);
+      }
+      if (aiIntelligence.needs && Array.isArray(aiIntelligence.needs) && aiIntelligence.needs.length > 0) {
+        needs.push(...aiIntelligence.needs);
+      }
     }
     
-    return { wants, needs };
+    // Priority 3: Manual intelligence data
+    if (manualIntelligence) {
+      if (manualIntelligence.wants && Array.isArray(manualIntelligence.wants) && manualIntelligence.wants.length > 0) {
+        wants.push(...manualIntelligence.wants);
+      }
+      if (manualIntelligence.needs && Array.isArray(manualIntelligence.needs) && manualIntelligence.needs.length > 0) {
+        needs.push(...manualIntelligence.needs);
+      }
+    }
+    
+    // Remove duplicates and return
+    const uniqueWants = Array.from(new Set(wants));
+    const uniqueNeeds = Array.from(new Set(needs));
+    
+    return { 
+      wants: uniqueWants, 
+      needs: uniqueNeeds,
+      hasRealData: uniqueWants.length > 0 || uniqueNeeds.length > 0
+    };
   };
 
-  const { wants, needs } = generateWantsAndNeeds();
+  const { wants, needs, hasRealData } = getRealWantsAndNeeds();
 
   // Generate last actions from fetched API data
   const generateLastActions = () => {
@@ -680,38 +685,58 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
         </div>
       </div>
 
-      {/* What do they care about */}
-      <div className="space-y-6">
-        <div className="bg-background p-4 rounded-lg border border-border">
-          <h4 className="font-medium text-foreground mb-3">
-            Wants & Needs: Based on their role as {prospectData.title} at {prospectData.company}, they likely care about:
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
-              <ul className="space-y-1">
-                {wants.map((want, index) => (
-                  <li key={index} className="text-sm text-muted flex items-start">
-                    <span className="text-muted mr-2">•</span>
-                    {want}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
-              <ul className="space-y-1">
-                {needs.map((need, index) => (
-                  <li key={index} className="text-sm text-muted flex items-start">
-                    <span className="text-muted mr-2">•</span>
-                    {need}
-                  </li>
-                ))}
-              </ul>
+      {/* What do they care about - Only show if we have real intelligence data */}
+      {hasRealData && (
+        <div className="space-y-6">
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">
+              Professional Insights
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {wants.length > 0 && (
+                <div>
+                  <h5 className="text-sm font-medium text-foreground mb-2">Wants</h5>
+                  <ul className="space-y-1">
+                    {wants.map((want, index) => (
+                      <li key={index} className="text-sm text-muted flex items-start">
+                        <span className="text-muted mr-2">•</span>
+                        {want}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {needs.length > 0 && (
+                <div>
+                  <h5 className="text-sm font-medium text-foreground mb-2">Needs</h5>
+                  <ul className="space-y-1">
+                    {needs.map((need, index) => (
+                      <li key={index} className="text-sm text-muted flex items-start">
+                        <span className="text-muted mr-2">•</span>
+                        {need}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      )}
+      
+      {/* Show helpful message if no real intelligence data */}
+      {!hasRealData && (
+        <div className="space-y-6">
+          <div className="bg-muted/30 p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-2">
+              Professional Insights
+            </h4>
+            <p className="text-sm text-muted">
+              Gather intelligence data to see wants and needs for this prospect. This information comes from enrichment services, AI analysis, or manual input.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* What did I last do */}
       <div className="space-y-6">
