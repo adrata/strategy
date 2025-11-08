@@ -200,11 +200,6 @@ function BacklogItemComponent({
           )}
           <div className="flex items-center gap-3 text-xs text-muted">
             {item.assignee && <span>{item.assignee}</span>}
-            {item.priority && !itemIsBug && (
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority]}`}>
-                {item.priority}
-              </span>
-            )}
             {displayTag && (
               <span className="bg-panel-background px-2 py-0.5 rounded">
                 {displayTag}
