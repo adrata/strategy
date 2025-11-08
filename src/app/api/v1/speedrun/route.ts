@@ -13,7 +13,7 @@ const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * Dedicated optimized endpoint for speedrun data
  * - Top 50 people with companies (prioritizes ranked people, includes unranked)
  * - Only includes people with company relationships
- * - Ordered by globalRank ascending (1-50), then by creation date
+ * - Ordered by globalRank descending (50-1), then by creation date
  * - Pre-formatted response (no transformation needed)
  * - Aggressive Redis caching (5 min TTL)
  * - Leverages composite indexes for <200ms queries
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
               }
             }
           },
-          orderBy: { globalRank: 'asc' }
+          orderBy: { globalRank: 'desc' } // 50-1 descending order
         });
 
         // 2. Get people from companies that have people (these get Speedrun ranks)
@@ -191,10 +191,10 @@ export async function GET(request: NextRequest) {
               }
             }
           },
-          orderBy: { globalRank: 'asc' }
+          orderBy: { globalRank: 'desc' } // 50-1 descending order
         });
 
-        // 3. Combine and sort by globalRank
+        // 3. Combine and sort by globalRank (descending: 50-1)
         const allRecords = [
           ...companiesWithoutPeople.map(company => ({
             ...company,
@@ -223,14 +223,14 @@ export async function GET(request: NextRequest) {
           }))
         ];
 
-        // Sort by globalRank to maintain unified ranking
-        allRecords.sort((a, b) => a.globalRank - b.globalRank);
+        // Sort by globalRank descending (50-1) to maintain unified ranking
+        allRecords.sort((a, b) => (b.globalRank || 0) - (a.globalRank || 0));
         
-        // 🏆 FIX: Assign sequential ranks (1, 2, 3, ...) to prevent duplicate #1s
-        // After sorting, reassign ranks sequentially to ensure each rank appears only once
+        // 🏆 FIX: Assign countdown ranks (50, 49, 48, ... 3, 2, 1) for descending display
+        // After sorting, reassign ranks in descending order (50-1) for countdown effect
         speedrunRecords = allRecords.slice(0, 50).map((record, index) => ({
           ...record,
-          displayRank: index + 1, // Sequential rank: 1, 2, 3, ..., 50
+          displayRank: 50 - index, // Countdown rank: 50, 49, 48, ..., 3, 2, 1
           globalRank: record.globalRank // Keep original for sorting, but use displayRank for UI
         }));
         
