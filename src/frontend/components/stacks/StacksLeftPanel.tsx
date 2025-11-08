@@ -282,8 +282,22 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])
         ).length;
 
-        // Backlog count = Up Next items + Backlog items (both appear in backlog view)
-        const backlogCount = upNextCount + backlogItemsCount;
+        // Backlog count = Up Next items + Backlog items
+        // BUT exclude items that are in workstream board statuses other than 'up-next'/'todo'
+        // (i.e., exclude 'built', 'in-progress', 'qa1', 'qa2', 'shipped' from backlog count)
+        const backlogCount = allItems.filter((item: any) => {
+          const status = item.status;
+          // Include 'up-next' and 'todo' (these appear in backlog view)
+          if (status === STACK_STATUS.UP_NEXT || status === STACK_STATUS.TODO) {
+            return true;
+          }
+          // Include 'backlog' and 'deep-backlog' (below the line)
+          if (status === STACK_STATUS.BACKLOG || status === STACK_STATUS.DEEP_BACKLOG) {
+            return true;
+          }
+          // Exclude all other workstream board statuses ('built', 'in-progress', 'qa1', 'qa2', 'shipped')
+          return false;
+        }).length;
 
         // Bugs count = tasks with type='bug'
         const bugsCount = tasks.filter((task: any) => task.type === 'bug').length;
@@ -367,8 +381,22 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         WORKSTREAM_BOARD_STATUSES.includes(item.status as typeof STACK_STATUS[keyof typeof STACK_STATUS])
       ).length;
 
-      // Backlog count = Up Next items + Backlog items (both appear in backlog view)
-      const backlogCount = upNextCount + backlogItemsCount;
+      // Backlog count = Up Next items + Backlog items
+      // BUT exclude items that are in workstream board statuses other than 'up-next'/'todo'
+      // (i.e., exclude 'built', 'in-progress', 'qa1', 'qa2', 'shipped' from backlog count)
+      const backlogCount = allItems.filter((item: any) => {
+        const status = item.status;
+        // Include 'up-next' and 'todo' (these appear in backlog view)
+        if (status === STACK_STATUS.UP_NEXT || status === STACK_STATUS.TODO) {
+          return true;
+        }
+        // Include 'backlog' and 'deep-backlog' (below the line)
+        if (status === STACK_STATUS.BACKLOG || status === STACK_STATUS.DEEP_BACKLOG) {
+          return true;
+        }
+        // Exclude all other workstream board statuses ('built', 'in-progress', 'qa1', 'qa2', 'shipped')
+        return false;
+      }).length;
 
       // Bugs count = tasks with type='bug'
       const bugsCount = (contextTasks || []).filter((task: any) => task.type === 'bug').length;
