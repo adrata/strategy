@@ -1162,14 +1162,32 @@ export function PipelineHeader({
         
         // For companies and people sections, show Companies/People first, then Actions
         if (section === 'companies' || section === 'people') {
+          // Use singular form when count is 1
+          const label = section === 'companies' 
+            ? (totalCount === 1 ? 'Company' : 'Companies')
+            : (totalCount === 1 ? 'Person' : 'People');
+          
           metricItems.push({
-            label: section === 'companies' ? 'Companies' : 'People',
+            label: label,
             value: totalCount > 0 ? totalCount.toString() : '—',
             color: 'text-foreground'
           });
+          
+          // Calculate total actions count from metrics.data if available
+          // For people section, sum up actions from all records
+          let totalActions = 0;
+          if ('data' in metrics && Array.isArray(metrics.data) && metrics.data.length > 0) {
+            // Sum actions from all records
+            totalActions = metrics.data.reduce((sum: number, record: any) => {
+              // Handle both _count.actions and direct actions count
+              const actionsCount = record._count?.actions || record.actionsCount || record.actions?.length || 0;
+              return sum + actionsCount;
+            }, 0);
+          }
+          
           metricItems.push({
             label: 'Actions',
-            value: '—',
+            value: totalActions > 0 ? totalActions.toString() : '—',
             color: 'text-foreground'
           });
         } else {

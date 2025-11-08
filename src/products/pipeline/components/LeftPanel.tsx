@@ -1109,6 +1109,10 @@ export function PipelineLeftPanelStandalone({
     return () => clearTimeout(timer);
   }, []);
 
+  // Check if data is actually loaded (not just loading state)
+  const isDataLoaded = acquisitionData && !acquisitionData.isLoading && acquisitionData.acquireData;
+  const shouldShowLoading = !minLoadingTimeElapsed || acquisitionData?.isLoading || !isDataLoaded;
+
   // Workspace branding state
   const [workspaceBranding, setWorkspaceBranding] = useState({
     logoUrl: '/favicon.ico',
@@ -1340,7 +1344,7 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Revenue</span>
               <span className="text-xs font-semibold text-foreground">
-                {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
+                {shouldShowLoading ? (
                   <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
                   // Check if we're in demo mode
@@ -1370,7 +1374,7 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Workstream</span>
               <span className="text-xs font-semibold text-foreground">
-                {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
+                {shouldShowLoading ? (
                   <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
                   // Check if we're in demo mode
@@ -1403,7 +1407,7 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-muted">Coverage</span>
               <span className="text-xs font-semibold text-foreground">
-                {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
+                {shouldShowLoading ? (
                   <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
                   // Check if we're in demo mode
