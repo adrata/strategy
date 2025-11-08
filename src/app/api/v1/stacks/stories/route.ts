@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category'); // 'build' or 'sell'
     const status = searchParams.get('status');
     const epochId = searchParams.get('epochId');
+    const epicId = searchParams.get('epicId');
     const assigneeId = searchParams.get('assigneeId');
 
     if (!workspaceId) {
@@ -96,6 +97,11 @@ export async function GET(request: NextRequest) {
       // Exclude stories linked to epochs - only show regular stories and epic-linked stories
       where.epochId = null;
       console.log('🔍 [STACKS API] Excluding epoch-linked stories (showing only regular and epic-linked stories)');
+    }
+
+    if (epicId) {
+      where.epicId = epicId;
+      console.log('🔍 [STACKS API] Filtering by epicId:', epicId);
     }
 
     if (assigneeId) {

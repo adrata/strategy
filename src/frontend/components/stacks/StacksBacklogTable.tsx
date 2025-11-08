@@ -161,12 +161,12 @@ function BacklogItemComponent({
             </p>
           )}
           <div className="flex items-center gap-3 text-xs text-muted">
+            {item.assignee && <span>{item.assignee}</span>}
             {item.priority && (
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority]}`}>
                 {item.priority}
               </span>
             )}
-            {item.assignee && <span>{item.assignee}</span>}
             {displayTag && (
               <span className="bg-panel-background px-2 py-0.5 rounded">
                 {displayTag}
@@ -672,13 +672,36 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           })
         : [];
 
-      // Combine items that need updates (rank changes OR status changes)
-      const itemsToUpdate = [
-        ...itemsWithChangedRanks,
-        ...itemsWithStatusChanges.filter(
-          (item) => !itemsWithChangedRanks.find((i) => i.id === item.id)
-        ),
-      ];
+      // When moving between sections, we need to update ALL items in the target section
+      // because their ranks all shift. Also include the moved item.
+      let itemsToUpdate: BacklogItem[];
+      if (statusUpdate) {
+        // Cross-section move: update all items in target section + the moved item
+        const movedItem = newItems.find(item => item.id === statusUpdate.itemId);
+        const targetStatus = statusUpdate.newStatus;
+        
+        // Get all items with the target status (they all need rank updates)
+        const targetSectionItems = newItems.filter(item => 
+          item.status === targetStatus || 
+          (targetStatus === STACK_STATUS.UP_NEXT && item.status === STACK_STATUS.TODO) ||
+          (targetStatus === STACK_STATUS.TODO && item.status === STACK_STATUS.UP_NEXT)
+        );
+        
+        // Combine: all target section items + moved item if not already included
+        itemsToUpdate = [...new Set([
+          ...targetSectionItems,
+          ...itemsWithChangedRanks,
+          ...itemsWithStatusChanges
+        ].map(item => item.id))].map(id => newItems.find(item => item.id === id)!).filter(Boolean);
+      } else {
+        // Same-section move: only update items whose rank changed
+        itemsToUpdate = [
+          ...itemsWithChangedRanks,
+          ...itemsWithStatusChanges.filter(
+            (item) => !itemsWithChangedRanks.find((i) => i.id === item.id)
+          ),
+        ];
+      }
 
       // Also handle status update if provided
       const updatePromises: Promise<Response>[] = [];
@@ -691,6 +714,9 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         // If this is the item with a status change, include status in the same update
         if (statusUpdate && item.id === statusUpdate.itemId) {
           updatePayload.status = statusUpdate.newStatus;
+          console.log(`🔄 [persistRanks] Updating ${item.type} ${item.id} with status: ${statusUpdate.newStatus}, rank: ${item.rank}`);
+        } else {
+          console.log(`🔄 [persistRanks] Updating ${item.type} ${item.id} with rank: ${item.rank}`);
         }
         
         // Determine the correct API endpoint based on item type
@@ -712,15 +738,29 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           }).then(async (response) => {
             if (!response.ok) {
               const errorText = await response.text();
-              console.error(`Failed to update ${item.type} ${item.id}:`, response.status, errorText);
-              throw new Error(`Failed to update ${item.type}: ${response.status}`);
+              console.error(`❌ Failed to update ${item.type} ${item.id}:`, response.status, errorText);
+              throw new Error(`Failed to update ${item.type}: ${response.status} - ${errorText}`);
             }
+            console.log(`✅ Successfully updated ${item.type} ${item.id}`);
             return response;
           })
         );
       });
 
-      await Promise.all(updatePromises);
+      // Wait for all updates to complete
+      const results = await Promise.allSettled(updatePromises);
+      
+      // Check for any failures
+      const failures = results.filter(r => r.status === 'rejected');
+      if (failures.length > 0) {
+        console.error('❌ Some updates failed:', failures);
+        throw new Error(`${failures.length} update(s) failed`);
+      }
+      
+      console.log(`✅ Successfully persisted ${results.length} item updates`);
+      
+      // Small delay before refresh to ensure database is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // Trigger refresh to sync with other components
       if (stacksContext?.triggerRefresh) {
@@ -900,7 +940,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     // If moving between sections, update the status
     const isCrossSectionMove = activeIsUpNext !== overIsUpNext;
     const newStatus = isCrossSectionMove 
-      ? (overIsUpNext ? STACK_STATUS.UP_NEXT : STACK_STATUS.IN_PROGRESS) 
+      ? (overIsUpNext ? STACK_STATUS.UP_NEXT : STACK_STATUS.BACKLOG) 
       : activeItem.status;
     
     // Get items in the target section (where we're dropping)
@@ -930,14 +970,17 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       
       // Insert the dragged item at the drop position in the target section
       const updatedTargetItems = [...targetSectionItemsWithoutDragged];
-      const insertIndex = Math.min(dropIndex, updatedTargetItems.length);
-      updatedTargetItems.splice(insertIndex, 0, { ...activeItem, status: newStatus as BacklogItem['status'] });
+      // If dropping at the top (dropIndex === 0 or overIdStr is first item), insert at 0
+      // Otherwise, insert at the drop position
+      const insertIndex = dropIndex >= 0 ? dropIndex : 0;
+      const itemWithNewStatus = { ...activeItem, status: newStatus as BacklogItem['status'] };
+      updatedTargetItems.splice(insertIndex, 0, itemWithNewStatus);
       
       // Get items from the source section (items not in target section)
       const sourceSectionItemsWithoutDragged = itemsWithoutDragged.filter(item => 
         targetSection === 'upNext'
           ? (item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO)
-          : (item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO)
+          : (item.status === STACK_STATUS.UP_NEXT || item.status !== STACK_STATUS.TODO)
       );
       
       // Merge sections: target section items first, then source section items
@@ -945,7 +988,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         ? [...updatedTargetItems, ...sourceSectionItemsWithoutDragged]
         : [...sourceSectionItemsWithoutDragged, ...updatedTargetItems];
       
-      // Update ranks only for positioning, don't reorder other items
+      // Update ranks for ALL items to ensure correct ordering
+      // Items in the target section get ranks 1-N, items in source section get ranks N+1 onwards
       itemsWithNewRanks = allReorderedItems.map((item, index) => ({
         ...item,
         rank: index + 1
@@ -967,7 +1011,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       // Get other items (items not in the reordered section)
       const otherItems = items.filter(item => 
         targetSection === 'upNext'
-          ? (item.status !== 'up-next' && item.status !== 'todo')
+          ? (item.status !== STACK_STATUS.UP_NEXT && item.status !== STACK_STATUS.TODO)
           : (item.status === STACK_STATUS.UP_NEXT || item.status === STACK_STATUS.TODO)
       );
 
@@ -993,6 +1037,9 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     // Update ranks and status via API immediately using optimized helper
     try {
+      console.log(`🔄 [handleDragEnd] Starting persist for ${isCrossSectionMove ? 'cross-section' : 'same-section'} move`);
+      console.log(`🔄 [handleDragEnd] Moving item ${activeIdStr} from ${activeItem.status} to ${isCrossSectionMove ? newStatus : 'same status'}`);
+      
       await persistRanks(
         itemsWithNewRanks, 
         items,
@@ -1004,10 +1051,13 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         } : undefined
       );
       
+      console.log(`✅ [handleDragEnd] Successfully persisted all changes`);
       // Success - ranks are persisted, persistRanks function already triggers refresh via context
     } catch (error) {
-      console.error('Failed to update item order:', error);
-      // Trigger refresh to revert optimistic update and sync with server
+      console.error('❌ [handleDragEnd] Failed to update item order:', error);
+      // Revert optimistic update on error
+      setItems(items);
+      // Trigger refresh to sync with server state
       if (stacksContext?.triggerRefresh) {
         stacksContext.triggerRefresh();
       }

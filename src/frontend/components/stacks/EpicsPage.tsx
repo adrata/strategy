@@ -11,27 +11,9 @@ import { useStacks } from '@/products/stacks/context/StacksProvider';
 import { EpicGoalBar } from './EpicGoalBar';
 import { AddEpicModal } from './AddEpicModal';
 import { EpicRankBadge } from './EpicRankBadge';
-import { SortableEpicCard } from './SortableEpicCard';
+import { EpicCard } from './EpicCard';
 import { StacksEpic } from './types';
 import { getCategoryColors } from '@/platform/config/color-palette';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragStartEvent,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 interface CoreDocument {
   id: string;
@@ -65,17 +47,8 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [sortedEpics, setSortedEpics] = useState<StacksEpic[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; epicId: string } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
-
-  // DnD sensors
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
   // Sort epics by rank (lower rank = more important), then by createdAt
   useEffect(() => {
@@ -110,6 +83,7 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+    return undefined;
   }, [contextMenu]);
 
   // Fetch core documents (3 most recent papers/pitches)
@@ -162,6 +136,7 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
 
   const handleEpicClick = (epic: StacksEpic) => {
     setSelectedEpic(epic);
+    // Call onEpicSelect to show stories in the middle panel
     if (onEpicSelect) {
       onEpicSelect(epic);
     }
@@ -192,76 +167,6 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
     return workspaceId || null;
   };
 
-  // Update epic ranks in API
-  const updateEpicRanks = async (updatedEpics: StacksEpic[]) => {
-    const workspaceId = getWorkspaceId();
-    if (!workspaceId) {
-      console.error('No workspace ID available');
-      return;
-    }
-
-    try {
-      // Update all epics with new ranks
-      const updatePromises = updatedEpics.map((epic, index) => {
-        const rank = index + 1;
-        return fetch(`/api/stacks/epics/${epic.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            rank,
-            workspaceId,
-          }),
-        });
-      });
-
-      await Promise.all(updatePromises);
-      
-      // Refresh epics after update
-      if (triggerRefresh) {
-        triggerRefresh();
-      }
-    } catch (error) {
-      console.error('Failed to update epic ranks:', error);
-    }
-  };
-
-  // Drag handlers
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  };
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    setActiveId(null);
-
-    if (!over || active.id === over.id) {
-      return;
-    }
-
-    const oldIndex = sortedEpics.findIndex((epic) => epic.id === active.id);
-    const newIndex = sortedEpics.findIndex((epic) => epic.id === over.id);
-
-    if (oldIndex === -1 || newIndex === -1) {
-      return;
-    }
-
-    // Reorder epics
-    const newSortedEpics = arrayMove(sortedEpics, oldIndex, newIndex);
-    
-    // Update ranks (1-based, lower = more important)
-    const updatedEpics = newSortedEpics.map((epic, index) => ({
-      ...epic,
-      rank: index + 1,
-    }));
-
-    setSortedEpics(updatedEpics);
-    
-    // Persist to API
-    await updateEpicRanks(updatedEpics);
-  };
 
   // Right-click handler
   const handleContextMenu = (event: React.MouseEvent, epicId: string) => {
@@ -274,43 +179,6 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
     });
   };
 
-  // Move epic to position
-  const moveEpic = async (epicId: string, direction: 'up' | 'down' | 'top' | 'bottom') => {
-    const currentIndex = sortedEpics.findIndex((e) => e.id === epicId);
-    if (currentIndex === -1) return;
-
-    let newIndex: number;
-    
-    switch (direction) {
-      case 'up':
-        newIndex = Math.max(0, currentIndex - 1);
-        break;
-      case 'down':
-        newIndex = Math.min(sortedEpics.length - 1, currentIndex + 1);
-        break;
-      case 'top':
-        newIndex = 0;
-        break;
-      case 'bottom':
-        newIndex = sortedEpics.length - 1;
-        break;
-      default:
-        return;
-    }
-
-    if (currentIndex === newIndex) return;
-
-    const newSortedEpics = arrayMove(sortedEpics, currentIndex, newIndex);
-    const updatedEpics = newSortedEpics.map((epic, index) => ({
-      ...epic,
-      rank: index + 1,
-    }));
-
-    setSortedEpics(updatedEpics);
-    setContextMenu(null);
-    
-    await updateEpicRanks(updatedEpics);
-  };
 
   // Only show loading spinner for core docs initial load
   // Epics come from context and should display even while loading
@@ -473,33 +341,20 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
             </button>
           </div>
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={filteredAndSortedEpics.map((e) => e.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-4">
-                {filteredAndSortedEpics.map((epic, index) => {
-                  const rank = epic.rank || index + 1;
-                  return (
-                    <SortableEpicCard
-                      key={epic.id}
-                      epic={{ ...epic, rank }}
-                      isSelected={selectedEpic?.id === epic.id}
-                      isDragging={activeId === epic.id}
-                      onClick={() => handleEpicClick(epic)}
-                      onContextMenu={handleContextMenu}
-                    />
-                  );
-                })}
-              </div>
-            </SortableContext>
-          </DndContext>
+          <div className="space-y-4">
+            {filteredAndSortedEpics.map((epic, index) => {
+              const rank = epic.rank || index + 1;
+              return (
+                <EpicCard
+                  key={epic.id}
+                  epic={{ ...epic, rank }}
+                  isSelected={selectedEpic?.id === epic.id}
+                  onClick={() => handleEpicClick(epic)}
+                  onContextMenu={handleContextMenu}
+                />
+              );
+            })}
+          </div>
         )}
         </div>
       </div>
@@ -512,42 +367,6 @@ export function EpicsPage({ onEpicSelect, onDocumentSelect }: EpicsPageProps) {
         />
       )}
 
-      {/* Context Menu */}
-      {contextMenu && (
-        <div
-          ref={contextMenuRef}
-          className="fixed bg-card border border-border rounded-lg shadow-lg z-50 py-2 min-w-[180px]"
-          style={{
-            left: `${contextMenu.x}px`,
-            top: `${contextMenu.y}px`,
-          }}
-        >
-          <button
-            onClick={() => moveEpic(contextMenu.epicId, 'top')}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors"
-          >
-            Move to Top
-          </button>
-          <button
-            onClick={() => moveEpic(contextMenu.epicId, 'up')}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors"
-          >
-            Move Up
-          </button>
-          <button
-            onClick={() => moveEpic(contextMenu.epicId, 'down')}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors"
-          >
-            Move Down
-          </button>
-          <button
-            onClick={() => moveEpic(contextMenu.epicId, 'bottom')}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors"
-          >
-            Move to Bottom
-          </button>
-        </div>
-      )}
     </div>
   );
 }
