@@ -69,12 +69,13 @@ export async function GET(request: NextRequest) {
     // Build where clause
     // Note: This query returns ALL stories (both epic-connected via epochId and standalone stories)
     // Bugs are stored in stacksTask table with type='bug', so they are automatically excluded
+    // Exclude stories linked to epochs (epochId is set) - only show regular stories and epic-linked stories
     const where: any = {
       project: {
         workspaceId: workspaceId
       }
-      // epochId is optional - if not provided, returns all stories (epic-connected + standalone)
-      // if provided, filters to only stories for that epic
+      // epochId is optional - if not provided, returns all stories EXCEPT epoch-linked stories
+      // if provided, filters to only stories for that epoch
     };
 
     // Note: category field doesn't exist in StacksStory schema yet
@@ -88,8 +89,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (epochId) {
+      // If epochId is provided, show only stories for that epoch
       where.epochId = epochId;
       console.log('🔍 [STACKS API] Filtering by epochId:', epochId);
+    } else {
+      // Exclude stories linked to epochs - only show regular stories and epic-linked stories
+      where.epochId = null;
+      console.log('🔍 [STACKS API] Excluding epoch-linked stories (showing only regular and epic-linked stories)');
     }
 
     if (assigneeId) {
