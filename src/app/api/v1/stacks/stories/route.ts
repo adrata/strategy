@@ -386,7 +386,7 @@ export async function GET(request: NextRequest) {
           epoch,
           project,
           dueDate: null, // dueDate field doesn't exist in schema yet
-          tags: [], // tags field doesn't exist in schema yet
+          tags: (story as any).viewType === 'bug' ? ['bug'] : [], // Add 'bug' tag if viewType is 'bug'
           isFlagged: (story as any).isFlagged || false, // Safe access if column doesn't exist
           points: (story as any).points || null, // Safe access if column doesn't exist
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
@@ -410,7 +410,7 @@ export async function GET(request: NextRequest) {
           epoch: null,
           project: null,
           dueDate: null,
-          tags: [],
+          tags: (story as any).viewType === 'bug' ? ['bug'] : [], // Add 'bug' tag if viewType is 'bug'
           isFlagged: false,
           points: null,
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
@@ -675,7 +675,12 @@ export async function POST(request: NextRequest) {
       project: story.project ? {
         id: story.project.id,
         name: story.project.name || ''
-      } : null
+      } : null,
+      tags: (story as any).viewType === 'bug' ? ['bug'] : [], // Add 'bug' tag if viewType is 'bug'
+      isFlagged: (story as any).isFlagged || false,
+      points: (story as any).points || null,
+      createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
+      updatedAt: story.updatedAt?.toISOString() || new Date().toISOString()
     };
 
     return NextResponse.json({ story: transformedStory });
@@ -842,7 +847,12 @@ export async function PUT(request: NextRequest) {
       project: story.project ? {
         id: story.project.id,
         name: story.project.name || ''
-      } : null
+      } : null,
+      tags: (story as any).viewType === 'bug' ? ['bug'] : [], // Add 'bug' tag if viewType is 'bug'
+      isFlagged: (story as any).isFlagged || false,
+      points: (story as any).points || null,
+      createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
+      updatedAt: story.updatedAt?.toISOString() || new Date().toISOString()
     };
 
     return NextResponse.json({ story: transformedStory });

@@ -41,6 +41,12 @@ export function generateSlug(name: string, id: string): string {
 export function extractIdFromSlug(slug: string): string {
   if (!slug) return '';
   
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  if (isDevelopment) {
+    console.log('🔍 [URL UTILS] extractIdFromSlug called with:', slug);
+  }
+  
   // Handle demo IDs that contain hyphens (e.g., "zp-kirk-harbaugh-2025")
   // Look for patterns that start with "zp-" or are ULIDs (26 chars starting with 0)
   const parts = slug.split('-');
@@ -50,7 +56,11 @@ export function extractIdFromSlug(slug: string): string {
   if (zpIndex !== -1) {
     // For demo IDs like "kirk-harbaugh-zp-kirk-harbaugh-2025"
     // Reconstruct the demo ID from the "zp" part onwards
-    return parts.slice(zpIndex).join('-');
+    const result = parts.slice(zpIndex).join('-');
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Matched demo ID pattern (zp):', result);
+    }
+    return result;
   }
   
   // 🆕 FIX: Handle demo data IDs (cybersecurity-company-*, cybersecurity-person-*, etc.)
@@ -61,7 +71,11 @@ export function extractIdFromSlug(slug: string): string {
       // Find the pattern in the slug and extract everything from that point
       const patternIndex = slug.indexOf(pattern);
       if (patternIndex !== -1) {
-        return slug.substring(patternIndex);
+        const result = slug.substring(patternIndex);
+        if (isDevelopment) {
+          console.log('🔍 [URL UTILS] Matched demo pattern:', pattern, '->', result);
+        }
+        return result;
       }
     }
   }
@@ -73,8 +87,15 @@ export function extractIdFromSlug(slug: string): string {
   
   const lastPart = parts[parts.length - 1];
   
+  if (isDevelopment) {
+    console.log('🔍 [URL UTILS] Last part of slug:', lastPart, 'length:', lastPart?.length);
+  }
+  
   // Check for Zoho IDs first (they have specific prefixes)
   if (lastPart && (lastPart.startsWith('zcrm_') || lastPart.startsWith('zoho_'))) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Matched Zoho ID:', lastPart);
+    }
     return lastPart;
   }
   
@@ -82,6 +103,9 @@ export function extractIdFromSlug(slug: string): string {
   // ULIDs start with timestamp (0-9) or can start with 'c' for legacy compatibility
   const ulidPattern = /^[0-9A-HJKMNP-TV-Z]{26}$/;
   if (lastPart && ulidPattern.test(lastPart.toUpperCase())) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Matched ULID pattern:', lastPart);
+    }
     return lastPart;
   }
   
@@ -89,40 +113,62 @@ export function extractIdFromSlug(slug: string): string {
   // CUIDs use lowercase letters and numbers: c[a-z0-9]{24}
   const cuidPattern = /^c[a-z0-9]{24}$/;
   if (lastPart && cuidPattern.test(lastPart)) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Matched CUID pattern:', lastPart);
+    }
     return lastPart;
   }
   
   // Try to find ULID at the end of the slug (after last hyphen)
   const ulidMatch = slug.match(/([0-9A-HJKMNP-TV-Z]{26})$/i);
   if (ulidMatch) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Found ULID in slug:', ulidMatch[1]);
+    }
     return ulidMatch[1];
   }
   
   // Try to find CUID at the end (legacy support) - lowercase alphanumeric
   const cuidMatch = slug.match(/(c[a-z0-9]{24})$/);
   if (cuidMatch) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Found CUID in slug:', cuidMatch[1]);
+    }
     return cuidMatch[1];
   }
   
   // Fallback: try to find any ULID/CUID pattern in the slug
   const anyUlidMatch = slug.match(/([0-9A-HJKMNP-TV-Z]{26})/i);
   if (anyUlidMatch) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Found ULID anywhere in slug:', anyUlidMatch[1]);
+    }
     return anyUlidMatch[1];
   }
   
   const anyCuidMatch = slug.match(/(c[a-z0-9]{24})/);
   if (anyCuidMatch) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Found CUID anywhere in slug:', anyCuidMatch[1]);
+    }
     return anyCuidMatch[1];
   }
   
   // Try to find Zoho ID patterns
   const zohoMatch = slug.match(/(zcrm_|zoho_)[a-z0-9_]+/);
   if (zohoMatch) {
+    if (isDevelopment) {
+      console.log('🔍 [URL UTILS] Found Zoho ID in slug:', zohoMatch[0]);
+    }
     return zohoMatch[0];
   }
   
   // Fallback: return the last part (original behavior)
-  return parts[parts.length - 1] || '';
+  const fallback = parts[parts.length - 1] || '';
+  if (isDevelopment) {
+    console.log('🔍 [URL UTILS] Using fallback (last part):', fallback);
+  }
+  return fallback;
 }
 
 /**

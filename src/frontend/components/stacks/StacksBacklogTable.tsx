@@ -396,9 +396,9 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         const backlogItems: BacklogItem[] = sortedItems.map((item, index: number) => {
           // Determine if this is a story or task
           // Tasks have a 'type' property that is 'task' or 'bug'
-          // Stories don't have a 'type' property (or have type: undefined)
+          // Stories don't have a 'type' property but may have viewType === 'bug'
           const isTask = item.type === 'task' || item.type === 'bug';
-          const isBug = item.type === 'bug';
+          const isBug = item.type === 'bug' || (item.viewType === 'bug' && !isTask); // Stories with viewType='bug' are also bugs
           
           // Add 'bug' tag if it's a bug
           const tags = item.tags || [];
@@ -428,7 +428,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             updatedAt: typeof item.updatedAt === 'string' ? item.updatedAt : item.updatedAt.toISOString(),
             rank: rank,
             type: isTask ? 'task' : 'story',
-            originalType: isTask ? item.type : undefined,
+            originalType: isTask ? item.type : (item.viewType === 'bug' ? 'bug' : undefined), // Set originalType to 'bug' for stories with viewType='bug'
             isFlagged: item.isFlagged || false
           };
         });
@@ -636,7 +636,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       const backlogItems = sortedItems.map((item: any, index: number) => {
         // Determine if this is a story or task (same logic as main fetchItems)
         const isTask = item.type === 'task' || item.type === 'bug';
-        const isBug = item.type === 'bug';
+        const isBug = item.type === 'bug' || (item.viewType === 'bug' && !isTask); // Stories with viewType='bug' are also bugs
         
         // Add 'bug' tag if it's a bug
         const tags = item.tags || [];
@@ -665,7 +665,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           updatedAt: typeof item.updatedAt === 'string' ? item.updatedAt : item.updatedAt.toISOString(),
           rank: rank,
           type: isTask ? 'task' : 'story',
-          originalType: isTask ? item.type : undefined, // Preserve original type to detect bugs
+          originalType: isTask ? item.type : (item.viewType === 'bug' ? 'bug' : undefined), // Set originalType to 'bug' for stories with viewType='bug'
           isFlagged: item.isFlagged || false
         };
       });

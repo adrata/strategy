@@ -987,7 +987,7 @@ model OasisReaction {
 }
 
 model OasisReadReceipt {
-  id        String       @id @default(cuid())
+  id        String       @id @default(ulid())
   userId    String       @db.VarChar(30)
   messageId String
   readAt    DateTime     @default(now())

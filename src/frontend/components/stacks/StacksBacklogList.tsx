@@ -237,32 +237,46 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
 
         // Convert stories and tasks to BacklogItem format
         const allItems: BacklogItem[] = [
-          ...stories.map((story: any, index: number) => ({
-            id: story.id,
-            title: story.title || story.name || 'Untitled',
-            description: story.description,
-            priority: (story.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
-            status: (story.status || 'todo') as 'todo' | 'in-progress' | 'review' | 'done',
-            assignee: story.assigneeId || story.assignee?.name || story.assignedTo,
-            dueDate: story.dueDate,
-            tags: story.tags || [],
-            createdAt: story.createdAt || new Date().toISOString(),
-            updatedAt: story.updatedAt || story.createdAt || new Date().toISOString(),
-            rank: story.rank || index + 1
-          })),
-          ...tasks.map((task: any, index: number) => ({
-            id: task.id,
-            title: task.title || task.name || 'Untitled',
-            description: task.description,
-            priority: (task.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
-            status: (task.status || 'todo') as 'todo' | 'in-progress' | 'review' | 'done',
-            assignee: task.assigneeId || task.assignee?.name || task.assignedTo,
-            dueDate: task.dueDate,
-            tags: task.tags || [],
-            createdAt: task.createdAt || new Date().toISOString(),
-            updatedAt: task.updatedAt || task.createdAt || new Date().toISOString(),
-            rank: task.rank || stories.length + index + 1
-          }))
+          ...stories.map((story: any, index: number) => {
+            // Determine if story is a bug based on viewType
+            const isBug = story.viewType === 'bug';
+            // Add 'bug' tag if it's a bug
+            const tags = isBug ? ['bug', ...(story.tags || [])] : (story.tags || []);
+            
+            return {
+              id: story.id,
+              title: story.title || story.name || 'Untitled',
+              description: story.description,
+              priority: (story.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
+              status: (story.status || 'todo') as 'todo' | 'in-progress' | 'review' | 'done',
+              assignee: story.assigneeId || story.assignee?.name || story.assignedTo,
+              dueDate: story.dueDate,
+              tags: tags,
+              createdAt: story.createdAt || new Date().toISOString(),
+              updatedAt: story.updatedAt || story.createdAt || new Date().toISOString(),
+              rank: story.rank || index + 1
+            };
+          }),
+          ...tasks.map((task: any, index: number) => {
+            // Tasks with type='bug' are bugs
+            const isBug = task.type === 'bug';
+            // Add 'bug' tag if it's a bug
+            const tags = isBug ? ['bug', ...(task.tags || [])] : (task.tags || []);
+            
+            return {
+              id: task.id,
+              title: task.title || task.name || 'Untitled',
+              description: task.description,
+              priority: (task.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
+              status: (task.status || 'todo') as 'todo' | 'in-progress' | 'review' | 'done',
+              assignee: task.assigneeId || task.assignee?.name || task.assignedTo,
+              dueDate: task.dueDate,
+              tags: tags,
+              createdAt: task.createdAt || new Date().toISOString(),
+              updatedAt: task.updatedAt || task.createdAt || new Date().toISOString(),
+              rank: task.rank || stories.length + index + 1
+            };
+          })
         ];
 
         // Sort by rank if available

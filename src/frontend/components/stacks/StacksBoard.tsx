@@ -327,6 +327,12 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       mappedStatus = STACK_STATUS.UP_NEXT;
     }
     
+    // Determine if story is a bug based on viewType
+    const isBug = story.viewType === 'bug';
+    
+    // Build tags array - include 'bug' tag if viewType is 'bug'
+    const tags = isBug ? ['bug', ...(story.tags || [])] : (story.tags || []);
+    
     return {
       id: story.id,
       title: story.title,
@@ -340,7 +346,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         ? `${story.assignee.firstName} ${story.assignee.lastName}`.trim() 
         : undefined),
       dueDate: undefined,
-      tags: story.tags || [],
+      tags: tags,
       epoch: story.epoch ? {
         id: story.epoch.id,
         title: story.epoch.title,
@@ -355,7 +361,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       updatedAt: typeof story.updatedAt === 'string' ? story.updatedAt : story.updatedAt.toISOString(),
       rank: story.rank || null,
       type: 'story' as const,
-      originalType: undefined
+      originalType: isBug ? 'bug' : undefined // Set originalType to 'bug' if viewType is 'bug' so bug pill displays
     };
   };
 

@@ -58,17 +58,22 @@ export function EpicStoriesList({ epicId, onItemClick }: EpicStoriesListProps) {
   }, [workspaceId, epicId, stories]);
 
   // Convert stories to StacksItem format
-  const items = epicStories.map((story: any) => ({
-    id: story.id,
-    title: story.title,
-    description: story.description || '',
-    status: story.status || 'todo',
-    priority: story.priority || 'medium',
-    type: 'story' as const,
-    assignee: story.assignee?.name || story.assignee?.email || '',
-    createdAt: story.createdAt,
-    updatedAt: story.updatedAt,
-  }));
+  const items = epicStories.map((story: any) => {
+    // Determine if story is a bug based on viewType
+    const isBug = story.viewType === 'bug';
+    
+    return {
+      id: story.id,
+      title: story.title,
+      description: story.description || '',
+      status: story.status || 'todo',
+      priority: story.priority || 'medium',
+      type: (isBug ? 'bug' : 'story') as const, // Set type to 'bug' if viewType is 'bug'
+      assignee: story.assignee?.name || story.assignee?.email || '',
+      createdAt: story.createdAt,
+      updatedAt: story.updatedAt,
+    };
+  });
 
   if (loading) {
     return (

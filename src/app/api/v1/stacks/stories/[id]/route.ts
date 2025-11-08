@@ -10,10 +10,15 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Declare variables outside try block for error handling
+  let finalStoryId: string | undefined;
+  let workspaceId: string | undefined;
+  let paramValue: string | undefined;
+  
   try {
     // Resolve params (Next.js 15+ compatibility)
     const resolvedParams = await params;
-    const paramValue = resolvedParams.id;
+    paramValue = resolvedParams.id;
     
     // Extract ID from slug (handles both slug format "name-id" and raw ID)
     const storyId = extractIdFromSlug(paramValue);
@@ -23,7 +28,7 @@ export async function GET(
     console.log('🔍 [STACKS API] Extracted story ID:', storyId);
     
     // If extraction failed, try using the param value directly as ID
-    const finalStoryId = storyId || paramValue;
+    finalStoryId = storyId || paramValue;
     if (storyId !== paramValue && storyId) {
       console.log('🔍 [STACKS API] Using extracted ID from slug');
     } else if (!storyId) {
@@ -47,7 +52,7 @@ export async function GET(
     }
 
     // Get workspace ID from authenticated context
-    const workspaceId = context.workspaceId;
+    workspaceId = context.workspaceId;
     const userId = context.userId;
     
     console.log('✅ [STACKS API] Authenticated user:', userId, 'workspace:', workspaceId, 'storyId:', storyId);
@@ -61,57 +66,73 @@ export async function GET(
     }
 
     console.log('🔍 [STACKS API] Looking up story with ID:', finalStoryId, 'in workspace:', workspaceId);
+    console.log('🔍 [STACKS API] ID type check - CUID:', /^c[a-z0-9]{24}$/.test(finalStoryId), 'ULID:', /^[0-9A-HJKMNP-TV-Z]{26}$/i.test(finalStoryId));
 
     // Fetch the story with workspace validation
     // Use explicit select to avoid selecting viewType column that may not exist in database
-    const story = await prisma.stacksStory.findFirst({
-      where: {
-        id: finalStoryId,
-        project: {
-          workspaceId: workspaceId
-        }
-      },
-      select: {
-        id: true,
-        epochId: true,
-        projectId: true,
-        title: true,
-        description: true,
-        acceptanceCriteria: true,
-        status: true,
-        priority: true,
-        assigneeId: true,
-        product: true,
-        section: true,
-        viewType: true,
-        isFlagged: true,
-        rank: true,
-        statusChangedAt: true,
-        createdAt: true,
-        updatedAt: true,
-        epoch: {
-          select: {
-            id: true,
-            title: true,
-            description: true
+    let story;
+    try {
+      story = await prisma.stacksStory.findFirst({
+        where: {
+          id: finalStoryId,
+          project: {
+            workspaceId: workspaceId
           }
         },
-        assignee: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true
-          }
-        },
-        project: {
-          select: {
-            id: true,
-            name: true
+        select: {
+          id: true,
+          epochId: true,
+          projectId: true,
+          title: true,
+          description: true,
+          acceptanceCriteria: true,
+          status: true,
+          priority: true,
+          assigneeId: true,
+          product: true,
+          section: true,
+          viewType: true,
+          isFlagged: true,
+          rank: true,
+          statusChangedAt: true,
+          createdAt: true,
+          updatedAt: true,
+          epoch: {
+            select: {
+              id: true,
+              title: true,
+              description: true
+            }
+          },
+          assignee: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          },
+          project: {
+            select: {
+              id: true,
+              name: true
+            }
           }
         }
-      }
-    });
+      });
+    } catch (storyQueryError) {
+      console.error('❌ [STACKS API] Error querying story:', storyQueryError);
+      console.error('❌ [STACKS API] Story query error details:', {
+        message: storyQueryError instanceof Error ? storyQueryError.message : String(storyQueryError),
+        name: storyQueryError instanceof Error ? storyQueryError.name : 'Unknown',
+        stack: storyQueryError instanceof Error ? storyQueryError.stack : undefined,
+        code: (storyQueryError as any)?.code,
+        meta: (storyQueryError as any)?.meta,
+        queryId: finalStoryId,
+        workspaceId: workspaceId
+      });
+      throw storyQueryError;
+    }
 
     // If story not found, check if it's a task
     if (!story) {
@@ -119,51 +140,108 @@ export async function GET(
       
       try {
         // Try to fetch as a task
-        const task = await prisma.stacksTask.findFirst({
-          where: {
-            id: finalStoryId,
-            project: {
-              workspaceId: workspaceId
-            }
-          },
-          select: {
-            id: true,
-            storyId: true,
-            projectId: true,
-            title: true,
-            description: true,
-            status: true,
-            priority: true,
-            type: true,
-            assigneeId: true,
-            product: true,
-            section: true,
-            rank: true,
-            attachments: true, // Include attachments field
-            createdAt: true,
-            updatedAt: true,
-            assignee: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true
+        // First, try without attachments to see if that's the issue
+        let task;
+        try {
+          task = await prisma.stacksTask.findFirst({
+            where: {
+              id: finalStoryId,
+              project: {
+                workspaceId: workspaceId
               }
             },
-            story: {
-              select: {
-                id: true,
-                title: true
-              }
-            },
-            project: {
-              select: {
-                id: true,
-                name: true
+            select: {
+              id: true,
+              storyId: true,
+              projectId: true,
+              title: true,
+              description: true,
+              status: true,
+              priority: true,
+              type: true,
+              assigneeId: true,
+              product: true,
+              section: true,
+              rank: true,
+              attachments: true, // Include attachments field - will fail gracefully if column doesn't exist
+              createdAt: true,
+              updatedAt: true,
+              assignee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              },
+              story: {
+                select: {
+                  id: true,
+                  title: true
+                }
+              },
+              project: {
+                select: {
+                  id: true,
+                  name: true
+                }
               }
             }
+          });
+        } catch (attachmentsError: any) {
+          // If attachments column doesn't exist, try without it
+          if (attachmentsError?.code === 'P2022' && attachmentsError?.meta?.column_name === 'attachments') {
+            console.warn('⚠️ [STACKS API] Attachments column does not exist, fetching task without it');
+            task = await prisma.stacksTask.findFirst({
+              where: {
+                id: finalStoryId,
+                project: {
+                  workspaceId: workspaceId
+                }
+              },
+              select: {
+                id: true,
+                storyId: true,
+                projectId: true,
+                title: true,
+                description: true,
+                status: true,
+                priority: true,
+                type: true,
+                assigneeId: true,
+                product: true,
+                section: true,
+                rank: true,
+                // Omit attachments field
+                createdAt: true,
+                updatedAt: true,
+                assignee: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true
+                  }
+                },
+                story: {
+                  select: {
+                    id: true,
+                    title: true
+                  }
+                },
+                project: {
+                  select: {
+                    id: true,
+                    name: true
+                  }
+                }
+              }
+            });
+          } else {
+            // Re-throw if it's a different error
+            throw attachmentsError;
           }
-        });
+        }
 
         if (!task) {
           console.log('❌ [STACKS API] Neither story nor task found');
@@ -209,9 +287,9 @@ export async function GET(
           section: task.section || null,
           rank: task.rank || null, // Tasks have rank field
           type: task.type || 'task', // Include type to distinguish from stories
-          attachments: task.attachments && Array.isArray(task.attachments) 
-            ? task.attachments 
-            : [], // Include attachments from task
+          attachments: (task as any).attachments && Array.isArray((task as any).attachments) 
+            ? (task as any).attachments 
+            : [], // Include attachments from task (safe access)
           assignee: task.assignee ? {
             id: task.assignee.id,
             name: (() => {
@@ -246,9 +324,13 @@ export async function GET(
         console.error('❌ [STACKS API] Error fetching task:', taskError);
         console.error('❌ [STACKS API] Task error details:', {
           message: taskError instanceof Error ? taskError.message : String(taskError),
+          name: taskError instanceof Error ? taskError.name : 'Unknown',
           stack: taskError instanceof Error ? taskError.stack : undefined,
           code: (taskError as any)?.code,
-          meta: (taskError as any)?.meta
+          meta: (taskError as any)?.meta,
+          queryId: finalStoryId,
+          workspaceId: workspaceId,
+          paramValue: paramValue
         });
         // Re-throw to be caught by outer catch block
         throw taskError;
@@ -290,7 +372,7 @@ export async function GET(
         name: story.project.name
       } : null,
       dueDate: null, // dueDate field doesn't exist in schema yet
-      tags: [], // tags field doesn't exist in schema yet
+      tags: (story as any).viewType === 'bug' ? ['bug'] : [], // Add 'bug' tag if viewType is 'bug'
       isFlagged: story.isFlagged || false,
       points: (story as any).points || null, // Safe access if column doesn't exist
       createdAt: story.createdAt,
@@ -303,29 +385,76 @@ export async function GET(
     return NextResponse.json({ story: transformedStory, type: 'story' });
 
   } catch (error) {
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    // Comprehensive error logging
     console.error('❌ [STACKS API] Error fetching story:', error);
+    console.error('❌ [STACKS API] Full error details:', {
+      message: error instanceof Error ? error.message : String(error),
+      name: error instanceof Error ? error.name : 'Unknown',
+      stack: error instanceof Error ? error.stack : undefined,
+      code: (error as any)?.code,
+      meta: (error as any)?.meta,
+      clientVersion: (error as any)?.clientVersion,
+      queryId: finalStoryId || 'unknown',
+      workspaceId: workspaceId || 'unknown',
+      paramValue: paramValue || 'unknown',
+      timestamp: new Date().toISOString()
+    });
     
     // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
       const prismaError = error as any;
       const columnName = prismaError.meta?.column_name || 'unknown';
+      const tableName = prismaError.meta?.table_name || 'unknown';
       console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
         columnName,
-        tableName: prismaError.meta?.table_name,
-        modelName: prismaError.meta?.modelName
+        tableName,
+        modelName: prismaError.meta?.modelName,
+        queryId: finalStoryId,
+        workspaceId: workspaceId
       });
       
+      const errorMessage = isDevelopment
+        ? `Database column '${columnName}' does not exist in table '${tableName}'. Please run database migrations. Query ID: ${finalStoryId}`
+        : `Database schema mismatch. Please run database migrations.`;
+      
       return createErrorResponse(
-        columnName !== 'unknown'
-          ? `Database column '${columnName}' does not exist. Please run database migrations.`
-          : 'Database schema mismatch. Please run database migrations.',
+        errorMessage,
         'SCHEMA_MISMATCH',
         500
       );
     }
     
+    // Handle other Prisma errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      const prismaError = error as any;
+      const errorCode = prismaError.code || 'UNKNOWN';
+      console.error('❌ [STACKS API] Prisma error:', {
+        code: errorCode,
+        meta: prismaError.meta,
+        queryId: finalStoryId,
+        workspaceId: workspaceId
+      });
+      
+      const errorMessage = isDevelopment
+        ? `Database error (${errorCode}): ${error instanceof Error ? error.message : String(error)}. Query ID: ${finalStoryId}`
+        : 'Database operation failed. Please try again.';
+      
+      return createErrorResponse(
+        errorMessage,
+        'DATABASE_ERROR',
+        500
+      );
+    }
+    
+    // Generic error handling
+    const errorMessage = isDevelopment
+      ? `Failed to fetch story: ${error instanceof Error ? error.message : String(error)}. Query ID: ${finalStoryId}, Workspace: ${workspaceId}`
+      : 'Failed to fetch story. Please try again.';
+    
     return createErrorResponse(
-      'Failed to fetch story. Please try again.',
+      errorMessage,
       'STORY_FETCH_ERROR',
       500
     );
@@ -512,6 +641,7 @@ export async function PATCH(
         name: story.project.name
       } : null,
       isFlagged: story.isFlagged || false,
+      tags: (story as any).viewType === 'bug' ? ['bug'] : [], // Add 'bug' tag if viewType is 'bug'
       createdAt: story.createdAt,
       updatedAt: story.updatedAt
     };

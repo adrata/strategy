@@ -222,8 +222,16 @@ export function StacksStoriesList({ onItemClick, selectedItem }: StacksStoriesLi
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-foreground truncate">
-                        {story.title || 'Untitled'}
+                      <div className="flex items-start gap-2">
+                        {/* Bug pill for bug type */}
+                        {(story.viewType === 'bug' || story.tags?.includes('bug')) && (
+                          <span className="bg-error-bg text-error-text px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0">
+                            bug
+                          </span>
+                        )}
+                        <div className="text-sm font-medium text-foreground truncate">
+                          {story.title || 'Untitled'}
+                        </div>
                       </div>
                       {story.description && (
                         <div className="text-xs text-muted mt-1 line-clamp-2">
