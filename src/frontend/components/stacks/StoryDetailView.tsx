@@ -197,8 +197,13 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
         // Navigate back to epics
         router.push(`/${workspaceSlug}/stacks/epics`);
       } else {
-        // Use browser history for smooth navigation without page reload
-        router.back();
+        // Default: navigate to workstream (the main stacks view)
+        if (workspaceSlug) {
+          router.push(`/${workspaceSlug}/stacks`);
+        } else {
+          // Fallback to browser history if no workspace slug
+          router.back();
+        }
       }
     }
   };
@@ -267,11 +272,25 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     }
   };
 
-  // Determine section name from pathname
+  // Determine section name from pathname or navigation source
   const getSectionName = () => {
+    // Check navigation source from sessionStorage first
+    const navigationSource = typeof window !== 'undefined' 
+      ? sessionStorage.getItem('stacks-navigation-source') 
+      : null;
+    
+    if (navigationSource === 'backlog' || navigationSource === 'up-next') {
+      return 'Backlog';
+    }
+    if (navigationSource === 'epics') {
+      return 'Epics';
+    }
+    
+    // Fallback to checking pathname
     const pathParts = pathname.split('/').filter(Boolean);
     if (pathParts.includes('backlog')) return 'Backlog';
     if (pathParts.includes('workstream')) return 'Workstream';
+    if (pathParts.includes('epics')) return 'Epics';
     return 'Stacks';
   };
 
