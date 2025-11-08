@@ -1002,7 +1002,7 @@ model OasisReadReceipt {
 
 /// Stacks - Project Management (Jira-like)
 model StacksProject {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   workspaceId String        @db.VarChar(30)
   name        String        @db.VarChar(200)
   description String?
@@ -1019,7 +1019,7 @@ model StacksProject {
 }
 
 model StacksEpic {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   projectId   String
   epochId     String? // Epics belong to Epoch (bigger items)
   title       String        @db.VarChar(200)
@@ -1045,7 +1045,7 @@ model StacksEpic {
 // StacksEpoch - bigger/higher-level items (separate table)
 // Epochs contain epics, which contain stories
 model StacksEpoch {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   projectId   String
   title       String        @db.VarChar(200)
   description String?
@@ -1065,7 +1065,7 @@ model StacksEpoch {
 }
 
 model StacksStory {
-  id                 String          @id @default(cuid())
+  id                 String          @id @default(ulid())
   epicId             String? // Stories belong to Epic (existing column in database)
   epochId            String? // Stories can also belong to Epoch (bigger items)
   projectId          String
@@ -1100,7 +1100,7 @@ model StacksStory {
 }
 
 model StacksTask {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   storyId     String?
   projectId   String
   title       String        @db.VarChar(200)
