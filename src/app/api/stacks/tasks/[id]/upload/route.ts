@@ -127,13 +127,21 @@ export async function POST(
       uploadedBy: userId
     };
 
-    // NOTE: Attachments feature disabled - field not in streamlined schema used in production
-    // If you need attachments, add the field to schema-streamlined.prisma first
-    
-    console.warn('⚠️ [STACKS TASKS UPLOAD API] Attachments field not available in production schema');
-    
-    // Return success but indicate attachments aren't stored
-    // The file upload itself succeeded, but metadata can't be stored on the task
+    // Get existing attachments or initialize empty array
+    const existingAttachments = task.attachments && typeof task.attachments === 'object' && Array.isArray(task.attachments)
+      ? task.attachments as any[]
+      : [];
+
+    // Add new attachment to the array
+    const updatedAttachments = [...existingAttachments, attachmentMetadata];
+
+    // Update task with new attachments
+    await prisma.stacksTask.update({
+      where: { id: taskId },
+      data: {
+        attachments: updatedAttachments as any
+      }
+    });
 
     return NextResponse.json({
       success: true,

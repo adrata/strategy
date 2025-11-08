@@ -161,6 +161,34 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
               </div>
               
               <div>
+                <label className="text-xs text-muted uppercase tracking-wide">Type</label>
+                <div className="mt-1">
+                  <InlineEditField
+                    value={(() => {
+                      // Determine current type: check if it's a bug
+                      // For stories: check viewType === 'bug'
+                      // For tasks: check type === 'bug' (though tasks shouldn't appear here, handle it anyway)
+                      if (story.viewType === 'bug' || story.type === 'bug') {
+                        return 'bug';
+                      }
+                      // Default to 'detail' for stories (which displays as 'Story')
+                      return 'detail';
+                    })()}
+                    field="viewType"
+                    recordId={story.id}
+                    recordType="stacks"
+                    inputType="select"
+                    options={[
+                      { value: 'detail', label: 'Story' },
+                      { value: 'bug', label: 'Bug' }
+                    ]}
+                    onSave={handleSave}
+                    className="text-sm font-medium"
+                  />
+                </div>
+              </div>
+              
+              <div>
                 <label className="text-xs text-muted uppercase tracking-wide">Status</label>
                 <div className="mt-1">
                   <InlineEditField

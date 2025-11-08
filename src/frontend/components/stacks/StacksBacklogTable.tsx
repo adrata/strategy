@@ -161,12 +161,12 @@ function BacklogItemComponent({
             </p>
           )}
           <div className="flex items-center gap-3 text-xs text-muted">
-            {item.assignee && <span>{item.assignee}</span>}
-            {item.assignee && itemIsBug && item.priority && (
+            {item.priority && (
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority]}`}>
                 {item.priority}
               </span>
             )}
+            {item.assignee && <span>{item.assignee}</span>}
             {displayTag && (
               <span className="bg-panel-background px-2 py-0.5 rounded">
                 {displayTag}
@@ -661,12 +661,37 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         return oldItem.rank !== item.rank;
       });
 
+      // Also include items with status changes (even if rank didn't change)
+      // This ensures status updates are persisted when moving between sections
+      const itemsWithStatusChanges = statusUpdate 
+        ? newItems.filter((item) => {
+            if (item.id !== statusUpdate.itemId) return false;
+            const oldItem = oldItemsMap.get(item.id);
+            if (!oldItem) return true; // New item, needs update
+            return oldItem.status !== item.status;
+          })
+        : [];
+
+      // Combine items that need updates (rank changes OR status changes)
+      const itemsToUpdate = [
+        ...itemsWithChangedRanks,
+        ...itemsWithStatusChanges.filter(
+          (item) => !itemsWithChangedRanks.find((i) => i.id === item.id)
+        ),
+      ];
+
       // Also handle status update if provided
       const updatePromises: Promise<Response>[] = [];
 
-      // Update ranks for items that changed
-      itemsWithChangedRanks.forEach(item => {
+      // Update ranks and status for items that changed
+      itemsToUpdate.forEach(item => {
+        const oldItem = oldItemsMap.get(item.id);
         const updatePayload: any = { rank: item.rank };
+        
+        // If this is the item with a status change, include status in the same update
+        if (statusUpdate && item.id === statusUpdate.itemId) {
+          updatePayload.status = statusUpdate.newStatus;
+        }
         
         // Determine the correct API endpoint based on item type
         const endpoint = item.type === 'task' 
@@ -684,33 +709,16 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatePayload)
+          }).then(async (response) => {
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(`Failed to update ${item.type} ${item.id}:`, response.status, errorText);
+              throw new Error(`Failed to update ${item.type}: ${response.status}`);
+            }
+            return response;
           })
         );
       });
-
-      // Handle status update if provided
-      if (statusUpdate) {
-        const itemToUpdate = newItems.find(i => i.id === statusUpdate.itemId);
-        if (itemToUpdate) {
-          const statusPayload: any = { status: statusUpdate.newStatus };
-          const statusEndpoint = itemToUpdate.type === 'task'
-            ? `/api/stacks/tasks/${statusUpdate.itemId}`
-            : `/api/v1/stacks/stories/${statusUpdate.itemId}`;
-          
-          if (itemToUpdate.type === 'task') {
-            statusPayload.userId = authUser?.id;
-          }
-          
-          updatePromises.push(
-            fetch(statusEndpoint, {
-              method: 'PATCH',
-              credentials: 'include',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(statusPayload)
-            })
-          );
-        }
-      }
 
       await Promise.all(updatePromises);
       

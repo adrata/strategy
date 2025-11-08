@@ -128,6 +128,7 @@ export async function GET(
           product: true,
           section: true,
           rank: true,
+          attachments: true, // Include attachments field
           createdAt: true,
           updatedAt: true,
           assignee: {
@@ -171,6 +172,9 @@ export async function GET(
         section: task.section || null,
         rank: (task as any).rank || null, // Tasks have rank field
         type: task.type || 'task', // Include type to distinguish from stories
+        attachments: (task as any).attachments && Array.isArray((task as any).attachments) 
+          ? (task as any).attachments 
+          : [], // Include attachments from task
         assignee: task.assignee ? {
           id: task.assignee.id,
           name: (() => {
