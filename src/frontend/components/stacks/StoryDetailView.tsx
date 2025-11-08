@@ -186,8 +186,15 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
         ? sessionStorage.getItem('stacks-navigation-source') 
         : null;
       
-      // Check if referrer or current path indicates we came from a specific section
-      const cameFromBacklog = referrer.includes('/backlog') || navigationSource === 'backlog' || navigationSource === 'up-next';
+      // Check if story status indicates it's a backlog item
+      // Backlog statuses are 'up-next' and 'todo' (per constants.ts)
+      const isBacklogStatus = story && (story.status === 'up-next' || story.status === 'todo');
+      
+      // Check if referrer, navigation source, or story status indicates we came from backlog
+      const cameFromBacklog = referrer.includes('/backlog') || 
+                             navigationSource === 'backlog' || 
+                             navigationSource === 'up-next' ||
+                             isBacklogStatus;
       const cameFromEpics = referrer.includes('/epics') || navigationSource === 'epics';
       
       if (cameFromBacklog && workspaceSlug) {
@@ -279,7 +286,10 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       ? sessionStorage.getItem('stacks-navigation-source') 
       : null;
     
-    if (navigationSource === 'backlog' || navigationSource === 'up-next') {
+    // Check if story status indicates it's a backlog item
+    const isBacklogStatus = story && (story.status === 'up-next' || story.status === 'todo');
+    
+    if (navigationSource === 'backlog' || navigationSource === 'up-next' || isBacklogStatus) {
       return 'Backlog';
     }
     if (navigationSource === 'epics') {

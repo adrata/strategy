@@ -110,24 +110,15 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     } else if (pathname.includes('/stacks/backlog') && !pathname.includes('/stacks/sell/backlog') && !pathname.includes('/stacks/build/backlog')) {
       console.log('✅ [StacksContainer] Setting: backlog');
       onSubSectionChange('backlog');
-      // Clear navigation source when returning to backlog
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('stacks-navigation-source');
-      }
+      // Don't clear navigation source here - we want to preserve it when clicking stories from backlog
     } else if (pathname.includes('/stacks/sell/backlog')) {
       console.log('✅ [StacksContainer] Setting: backlog');
       onSubSectionChange('backlog');
-      // Clear navigation source when returning to backlog
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('stacks-navigation-source');
-      }
+      // Don't clear navigation source here - we want to preserve it when clicking stories from backlog
     } else if (pathname.includes('/stacks/build/backlog')) {
       console.log('✅ [StacksContainer] Setting: backlog-build');
       onSubSectionChange('backlog-build');
-      // Clear navigation source when returning to backlog
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('stacks-navigation-source');
-      }
+      // Don't clear navigation source here - we want to preserve it when clicking stories from backlog
     } else if (pathname.includes('/stacks/sell/pipeline')) {
       console.log('✅ [StacksContainer] Setting: stacks');
       onSubSectionChange('stacks');
