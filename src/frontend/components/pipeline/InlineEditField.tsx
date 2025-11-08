@@ -19,6 +19,10 @@ interface InlineEditFieldProps {
   options?: Array<{ value: string; label: string }>; // Added for select fields
   successMessage?: string;
   onSuccess?: (message: string) => void;
+  // Additional props for bug image upload
+  isBug?: boolean; // Whether this is a bug (for showing Add Image button)
+  status?: string; // Story/task status (for disabling Add Image button)
+  onImageUpload?: (file: File) => Promise<void>; // Callback for image upload
 }
 
 export const InlineEditField: React.FC<InlineEditFieldProps> = ({
@@ -36,6 +40,9 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   options,
   successMessage,
   onSuccess,
+  isBug = false,
+  status,
+  onImageUpload,
 }) => {
   // If variant is company, render the InlineCompanySelector
   if (variant === 'company') {
@@ -75,6 +82,11 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Check if Add Image button should be disabled
+  const isImageUploadDisabled = status === 'built' || status === 'shipped' || uploadingImage;
 
   // Sync editValue with value prop when it changes, but not while saving
   useEffect(() => {
@@ -183,19 +195,74 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
     }
   };
 
+  // Handle image upload
+  const handleImageUpload = async (file: File) => {
+    if (!onImageUpload || !recordId) return;
+    
+    setUploadingImage(true);
+    try {
+      await onImageUpload(file);
+      onSuccess?.('Image uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      onSuccess?.('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onImageUpload) {
+      handleImageUpload(file);
+    }
+    // Reset input so same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   if (isEditing) {
     return (
       <div className="flex items-center gap-2">
         {type === 'textarea' ? (
-          <textarea
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className={`flex-1 px-2 py-1 border border-border rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-background text-foreground ${className}`}
-            placeholder={placeholder}
-            rows={3}
-            autoFocus
-          />
+          <div className="flex-1 relative">
+            <textarea
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={`w-full px-2 py-1 ${isBug && field === 'description' ? 'pb-8' : ''} border border-border rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-background text-foreground ${className}`}
+              placeholder={placeholder}
+              rows={3}
+              autoFocus
+            />
+            {/* Add Image button for bugs - positioned at bottom-right to not cover text */}
+            {isBug && field === 'description' && (
+              <>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                  disabled={isImageUploadDisabled}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isImageUploadDisabled}
+                  className={`absolute bottom-1 right-1 px-2 py-1 text-xs border rounded transition-colors z-10 ${
+                    isImageUploadDisabled
+                      ? 'text-muted bg-gray-100 border-gray-200 cursor-not-allowed opacity-50'
+                      : 'text-muted hover:text-foreground bg-background border-border hover:bg-hover'
+                  }`}
+                  title={isImageUploadDisabled ? 'Image upload disabled for this status' : 'Add image'}
+                >
+                  {uploadingImage ? 'Uploading...' : 'Add Image'}
+                </button>
+              </>
+            )}
+          </div>
         ) : inputType === 'select' && options ? (
           <select
             value={editValue}

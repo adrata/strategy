@@ -28,11 +28,29 @@ export async function GET(
     console.log('🔍 [STACKS API] Extracted story ID:', storyId);
     
     // If extraction failed, try using the param value directly as ID
+    // Also try extracting from the full slug if the last part didn't match
     finalStoryId = storyId || paramValue;
-    if (storyId !== paramValue && storyId) {
+    
+    // If storyId extraction failed but paramValue looks like a slug, try to extract ID from anywhere in the slug
+    if (!storyId || storyId === paramValue) {
+      // Try to find CUID or ULID anywhere in the paramValue
+      const cuidMatch = paramValue.match(/(c[a-z0-9]{24})/);
+      const ulidMatch = paramValue.match(/([0-9A-HJKMNP-TV-Z]{26})/i);
+      
+      if (cuidMatch) {
+        finalStoryId = cuidMatch[1];
+        console.log('🔍 [STACKS API] Found CUID in param:', finalStoryId);
+      } else if (ulidMatch) {
+        finalStoryId = ulidMatch[1];
+        console.log('🔍 [STACKS API] Found ULID in param:', finalStoryId);
+      } else {
+        // Use last part as fallback
+        const lastPart = paramValue.split('-').pop() || paramValue;
+        finalStoryId = lastPart;
+        console.log('⚠️ [STACKS API] Using last part as ID:', finalStoryId);
+      }
+    } else {
       console.log('🔍 [STACKS API] Using extracted ID from slug');
-    } else if (!storyId) {
-      console.log('⚠️ [STACKS API] ID extraction failed, using param value directly');
     }
     
     // Use platform's unified authentication system
@@ -267,6 +285,21 @@ export async function GET(
           
           if (storyWithoutWorkspace) {
             console.log('⚠️ [STACKS API] Story exists but in different workspace:', storyWithoutWorkspace.project?.workspaceId);
+            console.log('⚠️ [STACKS API] Requested workspace:', workspaceId);
+            console.log('⚠️ [STACKS API] Story project ID:', storyWithoutWorkspace.projectId);
+          }
+          
+          // Also try searching without workspace filter to see if story exists at all
+          const allStories = await prisma.stacksStory.findMany({
+            where: { 
+              id: { contains: finalStoryId }
+            },
+            select: { id: true, title: true, projectId: true, project: { select: { workspaceId: true, name: true } } },
+            take: 5
+          });
+          
+          if (allStories.length > 0) {
+            console.log('⚠️ [STACKS API] Found similar story IDs:', allStories.map(s => ({ id: s.id, title: s.title, workspace: s.project?.workspaceId })));
           }
           
           return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);

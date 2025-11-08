@@ -162,6 +162,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   
   const [draggedCard, setDraggedCard] = useState<StackCard | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [cards, setCards] = useState<StackCard[]>([]);
   const [loading, setLoading] = useState(false);
   const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
@@ -538,6 +539,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     }
     setDraggedCard(null);
     setDragOverColumn(null);
+    setDragOverIndex(null);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -579,12 +581,15 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     // If there's no related target or it's not a child of current target, clear drag over
     if (!relatedTarget || !currentTarget.contains(relatedTarget)) {
       setDragOverColumn(null);
+      setDragOverIndex(null);
     }
   };
 
-  const handleDrop = async (e: React.DragEvent, targetStatus: string) => {
+  const handleDrop = async (e: React.DragEvent, targetStatus: string, targetIndex?: number) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragOverColumn(null);
+    setDragOverIndex(null);
     
     if (!draggedCard) {
       setDraggedCard(null);
@@ -599,14 +604,25 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     let updatedCards: StackCard[];
     
     if (isSameColumn) {
-      // Same-column reordering: move card to end of column and recalculate ranks
+      // Same-column reordering: move card to specific position or end
       const cardsInColumn = cards.filter(c => c.status === targetStatus);
       const otherCards = cards.filter(c => c.status !== targetStatus);
       const cardToMove = cardsInColumn.find(c => c.id === draggedCard.id);
       const cardsWithoutMoved = cardsInColumn.filter(c => c.id !== draggedCard.id);
       
-      // Move card to end of column
-      const reorderedColumn = [...cardsWithoutMoved, cardToMove!];
+      // If targetIndex is provided and valid, insert at that position
+      // Otherwise, move to end
+      let reorderedColumn: StackCard[];
+      if (targetIndex !== undefined && targetIndex !== null && targetIndex >= 0 && targetIndex < cardsWithoutMoved.length) {
+        reorderedColumn = [
+          ...cardsWithoutMoved.slice(0, targetIndex),
+          cardToMove!,
+          ...cardsWithoutMoved.slice(targetIndex)
+        ];
+      } else {
+        // Move to end (default behavior)
+        reorderedColumn = [...cardsWithoutMoved, cardToMove!];
+      }
       
       // Recalculate ranks for the column
       const columnWithRanks = reorderedColumn.map((card, index) => ({
@@ -621,8 +637,20 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       const otherCards = cards.filter(c => c.status !== targetStatus && c.id !== draggedCard.id);
       const movedCard = { ...draggedCard, status: targetStatus as StackCard['status'] };
       
-      // Add moved card to target column and recalculate ranks
-      const updatedTargetColumn = [...cardsInTargetColumn, movedCard].map((card, index) => ({
+      // If targetIndex is provided, insert at that position, otherwise add to end
+      let updatedTargetColumn: StackCard[];
+      if (targetIndex !== undefined && targetIndex !== null && targetIndex >= 0 && targetIndex <= cardsInTargetColumn.length) {
+        updatedTargetColumn = [
+          ...cardsInTargetColumn.slice(0, targetIndex),
+          movedCard,
+          ...cardsInTargetColumn.slice(targetIndex)
+        ];
+      } else {
+        updatedTargetColumn = [...cardsInTargetColumn, movedCard];
+      }
+      
+      // Recalculate ranks
+      updatedTargetColumn = updatedTargetColumn.map((card, index) => ({
         ...card,
         rank: index + 1
       }));
@@ -861,12 +889,20 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   };
 
   const handleMoveToBottom = async () => {
-    if (!contextMenu) return;
+    if (!contextMenu) {
+      console.error('❌ [StacksBoard] handleMoveToBottom called but contextMenu is null');
+      return;
+    }
     const card = contextMenu.card;
+    console.log('🔄 [StacksBoard] Moving card to bottom:', card.id, card.title, 'type:', card.type);
+    
     const cardsInColumn = cards.filter(c => c.status === card.status);
     const currentIndex = cardsInColumn.findIndex(c => c.id === card.id);
     
+    console.log('🔍 [StacksBoard] Current index:', currentIndex, 'Total cards in column:', cardsInColumn.length);
+    
     if (currentIndex === cardsInColumn.length - 1) {
+      console.log('ℹ️ [StacksBoard] Card is already at bottom');
       setContextMenu(null);
       return;
     }
@@ -885,6 +921,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         rank: index + 1
       }));
       
+      console.log('✅ [StacksBoard] Optimistic update complete, new ranks:', reorderedColumn.map(c => ({ id: c.id, rank: c.rank })));
+      
       return [...reorderedColumn, ...otherCards];
     });
 
@@ -898,11 +936,14 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         ...c,
         rank: index + 1
       }));
+      
+      console.log('💾 [StacksBoard] Persisting ranks for', reorderedColumn.length, 'cards');
       await persistRanks(reorderedColumn, oldCards);
+      console.log('✅ [StacksBoard] Successfully moved card to bottom');
     } catch (error) {
       // Revert on error
+      console.error('❌ [StacksBoard] Error moving card to bottom, reverting:', error);
       setCards(oldCards);
-      console.error('Error moving card to bottom:', error);
     }
   };
 
@@ -1067,19 +1108,52 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                       const columnNumber = columnIndex + 1;
                       const letterSuffix = getLetterSuffix(index);
                       const displayNumber = `${columnNumber}${letterSuffix}`;
+                      const isDragOverHere = dragOverColumn === column.key && dragOverIndex === index;
+                      const isSameColumn = draggedCard?.status === column.key;
                       
                       return (
-                      <div
-                        key={card.id}
-                        className={`relative bg-background border border-border rounded-lg p-3 hover:border-primary transition-colors cursor-pointer ${
-                          draggedCard?.id === card.id ? 'opacity-50' : ''
-                        }`}
-                        draggable={true}
-                        onDragStart={(e) => handleDragStart(e, card)}
-                        onDragEnd={handleDragEnd}
-                        onClick={() => onCardClick?.(card)}
-                        onContextMenu={(e) => handleContextMenu(e, card)}
-                      >
+                        <React.Fragment key={`fragment-${card.id}`}>
+                          {/* Drop zone before card */}
+                          {isSameColumn && draggedCard && draggedCard.id !== card.id && (
+                            <div
+                              className={`h-2 transition-all ${
+                                isDragOverHere ? 'h-8 bg-primary/20 border-2 border-dashed border-primary rounded' : ''
+                              }`}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (draggedCard && draggedCard.status === column.key) {
+                                  setDragOverIndex(index);
+                                }
+                              }}
+                              onDragLeave={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setDragOverIndex(null);
+                              }}
+                              onDrop={(e) => {
+                                handleDrop(e, column.key, index);
+                              }}
+                            />
+                          )}
+                          <div
+                            key={card.id}
+                            className={`relative bg-background border border-border rounded-lg p-3 hover:border-primary transition-colors cursor-pointer ${
+                              draggedCard?.id === card.id ? 'opacity-50' : ''
+                            }`}
+                            draggable={true}
+                            onDragStart={(e) => handleDragStart(e, card)}
+                            onDragEnd={handleDragEnd}
+                            onClick={() => onCardClick?.(card)}
+                            onContextMenu={(e) => handleContextMenu(e, card)}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (draggedCard && draggedCard.status === column.key && draggedCard.id !== card.id) {
+                                setDragOverIndex(index + 1);
+                              }
+                            }}
+                          >
                         {/* Rank number in top left */}
                         <div className="absolute top-2 left-2 w-6 h-6 bg-panel-background text-foreground rounded-[12px] flex items-center justify-center text-xs font-bold flex-shrink-0 shrink-0">
                           {displayNumber}
@@ -1160,12 +1234,31 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                           </div>
                         )}
                       </div>
+                      </React.Fragment>
                       );
                     })}
-                    {isDragOver && (
-                      <div className="mt-2 py-3 border-2 border-dashed border-primary rounded-lg bg-primary/5 flex items-center justify-center">
-                        <span className="text-xs text-primary font-medium">Drop here</span>
-                      </div>
+                    {/* Drop zone at end of column */}
+                    {draggedCard && (
+                      <div
+                        className={`h-2 transition-all ${
+                          dragOverColumn === column.key && dragOverIndex === cards.length ? 'h-8 bg-primary/20 border-2 border-dashed border-primary rounded' : ''
+                        }`}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (draggedCard) {
+                            setDragOverIndex(cards.length);
+                          }
+                        }}
+                        onDragLeave={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDragOverIndex(null);
+                        }}
+                        onDrop={(e) => {
+                          handleDrop(e, column.key, cards.length);
+                        }}
+                      />
                     )}
                   </>
                 )}

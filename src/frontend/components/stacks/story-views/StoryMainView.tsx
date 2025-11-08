@@ -352,6 +352,49 @@ export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainV
                 placeholder="Enter description"
                 onSave={handleSave}
                 className="text-sm text-foreground whitespace-pre-wrap"
+                isBug={story.viewType === 'bug' || story.type === 'bug'}
+                status={story.status}
+                onImageUpload={async (file: File) => {
+                  // Upload image to story/task
+                  const formData = new FormData();
+                  formData.append('file', file);
+
+                  // For now, use task upload endpoint since stories with viewType='bug' 
+                  // might need to be handled differently. If story.type === 'bug', it's a task.
+                  const isTaskBug = story.type === 'bug';
+                  const uploadEndpoint = isTaskBug 
+                    ? `/api/stacks/tasks/${story.id}/upload`
+                    : `/api/stacks/tasks/${story.id}/upload`; // Use task endpoint for now
+
+                  const response = await fetch(uploadEndpoint, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                  });
+
+                  if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Failed to upload image');
+                  }
+
+                  // Refresh story data after upload
+                  const data = await response.json();
+                  
+                  // Fetch updated story
+                  const storyResponse = await fetch(`/api/v1/stacks/stories/${story.id}`, {
+                    credentials: 'include'
+                  });
+                  
+                  if (storyResponse.ok) {
+                    const storyData = await storyResponse.json();
+                    if (storyData.story) {
+                      setStory(storyData.story);
+                      if (onStoryUpdate) {
+                        onStoryUpdate(storyData.story);
+                      }
+                    }
+                  }
+                }}
               />
             </div>
           </div>
