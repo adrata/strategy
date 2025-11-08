@@ -32,7 +32,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
-  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number; epicsCount: number }) => number | React.ReactNode;
+  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number; epicsCount: number; bugsCount: number }) => number | React.ReactNode;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -69,6 +69,16 @@ const navigationItems: NavigationItem[] = [
     }
   },
   {
+    id: 'bugs',
+    label: 'Bugs',
+    icon: ClipboardDocumentListIcon,
+    description: 'All bugs list',
+    getCount: (stats) => {
+      // Count bugs (tasks with type='bug')
+      return stats.bugsCount || 0;
+    }
+  },
+  {
     id: 'metrics',
     label: 'Metrics',
     icon: ChartBarIcon,
@@ -100,7 +110,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     upNextCount: 0,
     backlogCount: 0,
     workstreamCount: 0,
-    epicsCount: 0
+    epicsCount: 0,
+    bugsCount: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
   
@@ -274,6 +285,9 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         // Backlog count = Up Next items + Backlog items (both appear in backlog view)
         const backlogCount = upNextCount + backlogItemsCount;
 
+        // Bugs count = tasks with type='bug'
+        const bugsCount = tasks.filter((task: any) => task.type === 'bug').length;
+
         console.log('📊 [StacksLeftPanel] Final counts:', { 
           total, 
           active, 
@@ -283,12 +297,13 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           workstreamCount, 
           backlogCount, 
           epicsCount,
+          bugsCount,
           stories: stories.length, 
           tasks: tasks.length,
           workspace: workspaceId 
         });
 
-        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, epicsCount });
+        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount, epicsCount, bugsCount });
       } catch (error) {
         console.error('❌ [StacksLeftPanel] Failed to fetch story/task counts:', error);
         // Log error details for debugging
@@ -302,7 +317,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         // Preserve counts if we had previous values, otherwise reset to 0
         // This prevents showing 0 when there's a transient error
         const preservedEpicsCount = previousEpicsCount > 0 ? previousEpicsCount : 0;
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, epicsCount: preservedEpicsCount });
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0, epicsCount: preservedEpicsCount, bugsCount: 0 });
       } finally {
         setStatsLoading(false);
       }
@@ -355,6 +370,9 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       // Backlog count = Up Next items + Backlog items (both appear in backlog view)
       const backlogCount = upNextCount + backlogItemsCount;
 
+      // Bugs count = tasks with type='bug'
+      const bugsCount = (contextTasks || []).filter((task: any) => task.type === 'bug').length;
+
       // Update stats
       setStats(prev => ({
         total,
@@ -363,9 +381,10 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         upNextCount,
         backlogCount,
         workstreamCount,
+        bugsCount,
       }));
       
-      console.log('✅ [StacksLeftPanel] Stats updated from context:', { total, active, completed, upNextCount, backlogCount, workstreamCount });
+      console.log('✅ [StacksLeftPanel] Stats updated from context:', { total, active, completed, upNextCount, backlogCount, workstreamCount, bugsCount });
     }
   }, [contextStories, contextTasks]);
 
@@ -475,8 +494,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     setIsProfilePanelVisible(!isProfilePanelVisible);
   };
 
-  // All navigation items are displayed (no category grouping)
-  const displayItems = navigationItems;
+  // Filter out Stories and Bugs from navigation (they're shown in the middle panel instead)
+  const displayItems = navigationItems.filter(item => item.id !== 'stories' && item.id !== 'bugs');
 
   return (
     <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">

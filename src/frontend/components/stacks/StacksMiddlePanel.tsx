@@ -27,6 +27,7 @@ import { StoryDetailView } from './StoryDetailView';
 import { EpicsPage } from './EpicsPage';
 import { EpicStoriesList } from './EpicStoriesList';
 import { StacksStoriesList } from './StacksStoriesList';
+import { StacksBugsList } from './StacksBugsList';
 import { StacksEpic } from './types';
 import { ErrorBoundary } from '@/frontend/components/ErrorBoundary';
 import { useStacks } from '@/products/stacks/context/StacksProvider';
@@ -681,6 +682,14 @@ export function StacksMiddlePanel({
     return (
       <div className="h-full flex flex-col bg-background">
         <StacksStoriesList onItemClick={onItemClick} selectedItem={selectedItem} />
+      </div>
+    );
+  }
+
+  if (activeSubSection === 'bugs') {
+    return (
+      <div className="h-full flex flex-col bg-background">
+        <StacksBugsList onItemClick={onItemClick} selectedItem={selectedItem} />
       </div>
     );
   }
