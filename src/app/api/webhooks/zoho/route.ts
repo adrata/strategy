@@ -220,40 +220,57 @@ async function processLeadData(leadData: any) {
         }
       });
 
-      const leadRecord = await prisma.people.upsert({
-        where: {
-          id: `zoho_lead_${leadData.id || Date.now()}`
-        },
-        create: {
-          id: `zoho_lead_${leadData.id || Date.now()}`,
-          entity_id: entityRecord.id, // Link to entity record
-          workspaceId: workspaceId,
-          firstName: firstName,
-          lastName: lastName,
-          fullName: fullName,
-          email: leadData.Email || `${leadData.id || Date.now()}@zoho.com`,
-          phone: leadData.Phone || '',
-          company: leadData.Company || '',
-          title: leadData.Title || leadData.Designation || '',
-          source: 'Zoho CRM',
-          status: 'LEAD',
-          zohoId: leadData.id,
-          description: description,
-          ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
-          updatedAt: new Date()
-        },
-        update: {
-          firstName: firstName,
-          lastName: lastName,
-          fullName: fullName,
-          phone: leadData.Phone || '',
-          company: leadData.Company || '',
-          title: leadData.Title || leadData.Designation || '',
-          status: 'LEAD',
-          description: description,
-          updatedAt: new Date()
-        }
-      });
+      // Use ULID for ID generation (Prisma will auto-generate via @default(ulid()))
+      // Find existing record by email + workspaceId for upsert
+      const email = leadData.Email || null;
+      const existingPerson = email 
+        ? await prisma.people.findFirst({
+            where: {
+              workspaceId: workspaceId,
+              OR: [
+                { email: email },
+                { workEmail: email },
+                { personalEmail: email }
+              ]
+            }
+          })
+        : null;
+
+      const leadRecord = existingPerson
+        ? await prisma.people.update({
+            where: { id: existingPerson.id },
+            data: {
+              firstName: firstName,
+              lastName: lastName,
+              fullName: fullName,
+              email: email || existingPerson.email,
+              phone: leadData.Phone || existingPerson.phone,
+              company: leadData.Company || existingPerson.company,
+              title: leadData.Title || leadData.Designation || existingPerson.title,
+              source: 'Zoho CRM',
+              status: 'LEAD',
+              description: description,
+              updatedAt: new Date()
+            }
+          })
+        : await prisma.people.create({
+            data: {
+              // Let Prisma generate ULID via @default(ulid())
+              entity_id: entityRecord.id, // Link to entity record
+              workspaceId: workspaceId,
+              firstName: firstName,
+              lastName: lastName,
+              fullName: fullName,
+              email: leadData.Email || null,
+              phone: leadData.Phone || null,
+              title: leadData.Title || leadData.Designation || null,
+              source: 'Zoho CRM',
+              status: 'LEAD',
+              description: description,
+              mainSellerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+              updatedAt: new Date()
+            }
+          });
       
       console.log(`✅ [ZOHO WEBHOOK] Lead saved to database: ${fullName} (ID: ${leadRecord.id})`);
     } catch (dbError) {
@@ -346,45 +363,50 @@ async function processLeadWebhook(operation: string, data: any) {
         const createLastName = leadData.Last_Name || '';
         const createFullName = `${createFirstName} ${createLastName}`.trim();
         
-        // Check if lead exists by zohoId
-        const existingLead = await prisma.leads.findFirst({
-          where: { zohoId: leadData.id , deletedAt: null}
+        // Check if lead exists by email + workspaceId
+        const existingLead = await prisma.people.findFirst({
+          where: { 
+            workspaceId: workspaceId,
+            OR: [
+              { email: leadData.Email || undefined },
+              { workEmail: leadData.Email || undefined },
+              { personalEmail: leadData.Email || undefined }
+            ],
+            deletedAt: null
+          }
         });
 
         if (existingLead) {
           // Update existing lead
-          await prisma.leads.update({
+          await prisma.people.update({
             where: { id: existingLead.id },
             data: {
               firstName: createFirstName,
               lastName: createLastName,
               fullName: createFullName,
-              email: leadData.Email || '',
-              phone: leadData.Phone || '',
-              company: leadData.Company || '',
-              title: leadData.Title || leadData.Designation || '',
-              status: leadData.Lead_Status || 'New',
-              description: leadData.Description || ''
+              email: leadData.Email || existingLead.email,
+              phone: leadData.Phone || existingLead.phone,
+              title: leadData.Title || leadData.Designation || existingLead.title,
+              status: 'LEAD',
+              description: leadData.Description || existingLead.notes,
+              updatedAt: new Date()
             }
           });
         } else {
-          // Create new lead
-          await prisma.leads.create({
+          // Create new lead - let Prisma generate ULID via @default(ulid())
+          await prisma.people.create({
             data: {
-              id: `zoho_lead_${leadData.id || Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
               workspaceId: workspaceId,
               firstName: createFirstName,
               lastName: createLastName,
               fullName: createFullName,
-              email: leadData.Email || '',
-              phone: leadData.Phone || '',
-              company: leadData.Company || '',
-              title: leadData.Title || leadData.Designation || '',
+              email: leadData.Email || null,
+              phone: leadData.Phone || null,
+              title: leadData.Title || leadData.Designation || null,
               source: leadData.Lead_Source || 'Zoho CRM',
-              status: leadData.Lead_Status || 'New',
-              zohoId: leadData.id,
-              description: leadData.Description || '',
-              ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+              status: 'LEAD',
+              description: leadData.Description || null,
+              mainSellerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
               updatedAt: new Date()
             }
           });

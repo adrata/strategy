@@ -117,128 +117,142 @@ export async function GET(
     if (!story) {
       console.log('🔍 [STACKS API] Story not found, checking for task:', finalStoryId);
       
-      // Try to fetch as a task
-      const task = await prisma.stacksTask.findFirst({
-        where: {
-          id: finalStoryId,
-          project: {
-            workspaceId: workspaceId
-          }
-        },
-        select: {
-          id: true,
-          storyId: true,
-          projectId: true,
-          title: true,
-          description: true,
-          status: true,
-          priority: true,
-          type: true,
-          assigneeId: true,
-          product: true,
-          section: true,
-          rank: true,
-          attachments: true, // Include attachments field
-          createdAt: true,
-          updatedAt: true,
-          assignee: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true
+      try {
+        // Try to fetch as a task
+        const task = await prisma.stacksTask.findFirst({
+          where: {
+            id: finalStoryId,
+            project: {
+              workspaceId: workspaceId
             }
           },
-          story: {
-            select: {
-              id: true,
-              title: true
-            }
-          },
-          project: {
-            select: {
-              id: true,
-              name: true
+          select: {
+            id: true,
+            storyId: true,
+            projectId: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            type: true,
+            assigneeId: true,
+            product: true,
+            section: true,
+            rank: true,
+            attachments: true, // Include attachments field
+            createdAt: true,
+            updatedAt: true,
+            assignee: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true
+              }
+            },
+            story: {
+              select: {
+                id: true,
+                title: true
+              }
+            },
+            project: {
+              select: {
+                id: true,
+                name: true
+              }
             }
           }
-        }
-      });
+        });
 
-      if (!task) {
-        console.log('❌ [STACKS API] Neither story nor task found');
-        console.log('❌ [STACKS API] Searched for ID:', finalStoryId);
-        console.log('❌ [STACKS API] In workspace:', workspaceId);
-        console.log('❌ [STACKS API] Original param value:', paramValue);
-        
-        // Try to find the task without workspace validation to see if it exists
-        const taskWithoutWorkspace = await prisma.stacksTask.findFirst({
-          where: { id: finalStoryId },
-          select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
-        });
-        
-        if (taskWithoutWorkspace) {
-          console.log('⚠️ [STACKS API] Task exists but in different workspace:', taskWithoutWorkspace.project?.workspaceId);
+        if (!task) {
+          console.log('❌ [STACKS API] Neither story nor task found');
+          console.log('❌ [STACKS API] Searched for ID:', finalStoryId);
+          console.log('❌ [STACKS API] In workspace:', workspaceId);
+          console.log('❌ [STACKS API] Original param value:', paramValue);
+          
+          // Try to find the task without workspace validation to see if it exists
+          const taskWithoutWorkspace = await prisma.stacksTask.findFirst({
+            where: { id: finalStoryId },
+            select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
+          });
+          
+          if (taskWithoutWorkspace) {
+            console.log('⚠️ [STACKS API] Task exists but in different workspace:', taskWithoutWorkspace.project?.workspaceId);
+          }
+          
+          // Also check story without workspace
+          const storyWithoutWorkspace = await prisma.stacksStory.findFirst({
+            where: { id: finalStoryId },
+            select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
+          });
+          
+          if (storyWithoutWorkspace) {
+            console.log('⚠️ [STACKS API] Story exists but in different workspace:', storyWithoutWorkspace.project?.workspaceId);
+          }
+          
+          return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
         }
-        
-        // Also check story without workspace
-        const storyWithoutWorkspace = await prisma.stacksStory.findFirst({
-          where: { id: finalStoryId },
-          select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
+
+        console.log('✅ [STACKS API] Task found:', task.id, 'type:', task.type);
+
+        // Transform task data to match story response format
+        const transformedStory = {
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          acceptanceCriteria: null, // Tasks don't have acceptance criteria
+          status: task.status,
+          priority: task.priority,
+          viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs, 'detail' for other tasks
+          product: task.product || null,
+          section: task.section || null,
+          rank: task.rank || null, // Tasks have rank field
+          type: task.type || 'task', // Include type to distinguish from stories
+          attachments: task.attachments && Array.isArray(task.attachments) 
+            ? task.attachments 
+            : [], // Include attachments from task
+          assignee: task.assignee ? {
+            id: task.assignee.id,
+            name: (() => {
+              const firstName = task.assignee.firstName != null ? String(task.assignee.firstName) : '';
+              const lastName = task.assignee.lastName != null ? String(task.assignee.lastName) : '';
+              const fullName = `${firstName} ${lastName}`.trim();
+              return fullName || 'Unknown';
+            })(),
+            email: task.assignee.email || ''
+          } : null,
+          epoch: null, // Tasks don't have epochs
+          story: task.story ? {
+            id: task.story.id,
+            title: task.story.title
+          } : null,
+          project: task.project ? {
+            id: task.project.id,
+            name: task.project.name
+          } : null,
+          dueDate: null,
+          tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
+          isFlagged: false, // Tasks don't have isFlagged
+          points: null, // Tasks don't have points
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+          timeInStatus: 0 // Tasks don't track statusChangedAt
+        };
+
+        console.log('✅ [STACKS API] Task found and transformed');
+        return NextResponse.json({ story: transformedStory, type: 'task' });
+      } catch (taskError) {
+        console.error('❌ [STACKS API] Error fetching task:', taskError);
+        console.error('❌ [STACKS API] Task error details:', {
+          message: taskError instanceof Error ? taskError.message : String(taskError),
+          stack: taskError instanceof Error ? taskError.stack : undefined,
+          code: (taskError as any)?.code,
+          meta: (taskError as any)?.meta
         });
-        
-        if (storyWithoutWorkspace) {
-          console.log('⚠️ [STACKS API] Story exists but in different workspace:', storyWithoutWorkspace.project?.workspaceId);
-        }
-        
-        return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
+        // Re-throw to be caught by outer catch block
+        throw taskError;
       }
-
-      // Transform task data to match story response format
-      const transformedStory = {
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        acceptanceCriteria: null, // Tasks don't have acceptance criteria
-        status: task.status,
-        priority: task.priority,
-        viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs, 'detail' for other tasks
-        product: task.product || null,
-        section: task.section || null,
-        rank: (task as any).rank || null, // Tasks have rank field
-        type: task.type || 'task', // Include type to distinguish from stories
-        attachments: (task as any).attachments && Array.isArray((task as any).attachments) 
-          ? (task as any).attachments 
-          : [], // Include attachments from task
-        assignee: task.assignee ? {
-          id: task.assignee.id,
-          name: (() => {
-            const firstName = task.assignee.firstName != null ? String(task.assignee.firstName) : '';
-            const lastName = task.assignee.lastName != null ? String(task.assignee.lastName) : '';
-            const fullName = `${firstName} ${lastName}`.trim();
-            return fullName || 'Unknown';
-          })(),
-          email: task.assignee.email || ''
-        } : null,
-        epoch: null, // Tasks don't have epochs
-        story: task.story ? {
-          id: task.story.id,
-          title: task.story.title
-        } : null,
-        project: task.project ? {
-          id: task.project.id,
-          name: task.project.name
-        } : null,
-        dueDate: null,
-        tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
-        isFlagged: false, // Tasks don't have isFlagged
-        points: null, // Tasks don't have points
-        createdAt: task.createdAt,
-        updatedAt: task.updatedAt,
-        timeInStatus: 0 // Tasks don't track statusChangedAt
-      };
-
-      console.log('✅ [STACKS API] Task found and transformed');
-      return NextResponse.json({ story: transformedStory, type: 'task' });
     }
 
     // Transform the data to match the expected format
