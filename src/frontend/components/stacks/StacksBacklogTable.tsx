@@ -96,7 +96,8 @@ function BacklogItemComponent({
   onItemClick,
   onContextMenu,
   isBug,
-}: BacklogItemProps) {
+  allItems = [], // Full sorted list of all items (not filtered)
+}: BacklogItemProps & { allItems?: BacklogItem[] }) {
   const {
     attributes,
     listeners,
@@ -122,6 +123,43 @@ function BacklogItemComponent({
   }) || [];
   const displayTag = filteredTags.length > 0 ? filteredTags[0] : null;
 
+  // Calculate rank based on position in full sorted list, not filtered list
+  // Find the item's position within its section (Up Next vs Backlog) in the full list
+  let displayRank: string;
+  
+  if (allItems.length > 0) {
+    // Find all items in the same section as this item in the full list
+    const itemStatus = item.status;
+    const isItemUpNext = itemStatus === STACK_STATUS.UP_NEXT || itemStatus === STACK_STATUS.TODO;
+    
+    // Get all items in the same section from the full list
+    const sectionItems = allItems.filter(i => {
+      if (isItemUpNext) {
+        return i.status === STACK_STATUS.UP_NEXT || i.status === STACK_STATUS.TODO;
+      } else if (itemStatus === STACK_STATUS.BACKLOG) {
+        return i.status === STACK_STATUS.BACKLOG;
+      } else {
+        return i.status === STACK_STATUS.DEEP_BACKLOG;
+      }
+    });
+    
+    // Find the item's position within its section
+    const sectionIndex = sectionItems.findIndex(i => i.id === item.id);
+    const actualSectionIndex = sectionIndex >= 0 ? sectionIndex : index;
+    
+    // Calculate display rank based on position within section
+    if (isItemUpNext || isUpNext) {
+      displayRank = `1${String.fromCharCode(65 + actualSectionIndex)}`;
+    } else if (itemStatus === STACK_STATUS.DEEP_BACKLOG) {
+      displayRank = `DB${actualSectionIndex + 1}`;
+    } else {
+      displayRank = `B${actualSectionIndex + 1}`;
+    }
+  } else {
+    // Fallback to filtered list index if full list is not available
+    displayRank = isUpNext ? `1${String.fromCharCode(65 + index)}` : `B${index + 1}`;
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -137,7 +175,7 @@ function BacklogItemComponent({
       <div className="flex items-start gap-3">
         {/* Item Number/Letter */}
         <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-panel-background text-foreground rounded text-xs font-semibold">
-          {isUpNext ? `1${String.fromCharCode(65 + index)}` : `B${index + 1}`}
+          {displayRank}
         </div>
 
         {/* Content */}
@@ -1696,6 +1734,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           onItemClick={onItemClick}
                           onContextMenu={handleContextMenu}
                           isBug={isBug}
+                          allItems={items}
                         />
                       ))}
                     </div>
@@ -1732,6 +1771,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           onItemClick={onItemClick}
                           onContextMenu={handleContextMenu}
                           isBug={isBug}
+                          allItems={items}
                         />
                       ))}
                     </div>
@@ -1767,6 +1807,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           onItemClick={onItemClick}
                           onContextMenu={handleContextMenu}
                           isBug={isBug}
+                          allItems={items}
                         />
                       ))}
                     </div>

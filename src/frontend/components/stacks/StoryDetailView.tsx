@@ -109,6 +109,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       try {
         setLoading(true);
         console.log('🔍 [StoryDetailView] Fetching story:', storyId);
+        console.log('🔍 [StoryDetailView] Workspace ID:', ui.activeWorkspace?.id);
         
         // Add cache-busting query parameter to ensure fresh data
         const response = await fetch(
@@ -152,7 +153,11 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
           }
         } else {
           const errorData = await response.json().catch(() => ({}));
-          console.error('❌ [StoryDetailView] Failed to fetch story:', response.status, errorData);
+          console.error('❌ [StoryDetailView] Failed to fetch story');
+          console.error('❌ [StoryDetailView] Status:', response.status);
+          console.error('❌ [StoryDetailView] Story ID:', storyId);
+          console.error('❌ [StoryDetailView] Workspace ID:', ui.activeWorkspace?.id);
+          console.error('❌ [StoryDetailView] Error data:', errorData);
           setStory(null);
           setStoryType('story');
         }

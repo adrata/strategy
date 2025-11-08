@@ -22,6 +22,14 @@ export async function GET(
     console.log('🔍 [STACKS API] Param value:', paramValue);
     console.log('🔍 [STACKS API] Extracted story ID:', storyId);
     
+    // If extraction failed, try using the param value directly as ID
+    const finalStoryId = storyId || paramValue;
+    if (storyId !== paramValue && storyId) {
+      console.log('🔍 [STACKS API] Using extracted ID from slug');
+    } else if (!storyId) {
+      console.log('⚠️ [STACKS API] ID extraction failed, using param value directly');
+    }
+    
     // Use platform's unified authentication system
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
@@ -48,15 +56,17 @@ export async function GET(
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
     }
 
-    if (!storyId) {
+    if (!finalStoryId) {
       return createErrorResponse('Story ID required', 'STORY_ID_REQUIRED', 400);
     }
+
+    console.log('🔍 [STACKS API] Looking up story with ID:', finalStoryId, 'in workspace:', workspaceId);
 
     // Fetch the story with workspace validation
     // Use explicit select to avoid selecting viewType column that may not exist in database
     const story = await prisma.stacksStory.findFirst({
       where: {
-        id: storyId,
+        id: finalStoryId,
         project: {
           workspaceId: workspaceId
         }
@@ -105,12 +115,12 @@ export async function GET(
 
     // If story not found, check if it's a task
     if (!story) {
-      console.log('🔍 [STACKS API] Story not found, checking for task:', storyId);
+      console.log('🔍 [STACKS API] Story not found, checking for task:', finalStoryId);
       
       // Try to fetch as a task
       const task = await prisma.stacksTask.findFirst({
         where: {
-          id: storyId,
+          id: finalStoryId,
           project: {
             workspaceId: workspaceId
           }
@@ -155,7 +165,31 @@ export async function GET(
       });
 
       if (!task) {
-        console.log('❌ [STACKS API] Neither story nor task found:', storyId);
+        console.log('❌ [STACKS API] Neither story nor task found');
+        console.log('❌ [STACKS API] Searched for ID:', finalStoryId);
+        console.log('❌ [STACKS API] In workspace:', workspaceId);
+        console.log('❌ [STACKS API] Original param value:', paramValue);
+        
+        // Try to find the task without workspace validation to see if it exists
+        const taskWithoutWorkspace = await prisma.stacksTask.findFirst({
+          where: { id: finalStoryId },
+          select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
+        });
+        
+        if (taskWithoutWorkspace) {
+          console.log('⚠️ [STACKS API] Task exists but in different workspace:', taskWithoutWorkspace.project?.workspaceId);
+        }
+        
+        // Also check story without workspace
+        const storyWithoutWorkspace = await prisma.stacksStory.findFirst({
+          where: { id: finalStoryId },
+          select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
+        });
+        
+        if (storyWithoutWorkspace) {
+          console.log('⚠️ [STACKS API] Story exists but in different workspace:', storyWithoutWorkspace.project?.workspaceId);
+        }
+        
         return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
       }
 

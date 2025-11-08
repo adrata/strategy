@@ -612,8 +612,16 @@ export async function POST(request: NextRequest) {
       userId: context.userId
     });
 
+    // Normalize company name to prevent trailing spaces and ensure clean data
+    const { normalizeName } = await import('@/platform/utils/name-normalization');
+    const normalizedCompanyName = normalizeName(body.name);
+    
+    if (!normalizedCompanyName) {
+      return createErrorResponse('Company name is required and must be a non-empty string', 'VALIDATION_ERROR', 400);
+    }
+
     // Check for duplicate company before creating
-    const companyName = body.name.trim();
+    const companyName = normalizedCompanyName;
     const existingCompany = await prisma.companies.findFirst({
       where: {
         workspaceId: context.workspaceId,
@@ -808,7 +816,7 @@ export async function POST(request: NextRequest) {
 
     // Create company data object outside transaction scope for error handler access
     const companyData: any = {
-      name: body.name,
+      name: normalizedCompanyName,
       workspaceId: context.workspaceId,
       state: body.state || null,
       status: body.status || 'ACTIVE', // Use provided status or default to ACTIVE

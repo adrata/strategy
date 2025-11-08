@@ -553,13 +553,16 @@ export const PipelineContent = React.memo(function PipelineContent({
     
     let filtered = dataToFilter.filter((record: any) => {
       // Search filter
+      const searchLower = searchQuery.toLowerCase();
       const matchesSearch = !searchQuery || 
-        (record['name'] && record.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (record['fullName'] && record.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (record['title'] && record.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (record['company'] && record.company && (typeof record.company === 'string' ? record.company : record.company.name) && (typeof record.company === 'string' ? record.company : record.company.name).toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (record['email'] && record.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (record['companyName'] && record.companyName.toLowerCase().includes(searchQuery.toLowerCase()));
+        (record['name'] && record.name.toLowerCase().includes(searchLower)) ||
+        (record['fullName'] && record.fullName.toLowerCase().includes(searchLower)) ||
+        (record['firstName'] && record.firstName.toLowerCase().includes(searchLower)) ||
+        (record['lastName'] && record.lastName.toLowerCase().includes(searchLower)) ||
+        (record['title'] && record.title.toLowerCase().includes(searchLower)) ||
+        (record['company'] && record.company && (typeof record.company === 'string' ? record.company : record.company.name) && (typeof record.company === 'string' ? record.company : record.company.name).toLowerCase().includes(searchLower)) ||
+        (record['email'] && record.email.toLowerCase().includes(searchLower)) ||
+        (record['companyName'] && record.companyName.toLowerCase().includes(searchLower));
 
       // Vertical filter
       const matchesVertical = verticalFilter === 'all' ||

@@ -1023,7 +1023,7 @@ model documents {
 
 /// Oasis - Team Communication (Slack-like)
 model OasisChannel {
-  id          String               @id @default(cuid())
+  id          String               @id @default(ulid())
   workspaceId String               @db.VarChar(30)
   name        String               @db.VarChar(100)
   description String?              @db.VarChar(500)
@@ -1039,7 +1039,7 @@ model OasisChannel {
 }
 
 model OasisChannelMember {
-  id        String       @id @default(cuid())
+  id        String       @id @default(ulid())
   channelId String
   userId    String       @db.VarChar(30)
   joinedAt  DateTime     @default(now())
@@ -1052,7 +1052,7 @@ model OasisChannelMember {
 }
 
 model OasisDirectMessage {
-  id           String               @id @default(cuid())
+  id           String               @id @default(ulid())
   workspaceId  String               @db.VarChar(30)
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
@@ -1064,7 +1064,7 @@ model OasisDirectMessage {
 }
 
 model OasisDMParticipant {
-  id       String             @id @default(cuid())
+  id       String             @id @default(ulid())
   dmId     String
   userId   String             @db.VarChar(30)
   joinedAt DateTime           @default(now())
@@ -1077,7 +1077,7 @@ model OasisDMParticipant {
 }
 
 model OasisMessage {
-  id                 String              @id @default(cuid())
+  id                 String              @id @default(ulid())
   content            String
   channelId          String?
   dmId               String?
@@ -1101,7 +1101,7 @@ model OasisMessage {
 }
 
 model OasisReaction {
-  id        String       @id @default(cuid())
+  id        String       @id @default(ulid())
   messageId String
   userId    String       @db.VarChar(30)
   emoji     String       @db.VarChar(10)
@@ -1115,7 +1115,7 @@ model OasisReaction {
 }
 
 model OasisReadReceipt {
-  id        String       @id @default(cuid())
+  id        String       @id @default(ulid())
   userId    String       @db.VarChar(30)
   messageId String
   readAt    DateTime     @default(now())
@@ -1130,7 +1130,7 @@ model OasisReadReceipt {
 
 /// Stacks - Project Management (Jira-like)
 model StacksProject {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   workspaceId String        @db.VarChar(30)
   name        String        @db.VarChar(200)
   description String?
@@ -1147,7 +1147,7 @@ model StacksProject {
 }
 
 model StacksEpic {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   projectId   String
   epochId     String? // Epics belong to Epoch (bigger items)
   title       String        @db.VarChar(200)
@@ -1173,7 +1173,7 @@ model StacksEpic {
 // StacksEpoch - bigger/higher-level items (separate table)
 // Epochs contain epics, which contain stories
 model StacksEpoch {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   projectId   String
   title       String        @db.VarChar(200)
   description String?
@@ -1193,7 +1193,7 @@ model StacksEpoch {
 }
 
 model StacksStory {
-  id                 String          @id @default(cuid())
+  id                 String          @id @default(ulid())
   epicId             String? // Stories belong to Epic (existing column in database)
   epochId            String? // Stories can also belong to Epoch (bigger items)
   projectId          String
@@ -1228,7 +1228,7 @@ model StacksStory {
 }
 
 model StacksTask {
-  id          String        @id @default(cuid())
+  id          String        @id @default(ulid())
   storyId     String?
   projectId   String
   title       String        @db.VarChar(200)

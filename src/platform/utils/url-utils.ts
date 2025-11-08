@@ -66,20 +66,53 @@ export function extractIdFromSlug(slug: string): string {
     }
   }
   
-  // Check if the last part is a ULID (26 characters starting with 0 or c for legacy custom ULIDs) or Zoho ID
+  // ULIDs are 26 characters using Crockford's Base32 alphabet: 0123456789ABCDEFGHJKMNPQRSTVWXYZ
+  // ULID pattern: exactly 26 characters, starts with timestamp (0-9) or legacy 'c' prefix
+  // CUIDs are 25 characters and start with 'c' (legacy support)
+  // CUIDs use lowercase alphanumeric characters: c + 24 lowercase letters/numbers
+  
   const lastPart = parts[parts.length - 1];
-  if (lastPart && (
-    (lastPart['length'] === 26 && (lastPart.startsWith('01') || lastPart.startsWith('c'))) ||
-    lastPart.startsWith('zcrm_') ||
-    lastPart.startsWith('zoho_')
-  )) {
+  
+  // Check for Zoho IDs first (they have specific prefixes)
+  if (lastPart && (lastPart.startsWith('zcrm_') || lastPart.startsWith('zoho_'))) {
     return lastPart;
   }
   
-  // For other cases, try to find a ULID pattern or Zoho ID pattern in the slug
-  const ulidMatch = slug.match(/[0-9A-HJKMNP-TV-Zc]{26}/);
+  // ULID: exactly 26 characters, valid Base32 characters (uppercase)
+  // ULIDs start with timestamp (0-9) or can start with 'c' for legacy compatibility
+  const ulidPattern = /^[0-9A-HJKMNP-TV-Z]{26}$/;
+  if (lastPart && ulidPattern.test(lastPart.toUpperCase())) {
+    return lastPart;
+  }
+  
+  // CUID: 25 characters starting with 'c' followed by 24 lowercase alphanumeric characters
+  // CUIDs use lowercase letters and numbers: c[a-z0-9]{24}
+  const cuidPattern = /^c[a-z0-9]{24}$/;
+  if (lastPart && cuidPattern.test(lastPart)) {
+    return lastPart;
+  }
+  
+  // Try to find ULID at the end of the slug (after last hyphen)
+  const ulidMatch = slug.match(/([0-9A-HJKMNP-TV-Z]{26})$/i);
   if (ulidMatch) {
-    return ulidMatch[0];
+    return ulidMatch[1];
+  }
+  
+  // Try to find CUID at the end (legacy support) - lowercase alphanumeric
+  const cuidMatch = slug.match(/(c[a-z0-9]{24})$/);
+  if (cuidMatch) {
+    return cuidMatch[1];
+  }
+  
+  // Fallback: try to find any ULID/CUID pattern in the slug
+  const anyUlidMatch = slug.match(/([0-9A-HJKMNP-TV-Z]{26})/i);
+  if (anyUlidMatch) {
+    return anyUlidMatch[1];
+  }
+  
+  const anyCuidMatch = slug.match(/(c[a-z0-9]{24})/);
+  if (anyCuidMatch) {
+    return anyCuidMatch[1];
   }
   
   // Try to find Zoho ID patterns

@@ -51,7 +51,7 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     // Check for story detail page pattern: /workspace/stacks/{storyId}
     // This must be checked BEFORE the catch-all to prevent routing to default section
     const pathParts = pathname.split('/').filter(Boolean);
-    const knownSections = ['workstream', 'workstreams', 'backlog', 'metrics', 'deep-backlog', 'pipeline', 'sell', 'build', 'stories', 'bugs'];
+    const knownSections = ['workstream', 'workstreams', 'backlog', 'metrics', 'deep-backlog', 'pipeline', 'sell', 'build', 'stories', 'bugs', 'epics'];
     
     // Check if this looks like a story detail page (has a storyId in the path)
     if (pathParts.length >= 3 && pathParts[1] === 'stacks') {
@@ -61,12 +61,27 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
       if (lastSegment && !knownSections.includes(lastSegment)) {
         // Try to extract ID from slug - if it extracts something, it's likely a story
         const extractedId = extractIdFromSlug(lastSegment);
-        // ULIDs are 26 characters and typically start with 'c' or '01'
-        if (extractedId && (
-          extractedId.length === 26 && (extractedId.startsWith('c') || extractedId.startsWith('01'))
-        )) {
+        // ULIDs are exactly 26 characters using Base32 alphabet
+        // CUIDs are 25 characters starting with 'c' (legacy support)
+        const isUlid = /^[0-9A-HJKMNP-TV-Z]{26}$/.test(lastSegment);
+        const isCuid = /^c[0-9A-HJKMNP-TV-Z]{24}$/.test(lastSegment);
+        const looksLikeId = isUlid || isCuid || (extractedId && (extractedId.length === 26 || extractedId.length === 25));
+        
+        if (looksLikeId) {
           console.log('✅ [StacksContainer] Detected story detail page, keeping current section');
+          console.log('✅ [StacksContainer] Extracted ID:', extractedId, 'Last segment:', lastSegment);
           // Don't change activeSubSection - let storyId prop handle the detail view
+          // But restore the navigation source if we have one
+          if (typeof window !== 'undefined') {
+            const navSource = sessionStorage.getItem('stacks-navigation-source');
+            if (navSource && navSource !== 'epics') {
+              console.log('✅ [StacksContainer] Restoring navigation source:', navSource);
+              // Don't change section if we're viewing a story detail from backlog
+              if (navSource === 'backlog') {
+                onSubSectionChange('backlog');
+              }
+            }
+          }
           return;
         }
       }
@@ -138,10 +153,14 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     
     if (!item?.id) return;
     
-    // Store navigation source if coming from backlog, epics, or up-next section
+    // Store navigation source if coming from backlog, epics, bugs, or up-next section
     if (activeSubSection === 'backlog' || pathname.includes('/backlog')) {
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('stacks-navigation-source', 'backlog');
+      }
+    } else if (activeSubSection === 'bugs' || pathname.includes('/bugs')) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('stacks-navigation-source', 'bugs');
       }
     } else if (activeSubSection === 'epics' || pathname.includes('/epics')) {
       if (typeof window !== 'undefined') {

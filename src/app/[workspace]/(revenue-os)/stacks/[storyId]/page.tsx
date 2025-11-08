@@ -21,7 +21,13 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
 export default async function WorkspaceStacksStoryPage({ params }: StoryPageProps) {
   const resolvedParams = await params;
   // Extract ID from slug (handles both slug format and raw ID)
-  const storyId = extractIdFromSlug(resolvedParams.storyId);
+  const extractedId = extractIdFromSlug(resolvedParams.storyId);
+  // Fallback to param value if extraction fails or returns empty
+  const storyId = extractedId || resolvedParams.storyId;
+  
+  console.log('🔍 [WorkspaceStacksStoryPage] Param value:', resolvedParams.storyId);
+  console.log('🔍 [WorkspaceStacksStoryPage] Extracted ID:', extractedId);
+  console.log('🔍 [WorkspaceStacksStoryPage] Using storyId:', storyId);
   
   return (
     <StacksGuard>

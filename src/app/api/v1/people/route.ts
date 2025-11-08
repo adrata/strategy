@@ -948,9 +948,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create full name
-    const fullName = `${body.firstName} ${body.lastName}`;
-
     // Validate status if provided
     const validStatuses = ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CLIENT', 'PARTNER', 'SUPERFAN'];
     if (body.status && !validStatuses.includes(body.status)) {
@@ -1019,14 +1016,21 @@ export async function POST(request: NextRequest) {
       // Continue without core linking - person creation should still succeed
     }
 
+    // Normalize name fields to prevent trailing spaces and ensure clean data
+    const { normalizePersonNames, generateFullName, normalizeFullName } = await import('@/platform/utils/name-normalization');
+    const normalizedNames = normalizePersonNames(body.firstName, body.lastName);
+    const normalizedFullName = body.fullName 
+      ? normalizeFullName(body.fullName)
+      : generateFullName(normalizedNames.firstName, normalizedNames.lastName);
+
     // Create person and action in a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Create person
       const person = await tx.people.create({
         data: {
-          firstName: body.firstName,
-          lastName: body.lastName,
-          fullName: fullName,
+          firstName: normalizedNames.firstName,
+          lastName: normalizedNames.lastName,
+          fullName: normalizedFullName,
           ...(corePersonId && { corePersonId: corePersonId }),
           displayName: body.displayName,
           salutation: body.salutation,
