@@ -546,8 +546,16 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
       // Use companyId if available, otherwise fall back to searching by name
       if (companyId) {
         // Navigate to the actual company record using workspace-aware navigation
+        // Include search parameter and tab=overview in the URL
         try {
-        navigateToPipelineItem('companies', companyId, companyName);
+          const slug = generateSlug(companyName, companyId);
+          const currentPath = window.location.pathname;
+          const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+          const workspaceSlug = workspaceMatch ? workspaceMatch[1] : 'workspace';
+          
+          // Build URL with search parameter and tab
+          const url = `/${workspaceSlug}/companies/${slug}?search=${encodeURIComponent(companyName)}&tab=overview`;
+          window.location.href = url;
         } catch (error) {
           console.error('Error navigating to company:', error);
           // Fallback to search navigation if navigateToPipelineItem fails
