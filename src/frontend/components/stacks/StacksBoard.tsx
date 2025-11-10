@@ -167,6 +167,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   const [loading, setLoading] = useState(false);
   const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; card: StackCard } | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState<StackCard | null>(null);
   
   // Get workspace slug from pathname (consistent with other components)
   const workspaceSlug = pathname.split('/').filter(Boolean)[0];
@@ -947,18 +949,43 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!contextMenu) return;
     const card = contextMenu.card;
-    
-    if (!window.confirm(`Are you sure you want to delete "${card.title}"?`)) {
-      setContextMenu(null);
-      return;
+    setCardToDelete(card);
+    setShowDeleteConfirm(true);
+    setContextMenu(null);
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
+    setCardToDelete(null);
+  };
+
+  // Handle Escape key to close delete confirmation modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showDeleteConfirm) {
+        setShowDeleteConfirm(false);
+        setCardToDelete(null);
+      }
+    };
+
+    if (showDeleteConfirm) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
     }
+  }, [showDeleteConfirm]);
+
+  const handleDeleteConfirm = async () => {
+    if (!cardToDelete) return;
+
+    const card = cardToDelete;
 
     // Optimistic update
     setCards(prevCards => prevCards.filter(c => c.id !== card.id));
-    setContextMenu(null);
+    setShowDeleteConfirm(false);
+    setCardToDelete(null);
 
     try {
       const endpoint = card.type === 'task' 
@@ -1283,6 +1310,38 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
           onMoveToBottom={handleMoveToBottom}
           onDelete={handleDelete}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && cardToDelete && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]" 
+          onClick={handleDeleteCancel}
+        >
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-sm mx-4" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Delete Record</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete "{cardToDelete.title}"? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleDeleteCancel}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

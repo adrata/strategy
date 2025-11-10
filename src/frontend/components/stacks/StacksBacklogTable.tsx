@@ -505,6 +505,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     isUpNext: false,
     itemStatus: null
   });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<BacklogItem | null>(null);
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
@@ -1333,21 +1335,46 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!contextMenu.itemId) return;
 
     const item = items.find(i => i.id === contextMenu.itemId);
     if (!item) return;
 
-    // Show confirmation dialog
-    if (!window.confirm(`Are you sure you want to delete "${item.title}"?`)) {
-      setContextMenu(prev => ({ ...prev, isVisible: false }));
-      return;
+    setItemToDelete(item);
+    setShowDeleteConfirm(true);
+    setContextMenu(prev => ({ ...prev, isVisible: false }));
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
+    setItemToDelete(null);
+  };
+
+  // Handle Escape key to close delete confirmation modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showDeleteConfirm) {
+        setShowDeleteConfirm(false);
+        setItemToDelete(null);
+      }
+    };
+
+    if (showDeleteConfirm) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
     }
+  }, [showDeleteConfirm]);
+
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+
+    const item = itemToDelete;
 
     // Optimistic update - remove item from UI
-    setItems(prevItems => prevItems.filter(i => i.id !== contextMenu.itemId));
-    setContextMenu(prev => ({ ...prev, isVisible: false }));
+    setItems(prevItems => prevItems.filter(i => i.id !== item.id));
+    setShowDeleteConfirm(false);
+    setItemToDelete(null);
 
     // Resolve workspace ID - use the hook's workspaceId or fallback
     let resolvedWorkspaceId = workspaceId;
@@ -1852,6 +1879,38 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         showMoveToDeepBacklog={contextMenu.isUpNext === false && contextMenu.itemStatus === STACK_STATUS.BACKLOG}
         onDelete={handleDelete}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && itemToDelete && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]" 
+          onClick={handleDeleteCancel}
+        >
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-sm mx-4" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Delete Record</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete "{itemToDelete.title}"? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleDeleteCancel}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
