@@ -300,7 +300,7 @@ class AINotificationGenerator {
       select: { customFields: true }
     });
     
-    const customFields = person?.customFields as any || {};
+    const customFields = person?.customFields || {};
     const changeHistory = customFields.changeHistory || [];
     
     if (changeHistory[changeIndex]) {
