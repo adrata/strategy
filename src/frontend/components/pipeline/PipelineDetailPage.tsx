@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { authFetch } from '@/platform/api-fetch';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
@@ -192,6 +192,63 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     return data;
   };
 
+  // Helper function to get sortable value from record (matches PipelineContent logic)
+  const getSortableValue = useCallback((record: any, field: string) => {
+    switch (field) {
+      case 'name':
+        return (record['firstName'] && record['lastName'] ? `${record['firstName']} ${record['lastName']}` : '') || record['fullName'] || record.name || '';
+      
+      case 'company':
+        const company = record['company'];
+        let companyName = '';
+        if (typeof company === 'object' && company !== null) {
+          companyName = company.name || company.companyName || '';
+        } else {
+          companyName = company || record['companyName'] || '';
+        }
+        return companyName;
+      
+      case 'rank':
+      case 'globalRank':
+        // Handle rank field - prioritize winningScore.rank for alphanumeric display
+        const winningRank = record.winningScore?.rank;
+        const fallbackRank = record.rank || record.globalRank || record.stableIndex || 0;
+        
+        // Use full alphanumeric rank for display and sorting
+        if (winningRank && typeof winningRank === 'string') {
+          // For sorting alphanumeric ranks (1A, 1B, 2A, 2B, etc.)
+          const numMatch = winningRank.match(/^(\d+)([A-Z])$/);
+          if (numMatch) {
+            const companyRank = parseInt(numMatch[1], 10);
+            const prospectLetter = numMatch[2];
+            // Convert to sortable number: Company rank * 100 + letter position
+            // 1A = 100, 1B = 101, 2A = 200, 2B = 201, etc.
+            const letterValue = prospectLetter.charCodeAt(0) - 64; // A=1, B=2, C=3
+            return companyRank * 100 + letterValue;
+          }
+        }
+        
+        // Fallback for numeric ranks
+        if (typeof fallbackRank === 'string') {
+          const numMatch = fallbackRank.match(/^(\d+)/);
+          return numMatch?.[1] ? parseInt(numMatch[1], 10) : 0;
+        }
+        return typeof fallbackRank === 'number' ? fallbackRank : 0;
+      
+      case 'lastContact':
+      case 'lastContactDate':
+      case 'lastAction':
+        const dateValue = record.lastContact || record.lastContactDate || record.lastAction || record.updatedAt;
+        if (dateValue) {
+          return new Date(dateValue);
+        }
+        return new Date(0);
+      
+      default:
+        return record[field] || '';
+    }
+  }, []);
+
   // 🚀 NAVIGATION FIX: Get navigation data using fast section data for proper record indexing
   const getNavigationData = (section: string) => {
     console.log(`🔍 [NAVIGATION DATA] Getting navigation data for section ${section}:`, {
@@ -228,7 +285,63 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   };
   
   // 🚀 NAVIGATION FIX: Use fast section data for navigation for all sections
-  const data = getNavigationData(section);
+  const rawData = getNavigationData(section);
+
+  // 🎯 FIX: Sort navigation data to match list view order
+  // Default sort: leads by rank descending (highest rank first), prospects by lastContactDate ascending
+  const sortedData = useMemo(() => {
+    if (!rawData || rawData.length === 0) return rawData;
+
+    // Determine default sort field and direction based on section (matching PipelineContent defaults)
+    const defaultSortField = section === 'prospects' ? 'lastContactDate' : 'rank';
+    const defaultSortDirection = section === 'prospects' ? 'asc' : 'desc';
+
+    // Sort the data to match list view order
+    const sorted = [...rawData].sort((a: any, b: any) => {
+      let aVal = getSortableValue(a, defaultSortField);
+      let bVal = getSortableValue(b, defaultSortField);
+
+      // Handle null/undefined values
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return defaultSortDirection === 'asc' ? 1 : -1;
+      if (bVal == null) return defaultSortDirection === 'asc' ? -1 : 1;
+
+      // Convert to comparable values
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        aVal = aVal.toLowerCase();
+        bVal = bVal.toLowerCase();
+      }
+
+      // Handle numeric values
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return defaultSortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+
+      // Handle date values
+      if (aVal instanceof Date && bVal instanceof Date) {
+        return defaultSortDirection === 'asc' ? aVal.getTime() - bVal.getTime() : bVal.getTime() - aVal.getTime();
+      }
+
+      // String comparison
+      if (aVal < bVal) return defaultSortDirection === 'asc' ? -1 : 1;
+      if (aVal > bVal) return defaultSortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    console.log(`🔧 [NAVIGATION SORT] Sorted ${section} data:`, {
+      section,
+      sortField: defaultSortField,
+      sortDirection: defaultSortDirection,
+      dataLength: sorted.length,
+      firstRecord: sorted[0] ? { id: sorted[0].id, name: sorted[0].name || sorted[0].fullName, rank: sorted[0].rank || sorted[0].globalRank } : 'no records',
+      sampleIds: sorted.slice(0, 5).map((r: any) => ({ id: r.id, name: r.name || r.fullName, rank: r.rank || r.globalRank }))
+    });
+
+    return sorted;
+  }, [rawData, section, getSortableValue]);
+
+  // Use sorted data for navigation
+  const data = sortedData;
   
   // 🚀 DEBUG: Log navigation data for all sections
   console.log(`🔍 [NAVIGATION DEBUG] Navigation data for ${section}:`, {

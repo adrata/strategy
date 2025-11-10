@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Person } from "../../types";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
+import { authFetch } from "@/platform/api-fetch";
 
 interface PersonDetailOverviewProps {
   person: Person;
@@ -23,22 +24,23 @@ export function PersonDetailOverview({
   const engagementPriority = customFields.engagementPriority || 'Medium';
   
   // Get CoreSignal profile data ONLY (no fallbacks to database)
-  const fullName = coresignalData.full_name || '-';
-  const jobTitle = coresignalData.active_experience_title || coresignalData.headline || '-';
-  const email = coresignalData.primary_professional_email || '-';
-  const phone = coresignalData.phone || '-';
-  const linkedinUrl = coresignalData.linkedin_url || '-';
-  const location = coresignalData.location_full || coresignalData.location || '-';
+  // Use updatedFields to override with saved values
+  const fullName = updatedFields.fullName ?? (coresignalData.full_name || (person as any).fullName || person.name || '-');
+  const jobTitle = updatedFields.jobTitle ?? (coresignalData.active_experience_title || coresignalData.headline || (person as any).jobTitle || person.title || '-');
+  const email = updatedFields.email ?? (coresignalData.primary_professional_email || (person as any).email || person.email || '-');
+  const phone = updatedFields.phone ?? (coresignalData.phone || (person as any).phone || person.phone || '-');
+  const linkedinUrl = updatedFields.linkedinUrl ?? (coresignalData.linkedin_url || (person as any).linkedinUrl || person.linkedin || '-');
+  const location = updatedFields.city ?? (coresignalData.location_full || coresignalData.location || (person as any).city || person.location || '-');
   
   // Get company name from active experience
   const activeExperience = coresignalData.experience?.find((exp: any) => exp.active_experience === 1) || coresignalData.experience?.[0];
-  const companyName = coresignalData.active_experience_company || activeExperience?.company_name || coresignalData.experience?.[0]?.company_name || '-';
+  const companyName = updatedFields.company ?? (coresignalData.active_experience_company || activeExperience?.company_name || coresignalData.experience?.[0]?.company_name || person.company || '-');
   
   // Get department from active experience
-  const department = coresignalData.active_experience_department || activeExperience?.department || coresignalData.experience?.[0]?.department || '-';
+  const department = updatedFields.department ?? (coresignalData.active_experience_department || activeExperience?.department || coresignalData.experience?.[0]?.department || person.department || '-');
   
   // Get seniority from active experience
-  const seniority = activeExperience?.management_level || person.seniority || 'Unknown';
+  const seniority = updatedFields.seniority ?? (activeExperience?.management_level || person.seniority || 'Unknown');
   
   // Get experience and education data
   const experience = coresignalData.experience || [];
@@ -58,10 +60,38 @@ export function PersonDetailOverview({
     });
   };
 
-  // Default save handler if none provided
+  // Local state to track updated fields
+  const [updatedFields, setUpdatedFields] = useState<Record<string, any>>({});
+
+  // Save handler that uses authFetch for authenticated API calls
   const handleSave = onSave || (async (field: string, value: string, recordId: string, recordType: string) => {
-    console.log(`🔄 [MONACO PERSON] Saving ${field} = ${value} for ${recordType} ${recordId}`);
-    // TODO: Implement actual save logic for Monaco person records
+    try {
+      console.log(`🔄 [MONACO PERSON OVERVIEW] Saving ${field} = ${value} for ${recordType} ${recordId}`);
+      
+      // Use authFetch for authenticated API calls
+      const result = await authFetch(`/api/v1/people/${recordId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ [field]: value }),
+      }, { success: false, error: 'Update failed' });
+
+      if (result?.success) {
+        console.log(`✅ [MONACO PERSON OVERVIEW] Successfully updated ${field} for person ${recordId}`);
+        
+        // Update local state to reflect the change immediately
+        setUpdatedFields(prev => ({
+          ...prev,
+          [field]: value
+        }));
+      } else {
+        throw new Error(result?.error || 'Update failed');
+      }
+    } catch (error) {
+      console.error('❌ [MONACO PERSON OVERVIEW] Error updating person record:', error);
+      throw error;
+    }
   });
 
   return (

@@ -24,6 +24,7 @@ import { PainIntelligence, PainIntelligenceData, ExamplePainData } from "./PainI
 import { useCompanyData } from "@/platform/hooks/useCompanyData";
 import { useUnifiedAuth } from "@/platform/auth";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
+import { authFetch } from "@/platform/api-fetch";
 
 
 // Import report components
@@ -552,6 +553,8 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
   const [activeTab, setActiveTab] = useState("Overview");
   const [activeReport, setActiveReport] = useState<string | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  // Local state to track updated fields
+  const [updatedFields, setUpdatedFields] = useState<Record<string, any>>({});
 
   // Extract custom fields data for enhanced display
   const customFields = (person as any).customFields || {};
@@ -591,19 +594,20 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     timeline: customFields.timeline || "Unknown",
     decisionFactors: customFields.decisionFactors || [],
     // Ensure all person properties are available with CoreSignal data
-    fullName: coresignalData.full_name || (person as any).fullName || person.name,
-    jobTitle: coresignalData.active_experience_title || coresignalData.headline || (person as any).jobTitle || person.title,
-    workEmail: coresignalData.primary_professional_email || (person as any).workEmail || person.email,
-    linkedinUrl: coresignalData.linkedin_url || (person as any).linkedinUrl || person.linkedin,
-    linkedinNavigatorUrl: (person as any).linkedinNavigatorUrl,
-    linkedinConnectionDate: (person as any).linkedinConnectionDate,
-    city: (person as any).city,
-    state: (person as any).state,
-    notes: (person as any).notes,
+    // Use updatedFields to override with saved values
+    fullName: updatedFields.fullName ?? (coresignalData.full_name || (person as any).fullName || person.name),
+    jobTitle: updatedFields.jobTitle ?? (coresignalData.active_experience_title || coresignalData.headline || (person as any).jobTitle || person.title),
+    workEmail: updatedFields.workEmail ?? (coresignalData.primary_professional_email || (person as any).workEmail || person.email),
+    linkedinUrl: updatedFields.linkedinUrl ?? (coresignalData.linkedin_url || (person as any).linkedinUrl || person.linkedin),
+    linkedinNavigatorUrl: updatedFields.linkedinNavigatorUrl ?? ((person as any).linkedinNavigatorUrl),
+    linkedinConnectionDate: updatedFields.linkedinConnectionDate ?? ((person as any).linkedinConnectionDate),
+    city: updatedFields.city ?? ((person as any).city),
+    state: updatedFields.state ?? ((person as any).state),
+    notes: updatedFields.notes ?? ((person as any).notes),
     // Use CoreSignal data for company, department, and seniority
-    company: companyName,
-    department: department,
-    seniority: seniority
+    company: updatedFields.company ?? companyName,
+    department: updatedFields.department ?? department,
+    seniority: updatedFields.seniority ?? seniority
   };
 
   // Function to get the back button text based on source section
@@ -766,25 +770,25 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     try {
       console.log(`🔄 [MONACO PERSON] Saving ${field} = ${value} for ${recordType} ${recordId}`);
       
-      // Use v1 people API for updates
-      const response = await fetch(`/api/v1/people/${recordId}`, {
+      // Use authFetch for authenticated API calls
+      const result = await authFetch(`/api/v1/people/${recordId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ [field]: value }),
-      });
+      }, { success: false, error: 'Update failed' });
 
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          console.log(`✅ [MONACO PERSON] Successfully updated ${field} for person ${recordId}`);
-        } else {
-          throw new Error(result.error || 'Update failed');
-        }
+      if (result?.success) {
+        console.log(`✅ [MONACO PERSON] Successfully updated ${field} for person ${recordId}`);
+        
+        // Update local state to reflect the change immediately
+        setUpdatedFields(prev => ({
+          ...prev,
+          [field]: value
+        }));
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(result?.error || 'Update failed');
       }
     } catch (error) {
       console.error('❌ [MONACO PERSON] Error updating person record:', error);

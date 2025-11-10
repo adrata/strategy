@@ -1175,12 +1175,13 @@ export const PipelineView = React.memo(function PipelineView({
   }, [section, sellerId, companyId]);
 
   // Navigation functions for record detail view
+  // 🎯 FIX: Use filteredData (sorted and filtered) instead of undefined data to match list view order
   const handleNavigatePrevious = useCallback(() => {
-    if (!data || !selectedRecord) return;
+    if (!filteredData || !selectedRecord) return;
     
-    const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
+    const currentIndex = filteredData.findIndex((r: any) => r['id'] === selectedRecord.id);
     if (currentIndex > 0) {
-      const previousRecord = data[currentIndex - 1];
+      const previousRecord = filteredData[currentIndex - 1];
       setSelectedRecord(previousRecord);
       
       // Get the best available name for human-readable URL
@@ -1189,14 +1190,14 @@ export const PipelineView = React.memo(function PipelineView({
       // Update URL to reflect the new record with workspace context
       navigateToPipelineItem(section, previousRecord.id, recordName);
     }
-  }, [data, selectedRecord, section]);
+  }, [filteredData, selectedRecord, section, navigateToPipelineItem]);
 
   const handleNavigateNext = useCallback(() => {
-    if (!data || !selectedRecord) return;
+    if (!filteredData || !selectedRecord) return;
     
-    const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
-    if (currentIndex < data.length - 1) {
-      const nextRecord = data[currentIndex + 1];
+    const currentIndex = filteredData.findIndex((r: any) => r['id'] === selectedRecord.id);
+    if (currentIndex < filteredData.length - 1) {
+      const nextRecord = filteredData[currentIndex + 1];
       setSelectedRecord(nextRecord);
       
       // Get the best available name for human-readable URL
@@ -1205,14 +1206,14 @@ export const PipelineView = React.memo(function PipelineView({
       // Update URL to reflect the new record with workspace context
       navigateToPipelineItem(section, nextRecord.id, recordName);
     }
-  }, [data, selectedRecord, section]);
+  }, [filteredData, selectedRecord, section, navigateToPipelineItem]);
 
   // Handle record reordering for drag-and-drop
   const handleReorderRecords = useCallback((fromIndex: number, toIndex: number) => {
-    if (!data || fromIndex === toIndex) return;
+    if (!filteredData || fromIndex === toIndex) return;
     
     // Create a new array with the reordered items
-    const newData = [...data];
+    const newData = [...filteredData];
     const [movedItem] = newData.splice(fromIndex, 1);
     if (!movedItem) return; // Safety check
     newData.splice(toIndex, 0, movedItem);
@@ -1225,7 +1226,7 @@ export const PipelineView = React.memo(function PipelineView({
     
     // TODO: Implement backend update to persist the new order
     // await updateRecordOrder(section, newData.map(item => item.id));
-  }, [data, section]);
+  }, [filteredData, section]);
 
   // Handle section navigation - UNIFIED with consistent loading states
   const handleSectionChange = useCallback((newSection: string) => {
