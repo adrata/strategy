@@ -464,9 +464,8 @@ export function PipelineTable({
                             // Show checkmark for completed items
                             displayRank = '✓';
                           } else {
-                            // For speedrun, show actual globalRank (1-50 per user)
-                            // Never fall back to array index, use - if no rank
-                            displayRank = record['globalRank'] || record['rank'] || record['winningScore']?.rank || '-';
+                            // For speedrun, use displayRank if available, otherwise globalRank, otherwise sequential index
+                            displayRank = record['displayRank'] || record['globalRank'] || record['rank'] || record['winningScore']?.rank || (index + 1);
                           }
                         } else {
                           // For other sections, keep hierarchical ranking if available

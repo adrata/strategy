@@ -104,7 +104,6 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
             mainSellerId: context.userId, // Only companies assigned to this user
             // Only companies with 0 people
             people: {
@@ -137,7 +136,11 @@ export async function GET(request: NextRequest) {
               }
             }
           },
-          orderBy: { globalRank: 'desc' } // 50-1 descending order
+          orderBy: [
+            { globalRank: 'desc' }, // Sort by rank if available (50-1 descending)
+            { createdAt: 'desc' } // Fallback to creation date
+          ],
+          take: 50 // Limit to top 50
         });
 
         // 2. Get people from companies that have people (these get Speedrun ranks)
@@ -146,7 +149,6 @@ export async function GET(request: NextRequest) {
             workspaceId: context.workspaceId,
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
-            globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
             mainSellerId: context.userId // Only people assigned to this user
           },
           select: {
@@ -191,7 +193,11 @@ export async function GET(request: NextRequest) {
               }
             }
           },
-          orderBy: { globalRank: 'desc' } // 50-1 descending order
+          orderBy: [
+            { globalRank: 'desc' }, // Sort by rank if available (50-1 descending)
+            { createdAt: 'desc' } // Fallback to creation date
+          ],
+          take: 50 // Limit to top 50
         });
 
         // 3. Combine and sort by globalRank (descending: 50-1)
@@ -223,15 +229,27 @@ export async function GET(request: NextRequest) {
           }))
         ];
 
-        // Sort by globalRank descending (50-1) to maintain unified ranking
-        allRecords.sort((a, b) => (b.globalRank || 0) - (a.globalRank || 0));
+        // Sort by globalRank descending (50-1) if available, otherwise by creation date
+        allRecords.sort((a, b) => {
+          // First sort by globalRank if both have it
+          if (a.globalRank && b.globalRank) {
+            return b.globalRank - a.globalRank; // Descending: 50-1
+          }
+          // If only one has rank, prioritize it
+          if (a.globalRank && !b.globalRank) return -1;
+          if (!a.globalRank && b.globalRank) return 1;
+          // If neither has rank, sort by creation date (newest first)
+          const aDate = new Date(a.createdAt).getTime();
+          const bDate = new Date(b.createdAt).getTime();
+          return bDate - aDate;
+        });
         
-        // 🏆 FIX: Assign countdown ranks (50, 49, 48, ... 3, 2, 1) for descending display
-        // After sorting, reassign ranks in descending order (50-1) for countdown effect
+        // 🏆 FIX: Assign sequential ranks (1, 2, 3, ...) for proper display
+        // After sorting, assign ranks in ascending order (1, 2, 3, ...) for display
         speedrunRecords = allRecords.slice(0, 50).map((record, index) => ({
           ...record,
-          displayRank: 50 - index, // Countdown rank: 50, 49, 48, ..., 3, 2, 1
-          globalRank: record.globalRank // Keep original for sorting, but use displayRank for UI
+          displayRank: index + 1, // Sequential rank: 1, 2, 3, ..., 50
+          globalRank: record.globalRank || (index + 1) // Use existing rank or assign sequential
         }));
         
       } catch (error) {
