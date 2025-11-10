@@ -345,7 +345,10 @@ class SmartBuyerGroupPipeline {
         const roleAssignment = new RoleAssignment(
           this.dealSize, 
           intelligence.revenue || 0, 
-          intelligence.employeeCount || 0
+          intelligence.employeeCount || 0,
+          null, // rolePriorities
+          this.productCategory, // productCategory for dynamic role assignment
+          intelligence.industry // companyIndustry for dynamic role assignment
         );
         return roleAssignment.assignRoles(aiEnhancedEmployees);
       });
@@ -418,7 +421,9 @@ class SmartBuyerGroupPipeline {
           this.dealSize, 
           intelligence.revenue || 0, 
           intelligence.employeeCount || 0,
-          this.options.rolePriorities || null
+          this.options.rolePriorities || null,
+          this.productCategory, // productCategory for dynamic role assignment
+          intelligence.industry // companyIndustry for dynamic role assignment
         );
         const selected = roleAssignment.selectOptimalBuyerGroup(aiValidatedEmployees, buyerGroupSize);
         

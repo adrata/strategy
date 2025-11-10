@@ -8,6 +8,7 @@
 
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
+const { extractBestCurrentTitleFromCoreSignal } = require('./utils/title-extraction');
 
 class Enrich10PeopleCoreSignal {
   constructor() {
@@ -208,12 +209,23 @@ class Enrich10PeopleCoreSignal {
 
   async updatePersonWithCoreSignalData(person, coresignalData) {
     try {
+      // Extract best current title using company-matched logic
+      const companyName = typeof person.company === 'string' 
+        ? person.company 
+        : (person.company?.name || null);
+      const bestTitle = extractBestCurrentTitleFromCoreSignal(
+        coresignalData,
+        companyName,
+        null, // company ID if available
+        person.jobTitle // manual title
+      );
+      
       // Prepare the update data
       const updateData = {
         // Basic info
         workEmail: coresignalData.primary_professional_email || person.workEmail,
         phone: coresignalData.phone || person.phone,
-        jobTitle: coresignalData.active_experience_title || person.jobTitle,
+        jobTitle: bestTitle || coresignalData.active_experience_title || person.jobTitle,
         
         // Location info
         location: coresignalData.location || person.location,

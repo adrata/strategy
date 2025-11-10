@@ -12,12 +12,14 @@ const {
 } = require('./company-size-config');
 
 class RoleAssignment {
-  constructor(dealSize, companyRevenue = 0, companyEmployees = 0, rolePriorities = null) {
+  constructor(dealSize, companyRevenue = 0, companyEmployees = 0, rolePriorities = null, productCategory = 'sales', companyIndustry = null) {
     this.dealSize = dealSize;
     this.companyRevenue = companyRevenue;
     this.companyEmployees = companyEmployees;
     this.companyTier = determineCompanySizeTier(companyRevenue, companyEmployees);
     this.dealThresholds = getDealSizeThresholds(this.companyTier);
+    this.productCategory = productCategory;
+    this.companyIndustry = (companyIndustry || '').toLowerCase();
     this.rolePriorities = rolePriorities || {
       decision: 10,
       champion: 8,
@@ -113,7 +115,13 @@ class RoleAssignment {
       }
       
       // Champions: Operational leaders (Directors, VPs, Managers) - only if qualified
+      // Dynamic exclusion: accounting/finance excluded unless product/industry is relevant
+      const isAccountingFinance = deptLower.includes('accounting') || 
+                                  deptLower.includes('finance') || 
+                                  deptLower.includes('financial');
+      
       if (role === 'stakeholder' && counts.champion < targets.champion && 
+          (!isAccountingFinance || this.isAccountingFinanceRelevantForChampion()) && // Dynamic check
           (titleLower.includes('director') || titleLower.includes('head of') || 
            titleLower.includes('vp') || titleLower.includes('manager'))) {
         const roleConfidence = Math.min((emp.scores?.championPotential || 15) * 4, 100);
@@ -218,6 +226,7 @@ class RoleAssignment {
     
     for (const emp of sortedEmployees) {
       const titleLower = emp.title?.toLowerCase() || '';
+      const deptLower = emp.department?.toLowerCase() || '';
       let role = 'stakeholder';
       let confidence = 70;
       let reasoning = 'General stakeholder';
@@ -229,13 +238,19 @@ class RoleAssignment {
         reasoning = 'Primary decision maker for small company';
         hasDecisionMaker = true;
       }
-      // Assign second person as champion if qualified
-      else if (employeesWithRoles.length === 1 && 
-               (titleLower.includes('director') || titleLower.includes('manager') || 
-                titleLower.includes('vp') || titleLower.includes('head of'))) {
-        role = 'champion';
-        confidence = Math.min((emp.scores?.championPotential || 15) * 4, 100);
-        reasoning = 'Operational champion for small company';
+      // Assign second person as champion if qualified (dynamic accounting/finance check)
+      else if (employeesWithRoles.length === 1) {
+        const isAccountingFinance = deptLower.includes('accounting') || 
+                                    deptLower.includes('finance') || 
+                                    deptLower.includes('financial');
+        
+        if ((!isAccountingFinance || this.isAccountingFinanceRelevantForChampion()) && 
+            (titleLower.includes('director') || titleLower.includes('manager') || 
+             titleLower.includes('vp') || titleLower.includes('head of'))) {
+          role = 'champion';
+          confidence = Math.min((emp.scores?.championPotential || 15) * 4, 100);
+          reasoning = 'Operational champion for small company';
+        }
       }
       
       employeesWithRoles.push({
@@ -374,6 +389,34 @@ class RoleAssignment {
   }
 
   /**
+   * Check if accounting/finance departments are relevant for champion role
+   * Dynamic based on product category and company industry
+   * @returns {boolean} True if accounting/finance can be champions
+   */
+  isAccountingFinanceRelevantForChampion() {
+    const productCategoryLower = (this.productCategory || '').toLowerCase();
+    const industryLower = this.companyIndustry || '';
+    
+    // If product is for accounting/finance, then accounting/finance people CAN be champions
+    if (productCategoryLower.includes('accounting') || 
+        productCategoryLower.includes('finance') || 
+        productCategoryLower.includes('financial')) {
+      return true;
+    }
+    
+    // If company IS an accounting/finance firm, then accounting/finance people CAN be champions
+    if (industryLower.includes('accounting') || 
+        industryLower.includes('finance') || 
+        industryLower.includes('financial services') ||
+        industryLower.includes('financial')) {
+      return true;
+    }
+    
+    // Otherwise, accounting/finance should be stakeholders (not champions)
+    return false;
+  }
+
+  /**
    * Check if employee is potential champion
    * @param {string} title - Employee title
    * @param {string} dept - Employee department
@@ -381,16 +424,27 @@ class RoleAssignment {
    * @returns {boolean} True if potential champion
    */
   isChampion(title, dept, scores) {
+    const deptLower = (dept || '').toLowerCase();
+    const isAccountingFinance = deptLower.includes('accounting') || 
+                                deptLower.includes('finance') || 
+                                deptLower.includes('financial');
+    
+    // Dynamic check: exclude accounting/finance unless product/industry is relevant
+    if (isAccountingFinance && !this.isAccountingFinanceRelevantForChampion()) {
+      return false; // Accounting/finance roles are stakeholders unless product/industry is accounting/finance
+    }
+    
     // Right level (Director/Senior Manager - can advocate but doesn't sign)
     const rightLevel = (title.includes('director') && !title.includes('senior director')) ||
                        title.includes('senior manager') ||
                        title.includes('sr manager');
     
     // Relevant department for advocacy
-    const relevantDept = dept.includes('sales') || 
-                        dept.includes('revenue') || 
-                        dept.includes('operations') ||
-                        dept.includes('product');
+    const relevantDept = deptLower.includes('sales') || 
+                        deptLower.includes('revenue') || 
+                        deptLower.includes('operations') ||
+                        deptLower.includes('product') ||
+                        (isAccountingFinance && this.isAccountingFinanceRelevantForChampion());
     
     // Strong champion potential score
     const strongPotential = scores.championPotential > 15;
@@ -492,14 +546,30 @@ class RoleAssignment {
 
   /**
    * Find best champion candidate
+   * Dynamically excludes accounting/finance unless product/industry is relevant
    * @param {Array} employees - Employees with roles
    * @returns {object|null} Best champion candidate
    */
   findBestChampion(employees) {
-    // Sort by champion potential descending
+    // Sort by champion potential descending, with dynamic accounting/finance filtering
     const candidates = employees
-      .filter(emp => emp.buyerGroupRole !== 'champion') // Exclude existing champions
-      .sort((a, b) => b.scores.championPotential - a.scores.championPotential);
+      .filter(emp => {
+        // Exclude existing champions
+        if (emp.buyerGroupRole === 'champion') return false;
+        
+        // Dynamic check: exclude accounting/finance unless product/industry is relevant
+        const deptLower = (emp.department || '').toLowerCase();
+        const isAccountingFinance = deptLower.includes('accounting') || 
+                                    deptLower.includes('finance') || 
+                                    deptLower.includes('financial');
+        
+        if (isAccountingFinance && !this.isAccountingFinanceRelevantForChampion()) {
+          return false;
+        }
+        
+        return true;
+      })
+      .sort((a, b) => (b.scores?.championPotential || 0) - (a.scores?.championPotential || 0));
     
     return candidates[0] || null;
   }
@@ -745,6 +815,7 @@ class RoleAssignment {
 
   /**
    * Generate detailed reasoning for champion selection
+   * Note: Accounting/finance departments are dynamically included/excluded based on product category and company industry
    * @param {object} emp - Employee data
    * @param {number} dealSize - Deal size
    * @param {string} companyTier - Company tier
@@ -765,13 +836,16 @@ class RoleAssignment {
       reasoning += `Head of department roles have both strategic and operational influence. `;
     }
     
-    // Department alignment
+    // Department alignment (dynamic based on product/industry)
     if (deptLower.includes('sales')) {
       reasoning += `Sales leaders are natural champions for revenue-generating tools. `;
     } else if (deptLower.includes('marketing')) {
       reasoning += `Marketing leaders champion tools that improve lead generation and conversion. `;
     } else if (deptLower.includes('operations')) {
       reasoning += `Operations leaders drive efficiency improvements and process optimization. `;
+    } else if ((deptLower.includes('accounting') || deptLower.includes('finance')) && 
+               this.isAccountingFinanceRelevantForChampion()) {
+      reasoning += `Accounting/finance leaders are champions for accounting/finance products or within accounting/finance companies. `;
     }
     
     // Champion potential indicators

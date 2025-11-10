@@ -239,12 +239,24 @@ class EnhancedEmployeeSearchEnrichment {
       // Parse location data
       const locationParts = this.parseLocation(employeeData.location_full);
       
+      // Extract best current title using company-matched logic
+      const { extractBestCurrentTitleFromCoreSignal } = require('./utils/title-extraction');
+      const companyName = typeof person.company === 'string' 
+        ? person.company 
+        : (person.company?.name || null);
+      const bestTitle = extractBestCurrentTitleFromCoreSignal(
+        employeeData,
+        companyName,
+        null, // company ID if available
+        person.jobTitle // manual title
+      );
+      
       // Prepare update data
       const updateData = {
         // Core fields
         workEmail: employeeData.primary_professional_email || person.workEmail,
         workPhone: employeeData.phone || person.workPhone,
-        jobTitle: employeeData.active_experience_title || person.jobTitle,
+        jobTitle: bestTitle || employeeData.active_experience_title || person.jobTitle,
         linkedinUrl: employeeData.linkedin_url || person.linkedinUrl,
         profilePictureUrl: employeeData.picture_url || person.profilePictureUrl,
         

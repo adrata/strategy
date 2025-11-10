@@ -789,13 +789,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       
       console.log(`✅ Successfully persisted ${results.length} item updates`);
       
-      // Small delay before refresh to ensure database is updated
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Trigger refresh to sync with other components
-      if (stacksContext?.triggerRefresh) {
-        stacksContext.triggerRefresh();
-      }
+      // Note: We don't trigger a full refresh here because:
+      // 1. We've already optimistically updated the items in state
+      // 2. Triggering refresh causes the skeleton loader to show unnecessarily
+      // 3. The optimistic update is sufficient - other components will sync on their next natural refresh
+      // If we need to sync with other components, we can do a silent refresh without showing the skeleton
     } catch (error) {
       console.error('Error persisting ranks:', error);
       throw error;
@@ -1543,10 +1541,10 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       await Promise.all(updatePromises);
       console.log('✅ [StacksBacklogTable] Ranks persisted immediately after moveItem');
       
-      // Trigger refresh to sync with other components
-      if (stacksContext?.triggerRefresh) {
-        stacksContext.triggerRefresh();
-      }
+      // Note: We don't trigger a full refresh here because:
+      // 1. We've already optimistically updated the items in state
+      // 2. Triggering refresh causes the skeleton loader to show unnecessarily
+      // 3. The optimistic update is sufficient - other components will sync on their next natural refresh
     } catch (error) {
       console.error('❌ [StacksBacklogTable] Error persisting ranks after moveItem:', error);
       // On error, refresh to get server state

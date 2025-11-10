@@ -253,114 +253,30 @@ export function NotesEditor({
   const getStatusDisplay = () => {
     switch (saveStatus) {
       case 'saving':
+        // Only show status when actively saving
         return {
           icon: <ClockIcon className="w-4 h-4 text-gray-400 animate-spin" />,
           text: 'Saving...',
-          color: 'text-gray-400'
-        };
-      case 'saved':
-        // Show "Last saved" message when successfully saved and content exists
-        if (lastSavedAt && localValue && localValue.trim().length > 0) {
-          const now = new Date();
-          const diffMs = now.getTime() - lastSavedAt.getTime();
-          const diffSeconds = Math.floor(diffMs / 1000);
-          const diffMinutes = Math.floor(diffSeconds / 60);
-          
-          let timeText;
-          if (diffSeconds < 10) {
-            timeText = 'Now';
-          } else if (diffSeconds < 60) {
-            timeText = `${diffSeconds}s ago`;
-          } else if (diffMinutes < 60) {
-            timeText = `${diffMinutes}m ago`;
-          } else {
-            timeText = lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          }
-          
-          // Use green for first 2 seconds, then gray
-          const isRecentSave = timeSinceSave < 2;
-          const iconColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
-          const textColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
-          
-          return {
-            icon: <CheckIcon className={`w-4 h-4 ${iconColor}`} />,
-            text: `Last saved ${timeText}`,
-            color: textColor
-          };
-        }
-        // Show helpful hint when there's no content
-        if (!localValue || localValue.trim().length === 0) {
-          return {
-            icon: null,
-            text: 'Start typing—auto-saved',
-            color: 'text-gray-400'
-          };
-        }
-        
-        return {
-          icon: null,
-          text: '',
-          color: 'text-transparent'
+          color: 'text-gray-400',
+          show: true
         };
       case 'error':
+        // Always show error status
         return {
           icon: <ExclamationTriangleIcon className="w-4 h-4 text-red-500" />,
           text: 'Error saving',
-          color: 'text-red-500'
+          color: 'text-red-500',
+          show: true
         };
+      case 'saved':
+      case 'idle':
       default:
-        // Show "Unsaved changes" when there are changes but no save yet
-        if (localValue && localValue !== lastSavedValue) {
-          return {
-            icon: <ClockIcon className="w-4 h-4 text-orange-500" />,
-            text: 'Unsaved changes',
-            color: 'text-orange-500'
-          };
-        }
-        
-        // Show "Last saved" message when idle and there's a lastSavedAt time AND content exists
-        if (lastSavedAt && localValue && localValue.trim().length > 0) {
-          const now = new Date();
-          const diffMs = now.getTime() - lastSavedAt.getTime();
-          const diffSeconds = Math.floor(diffMs / 1000);
-          const diffMinutes = Math.floor(diffSeconds / 60);
-          
-          let timeText;
-          if (diffSeconds < 10) {
-            timeText = 'Now';
-          } else if (diffSeconds < 60) {
-            timeText = `${diffSeconds}s ago`;
-          } else if (diffMinutes < 60) {
-            timeText = `${diffMinutes}m ago`;
-          } else {
-            timeText = lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          }
-          
-          // Use green for first 2 seconds, then gray
-          const isRecentSave = timeSinceSave < 2;
-          const iconColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
-          const textColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
-          
-          return {
-            icon: <CheckIcon className={`w-4 h-4 ${iconColor}`} />,
-            text: `Last saved ${timeText}`,
-            color: textColor
-          };
-        }
-        
-        // Show helpful hint when there are no notes yet
-        if (!localValue || localValue.trim().length === 0) {
-          return {
-            icon: null,
-            text: 'Start typing—auto-saved',
-            color: 'text-gray-400'
-          };
-        }
-        
+        // Hide status in idle/saved states to reduce visual distraction
         return {
           icon: null,
           text: '',
-          color: 'text-transparent'
+          color: 'text-transparent',
+          show: false
         };
     }
   };
@@ -376,6 +292,10 @@ export function NotesEditor({
           <div className="flex items-center gap-2">
             {(() => {
               const status = getStatusDisplay();
+              // Only render status when it should be shown (saving or error)
+              if (!status.show) {
+                return null;
+              }
               return (
                 <>
                   {status.icon}

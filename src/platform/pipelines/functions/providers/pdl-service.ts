@@ -15,6 +15,7 @@
 import type { APIClients } from '../types/api-clients';
 import { DATA_QUALITY_THRESHOLDS, API_RATE_LIMITS } from '@/platform/config/constants';
 import { createLogger } from '@/platform/utils/logger';
+import { extractBestCurrentTitle } from '@/platform/utils/title-extraction';
 
 const pdlLogger = createLogger('PDL-Service');
 
@@ -275,6 +276,7 @@ export async function enrichPersonWithPDL(
   }
   
   try {
+    const startTime = Date.now();
     const response = await apis.pdl.enrichPerson(input);
     
     if (!response || !response.data) {
@@ -284,16 +286,30 @@ export async function enrichPersonWithPDL(
     
     const data = response.data;
     
+    // Parse work history first for title extraction
+    const workHistory = parseWorkHistory(data.experience || []);
+    
+    // Extract best current title using company-matched logic
+    const titleResult = extractBestCurrentTitle(
+      {
+        workHistory,
+        job_title: data.job_title,
+      },
+      input.company || null,
+      data.job_company_id || null,
+      input.title || null
+    );
+    
     // Transform PDL response to our format
     const enriched: PDLEnrichedPerson = {
       id: data.id || generateId(input),
       fullName: data.full_name || `${input.firstName} ${input.lastName}`,
       firstName: data.first_name || input.firstName,
       lastName: data.last_name || input.lastName,
-      currentTitle: data.job_title || input.title,
+      currentTitle: titleResult.title || data.job_title || input.title,
       currentCompany: data.job_company_name || input.company,
       
-      workHistory: parseWorkHistory(data.experience || []),
+      workHistory,
       totalWorkExperience: data.experience_years || 0,
       
       education: parseEducation(data.education || []),
@@ -535,15 +551,28 @@ function buildPDLSearchQuery(criteria: PDLSearchCriteria): Record<string, any> {
  * Transform PDL person data to our format
  */
 function transformPDLPerson(data: PDLAPIPerson): PDLEnrichedPerson {
+  const workHistory = parseWorkHistory(data.experience || []);
+  
+  // Extract best current title using company-matched logic
+  const titleResult = extractBestCurrentTitle(
+    {
+      workHistory,
+      job_title: data.job_title,
+    },
+    data.job_company_name || null,
+    data.job_company_id || null,
+    null
+  );
+  
   return {
     id: data.id || generateId(data),
     fullName: data.full_name || '',
     firstName: data.first_name,
     lastName: data.last_name,
-    currentTitle: data.job_title,
+    currentTitle: titleResult.title || data.job_title,
     currentCompany: data.job_company_name,
     
-    workHistory: parseWorkHistory(data.experience || []),
+    workHistory,
     totalWorkExperience: data.experience_years || 0,
     
     education: parseEducation(data.education || []),

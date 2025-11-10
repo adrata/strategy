@@ -824,7 +824,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`relative ${activeWorkType === 'bug' && isDragging ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+              className={`${activeWorkType === 'bug' && isDragging ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
             >
               <textarea
                 value={formData.description}
@@ -840,7 +840,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 }`}
               />
               {activeWorkType === 'bug' && (
-                <>
+                <div className="mt-2 flex justify-end">
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -852,11 +852,11 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-2 right-2 px-2 py-1 text-xs text-muted hover:text-foreground bg-background border border-border rounded hover:bg-hover transition-colors"
+                    className="px-2 py-1 text-xs text-muted hover:text-foreground bg-background border border-border rounded hover:bg-hover transition-colors"
                   >
                     Add Image
                   </button>
-                </>
+                </div>
               )}
             </div>
             {/* Image previews */}

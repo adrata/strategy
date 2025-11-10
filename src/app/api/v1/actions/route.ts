@@ -262,39 +262,93 @@ export async function POST(request: NextRequest) {
 
     // Validate foreign key references if provided
     if (body.companyId) {
-      console.log('🔍 [ACTIONS API] Validating company reference:', { companyId: body.companyId });
-      const companyExists = await prisma.companies.findUnique({
-        where: { id: body.companyId, deletedAt: null }
+      console.log('🔍 [ACTIONS API] Validating company reference:', { companyId: body.companyId, workspaceId: context.workspaceId });
+      
+      // First, try to find company by ID with workspace validation
+      let companyExists = await prisma.companies.findFirst({
+        where: { 
+          id: body.companyId, 
+          workspaceId: context.workspaceId, // CRITICAL: Validate workspace
+          deletedAt: null 
+        }
       });
+      
+      // If not found by ID, try to resolve by company name if provided
+      if (!companyExists && body.companyName) {
+        console.log('🔍 [ACTIONS API] Company not found by ID, trying to resolve by name:', { 
+          companyName: body.companyName,
+          workspaceId: context.workspaceId 
+        });
+        
+        companyExists = await prisma.companies.findFirst({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            name: {
+              equals: body.companyName,
+              mode: 'insensitive'
+            }
+          }
+        });
+        
+        if (companyExists) {
+          console.log('✅ [ACTIONS API] Found company by name, updating companyId:', {
+            originalCompanyId: body.companyId,
+            resolvedCompanyId: companyExists.id,
+            companyName: companyExists.name
+          });
+          // Update the companyId in the body to use the resolved ID
+          body.companyId = companyExists.id;
+        }
+      }
+      
       if (!companyExists) {
         console.error('❌ [ACTIONS API] Validation failed - company not found:', {
           companyId: body.companyId,
-          context: { userId: context.userId, workspaceId: context.workspaceId }
+          companyName: body.companyName || 'not provided',
+          workspaceId: context.workspaceId,
+          context: { userId: context.userId }
         });
         return NextResponse.json(
-          { success: false, error: `Company with ID ${body.companyId} not found or has been deleted` },
+          { success: false, error: `Company "${body.companyName || body.companyId}" not found or has been deleted in this workspace` },
           { status: 400 }
         );
       }
-      console.log('✅ [ACTIONS API] Company reference validated:', { companyName: companyExists.name });
+      console.log('✅ [ACTIONS API] Company reference validated:', { 
+        companyId: companyExists.id,
+        companyName: companyExists.name,
+        workspaceId: context.workspaceId 
+      });
     }
 
     if (body.personId) {
-      console.log('🔍 [ACTIONS API] Validating person reference:', { personId: body.personId });
-      const personExists = await prisma.people.findUnique({
-        where: { id: body.personId, deletedAt: null }
+      console.log('🔍 [ACTIONS API] Validating person reference:', { personId: body.personId, workspaceId: context.workspaceId });
+      
+      // Validate person exists in the correct workspace
+      const personExists = await prisma.people.findFirst({
+        where: { 
+          id: body.personId, 
+          workspaceId: context.workspaceId, // CRITICAL: Validate workspace
+          deletedAt: null 
+        }
       });
+      
       if (!personExists) {
         console.error('❌ [ACTIONS API] Validation failed - person not found:', {
           personId: body.personId,
-          context: { userId: context.userId, workspaceId: context.workspaceId }
+          workspaceId: context.workspaceId,
+          context: { userId: context.userId }
         });
         return NextResponse.json(
-          { success: false, error: `Person with ID ${body.personId} not found or has been deleted` },
+          { success: false, error: `Person with ID ${body.personId} not found or has been deleted in this workspace` },
           { status: 400 }
         );
       }
-      console.log('✅ [ACTIONS API] Person reference validated:', { personName: personExists.fullName || personExists.firstName + ' ' + personExists.lastName });
+      console.log('✅ [ACTIONS API] Person reference validated:', { 
+        personId: personExists.id,
+        personName: personExists.fullName || personExists.firstName + ' ' + personExists.lastName,
+        workspaceId: context.workspaceId 
+      });
     }
 
     console.log('💾 [ACTIONS API] Creating action in database...');

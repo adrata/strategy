@@ -187,8 +187,13 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
         : null;
       
       // Check if story status indicates it's a backlog item
-      // Backlog statuses are 'up-next' and 'todo' (per constants.ts)
-      const isBacklogStatus = story && (story.status === 'up-next' || story.status === 'todo');
+      // Backlog statuses include 'up-next', 'todo', 'backlog', and 'deep-backlog'
+      const isBacklogStatus = story && (
+        story.status === 'up-next' || 
+        story.status === 'todo' || 
+        story.status === 'backlog' || 
+        story.status === 'deep-backlog'
+      );
       
       // Check if referrer, navigation source, or story status indicates we came from backlog
       const cameFromBacklog = referrer.includes('/backlog') || 
@@ -287,7 +292,13 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       : null;
     
     // Check if story status indicates it's a backlog item
-    const isBacklogStatus = story && (story.status === 'up-next' || story.status === 'todo');
+    // Backlog statuses include 'up-next', 'todo', 'backlog', and 'deep-backlog'
+    const isBacklogStatus = story && (
+      story.status === 'up-next' || 
+      story.status === 'todo' || 
+      story.status === 'backlog' || 
+      story.status === 'deep-backlog'
+    );
     
     if (navigationSource === 'backlog' || navigationSource === 'up-next' || isBacklogStatus) {
       return 'Backlog';

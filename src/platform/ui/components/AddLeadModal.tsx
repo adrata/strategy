@@ -84,6 +84,11 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
   const [isLoading, setIsLoading] = useState(false);
   const firstNameInputRef = useRef<HTMLInputElement>(null);
   const companyNameInputRef = useRef<HTMLInputElement>(null);
+  
+  // Image upload state
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Keyboard shortcut for Ctrl+Enter
   useEffect(() => {
@@ -138,6 +143,51 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, activeTab, personFormData.firstName, personFormData.lastName, companyFormData.name, isLoading]);
 
+  // Image upload handlers
+  const handleImageFiles = (files: File[]) => {
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length === 0) {
+      alert('Please select image files only (PNG, JPG, GIF, WebP)');
+      return;
+    }
+
+    // Validate file sizes (max 10MB each)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const validFiles = imageFiles.filter(file => {
+      if (file.size > maxSize) {
+        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    // Limit to 10 images total
+    const remainingSlots = 10 - uploadedImages.length;
+    if (validFiles.length > remainingSlots) {
+      alert(`Maximum 10 images allowed. You can add ${remainingSlots} more.`);
+      return;
+    }
+
+    const filesToAdd = validFiles.slice(0, remainingSlots);
+    setUploadedImages(prev => [...prev, ...filesToAdd]);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      handleImageFiles(files);
+    }
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -189,6 +239,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             notes: "",
             status: "LEAD"
           });
+          setUploadedImages([]);
           
           // Call callback
           if (onLeadAdded) {
@@ -235,6 +286,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             notes: "",
             state: null
           });
+          setUploadedImages([]);
           
           // Call callback
           if (onLeadAdded) {
@@ -471,8 +523,13 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                   Notes
+                  {uploadedImages.length > 0 && (
+                    <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                      {uploadedImages.length} {uploadedImages.length === 1 ? 'image' : 'images'}
+                    </span>
+                  )}
                 </label>
                 <textarea
                   value={personFormData.notes}
@@ -481,6 +538,48 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   rows={3}
                   className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
+                <div className="mt-2 flex justify-end">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileInputChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-2 py-1 text-xs text-muted hover:text-foreground bg-background border border-border rounded hover:bg-hover transition-colors"
+                  >
+                    Add Image
+                  </button>
+                </div>
+                {/* Image previews */}
+                {uploadedImages.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {uploadedImages.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Preview ${index + 1}`}
+                          className="w-20 h-20 object-cover rounded border border-border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove image"
+                        >
+                          ×
+                        </button>
+                        <p className="text-xs text-muted mt-1 truncate w-20" title={image.name}>
+                          {image.name}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -559,8 +658,13 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                   Notes
+                  {uploadedImages.length > 0 && (
+                    <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                      {uploadedImages.length} {uploadedImages.length === 1 ? 'image' : 'images'}
+                    </span>
+                  )}
                 </label>
                 <textarea
                   value={companyFormData.notes}
@@ -569,6 +673,48 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   rows={3}
                   className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
+                <div className="mt-2 flex justify-end">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileInputChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-2 py-1 text-xs text-muted hover:text-foreground bg-background border border-border rounded hover:bg-hover transition-colors"
+                  >
+                    Add Image
+                  </button>
+                </div>
+                {/* Image previews */}
+                {uploadedImages.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {uploadedImages.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Preview ${index + 1}`}
+                          className="w-20 h-20 object-cover rounded border border-border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove image"
+                        >
+                          ×
+                        </button>
+                        <p className="text-xs text-muted mt-1 truncate w-20" title={image.name}>
+                          {image.name}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -589,6 +735,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
               type="submit"
               disabled={
                 isLoading || 
+                uploadingImages ||
                 (activeTab === 'person' && (!personFormData.firstName || !personFormData.lastName)) ||
                 (activeTab === 'company' && !companyFormData.name)
               }
@@ -624,7 +771,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                 }
               }}
             >
-              {isLoading ? 'Creating...' : `Complete (${getCommonShortcut('SUBMIT')})`}
+              {uploadingImages ? 'Uploading images...' : isLoading ? 'Creating...' : `Complete (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
         </form>

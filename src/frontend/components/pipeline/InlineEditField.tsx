@@ -226,19 +226,19 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
     return (
       <div className="flex items-center gap-2">
         {type === 'textarea' ? (
-          <div className="flex-1 relative">
+          <div className="flex-1">
             <textarea
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              className={`w-full px-2 py-1 ${isBug && field === 'description' ? 'pb-8' : ''} border border-border rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-background text-foreground ${className}`}
+              className={`w-full px-2 py-1 border border-border rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-background text-foreground ${className}`}
               placeholder={placeholder}
               rows={3}
               autoFocus
             />
-            {/* Add Image button for bugs - positioned at bottom-right to not cover text */}
+            {/* Add Image button for bugs - positioned below textarea */}
             {isBug && field === 'description' && (
-              <>
+              <div className="mt-2 flex justify-end">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -251,7 +251,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isImageUploadDisabled}
-                  className={`absolute bottom-1 right-1 px-2 py-1 text-xs border rounded transition-colors z-10 ${
+                  className={`px-2 py-1 text-xs border rounded transition-colors ${
                     isImageUploadDisabled
                       ? 'text-muted bg-gray-100 border-gray-200 cursor-not-allowed opacity-50'
                       : 'text-muted hover:text-foreground bg-background border-border hover:bg-hover'
@@ -260,7 +260,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
                 >
                   {uploadingImage ? 'Uploading...' : 'Add Image'}
                 </button>
-              </>
+              </div>
             )}
           </div>
         ) : inputType === 'select' && options ? (

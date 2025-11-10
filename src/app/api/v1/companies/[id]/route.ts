@@ -592,12 +592,16 @@ export async function PATCH(
     });
 
     // Log data update as an action
+    // Skip activity log for notes-only updates to prevent log spam from autosave
     try {
       const updatedFields = Object.keys(updateData).filter(key => 
         updateData[key] !== existingCompany[key]
       );
       
-      if (updatedFields.length > 0) {
+      // Only create activity log if there are updated fields AND it's not just a notes-only update
+      const isNotesOnlyUpdate = updatedFields.length === 1 && updatedFields[0] === 'notes';
+      
+      if (updatedFields.length > 0 && !isNotesOnlyUpdate) {
         await prisma.actions.create({
           data: {
             companyId: id,
@@ -612,6 +616,8 @@ export async function PATCH(
         });
         
         console.log(`📝 [COMPANIES API] Logged data update action for company ${id}: ${updatedFields.join(', ')}`);
+      } else if (isNotesOnlyUpdate) {
+        console.log(`📝 [COMPANIES API] Skipping activity log for notes-only update (autosave) for company ${id}`);
       }
     } catch (actionError) {
       console.error('Failed to log company data update action:', actionError);

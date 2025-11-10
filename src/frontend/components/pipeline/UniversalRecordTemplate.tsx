@@ -3307,7 +3307,9 @@ export function UniversalRecordTemplate({
         completedAt: new Date().toISOString(),
         // Only include personId/companyId if they are valid (not empty strings or undefined)
         ...(actionData.personId && actionData.personId.trim() !== '' && { personId: actionData.personId }),
-        ...(actionData.companyId && actionData.companyId.trim() !== '' && { companyId: actionData.companyId })
+        ...(actionData.companyId && actionData.companyId.trim() !== '' && { companyId: actionData.companyId }),
+        // Include companyName to help resolve company if companyId is invalid or missing
+        ...(actionData.company && actionData.company.trim() !== '' && { companyName: actionData.company.trim() })
       };
       
         console.log('📤 [UNIVERSAL] Request body prepared:', {
@@ -3406,8 +3408,8 @@ export function UniversalRecordTemplate({
           }
         }
         
-        // Navigate to next record if available (for sprint view)
-        if (onNavigateNext) {
+        // Navigate to next record only for speedrun (traditional sales sections like leads and prospects stay on same record)
+        if (recordType === 'speedrun' && onNavigateNext) {
           console.log('🎯 [SPEEDRUN] Navigating to next record');
           onNavigateNext();
         }

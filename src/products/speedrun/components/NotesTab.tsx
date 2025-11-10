@@ -113,21 +113,16 @@ export function NotesTab({
       {/* Notes Header */}
       <div className="flex items-center justify-end px-4 py-2 border-b border-border bg-background">
         <div className="flex items-center gap-2">
+          {/* Only show status when actively saving or on error - hide in idle/saved states */}
           {saveStatus === 'saving' && (
-            <span className="text-xs text-blue-600 flex items-center gap-1">
-              <div className="w-3 h-3 border border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-xs text-gray-400 flex items-center gap-1">
+              <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
               Saving...
             </span>
           )}
-          {saveStatus === 'saved' && lastSavedAt && (
-            <span className={`text-xs flex items-center gap-1 ${timeSinceSave < 2 ? 'text-success' : 'text-muted'}`}>
-              <span className={`w-2 h-2 rounded-full ${timeSinceSave < 2 ? 'bg-success' : 'bg-muted'}`}></span>
-              Last saved {formatTimeAgo(lastSavedAt)}
-            </span>
-          )}
           {saveStatus === 'error' && (
-            <span className="text-xs text-error flex items-center gap-1">
-              <span className="w-2 h-2 bg-error rounded-full"></span>
+            <span className="text-xs text-red-500 flex items-center gap-1">
+              <span className="w-2 h-2 bg-red-500 rounded-full"></span>
               Save failed
             </span>
           )}

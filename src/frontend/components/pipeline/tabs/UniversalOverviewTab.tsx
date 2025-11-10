@@ -9,6 +9,7 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { formatUrlForDisplay, getUrlDisplayName } from '@/platform/utils/urlFormatter';
 import { DatePicker } from '@/platform/ui/components/DatePicker';
 import { ClockIcon } from '@heroicons/react/24/outline';
+import { extractBestCurrentTitle } from '@/platform/utils/title-extraction';
 
 // Helper function to format future dates as "In 2 weeks"
 function formatNextActionDate(dateString: string | Date | null | undefined): string {
@@ -478,7 +479,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     // Basic info - Database fields first, then CoreSignal fallback - no fallback to '-'
     name: record?.fullName || record?.name || coresignalData.full_name || null,
     title: (() => {
-      // First try database fields
+      // First try database fields (manual entry)
       if (record?.jobTitle || record?.title) {
         return record?.jobTitle || record?.title;
       }
@@ -488,38 +489,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         ? record.company 
         : (record?.company?.name || record?.companyName);
       
-      // Try to find title from company-matched work experience
-      if (coresignalData.experience && Array.isArray(coresignalData.experience) && recordCompanyName) {
-        // Normalize company name for matching (case-insensitive, remove common suffixes)
-        const normalizeCompanyName = (name: string) => {
-          if (!name) return '';
-          return name.toLowerCase()
-            .replace(/\s+(inc|llc|ltd|corp|corporation|company|co)\.?$/i, '')
-            .trim();
-        };
-        
-        const normalizedRecordCompany = normalizeCompanyName(recordCompanyName);
-        
-        // Find experience entry that matches the company
-        const matchedExperience = coresignalData.experience.find((exp: any) => {
-          if (!exp.company_name) return false;
-          const normalizedExpCompany = normalizeCompanyName(exp.company_name);
-          // Check for exact match or if one contains the other
-          return normalizedExpCompany === normalizedRecordCompany ||
-                 normalizedExpCompany.includes(normalizedRecordCompany) ||
-                 normalizedRecordCompany.includes(normalizedExpCompany);
-        });
-        
-        if (matchedExperience?.position_title) {
-          return matchedExperience.position_title;
-        }
-      }
+      // Use title extraction utility for intelligent title selection
+      const titleResult = extractBestCurrentTitle(
+        {
+          experience: coresignalData.experience,
+          active_experience_title: coresignalData.active_experience_title,
+          job_title: coresignalData.job_title,
+        },
+        recordCompanyName || null,
+        null, // company ID if available
+        null // manual title already checked above
+      );
       
-      // Fallback to active experience title or first experience title
-      return coresignalData.active_experience_title || 
-             coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || 
-             coresignalData.experience?.[0]?.position_title || 
-             null;
+      return titleResult.title || null;
     })(),
     email: (() => {
       const emailValue = record?.email || record?.workEmail || coresignalData.primary_professional_email || null;
