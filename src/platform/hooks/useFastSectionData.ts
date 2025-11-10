@@ -178,9 +178,10 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/people?section=opportunities&limit=10000${refreshParam}`;
           break;
         case 'people':
-          // 🚀 PERFORMANCE: Use reasonable limit for people (500 records per page)
+          // 🚀 PERFORMANCE: Use reasonable limit for people, but allow fetching all records
           // Client-side pagination will handle larger datasets efficiently
-          url = `/api/v1/people?limit=${Math.min(limit, 500)}${refreshParam}`;
+          // Remove 500 cap to allow fetching all people records
+          url = `/api/v1/people?limit=${Math.max(limit, 10000)}${refreshParam}`;
           break;
         case 'companies':
           // For companies, use v1 API with increased limit (now supports up to 10000 records)

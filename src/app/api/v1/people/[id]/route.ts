@@ -318,6 +318,32 @@ export async function PUT(
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')}-${updatedPerson.id}`;
 
+    // Auto-trigger enrichment if email, linkedinUrl, or companyId was updated
+    const enrichmentFields = ['email', 'linkedinUrl', 'companyId'];
+    const shouldTriggerEnrichment = enrichmentFields.some(field => 
+      body[field] !== undefined && body[field] !== existingPerson[field]
+    );
+
+    if (shouldTriggerEnrichment) {
+      setImmediate(async () => {
+        try {
+          const { EnrichmentService } = await import('@/platform/services/enrichment-service');
+          const authToken = request.headers.get('Authorization') || undefined;
+          EnrichmentService.triggerEnrichmentAsync(
+            'person',
+            id,
+            'update',
+            authUser.workspaceId,
+            authToken || undefined,
+            enrichmentFields.filter(field => body[field] !== undefined)
+          );
+          console.log('🤖 [PEOPLE API] Auto-triggered enrichment check for updated person', id);
+        } catch (error) {
+          console.error('⚠️ [PEOPLE API] Failed to trigger enrichment:', error);
+        }
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -762,6 +788,32 @@ export async function PATCH(
         console.error('⚠️ [PEOPLE API] Failed to auto-populate nextActionDate:', nextActionError);
         // Don't fail the main update if nextActionDate calculation fails
       }
+    }
+
+    // Auto-trigger enrichment if email, linkedinUrl, or companyId was updated
+    const enrichmentFields = ['email', 'linkedinUrl', 'companyId'];
+    const changedEnrichmentFields = enrichmentFields.filter(field => 
+      updateData[field] !== undefined && updateData[field] !== existingPerson[field]
+    );
+
+    if (changedEnrichmentFields.length > 0) {
+      setImmediate(async () => {
+        try {
+          const { EnrichmentService } = await import('@/platform/services/enrichment-service');
+          const authToken = request.headers.get('Authorization') || undefined;
+          EnrichmentService.triggerEnrichmentAsync(
+            'person',
+            id,
+            'update',
+            authUser.workspaceId,
+            authToken || undefined,
+            changedEnrichmentFields
+          );
+          console.log('🤖 [PEOPLE API] Auto-triggered enrichment check for updated person', id, 'changed fields:', changedEnrichmentFields);
+        } catch (error) {
+          console.error('⚠️ [PEOPLE API] Failed to trigger enrichment:', error);
+        }
+      });
     }
 
     return NextResponse.json(responseData);

@@ -142,7 +142,11 @@ export async function GET(request: NextRequest) {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
         ...(includeAllUsers ? {} : {
-          mainSellerId: context.userId // Only show leads assigned to the current user
+          // Include records assigned to user OR unassigned (NULL) - consistent with counts API
+          OR: [
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
+          ]
         })
       };
 
@@ -616,7 +620,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            mainSellerId: context.userId, // Only show companies assigned to the current user
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ],
             AND: [
               { people: { none: {} } }, // Companies with 0 people
               {
@@ -711,7 +718,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            mainSellerId: context.userId, // Only show companies assigned to the current user
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ],
             AND: [
               { people: { none: {} } }, // Companies with 0 people
               { status: 'PROSPECT' }
@@ -808,6 +818,78 @@ export async function GET(request: NextRequest) {
         console.warn(`⚠️ [V1 PEOPLE API] Removed ${allLeads.length - deduplicatedLeads.length} duplicate records from ${section} response`);
       }
 
+      // 🚀 FIX: Calculate accurate totalCount for leads/prospects sections
+      // For leads/prospects, we need to count companies with 0 people separately
+      let accurateTotalCount = totalCount;
+      if (section === 'leads') {
+        const [peopleCount, companyCount] = await Promise.all([
+          prisma.people.count({ 
+            where: { 
+              workspaceId: context.workspaceId,
+              deletedAt: null,
+              status: 'LEAD',
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ]
+            } 
+          }),
+          prisma.companies.count({
+            where: {
+              workspaceId: context.workspaceId,
+              deletedAt: null,
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ],
+              AND: [
+                { people: { none: {} } },
+                {
+                  OR: [
+                    { status: 'LEAD' },
+                    { status: null }
+                  ]
+                }
+              ]
+            }
+          })
+        ]);
+        accurateTotalCount = peopleCount + companyCount;
+      } else if (section === 'prospects') {
+        const [peopleCount, companyCount] = await Promise.all([
+          prisma.people.count({ 
+            where: { 
+              workspaceId: context.workspaceId,
+              deletedAt: null,
+              status: 'PROSPECT',
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ]
+            } 
+          }),
+          prisma.companies.count({
+            where: {
+              workspaceId: context.workspaceId,
+              deletedAt: null,
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ],
+              AND: [
+                { people: { none: {} } },
+                { status: 'PROSPECT' }
+              ]
+            }
+          })
+        ]);
+        accurateTotalCount = peopleCount + companyCount;
+      } else {
+        // For regular people section, totalCount already includes NULL mainSellerId records
+        // since where clause now includes OR for NULL mainSellerId
+        accurateTotalCount = totalCount;
+      }
+
       const result = {
         success: true,
         data: deduplicatedLeads,
@@ -816,12 +898,12 @@ export async function GET(request: NextRequest) {
           pagination: {
             page,
             limit,
-            totalCount: deduplicatedLeads.length, // Use actual deduplicated count
-            totalPages: Math.ceil(deduplicatedLeads.length / limit),
+            totalCount: accurateTotalCount, // Use accurate database count, not array length
+            totalPages: Math.ceil(accurateTotalCount / limit),
           },
           // Add compatibility fields for useFastSectionData hook
-          count: deduplicatedLeads.length,
-          totalCount: deduplicatedLeads.length,
+          count: accurateTotalCount,
+          totalCount: accurateTotalCount,
           filters: { search, status, priority, companyId, excludeCompanyId, sortBy, sortOrder },
           userId: context.userId,
           workspaceId: context.workspaceId,
@@ -1233,6 +1315,25 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         console.error('⚠️ [PEOPLE API] Failed to generate strategy data:', error);
         // Don't fail the request if strategy generation fails
+      }
+    });
+
+    // Auto-trigger enrichment/intelligence gathering (async, don't await)
+    setImmediate(async () => {
+      try {
+        const { EnrichmentService } = await import('@/platform/services/enrichment-service');
+        const authToken = request.headers.get('Authorization') || undefined;
+        EnrichmentService.triggerEnrichmentAsync(
+          'person',
+          person.id,
+          'create',
+          context.workspaceId,
+          authToken || undefined
+        );
+        console.log('🤖 [PEOPLE API] Auto-triggered enrichment check for new person', person.id);
+      } catch (error) {
+        console.error('⚠️ [PEOPLE API] Failed to trigger enrichment:', error);
+        // Don't fail the request if enrichment trigger fails
       }
     });
 

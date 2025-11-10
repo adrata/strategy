@@ -45,9 +45,9 @@ export function usePeopleData(): UsePeopleDataReturn {
       setLoading(true);
       setError(null);
 
-      // 🚀 PERFORMANCE: Use reasonable limit (500 records) instead of 10000
-      // This significantly improves load time for large datasets
-      const response = await fetch('/api/v1/people?limit=500', { credentials: 'include' });
+      // 🚀 PERFORMANCE: Use reasonable limit for initial load, but get accurate total count from API
+      // The API returns totalCount in meta.pagination.totalCount regardless of limit
+      const response = await fetch('/api/v1/people?limit=100', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch people: ${response.statusText}`);
@@ -55,6 +55,9 @@ export function usePeopleData(): UsePeopleDataReturn {
 
       const json = await response.json();
       const data = Array.isArray(json) ? json : (json?.data || []);
+      
+      // Get total count from API response meta, fallback to data length
+      const totalCount = json?.meta?.pagination?.totalCount || json?.meta?.totalCount || data.length;
       
       // Transform people data to Person format
       const transformedPeople: Person[] = (data || []).map((person: any) => ({
@@ -79,7 +82,7 @@ export function usePeopleData(): UsePeopleDataReturn {
       }));
 
       setPeople(transformedPeople);
-      setCount(transformedPeople.length);
+      setCount(totalCount);
       try {
         const storageKey = `adrata-people-${workspaceId}`;
         localStorage.setItem(storageKey, JSON.stringify({ people: transformedPeople, ts: Date.now() }));

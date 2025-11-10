@@ -234,6 +234,98 @@ export class EnrichmentService {
       };
     }
   }
+
+  /**
+   * Auto-trigger enrichment asynchronously
+   * Checks if enrichment should be triggered and calls the enrichment API
+   * Runs in background without blocking the main request
+   * 
+   * @param entityType - 'person' or 'company'
+   * @param entityId - ID of the entity to enrich
+   * @param trigger - 'create' or 'update'
+   * @param workspaceId - Workspace ID for context
+   * @param authToken - Optional Authorization token from the original request
+   * @param changedFields - Optional array of field names that changed (for updates)
+   */
+  static triggerEnrichmentAsync(
+    entityType: 'person' | 'company',
+    entityId: string,
+    trigger: 'create' | 'update',
+    workspaceId: string,
+    authToken?: string,
+    changedFields?: string[]
+  ): void {
+    // Run asynchronously to not block the main request
+    setImmediate(async () => {
+      try {
+        // Check if enrichment should be triggered
+        const checkResult = await this.autoTriggerCheck(
+          entityType,
+          entityId,
+          trigger,
+          workspaceId
+        );
+
+        if (!checkResult.shouldEnrich) {
+          console.log(`⏭️ [ENRICHMENT] Skipping enrichment for ${entityType}:${entityId} - ${checkResult.reason}`);
+          return;
+        }
+
+        console.log(`🤖 [ENRICHMENT] Auto-triggering enrichment for ${entityType}:${entityId} - ${checkResult.reason}`);
+
+        // Get base URL for internal API call
+        const { getBaseUrl } = await import('@/lib/env-urls');
+        const baseUrl = getBaseUrl();
+        const enrichUrl = `${baseUrl}/api/v1/enrich`;
+
+        // Prepare headers
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+
+        // Add Authorization header if provided
+        if (authToken) {
+          headers['Authorization'] = authToken.startsWith('Bearer ') ? authToken : `Bearer ${authToken}`;
+        }
+
+        // Call enrichment API
+        const response = await fetch(enrichUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            type: entityType,
+            entityId: entityId,
+            options: {
+              verifyEmail: true,
+              verifyPhone: true,
+              discoverContacts: entityType === 'company',
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`❌ [ENRICHMENT] Failed to trigger enrichment for ${entityType}:${entityId}:`, {
+            status: response.status,
+            error: errorText
+          });
+          return;
+        }
+
+        const result = await response.json();
+        console.log(`✅ [ENRICHMENT] Enrichment triggered successfully for ${entityType}:${entityId}`, {
+          result: result.data || result
+        });
+
+      } catch (error) {
+        console.error(`❌ [ENRICHMENT] Error triggering enrichment for ${entityType}:${entityId}:`, {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        // Don't throw - enrichment failures shouldn't break the main request
+      }
+    });
+  }
 }
 
 export default EnrichmentService;

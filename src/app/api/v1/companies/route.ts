@@ -994,6 +994,25 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    // Auto-trigger enrichment/intelligence gathering (async, don't await)
+    setImmediate(async () => {
+      try {
+        const { EnrichmentService } = await import('@/platform/services/enrichment-service');
+        const authToken = request.headers.get('Authorization') || undefined;
+        EnrichmentService.triggerEnrichmentAsync(
+          'company',
+          company.id,
+          'create',
+          context.workspaceId,
+          authToken || undefined
+        );
+        console.log('🤖 [COMPANIES API] Auto-triggered enrichment check for new company', company.id);
+      } catch (error) {
+        console.error('⚠️ [COMPANIES API] Failed to trigger enrichment:', error);
+        // Don't fail the request if enrichment trigger fails
+      }
+    });
+
     return NextResponse.json({
       success: true,
       data: company,

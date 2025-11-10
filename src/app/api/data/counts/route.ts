@@ -111,26 +111,32 @@ export async function GET(request: NextRequest) {
     
     try {
       [peopleCounts, companiesCounts, speedrunPeopleCount, speedrunCompaniesCount, speedrunPeopleNoActionsCount, speedrunCompaniesNoActionsCount] = await Promise.all([
-        // Get people counts by status - Only show records where user is main seller (exclude unassigned)
+        // Get people counts by status - Include records where user is main seller OR mainSellerId is null (consistent with list API)
         prisma.people.groupBy({
           by: ['status'],
           where: {
             workspaceId,
             deletedAt: null, // Only count non-deleted records
-            mainSellerId: userId // Only count records where user is the main seller
+            OR: [
+              { mainSellerId: userId }, // Records assigned to this user
+              { mainSellerId: null }    // Unassigned records (consistent with list API)
+            ]
           },
           _count: { id: true }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching people counts:', error);
           return [];
         }),
-        // Get companies counts by status - Only show records where user is main seller (exclude unassigned)
+        // Get companies counts by status - Include records where user is main seller OR mainSellerId is null (consistent with list API)
         prisma.companies.groupBy({
           by: ['status'],
           where: {
             workspaceId,
             deletedAt: null, // Only count non-deleted records
-            mainSellerId: userId // Only count records where user is the main seller
+            OR: [
+              { mainSellerId: userId }, // Records assigned to this user
+              { mainSellerId: null }    // Unassigned records (consistent with list API)
+            ]
           },
           _count: { id: true }
         }).catch((error) => {
@@ -144,7 +150,10 @@ export async function GET(request: NextRequest) {
             deletedAt: null, // Only count non-deleted records
             companyId: { not: null }, // Only people with companies
             globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
-            mainSellerId: userId // Only count people assigned to this user
+            OR: [
+              { mainSellerId: userId }, // Records assigned to this user
+              { mainSellerId: null }    // Unassigned records (consistent with list API)
+            ]
           }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun people count:', error);
@@ -157,7 +166,10 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             globalRank: { not: null, gte: 1, lte: 50 }, // Only companies with ranks 1-50
             people: { none: {} }, // CRITICAL: Only companies with 0 people (companies with people are represented by their people)
-            mainSellerId: userId
+            OR: [
+              { mainSellerId: userId }, // Records assigned to this user
+              { mainSellerId: null }    // Unassigned records (consistent with list API)
+            ]
           }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
@@ -172,30 +184,39 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             companyId: { not: null },
             globalRank: { not: null, gte: 1, lte: 50 },
-            mainSellerId: userId,
-            OR: [
-              { lastActionDate: null },
-              { 
-                lastActionDate: {
-                  lt: new Date(new Date().setHours(0, 0, 0, 0)) // Before today = Ready
-                }
+            AND: [
+              {
+                OR: [
+                  { mainSellerId: userId }, // Records assigned to this user
+                  { mainSellerId: null }    // Unassigned records (consistent with list API)
+                ]
               },
               {
-                // Action today but not meaningful = Still Ready
-                AND: [
+                OR: [
+                  { lastActionDate: null },
                   { 
                     lastActionDate: {
-                      gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                      lt: new Date(new Date().setHours(23, 59, 59, 999))
+                      lt: new Date(new Date().setHours(0, 0, 0, 0)) // Before today = Ready
                     }
                   },
                   {
-                    OR: [
-                      { lastAction: null },
-                      { lastAction: 'No action taken' },
-                      { lastAction: 'Record created' },
-                      { lastAction: 'Company record created' },
-                      { lastAction: 'Record added' }
+                    // Action today but not meaningful = Still Ready
+                    AND: [
+                      { 
+                        lastActionDate: {
+                          gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                          lt: new Date(new Date().setHours(23, 59, 59, 999))
+                        }
+                      },
+                      {
+                        OR: [
+                          { lastAction: null },
+                          { lastAction: 'No action taken' },
+                          { lastAction: 'Record created' },
+                          { lastAction: 'Company record created' },
+                          { lastAction: 'Record added' }
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -214,30 +235,39 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             globalRank: { not: null, gte: 1, lte: 50 },
             people: { none: {} },
-            mainSellerId: userId,
-            OR: [
-              { lastActionDate: null },
-              { 
-                lastActionDate: {
-                  lt: new Date(new Date().setHours(0, 0, 0, 0)) // Before today = Ready
-                }
+            AND: [
+              {
+                OR: [
+                  { mainSellerId: userId }, // Records assigned to this user
+                  { mainSellerId: null }    // Unassigned records (consistent with list API)
+                ]
               },
               {
-                // Action today but not meaningful = Still Ready
-                AND: [
+                OR: [
+                  { lastActionDate: null },
                   { 
                     lastActionDate: {
-                      gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                      lt: new Date(new Date().setHours(23, 59, 59, 999))
+                      lt: new Date(new Date().setHours(0, 0, 0, 0)) // Before today = Ready
                     }
                   },
                   {
-                    OR: [
-                      { lastAction: null },
-                      { lastAction: 'No action taken' },
-                      { lastAction: 'Record created' },
-                      { lastAction: 'Company record created' },
-                      { lastAction: 'Record added' }
+                    // Action today but not meaningful = Still Ready
+                    AND: [
+                      { 
+                        lastActionDate: {
+                          gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                          lt: new Date(new Date().setHours(23, 59, 59, 999))
+                        }
+                      },
+                      {
+                        OR: [
+                          { lastAction: null },
+                          { lastAction: 'No action taken' },
+                          { lastAction: 'Record created' },
+                          { lastAction: 'Company record created' },
+                          { lastAction: 'Record added' }
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -277,14 +307,17 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {} as Record<string, number>);
 
-    // 🚀 LEADS: Include companies with 0 people in leads count - Only show records where user is main seller
+    // 🚀 LEADS: Include companies with 0 people in leads count - Include records where user is main seller OR mainSellerId is null
     let companiesWithNoPeopleCount = 0;
     try {
       companiesWithNoPeopleCount = await prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
-          mainSellerId: userId, // Only count records where user is the main seller
+          OR: [
+            { mainSellerId: userId }, // Records assigned to this user
+            { mainSellerId: null }    // Unassigned records (consistent with list API)
+          ],
           AND: [
             { people: { none: {} } }, // Companies with 0 people
             {
@@ -301,14 +334,17 @@ export async function GET(request: NextRequest) {
       companiesWithNoPeopleCount = 0;
     }
 
-    // 🚀 PROSPECTS: Include companies with 0 people and PROSPECT status - Only show records where user is main seller
+    // 🚀 PROSPECTS: Include companies with 0 people and PROSPECT status - Include records where user is main seller OR mainSellerId is null
     let companiesProspectsCount = 0;
     try {
       companiesProspectsCount = await prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
-          mainSellerId: userId, // Only count records where user is the main seller
+          OR: [
+            { mainSellerId: userId }, // Records assigned to this user
+            { mainSellerId: null }    // Unassigned records (consistent with list API)
+          ],
           AND: [
             { people: { none: {} } }, // Companies with 0 people
             { status: 'PROSPECT' as any }

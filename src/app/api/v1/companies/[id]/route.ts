@@ -278,6 +278,32 @@ export async function PUT(
       },
     });
 
+    // Auto-trigger enrichment if website or linkedinUrl was updated
+    const enrichmentFields = ['website', 'linkedinUrl'];
+    const shouldTriggerEnrichment = enrichmentFields.some(field => 
+      body[field] !== undefined && body[field] !== existingCompany[field]
+    );
+
+    if (shouldTriggerEnrichment) {
+      setImmediate(async () => {
+        try {
+          const { EnrichmentService } = await import('@/platform/services/enrichment-service');
+          const authToken = request.headers.get('Authorization') || undefined;
+          EnrichmentService.triggerEnrichmentAsync(
+            'company',
+            id,
+            'update',
+            authUser.workspaceId,
+            authToken || undefined,
+            enrichmentFields.filter(field => body[field] !== undefined)
+          );
+          console.log('🤖 [COMPANIES API] Auto-triggered enrichment check for updated company', id);
+        } catch (error) {
+          console.error('⚠️ [COMPANIES API] Failed to trigger enrichment:', error);
+        }
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: updatedCompany,
@@ -673,6 +699,32 @@ export async function PATCH(
         },
       }
     });
+
+    // Auto-trigger enrichment if website or linkedinUrl was updated
+    const enrichmentFields = ['website', 'linkedinUrl'];
+    const changedEnrichmentFields = enrichmentFields.filter(field => 
+      updateData[field] !== undefined && updateData[field] !== existingCompany[field]
+    );
+
+    if (changedEnrichmentFields.length > 0) {
+      setImmediate(async () => {
+        try {
+          const { EnrichmentService } = await import('@/platform/services/enrichment-service');
+          const authToken = request.headers.get('Authorization') || undefined;
+          EnrichmentService.triggerEnrichmentAsync(
+            'company',
+            id,
+            'update',
+            authUser.workspaceId,
+            authToken || undefined,
+            changedEnrichmentFields
+          );
+          console.log('🤖 [COMPANIES API] Auto-triggered enrichment check for updated company', id, 'changed fields:', changedEnrichmentFields);
+        } catch (error) {
+          console.error('⚠️ [COMPANIES API] Failed to trigger enrichment:', error);
+        }
+      });
+    }
 
     // IMPORTANT: Explicitly include all editable fields to ensure they're always in response (even if null)
     // This prevents fields from disappearing when API response doesn't include them
