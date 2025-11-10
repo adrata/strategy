@@ -559,15 +559,18 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
   // 🚀 CACHE OPTIMIZATION: Removed debug force refresh that was causing unnecessary reloads
 
+  // Memoize refresh function to prevent infinite loops in components that depend on it
+  const refresh = useCallback(() => {
+    console.log(`🔄 [FAST SECTION DATA] Refresh called for section: ${section}`);
+    return fetchSectionData(true);
+  }, [fetchSectionData, section]);
+
   return {
     data,
     loading,
     error,
     count,
-    refresh: () => {
-      console.log(`🔄 [FAST SECTION DATA] Refresh called for section: ${section}`);
-      return fetchSectionData(true);
-    },
+    refresh,
     clearCache: () => {
       console.log(`🧹 [FAST SECTION DATA] Clearing cache for section: ${section}`);
       // Critical: Remove section from loaded sections Set to allow refetch
