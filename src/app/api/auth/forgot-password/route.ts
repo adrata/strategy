@@ -60,7 +60,9 @@ export async function POST(request: NextRequest) {
     console.log("🔐 [FORGOT PASSWORD] Generated secure reset token for:", user.email);
 
     // Create reset link
-    const resetLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const { getBaseUrl } = await import('@/lib/env-urls');
+    const baseUrl = getBaseUrl();
+    const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
     
     // Send actual email using Resend
     const emailResult = await sendEmail({

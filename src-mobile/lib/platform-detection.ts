@@ -48,13 +48,22 @@ export function getPlatform(): Platform {
  */
 export function getAPIBaseURL(): string {
   if (isMobile()) {
-    // Mobile should use production/staging API
-    return process.env.EXPO_PUBLIC_API_URL || 'https://action.adrata.com';
+    // Mobile should use environment-aware API URL
+    // Check for staging first, then production, then fallback
+    if (process.env.EXPO_PUBLIC_API_URL) {
+      return process.env.EXPO_PUBLIC_API_URL;
+    }
+    // Default to production, but can be overridden via env var for staging
+    return 'https://action.adrata.com';
   }
   
   if (isDesktop()) {
-    // Desktop uses localhost in dev, production URL in prod
-    return process.env.NEXT_PUBLIC_API_URL || 'https://action.adrata.com';
+    // Desktop uses environment-aware URL
+    if (process.env.NEXT_PUBLIC_API_URL) {
+      return process.env.NEXT_PUBLIC_API_URL;
+    }
+    // Default to production, but can be overridden via env var for staging
+    return 'https://action.adrata.com';
   }
   
   // Web uses relative URLs or env var

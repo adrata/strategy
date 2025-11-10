@@ -125,7 +125,46 @@ export function SpeedrunSprintView() {
   const TOTAL_PEOPLE = allData.length; // Use actual data length
   const TOTAL_SPRINTS = Math.ceil(TOTAL_PEOPLE / SPRINT_SIZE); // Calculate based on actual data
   
-
+  // Helper function to filter completedRecords to only include records from the current sprint
+  const filterCompletedRecordsBySprint = useCallback((completedRecordIds: string[], sprintIndex: number, dataSource: any[]) => {
+    if (!Array.isArray(completedRecordIds) || !Array.isArray(dataSource) || dataSource.length === 0) {
+      return [];
+    }
+    
+    // Calculate sprint boundaries based on strategic rank (1-indexed rank system)
+    // Sprint 1 (index 0): ranks 1-10, Sprint 2 (index 1): ranks 11-20, etc.
+    const sprintStartRank = sprintIndex * SPRINT_SIZE + 1;
+    const sprintEndRank = (sprintIndex + 1) * SPRINT_SIZE;
+    
+    // Sort all records by rank first
+    const sortedRecords = [...dataSource].sort((a: any, b: any) => {
+      const rankA = a.globalRank || a.rank || 999999;
+      const rankB = b.globalRank || b.rank || 999999;
+      return rankA - rankB;
+    });
+    
+    // Get all records that belong to this sprint based on rank
+    const recordsInSprint = sortedRecords.filter((record: any) => {
+      const rank = record.globalRank || record.rank || 999999;
+      return rank >= sprintStartRank && rank <= sprintEndRank;
+    });
+    
+    // Filter completedRecordIds to only include IDs that belong to records in this sprint
+    const sprintRecordIds = new Set(recordsInSprint.map((r: any) => r.id));
+    const filteredCompletedIds = completedRecordIds.filter((id: string) => sprintRecordIds.has(id));
+    
+    console.log(`🔍 [FILTER COMPLETED] Filtering completedRecords for Sprint ${sprintIndex + 1}:`, {
+      sprintIndex,
+      sprintStartRank,
+      sprintEndRank,
+      totalCompletedRecords: completedRecordIds.length,
+      recordsInSprint: recordsInSprint.length,
+      filteredCompletedIds: filteredCompletedIds.length,
+      removedIds: completedRecordIds.filter((id: string) => !sprintRecordIds.has(id))
+    });
+    
+    return filteredCompletedIds;
+  }, [SPRINT_SIZE]);
   
   // Load completed records from localStorage on mount
   useEffect(() => {
@@ -426,37 +465,45 @@ export function SpeedrunSprintView() {
   const currentSprintNumber = currentSprintIndex + 1;
 
   // Calculate which records belong to the current sprint based on rank
-  // Use allData (not filteredData) to ensure we check ALL records that should be in the sprint
-  // regardless of snooze status - we want to know when all 10 are truly completed
+  // Use filteredData to match what's actually displayed in the sprint view
+  // This ensures the completion check only considers visible records
   const currentSprintRecords = React.useMemo(() => {
-    // Ensure allData is an array
-    if (!Array.isArray(allData) || allData.length === 0) return [];
+    // Ensure filteredData is an array
+    if (!Array.isArray(filteredData) || filteredData.length === 0) return [];
     
-    const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
-    const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
+    // Calculate sprint boundaries based on strategic rank (1-indexed rank system)
+    // Sprint 1 (index 0): ranks 1-10, Sprint 2 (index 1): ranks 11-20, etc.
+    // This matches the logic in the data memo
+    const sprintStartRank = currentSprintIndex * SPRINT_SIZE + 1;
+    const sprintEndRank = (currentSprintIndex + 1) * SPRINT_SIZE;
     
-    // Get all records that should be in this sprint based on their rank
-    // Use allData to include all records, not just filtered ones
-    const sortedRecords = [...allData].sort((a: any, b: any) => {
+    // Sort all records by rank first
+    const sortedRecords = [...filteredData].sort((a: any, b: any) => {
       const rankA = a.globalRank || a.rank || 999999;
       const rankB = b.globalRank || b.rank || 999999;
       return rankA - rankB;
     });
     
-    const sprintRecords = sortedRecords.slice(sprintStartIndex, sprintEndIndex);
+    // Get all records that belong to this sprint based on rank (regardless of completion status)
+    // This matches the logic in the data memo
+    const sprintRecords = sortedRecords.filter((record: any) => {
+      const rank = record.globalRank || record.rank || 999999;
+      return rank >= sprintStartRank && rank <= sprintEndRank;
+    });
     
-    console.log(`🏃‍♂️ [SPRINT ${currentSprintIndex + 1}] Records in sprint:`, {
+    console.log(`🏃‍♂️ [SPRINT ${currentSprintIndex + 1}] Records in sprint (rank-based):`, {
       sprintIndex: currentSprintIndex,
-      sprintStartIndex,
-      sprintEndIndex,
+      sprintStartRank,
+      sprintEndRank,
       totalRecords: sprintRecords.length,
       expectedCount: SPRINT_SIZE,
       recordIds: sprintRecords.map((r: any) => r.id),
-      recordNames: sprintRecords.map((r: any) => r.name || r.fullName)
+      recordNames: sprintRecords.map((r: any) => r.name || r.fullName),
+      recordRanks: sprintRecords.map((r: any) => r.globalRank || r.rank)
     });
     
     return sprintRecords;
-  }, [allData, currentSprintIndex]);
+  }, [filteredData, currentSprintIndex]);
 
   // Check if all records in the current sprint are completed
   const isSprintComplete = React.useMemo(() => {
@@ -1142,14 +1189,44 @@ export function SpeedrunSprintView() {
           setShowSprintCompletionModal(false);
           // Advance to next sprint
           if (hasNextSprint) {
-            console.log(`🏃‍♂️ [SPRINT] Advancing from Sprint ${currentSprintNumber} to Sprint ${currentSprintNumber + 1}`);
+            const nextSprintIndex = currentSprintIndex + 1;
+            console.log(`🏃‍♂️ [SPRINT] Advancing from Sprint ${currentSprintNumber} to Sprint ${nextSprintIndex + 1}`);
+            
             // Refresh data to get updated rankings before advancing
             refresh();
+            
             // Advance to next sprint after a brief delay to allow data refresh
             setTimeout(() => {
-            setCurrentSprintIndex(currentSprintIndex + 1);
-            // Reset the modal shown flag for the new sprint
-            sprintCompletionModalShownFor.current = null;
+              // Filter completedRecords to only include records from the new sprint
+              // Use functional update to ensure we have the latest completedRecords state
+              setCompletedRecords((prevCompletedRecords) => {
+                // Use allData (or enrichedData if available) to ensure we have the latest data
+                const dataSource = enrichedData.length > 0 ? enrichedData : (allData || []);
+                const safeCompletedRecords = Array.isArray(prevCompletedRecords) ? prevCompletedRecords : [];
+                const filteredCompleted = filterCompletedRecordsBySprint(
+                  safeCompletedRecords,
+                  nextSprintIndex,
+                  dataSource
+                );
+                
+                // Update localStorage to persist the filtered list
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('speedrunCompletedRecords', JSON.stringify(filteredCompleted));
+                  console.log(`💾 [SPRINT] Updated localStorage with filtered completedRecords for Sprint ${nextSprintIndex + 1}:`, {
+                    previousCount: safeCompletedRecords.length,
+                    filteredCount: filteredCompleted.length,
+                    removedCount: safeCompletedRecords.length - filteredCompleted.length
+                  });
+                }
+                
+                return filteredCompleted;
+              });
+              
+              // Advance to next sprint
+              setCurrentSprintIndex(nextSprintIndex);
+              
+              // Reset the modal shown flag for the new sprint
+              sprintCompletionModalShownFor.current = null;
             }, 100);
           } else {
             // No more sprints, go back to speedrun list

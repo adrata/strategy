@@ -3,6 +3,7 @@ import { prisma } from '@/platform/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { randomBytes } from 'crypto';
+import { getBaseUrl } from '@/lib/env-urls';
 
 /**
  * Required for static export (desktop build)
@@ -55,7 +56,7 @@ export async function POST(
 
     // Generate secure share token
     const shareToken = randomBytes(32).toString('hex');
-    const shareUrl = `${process.env.NEXTAUTH_URL}/workshop/shared/${shareToken}`;
+    const shareUrl = `${getBaseUrl()}/workshop/shared/${shareToken}`;
 
     // Create share
     const share = await prisma.workshopShare.create({

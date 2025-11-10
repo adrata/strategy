@@ -699,11 +699,9 @@ export class OAuthService {
       console.log(`🔐 [OAUTH] Created stateless session (method 2) with state length: ${state.length}`);
 
       // Build authorization URL with provider-specific redirect URI
-      // Use environment variable for OAuth base URL, fallback to production
-      let baseUrl = process.env.OAUTH_REDIRECT_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://action.adrata.com';
-      
-      // Ensure clean base URL (remove any trailing slashes, newlines, or whitespace)
-      baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/[\r\n\t]/g, '');
+      // Use environment-aware URL utility
+      const { getOAuthRedirectUrl } = await import('@/lib/env-urls');
+      const baseUrl = getOAuthRedirectUrl();
       
       const redirectUri = provider === 'microsoft' 
         ? `${baseUrl}/outlook/auth_callback/`
@@ -779,11 +777,9 @@ export class OAuthService {
       }
 
       // Exchange code for token with provider-specific redirect URI (must match authorization)
-      // Use environment variable for OAuth base URL, fallback to production
-      let baseUrl = process.env.OAUTH_REDIRECT_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://action.adrata.com';
-      
-      // Ensure clean base URL (remove any trailing slashes, newlines, or whitespace)
-      baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/[\r\n\t]/g, '');
+      // Use environment-aware URL utility
+      const { getOAuthRedirectUrl } = await import('@/lib/env-urls');
+      const baseUrl = getOAuthRedirectUrl();
       
       const redirectUri = session['provider'] === 'microsoft' 
         ? `${baseUrl}/outlook/auth_callback/`

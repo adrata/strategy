@@ -225,7 +225,9 @@ export async function PUT(
 
         // 🎯 AUTO RE-RANKING: Trigger automatic re-ranking for speedrun when engagement actions are completed
         try {
-          const reRankResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/speedrun/re-rank`, {
+          const { getBaseUrl } = await import('@/lib/env-urls');
+          const baseUrl = getBaseUrl();
+          const reRankResponse = await fetch(`${baseUrl}/api/v1/speedrun/re-rank`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -473,7 +475,9 @@ export async function PATCH(
 
         // 🎯 AUTO RE-RANKING: Trigger automatic re-ranking for speedrun when engagement actions are completed
         try {
-          const reRankResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/speedrun/re-rank`, {
+          const { getBaseUrl } = await import('@/lib/env-urls');
+          const baseUrl = getBaseUrl();
+          const reRankResponse = await fetch(`${baseUrl}/api/v1/speedrun/re-rank`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

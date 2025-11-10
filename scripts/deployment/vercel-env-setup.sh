@@ -5,14 +5,23 @@
 
 echo "🔧 Setting up Vercel environment variables..."
 
+# SECURITY: Never hardcode credentials in scripts
 # Pusher Configuration (Critical for Ross-Dan chat)
 echo "Setting Pusher variables..."
-vercel env add PUSHER_APP_ID production <<< "2014946"
-vercel env add PUSHER_KEY production <<< "1c5e2d82c19e713c07ff"
-vercel env add PUSHER_SECRET production <<< "446caa0d73c1cbff6e97"
-vercel env add PUSHER_CLUSTER production <<< "us3"
-vercel env add NEXT_PUBLIC_PUSHER_KEY production <<< "1c5e2d82c19e713c07ff"
-vercel env add NEXT_PUBLIC_PUSHER_CLUSTER production <<< "us3"
+echo "⚠️  WARNING: This script requires Pusher credentials to be set as environment variables"
+echo "Set PUSHER_APP_ID, PUSHER_KEY, PUSHER_SECRET, PUSHER_CLUSTER before running"
+
+if [ -z "$PUSHER_APP_ID" ] || [ -z "$PUSHER_KEY" ] || [ -z "$PUSHER_SECRET" ] || [ -z "$PUSHER_CLUSTER" ]; then
+    echo "❌ ERROR: Pusher credentials must be set as environment variables"
+    exit 1
+fi
+
+vercel env add PUSHER_APP_ID production <<< "$PUSHER_APP_ID"
+vercel env add PUSHER_KEY production <<< "$PUSHER_KEY"
+vercel env add PUSHER_SECRET production <<< "$PUSHER_SECRET"
+vercel env add PUSHER_CLUSTER production <<< "$PUSHER_CLUSTER"
+vercel env add NEXT_PUBLIC_PUSHER_KEY production <<< "$PUSHER_KEY"
+vercel env add NEXT_PUBLIC_PUSHER_CLUSTER production <<< "$PUSHER_CLUSTER"
 
 # Database (should already be set)
 echo "Setting database variables..."

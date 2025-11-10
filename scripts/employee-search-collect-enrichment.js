@@ -11,7 +11,11 @@ const { PrismaClient } = require('@prisma/client');
 class EmployeeSearchCollectEnrichment {
   constructor() {
     this.prisma = new PrismaClient();
-    this.coresignalApiKey = process.env.CORESIGNAL_API_KEY || 'hzwQmb13cF21if4arzLpx0SRWyoOUyzP';
+    // SECURITY: Never hardcode API keys - always require environment variable
+    this.coresignalApiKey = process.env.CORESIGNAL_API_KEY;
+    if (!this.coresignalApiKey) {
+      throw new Error('CORESIGNAL_API_KEY environment variable is required. Please set it in your .env file.');
+    }
     this.baseUrl = 'https://api.coresignal.com/cdapi/v2';
   }
 

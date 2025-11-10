@@ -57,33 +57,27 @@ pub async fn init_database_manager(app_handle: &tauri::AppHandle<tauri::Wry>) ->
     // STEP 2: Comprehensive Environment Variable Setup
     println!("🔍 [TAURI] Step 2: Setting up database credentials...");
     
-    // Hardcoded production credentials as fallback with connection pooling optimization
-    let production_db_url = "postgresql://neondb_owner:npg_DtnFYHvWj6m8@ep-damp-math-a8ht5oj3.eastus2.azure.neon.tech/neondb?sslmode=require&pgbouncer=true&connection_limit=20&pool_timeout=20&statement_timeout=30000";
-    let production_workspace_id = "adrata";
-    let production_user_id = "dan";
-    
-    // Get or set DATABASE_URL
+    // SECURITY: Never hardcode credentials - always use environment variables
+    // Get DATABASE_URL from environment - fail if not set
     let _database_url = match std::env::var("DATABASE_URL") {
         Ok(url) => {
-            println!("✅ [TAURI] DATABASE_URL found in environment: {}...", &url[..50]);
+            println!("✅ [TAURI] DATABASE_URL found in environment: {}...", &url[..50.min(url.len())]);
             url
         },
         Err(_) => {
-            println!("⚠️ [TAURI] DATABASE_URL not found, using production fallback");
-            std::env::set_var("DATABASE_URL", production_db_url);
-            production_db_url.to_string()
+            let error_msg = "❌ [TAURI] DATABASE_URL environment variable is required but not set. Please configure it in your .env file or environment.";
+            println!("{}", error_msg);
+            return Err(Box::new(std::io::Error::other(error_msg)));
         }
     };
     
-    // Set other critical environment variables
+    // Set other critical environment variables (optional - can be set in .env)
     if std::env::var("DEFAULT_WORKSPACE_ID").is_err() {
-        std::env::set_var("DEFAULT_WORKSPACE_ID", production_workspace_id);
-        println!("✅ [TAURI] Set DEFAULT_WORKSPACE_ID: {}", production_workspace_id);
+        println!("⚠️ [TAURI] DEFAULT_WORKSPACE_ID not set (optional)");
     }
     
     if std::env::var("DEFAULT_USER_ID").is_err() {
-        std::env::set_var("DEFAULT_USER_ID", production_user_id);
-        println!("✅ [TAURI] Set DEFAULT_USER_ID: {}", production_user_id);
+        println!("⚠️ [TAURI] DEFAULT_USER_ID not set (optional)");
     }
     
     // STEP 3: Test Database Connection Before Creating Manager

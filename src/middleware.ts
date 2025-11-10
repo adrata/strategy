@@ -148,13 +148,16 @@ export function middleware(request: NextRequest) {
     if (!authenticated) {
       // Unauthenticated user - redirect to sign-in
       const hostname = request.headers.get('host') || '';
+      // Handle action.com -> action.adrata.com redirect
       const isActionCom = hostname === 'action.com' || hostname.startsWith('action.com');
+      // Use current hostname, or redirect action.com to production
       const targetDomain = isActionCom ? 'action.adrata.com' : hostname.split(':')[0];
       
       const redirectUrl = new URL(request.url);
       redirectUrl.host = targetDomain;
       redirectUrl.pathname = '/sign-in';
       
+      // Use https for production/staging domains, http for localhost
       if (!targetDomain.includes('localhost') && !targetDomain.includes('127.0.0.1')) {
         redirectUrl.protocol = 'https:';
       }
@@ -171,6 +174,8 @@ export function middleware(request: NextRequest) {
   }
 
   // Handle domain redirect: action.com -> action.adrata.com
+  // Note: This only redirects action.com to production
+  // staging.adrata.com and action.adrata.com are handled as-is
   if (hostname === 'action.com' || hostname.startsWith('action.com')) {
     const redirectUrl = new URL(request.url);
     redirectUrl.host = 'action.adrata.com';

@@ -169,7 +169,8 @@ export async function POST(request: NextRequest) {
     console.log(`✅ [INVITE USER] Generated invitation token for user: ${user.email}`);
 
     // Create invitation link
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const { getBaseUrl } = await import('@/lib/env-urls');
+    const baseUrl = getBaseUrl();
     const invitationLink = `${baseUrl}/setup-account?token=${invitationToken}`;
 
     // Get inviter details for email

@@ -7,34 +7,39 @@
  */
 
 // Environment-aware API base URL
+// Uses centralized utility for consistent URL handling across environments
 const getApiBaseUrl = () => {
-  // CRITICAL FIX: For production (action.adrata.com), always use relative URLs
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname === 'action.adrata.com') {
-      return ''; // Use relative URLs for production (same domain)
+  // Import utility dynamically to avoid issues in different contexts
+  try {
+    // For client-side, check window location
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      // Use relative URLs for production and staging (same domain)
+      if (hostname === 'action.adrata.com' || hostname === 'staging.adrata.com') {
+        return ''; // Use relative URLs for same-domain deployments
+      }
+      // Local development
+      if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return ''; // Local development (relative URLs)
+      }
     }
-  }
-  
-  // Use environment variable if available (only for non-production)
-  if (process['env']['NEXT_PUBLIC_API_BASE_URL']) {
-    const envUrl = process['env']['NEXT_PUBLIC_API_BASE_URL'];
-    // If environment variable already ends with /api, return it as-is
-    if (envUrl.endsWith('/api')) {
+    
+    // Server-side: Use environment variables or utility
+    if (process['env']['NEXT_PUBLIC_API_BASE_URL']) {
+      const envUrl = process['env']['NEXT_PUBLIC_API_BASE_URL'];
+      // If environment variable already ends with /api, return it as-is
+      if (envUrl.endsWith('/api')) {
+        return envUrl;
+      }
+      // Otherwise, return the environment variable (it will get /api appended)
       return envUrl;
     }
-    // Otherwise, return the environment variable (it will get /api appended)
-    return envUrl;
+    
+    return ''; // Default to relative URLs
+  } catch (error) {
+    // Fallback to relative URLs if utility import fails
+    return '';
   }
-  
-  if (typeof window !== 'undefined') {
-    // Client-side: Use current domain for API calls
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return ''; // Local development (relative URLs)
-    }
-  }
-  return ''; // Default to relative URLs
 };
 
 // Authentication UI Routes - OPTIMIZED: Flattened structure for better performance

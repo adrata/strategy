@@ -629,7 +629,8 @@ export async function POST(request: NextRequest) {
             if (ryanParticipant) {
               // Send email notification to Ryan
               const workspaceSlug = dm.workspace.slug || 'workspace';
-              const oasisUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.adrata.com'}/${workspaceSlug}/oasis`;
+              const { getBaseUrl } = await import('@/lib/env-urls');
+              const oasisUrl = `${getBaseUrl()}/${workspaceSlug}/oasis`;
               
               await sendEmail({
                 to: 'ryan@notaryeveryday.com',

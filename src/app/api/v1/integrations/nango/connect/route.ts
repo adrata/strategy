@@ -307,7 +307,7 @@ export async function POST(request: NextRequest) {
           status: 'pending',
           metadata: {
             sessionToken,
-            redirectUrl: redirectUrl || `${process.env.NEXTAUTH_URL || 'https://action.adrata.com'}/${workspaceId}/grand-central/integrations`,
+            redirectUrl: redirectUrl || (await import('@/lib/env-urls')).getBaseUrl() + `/${workspaceId}/grand-central/integrations`,
             createdAt: new Date().toISOString()
           }
         }
@@ -333,7 +333,7 @@ export async function POST(request: NextRequest) {
             status: 'pending',
             metadata: {
               sessionToken,
-              redirectUrl: redirectUrl || `${process.env.NEXTAUTH_URL || 'https://action.adrata.com'}/${workspaceId}/grand-central/integrations`,
+              redirectUrl: redirectUrl || (await import('@/lib/env-urls')).getBaseUrl() + `/${workspaceId}/grand-central/integrations`,
               updatedAt: new Date().toISOString()
             },
             updatedAt: new Date()

@@ -8,9 +8,13 @@
 
 const { PrismaClient } = require("@prisma/client");
 
-const DATABASE_URL =
-  process.env.DATABASE_URL ||
-  "postgresql://neondb_owner:npg_DtnFYHvWj6m8@ep-damp-math-a8ht5oj3.eastus2.azure.neon.tech/neondb?sslmode=require";
+// SECURITY: Never hardcode database credentials - always use environment variables
+const DATABASE_URL = process.env.DATABASE_URL;
+if (!DATABASE_URL) {
+  console.error("❌ ERROR: DATABASE_URL environment variable is required");
+  console.error("Please set it in your .env file or environment before running this script");
+  process.exit(1);
+}
 
 const prisma = new PrismaClient({
   datasources: { db: { url: DATABASE_URL } },

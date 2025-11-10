@@ -66,29 +66,48 @@ setup_secrets() {
     print_info "🌐 VERCEL CONFIGURATION"
     echo "========================="
     
-    # These are your actual Vercel values from the codebase
-    set_secret "VERCEL_ORG_ID" "team_2gElE5Xr5RnI4KCjMhqA4O2C" "Vercel Organization ID"
-    set_secret "VERCEL_TOKEN" "kQ4dvYc6FsziGfyyi2guBL9t" "Vercel API Token for deployments"
+    # SECURITY: Never hardcode credentials in scripts
+    # These values should be read from environment variables or secure vault
+    print_warning "⚠️  This script requires credentials to be provided via environment variables"
+    print_info "Set the following environment variables before running:"
+    echo "  - VERCEL_ORG_ID"
+    echo "  - VERCEL_TOKEN"
+    echo "  - VERCEL_PROJECT_ID (and variants)"
+    echo "  - DATABASE_URL (and variants)"
+    echo ""
     
-    # Project IDs from your configuration
-    set_secret "VERCEL_PROJECT_ID" "prj_XCF7tJDVK9P4dH5kq8bNgI1mZ6wA" "Default Vercel Project ID"
-    set_secret "VERCEL_PROJECT_ID_PRODUCTION" "prj_XCF7tJDVK9P4dH5kq8bNgI1mZ6wA" "Production Vercel Project ID"
-    set_secret "VERCEL_PROJECT_ID_STAGING" "prj_YBH8uKEWL0Q5eI6lr9cOhJ2nA7xB" "Staging Vercel Project ID"
-    set_secret "VERCEL_PROJECT_ID_DEMO" "prj_ZCI9vLFXM1R6fJ7ms0dPiK3oB8yC" "Demo Vercel Project ID"
-    set_secret "VERCEL_PROJECT_ID_DEVELOPMENT" "prj_ADJ0wMGYN2S7gK8nt1eQjL4pC9zD" "Development Vercel Project ID"
-    set_secret "VERCEL_PROJECT_ID_SANDBOX" "prj_ADJ0wMGYN2S7gK8nt1eQjL4pC9zD" "Sandbox Vercel Project ID"
+    # Vercel Configuration - read from environment
+    if [ -n "$VERCEL_ORG_ID" ]; then
+        set_secret "VERCEL_ORG_ID" "$VERCEL_ORG_ID" "Vercel Organization ID"
+    else
+        print_warning "VERCEL_ORG_ID not set, skipping..."
+    fi
+    
+    if [ -n "$VERCEL_TOKEN" ]; then
+        set_secret "VERCEL_TOKEN" "$VERCEL_TOKEN" "Vercel API Token for deployments"
+    else
+        print_warning "VERCEL_TOKEN not set, skipping..."
+    fi
+    
+    # Project IDs - read from environment
+    for env_var in "VERCEL_PROJECT_ID" "VERCEL_PROJECT_ID_PRODUCTION" "VERCEL_PROJECT_ID_STAGING" "VERCEL_PROJECT_ID_DEMO" "VERCEL_PROJECT_ID_DEVELOPMENT" "VERCEL_PROJECT_ID_SANDBOX"; do
+        if [ -n "${!env_var}" ]; then
+            set_secret "$env_var" "${!env_var}" "$env_var"
+        fi
+    done
     
     # Database Configuration
     print_info "🗄️  DATABASE CONFIGURATION"
     echo "============================"
     
-    # Production database URLs from your infrastructure
-    set_secret "DATABASE_URL" "postgresql://neondb_owner:npg_DtnFYHvWj6m8@ep-damp-math-a8ht5oj3.eastus2.azure.neon.tech/neondb?sslmode=require" "Production Database URL"
-    set_secret "DATABASE_URL_PRODUCTION" "postgresql://neondb_owner:npg_DtnFYHvWj6m8@ep-damp-math-a8ht5oj3.eastus2.azure.neon.tech/neondb?sslmode=require" "Production Database URL"
-    set_secret "DATABASE_URL_DEMO" "postgresql://neondb_owner:npg_VKvSsd4Ay5ah@ep-twilight-flower-a84fjbo5.eastus2.azure.neon.tech/neondb?sslmode=require" "Demo Database URL"
-    set_secret "DATABASE_URL_STAGING" "postgresql://neondb_owner:npg_jdnNpCH0si6T@ep-yellow-butterfly-a8jr2jxz.eastus2.azure.neon.tech/neondb?sslmode=require" "Staging Database URL"
-    set_secret "DATABASE_URL_DEVELOPMENT" "postgresql://neondb_owner:npg_xsDd5H6NUtSm@ep-tiny-sky-a8zvnemb.eastus2.azure.neon.tech/neondb?sslmode=require" "Development Database URL"
-    set_secret "DATABASE_URL_SANDBOX" "postgresql://neondb_owner:npg_xsDd5H6NUtSm@ep-tiny-sky-a8zvnemb.eastus2.azure.neon.tech/neondb?sslmode=require" "Sandbox Database URL"
+    # Database URLs - read from environment
+    for env_var in "DATABASE_URL" "DATABASE_URL_PRODUCTION" "DATABASE_URL_DEMO" "DATABASE_URL_STAGING" "DATABASE_URL_DEVELOPMENT" "DATABASE_URL_SANDBOX"; do
+        if [ -n "${!env_var}" ]; then
+            set_secret "$env_var" "${!env_var}" "$env_var"
+        else
+            print_warning "$env_var not set, skipping..."
+        fi
+    done
     
     # Authentication
     print_info "🔑 AUTHENTICATION CONFIGURATION"
@@ -101,16 +120,30 @@ setup_secrets() {
     print_info "🤖 API KEYS CONFIGURATION"
     echo "=========================="
     
-    set_secret "OPENAI_API_KEY" "CREDENTIAL_REMOVED_FOR_SECURITY" "OpenAI API Key"
-    set_secret "ANTHROPIC_API_KEY" "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" "Anthropic Claude API Key"
-    set_secret "BRIGHTDATA_API_KEY" "7b01d6f148d5f428222d8c59c03b55a62205ed435b4a32ee64c6e0c28b2c9f8e" "BrightData API Key"
+    # API Keys - read from environment variables
+    if [ -n "$OPENAI_API_KEY" ]; then
+        set_secret "OPENAI_API_KEY" "$OPENAI_API_KEY" "OpenAI API Key"
+    fi
+    
+    if [ -n "$ANTHROPIC_API_KEY" ]; then
+        set_secret "ANTHROPIC_API_KEY" "$ANTHROPIC_API_KEY" "Anthropic Claude API Key"
+    fi
+    
+    if [ -n "$BRIGHTDATA_API_KEY" ]; then
+        set_secret "BRIGHTDATA_API_KEY" "$BRIGHTDATA_API_KEY" "BrightData API Key"
+    fi
     
     # Optional Services
     print_info "📞 OPTIONAL SERVICES"
     echo "===================="
     
-    set_secret "TWILIO_ACCOUNT_SID" "CREDENTIAL_REMOVED_FOR_SECURITY" "Twilio Account SID"
-    set_secret "MAILGUN_API_KEY" "623e10c8-f2b4dee4" "Mailgun API Key"
+    if [ -n "$TWILIO_ACCOUNT_SID" ]; then
+        set_secret "TWILIO_ACCOUNT_SID" "$TWILIO_ACCOUNT_SID" "Twilio Account SID"
+    fi
+    
+    if [ -n "$MAILGUN_API_KEY" ]; then
+        set_secret "MAILGUN_API_KEY" "$MAILGUN_API_KEY" "Mailgun API Key"
+    fi
     set_secret "MAILGUN_DOMAIN" "mail.adrata.com" "Mailgun Domain"
     
     print_success "🎉 All secrets have been configured!"

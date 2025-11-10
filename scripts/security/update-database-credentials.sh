@@ -7,12 +7,23 @@ echo "🔐 DATABASE CREDENTIAL UPDATE SCRIPT"
 echo "===================================="
 echo ""
 
-# Use the new secure credentials
-NEW_USERNAME="adrata"
-NEW_PASSWORD="npg_F4Y0IJrNUjEv"
+# SECURITY: Never hardcode credentials in scripts
+# Get credentials from environment variables or prompt user
+if [ -z "$NEW_DATABASE_USERNAME" ] || [ -z "$NEW_DATABASE_PASSWORD" ]; then
+    echo "❌ ERROR: NEW_DATABASE_USERNAME and NEW_DATABASE_PASSWORD must be set as environment variables"
+    echo "Usage: NEW_DATABASE_USERNAME=username NEW_DATABASE_PASSWORD=password ./update-database-credentials.sh"
+    exit 1
+fi
+
+NEW_USERNAME="$NEW_DATABASE_USERNAME"
+NEW_PASSWORD="$NEW_DATABASE_PASSWORD"
+
+# Get database host from environment or use default
+DB_HOST="${DATABASE_HOST:-ep-damp-math-a8ht5oj3.eastus2.azure.neon.tech}"
+DB_NAME="${DATABASE_NAME:-neondb}"
 
 # Construct new DATABASE_URL
-NEW_DATABASE_URL="postgresql://${NEW_USERNAME}:${NEW_PASSWORD}@ep-damp-math-a8ht5oj3.eastus2.azure.neon.tech/neondb?sslmode=require&pgbouncer=true&connection_limit=20&pool_timeout=20&statement_timeout=30000"
+NEW_DATABASE_URL="postgresql://${NEW_USERNAME}:${NEW_PASSWORD}@${DB_HOST}/${DB_NAME}?sslmode=require&pgbouncer=true&connection_limit=20&pool_timeout=20&statement_timeout=30000"
 
 echo ""
 echo "🔧 Updating database credentials in all .env files..."

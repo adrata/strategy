@@ -767,64 +767,39 @@ export function UniversalRecordTemplate({
       case 'deals':
         return `${record?.stage || 'Unknown Stage'} • ${record?.amount || record?.value ? `$${(record.amount || record.value).toLocaleString()}` : 'No Amount'}`;
       case 'companies':
-        // Generate strategic company context for sellers - size and growth stage
+        // Use real company data with graceful fallback
         const coresignalData = record?.customFields?.coresignalData;
         const categories = coresignalData?.categories_and_keywords || [];
         const employeeCount = coresignalData?.employees_count || record?.size || record?.employeeCount;
         
-        // Extract industry for dynamic subtitle
+        // Extract industry for fallback
         const industry = coresignalData?.industry || 
                          record?.industry || 
-                         categories[0] || 
-                         'company';
-        const industryText = industry === 'company' ? 'company' : `${industry} company`;
+                         categories[0];
         
-        // Determine company size category based on real data
-        let sizeCategory = '';
+        // Priority 1: If we have employee count, show size category
         if (employeeCount) {
           const count = parseInt(employeeCount.toString().replace(/\D/g, ''));
-          if (count <= 50) {
-            sizeCategory = 'Small';
-          } else if (count <= 200) {
-            sizeCategory = 'Mid-size';
-          } else if (count <= 1000) {
-            sizeCategory = 'Growing';
-          } else {
-            sizeCategory = 'Large';
+          if (!isNaN(count) && count > 0) {
+            if (count <= 50) {
+              return 'Small company';
+            } else if (count <= 200) {
+              return 'Mid-size company';
+            } else if (count <= 1000) {
+              return 'Growing company';
+            } else {
+              return 'Large company';
+            }
           }
-        } else {
-          sizeCategory = 'Small'; // Default for unknown size
         }
         
-        // Determine growth stage based on company age and context
-        const foundedYear = coresignalData?.founded_year || record?.founded;
-        let growthStage = '';
-        if (foundedYear) {
-          const currentYear = new Date().getFullYear();
-          const age = currentYear - parseInt(foundedYear);
-          if (age <= 5) {
-            growthStage = 'startup';
-          } else if (age <= 15) {
-            growthStage = 'growing';
-          } else {
-            growthStage = 'established';
-          }
-        } else {
-          growthStage = 'growing'; // Default assumption
+        // Priority 2: If we have industry, show that
+        if (industry && industry !== 'company') {
+          return `${industry} company`;
         }
         
-        // Combine size and growth stage for strategic context
-               if (sizeCategory === 'Small' && growthStage === 'growing') {
-                 return `Small, growing ${industryText}`;
-               } else if (sizeCategory === 'Small' && growthStage === 'startup') {
-                 return `Small, emerging ${industry === 'company' ? 'startup' : `${industry} startup`}`;
-               } else if (sizeCategory === 'Mid-size' && growthStage === 'growing') {
-                 return `Mid-size, expanding ${industryText}`;
-               } else if (sizeCategory === 'Growing' && growthStage === 'established') {
-                 return `Growing, established ${industryText}`;
-               } else {
-                 return `${sizeCategory}, ${growthStage} ${industryText}`;
-               }
+        // Priority 3: Default fallback when no data available
+        return 'Newly added company';
       case 'people':
         const personTitle = record?.jobTitle || record?.title;
         // Use the same company extraction logic as UniversalOverviewTab

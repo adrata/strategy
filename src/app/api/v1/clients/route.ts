@@ -838,7 +838,9 @@ export async function POST(request: NextRequest) {
     // Generate strategy data for new client (async, don't await)
     setImmediate(async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/v1/strategy/generate`, {
+        const { getBaseUrl } = await import('@/lib/env-urls');
+        const baseUrl = getBaseUrl();
+        const response = await fetch(`${baseUrl}/api/v1/strategy/generate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

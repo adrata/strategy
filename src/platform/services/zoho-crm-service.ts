@@ -126,7 +126,8 @@ export class ZohoCRMService {
     if (!this.config) return;
 
     try {
-      const webhookUrl = `${process['env']['NEXTAUTH_URL'] || 'http://localhost:3000'}/api/webhooks/zoho`;
+      const { getWebhookUrl } = await import('@/lib/env-urls');
+      const webhookUrl = getWebhookUrl('/api/webhooks/zoho');
       
       const webhookData = {
         webhook_url: webhookUrl,

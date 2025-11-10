@@ -28,18 +28,19 @@ export default function SignInPage() {
   useEffect(() => {
     // CRITICAL: Ensure we're on the correct domain before anything else
     if (typeof window !== "undefined") {
-      // 🆕 ENVIRONMENT-AWARE: Allow staging and production domains
+      // Environment-aware domain check - allow production, staging, and localhost
       const currentHostname = window.location.hostname;
       const isProduction = currentHostname === "action.adrata.com";
+      const isStaging = currentHostname === "staging.adrata.com";
       const isLocalhost = currentHostname === "localhost" || currentHostname === "127.0.0.1";
-      const isStaging = currentHostname.includes("vercel.app") || currentHostname.includes("adrata-git");
+      const isVercelPreview = currentHostname.includes("vercel.app") || currentHostname.includes("adrata-git");
       
-      // Only redirect if we're on an unrecognized domain
-      if (!isProduction && !isLocalhost && !isStaging) {
+      // Only redirect if we're on an unrecognized domain (not production, staging, localhost, or Vercel preview)
+      if (!isProduction && !isStaging && !isLocalhost && !isVercelPreview) {
         console.log("🔄 [SIGN-IN PAGE] Unrecognized domain detected:", currentHostname);
-        console.log("🔄 [SIGN-IN PAGE] Redirecting to production domain: action.adrata.com");
+        // For unrecognized domains, redirect to production
         const correctUrl = `https://action.adrata.com/sign-in${window.location.search}`;
-        console.log("🔄 [SIGN-IN PAGE] Full redirect URL:", correctUrl);
+        console.log("🔄 [SIGN-IN PAGE] Redirecting to production domain:", correctUrl);
         window.location.href = correctUrl;
         return;
       }
@@ -170,22 +171,9 @@ export default function SignInPage() {
           activeWorkspaceId: result.session?.user?.activeWorkspaceId
         });
 
-        // 🆕 ENVIRONMENT-AWARE: Ensure we're redirecting to the correct domain
-        if (typeof window !== "undefined") {
-          const currentHostname = window.location.hostname;
-          const isProduction = currentHostname === "action.adrata.com";
-          const isLocalhost = currentHostname === "localhost" || currentHostname === "127.0.0.1";
-          const isStaging = currentHostname.includes("vercel.app") || currentHostname.includes("adrata-git");
-          
-          // Only redirect if we're on an unrecognized domain
-          if (!isProduction && !isLocalhost && !isStaging) {
-            console.log("🔄 [SIGN-IN PAGE] Redirecting to production domain: action.adrata.com");
-            const correctUrl = `https://action.adrata.com${redirectUrl}`;
-            console.log("🔄 [SIGN-IN PAGE] Full redirect URL:", correctUrl);
-            window.location.href = correctUrl;
-            return;
-          }
-        }
+        // Environment-aware: Ensure we're redirecting to the correct domain
+        // No need to redirect if we're already on a valid domain (production, staging, localhost, or Vercel preview)
+        // The redirectUrl is already relative, so it will work on any valid domain
 
         // Small delay to ensure session is saved, then redirect
         setTimeout(() => {

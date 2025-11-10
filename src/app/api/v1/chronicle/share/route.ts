@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { randomBytes } from 'crypto';
+import { getBaseUrl } from '@/lib/env-urls';
 
 // Required for static export (desktop build)
 export const dynamic = 'force-dynamic';;
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     // Generate unique share token
     const shareToken = randomBytes(32).toString('hex');
-    const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/chronicle/shared/${shareToken}`;
+    const shareUrl = `${getBaseUrl()}/chronicle/shared/${shareToken}`;
 
     // Set default expiration (30 days from now)
     const defaultExpiresAt = new Date();

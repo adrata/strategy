@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { Nango } from '@nangohq/node';
+import { getBaseUrl } from '@/lib/env-urls';
 
 // Required for static export (desktop build)
 export const dynamic = 'force-dynamic';;
@@ -21,16 +22,18 @@ export async function GET(request: NextRequest) {
     const providerConfigKey = searchParams.get('provider_config_key');
     const error = searchParams.get('error');
 
+    const baseUrl = getBaseUrl();
+    
     if (error) {
       console.error('OAuth error:', error);
       return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/[workspace]/grand-central?error=${encodeURIComponent(error)}`
+        `${baseUrl}/[workspace]/grand-central?error=${encodeURIComponent(error)}`
       );
     }
 
     if (!connectionId || !providerConfigKey) {
       return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/[workspace]/grand-central?error=missing_parameters`
+        `${baseUrl}/[workspace]/grand-central?error=missing_parameters`
       );
     }
 
@@ -45,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     if (!connection) {
       return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/[workspace]/grand-central?error=connection_not_found`
+        `${baseUrl}/[workspace]/grand-central?error=connection_not_found`
       );
     }
 
@@ -72,7 +75,7 @@ export async function GET(request: NextRequest) {
       });
 
       return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/[workspace]/grand-central?success=connected&provider=${providerConfigKey}`
+        `${baseUrl}/[workspace]/grand-central?success=connected&provider=${providerConfigKey}`
       );
     } catch (error) {
       console.error('Connection test failed:', error);
@@ -90,13 +93,14 @@ export async function GET(request: NextRequest) {
       });
 
       return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/[workspace]/grand-central?error=connection_test_failed`
+        `${baseUrl}/[workspace]/grand-central?error=connection_test_failed`
       );
     }
   } catch (error) {
     console.error('Error handling OAuth callback:', error);
+    const baseUrl = getBaseUrl();
     return NextResponse.redirect(
-      `${process.env.NEXTAUTH_URL}/[workspace]/grand-central?error=callback_error`
+      `${baseUrl}/[workspace]/grand-central?error=callback_error`
     );
   }
 }

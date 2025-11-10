@@ -74,7 +74,9 @@ export async function POST(request: NextRequest) {
 
 async function generateScheduledReport(reportType: 'DAILY' | 'WEEKLY' | 'BIWEEKLY', workspaceId: string, userId: string) {
   // Call the enhanced report generation API
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/v1/chronicle/generate-enhanced`, {
+  const { getBaseUrl } = await import('@/lib/env-urls');
+  const baseUrl = getBaseUrl();
+  const response = await fetch(`${baseUrl}/api/v1/chronicle/generate-enhanced`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
