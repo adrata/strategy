@@ -39,7 +39,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
     }
   }, [isOpen, section, user?.id, user?.email]);
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  // Default to showing create form when in companies section (list view)
+  const [showCreateForm, setShowCreateForm] = useState(section === 'companies');
   const [formData, setFormData] = useState({
     name: "",
     website: "",
@@ -60,7 +61,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
       console.log('🔄 [AddCompanyModal] Resetting state on modal close');
       setIsSubmitting(false);
       setSelectedCompany(null);
-      setShowCreateForm(false);
+      // Default to create form for companies section, search for other sections
+      setShowCreateForm(section === 'companies');
       setFormData({
         name: "",
         website: "",
@@ -74,8 +76,12 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
       // Clear any previous error when opening
       console.log('🔄 [AddCompanyModal] Clearing error state on modal open');
       setErrorMessage('');
+      // When opening, default to create form for companies section
+      if (section === 'companies') {
+        setShowCreateForm(true);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, section]);
 
   // Debug: Log form state changes
   useEffect(() => {
@@ -295,7 +301,9 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground">Add Company</h2>
-              <p className="text-sm text-muted">Search or add a new company</p>
+              <p className="text-sm text-muted">
+                {section === 'companies' ? 'Create a new company' : 'Search or add a new company'}
+              </p>
             </div>
           </div>
           <button

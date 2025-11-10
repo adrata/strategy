@@ -988,17 +988,26 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     setCardToDelete(null);
 
     try {
+      // Stories DELETE uses query parameter, tasks use path parameter
       const endpoint = card.type === 'task' 
         ? `/api/stacks/tasks/${card.id}`
-        : `/api/v1/stacks/stories/${card.id}`;
+        : `/api/v1/stacks/stories?id=${encodeURIComponent(card.id)}`;
       
-      const response = await fetch(endpoint, {
+      // Tasks require userId in body, stories use query param
+      const requestOptions: RequestInit = {
         method: 'DELETE',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         }
-      });
+      };
+      
+      // For tasks, include userId in body
+      if (card.type === 'task' && authUser?.id) {
+        requestOptions.body = JSON.stringify({ userId: authUser.id });
+      }
+      
+      const response = await fetch(endpoint, requestOptions);
 
       if (!response.ok) {
         // Revert on failure

@@ -86,14 +86,19 @@ export function AddPersonToCompanyModal({
     }
   }, [showCreateForm]);
 
-  // Search people as user types
+  // Search people as user types with debouncing
   useEffect(() => {
-    if (searchQuery.length >= 2) {
-      searchPeople(searchQuery);
+    if (searchQuery.length >= 2 && companyId) {
+      // Debounce search to avoid excessive API calls
+      const timeoutId = setTimeout(() => {
+        searchPeople(searchQuery);
+      }, 300); // 300ms debounce delay
+      
+      return () => clearTimeout(timeoutId);
     } else {
       setSearchResults([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, companyId]);
 
   // Reset state when modal closes
   useEffect(() => {
@@ -114,22 +119,66 @@ export function AddPersonToCompanyModal({
     }
   }, [isOpen]);
 
+  // Reset state when companyId changes (switching between companies)
+  useEffect(() => {
+    if (isOpen && companyId) {
+      // Reset all state when switching to a different company
+      setSearchQuery('');
+      setSearchResults([]);
+      setShowCreateForm(false);
+      setSelectedPerson(null);
+      setSuccessMessage(null);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        jobTitle: '',
+        state: ''
+      });
+      setIsCreating(false);
+      setIsSearching(false);
+      
+      // Refocus search input when company changes
+      setTimeout(() => {
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }, 100);
+    }
+  }, [companyId, isOpen]);
+
   const searchPeople = async (query: string) => {
+    // Capture current companyId to prevent stale updates
+    const currentCompanyId = companyId;
+    
     setIsSearching(true);
     try {
       // Use excludeCompanyId to filter out people already linked to this company
       // Use includeAllUsers to search across all people in the workspace regardless of seller assignment
-      const url = `/api/v1/people?search=${encodeURIComponent(query)}&limit=10&includeAllUsers=true${companyId ? `&excludeCompanyId=${companyId}` : ''}`;
+      const url = `/api/v1/people?search=${encodeURIComponent(query)}&limit=10&includeAllUsers=true${currentCompanyId ? `&excludeCompanyId=${currentCompanyId}` : ''}`;
       const response = await authFetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        setSearchResults(data.data || []);
+      
+      // Only update state if companyId hasn't changed during the API call
+      if (companyId === currentCompanyId) {
+        // authFetch returns parsed JSON data, not a Response object
+        if (response && (response.data || Array.isArray(response))) {
+          setSearchResults(response.data || response || []);
+        } else {
+          setSearchResults([]);
+        }
       }
     } catch (error) {
       console.error('Error searching people:', error);
-      setSearchResults([]);
+      // Only update state if companyId hasn't changed during the API call
+      if (companyId === currentCompanyId) {
+        setSearchResults([]);
+      }
     } finally {
-      setIsSearching(false);
+      // Only update loading state if companyId hasn't changed
+      if (companyId === currentCompanyId) {
+        setIsSearching(false);
+      }
     }
   };
 
@@ -170,11 +219,18 @@ export function AddPersonToCompanyModal({
       const personName = updatedPerson.fullName || `${updatedPerson.firstName} ${updatedPerson.lastName}`;
       setSuccessMessage(`Successfully linked person: ${personName}`);
       
-      // Close modal after a short delay to show the success message
+      // Call callback to notify parent
+      onPersonAdded(updatedPerson);
+      
+      // Reset form to allow adding another person
+      setSelectedPerson(null);
+      setSearchQuery('');
+      setSearchResults([]);
+      
+      // Clear success message after 2 seconds
       setTimeout(() => {
-        onPersonAdded(updatedPerson);
-        onClose();
-      }, 1500);
+        setSuccessMessage(null);
+      }, 2000);
     } catch (error) {
       console.error('Error linking person to company:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to link person to company. Please try again.';
@@ -247,11 +303,28 @@ export function AddPersonToCompanyModal({
       const personName = newPerson.fullName || `${newPerson.firstName} ${newPerson.lastName}`;
       setSuccessMessage(`Successfully created person: ${personName}`);
       
-      // Close modal after a short delay to show the success message
+      // Call callback to notify parent
+      onPersonAdded(newPerson);
+      
+      // Reset form to allow adding another person
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        jobTitle: '',
+        state: ''
+      });
+      
+      // Clear success message after 2 seconds
       setTimeout(() => {
-        onPersonAdded(newPerson);
-        onClose();
-      }, 1500);
+        setSuccessMessage(null);
+      }, 2000);
+      
+      // Auto-focus first name input for quick entry of next person
+      setTimeout(() => {
+        firstNameInputRef.current?.focus();
+      }, 100);
     } catch (error) {
       console.error('Error creating person:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create person. Please try again.';

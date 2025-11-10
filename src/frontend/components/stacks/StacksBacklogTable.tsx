@@ -1402,17 +1402,26 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     // Delete via API - determine correct endpoint based on item type
     try {
+      // Stories DELETE uses query parameter, tasks use path parameter
       const endpoint = item.type === 'task' 
         ? `/api/stacks/tasks/${item.id}`
-        : `/api/v1/stacks/stories/${item.id}`;
+        : `/api/v1/stacks/stories?id=${encodeURIComponent(item.id)}`;
       
-      const response = await fetch(endpoint, {
+      // Tasks require userId in body
+      const requestOptions: RequestInit = {
         method: 'DELETE',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-      });
+      };
+      
+      // For tasks, include userId in body
+      if (item.type === 'task' && authUser?.id) {
+        requestOptions.body = JSON.stringify({ userId: authUser.id });
+      }
+      
+      const response = await fetch(endpoint, requestOptions);
 
       if (!response.ok) {
         // Revert on failure
