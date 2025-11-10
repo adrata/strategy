@@ -193,11 +193,6 @@ function BacklogItemComponent({
               {item.title}
             </h4>
           </div>
-          {item.description && (
-            <p className="text-xs text-muted line-clamp-2 mb-2">
-              {item.description}
-            </p>
-          )}
           <div className="flex items-center gap-3 text-xs text-muted">
             {item.assignee && <span>{item.assignee}</span>}
             {displayTag && (
