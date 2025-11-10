@@ -1398,8 +1398,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         console.error('Failed to delete story:', await response.text());
       } else {
         console.log(`Successfully deleted story "${item.title}"`);
-        // Refresh the list to get updated data (fetches both stories and tasks)
-        await refreshItems();
+        // Don't refetch immediately - optimistic update is sufficient
+        // The useEffect with refreshTrigger will handle syncing with other components
       }
     } catch (error) {
       // Revert on error

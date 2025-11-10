@@ -984,6 +984,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         console.error('Failed to delete card:', await response.text());
       } else {
         console.log(`Successfully deleted card ${card.title}`);
+        // Don't refetch immediately - optimistic update is sufficient
+        // The useEffect with refreshTrigger will handle syncing with other components
       }
     } catch (error) {
       // Revert on error

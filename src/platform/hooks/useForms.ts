@@ -342,8 +342,15 @@ export function useForms(): UseFormsReturn {
             let apiUrl = "";
             let requestBody = recordData;
             
-            if (activeSection === "companies") {
+            if (activeSection === "companies" || activeSection === "clients") {
               apiUrl = "/api/v1/companies";
+              // For clients, set status to CLIENT
+              if (activeSection === "clients") {
+                requestBody.status = "CLIENT";
+                // Include client-specific fields
+                requestBody.contractValue = recordData.contractValue;
+                requestBody.renewalDate = recordData.renewalDate;
+              }
             } else if (activeSection === "leads" || activeSection === "prospects" || activeSection === "people") {
               apiUrl = "/api/v1/people";
               // Map fields for people API
@@ -375,10 +382,32 @@ export function useForms(): UseFormsReturn {
             if (createResponse.ok && responseData.success && responseData.data) {
               newRecordId = responseData.data.id;
               const recordType = activeSection === 'speedrun' ? 'speedrun' : activeSection.slice(0, -1);
-              const successMessage = activeSection === 'companies' 
-                ? `Successfully created company: ${formData.name}`
-                : `Successfully created ${recordType}: ${formData.name}`;
+              let successMessage = '';
+              if (activeSection === 'companies') {
+                successMessage = `Successfully created company: ${formData.name}`;
+              } else if (activeSection === 'clients') {
+                successMessage = `Successfully created client: ${formData.name}`;
+              } else {
+                successMessage = `Successfully created ${recordType}: ${formData.name}`;
+              }
               onSuccess(successMessage);
+              
+              // Dispatch refresh events for clients to ensure UI updates
+              if (activeSection === 'clients' && typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+                  detail: { 
+                    section: 'clients',
+                    type: 'record-created',
+                    recordId: newRecordId 
+                  }
+                }));
+                window.dispatchEvent(new CustomEvent('refresh-counts', {
+                  detail: { 
+                    section: 'clients',
+                    type: 'record-created'
+                  }
+                }));
+              }
             } else {
               throw new Error(responseData.error || "Failed to create record via v1 API");
             }
