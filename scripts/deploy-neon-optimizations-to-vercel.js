@@ -11,7 +11,7 @@ console.log('🚀 [VERCEL-DEPLOY] Deploying Neon.tech optimizations to Vercel...
 // Neon-optimized environment variables for Vercel
 const neonOptimizedEnvVars = {
   // Core Neon database configuration (optimized)
-  'DATABASE_URL': 'postgresql://neondb_owner:npg_DtnFYHvWj6m8@ep-damp-math-a8ht5oj3.eastus2.azure.neon.tech/neondb?sslmode=require&pgbouncer=true&connection_limit=20&pool_timeout=20&statement_timeout=30000',
+  'DATABASE_URL': 'postgresql://adrata_app_2025:npg_qweNW4HnIMA8@ep-patient-mountain-adnc9mz6.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connection_limit=20&pool_timeout=20&statement_timeout=30000',
   
   // Neon performance configuration
   'NEON_AUTOSCALING_ENABLED': 'true',
