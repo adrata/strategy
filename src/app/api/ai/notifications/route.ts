@@ -31,7 +31,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Import notification generator dynamically
-    const { AINotificationGenerator } = require('@/scripts/_future_now/real-time-system/AINotificationGenerator');
+    // Use relative path since scripts folder is outside src
+    const { AINotificationGenerator } = require('../../../../../scripts/_future_now/real-time-system/AINotificationGenerator');
     const generator = new AINotificationGenerator();
     
     // Generate notifications
@@ -79,7 +80,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { AINotificationGenerator } = require('@/scripts/_future_now/real-time-system/AINotificationGenerator');
+    // Use relative path since scripts folder is outside src
+    const { AINotificationGenerator } = require('../../../../../scripts/_future_now/real-time-system/AINotificationGenerator');
     const generator = new AINotificationGenerator();
     
     await generator.markNotificationShown(personId, changeIndex);

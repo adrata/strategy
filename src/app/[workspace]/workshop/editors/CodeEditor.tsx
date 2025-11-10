@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { useWorkbench } from "../layout";
-import { WorkbenchDocument } from "../types/document";
+import { useWorkshop } from "../layout";
+import { WorkshopDocument } from "../types/document";
 import { 
   CodeBracketIcon,
   CheckIcon,
@@ -15,7 +15,7 @@ import {
 import Editor from '@monaco-editor/react';
 
 interface CodeEditorProps {
-  document: WorkbenchDocument;
+  document: WorkshopDocument;
   onSave: (content: any) => void;
   onAutoSave: (content: any) => void;
 }

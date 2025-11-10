@@ -4,12 +4,21 @@ import { Nango } from '@nangohq/node';
 import { getBaseUrl } from '@/lib/env-urls';
 
 // Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
+export const dynamic = 'force-dynamic';
 
-const nango = new Nango({
-  secretKey: process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY!,
-  host: process.env.NANGO_HOST || 'https://api.nango.dev'
-});
+// Lazy initialization of Nango client to avoid build-time errors
+function getNangoClient() {
+  const secretKey = process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY;
+  
+  if (!secretKey) {
+    throw new Error('Nango secret key is not configured. Please set NANGO_SECRET_KEY_DEV or NANGO_SECRET_KEY environment variable.');
+  }
+  
+  return new Nango({
+    secretKey,
+    host: process.env.NANGO_HOST || 'https://api.nango.dev'
+  });
+}
 
 /**
  * GET /api/grand-central/nango/callback
@@ -54,6 +63,7 @@ export async function GET(request: NextRequest) {
 
     // Test the connection to verify it's working
     try {
+      const nango = getNangoClient();
       await nango.proxy({
         providerConfigKey,
         connectionId,

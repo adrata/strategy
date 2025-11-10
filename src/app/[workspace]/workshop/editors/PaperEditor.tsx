@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useWorkbench } from "../layout";
-import { WorkbenchDocument } from "../types/document";
+import { useWorkshop } from "../layout";
+import { WorkshopDocument } from "../types/document";
 import { 
   BoldIcon,
   ItalicIcon,
@@ -37,7 +37,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { TRANSFORMERS } from '@lexical/markdown';
 
 interface PaperEditorProps {
-  document: WorkbenchDocument;
+  document: WorkshopDocument;
   onSave: (content: any) => void;
   onAutoSave: (content: any) => void;
 }
