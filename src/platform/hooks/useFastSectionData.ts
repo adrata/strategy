@@ -7,7 +7,7 @@
  * Performance Target: <500ms response time per section
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
 import { authFetch } from '@/platform/api-fetch';
@@ -41,7 +41,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState(0);
-  const [loadedSections, setLoadedSections] = useState<Set<string>>(new Set());
+  // 🔧 CRITICAL FIX: Use ref instead of state for loadedSections to prevent infinite loops
+  // loadedSections is only used for tracking, not for rendering, so it doesn't need to be state
+  const loadedSectionsRef = useRef<Set<string>>(new Set());
 
   const fetchSectionData = useCallback(async (forceRefresh: boolean = false) => {
     if (DEBUG_PIPELINE) console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
@@ -50,8 +52,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       authLoading,
       hasWorkspaceId: !!workspaceId,
       hasUserId: !!userId,
-      alreadyLoaded: loadedSections.has(section),
-      loadedSections: Array.from(loadedSections),
+      alreadyLoaded: loadedSectionsRef.current.has(section),
+      loadedSections: Array.from(loadedSectionsRef.current),
       actualWorkspaceId: workspaceId,
       actualUserId: userId,
       forceRefresh
@@ -96,14 +98,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         console.log(`🗑️ [FAST SECTION DATA] Cleared localStorage cache: ${storageKey}`);
         
         // Clear loaded sections to force refetch
-        setLoadedSections(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(section);
-          console.log(`🔄 [FAST SECTION DATA] Cleared section ${section} from loadedSections:`, {
-            before: Array.from(prev),
-            after: Array.from(newSet)
-          });
-          return newSet;
+        loadedSectionsRef.current.delete(section);
+        console.log(`🔄 [FAST SECTION DATA] Cleared section ${section} from loadedSections:`, {
+          remaining: Array.from(loadedSectionsRef.current)
         });
         
         // Set flag to skip all caching below
@@ -131,7 +128,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
             setLoading(false);
             setError(null);
             // Still mark as loaded in memory cache
-            setLoadedSections(prev => new Set(prev).add(section));
+            loadedSectionsRef.current.add(section);
             return;
           }
         }
@@ -141,7 +138,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
 
     // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh or speedrun)
-    if (!shouldForceRefresh && section !== 'speedrun' && loadedSections.has(section)) {
+    if (!shouldForceRefresh && section !== 'speedrun' && loadedSectionsRef.current.has(section)) {
       console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded in memory`);
       setLoading(false);
       return;
@@ -332,7 +329,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         
         setData(responseData);
         setCount(responseCount);
-        setLoadedSections(prev => new Set(prev).add(section));
+        loadedSectionsRef.current.add(section);
         
         // 🚀 PERFORMANCE: Cache data in localStorage (like leads pattern)
         try {
@@ -421,14 +418,14 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     } finally {
       setLoading(false);
     }
-  }, [section, limit, workspaceId, userId, authLoading, loadedSections]);
+  }, [section, limit, workspaceId, userId, authLoading]);
 
   // 🚀 PERFORMANCE: Only load section data when section changes and not already loaded
   useEffect(() => {
-    if (workspaceId && userId && !authLoading && !loadedSections.has(section)) {
+    if (workspaceId && userId && !authLoading && !loadedSectionsRef.current.has(section)) {
       fetchSectionData();
     }
-  }, [section, workspaceId, userId, authLoading, loadedSections]); // Removed fetchSectionData to prevent infinite loops
+  }, [section, workspaceId, userId, authLoading, fetchSectionData]);
 
   // 🚀 PERFORMANCE FIX: Event-based force refresh monitoring (no interval polling)
   // This solves the issue where saved changes don't persist when navigating back to a record
@@ -501,7 +498,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     // Only reset if workspace or user actually changed (not on initial load)
     if (workspaceId && userId && (workspaceId !== lastWorkspaceId || userId !== lastUserId) && lastWorkspaceId !== null) {
       console.log(`🔄 [FAST SECTION DATA] Workspace/user changed, resetting loaded sections for ${section}`);
-      setLoadedSections(new Set());
+      loadedSectionsRef.current.clear();
       setData([]); // Clear data to prevent showing stale data
       setCount(0);
       setLastWorkspaceId(workspaceId);
@@ -519,7 +516,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       const { workspaceId: newWorkspaceId } = event.detail;
       if (newWorkspaceId && newWorkspaceId !== workspaceId) {
         console.log(`🔄 [FAST SECTION DATA] Received workspace switch event for: ${newWorkspaceId}, clearing ${section} data`);
-        setLoadedSections(new Set());
+        loadedSectionsRef.current.clear();
         setData([]); // Clear data to prevent showing stale data
         setCount(0);
         setError(null);
@@ -574,12 +571,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     clearCache: () => {
       console.log(`🧹 [FAST SECTION DATA] Clearing cache for section: ${section}`);
       // Critical: Remove section from loaded sections Set to allow refetch
-      setLoadedSections(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(section);
-        console.log(`🧹 [FAST SECTION DATA] Removed ${section} from loaded sections. Remaining:`, Array.from(newSet));
-        return newSet;
-      });
+      loadedSectionsRef.current.delete(section);
+      console.log(`🧹 [FAST SECTION DATA] Removed ${section} from loaded sections. Remaining:`, Array.from(loadedSectionsRef.current));
       setData([]);
       setCount(0);
       setError(null);
