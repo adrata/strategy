@@ -820,12 +820,13 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             return targetIndex;
           }
           
-          // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
-          // instead of database rank to ensure navigation works correctly
+          // 🚀 SPEEDRUN FIX: For speedrun records, use countdown rank (N-1) format
+          // Data is sorted by globalRank descending (50-1), so we need countdown format
           if (section === 'speedrun') {
             const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-            const recordIndex = index >= 0 ? index + 1 : (recordToShow?.globalRank || recordToShow?.rank || 1);
-            console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
+            // Use countdown format: totalRecords - index (50, 49, 48... 3, 2, 1)
+            const recordIndex = index >= 0 ? data.length - index : (recordToShow?.globalRank || recordToShow?.rank || 1);
+            console.log(`🔍 [SPEEDRUN NAVIGATION] Using countdown rank:`, {
               recordId: recordToShow?.id,
               recordName: recordToShow?.name,
               dataLength: data.length,

@@ -968,9 +968,10 @@ export function SpeedrunSprintView() {
         recordType="speedrun"
         recordIndex={(() => {
           const index = data.findIndex(r => r['id'] === selectedRecord.id);
-          // Use globalRank first (same logic as left panel), then fall back to rank, then index
-          const dbRank = selectedRecord?.globalRank || selectedRecord?.rank || (index + 1);
-          console.log('🔍 [SPRINT VIEW] RecordIndex calculation:', {
+          // Use globalRank first (countdown format), then fall back to countdown calculation
+          // Use countdown format: totalRecords - index (50, 49, 48... 3, 2, 1)
+          const dbRank = selectedRecord?.globalRank || selectedRecord?.rank || (index >= 0 ? data.length - index : 1);
+          console.log('🔍 [SPRINT VIEW] RecordIndex calculation (countdown):', {
             selectedRecordId: selectedRecord.id,
             selectedRecordName: selectedRecord.name || selectedRecord.fullName,
             dataLength: data.length,

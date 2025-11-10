@@ -4650,9 +4650,9 @@ export function UniversalRecordTemplate({
                   <span className="text-sm font-semibold text-foreground">
                     {(() => {
                       console.log(`🔍 [RANK DEBUG] Record rank:`, record?.rank, 'RecordIndex:', recordIndex, 'RecordType:', recordType, 'Record:', record);
-                      // 🎯 FIX: For speedrun records, use sequential rank from navigation, not database rank
+                      // 🎯 FIX: For speedrun records, use countdown rank from navigation (N-1 format: 50, 49, 48... 3, 2, 1)
                       if (recordType === 'speedrun' && recordIndex !== undefined) {
-                        return recordIndex; // Use the recordIndex directly (already 1-based)
+                        return recordIndex; // Use the recordIndex directly (countdown format: N-1)
                       }
                       return record?.rank !== undefined ? record.rank : (recordIndex !== undefined ? recordIndex : getFirstInitial());
                     })()}

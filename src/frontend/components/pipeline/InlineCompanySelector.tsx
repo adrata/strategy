@@ -537,48 +537,52 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     );
   }
 
-  const handleCompanyClick = (e: React.MouseEvent) => {
+  const handleCompanyClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     const companyName = getCurrentCompanyName();
     if (companyName && companyName !== '-') {
-      // Use companyId if available, otherwise fall back to searching by name
-      if (companyId) {
-        // Navigate to the actual company record using workspace-aware navigation
-        // Include search parameter and tab=overview in the URL
+      const currentPath = window.location.pathname;
+      const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+      const workspaceSlug = workspaceMatch ? workspaceMatch[1] : 'workspace';
+      
+      // Use companyId if available, otherwise fetch it from API
+      let finalCompanyId = companyId;
+      
+      if (!finalCompanyId) {
+        // Try to fetch company ID from API by name
         try {
-          const slug = generateSlug(companyName, companyId);
-          const currentPath = window.location.pathname;
-          const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-          const workspaceSlug = workspaceMatch ? workspaceMatch[1] : 'workspace';
+          console.log(`🔍 [COMPANY NAV] Fetching company ID for: ${companyName}`);
+          const response = await authFetch(`/api/v1/companies?search=${encodeURIComponent(companyName)}&limit=1`);
+          const data = await response.json();
           
-          // Build URL with search parameter and tab
+          if (data.companies && data.companies.length > 0) {
+            finalCompanyId = data.companies[0].id;
+            console.log(`✅ [COMPANY NAV] Found company ID: ${finalCompanyId}`);
+          }
+        } catch (error) {
+          console.error('❌ [COMPANY NAV] Error fetching company ID:', error);
+        }
+      }
+      
+      // Navigate to the actual company record using workspace-aware navigation
+      // Include search parameter and tab=overview in the URL
+      if (finalCompanyId) {
+        try {
+          const slug = generateSlug(companyName, finalCompanyId);
           const url = `/${workspaceSlug}/companies/${slug}?search=${encodeURIComponent(companyName)}&tab=overview`;
+          console.log(`🔗 [COMPANY NAV] Navigating to: ${url}`);
           window.location.href = url;
         } catch (error) {
-          console.error('Error navigating to company:', error);
-          // Fallback to search navigation if navigateToPipelineItem fails
-          const currentPath = window.location.pathname;
-          const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-          if (workspaceMatch) {
-            const workspaceSlug = workspaceMatch[1];
-            window.location.href = `/${workspaceSlug}/companies?search=${encodeURIComponent(companyName)}`;
-          } else {
-            window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
-          }
+          console.error('❌ [COMPANY NAV] Error generating slug:', error);
+          // Fallback to search navigation if slug generation fails
+          window.location.href = `/${workspaceSlug}/companies?search=${encodeURIComponent(companyName)}`;
         }
       } else {
-        // Fallback: search for company by name and navigate to first result
-        console.warn('No companyId provided, falling back to search navigation');
-        const currentPath = window.location.pathname;
-        const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-        if (workspaceMatch) {
-          const workspaceSlug = workspaceMatch[1];
-          window.location.href = `/${workspaceSlug}/companies?search=${encodeURIComponent(companyName)}`;
-        } else {
-        window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
-        }
+        // Final fallback: search for company by name
+        console.warn('⚠️ [COMPANY NAV] No companyId found, using search navigation');
+        window.location.href = `/${workspaceSlug}/companies?search=${encodeURIComponent(companyName)}`;
       }
     }
   };
