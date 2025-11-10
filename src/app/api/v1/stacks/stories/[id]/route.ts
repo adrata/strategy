@@ -275,6 +275,11 @@ export async function GET(
           
           if (taskWithoutWorkspace) {
             console.log('⚠️ [STACKS API] Task exists but in different workspace:', taskWithoutWorkspace.project?.workspaceId);
+            console.log('⚠️ [STACKS API] Task project ID:', taskWithoutWorkspace.projectId);
+            // Check if task has no project
+            if (!taskWithoutWorkspace.project) {
+              console.log('⚠️ [STACKS API] Task exists but has no project assigned');
+            }
           }
           
           // Also check story without workspace
@@ -287,6 +292,101 @@ export async function GET(
             console.log('⚠️ [STACKS API] Story exists but in different workspace:', storyWithoutWorkspace.project?.workspaceId);
             console.log('⚠️ [STACKS API] Requested workspace:', workspaceId);
             console.log('⚠️ [STACKS API] Story project ID:', storyWithoutWorkspace.projectId);
+            // Check if story has no project or project is in different workspace
+            if (!storyWithoutWorkspace.project || storyWithoutWorkspace.project.workspaceId !== workspaceId) {
+              console.log('⚠️ [STACKS API] Story exists but has no project or wrong workspace');
+              // If story exists but has no project, try to return it anyway
+              // This handles edge cases where stories might not have projects assigned
+              try {
+                const storyWithoutProject = await prisma.stacksStory.findFirst({
+                  where: { id: finalStoryId },
+                  select: {
+                    id: true,
+                    epochId: true,
+                    projectId: true,
+                    title: true,
+                    description: true,
+                    acceptanceCriteria: true,
+                    status: true,
+                    priority: true,
+                    assigneeId: true,
+                    product: true,
+                    section: true,
+                    viewType: true,
+                    isFlagged: true,
+                    rank: true,
+                    statusChangedAt: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    epoch: {
+                      select: {
+                        id: true,
+                        title: true,
+                        description: true
+                      }
+                    },
+                    assignee: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true
+                      }
+                    }
+                    // Omit project from select since it doesn't exist or is wrong workspace
+                  }
+                });
+                
+                if (storyWithoutProject) {
+                  console.log('✅ [STACKS API] Returning story without project validation');
+                  // Transform the story data to match expected format
+                  const transformedStory = {
+                    id: storyWithoutProject.id,
+                    title: storyWithoutProject.title,
+                    description: storyWithoutProject.description,
+                    acceptanceCriteria: storyWithoutProject.acceptanceCriteria || null,
+                    status: storyWithoutProject.status,
+                    priority: storyWithoutProject.priority,
+                    viewType: storyWithoutProject.viewType || 'detail',
+                    product: storyWithoutProject.product || null,
+                    section: storyWithoutProject.section || null,
+                    rank: storyWithoutProject.rank || null,
+                    type: 'story',
+                    assignee: storyWithoutProject.assignee ? {
+                      id: storyWithoutProject.assignee.id,
+                      name: (() => {
+                        const firstName = storyWithoutProject.assignee.firstName != null ? String(storyWithoutProject.assignee.firstName) : '';
+                        const lastName = storyWithoutProject.assignee.lastName != null ? String(storyWithoutProject.assignee.lastName) : '';
+                        const fullName = `${firstName} ${lastName}`.trim();
+                        return fullName || 'Unknown';
+                      })(),
+                      email: storyWithoutProject.assignee.email || ''
+                    } : null,
+                    epoch: storyWithoutProject.epoch ? {
+                      id: storyWithoutProject.epoch.id,
+                      title: storyWithoutProject.epoch.title,
+                      description: storyWithoutProject.epoch.description
+                    } : null,
+                    project: null, // Explicitly set to null
+                    dueDate: null,
+                    tags: storyWithoutProject.viewType === 'bug' ? ['bug'] : [],
+                    isFlagged: storyWithoutProject.isFlagged || false,
+                    points: null,
+                    createdAt: storyWithoutProject.createdAt,
+                    updatedAt: storyWithoutProject.updatedAt,
+                    timeInStatus: storyWithoutProject.statusChangedAt ? Math.floor((Date.now() - new Date(storyWithoutProject.statusChangedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0
+                  };
+                  
+                  return NextResponse.json({
+                    story: transformedStory,
+                    type: 'story'
+                  });
+                }
+              } catch (storyWithoutProjectError) {
+                console.error('❌ [STACKS API] Error fetching story without project:', storyWithoutProjectError);
+                // Continue to return 404 if this also fails
+              }
+            }
           }
           
           // Also try searching without workspace filter to see if story exists at all

@@ -130,18 +130,23 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
             <div className={`flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium ${
               isData 
                 ? 'bg-error text-white' 
-                : 'bg-muted-light text-muted'
+                : 'bg-info/20 text-info border border-info/30'
             }`}>
               {isData ? '@' : (index + 1)}
             </div>
             
             {/* Icon and label */}
             <IconComponent className="w-4 h-4" />
-            <span className="font-medium">{label}</span>
-            
-            {/* Data context name */}
-            {isData && (
-              <span className="text-xs text-muted max-w-24 truncate">
+            {/* Show filename for files, label for data contexts */}
+            {isData ? (
+              <>
+                <span className="font-medium">{label}</span>
+                <span className="text-xs text-muted max-w-24 truncate">
+                  {file.name}
+                </span>
+              </>
+            ) : (
+              <span className="font-medium max-w-[120px] truncate" title={file.name}>
                 {file.name}
               </span>
             )}

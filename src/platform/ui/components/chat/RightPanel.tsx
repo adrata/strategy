@@ -1503,6 +1503,21 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       } catch (error) {
         console.error(`❌ [FILE HANDLER] Error processing ${file.name}:`, error);
         
+        // Remove file from context files on error
+        setContextFiles(prev => {
+          const updated = prev.filter(f => f.id !== contextFile.id);
+          // Persist to localStorage - WORKSPACE ISOLATED
+          try {
+            if (workspaceId) {
+              const storageKey = `adrata-context-files-${workspaceId}`;
+              localStorage.setItem(storageKey, JSON.stringify(updated));
+            }
+          } catch (storageError) {
+            console.warn('Failed to persist context files:', storageError);
+          }
+          return updated;
+        });
+        
         // Fallback to basic file handling
         setTimeout(() => {
           chat.addAssistantMessage(
@@ -1936,6 +1951,25 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         messagesToAdd.push(assistantMessage);
 
+        // Check if response indicates a technical issue - clear files if so
+        const responseText = assistantMessage.content.toLowerCase();
+        if (responseText.includes('brief technical issue') || 
+            responseText.includes('technical difficulties') ||
+            responseText.includes('technical hiccup')) {
+          // Clear context files when technical issues occur
+          if (contextFiles.length > 0) {
+            setContextFiles([]);
+            try {
+              if (workspaceId) {
+                const storageKey = `adrata-context-files-${workspaceId}`;
+                localStorage.removeItem(storageKey);
+              }
+            } catch (storageError) {
+              console.warn('Failed to clear context files:', storageError);
+            }
+          }
+        }
+
         // Update UI immediately (optimistic update)
         setConversations(prev => prev.map(conv => 
           conv.isActive 
@@ -1990,6 +2024,20 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
     } catch (error) {
       console.error('AI API call failed:', error);
+      
+      // Clear context files on error - they're no longer valid
+      if (contextFiles.length > 0) {
+        setContextFiles([]);
+        // Clear from localStorage - WORKSPACE ISOLATED
+        try {
+          if (workspaceId) {
+            const storageKey = `adrata-context-files-${workspaceId}`;
+            localStorage.removeItem(storageKey);
+          }
+        } catch (storageError) {
+          console.warn('Failed to clear context files:', storageError);
+        }
+      }
       
       const errorMessage: ChatMessage = {
         id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
