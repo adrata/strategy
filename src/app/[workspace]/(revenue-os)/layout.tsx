@@ -41,7 +41,20 @@ function SprintLeftPanelWrapper() {
 
   // Update selected record in sprint context instead of navigating away
   const handleRecordSelect = (record: any) => {
+    console.log('🔍 [SPRINT LEFT PANEL WRAPPER] handleRecordSelect called:', {
+      recordId: record?.id,
+      recordName: record?.name || record?.fullName,
+      currentSelectedRecordId: selectedRecord?.id,
+      willUpdate: record?.id !== selectedRecord?.id
+    });
     setSelectedRecord(record);
+    // Log after state update (will be logged on next render)
+    setTimeout(() => {
+      console.log('🔍 [SPRINT LEFT PANEL WRAPPER] State updated, new selectedRecord:', {
+        newSelectedRecordId: record?.id,
+        recordName: record?.name || record?.fullName
+      });
+    }, 0);
   };
   
   return (

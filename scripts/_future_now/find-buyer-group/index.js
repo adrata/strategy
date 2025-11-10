@@ -6,6 +6,7 @@
  */
 
 const fetch = require('node-fetch');
+const { PrismaClient, Prisma } = require('@prisma/client');
 const { CompanyIntelligence } = require('./company-intelligence');
 const { PreviewSearch } = require('./preview-search');
 const { SmartScoring } = require('./smart-scoring');
@@ -22,7 +23,7 @@ const { MultiSourceVerifier } = require('../../../src/platform/pipelines/modules
 
 class SmartBuyerGroupPipeline {
   constructor(options = {}) {
-    this.prisma = options.prisma || new (require('@prisma/client').PrismaClient)();
+    this.prisma = options.prisma || new PrismaClient();
     this.workspaceId = options.workspaceId;
     this.mainSellerId = options.mainSellerId || null; // 🏆 FIX: Store mainSellerId for assigning people
     this.dealSize = options.dealSize || 150000;
@@ -78,6 +79,12 @@ class SmartBuyerGroupPipeline {
       });
       
       const params = this.companyIntel.calculateOptimalParameters(intelligence, this.dealSize);
+      
+      // Ensure companyName is set - use fallback if Coresignal validation failed
+      if (!intelligence.companyName) {
+        intelligence.companyName = company?.name || extractDomain(this.targetCompany) || 'Unknown Company';
+        console.log(`⚠️  Company name not set, using fallback: ${intelligence.companyName}`);
+      }
       
       // Stage 2: Wide Preview Search (cheap) - with adaptive expansion
       let previewEmployees = await this.executeStage('preview-search', async () => {
@@ -1876,7 +1883,7 @@ class SmartBuyerGroupPipeline {
     
     try {
       // 1. Find or create company record
-      const company = await this.findOrCreateCompany(intelligence);
+      const company = await this.findOrCreateCompany(intelligence, this.mainSellerId);
       
       // 2. Create/update People records for ALL buyer group members
       console.log(`👥 Creating/updating People records for ${buyerGroup.length} members...`);
@@ -1994,7 +2001,16 @@ class SmartBuyerGroupPipeline {
               isBuyerGroupMember: true,
               buyerGroupOptimized: true,
               coresignalData: member.fullProfile, // Keep coresignal data
-              enrichedData: aiIntelligence,
+              enrichedData: {
+                ...(existingPerson?.enrichedData && typeof existingPerson.enrichedData === 'object' ? existingPerson.enrichedData : {}),
+                ...aiIntelligence,
+                emailVerificationDetails: member.emailVerificationDetails || [],
+                emailSource: member.emailSource || 'unverified',
+                phoneVerificationDetails: member.phoneVerificationDetails || [],
+                phoneSource: member.phoneSource || 'unverified',
+                phoneType: member.phoneType || 'unknown',
+                phoneMetadata: member.phoneMetadata || {}
+              },
               aiIntelligence: aiIntelligence,
               aiLastUpdated: new Date(),
               influenceScore: influenceScore,
@@ -2100,6 +2116,16 @@ class SmartBuyerGroupPipeline {
               emailConfidence: member.emailConfidence || 0,
               phone: coresignalPhone || member.phone,
               linkedinUrl: member.linkedinUrl,
+              // Store verification details in enrichedData
+              enrichedData: {
+                ...aiIntelligence,
+                emailVerificationDetails: member.emailVerificationDetails || [],
+                emailSource: member.emailSource || 'unverified',
+                phoneVerificationDetails: member.phoneVerificationDetails || [],
+                phoneSource: member.phoneSource || 'unverified',
+                phoneType: member.phoneType || 'unknown',
+                phoneMetadata: member.phoneMetadata || {}
+              },
               buyerGroupRole: member.buyerGroupRole,
               isBuyerGroupMember: true,
               buyerGroupOptimized: true,
@@ -2445,67 +2471,242 @@ class SmartBuyerGroupPipeline {
   /**
    * Find or create company record
    * @param {object} intelligence - Company intelligence data
+   * @param {string} mainSellerId - Optional mainSellerId to set on company
    * @returns {object} Company record
    */
-  async findOrCreateCompany(intelligence) {
+  async findOrCreateCompany(intelligence, mainSellerId = null) {
     console.log('🏢 Finding or creating company record...');
     
     try {
+      // Use mainSellerId from intelligence if provided, otherwise use parameter
+      const companyMainSellerId = intelligence.mainSellerId || mainSellerId || this.mainSellerId;
+      
       // First try to find by website domain
       let company = null;
       if (intelligence.website) {
         const domain = extractDomain(intelligence.website);
-        company = await this.prisma.companies.findFirst({
+        try {
+          company = await this.prisma.companies.findFirst({
             where: {
-                workspaceId: this.workspaceId,
-            OR: [
-              { website: { contains: domain } },
-              { domain: domain }
-            ]
+              workspaceId: this.workspaceId,
+              OR: [
+                { website: { contains: domain } },
+                { domain: domain }
+              ]
+            }
+          });
+        } catch (error) {
+          // If error is about coreCompanyId, use raw SQL to bypass Prisma validation
+          if (error.message && error.message.includes('coreCompanyId')) {
+            console.log('⚠️  Prisma validation issue, using raw SQL workaround...');
+            try {
+              // Use Prisma's $queryRaw with template literals (handles parameters correctly)
+              const results = await this.prisma.$queryRaw`
+                SELECT * FROM companies 
+                WHERE "workspaceId" = ${this.workspaceId}
+                AND ("website" LIKE ${'%' + domain + '%'} OR "domain" = ${domain})
+                AND "deletedAt" IS NULL
+                LIMIT 1
+              `;
+              if (results && results.length > 0) {
+                company = results[0];
+                console.log(`✅ Found company via raw SQL: ${company.name}`);
+              }
+            } catch (rawError) {
+              console.log(`⚠️  Raw SQL also failed: ${rawError.message}`);
+              // Continue - will create company if not found
+            }
+          } else {
+            throw error;
           }
-        });
+        }
       }
       
       // If not found by website, try by name
       if (!company && intelligence.companyName) {
-        company = await this.prisma.companies.findFirst({
-          where: {
+        try {
+          company = await this.prisma.companies.findFirst({
+            where: {
               workspaceId: this.workspaceId,
-            name: { contains: intelligence.companyName, mode: 'insensitive' }
+              name: { contains: intelligence.companyName, mode: 'insensitive' }
             }
           });
+        } catch (error) {
+          // If error is about coreCompanyId, use raw SQL to bypass Prisma validation
+          if (error.message && error.message.includes('coreCompanyId')) {
+            console.log('⚠️  Prisma validation issue, using raw SQL workaround...');
+            try {
+              // Use Prisma's $queryRaw with template literals (handles parameters correctly)
+              const results = await this.prisma.$queryRaw`
+                SELECT * FROM companies 
+                WHERE "workspaceId" = ${this.workspaceId}
+                AND LOWER("name") LIKE ${'%' + intelligence.companyName.toLowerCase() + '%'}
+                AND "deletedAt" IS NULL
+                LIMIT 1
+              `;
+              if (results && results.length > 0) {
+                company = results[0];
+                console.log(`✅ Found company via raw SQL: ${company.name}`);
+              }
+            } catch (rawError) {
+              console.log(`⚠️  Raw SQL also failed: ${rawError.message}`);
+              // Continue - will create company if not found
+            }
+          } else {
+            throw error;
+          }
         }
+      }
       
       // If still not found, create new company
       if (!company) {
         console.log(`📝 Creating new company record for ${intelligence.companyName}`);
-        company = await this.prisma.companies.create({
-          data: {
-            workspaceId: this.workspaceId,
-            name: intelligence.companyName || 'Unknown Company',
-            website: intelligence.website,
-            industry: intelligence.industry,
-            employeeCount: intelligence.employeeCount,
-            revenue: intelligence.revenue,
-            description: intelligence.description,
-            domain: intelligence.website ? extractDomain(intelligence.website) : null,
-            status: 'ACTIVE',
-            priority: 'MEDIUM',
-            updatedAt: new Date()
+        
+        // Try Prisma create first (preferred method)
+        try {
+          company = await this.prisma.companies.create({
+            data: {
+              workspaceId: this.workspaceId,
+              name: intelligence.companyName || 'Unknown Company',
+              website: intelligence.website,
+              industry: intelligence.industry,
+              employeeCount: intelligence.employeeCount,
+              revenue: intelligence.revenue,
+              description: intelligence.description,
+              domain: intelligence.website ? extractDomain(intelligence.website) : null,
+              mainSellerId: companyMainSellerId,
+              status: 'ACTIVE',
+              priority: 'MEDIUM',
+              updatedAt: new Date()
+            }
+          });
+          console.log(`✅ Created company: ${company.name} (${company.id})`);
+          if (companyMainSellerId) {
+            console.log(`   👤 Set mainSellerId: ${companyMainSellerId}`);
           }
-        });
-        console.log(`✅ Created company: ${company.name} (${company.id})`);
+        } catch (createError) {
+          // If Prisma create fails, check if it's a validation error or actual DB error
+          const isValidationError = createError.message && (
+            createError.message.includes('coreCompanyId') || 
+            createError.message.includes('additionalStatuses') ||
+            createError.message.includes('does not exist')
+          );
+          
+          if (isValidationError) {
+            console.log('⚠️  Prisma validation error detected, using direct database connection...');
+            
+            // Use Prisma's direct connection to bypass client validation
+            const companyId = createUniqueId('co');
+            const domain = intelligence.website ? extractDomain(intelligence.website) : null;
+            const revenue = intelligence.revenue ? parseFloat(intelligence.revenue) : null;
+            
+            try {
+              // Use Prisma's $executeRaw with proper enum casting
+              // Insert without status/priority first (they have defaults), then update if needed
+              await this.prisma.$executeRaw(Prisma.sql`
+                INSERT INTO companies (
+                  id, "workspaceId", name, website, industry, "employeeCount", revenue, description, domain, "mainSellerId", "createdAt", "updatedAt"
+                ) VALUES (
+                  ${companyId}, 
+                  ${this.workspaceId}, 
+                  ${intelligence.companyName || 'Unknown Company'}, 
+                  ${intelligence.website || null}, 
+                  ${intelligence.industry || null}, 
+                  ${intelligence.employeeCount || null}, 
+                  ${revenue}, 
+                  ${intelligence.description || null}, 
+                  ${domain}, 
+                  ${companyMainSellerId || null}, 
+                  NOW(), 
+                  NOW()
+                )
+              `);
+              
+              // Fetch using Prisma query (should work)
+              const results = await this.prisma.$queryRaw(Prisma.sql`
+                SELECT * FROM companies WHERE id = ${companyId}
+              `);
+              
+              if (results && results.length > 0) {
+                company = results[0];
+                console.log(`✅ Created company via Prisma.sql: ${company.name} (${company.id})`);
+                if (companyMainSellerId) {
+                  console.log(`   👤 Set mainSellerId: ${companyMainSellerId}`);
+                }
+              } else {
+                throw new Error('Failed to fetch created company');
+              }
+            } catch (rawError) {
+              console.error('❌ Raw SQL create failed:', rawError.message);
+              // Last resort: try without mainSellerId
+              if (rawError.message.includes('mainSellerId')) {
+                console.log('⚠️  Trying without mainSellerId field...');
+                try {
+                  // Insert without status/priority (they have defaults: ACTIVE and MEDIUM)
+                  await this.prisma.$executeRaw(Prisma.sql`
+                    INSERT INTO companies (
+                      id, "workspaceId", name, website, industry, "employeeCount", revenue, description, domain, "createdAt", "updatedAt"
+                    ) VALUES (
+                      ${companyId}, ${this.workspaceId}, ${intelligence.companyName || 'Unknown Company'}, 
+                      ${intelligence.website || null}, ${intelligence.industry || null}, 
+                      ${intelligence.employeeCount || null}, ${revenue}, 
+                      ${intelligence.description || null}, ${domain}, 
+                      NOW(), NOW()
+                    )
+                  `);
+                  
+                  const results = await this.prisma.$queryRaw(Prisma.sql`
+                    SELECT * FROM companies WHERE id = ${companyId}
+                  `);
+                  
+                  if (results && results.length > 0) {
+                    company = results[0];
+                    console.log(`✅ Created company (without mainSellerId): ${company.name}`);
+                    // Update mainSellerId separately if needed
+                    if (companyMainSellerId) {
+                      try {
+                        await this.prisma.companies.update({
+                          where: { id: company.id },
+                          data: { mainSellerId: companyMainSellerId }
+                        });
+                        console.log(`   👤 Updated mainSellerId: ${companyMainSellerId}`);
+                      } catch (updateError) {
+                        console.log(`   ⚠️  Could not set mainSellerId: ${updateError.message}`);
+                      }
+                    }
+                  }
+                } catch (fallbackError) {
+                  console.error('❌ Fallback create also failed:', fallbackError.message);
+                  throw fallbackError;
+                }
+              } else {
+                throw rawError;
+              }
+            }
+          } else {
+            console.error('❌ Failed to create company:', createError.message);
+            throw createError;
+          }
+        }
       } else {
         console.log(`✅ Found existing company: ${company.name} (${company.id})`);
         
-        // Update company with latest intelligence data
+        // Update company with latest intelligence data and mainSellerId if needed
+        const updateData = {};
         if (intelligence.website && !company.website) {
+          updateData.website = intelligence.website;
+          updateData.domain = extractDomain(intelligence.website);
+        }
+        // Set mainSellerId if company doesn't have one and we have one to set
+        if (companyMainSellerId && !company.mainSellerId) {
+          updateData.mainSellerId = companyMainSellerId;
+          console.log(`   👤 Setting mainSellerId: ${companyMainSellerId}`);
+        }
+        
+        if (Object.keys(updateData).length > 0) {
           await this.prisma.companies.update({
             where: { id: company.id },
-            data: {
-              website: intelligence.website,
-              domain: extractDomain(intelligence.website)
-            }
+            data: updateData
           });
         }
       }

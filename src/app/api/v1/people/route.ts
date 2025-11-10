@@ -386,6 +386,7 @@ export async function GET(request: NextRequest) {
       console.log(`🔍 [V1 PEOPLE API] Final where clause:`, JSON.stringify(where, null, 2));
 
       // Optimized query with Prisma ORM for reliability
+      // 🚀 PERFORMANCE: Use select instead of include for corePerson to reduce data transfer
       const [people, totalCount] = await Promise.all([
         prisma.people.findMany({
           where,
@@ -394,8 +395,70 @@ export async function GET(request: NextRequest) {
           },
           skip: offset,
           take: limit,
-          include: {
-            corePerson: true,
+          select: {
+            // Select only fields needed for the response
+            id: true,
+            workspaceId: true,
+            corePersonId: true,
+            companyId: true,
+            firstName: true,
+            lastName: true,
+            fullName: true,
+            fullNameOverride: true,
+            emailOverride: true,
+            jobTitleOverride: true,
+            displayName: true,
+            jobTitle: true,
+            email: true,
+            workEmail: true,
+            personalEmail: true,
+            phone: true,
+            mobilePhone: true,
+            workPhone: true,
+            linkedinUrl: true,
+            status: true,
+            priority: true,
+            source: true,
+            tags: true,
+            customFields: true,
+            notes: true,
+            timezone: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            globalRank: true,
+            companyRank: true,
+            createdAt: true,
+            updatedAt: true,
+            entityId: true,
+            deletedAt: true,
+            mainSellerId: true,
+            vertical: true,
+            // Include relations with minimal fields
+            corePerson: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                fullName: true,
+                email: true,
+                workEmail: true,
+                personalEmail: true,
+                phone: true,
+                mobilePhone: true,
+                workPhone: true,
+                linkedinUrl: true,
+                jobTitle: true,
+                companyName: true,
+                currentCompany: true,
+                currentRole: true,
+                city: true,
+                state: true,
+                country: true,
+                profilePictureUrl: true
+              }
+            },
             company: {
               select: {
                 id: true,

@@ -607,10 +607,15 @@ export function SpeedrunSprintView() {
   }, [data, selectedRecord, loading, completedRecords, setSelectedRecord]);
 
   // Sync selectedRecord with data array when data changes, preserving linkedinNavigatorUrl and notes
+  // Only sync if the record is in the current sprint's data array
   useEffect(() => {
-    if (!selectedRecord || !data || data.length === 0) return;
+    if (!selectedRecord) return;
     
-    const matchingRecord = data.find((r: any) => r.id === selectedRecord.id);
+    // Try to find in current sprint data first, then fall back to allData
+    const matchingRecord = (data && data.length > 0 ? data.find((r: any) => r.id === selectedRecord.id) : null) ||
+                           (allData && allData.length > 0 ? allData.find((r: any) => r.id === selectedRecord.id) : null);
+    
+    if (!matchingRecord) return; // Record not found in either data source
     if (matchingRecord && matchingRecord !== selectedRecord) {
       // Merge preserving linkedinNavigatorUrl and notes from selectedRecord if new record doesn't have them
       // Helper function to check if notes have content (handles both string and object formats)
@@ -980,8 +985,10 @@ export function SpeedrunSprintView() {
     );
   }
 
-  // Empty state
-  if (!data || data['length'] === 0) {
+  // Empty state - check rawData/allData instead of filtered data
+  // Only show empty state if we're not loading and there's truly no data
+  // Don't show empty state if we have a selectedRecord - let the detail view handle it
+  if (!loading && (!allData || allData.length === 0) && !selectedRecord) {
     return (
       <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center max-w-md">
@@ -996,6 +1003,18 @@ export function SpeedrunSprintView() {
     );
   }
 
+
+  // Debug: Log when selectedRecord changes
+  React.useEffect(() => {
+    console.log('🔍 [SPEEDRUN SPRINT VIEW] selectedRecord changed:', {
+      hasSelectedRecord: !!selectedRecord,
+      selectedRecordId: selectedRecord?.id,
+      selectedRecordName: selectedRecord?.name || selectedRecord?.fullName,
+      dataLength: data?.length || 0,
+      allDataLength: allData?.length || 0,
+      loading: loading
+    });
+  }, [selectedRecord?.id, data?.length, allData?.length, loading]);
 
   // Sprint detail view for middle panel - using minimal UniversalRecordDetails
   const sprintDetailView = selectedRecord ? (
@@ -1014,60 +1033,92 @@ export function SpeedrunSprintView() {
         record={selectedRecord}
         recordType="speedrun"
         recordIndex={(() => {
-          const index = data.findIndex(r => r['id'] === selectedRecord.id);
+          // Find index in current sprint data, or use allData if not found
+          const index = data && data.length > 0 ? data.findIndex(r => r['id'] === selectedRecord.id) : -1;
+          // If not found in current sprint, try to find in allData to get the rank
+          const recordInAllData = index < 0 && allData ? allData.find((r: any) => r.id === selectedRecord.id) : null;
           // Use globalRank first (countdown format), then fall back to countdown calculation
           // Use countdown format: totalRecords - index (50, 49, 48... 3, 2, 1)
-          const dbRank = selectedRecord?.globalRank || selectedRecord?.rank || (index >= 0 ? data.length - index : 1);
+          const dbRank = selectedRecord?.globalRank || selectedRecord?.rank || recordInAllData?.globalRank || recordInAllData?.rank || (index >= 0 ? data.length - index : 1);
           console.log('🔍 [SPRINT VIEW] RecordIndex calculation (countdown):', {
             selectedRecordId: selectedRecord.id,
             selectedRecordName: selectedRecord.name || selectedRecord.fullName,
-            dataLength: data.length,
+            dataLength: data?.length || 0,
+            allDataLength: allData?.length || 0,
             foundIndex: index,
+            foundInAllData: !!recordInAllData,
             dbRank: dbRank,
             globalRank: selectedRecord?.globalRank,
             rank: selectedRecord?.rank,
             usingDatabaseRank: !!(selectedRecord?.globalRank || selectedRecord?.rank),
-            dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName, globalRank: r.globalRank, rank: r.rank })),
             // Debug navigation state
             canGoPrevious: index > 0,
-            canGoNext: index < data.length - 1,
+            canGoNext: index >= 0 && index < (data?.length || 0) - 1,
             hasNextSprint: hasNextSprint,
             currentSprintIndex: currentSprintIndex,
             totalSprints: totalSprints
           });
           return dbRank;
         })()}
-        totalRecords={data.length}
+        totalRecords={data && data.length > 0 ? data.length : (allData?.length || 0)}
         onBack={() => {
           // Go back to speedrun list
           navigateToPipeline('speedrun');
         }}
         onNavigatePrevious={() => {
-          const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
+          // Find index in current sprint data, or use allData if not found in current sprint
+          const currentIndex = data && data.length > 0 ? data.findIndex(r => r['id'] === selectedRecord.id) : -1;
+          
+          // If not in current sprint, try to find in allData and navigate within allData
+          if (currentIndex < 0 && allData && allData.length > 0) {
+            const allDataIndex = allData.findIndex((r: any) => r.id === selectedRecord.id);
+            if (allDataIndex > 0) {
+              const previousRecord = allData[allDataIndex - 1];
+              console.log(`🏃‍♂️ [SPRINT] Navigating to previous record (from allData): ${previousRecord.name || previousRecord.fullName} (ID: ${previousRecord.id})`);
+              setSelectedRecord(previousRecord);
+              return;
+            }
+          }
+          
           console.log('🔍 [SPRINT VIEW] Previous navigation:', {
             currentIndex,
-            dataLength: data.length,
+            dataLength: data?.length || 0,
             canGoPrevious: currentIndex > 0,
-            previousRecord: currentIndex > 0 ? data[currentIndex - 1] : null
+            previousRecord: currentIndex > 0 && data ? data[currentIndex - 1] : null
           });
-          if (currentIndex > 0) {
+          
+          if (currentIndex > 0 && data && data.length > 0) {
             const previousRecord = data[currentIndex - 1];
             console.log(`🏃‍♂️ [SPRINT] Navigating to previous record: ${previousRecord.name || previousRecord.fullName} (ID: ${previousRecord.id})`);
             setSelectedRecord(previousRecord);
           }
         }}
         onNavigateNext={() => {
-          const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
-          const nextRecord = data[currentIndex + 1];
+          // Find index in current sprint data, or use allData if not found in current sprint
+          const currentIndex = data && data.length > 0 ? data.findIndex(r => r['id'] === selectedRecord.id) : -1;
+          
+          // If not in current sprint, try to find in allData and navigate within allData
+          if (currentIndex < 0 && allData && allData.length > 0) {
+            const allDataIndex = allData.findIndex((r: any) => r.id === selectedRecord.id);
+            if (allDataIndex >= 0 && allDataIndex < allData.length - 1) {
+              const nextRecord = allData[allDataIndex + 1];
+              console.log(`🏃‍♂️ [SPRINT] Navigating to next record (from allData): ${nextRecord.name || nextRecord.fullName} (ID: ${nextRecord.id})`);
+              setSelectedRecord(nextRecord);
+              return;
+            }
+          }
+          
+          const nextRecord = currentIndex >= 0 && data && data.length > 0 ? data[currentIndex + 1] : null;
           console.log('🔍 [SPRINT VIEW] Next navigation:', {
             currentIndex,
-            dataLength: data.length,
-            canGoNext: currentIndex < data.length - 1,
+            dataLength: data?.length || 0,
+            canGoNext: currentIndex >= 0 && currentIndex < (data?.length || 0) - 1,
             nextRecord: nextRecord,
             hasNextSprint: hasNextSprint,
             currentSprintIndex: currentSprintIndex,
             totalSprints: totalSprints
           });
+          
           if (nextRecord) {
             console.log(`🏃‍♂️ [SPRINT] Navigating to next record: ${nextRecord.name || nextRecord.fullName} (ID: ${nextRecord.id})`);
             setSelectedRecord(nextRecord);

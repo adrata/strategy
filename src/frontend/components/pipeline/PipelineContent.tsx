@@ -885,18 +885,32 @@ export const PipelineContent = React.memo(function PipelineContent({
   };
 
   const handleSortChange = useCallback((field: string) => {
+    const isSpeedrunRank = section === 'speedrun' && (field === 'globalRank' || field === 'rank');
+    
     if (sortField === field) {
-      // Three-state cycle: asc → desc → unsorted (null)
-      if (sortDirection === 'asc') {
-        setSortDirection('desc');
-      } else if (sortDirection === 'desc') {
-        // Third click: reset to unsorted (use original data order)
-        setSortField('');
-        setSortDirection('asc');
+      // For speedrun rank: only toggle between desc → unsorted (never allow asc)
+      if (isSpeedrunRank) {
+        if (sortDirection === 'desc') {
+          // Second click: reset to unsorted (use original data order)
+          setSortField('');
+          setSortDirection('desc'); // Keep desc as default even when unsorted
+        }
+        // If somehow it's 'asc', force it back to 'desc'
+        else if (sortDirection === 'asc') {
+          setSortDirection('desc');
+        }
+      } else {
+        // Regular three-state cycle for other fields: asc → desc → unsorted (null)
+        if (sortDirection === 'asc') {
+          setSortDirection('desc');
+        } else if (sortDirection === 'desc') {
+          // Third click: reset to unsorted (use original data order)
+          setSortField('');
+          setSortDirection('asc');
+        }
       }
     } else {
       // New field - check if it's speedrun rank for special default
-      const isSpeedrunRank = section === 'speedrun' && (field === 'globalRank' || field === 'rank');
       setSortField(field);
       setSortDirection(isSpeedrunRank ? 'desc' : 'asc'); // Descending for speedrun rank
     }
@@ -920,16 +934,23 @@ export const PipelineContent = React.memo(function PipelineContent({
     };
     
     const actualField = fieldMapping[field] || field;
+    const isSpeedrunRank = section === 'speedrun' && (actualField === 'globalRank' || actualField === 'rank');
     
-    // If clicking the same field, toggle direction; otherwise start with ascending
+    // If clicking the same field, toggle direction; otherwise start with appropriate default
     if (sortField === actualField) {
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      // For speedrun rank, only allow desc → desc (no toggle to asc)
+      if (isSpeedrunRank) {
+        // Keep it at desc, don't toggle
+        setSortDirection('desc');
+      } else {
+        setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      }
     } else {
       setSortField(actualField);
-      setSortDirection('asc');
+      setSortDirection(isSpeedrunRank ? 'desc' : 'asc'); // Descending for speedrun rank, ascending for others
     }
     
-    console.log(`🔧 [SORT FIX] Dropdown sort: ${field} -> ${actualField} (section: ${section}, direction: ${sortField === actualField ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc'})`);
+    console.log(`🔧 [SORT FIX] Dropdown sort: ${field} -> ${actualField} (section: ${section}, direction: ${isSpeedrunRank ? 'desc' : (sortField === actualField ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc')})`);
   }, [section, sortField, sortDirection]);
 
   const handleColumnSort = useCallback((columnName: string) => {

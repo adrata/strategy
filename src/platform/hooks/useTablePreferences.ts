@@ -83,7 +83,18 @@ export function useTablePreferences(
         if (saved) {
           const parsed = JSON.parse(saved);
           // Merge with defaults to handle new fields
-          return { ...defaultPrefs, ...parsed };
+          const mergedPrefs = { ...defaultPrefs, ...parsed };
+          
+          // CRITICAL FIX: For speedrun section, enforce descending sort for rank field
+          // This prevents ascending sort from being saved/loaded for speedrun rank
+          if (section === 'speedrun' && (mergedPrefs.sortField === 'rank' || mergedPrefs.sortField === 'globalRank')) {
+            if (mergedPrefs.sortDirection === 'asc') {
+              console.log(`🔧 [TablePreferences] Correcting speedrun rank sort direction from 'asc' to 'desc'`);
+              mergedPrefs.sortDirection = 'desc';
+            }
+          }
+          
+          return mergedPrefs;
         }
       } catch (error) {
         console.warn('Failed to parse saved table preferences:', error);
@@ -120,12 +131,22 @@ export function useTablePreferences(
     (updates: Partial<TablePreferences>) => {
       setPreferences(prev => {
         const newPrefs = { ...prev, ...updates };
+        
+        // CRITICAL FIX: For speedrun section, enforce descending sort for rank field
+        // Prevent saving ascending sort for speedrun rank
+        if (section === 'speedrun' && (newPrefs.sortField === 'rank' || newPrefs.sortField === 'globalRank')) {
+          if (newPrefs.sortDirection === 'asc') {
+            console.log(`🔧 [TablePreferences] Preventing ascending sort for speedrun rank, forcing 'desc'`);
+            newPrefs.sortDirection = 'desc';
+          }
+        }
+        
         // Debounce the save operation
         setTimeout(() => savePreferences(newPrefs), 100);
         return newPrefs;
       });
     },
-    [savePreferences]
+    [savePreferences, section]
   );
 
   // Individual setters

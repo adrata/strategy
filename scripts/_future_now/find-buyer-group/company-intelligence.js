@@ -95,7 +95,7 @@ class CompanyIntelligence {
           industry: true,
           size: true,
           customFields: true, // Contains coresignalData
-          companyIntelligence: true,
+          // companyIntelligence: true, // Optional field - removed to avoid schema sync issues
           updatedAt: true
         }
       });

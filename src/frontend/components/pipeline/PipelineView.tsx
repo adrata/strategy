@@ -974,12 +974,13 @@ export const PipelineView = React.memo(function PipelineView({
     });
 
     // Apply smart ranking or sorting
-    if (section === 'speedrun' && (!sortField || sortField === 'rank')) {
+    if (section === 'speedrun' && (!sortField || sortField === 'rank' || sortField === 'globalRank')) {
       // For speedrun, default to rank sorting when no custom sort is selected
+      // Always use descending order (50, 49, 48...) for speedrun rank
       filtered = [...filtered].sort((a: any, b: any) => {
-        const aRank = parseInt(a.winningScore?.rank || a.rank || '999', 10);
-        const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
-        return bRank - aRank; // Higher rank number first (largest to smallest)
+        const aRank = parseInt(a.globalRank || a.winningScore?.rank || a.rank || '999', 10);
+        const bRank = parseInt(b.globalRank || b.winningScore?.rank || b.rank || '999', 10);
+        return bRank - aRank; // Higher rank number first (largest to smallest) - descending order
       });
     }
     
@@ -994,7 +995,11 @@ export const PipelineView = React.memo(function PipelineView({
       });
     } else if (sortField) {
       // Regular field sorting with robust field handling
-      console.log(`🔍 [SORTING DEBUG] Sorting by field: "${sortField}", direction: "${sortDirection}"`);
+      // Safety check: For speedrun rank, always enforce descending order
+      const isSpeedrunRank = section === 'speedrun' && (sortField === 'rank' || sortField === 'globalRank');
+      const effectiveSortDirection = isSpeedrunRank ? 'desc' : sortDirection;
+      
+      console.log(`🔍 [SORTING DEBUG] Sorting by field: "${sortField}", direction: "${sortDirection}"${isSpeedrunRank ? ' (enforced desc for speedrun rank)' : ''}`);
       console.log(`🔍 [SORTING DEBUG] Sample records before sorting:`, filtered.slice(0, 3).map(r => ({
         id: r.id,
         name: r.name,
@@ -1009,8 +1014,8 @@ export const PipelineView = React.memo(function PipelineView({
 
         // Handle null/undefined values
         if (aVal == null && bVal == null) return 0;
-        if (aVal == null) return sortDirection === 'asc' ? 1 : -1;
-        if (bVal == null) return sortDirection === 'asc' ? -1 : 1;
+        if (aVal == null) return effectiveSortDirection === 'asc' ? 1 : -1;
+        if (bVal == null) return effectiveSortDirection === 'asc' ? -1 : 1;
 
         // Convert to comparable values
         if (typeof aVal === 'string' && typeof bVal === 'string') {
@@ -1020,17 +1025,17 @@ export const PipelineView = React.memo(function PipelineView({
 
         // Handle numeric values
         if (typeof aVal === 'number' && typeof bVal === 'number') {
-          return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+          return effectiveSortDirection === 'asc' ? aVal - bVal : bVal - aVal;
         }
 
         // Handle date values
         if (aVal instanceof Date && bVal instanceof Date) {
-          return sortDirection === 'asc' ? aVal.getTime() - bVal.getTime() : bVal.getTime() - aVal.getTime();
+          return effectiveSortDirection === 'asc' ? aVal.getTime() - bVal.getTime() : bVal.getTime() - aVal.getTime();
         }
 
         // String comparison
-        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+        if (aVal < bVal) return effectiveSortDirection === 'asc' ? -1 : 1;
+        if (aVal > bVal) return effectiveSortDirection === 'asc' ? 1 : -1;
         return 0;
       });
       
@@ -1340,18 +1345,32 @@ export const PipelineView = React.memo(function PipelineView({
   };
 
   const handleSortChange = useCallback((field: string) => {
+    const isSpeedrunRank = section === 'speedrun' && (field === 'globalRank' || field === 'rank');
+    
     if (sortField === field) {
-      // Three-state cycle: asc → desc → unsorted (null)
-      if (sortDirection === 'asc') {
-        setSortDirection('desc');
-      } else if (sortDirection === 'desc') {
-        // Third click: reset to unsorted (use original data order)
-        setSortField(null);
-        setSortDirection('asc');
+      // For speedrun rank: only toggle between desc → unsorted (never allow asc)
+      if (isSpeedrunRank) {
+        if (sortDirection === 'desc') {
+          // Second click: reset to unsorted (use original data order)
+          setSortField(null);
+          setSortDirection('desc'); // Keep desc as default even when unsorted
+        }
+        // If somehow it's 'asc', force it back to 'desc'
+        else if (sortDirection === 'asc') {
+          setSortDirection('desc');
+        }
+      } else {
+        // Regular three-state cycle for other fields: asc → desc → unsorted (null)
+        if (sortDirection === 'asc') {
+          setSortDirection('desc');
+        } else if (sortDirection === 'desc') {
+          // Third click: reset to unsorted (use original data order)
+          setSortField(null);
+          setSortDirection('asc');
+        }
       }
     } else {
       // New field - check if it's speedrun rank for special default
-      const isSpeedrunRank = section === 'speedrun' && (field === 'globalRank' || field === 'rank');
       setSortField(field);
       setSortDirection(isSpeedrunRank ? 'desc' : 'asc'); // Descending for speedrun rank
     }
@@ -1372,10 +1391,11 @@ export const PipelineView = React.memo(function PipelineView({
     };
     
     const actualField = fieldMapping[field] || field;
+    const isSpeedrunRank = section === 'speedrun' && (actualField === 'globalRank' || actualField === 'rank');
     setSortField(actualField);
-    setSortDirection('asc'); // Always start with ascending from dropdown
-    console.log(`🔧 Dropdown sort: ${field} -> ${actualField}`);
-  }, []);
+    setSortDirection(isSpeedrunRank ? 'desc' : 'asc'); // Descending for speedrun rank, ascending for others
+    console.log(`🔧 Dropdown sort: ${field} -> ${actualField}, direction: ${isSpeedrunRank ? 'desc' : 'asc'}`);
+  }, [section]);
 
   const handleColumnSort = useCallback((columnName: string) => {
     // Map column display names to actual data field names (section-specific)
