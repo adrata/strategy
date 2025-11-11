@@ -111,9 +111,9 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
         console.log('🔍 [StoryDetailView] Fetching story:', storyId);
         console.log('🔍 [StoryDetailView] Workspace ID:', ui.activeWorkspace?.id);
         
-        // Add cache-busting query parameter to ensure fresh data
+        // Add cache-busting query parameter and workspaceId to ensure correct workspace lookup
         const response = await fetch(
-          `/api/v1/stacks/stories/${storyId}?t=${Date.now()}`,
+          `/api/v1/stacks/stories/${storyId}?workspaceId=${ui.activeWorkspace.id}&t=${Date.now()}`,
           { 
             credentials: 'include',
             cache: 'no-store'

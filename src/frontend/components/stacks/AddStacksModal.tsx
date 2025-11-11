@@ -12,6 +12,8 @@ import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 import { Select } from '@/platform/ui/components/Select';
+import { useRouter } from 'next/navigation';
+import { generateSlug } from '@/platform/utils/url-utils';
 
 interface AddStacksModalProps {
   isOpen: boolean;
@@ -24,6 +26,7 @@ type WorkTypeTab = 'story' | 'bug' | 'epic';
 export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModalProps) {
   const { ui } = useRevenueOS();
   const { user } = useUnifiedAuth();
+  const router = useRouter();
   const [activeWorkType, setActiveWorkType] = useState<WorkTypeTab>('story');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -523,7 +526,11 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           bugData.assigneeId = formData.assigneeId;
         }
 
-        const response = await fetch('/api/stacks/tasks', {
+        // Pass workspaceId as query parameter to ensure correct workspace is used
+        const apiUrl = `/api/stacks/tasks?workspaceId=${workspaceId}`;
+        console.log('📤 [AddStacksModal] Creating bug task with workspaceId:', workspaceId);
+
+        const response = await fetch(apiUrl, {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -540,7 +547,16 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           }
           
           onStacksAdded(createdTask);
-          onClose();
+          
+          // Navigate to the bug detail page after creation
+          if (createdTask?.id && createdTask?.title) {
+            const workspaceSlug = window.location.pathname.split('/')[1];
+            const slug = generateSlug(createdTask.title, createdTask.id);
+            // Use router.push for client-side navigation
+            router.push(`/${workspaceSlug}/stacks/${slug}`);
+          } else {
+            onClose();
+          }
         } else {
           let errorMessage = 'Failed to create bug';
           try {

@@ -69,11 +69,18 @@ export async function GET(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    // Get workspace ID from authenticated context
-    workspaceId = context.workspaceId;
+    // Get workspace ID - prefer query parameter over context (frontend may have different active workspace)
+    const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const contextWorkspaceId = context.workspaceId;
     const userId = context.userId;
     
-    console.log('✅ [STACKS API] Authenticated user:', userId, 'workspace:', workspaceId, 'storyId:', storyId);
+    // Use query parameter if provided, otherwise fall back to authenticated context
+    workspaceId = queryWorkspaceId || contextWorkspaceId;
+    
+    console.log('✅ [STACKS API] Authenticated user:', userId);
+    console.log('🔍 [STACKS API] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
+    console.log('🔍 [STACKS API] Story ID:', storyId);
 
     if (!workspaceId) {
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);

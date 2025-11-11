@@ -315,8 +315,18 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const workspaceId = context.workspaceId;
+    // Get workspace ID - prefer query parameter over context (frontend may have different active workspace)
+    const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const contextWorkspaceId = context.workspaceId;
     const userId = context.userId;
+    
+    // Use query parameter if provided, otherwise fall back to authenticated context
+    const workspaceId = queryWorkspaceId || contextWorkspaceId;
+    
+    console.log('✅ [STACKS TASKS API POST] Authenticated user:', userId);
+    console.log('🔍 [STACKS TASKS API POST] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
+    
     const body = await request.json();
     const { projectId, storyId, title, description, status, priority, type, assigneeId, product, section } = body;
 
