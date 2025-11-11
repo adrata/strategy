@@ -803,6 +803,18 @@ export function SpeedrunSprintView() {
     return () => document.removeEventListener("keydown", handleKeyDown, true);
   }, [selectedRecord, data, handleNavigateNext, handleNavigatePrevious]);
 
+  // Debug: Log when selectedRecord changes
+  React.useEffect(() => {
+    console.log('🔍 [SPEEDRUN SPRINT VIEW] selectedRecord changed:', {
+      hasSelectedRecord: !!selectedRecord,
+      selectedRecordId: selectedRecord?.id,
+      selectedRecordName: selectedRecord?.name || selectedRecord?.fullName,
+      dataLength: data?.length || 0,
+      allDataLength: allData?.length || 0,
+      loading: loading
+    });
+  }, [selectedRecord?.id, data?.length, allData?.length, loading]);
+
   // Handle snooze
   const handleSnooze = (recordId: string, duration: string) => {
     console.log(`🛌 Snoozed record ${recordId} for ${duration}`);
@@ -1002,19 +1014,6 @@ export function SpeedrunSprintView() {
       </div>
     );
   }
-
-
-  // Debug: Log when selectedRecord changes
-  React.useEffect(() => {
-    console.log('🔍 [SPEEDRUN SPRINT VIEW] selectedRecord changed:', {
-      hasSelectedRecord: !!selectedRecord,
-      selectedRecordId: selectedRecord?.id,
-      selectedRecordName: selectedRecord?.name || selectedRecord?.fullName,
-      dataLength: data?.length || 0,
-      allDataLength: allData?.length || 0,
-      loading: loading
-    });
-  }, [selectedRecord?.id, data?.length, allData?.length, loading]);
 
   // Sprint detail view for middle panel - using minimal UniversalRecordDetails
   const sprintDetailView = selectedRecord ? (
