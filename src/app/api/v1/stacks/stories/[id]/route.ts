@@ -416,55 +416,54 @@ export async function GET(
             searchedId: finalStoryId,
             requestedWorkspaceId: workspaceId
           });
-        }
-        
-        // CRITICAL DEBUG: Check if task exists in database WITHOUT workspace filter
-        // Wrap in try-catch to prevent 500 errors if query fails
-        try {
-          const taskWithoutWorkspace = await prisma.stacksTask.findFirst({
-            where: { id: finalStoryId },
-            select: { 
-              id: true, 
-              title: true,
-              type: true,
-              projectId: true, 
-              project: { 
-                select: { 
-                  id: true,
-                  name: true,
-                  workspaceId: true 
-                } 
-              } 
-            }
-          });
           
-          if (taskWithoutWorkspace) {
-            console.error('🚨 [STACKS API] BUG EXISTS IN DATABASE BUT FAILED VALIDATION:', {
-              bugId: taskWithoutWorkspace.id,
-              bugTitle: taskWithoutWorkspace.title,
-              bugType: taskWithoutWorkspace.type,
-              bugProjectId: taskWithoutWorkspace.projectId,
-              bugProjectWorkspaceId: taskWithoutWorkspace.project?.workspaceId,
-              requestedWorkspaceId: workspaceId,
-              workspaceMismatch: taskWithoutWorkspace.project?.workspaceId !== workspaceId,
-              SOLUTION: 'Bug was created in different workspace than being queried'
+          // CRITICAL DEBUG: Check if task exists in database WITHOUT workspace filter
+          // Wrap in try-catch to prevent 500 errors if query fails
+          try {
+            const taskWithoutWorkspace = await prisma.stacksTask.findFirst({
+              where: { id: finalStoryId },
+              select: { 
+                id: true, 
+                title: true,
+                type: true,
+                projectId: true, 
+                project: { 
+                  select: { 
+                    id: true,
+                    name: true,
+                    workspaceId: true 
+                  } 
+                } 
+              }
             });
-          } else {
-            console.error('🚨 [STACKS API] BUG DOES NOT EXIST IN DATABASE AT ALL:', {
-              searchedId: finalStoryId,
-              suggestion: 'Bug may not have been created successfully'
+            
+            if (taskWithoutWorkspace) {
+              console.error('🚨 [STACKS API] BUG EXISTS IN DATABASE BUT FAILED VALIDATION:', {
+                bugId: taskWithoutWorkspace.id,
+                bugTitle: taskWithoutWorkspace.title,
+                bugType: taskWithoutWorkspace.type,
+                bugProjectId: taskWithoutWorkspace.projectId,
+                bugProjectWorkspaceId: taskWithoutWorkspace.project?.workspaceId,
+                requestedWorkspaceId: workspaceId,
+                workspaceMismatch: taskWithoutWorkspace.project?.workspaceId !== workspaceId,
+                SOLUTION: 'Bug was created in different workspace than being queried'
+              });
+            } else {
+              console.error('🚨 [STACKS API] BUG DOES NOT EXIST IN DATABASE AT ALL:', {
+                searchedId: finalStoryId,
+                suggestion: 'Bug may not have been created successfully'
+              });
+            }
+          } catch (debugQueryError) {
+            // Log but don't throw - this is just for debugging
+            console.warn('⚠️ [STACKS API] Error in debug query (non-fatal):', {
+              error: debugQueryError instanceof Error ? debugQueryError.message : String(debugQueryError),
+              code: (debugQueryError as any)?.code,
+              searchedId: finalStoryId
             });
           }
-        } catch (debugQueryError) {
-          // Log but don't throw - this is just for debugging
-          console.warn('⚠️ [STACKS API] Error in debug query (non-fatal):', {
-            error: debugQueryError instanceof Error ? debugQueryError.message : String(debugQueryError),
-            code: (debugQueryError as any)?.code,
-            searchedId: finalStoryId
-          });
-        }
-        
-        console.log('❌ [STACKS API] Task not found by ID or workspace mismatch');
+          
+          console.log('❌ [STACKS API] Task not found by ID or workspace mismatch');
           
           // Also check story without workspace
           const storyWithoutWorkspace = await prisma.stacksStory.findFirst({
