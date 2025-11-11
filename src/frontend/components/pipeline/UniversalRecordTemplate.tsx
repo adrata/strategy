@@ -2753,22 +2753,110 @@ export function UniversalRecordTemplate({
       
       // 🚀 CACHE INVALIDATION: Trigger data refresh if status field was updated
       if (field === 'status') {
-        // Determine target section based on status value
-        let targetSection = 'people'; // default
-        if (value === 'LEAD') targetSection = 'leads';
-        else if (value === 'PROSPECT') targetSection = 'prospects';
-        else if (value === 'OPPORTUNITY') targetSection = 'opportunities';
-        else if (value === 'CLIENT' || value === 'CUSTOMER' || value === 'SUPERFAN') targetSection = 'clients';
+        // Normalize status value to uppercase for consistent comparison
+        const normalizedStatus = typeof value === 'string' ? value.toUpperCase().trim() : value;
         
+        // Determine target section based on status value (case-insensitive)
+        const getSectionFromStatus = (status: string | null): string => {
+          if (!status) return 'people'; // default
+          const statusUpper = status.toUpperCase().trim();
+          if (statusUpper === 'LEAD') return 'leads';
+          if (statusUpper === 'PROSPECT') return 'prospects';
+          if (statusUpper === 'OPPORTUNITY') return 'opportunities';
+          if (statusUpper === 'CLIENT' || statusUpper === 'CUSTOMER' || statusUpper === 'SUPERFAN') return 'clients';
+          return 'people'; // default fallback
+        };
+        
+        const targetSection = getSectionFromStatus(normalizedStatus);
+        
+        // Determine current section from recordType
+        const currentSection = recordType === 'leads' ? 'leads' : 
+                              recordType === 'prospects' ? 'prospects' :
+                              recordType === 'opportunities' ? 'opportunities' :
+                              recordType === 'clients' ? 'clients' : 'people';
+        
+        console.log(`🔄 [STATUS CHANGE] Status update detected:`, {
+          field,
+          value,
+          normalizedStatus,
+          currentSection,
+          targetSection,
+          recordId,
+          recordType,
+          willNavigate: targetSection !== currentSection
+        });
+        
+        // Trigger refresh events for both old and new sections
         window.dispatchEvent(new CustomEvent('refresh-counts', {
           detail: { 
             section: targetSection,
             type: 'status-update',
             field, 
-            value, 
-            recordId 
+            value: normalizedStatus, 
+            recordId,
+            oldSection: currentSection,
+            newSection: targetSection
           }
         }));
+        
+        // Also refresh the old section counts
+        if (currentSection !== targetSection) {
+          window.dispatchEvent(new CustomEvent('refresh-counts', {
+            detail: { 
+              section: currentSection,
+              type: 'status-update',
+              field, 
+              value: normalizedStatus, 
+              recordId,
+              oldSection: currentSection,
+              newSection: targetSection
+            }
+          }));
+        }
+        
+        // CRITICAL FIX: Navigate to the correct section when status changes
+        // This ensures LEAD → PROSPECT → OPPORTUNITY conversions work properly
+        // Only navigate if we're actually changing sections (not just updating status within same section)
+        if (targetSection !== currentSection && typeof window !== 'undefined') {
+          console.log(`🔄 [STATUS CHANGE] Status changed to ${normalizedStatus}, navigating from ${currentSection} to ${targetSection}`);
+          
+          // Generate proper slug for navigation using person's ID and name (not company)
+          const { generateSlug } = require('@/platform/utils/url-utils');
+          const recordName = record?.fullName || record?.name || record?.firstName || 'record';
+          const recordSlug = generateSlug(recordName, recordId);
+          
+          // Get workspace slug from current URL
+          const currentPath = window.location.pathname;
+          const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+          
+          if (workspaceMatch) {
+            const workspaceSlug = workspaceMatch[1];
+            const newUrl = `/${workspaceSlug}/${targetSection}/${recordSlug}`;
+            
+            console.log(`🔗 [STATUS CHANGE] Navigating to: ${newUrl}`, {
+              workspaceSlug,
+              targetSection,
+              recordSlug,
+              recordName,
+              recordId,
+              oldUrl: currentPath
+            });
+            
+            // Navigate to the new section with proper record (not company)
+            // Use window.location.href for reliable navigation
+            // Small delay to ensure save completes and API response is processed
+            setTimeout(() => {
+              window.location.href = newUrl;
+            }, 500);
+          } else {
+            // Fallback for non-workspace URLs
+            const newUrl = `/${targetSection}/${recordSlug}`;
+            console.log(`🔗 [STATUS CHANGE] Navigating to (no workspace): ${newUrl}`);
+            setTimeout(() => {
+              window.location.href = newUrl;
+            }, 500);
+          }
+        }
       }
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error saving field:', error);
@@ -3160,8 +3248,9 @@ export function UniversalRecordTemplate({
       const prospectId = result.data?.id || record.id;
       const prospectName = result.data?.fullName || record.fullName || record.name || 'Unknown';
       
-      // Create a proper slug: name-id (matching existing pattern)
-      const prospectSlug = `${prospectName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}-${prospectId}`;
+      // Use generateSlug utility for consistent slug generation
+      const { generateSlug } = require('@/platform/utils/url-utils');
+      const prospectSlug = generateSlug(prospectName, prospectId);
       
       // Get current path and replace the section properly
       const currentPath = window.location.pathname;
@@ -3170,7 +3259,12 @@ export function UniversalRecordTemplate({
       if (workspaceMatch) {
         const workspaceSlug = workspaceMatch[1];
         const newUrl = `/${workspaceSlug}/prospects/${prospectSlug}`;
-        console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
+        console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`, {
+          workspaceSlug,
+          prospectSlug,
+          prospectName,
+          prospectId
+        });
         router.push(newUrl);
       } else {
         const newUrl = `/prospects/${prospectSlug}`;
@@ -3237,8 +3331,9 @@ export function UniversalRecordTemplate({
       const opportunityId = result.data?.id || record.id;
       const opportunityName = result.data?.fullName || record.fullName || record.name || 'Unknown';
       
-      // Create a proper slug: name-id (matching existing pattern)
-      const opportunitySlug = `${opportunityName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}-${opportunityId}`;
+      // Use generateSlug utility for consistent slug generation
+      const { generateSlug } = require('@/platform/utils/url-utils');
+      const opportunitySlug = generateSlug(opportunityName, opportunityId);
       
       // Get current path and replace the section properly
       const currentPath = window.location.pathname;
@@ -3247,7 +3342,12 @@ export function UniversalRecordTemplate({
       if (workspaceMatch) {
         const workspaceSlug = workspaceMatch[1];
         const newUrl = `/${workspaceSlug}/opportunities/${opportunitySlug}`;
-        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
+        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`, {
+          workspaceSlug,
+          opportunitySlug,
+          opportunityName,
+          opportunityId
+        });
         router.push(newUrl);
       } else {
         const newUrl = `/opportunities/${opportunitySlug}`;
@@ -4227,12 +4327,7 @@ export function UniversalRecordTemplate({
             (recordType === 'companies' || record?.isCompanyLead || record?.recordType === 'company') ? 
               <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'speedrun' ?
-                <SpeedrunInsightsTab 
-                  key={activeTab} 
-                  person={record} 
-                  insightsData={extractProductionInsights(record)} 
-                  onSave={handleInlineFieldSave}
-                /> :
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'people' ?
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
@@ -4271,12 +4366,7 @@ export function UniversalRecordTemplate({
             (recordType === 'companies' || record?.isCompanyLead || record?.recordType === 'company') ? 
               <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'speedrun' ?
-                <SpeedrunInsightsTab 
-                  key={activeTab} 
-                  person={record} 
-                  insightsData={extractProductionInsights(record)} 
-                  onSave={handleInlineFieldSave}
-                /> :
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'people' ?
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />

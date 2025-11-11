@@ -1175,12 +1175,23 @@ export function SpeedrunSprintView() {
             }, 10000);
           }
           
-          // Schedule a delayed refresh to ensure eventual consistency (after 2 seconds)
-          // This allows the UI to update immediately while ensuring data consistency
-          setTimeout(() => {
-            console.log('🔄 [SPEEDRUN SPRINT] Performing delayed refresh for consistency');
+          // CRITICAL FIX: For contact info fields (email, phone, linkedinUrl), refresh immediately
+          // This ensures the UI updates without requiring multiple refreshes
+          const contactInfoFields = ['email', 'phone', 'linkedinUrl', 'linkedinNavigatorUrl', 'linkedinConnectionDate'];
+          const isContactInfoUpdate = Object.keys(updatedRecord).some(key => contactInfoFields.includes(key));
+          
+          if (isContactInfoUpdate) {
+            console.log('🔄 [SPEEDRUN SPRINT] Contact info updated - refreshing immediately');
+            // Refresh immediately for contact info to ensure UI updates
             refresh();
-          }, 2000);
+          } else {
+            // Schedule a delayed refresh for other fields to ensure eventual consistency (after 2 seconds)
+            // This allows the UI to update immediately while ensuring data consistency
+            setTimeout(() => {
+              console.log('🔄 [SPEEDRUN SPRINT] Performing delayed refresh for consistency');
+              refresh();
+            }, 2000);
+          }
         }}
       />
     </div>
