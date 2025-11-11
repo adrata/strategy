@@ -588,7 +588,7 @@ export async function GET(
           
           return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
         }
-        } catch (taskError) {
+      } catch (taskError) {
           console.error('❌ [STACKS API] Error fetching task:', taskError);
           console.error('❌ [STACKS API] Task error details:', {
             message: taskError instanceof Error ? taskError.message : String(taskError),
