@@ -588,66 +588,6 @@ export async function GET(
           
           return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
         }
-
-        console.log('✅ [STACKS API] Task found:', task.id, 'type:', task.type);
-        console.log('📎 [STACKS API] Task attachments:', JSON.stringify((task as any).attachments));
-
-        // Transform task data to match story response format
-        // Handle attachments - they can be null, an array, or a single object
-        let taskAttachments: any[] = [];
-        if ((task as any).attachments) {
-          if (Array.isArray((task as any).attachments)) {
-            taskAttachments = (task as any).attachments;
-          } else if (typeof (task as any).attachments === 'object') {
-            // If it's a single object, wrap it in an array
-            taskAttachments = [(task as any).attachments];
-          }
-        }
-        console.log('📎 [STACKS API] Processed attachments:', JSON.stringify(taskAttachments));
-
-        const transformedStory = {
-          id: task.id,
-          title: task.title,
-          description: task.description,
-          acceptanceCriteria: null, // Tasks don't have acceptance criteria
-          status: task.status,
-          priority: task.priority,
-          viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs, 'detail' for other tasks
-          product: task.product || null,
-          section: task.section || null,
-          rank: task.rank || null, // Tasks have rank field
-          type: task.type || 'task', // Include type to distinguish from stories
-          attachments: taskAttachments, // Include attachments from task
-          assignee: task.assignee ? {
-            id: task.assignee.id,
-            name: (() => {
-              const firstName = task.assignee.firstName != null ? String(task.assignee.firstName) : '';
-              const lastName = task.assignee.lastName != null ? String(task.assignee.lastName) : '';
-              const fullName = `${firstName} ${lastName}`.trim();
-              return fullName || 'Unknown';
-            })(),
-            email: task.assignee.email || ''
-          } : null,
-          epoch: null, // Tasks don't have epochs
-          story: task.story ? {
-            id: task.story.id,
-            title: task.story.title
-          } : null,
-          project: task.project ? {
-            id: task.project.id,
-            name: task.project.name
-          } : null,
-          dueDate: null,
-          tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
-          isFlagged: false, // Tasks don't have isFlagged
-          points: null, // Tasks don't have points
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
-          timeInStatus: 0 // Tasks don't track statusChangedAt
-        };
-
-        console.log('✅ [STACKS API] Task found and transformed');
-        return NextResponse.json({ story: transformedStory, type: 'task' });
       } catch (taskError) {
         console.error('❌ [STACKS API] Error fetching task:', taskError);
         console.error('❌ [STACKS API] Task error details:', {
