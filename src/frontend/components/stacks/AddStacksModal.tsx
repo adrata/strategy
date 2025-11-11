@@ -541,6 +541,16 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           const data = await response.json().catch(() => ({}));
           const createdTask = data.task || data;
           
+          console.log('✅ [AddStacksModal] Bug created successfully:', {
+            taskId: createdTask.id,
+            taskTitle: createdTask.title,
+            taskType: createdTask.type,
+            projectId: createdTask.project?.id,
+            projectWorkspaceId: createdTask.project?.workspaceId,
+            creationWorkspaceId: workspaceId,
+            timestamp: new Date().toISOString()
+          });
+          
           // Upload images if any
           if (uploadedImages.length > 0) {
             await uploadImagesToTask(createdTask.id, workspaceId);
@@ -552,8 +562,23 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           if (createdTask?.id && createdTask?.title) {
             const workspaceSlug = window.location.pathname.split('/')[1];
             const slug = generateSlug(createdTask.title, createdTask.id);
-            // Use router.push for client-side navigation
-            router.push(`/${workspaceSlug}/stacks/${slug}`);
+            
+            console.log('🔗 [AddStacksModal] Navigating to bug after creation:', {
+              bugId: createdTask.id,
+              bugSlug: slug,
+              workspaceSlug,
+              workspaceId,
+              targetUrl: `/${workspaceSlug}/stacks/${slug}`
+            });
+            
+            // CRITICAL FIX: Add delay before navigation to ensure:
+            // 1. Database commit completes
+            // 2. Workspace context loads in destination page
+            // 3. Project association is fully established
+            setTimeout(() => {
+              console.log('🚀 [AddStacksModal] Executing delayed navigation to bug');
+              router.push(`/${workspaceSlug}/stacks/${slug}`);
+            }, 800); // 800ms delay ensures database and context are ready
           } else {
             onClose();
           }

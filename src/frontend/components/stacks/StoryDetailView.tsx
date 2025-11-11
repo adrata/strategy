@@ -17,6 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { useUnifiedAuth } from '@/platform/auth';
 import { StoryMainView } from './story-views/StoryMainView';
 import { generateSlug, extractIdFromSlug } from '@/platform/utils/url-utils';
 
@@ -58,6 +59,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { ui } = useRevenueOS();
+  const { user } = useUnifiedAuth();
   const [story, setStory] = useState<any>(null);
   const [storyType, setStoryType] = useState<'story' | 'task'>('story');
   const [loading, setLoading] = useState(true);
@@ -69,12 +71,34 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   // Fetch stories list for navigation
   useEffect(() => {
     const fetchStories = async () => {
-      if (!ui.activeWorkspace?.id) return;
+      // Use same fallback logic for consistency
+      let workspaceId = ui.activeWorkspace?.id;
+      
+      if (!workspaceId) {
+        const workspaceSlug = pathname.split('/')[1];
+        if (workspaceSlug) {
+          try {
+            const { getWorkspaceIdBySlug } = await import('@/platform/config/workspace-mapping');
+            const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+            if (urlWorkspaceId) {
+              workspaceId = urlWorkspaceId;
+            }
+          } catch (error) {
+            console.warn('⚠️ [StoryDetailView] Failed to resolve workspace from URL slug:', error);
+          }
+        }
+      }
+      
+      if (!workspaceId && user?.activeWorkspaceId) {
+        workspaceId = user.activeWorkspaceId;
+      }
+      
+      if (!workspaceId) return;
 
       try {
         // Add cache-busting to ensure fresh data
         const response = await fetch(
-          `/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}&t=${Date.now()}`,
+          `/api/v1/stacks/stories?workspaceId=${workspaceId}&t=${Date.now()}`,
           { 
             credentials: 'include',
             cache: 'no-store'
@@ -96,24 +120,63 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     };
 
     fetchStories();
-  }, [storyId, ui.activeWorkspace?.id]);
+  }, [storyId, ui.activeWorkspace?.id, user?.activeWorkspaceId, pathname]);
 
   // Fetch story data and redirect to slugged URL if needed
   useEffect(() => {
     const fetchStory = async () => {
-      if (!ui.activeWorkspace?.id || !storyId) {
+      // CRITICAL FIX: Resolve workspace ID with multiple fallbacks (same as AddStacksModal)
+      // This ensures consistent workspace resolution between bug creation and lookup
+      let workspaceId = ui.activeWorkspace?.id;
+      
+      // Fallback 1: Get from URL workspace slug if UI workspace is missing
+      if (!workspaceId) {
+        const workspaceSlug = pathname.split('/')[1];
+        if (workspaceSlug) {
+          try {
+            const { getWorkspaceIdBySlug } = await import('@/platform/config/workspace-mapping');
+            const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+            if (urlWorkspaceId) {
+              console.log(`🔍 [StoryDetailView] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+              workspaceId = urlWorkspaceId;
+            }
+          } catch (error) {
+            console.warn('⚠️ [StoryDetailView] Failed to resolve workspace from URL slug:', error);
+          }
+        }
+      }
+      
+      // Fallback 2: Use user's active workspace ID
+      if (!workspaceId && user?.activeWorkspaceId) {
+        console.log(`🔍 [StoryDetailView] Using user activeWorkspaceId: ${user.activeWorkspaceId}`);
+        workspaceId = user.activeWorkspaceId;
+      }
+      
+      if (!workspaceId || !storyId) {
+        console.error('❌ [StoryDetailView] No workspace ID available after all fallbacks:', {
+          uiActiveWorkspace: ui.activeWorkspace?.id,
+          userActiveWorkspaceId: user?.activeWorkspaceId,
+          pathname,
+          storyId
+        });
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
-        console.log('🔍 [StoryDetailView] Fetching story:', storyId);
-        console.log('🔍 [StoryDetailView] Workspace ID:', ui.activeWorkspace?.id);
+        console.log('🔍 [StoryDetailView] Fetching story:', {
+          storyId,
+          workspaceId,
+          source: ui.activeWorkspace?.id === workspaceId ? 'ui.activeWorkspace' : 
+                  user?.activeWorkspaceId === workspaceId ? 'user.activeWorkspaceId' : 'URL slug',
+          uiActiveWorkspaceId: ui.activeWorkspace?.id,
+          userActiveWorkspaceId: user?.activeWorkspaceId
+        });
         
         // Add cache-busting query parameter and workspaceId to ensure correct workspace lookup
         const response = await fetch(
-          `/api/v1/stacks/stories/${storyId}?workspaceId=${ui.activeWorkspace.id}&t=${Date.now()}`,
+          `/api/v1/stacks/stories/${storyId}?workspaceId=${workspaceId}&t=${Date.now()}`,
           { 
             credentials: 'include',
             cache: 'no-store'
@@ -170,7 +233,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     };
 
     fetchStory();
-  }, [storyId, ui.activeWorkspace?.id, pathname, router, hasRedirected]);
+  }, [storyId, ui.activeWorkspace?.id, user?.activeWorkspaceId, pathname, router, hasRedirected]);
 
   const handleBack = () => {
     if (onClose) {
@@ -221,14 +284,35 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   };
 
   const handleUpdate = async () => {
-    if (!story?.id || !ui.activeWorkspace?.id) return;
+    if (!story?.id) return;
+    
+    // Resolve workspace ID with fallbacks
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId) {
+      const workspaceSlug = pathname.split('/')[1];
+      if (workspaceSlug) {
+        try {
+          const { getWorkspaceIdBySlug } = await import('@/platform/config/workspace-mapping');
+          const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+          if (urlWorkspaceId) {
+            workspaceId = urlWorkspaceId;
+          }
+        } catch (error) {
+          console.warn('⚠️ [StoryDetailView] Failed to resolve workspace from URL slug:', error);
+        }
+      }
+    }
+    if (!workspaceId && user?.activeWorkspaceId) {
+      workspaceId = user.activeWorkspaceId;
+    }
+    if (!workspaceId) return;
     
     try {
       setIsUpdating(true);
       
-      // Fetch fresh story data from API
+      // Fetch fresh story data from API with workspaceId
       const response = await fetch(
-        `/api/v1/stacks/stories/${story.id}?t=${Date.now()}`,
+        `/api/v1/stacks/stories/${story.id}?workspaceId=${workspaceId}&t=${Date.now()}`,
         { credentials: 'include' }
       );
 

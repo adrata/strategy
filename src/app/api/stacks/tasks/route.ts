@@ -402,7 +402,7 @@ export async function POST(request: NextRequest) {
         createdAt: true,
         updatedAt: true,
         project: {
-          select: { id: true, name: true }
+          select: { id: true, name: true, workspaceId: true }
         },
         story: {
           select: { id: true, title: true }
@@ -411,6 +411,20 @@ export async function POST(request: NextRequest) {
           select: { id: true, firstName: true, lastName: true, email: true }
         }
       }
+    });
+
+    // COMPREHENSIVE LOGGING: Track workspace information for debugging
+    console.log('✅ [STACKS TASKS API] Task created successfully:', {
+      taskId: task.id,
+      taskTitle: task.title,
+      taskType: task.type,
+      projectId: task.projectId,
+      projectWorkspaceId: task.project?.workspaceId,
+      requestedWorkspaceId: workspaceId,
+      workspaceMatch: task.project?.workspaceId === workspaceId,
+      queryWorkspaceId,
+      contextWorkspaceId,
+      timestamp: new Date().toISOString()
     });
 
     // Transform assignee field to match expected format
