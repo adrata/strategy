@@ -606,6 +606,11 @@ export async function GET(
       }
     }
 
+    // If we reach here, story should exist (if it didn't, we would have returned a task or 404)
+    if (!story) {
+      return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
+    }
+
     // Transform the data to match the expected format
     const transformedStory = {
       id: story.id,
