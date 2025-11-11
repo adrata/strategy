@@ -4739,9 +4739,33 @@ export function UniversalRecordTemplate({
               </div>
               */}
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground mb-1">{getDisplayName()}</h1>
-              <p className="text-sm text-muted">{getSubtitle()}</p>
+            <div className="flex items-center gap-3">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground mb-1">{getDisplayName()}</h1>
+                <p className="text-sm text-muted">{getSubtitle()}</p>
+              </div>
+              
+              {/* Stage Badge - Show for all records including company records */}
+              {(() => {
+                const stageValue = record?.stage || record?.status;
+                if (stageValue && recordType !== 'opportunities') {
+                  const stageColors: Record<string, string> = {
+                    'LEAD': 'bg-warning/20 text-warning border-warning/50',
+                    'PROSPECT': 'bg-primary/20 text-primary border-primary/50',
+                    'OPPORTUNITY': 'bg-info/20 text-info border-info/50',
+                    'CUSTOMER': 'bg-success/20 text-success border-success/50',
+                    'CLIENT': 'bg-success/20 text-success border-success/50',
+                    'SUPERFAN': 'bg-info/20 text-info border-info/50'
+                  };
+                  const colorClass = stageColors[stageValue.toUpperCase()] || 'bg-hover/50 text-foreground border-border';
+                  return (
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border ${colorClass} ml-2`}>
+                      {stageValue}
+                    </span>
+                  );
+                }
+                return null;
+              })()}
             </div>
           </div>
           
@@ -4919,15 +4943,26 @@ export function UniversalRecordTemplate({
       />
 
       {/* Add Person to Company Modal */}
-      {recordType === 'companies' && (
-        <AddPersonToCompanyModal
-          isOpen={isAddPersonModalOpen}
-          onClose={() => setIsAddPersonModalOpen(false)}
-          companyId={record?.id}
-          companyName={record?.name || record?.companyName || ''}
-          onPersonAdded={handlePersonAdded}
-        />
-      )}
+      {(() => {
+        // Show for companies and for speedrun/leads/prospects company records
+        const isCompanyRecord = recordType === 'companies' ||
+                               (recordType === 'speedrun' && record?.recordType === 'company') ||
+                               (recordType === 'leads' && record?.isCompanyLead === true) ||
+                               (recordType === 'prospects' && record?.isCompanyLead === true);
+        
+        if (isCompanyRecord) {
+          return (
+            <AddPersonToCompanyModal
+              isOpen={isAddPersonModalOpen}
+              onClose={() => setIsAddPersonModalOpen(false)}
+              companyId={record?.id}
+              companyName={record?.name || record?.companyName || record?.company || ''}
+              onPersonAdded={handlePersonAdded}
+            />
+          );
+        }
+        return null;
+      })()}
 
       {/* Add Company Modal */}
       {(recordType === 'people' || recordType === 'leads' || recordType === 'prospects') && (
