@@ -588,20 +588,21 @@ export async function GET(
           
           return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
         }
-      } catch (taskError) {
-        console.error('❌ [STACKS API] Error fetching task:', taskError);
-        console.error('❌ [STACKS API] Task error details:', {
-          message: taskError instanceof Error ? taskError.message : String(taskError),
-          name: taskError instanceof Error ? taskError.name : 'Unknown',
-          stack: taskError instanceof Error ? taskError.stack : undefined,
-          code: (taskError as any)?.code,
-          meta: (taskError as any)?.meta,
-          queryId: finalStoryId,
-          workspaceId: workspaceId,
-          paramValue: paramValue
-        });
-        // Re-throw to be caught by outer catch block
-        throw taskError;
+        } catch (taskError) {
+          console.error('❌ [STACKS API] Error fetching task:', taskError);
+          console.error('❌ [STACKS API] Task error details:', {
+            message: taskError instanceof Error ? taskError.message : String(taskError),
+            name: taskError instanceof Error ? taskError.name : 'Unknown',
+            stack: taskError instanceof Error ? taskError.stack : undefined,
+            code: (taskError as any)?.code,
+            meta: (taskError as any)?.meta,
+            queryId: finalStoryId,
+            workspaceId: workspaceId,
+            paramValue: paramValue
+          });
+          // Re-throw to be caught by outer catch block
+          throw taskError;
+        }
       }
     }
 
