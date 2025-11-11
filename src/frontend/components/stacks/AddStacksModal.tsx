@@ -426,11 +426,13 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     setIsLoading(true);
 
     try {
-      // Resolve workspace ID with fallback logic (same as other Stacks components)
-      let workspaceId = ui.activeWorkspace?.id;
+      // CRITICAL FIX: Always prioritize URL workspace slug as source of truth
+      // This ensures consistent workspace resolution between bug creation and lookup
+      // The URL slug is the most reliable source since it's what the user is actually viewing
+      let workspaceId: string | null = null;
       
-      // Fallback 1: Get from URL workspace slug if UI workspace is missing
-      if (!workspaceId && workspaceSlug) {
+      // Priority 1: Get from URL workspace slug (MOST RELIABLE - source of truth)
+      if (workspaceSlug) {
         const { getWorkspaceIdBySlug } = await import('@/platform/config/workspace-mapping');
         const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
         if (urlWorkspaceId) {
@@ -439,7 +441,13 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         }
       }
       
-      // Fallback 2: Use user's active workspace ID
+      // Fallback 2: Use UI active workspace (only if URL slug didn't work)
+      if (!workspaceId && ui.activeWorkspace?.id) {
+        console.log(`🔍 [AddStacksModal] Using UI activeWorkspace: ${ui.activeWorkspace.id}`);
+        workspaceId = ui.activeWorkspace.id;
+      }
+      
+      // Fallback 3: Use user's active workspace ID (last resort)
       if (!workspaceId && user?.activeWorkspaceId) {
         console.log(`🔍 [AddStacksModal] Using user activeWorkspaceId: ${user.activeWorkspaceId}`);
         workspaceId = user.activeWorkspaceId;

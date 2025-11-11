@@ -1,0 +1,837 @@
+{
+  "timestamp": "2025-11-11T03:11:57.386Z",
+  "totalCompanies": 459,
+  "exactDuplicates": [],
+  "similarDuplicates": [
+    {
+      "normalizedName": "alabama power",
+      "companies": [
+        {
+          "id": "01K9QD597SA0NQSWJQW0ZQKSZX",
+          "name": "Alabama Power",
+          "website": "https://southernco.com",
+          "linkedinUrl": "https://www.linkedin.com/company/alabama-power",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:29.913Z"
+        },
+        {
+          "id": "01K9QD2TC5W7R9XWC6V5AD7T1P",
+          "name": "Alabama Power Company",
+          "website": "https://southernco.com",
+          "linkedinUrl": "https://www.linkedin.com/company/alabama-power",
+          "peopleCount": 14,
+          "createdAt": "2025-11-10T17:30:09.157Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "elgi",
+      "companies": [
+        {
+          "id": "01K9QD4B42MJWD058PHPJNTJM9",
+          "name": "ELGi",
+          "website": "https://elgi.com",
+          "linkedinUrl": "https://www.linkedin.com/company/elginorthamerica",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:30:59.074Z"
+        },
+        {
+          "id": "01K9QD4GT0CRTBSWJF9GF6D7PT",
+          "name": "El-Gi",
+          "website": "https://www.elgi.com/us",
+          "linkedinUrl": "https://www.linkedin.com/company/elginorthamerica",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:04.896Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "exelon",
+      "companies": [
+        {
+          "id": "01K9QD59TYCCF6PYXZW6PPR1D4",
+          "name": "Exelon",
+          "website": "https://exeloncorp.com",
+          "linkedinUrl": "https://www.linkedin.com/company/exelon",
+          "peopleCount": 2,
+          "createdAt": "2025-11-10T17:31:30.526Z"
+        },
+        {
+          "id": "01K9QD37PX0CDR5JMQGYG0YX1J",
+          "name": "Exelon Corporation",
+          "website": "https://exeloncorp.com",
+          "linkedinUrl": "https://www.linkedin.com/company/exelon",
+          "peopleCount": 9,
+          "createdAt": "2025-11-10T17:30:22.813Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "expanse electrical",
+      "companies": [
+        {
+          "id": "01K9QD471AN93DDHJSCRV8RJFX",
+          "name": "Expanse Electrical",
+          "website": "https://expanseelectrical.com",
+          "linkedinUrl": "https://www.linkedin.com/company/expanse-electrical-co",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:30:54.890Z"
+        },
+        {
+          "id": "01K9QD4M2X1SK8RX2XT2TEAQH6",
+          "name": "Expanse Electrical Co.",
+          "website": "https://expanseelectrical.com",
+          "linkedinUrl": "https://www.linkedin.com/company/expanse-electrical-co",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:08.253Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "florida power",
+      "companies": [
+        {
+          "id": "01K9QD4TD0WFR202WQ6EVT8E8R",
+          "name": "FLORIDA POWER",
+          "website": "https://fpl.com",
+          "linkedinUrl": "https://www.linkedin.com/company/florida-power-&-light",
+          "peopleCount": 5,
+          "createdAt": "2025-11-10T17:31:14.720Z"
+        },
+        {
+          "id": "01K9QD2Y2QKHGZY3QRFVEPNEFN",
+          "name": "Florida Power Corporation",
+          "website": "https://www.fpl.com",
+          "linkedinUrl": "https://www.linkedin.com/company/fpl",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:30:12.951Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "georgia system operations",
+      "companies": [
+        {
+          "id": "01K9QD5A6ZNHFQ2D0EME0ZJXWW",
+          "name": "Georgia System Operations Corp.",
+          "website": "https://gasoc.com",
+          "linkedinUrl": "https://www.linkedin.com/company/georgia-system-operations-corporation",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:30.912Z"
+        },
+        {
+          "id": "01K9QD2YF92H01KC773B13QK5N",
+          "name": "Georgia System Operations Corporation",
+          "website": "https://gasoc.com",
+          "linkedinUrl": "https://www.linkedin.com/company/georgia-system-operations-corporation",
+          "peopleCount": 3,
+          "createdAt": "2025-11-10T17:30:13.353Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "micronet communications",
+      "companies": [
+        {
+          "id": "01K9QD4YRWS44BGSFWEGXS93C8",
+          "name": "Micronet Communications",
+          "website": "https://www.micronetcom.com",
+          "linkedinUrl": "https://www.linkedin.com/company/micronet-communications-inc-",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:19.196Z"
+        },
+        {
+          "id": "01K9QD4Z52BAJ97GT0WKYRYYP3",
+          "name": "Micronet Communications, Inc.",
+          "website": "https://micronetcom.com",
+          "linkedinUrl": "https://www.linkedin.com/company/micronet-communications-inc-",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:19.587Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "pemtex",
+      "companies": [
+        {
+          "id": "01K9QD399Q2R0PAMZK9704SX0M",
+          "name": "Pem-Tex LLC",
+          "website": "https://gmail.com",
+          "linkedinUrl": null,
+          "peopleCount": 2,
+          "createdAt": "2025-11-10T17:30:24.439Z"
+        },
+        {
+          "id": "01K9QD4FSKDJ8AVRBDMGST7JQ5",
+          "name": "Pem-Tex, LLC",
+          "website": "https://pemtex.com",
+          "linkedinUrl": null,
+          "peopleCount": 2,
+          "createdAt": "2025-11-10T17:31:03.859Z"
+        },
+        {
+          "id": "01K9QD4BH96ZNW9PNYWPYY4BMG",
+          "name": "Pem-Tex,LLC",
+          "website": "https://pemtex.com",
+          "linkedinUrl": null,
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:30:59.497Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "southern california edison",
+      "companies": [
+        {
+          "id": "01K9QD5BCQP99RHJM06CZ0CG8Q",
+          "name": "Southern California Edison",
+          "website": "https://sce.com",
+          "linkedinUrl": "https://www.linkedin.com/company/sce",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:32.119Z"
+        },
+        {
+          "id": "01K9QD4WVH2NPY5WWB9CRRGJDB",
+          "name": "Southern California Edison Company",
+          "website": "https://sce.com",
+          "linkedinUrl": "https://www.linkedin.com/company/sce",
+          "peopleCount": 71,
+          "createdAt": "2025-11-10T17:31:17.233Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "tucson electric power",
+      "companies": [
+        {
+          "id": "01K9QD55WFH5K2AJ5WZEDM1MM4",
+          "name": "Tucson Electric Power",
+          "website": "https://tep.com",
+          "linkedinUrl": "https://www.linkedin.com/company/tucson-electric-power",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:31:26.479Z"
+        },
+        {
+          "id": "01K9QD563YXF3G7DZ3GJVFVCJ8",
+          "name": "Tucson Electric Power Co",
+          "website": null,
+          "linkedinUrl": "https://www.linkedin.com/company/tucson-electric-power",
+          "peopleCount": 0,
+          "createdAt": "2025-11-10T17:31:26.718Z"
+        }
+      ]
+    },
+    {
+      "normalizedName": "wheatland electric cooperative",
+      "companies": [
+        {
+          "id": "01K9QD35VE5AJKAXQFTCQWPP57",
+          "name": "Wheatland Electric Cooperative",
+          "website": "https://www.weci.net",
+          "linkedinUrl": "https://www.linkedin.com/company/wheatland-electric-cooperative-inc.",
+          "peopleCount": 2,
+          "createdAt": "2025-11-10T17:30:20.910Z"
+        },
+        {
+          "id": "01K9QD36168PCJBPZX7N74KJXJ",
+          "name": "Wheatland Electric Cooperative, Inc.",
+          "website": "https://weci.net",
+          "linkedinUrl": "https://www.linkedin.com/company/wheatland-electric-cooperative-inc-",
+          "peopleCount": 1,
+          "createdAt": "2025-11-10T17:30:21.094Z"
+        }
+      ]
+    }
+  ],
+  "highSimilarityPairs": [
+    {
+      "similarity": 0.8529411764705882,
+      "company1": {
+        "id": "01K9QD2KPHQH289KAFWZEC8PY4",
+        "name": "Arizona Electric Power Cooperative",
+        "website": "https://azgt.coop",
+        "linkedinUrl": "https://www.linkedin.com/company/arizona-electric-power-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:02.321Z"
+      },
+      "company2": {
+        "id": "01K9QD2PEAE4RYWF11R5S4WZJ9",
+        "name": "Basin Electric Power Cooperative",
+        "website": "https://bepc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/basin-electric-power-cooperative",
+        "peopleCount": 7,
+        "createdAt": "2025-11-10T17:30:05.130Z"
+      }
+    },
+    {
+      "similarity": 0.8571428571428571,
+      "company1": {
+        "id": "01K9QD38P55446MCN0SATBXDNY",
+        "name": "Bartlett Electric Cooperative, Inc.",
+        "website": "https://bartlettec.coop",
+        "linkedinUrl": "https://www.linkedin.com/company/bartlett-electric-cooperative-inc",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:23.813Z"
+      },
+      "company2": {
+        "id": "01K9QD2TR3PBWCX8X2QRP17KCY",
+        "name": "Berkeley Electric Cooperative, Inc.",
+        "website": "https://bec.coop",
+        "linkedinUrl": "https://www.linkedin.com/company/berkeley-electric-cooperative-inc-",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:09.539Z"
+      }
+    },
+    {
+      "similarity": 0.9767441860465116,
+      "company1": {
+        "id": "01K9QD2H7NMYJXHT35E4SEYKCG",
+        "name": "Chelan County Public Utility District No. 1",
+        "website": "https://chelanpud.org",
+        "linkedinUrl": "https://www.linkedin.com/company/chelan-county-pud",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:29:59.797Z"
+      },
+      "company2": {
+        "id": "01K9QD2JCPDZJ1WDK1DYMAG0W4",
+        "name": "Chelan County Public Utility District No. 2",
+        "website": "https://chelanpud.org",
+        "linkedinUrl": "https://www.linkedin.com/company/chelan-county-pud",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:00.982Z"
+      }
+    },
+    {
+      "similarity": 0.8604651162790697,
+      "company1": {
+        "id": "01K9QD2H7NMYJXHT35E4SEYKCG",
+        "name": "Chelan County Public Utility District No. 1",
+        "website": "https://chelanpud.org",
+        "linkedinUrl": "https://www.linkedin.com/company/chelan-county-pud",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:29:59.797Z"
+      },
+      "company2": {
+        "id": "01K9QD52PM8EVQH9P5ABNJ9VFH",
+        "name": "Grant County Public Utility District No. 2",
+        "website": "https://gcpud.org",
+        "linkedinUrl": "https://www.linkedin.com/company/grant-county-pud",
+        "peopleCount": 4,
+        "createdAt": "2025-11-10T17:31:23.220Z"
+      }
+    },
+    {
+      "similarity": 0.8837209302325582,
+      "company1": {
+        "id": "01K9QD2JCPDZJ1WDK1DYMAG0W4",
+        "name": "Chelan County Public Utility District No. 2",
+        "website": "https://chelanpud.org",
+        "linkedinUrl": "https://www.linkedin.com/company/chelan-county-pud",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:00.982Z"
+      },
+      "company2": {
+        "id": "01K9QD52PM8EVQH9P5ABNJ9VFH",
+        "name": "Grant County Public Utility District No. 2",
+        "website": "https://gcpud.org",
+        "linkedinUrl": "https://www.linkedin.com/company/grant-county-pud",
+        "peopleCount": 4,
+        "createdAt": "2025-11-10T17:31:23.220Z"
+      }
+    },
+    {
+      "similarity": 0.8666666666666667,
+      "company1": {
+        "id": "01K9QD4RTXTQJ1M5BGDVMRXCA2",
+        "name": "Clay Electric Cooperative Inc.",
+        "website": "https://clayelectric.com",
+        "linkedinUrl": "https://www.linkedin.com/company/clay-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:31:13.117Z"
+      },
+      "company2": {
+        "id": "01K9QD5B00XG6NVCBJWWQCK3BD",
+        "name": "Owen Electric Cooperative Inc.",
+        "website": "https://owenelectric.com",
+        "linkedinUrl": "https://www.linkedin.com/company/owen-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:31:31.712Z"
+      }
+    },
+    {
+      "similarity": 0.8717948717948718,
+      "company1": {
+        "id": "01K9QD2VSYNNNKTKC68Q7BEPEV",
+        "name": "Coastal Electric Membership Corporation",
+        "website": "https://coastalemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/coastal-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.622Z"
+      },
+      "company2": {
+        "id": "01K9QD2VZVXS6D7PD1GMHP5AV0",
+        "name": "Cobb Electric Membership Corporation",
+        "website": "https://cobbemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/cobb-emc",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.811Z"
+      }
+    },
+    {
+      "similarity": 0.85,
+      "company1": {
+        "id": "01K9QD2VSYNNNKTKC68Q7BEPEV",
+        "name": "Coastal Electric Membership Corporation",
+        "website": "https://coastalemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/coastal-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.622Z"
+      },
+      "company2": {
+        "id": "01K9QD2W5NHN23D7JN345SS8EM",
+        "name": "Colquitt Electric Membership Corporation",
+        "website": "https://colquittemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/colquitt-electric-membership",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:10.997Z"
+      }
+    },
+    {
+      "similarity": 0.8717948717948718,
+      "company1": {
+        "id": "01K9QD2VSYNNNKTKC68Q7BEPEV",
+        "name": "Coastal Electric Membership Corporation",
+        "website": "https://coastalemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/coastal-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.622Z"
+      },
+      "company2": {
+        "id": "01K9QD2Z75A487XRDCSAND3V2C",
+        "name": "Hart Electric Membership Corporation",
+        "website": "https://hartemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/hart-electric-membership-corporation",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:14.117Z"
+      }
+    },
+    {
+      "similarity": 0.85,
+      "company1": {
+        "id": "01K9QD2VSYNNNKTKC68Q7BEPEV",
+        "name": "Coastal Electric Membership Corporation",
+        "website": "https://coastalemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/coastal-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.622Z"
+      },
+      "company2": {
+        "id": "01K9QD31XVQ0D7SR8N181PMFJE",
+        "name": "Planters Electric Membership Corporation",
+        "website": "https://plantersemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/planters-electric-membership",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:16.891Z"
+      }
+    },
+    {
+      "similarity": 0.8717948717948718,
+      "company1": {
+        "id": "01K9QD2VSYNNNKTKC68Q7BEPEV",
+        "name": "Coastal Electric Membership Corporation",
+        "website": "https://coastalemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/coastal-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.622Z"
+      },
+      "company2": {
+        "id": "01K9QD34V2FQ4T7SEWNJMG8C4N",
+        "name": "Walton Electric Membership Corporation",
+        "website": "https://waltonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/walton-emc",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:19.874Z"
+      }
+    },
+    {
+      "similarity": 0.85,
+      "company1": {
+        "id": "01K9QD2VZVXS6D7PD1GMHP5AV0",
+        "name": "Cobb Electric Membership Corporation",
+        "website": "https://cobbemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/cobb-emc",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.811Z"
+      },
+      "company2": {
+        "id": "01K9QD2W5NHN23D7JN345SS8EM",
+        "name": "Colquitt Electric Membership Corporation",
+        "website": "https://colquittemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/colquitt-electric-membership",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:10.997Z"
+      }
+    },
+    {
+      "similarity": 0.868421052631579,
+      "company1": {
+        "id": "01K9QD2VZVXS6D7PD1GMHP5AV0",
+        "name": "Cobb Electric Membership Corporation",
+        "website": "https://cobbemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/cobb-emc",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.811Z"
+      },
+      "company2": {
+        "id": "01K9QD2YNCHQKWART0T8RNXXVB",
+        "name": "Gibson Electric Membership Corporation",
+        "website": "https://gibsonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/gibson-electric-membership-corporation",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:13.548Z"
+      }
+    },
+    {
+      "similarity": 0.8888888888888888,
+      "company1": {
+        "id": "01K9QD2VZVXS6D7PD1GMHP5AV0",
+        "name": "Cobb Electric Membership Corporation",
+        "website": "https://cobbemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/cobb-emc",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.811Z"
+      },
+      "company2": {
+        "id": "01K9QD2Z75A487XRDCSAND3V2C",
+        "name": "Hart Electric Membership Corporation",
+        "website": "https://hartemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/hart-electric-membership-corporation",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:14.117Z"
+      }
+    },
+    {
+      "similarity": 0.8648648648648649,
+      "company1": {
+        "id": "01K9QD2VZVXS6D7PD1GMHP5AV0",
+        "name": "Cobb Electric Membership Corporation",
+        "website": "https://cobbemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/cobb-emc",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:10.811Z"
+      },
+      "company2": {
+        "id": "01K9QD329TVKS30CFA290DS0JT",
+        "name": "Rayle Electric Membership Corporation",
+        "website": "https://rayleemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/rayle-electric-membership-corporation",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:17.274Z"
+      }
+    },
+    {
+      "similarity": 0.8518518518518519,
+      "company1": {
+        "id": "01K9QD2X403G9QWBXK65N85DQ5",
+        "name": "Dixie Electric Cooperative",
+        "website": "https://dixieec.com",
+        "linkedinUrl": "https://www.linkedin.com/company/dixie-electric-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:11.968Z"
+      },
+      "company2": {
+        "id": "01K9QD2XFVJFWC50CGK3X5SNS8",
+        "name": "Edisto Electric Cooperative",
+        "website": "https://edistoelectric.com",
+        "linkedinUrl": "https://www.linkedin.com/company/edisto-electric-cooperative",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:12.347Z"
+      }
+    },
+    {
+      "similarity": 0.9142857142857143,
+      "company1": {
+        "id": "01K9QD4DKCGVJ8V93FJ7VMXCY3",
+        "name": "Eastex Telephone Cooperative, Inc.",
+        "website": "https://eastex.com",
+        "linkedinUrl": "https://www.linkedin.com/company/eastex-telephone-cooperative",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:31:01.612Z"
+      },
+      "company2": {
+        "id": "01K9QD3TNPF5RA669KNZAJWFBW",
+        "name": "Wes-Tex Telephone Cooperative, Inc.",
+        "website": "https://westex.coop",
+        "linkedinUrl": "https://www.linkedin.com/company/wes-tex-telephone-co-op",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:42.230Z"
+      }
+    },
+    {
+      "similarity": 0.8571428571428571,
+      "company1": {
+        "id": "01K9QD2XFVJFWC50CGK3X5SNS8",
+        "name": "Edisto Electric Cooperative",
+        "website": "https://edistoelectric.com",
+        "linkedinUrl": "https://www.linkedin.com/company/edisto-electric-cooperative",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:12.347Z"
+      },
+      "company2": {
+        "id": "01K9QD2ZD171NYRNFYKD355WCS",
+        "name": "Holston Electric Cooperative",
+        "website": "https://holstonelectric.com",
+        "linkedinUrl": "https://www.linkedin.com/company/holston-electric-cooperative",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:14.305Z"
+      }
+    },
+    {
+      "similarity": 0.8536585365853658,
+      "company1": {
+        "id": "01K9QD2XVXK39JQXEW6BCA4CPA",
+        "name": "Excelsior Electric Membership Corporation",
+        "website": "https://excelsioremc.com",
+        "linkedinUrl": null,
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:12.733Z"
+      },
+      "company2": {
+        "id": "01K9QD2ZS0HYR47BHKTCGGNWNG",
+        "name": "Jackson Electric Membership Corporation",
+        "website": "https://jacksonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/jackson-electric-membership-corporation",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:14.688Z"
+      }
+    },
+    {
+      "similarity": 0.8974358974358975,
+      "company1": {
+        "id": "01K9QD2YNCHQKWART0T8RNXXVB",
+        "name": "Gibson Electric Membership Corporation",
+        "website": "https://gibsonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/gibson-electric-membership-corporation",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:13.548Z"
+      },
+      "company2": {
+        "id": "01K9QD2ZS0HYR47BHKTCGGNWNG",
+        "name": "Jackson Electric Membership Corporation",
+        "website": "https://jacksonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/jackson-electric-membership-corporation",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:14.688Z"
+      }
+    },
+    {
+      "similarity": 0.8947368421052632,
+      "company1": {
+        "id": "01K9QD2YNCHQKWART0T8RNXXVB",
+        "name": "Gibson Electric Membership Corporation",
+        "website": "https://gibsonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/gibson-electric-membership-corporation",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:13.548Z"
+      },
+      "company2": {
+        "id": "01K9QD34V2FQ4T7SEWNJMG8C4N",
+        "name": "Walton Electric Membership Corporation",
+        "website": "https://waltonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/walton-emc",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:19.874Z"
+      }
+    },
+    {
+      "similarity": 0.85,
+      "company1": {
+        "id": "01K9QD2Z75A487XRDCSAND3V2C",
+        "name": "Hart Electric Membership Corporation",
+        "website": "https://hartemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/hart-electric-membership-corporation",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:14.117Z"
+      },
+      "company2": {
+        "id": "01K9QD31XVQ0D7SR8N181PMFJE",
+        "name": "Planters Electric Membership Corporation",
+        "website": "https://plantersemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/planters-electric-membership",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:16.891Z"
+      }
+    },
+    {
+      "similarity": 0.8918918918918919,
+      "company1": {
+        "id": "01K9QD2Z75A487XRDCSAND3V2C",
+        "name": "Hart Electric Membership Corporation",
+        "website": "https://hartemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/hart-electric-membership-corporation",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:14.117Z"
+      },
+      "company2": {
+        "id": "01K9QD329TVKS30CFA290DS0JT",
+        "name": "Rayle Electric Membership Corporation",
+        "website": "https://rayleemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/rayle-electric-membership-corporation",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:17.274Z"
+      }
+    },
+    {
+      "similarity": 0.8947368421052632,
+      "company1": {
+        "id": "01K9QD2Z75A487XRDCSAND3V2C",
+        "name": "Hart Electric Membership Corporation",
+        "website": "https://hartemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/hart-electric-membership-corporation",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:14.117Z"
+      },
+      "company2": {
+        "id": "01K9QD34V2FQ4T7SEWNJMG8C4N",
+        "name": "Walton Electric Membership Corporation",
+        "website": "https://waltonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/walton-emc",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:19.874Z"
+      }
+    },
+    {
+      "similarity": 0.8974358974358975,
+      "company1": {
+        "id": "01K9QD2ZS0HYR47BHKTCGGNWNG",
+        "name": "Jackson Electric Membership Corporation",
+        "website": "https://jacksonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/jackson-electric-membership-corporation",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:14.688Z"
+      },
+      "company2": {
+        "id": "01K9QD34V2FQ4T7SEWNJMG8C4N",
+        "name": "Walton Electric Membership Corporation",
+        "website": "https://waltonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/walton-emc",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:19.874Z"
+      }
+    },
+    {
+      "similarity": 0.9,
+      "company1": {
+        "id": "01K9QD3SNS1071CSHHXQHTH1HT",
+        "name": "Omni Cable",
+        "website": "https://omnicable.com",
+        "linkedinUrl": "https://www.linkedin.com/company/omni-cable",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:41.210Z"
+      },
+      "company2": {
+        "id": "01K9QD407ZMHH1GXM0201D2DG7",
+        "name": "OmniCable",
+        "website": "https://gmail.com",
+        "linkedinUrl": "https://www.linkedin.com/company/omni-cable",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:47.935Z"
+      }
+    },
+    {
+      "similarity": 0.85,
+      "company1": {
+        "id": "01K9QD31XVQ0D7SR8N181PMFJE",
+        "name": "Planters Electric Membership Corporation",
+        "website": "https://plantersemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/planters-electric-membership",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:16.891Z"
+      },
+      "company2": {
+        "id": "01K9QD329TVKS30CFA290DS0JT",
+        "name": "Rayle Electric Membership Corporation",
+        "website": "https://rayleemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/rayle-electric-membership-corporation",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:17.274Z"
+      }
+    },
+    {
+      "similarity": 0.85,
+      "company1": {
+        "id": "01K9QD31XVQ0D7SR8N181PMFJE",
+        "name": "Planters Electric Membership Corporation",
+        "website": "https://plantersemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/planters-electric-membership",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:16.891Z"
+      },
+      "company2": {
+        "id": "01K9QD34V2FQ4T7SEWNJMG8C4N",
+        "name": "Walton Electric Membership Corporation",
+        "website": "https://waltonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/walton-emc",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:19.874Z"
+      }
+    },
+    {
+      "similarity": 0.868421052631579,
+      "company1": {
+        "id": "01K9QD329TVKS30CFA290DS0JT",
+        "name": "Rayle Electric Membership Corporation",
+        "website": "https://rayleemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/rayle-electric-membership-corporation",
+        "peopleCount": 3,
+        "createdAt": "2025-11-10T17:30:17.274Z"
+      },
+      "company2": {
+        "id": "01K9QD34V2FQ4T7SEWNJMG8C4N",
+        "name": "Walton Electric Membership Corporation",
+        "website": "https://waltonemc.com",
+        "linkedinUrl": "https://www.linkedin.com/company/walton-emc",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:19.874Z"
+      }
+    },
+    {
+      "similarity": 0.8888888888888888,
+      "company1": {
+        "id": "01K9QD4J6JW914KSZ8RY5BKB05",
+        "name": "TAK Communications",
+        "website": "https://takcommunications.com",
+        "linkedinUrl": "https://www.linkedin.com/company/tak-communications",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:31:06.323Z"
+      },
+      "company2": {
+        "id": "01K9QD4A5F4D6VT7N02QHABVZW",
+        "name": "TCS Communications",
+        "website": "https://tcscomm.com",
+        "linkedinUrl": "https://www.linkedin.com/company/tcs-communications",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:30:58.095Z"
+      }
+    },
+    {
+      "similarity": 0.85,
+      "company1": {
+        "id": "01K9QD4J6JW914KSZ8RY5BKB05",
+        "name": "TAK Communications",
+        "website": "https://takcommunications.com",
+        "linkedinUrl": "https://www.linkedin.com/company/tak-communications",
+        "peopleCount": 1,
+        "createdAt": "2025-11-10T17:31:06.323Z"
+      },
+      "company2": {
+        "id": "01K9QD3J1VQNHBAXCT99Z5NABP",
+        "name": "Totah Communications",
+        "website": "https://totahcomm.com",
+        "linkedinUrl": "https://www.linkedin.com/company/totah-communications-inc-",
+        "peopleCount": 2,
+        "createdAt": "2025-11-10T17:30:33.403Z"
+      }
+    }
+  ]
+}

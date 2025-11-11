@@ -335,22 +335,84 @@ export async function POST(request: NextRequest) {
     }
 
     // Auto-create or get project for workspace
+    // CRITICAL: Ensure we're using the correct workspace ID for project lookup
     let finalProjectId = projectId;
     if (!finalProjectId) {
+      console.log('🔍 [STACKS TASKS API POST] Looking up project for workspace:', workspaceId);
       let project = await prisma.stacksProject.findFirst({
-        where: { workspaceId }
+        where: { workspaceId },
+        select: { id: true, workspaceId: true, name: true }
       });
       
-      if (!project) {
+      if (project) {
+        console.log('✅ [STACKS TASKS API POST] Found existing project:', {
+          projectId: project.id,
+          projectName: project.name,
+          projectWorkspaceId: project.workspaceId,
+          requestedWorkspaceId: workspaceId,
+          workspaceMatch: project.workspaceId === workspaceId
+        });
+        
+        // CRITICAL: Verify project belongs to correct workspace
+        if (project.workspaceId !== workspaceId) {
+          console.error('❌ [STACKS TASKS API POST] PROJECT WORKSPACE MISMATCH:', {
+            projectId: project.id,
+            projectWorkspaceId: project.workspaceId,
+            requestedWorkspaceId: workspaceId,
+            action: 'Creating new project with correct workspace'
+          });
+          // Create a new project with the correct workspace ID
+          project = await prisma.stacksProject.create({
+            data: {
+              workspaceId,
+              name: 'Default Project',
+              description: 'Default project for stacks'
+            },
+            select: { id: true, workspaceId: true, name: true }
+          });
+          console.log('✅ [STACKS TASKS API POST] Created new project with correct workspace:', {
+            projectId: project.id,
+            projectWorkspaceId: project.workspaceId
+          });
+        }
+      } else {
+        console.log('ℹ️ [STACKS TASKS API POST] No project found, creating new one for workspace:', workspaceId);
         project = await prisma.stacksProject.create({
           data: {
             workspaceId,
             name: 'Default Project',
             description: 'Default project for stacks'
-          }
+          },
+          select: { id: true, workspaceId: true, name: true }
+        });
+        console.log('✅ [STACKS TASKS API POST] Created new project:', {
+          projectId: project.id,
+          projectWorkspaceId: project.workspaceId,
+          requestedWorkspaceId: workspaceId
         });
       }
       finalProjectId = project.id;
+    } else {
+      // If projectId is provided, verify it belongs to the correct workspace
+      const providedProject = await prisma.stacksProject.findFirst({
+        where: { id: projectId },
+        select: { id: true, workspaceId: true, name: true }
+      });
+      
+      if (providedProject) {
+        if (providedProject.workspaceId !== workspaceId) {
+          console.error('❌ [STACKS TASKS API POST] PROVIDED PROJECT WORKSPACE MISMATCH:', {
+            providedProjectId: projectId,
+            projectWorkspaceId: providedProject.workspaceId,
+            requestedWorkspaceId: workspaceId
+          });
+          return createErrorResponse(
+            `Project ${projectId} belongs to a different workspace`,
+            'PROJECT_WORKSPACE_MISMATCH',
+            400
+          );
+        }
+      }
     }
 
     // Build create data - only include defined fields

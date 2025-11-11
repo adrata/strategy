@@ -214,7 +214,8 @@ class CompanyIntelligence {
    * @returns {object} Coresignal company data
    */
   async fetchFromCoresignal(companyIdentifier) {
-    const apiKey = process.env.CORESIGNAL_API_KEY;
+    // Clean API key - remove newlines and trim whitespace
+    const apiKey = (process.env.CORESIGNAL_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
     if (!apiKey) {
       throw new Error('CORESIGNAL_API_KEY not found in environment variables');
     }
@@ -453,7 +454,8 @@ class CompanyIntelligence {
    * @returns {object|null} Company data
    */
   async searchByLinkedInUrl(linkedinId) {
-    const apiKey = process.env.CORESIGNAL_API_KEY;
+    // Clean API key - remove newlines and trim whitespace
+    const apiKey = (process.env.CORESIGNAL_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
     if (!apiKey) return null;
 
     const baseUrl = 'https://api.coresignal.com/cdapi/v2';
@@ -746,7 +748,8 @@ class CompanyIntelligence {
    * @returns {object|null} Company data with LinkedIn URL
    */
   async searchCompanyByName(companyName) {
-    const apiKey = process.env.CORESIGNAL_API_KEY;
+    // Clean API key - remove newlines and trim whitespace
+    const apiKey = (process.env.CORESIGNAL_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
     if (!apiKey) {
       return null;
     }

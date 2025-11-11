@@ -50,7 +50,22 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     }
     
     // If it's a person record, get companyId
-    return record?.companyId || record?.company?.id;
+    // Try multiple ways to get the company ID
+    const id = record?.companyId || 
+               record?.company?.id || 
+               (typeof record?.company === 'object' && record?.company?.id) ||
+               null;
+    
+    console.log(`🏢 [COMPANY OVERVIEW] Company ID determination:`, {
+      recordType,
+      companyId: id,
+      recordCompanyId: record?.companyId,
+      recordCompany: record?.company,
+      companyIsObject: typeof record?.company === 'object',
+      companyObjectId: typeof record?.company === 'object' ? record?.company?.id : null
+    });
+    
+    return id;
   }, [record, recordType]);
 
   // Detect if we have partial company data that needs to be fetched
@@ -176,19 +191,87 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   };
 
   // Enhanced save handler that ensures data refresh
-  const handleSave = async (field: string, value: string, recordId?: string, recordType?: string) => {
+  const handleSave = async (field: string, value: string | null, recordId?: string, recordTypeParam?: string) => {
     try {
-      // Call the parent's onSave function if provided
+      // CRITICAL: For company fields, always use company API endpoint
+      // Determine the correct company ID and ensure we're saving to companies API
+      const targetCompanyId = companyId || recordId;
+      const targetRecordType = 'companies'; // Always use companies API for company fields
+      
+      if (!targetCompanyId) {
+        throw new Error('Company ID not found. Cannot save company field.');
+      }
+      
+      console.log(`🏢 [COMPANY OVERVIEW] Saving ${field} = ${value} to company ${targetCompanyId}`);
+      
+      // Prepare update data - handle special cases
+      let updateData: any = {
+        [field]: value,
+      };
+      
+      // Handle empty/null values - convert empty strings to null
+      if (value === null || value === '' || value === '-') {
+        updateData[field] = null;
+      }
+      
+      // Handle foundedYear - convert to integer
+      if (field === 'foundedYear' && value !== null && value !== '' && value !== '-') {
+        const yearValue = parseInt(value as string);
+        if (isNaN(yearValue)) {
+          throw new Error('Founded Year must be a valid number');
+        }
+        updateData.foundedYear = yearValue;
+      }
+      
+      // Handle isPublic field - convert string to boolean
+      if (field === 'isPublic') {
+        if (value === null || value === '' || value === '-') {
+          updateData.isPublic = null;
+        } else {
+          updateData.isPublic = value === 'true' || value === true;
+        }
+      }
+      
+      // Handle numeric fields that might come as strings
+      const numericFields = ['employeeCount', 'revenue'];
+      if (numericFields.includes(field) && value !== null && value !== '' && value !== '-') {
+        const numValue = typeof value === 'string' ? parseFloat(value) : value;
+        if (!isNaN(numValue)) {
+          updateData[field] = numValue;
+        }
+      }
+      
+      // Make API call to update company
+      const response = await fetch(`/api/v1/companies/${targetCompanyId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(updateData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update ${field}`);
+      }
+      
+      const result = await response.json();
+      console.log(`✅ [COMPANY OVERVIEW] Successfully updated ${field} for company:`, targetCompanyId, result.data);
+      
+      // Call the parent's onSave function if provided (for compatibility)
       if (onSave) {
-        await onSave(field, value, recordId, recordType);
+        await onSave(field, value, targetCompanyId, targetRecordType);
       }
       
       // Trigger a data refresh to ensure UI updates
       if (hasPartialCompanyData && companyId) {
         await fetchFullCompanyData();
       }
+      
+      handleSuccess(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
     } catch (error) {
-      console.error('Error saving field:', error);
+      console.error('❌ [COMPANY OVERVIEW] Error saving field:', error);
       throw error; // Re-throw to let InlineEditField handle the error
     }
   };
@@ -274,6 +357,18 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
           >
             Retry
           </button>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error if no company ID is available (for person records without a company)
+  if (!companyId && recordType !== 'companies') {
+    return (
+      <div className="p-8 text-center">
+        <div className="bg-warning/10 border border-warning text-warning px-4 py-3 rounded mb-4">
+          <h3 className="text-lg font-semibold mb-2">No Company Linked</h3>
+          <p className="text-sm">This person record doesn't have a company associated. Please add a company first.</p>
         </div>
       </div>
     );

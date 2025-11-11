@@ -157,13 +157,13 @@ export function SpeedrunRecordTemplate({
   };
 
   // Handle inline field updates for speedrun
-  const handleSpeedrunInlineFieldSave = async (field: string, value: string, recordId: string, recordType: string) => {
+  const handleSpeedrunInlineFieldSave = async (field: string, value: string | null, recordId: string, recordType: string) => {
     try {
       console.log(`🔄 [SPEEDRUN] Inline updating ${field} for person:`, recordId, 'to:', value);
       
       // Prepare update data
       const updateData: any = {
-        [field]: field === 'globalRank' ? parseInt(value) : value,
+        [field]: field === 'globalRank' && value !== null ? parseInt(value as string) : value,
         updatedAt: new Date().toISOString()
       };
       
@@ -222,7 +222,7 @@ export function SpeedrunRecordTemplate({
       }
       
       // Update the person object locally to reflect changes immediately
-      (person as any)[field] = field === 'globalRank' ? parseInt(value) : value;
+      (person as any)[field] = field === 'globalRank' && value !== null ? parseInt(value as string) : value;
       
       console.log(`✅ [SPEEDRUN] Inline saved ${field} for speedrun person:`, recordId);
       

@@ -39,7 +39,8 @@ class TopTempBuyerGroupRunner {
     
     // Same configuration as TOP (top-temp is migration from TOP)
     this.config = {
-      dealSize: 300000, // $300K average (range: $200K-$500K)
+      dealSize: 300000, // $300K average (range: $150K-$500K+)
+      dealSizeRange: { min: 150000, max: 500000 }, // Flexible range for expensive deals
       productCategory: 'engineering-services',
       productName: 'Communications Engineering Services',
       customFiltering: {
@@ -395,6 +396,67 @@ class TopTempBuyerGroupRunner {
             if (matchedMember && matchedMember.buyerGroupRole) {
               updateData.buyerGroupRole = matchedMember.buyerGroupRole;
             }
+            
+            // Enrich with data from matched member if available
+            if (matchedMember) {
+              // Extract and update email
+              const memberEmail = matchedMember.email || 
+                                (matchedMember.fullProfile?.emails?.[0]?.email) ||
+                                (matchedMember.fullProfile?.email);
+              if (memberEmail && !memberEmail.includes('@coresignal.temp')) {
+                updateData.email = memberEmail;
+                updateData.emailVerified = matchedMember.emailVerified || false;
+                updateData.emailConfidence = matchedMember.emailConfidence || 0;
+              }
+              
+              // Extract and update phone
+              const memberPhone = matchedMember.phone ||
+                                (matchedMember.fullProfile?.phoneNumbers?.[0]?.number) ||
+                                (matchedMember.mobilePhone || matchedMember.workPhone);
+              if (memberPhone) {
+                updateData.phone = memberPhone;
+                updateData.mobilePhone = matchedMember.mobilePhone || null;
+                updateData.workPhone = matchedMember.workPhone || null;
+                updateData.phoneVerified = matchedMember.phoneVerified || false;
+                updateData.phoneConfidence = matchedMember.phoneConfidence || 0;
+              }
+              
+              // Update LinkedIn if missing
+              if (!person.linkedinUrl && matchedMember.linkedinUrl) {
+                updateData.linkedinUrl = matchedMember.linkedinUrl;
+              }
+              
+              // Save Coresignal data
+              if (matchedMember.fullProfile) {
+                updateData.coresignalData = matchedMember.fullProfile;
+              }
+              
+              // Save enriched data
+              if (matchedMember.emailVerificationDetails || matchedMember.phoneVerificationDetails) {
+                const existingEnriched = person.enrichedData && typeof person.enrichedData === 'object' 
+                  ? person.enrichedData 
+                  : {};
+                updateData.enrichedData = {
+                  ...existingEnriched,
+                  emailVerificationDetails: matchedMember.emailVerificationDetails || [],
+                  emailSource: matchedMember.emailSource || 'unverified',
+                  phoneVerificationDetails: matchedMember.phoneVerificationDetails || [],
+                  phoneSource: matchedMember.phoneSource || 'unverified',
+                  phoneType: matchedMember.phoneType || 'unknown',
+                  phoneMetadata: matchedMember.phoneMetadata || {}
+                };
+              }
+              
+              // Update job title if missing or if member has better data
+              if (matchedMember.title && (!person.jobTitle || !person.title)) {
+                updateData.jobTitle = matchedMember.title;
+                updateData.title = matchedMember.title;
+              }
+              
+              updateData.buyerGroupOptimized = true;
+              updateData.lastEnriched = new Date();
+            }
+            
             needsUpdate = true;
             inBuyerGroup++;
           } else {
@@ -443,10 +505,15 @@ class TopTempBuyerGroupRunner {
                       (normalizedName && existingNames.has(normalizedName));
 
         if (!exists && (email || linkedin || member.name)) {
-          // Create new person record
+          // Create new person record with ALL enriched data
           const nameParts = (member.name || '').split(' ');
           const firstName = nameParts[0] || '';
           const lastName = nameParts.slice(1).join(' ') || '';
+
+          // Extract phone data
+          const phone = member.phone ||
+                       (member.fullProfile?.phoneNumbers?.[0]?.number) ||
+                       (member.mobilePhone || member.workPhone);
 
           try {
             await this.prisma.people.create({
@@ -457,19 +524,45 @@ class TopTempBuyerGroupRunner {
                 firstName: firstName,
                 lastName: lastName,
                 fullName: member.name,
-                jobTitle: member.title,
-                title: member.title,
+                jobTitle: member.title || null,
+                title: member.title || null,
+                department: member.department || null,
+                // Email data with verification
                 email: email && !email.includes('@coresignal.temp') ? email : null,
+                emailVerified: member.emailVerified || false,
+                emailConfidence: member.emailConfidence || 0,
+                // Phone data
+                phone: phone || null,
+                mobilePhone: member.mobilePhone || null,
+                workPhone: member.workPhone || null,
+                phoneVerified: member.phoneVerified || false,
+                phoneConfidence: member.phoneConfidence || 0,
+                // LinkedIn
                 linkedinUrl: linkedin || null,
+                // Buyer group data
                 isBuyerGroupMember: true,
                 buyerGroupRole: member.buyerGroupRole || null,
                 buyerGroupStatus: 'in_buyer_group',
                 tags: ['in_buyer_group'],
-                buyerGroupOptimized: true
+                buyerGroupOptimized: true,
+                // Coresignal data
+                coresignalData: member.fullProfile || null,
+                // Enriched data with verification details
+                enrichedData: {
+                  emailVerificationDetails: member.emailVerificationDetails || [],
+                  emailSource: member.emailSource || 'unverified',
+                  phoneVerificationDetails: member.phoneVerificationDetails || [],
+                  phoneSource: member.phoneSource || 'unverified',
+                  phoneType: member.phoneType || 'unknown',
+                  phoneMetadata: member.phoneMetadata || {}
+                },
+                // Timestamps
+                lastEnriched: new Date(),
+                dataLastVerified: new Date()
               }
             });
             created++;
-            console.log(`   ✅ Created missing person: ${member.name}`);
+            console.log(`   ✅ Created missing person: ${member.name}${email ? ` (${email})` : ''}${phone ? ` (${phone})` : ''}`);
           } catch (error) {
             console.log(`   ⚠️  Failed to create person ${member.name}: ${error.message}`);
           }
@@ -495,6 +588,23 @@ class TopTempBuyerGroupRunner {
    */
   async findCompany(intelligence) {
     try {
+      // Try by LinkedIn URL first (most reliable identifier)
+      if (intelligence.linkedinUrl) {
+        const linkedinId = intelligence.linkedinUrl.match(/linkedin\.com\/company\/([^\/\?]+)/)?.[1];
+        if (linkedinId) {
+          const company = await this.prisma.companies.findFirst({
+            where: {
+              workspaceId: this.workspaceId,
+              linkedinUrl: { contains: linkedinId }
+            }
+          });
+          if (company) {
+            console.log(`   ✅ Found company by LinkedIn URL: ${company.name}`);
+            return company;
+          }
+        }
+      }
+
       // Try by website domain
       if (intelligence.website) {
         const domain = extractDomain(intelligence.website);
@@ -507,7 +617,10 @@ class TopTempBuyerGroupRunner {
             ]
           }
         });
-        if (company) return company;
+        if (company) {
+          console.log(`   ✅ Found company by website: ${company.name}`);
+          return company;
+        }
       }
 
       // Try by name
@@ -518,7 +631,10 @@ class TopTempBuyerGroupRunner {
             name: { contains: intelligence.companyName, mode: 'insensitive' }
           }
         });
-        if (company) return company;
+        if (company) {
+          console.log(`   ✅ Found company by name: ${company.name}`);
+          return company;
+        }
       }
 
       return null;

@@ -11,6 +11,8 @@ export interface ActionLog {
   nextActionDate: Date | null;
   workspaceId: string;
   userId: string;
+  userName?: string;
+  userEmail?: string;
   timestamp: Date;
 }
 
@@ -50,6 +52,8 @@ export function useActionLogs(personId: string, workspaceId: string) {
             nextActionDate: action.scheduledAt ? new Date(action.scheduledAt) : null,
             workspaceId: action.workspaceId,
             userId: action.userId,
+            userName: action.user?.fullName || action.user?.name || action.user?.firstName && action.user?.lastName ? `${action.user.firstName} ${action.user.lastName}` : null,
+            userEmail: action.user?.email || null,
             timestamp: new Date(action.completedAt || action.createdAt),
           }));
           

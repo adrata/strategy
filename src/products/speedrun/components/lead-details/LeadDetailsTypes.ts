@@ -92,7 +92,7 @@ export interface LeadDetailsTabContentProps {
   onSetNewNote: (note: string) => void;
   onAddNote: () => void;
   formatTimestamp: (timestamp: string) => string;
-  onInlineFieldSave?: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
+  onInlineFieldSave?: (field: string, value: string | null, recordId: string, recordType: string) => Promise<void>;
   onSaveNotes?: (value: string) => Promise<void>;
   saveStatus?: 'idle' | 'saving' | 'saved' | 'error';
   lastSavedAt?: Date | null;

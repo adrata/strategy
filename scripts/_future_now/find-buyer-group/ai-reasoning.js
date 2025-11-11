@@ -7,9 +7,11 @@
 
 class AIReasoning {
   constructor(apiKey) {
-    this.apiKey = apiKey || process.env.ANTHROPIC_API_KEY;
-    // Use claude-3-5-sonnet-20241022 (latest) or fallback to claude-3-5-sonnet-20240620
-    this.model = 'claude-3-5-sonnet-20240620'; // Claude 3.5 Sonnet (stable version)
+    // Clean API key - remove newlines and trim whitespace
+    const cleanedApiKey = (apiKey || process.env.ANTHROPIC_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
+    this.apiKey = cleanedApiKey;
+    // Use claude-sonnet-4-5 (latest Claude 4.5 Sonnet model)
+    this.model = 'claude-sonnet-4-5'; // Claude 4.5 Sonnet (latest stable version)
     this.baseUrl = 'https://api.anthropic.com/v1/messages';
     
     if (!this.apiKey) {
@@ -243,10 +245,13 @@ Respond in JSON format:
       throw new Error('ANTHROPIC_API_KEY is not set');
     }
 
+    // Ensure API key is clean
+    const cleanedApiKey = this.apiKey.trim().replace(/\n/g, '').replace(/\r/g, '');
+
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
-        'x-api-key': this.apiKey,
+        'x-api-key': cleanedApiKey,
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01'
       },

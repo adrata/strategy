@@ -113,13 +113,10 @@ export function NotesTab({
       {/* Notes Header */}
       <div className="flex items-center justify-end px-4 py-2 border-b border-border bg-background">
         <div className="flex items-center gap-2">
-          {/* Only show status when actively saving or on error - hide in idle/saved states */}
-          {saveStatus === 'saving' && (
-            <span className="text-xs text-gray-400 flex items-center gap-1">
-              <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-              Saving...
-            </span>
-          )}
+          {/* Show auto-save message instead of saving status */}
+          <span className="text-xs text-muted">
+            Notes are saved automatically
+          </span>
           {saveStatus === 'error' && (
             <span className="text-xs text-red-500 flex items-center gap-1">
               <span className="w-2 h-2 bg-red-500 rounded-full"></span>

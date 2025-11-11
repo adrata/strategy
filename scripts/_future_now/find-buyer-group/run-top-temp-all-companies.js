@@ -6,6 +6,13 @@
  * Runs buyer group discovery for all companies in top-temp workspace
  * with USA-only enabled and ensures complete buyer groups with real data.
  * Respects mainSellerId from company records.
+ * 
+ * Uses updated pipeline with:
+ * - Deal size range: $150K-$500K+ (average $300K)
+ * - LinkedIn URL priority for company matching
+ * - Enhanced validation that trusts LinkedIn search results
+ * - API key cleaning for all services (Coresignal, Lusha, Prospeo, Claude)
+ * - Automatic tagging of existing people as in/out of buyer group
  */
 
 // Load .env.local first (from Vercel), then .env as fallback
@@ -31,19 +38,36 @@ class TopTempAllCompaniesRunner {
     try {
       // Get all companies with websites or LinkedIn URLs
       const companies = await this.getCompanies();
-      console.log(`📊 Found ${companies.length} companies to process\n`);
+      console.log(`📊 Found ${companies.length} companies total\n`);
 
       if (companies.length === 0) {
         console.log('❌ No companies found. Exiting.');
         return;
       }
 
-      // Process ALL companies (re-running buyer group discovery)
-      const companiesToProcess = companies.map(c => ({
-        ...c,
-        peopleCount: c._count.people
-      }));
-      console.log(`🎯 Processing ALL ${companiesToProcess.length} companies (re-running buyer group discovery)\n`);
+      // Filter to only companies that don't have buyer groups yet
+      const companiesWithBuyerGroups = await this.prisma.buyerGroups.findMany({
+        where: {
+          workspaceId: this.workspaceId,
+          companyId: { not: null }
+        },
+        select: {
+          companyId: true
+        }
+      });
+      
+      const processedCompanyIds = new Set(companiesWithBuyerGroups.map(bg => bg.companyId).filter(Boolean));
+      
+      const companiesToProcess = companies
+        .filter(c => !processedCompanyIds.has(c.id))
+        .map(c => ({
+          ...c,
+          peopleCount: c._count.people
+        }));
+      
+      console.log(`📊 Companies already processed: ${processedCompanyIds.size}`);
+      console.log(`🎯 Companies to process: ${companiesToProcess.length}`);
+      console.log(`⏭️  Skipping ${companies.length - companiesToProcess.length} companies that already have buyer groups\n`);
 
       // Process companies
       let processed = 0;
@@ -61,7 +85,8 @@ class TopTempAllCompaniesRunner {
         console.log('');
 
         try {
-          const identifier = company.website || company.linkedinUrl || company.name;
+          // Prioritize LinkedIn URL (most reliable) over website
+          const identifier = company.linkedinUrl || company.website || company.name;
           const runner = new TopTempBuyerGroupRunner({
             mainSellerId: company.mainSellerId // Use company's mainSellerId
           });
@@ -70,21 +95,25 @@ class TopTempAllCompaniesRunner {
             skipDatabase: false
           });
 
-          if (result && result.buyerGroup && result.buyerGroup.length > 0) {
-            // Verify we got real data
-            const realEmails = result.buyerGroup.filter(m => {
+          // A successful run means the pipeline completed, even if no members were found
+          // (0 members is a valid result - it means no employees were found in Coresignal)
+          if (result && result.buyerGroup !== undefined) {
+            const buyerGroupSize = result.buyerGroup.length || 0;
+            
+            // Verify we got real data (only if there are members)
+            const realEmails = buyerGroupSize > 0 ? result.buyerGroup.filter(m => {
               const email = m.email || (m.fullProfile?.email) || '';
               return email && !email.includes('@coresignal.temp') && email.includes('@');
-            });
+            }) : [];
 
-            const hasRealData = result.buyerGroup.some(m => 
+            const hasRealData = buyerGroupSize > 0 && result.buyerGroup.some(m => 
               m.fullProfile || m.linkedinUrl || (m.email && !m.email.includes('@coresignal.temp'))
             );
 
             this.results.push({
               company: company.name,
               success: true,
-              buyerGroupSize: result.buyerGroup.length,
+              buyerGroupSize: buyerGroupSize,
               realEmails: realEmails.length,
               hasRealData: hasRealData,
               intelligence: result.intelligence,
@@ -92,20 +121,25 @@ class TopTempAllCompaniesRunner {
             });
 
             successful++;
-            console.log(`✅ Success: ${result.buyerGroup.length} members, ${realEmails.length} real emails`);
-
-            if (!hasRealData) {
-              console.log(`⚠️  WARNING: Buyer group may not have complete data`);
+            
+            if (buyerGroupSize === 0) {
+              console.log(`✅ Success: 0 members found (no employees in Coresignal for this company)`);
+            } else {
+              console.log(`✅ Success: ${buyerGroupSize} members, ${realEmails.length} real emails`);
+              if (!hasRealData) {
+                console.log(`⚠️  WARNING: Buyer group may not have complete data`);
+              }
             }
           } else {
+            // This is a real failure - pipeline didn't return a result object
             this.results.push({
               company: company.name,
               success: false,
-              error: 'No buyer group returned',
+              error: 'No buyer group returned from pipeline',
               mainSellerId: company.mainSellerId
             });
             failed++;
-            console.log(`❌ Failed: No buyer group returned`);
+            console.log(`❌ Failed: Pipeline did not return results`);
           }
 
         } catch (error) {

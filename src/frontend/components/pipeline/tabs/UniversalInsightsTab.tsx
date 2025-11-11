@@ -181,12 +181,13 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                            window.location.pathname.includes('/demo/');
     
     // Use AI-generated intelligence data with proper null handling
+    // Check both top-level fields and customFields for compatibility
     const insightsData = {
-      // AI-generated intelligence fields
-      influenceLevel: record.customFields?.influenceLevel || null,
-      engagementStrategy: record.customFields?.engagementStrategy || null,
+      // AI-generated intelligence fields - check both top-level and customFields
+      influenceLevel: record.influenceLevel || record.customFields?.influenceLevel || null,
+      engagementStrategy: record.engagementStrategy || record.customFields?.engagementStrategy || null,
       isBuyerGroupMember: record.isBuyerGroupMember || !!record.buyerGroupRole || record.customFields?.isBuyerGroupMember || false,
-      seniority: record.customFields?.seniority || null,
+      seniority: record.seniority || record.customFields?.seniority || null,
       influenceScore: record.customFields?.influenceScore || 0,
       decisionPower: record.customFields?.decisionPower || 0,
       primaryRole: record.customFields?.primaryRole || record?.jobTitle || record?.title || null,
@@ -202,8 +203,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       opportunities: record.customFields?.opportunities || [],
       intelligenceSummary: record.customFields?.intelligenceSummary || '',
       
-      // CoreSignal profile data
-      department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || null,
+      // CoreSignal profile data - also check top-level department field
+      department: record.department || coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || null,
       companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || null,
       employeeId: coresignalData.id || coresignalData.employeeId || null,
       followersCount: coresignalData.followers_count || coresignalData.followersCount || 0,
@@ -396,22 +397,18 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                   className="text-sm font-medium text-foreground"
                 />
               </div>
-              <div className="flex flex-col items-start">
-                <span className="text-sm text-muted mb-2">Engagement Strategy:</span>
-                <div className="text-sm text-foreground">
-                  {engagementStrategy && engagementStrategy.length > 80 ? (
-                    <div className="space-y-2">
-                      {engagementStrategy.split(/[.!?]+/).filter(sentence => sentence.trim().length > 10).map((strategy, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span className="text-sm text-gray-700 leading-relaxed">{strategy.trim()}{strategy.trim().endsWith('.') ? '' : '.'}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-sm font-medium text-foreground">{engagementStrategy}</span>
-                  )}
-                </div>
+              <div className="flex items-center">
+                <span className="text-sm text-muted w-24">Engagement Strategy:</span>
+                <InlineEditField
+                  value={engagementStrategy || ''}
+                  field="engagementStrategy"
+                  onSave={onSave}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter engagement strategy"
+                  className="text-sm font-medium text-foreground flex-1"
+                />
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted">Buyer Group Member:</span>

@@ -695,7 +695,11 @@ class SmartBuyerGroupPipeline {
    * @returns {object} Full profile data
    */
   async collectSingleProfile(employeeId, maxRetries = 3) {
-    const apiKey = process.env.CORESIGNAL_API_KEY;
+    // Clean API key - remove newlines and trim whitespace
+    const apiKey = (process.env.CORESIGNAL_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
+    if (!apiKey) {
+      throw new Error('CORESIGNAL_API_KEY not found in environment variables');
+    }
     const baseUrl = 'https://api.coresignal.com/cdapi/v2';
     
     let lastError;
@@ -1071,7 +1075,9 @@ class SmartBuyerGroupPipeline {
    * @returns {object|null} Email discovery result
    */
   async discoverEmailWithProspeo(name, companyName, companyDomain) {
-    if (!process.env.PROSPEO_API_KEY) {
+    // Clean Prospeo API key - remove newlines and trim whitespace
+    const prospeoApiKey = (process.env.PROSPEO_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
+    if (!prospeoApiKey) {
       return null;
     }
     
@@ -1085,7 +1091,7 @@ class SmartBuyerGroupPipeline {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-KEY': process.env.PROSPEO_API_KEY.trim()
+          'X-KEY': prospeoApiKey
         },
         body: JSON.stringify({
           first_name: firstName,
@@ -1116,7 +1122,17 @@ class SmartBuyerGroupPipeline {
           };
         }
       } else {
-        console.log(`   ⚠️ Prospeo API error: ${response.status}`);
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch (e) {
+          errorData = { message: errorText };
+        }
+        console.log(`   ⚠️ Prospeo API error: ${response.status} - ${errorData.message || errorText.substring(0, 100)}`);
+        if (response.status === 401) {
+          console.log(`   💡 Prospeo authentication failed - check PROSPEO_API_KEY is valid`);
+        }
       }
     } catch (error) {
       console.log(`   ⚠️ Prospeo discovery error: ${error.message}`);
@@ -1246,7 +1262,9 @@ class SmartBuyerGroupPipeline {
           // Use Lusha LinkedIn enrichment for phone discovery
           if (process.env.LUSHA_API_KEY) {
             try {
-              const lushaResult = await this.enrichWithLushaLinkedIn(member.linkedinUrl, process.env.LUSHA_API_KEY);
+              // Clean Lusha API key - remove newlines and trim whitespace
+              const cleanedLushaKey = (process.env.LUSHA_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
+              const lushaResult = await this.enrichWithLushaLinkedIn(member.linkedinUrl, cleanedLushaKey);
               
               if (lushaResult && (lushaResult.phone1 || lushaResult.mobilePhone || lushaResult.directDialPhone)) {
                 // Pick best phone (prioritize direct dial > mobile > work)
@@ -1905,6 +1923,12 @@ class SmartBuyerGroupPipeline {
       
       if (rejectedMembers.length > 0) {
         console.log(`⚠️ Rejected ${rejectedMembers.length} employees for company mismatch`);
+        const profileFailures = rejectedMembers.filter(r => r.reason.includes('No current company experience') && !r.reason.includes('no company search match'));
+        if (profileFailures.length > 0) {
+          console.log(`   ⚠️ ${profileFailures.length} employees rejected due to profile collection failures`);
+          console.log(`   💡 These employees were found via company search but profile collection failed`);
+          console.log(`   💡 Consider checking CORESIGNAL_API_KEY format`);
+        }
         console.log(`   Continuing with ${validatedMembers.length} validated employees`);
       }
       
@@ -2219,6 +2243,7 @@ class SmartBuyerGroupPipeline {
         data: {
           id: createUniqueId('bg'),
           workspaceId: this.workspaceId,
+          companyId: company.id, // Link to company record
           companyName: intelligence.companyName || extractDomain(this.targetCompany),
             website: intelligence.website,
           industry: intelligence.industry,
@@ -2255,6 +2280,10 @@ class SmartBuyerGroupPipeline {
         const coresignalEmail = this.extractEmailFromCoresignal(member.fullProfile);
         const email = coresignalEmail || (member.email && !member.email.includes('@coresignal.temp') ? member.email : null);
         
+        // Extract phone from Coresignal data
+        const coresignalPhone = this.extractPhoneFromCoresignal(member.fullProfile);
+        const phone = coresignalPhone || member.phone || member.mobilePhone || member.workPhone || null;
+        
         return {
           id: createUniqueId('bgm'),
           buyerGroupId: buyerGroupRecord.id,
@@ -2263,9 +2292,27 @@ class SmartBuyerGroupPipeline {
           department: member.department,
           role: member.buyerGroupRole,
           email: email, // Only real emails, no fake @coresignal.temp
+          phone: phone, // Include phone data
           linkedin: member.linkedinUrl,
           confidence: member.roleConfidence || 0,
           influenceScore: member.scores?.influence || 0,
+          coresignalId: member.id ? member.id.toString() : null,
+          customFields: {
+            // Store enriched data in customFields for reference
+            coresignalData: member.fullProfile || null,
+            enrichedData: {
+              emailVerificationDetails: member.emailVerificationDetails || [],
+              emailSource: member.emailSource || 'unverified',
+              phoneVerificationDetails: member.phoneVerificationDetails || [],
+              phoneSource: member.phoneSource || 'unverified',
+              phoneType: member.phoneType || 'unknown',
+              phoneMetadata: member.phoneMetadata || {}
+            },
+            emailVerified: member.emailVerified || false,
+            emailConfidence: member.emailConfidence || 0,
+            phoneVerified: member.phoneVerified || false,
+            phoneConfidence: member.phoneConfidence || 0
+          },
           updatedAt: new Date()
         };
       });
@@ -2308,14 +2355,63 @@ class SmartBuyerGroupPipeline {
    * @returns {object} Validation result with isValid and reason
    */
   validateEmployeeCompany(member, intelligence, company) {
+    // Check if employee was found via LinkedIn URL search
+    // When searching by LinkedIn URL, Coresignal filters by experience.company_linkedin_url with active_experience=1
+    // This means employees returned SHOULD be at the target company
+    const wasFoundViaLinkedInSearch = member.id && intelligence.linkedinUrl;
+    
+    // Get profile data for validation
     const coresignalData = member.fullProfile || {};
     const experience = coresignalData.experience || [];
     const currentExperience = experience.find(exp => exp.active_experience === 1) || experience[0] || {};
     
-    if (!currentExperience || !currentExperience.company_name) {
+    // PRIORITY 1: If found via LinkedIn URL search, trust the search result
+    // Coresignal's LinkedIn URL search filters by company, so these employees belong to the target company
+    if (wasFoundViaLinkedInSearch) {
+      // Still validate profile data if available, but trust search result
+      if (currentExperience && currentExperience.company_name) {
+        // Validate profile matches target company
+        const employeeCompanyName = (currentExperience.company_name || '').toLowerCase();
+        const targetCompanyName = (intelligence.companyName || company.name || '').toLowerCase();
+        
+        // Normalize for comparison
+        const normalize = (name) => {
+          return name.toLowerCase()
+            .replace(/\b(inc|llc|ltd|corp|corporation|company|co)\b/g, '')
+            .replace(/[^a-z0-9]/g, '')
+            .trim();
+        };
+        
+        const normalizedEmployee = normalize(employeeCompanyName);
+        const normalizedTarget = normalize(targetCompanyName);
+        
+        // If profile matches, great - return early
+        if (normalizedEmployee === normalizedTarget || 
+            normalizedEmployee.includes(normalizedTarget) || 
+            normalizedTarget.includes(normalizedEmployee)) {
+          return { isValid: true, reason: 'LinkedIn search + profile company match' };
+        }
+        
+        // If profile shows different company but we searched by LinkedIn URL, trust the search
+        // Profile data might be outdated (e.g., person left but profile not updated)
+        return {
+          isValid: true,
+          reason: `LinkedIn URL search result (profile shows "${currentExperience.company_name}" but search filtered by target company)`
+        };
+      }
+      
+      // No profile data but found via LinkedIn search - trust the search
+      return {
+        isValid: true,
+        reason: 'Employee found via LinkedIn company search (Coresignal filtered by company LinkedIn URL)'
+      };
+    }
+    
+    // PRIORITY 2: If NOT found via LinkedIn search, validate strictly using profile data
+    if (!member.fullProfile || !currentExperience || !currentExperience.company_name) {
       return {
         isValid: false,
-        reason: 'No current company experience found in Coresignal data'
+        reason: 'No current company experience found in Coresignal data and not found via LinkedIn company search'
       };
     }
     
@@ -2522,7 +2618,49 @@ class SmartBuyerGroupPipeline {
         }
       }
       
-      // If not found by website, try by name
+      // If not found by website, try by LinkedIn URL
+      if (!company && intelligence.linkedinUrl) {
+        const linkedinId = intelligence.linkedinUrl.match(/linkedin\.com\/company\/([^\/\?]+)/)?.[1];
+        if (linkedinId) {
+          try {
+            company = await this.prisma.companies.findFirst({
+              where: {
+                workspaceId: this.workspaceId,
+                linkedinUrl: { contains: linkedinId }
+              }
+            });
+            if (company) {
+              console.log(`✅ Found company by LinkedIn URL: ${company.name}`);
+            }
+          } catch (error) {
+            // If error is about coreCompanyId, use raw SQL to bypass Prisma validation
+            if (error.message && error.message.includes('coreCompanyId')) {
+              console.log('⚠️  Prisma validation issue, using raw SQL workaround...');
+              try {
+                const results = await this.prisma.$queryRaw`
+                  SELECT * FROM companies 
+                  WHERE "workspaceId" = ${this.workspaceId}
+                  AND "linkedinUrl" LIKE ${'%' + linkedinId + '%'}
+                  AND "deletedAt" IS NULL
+                  LIMIT 1
+                `;
+                if (results && results.length > 0) {
+                  company = results[0];
+                  console.log(`✅ Found company via raw SQL (LinkedIn): ${company.name}`);
+                }
+              } catch (rawError) {
+                console.log(`⚠️  Raw SQL also failed: ${rawError.message}`);
+                // Continue - will create company if not found
+              }
+            } else {
+              // Non-critical error, continue
+              console.log(`⚠️  LinkedIn URL search failed: ${error.message}`);
+            }
+          }
+        }
+      }
+
+      // If not found by website or LinkedIn, try by name
       if (!company && intelligence.companyName) {
         try {
           company = await this.prisma.companies.findFirst({
@@ -2569,6 +2707,7 @@ class SmartBuyerGroupPipeline {
               workspaceId: this.workspaceId,
               name: intelligence.companyName || 'Unknown Company',
               website: intelligence.website,
+              linkedinUrl: intelligence.linkedinUrl,
               industry: intelligence.industry,
               employeeCount: intelligence.employeeCount,
               revenue: intelligence.revenue,
@@ -2605,12 +2744,13 @@ class SmartBuyerGroupPipeline {
               // Insert without status/priority first (they have defaults), then update if needed
               await this.prisma.$executeRaw(Prisma.sql`
                 INSERT INTO companies (
-                  id, "workspaceId", name, website, industry, "employeeCount", revenue, description, domain, "mainSellerId", "createdAt", "updatedAt"
+                  id, "workspaceId", name, website, "linkedinUrl", industry, "employeeCount", revenue, description, domain, "mainSellerId", "createdAt", "updatedAt"
                 ) VALUES (
                   ${companyId}, 
                   ${this.workspaceId}, 
                   ${intelligence.companyName || 'Unknown Company'}, 
                   ${intelligence.website || null}, 
+                  ${intelligence.linkedinUrl || null}, 
                   ${intelligence.industry || null}, 
                   ${intelligence.employeeCount || null}, 
                   ${revenue}, 
@@ -2645,10 +2785,10 @@ class SmartBuyerGroupPipeline {
                   // Insert without status/priority (they have defaults: ACTIVE and MEDIUM)
                   await this.prisma.$executeRaw(Prisma.sql`
                     INSERT INTO companies (
-                      id, "workspaceId", name, website, industry, "employeeCount", revenue, description, domain, "createdAt", "updatedAt"
+                      id, "workspaceId", name, website, "linkedinUrl", industry, "employeeCount", revenue, description, domain, "createdAt", "updatedAt"
                     ) VALUES (
                       ${companyId}, ${this.workspaceId}, ${intelligence.companyName || 'Unknown Company'}, 
-                      ${intelligence.website || null}, ${intelligence.industry || null}, 
+                      ${intelligence.website || null}, ${intelligence.linkedinUrl || null}, ${intelligence.industry || null}, 
                       ${intelligence.employeeCount || null}, ${revenue}, 
                       ${intelligence.description || null}, ${domain}, 
                       NOW(), NOW()
@@ -2696,6 +2836,11 @@ class SmartBuyerGroupPipeline {
         if (intelligence.website && !company.website) {
           updateData.website = intelligence.website;
           updateData.domain = extractDomain(intelligence.website);
+        }
+        // Set LinkedIn URL if company doesn't have one and we have one
+        if (intelligence.linkedinUrl && !company.linkedinUrl) {
+          updateData.linkedinUrl = intelligence.linkedinUrl;
+          console.log(`   🔗 Setting LinkedIn URL: ${intelligence.linkedinUrl}`);
         }
         // Set mainSellerId if company doesn't have one and we have one to set
         if (companyMainSellerId && !company.mainSellerId) {

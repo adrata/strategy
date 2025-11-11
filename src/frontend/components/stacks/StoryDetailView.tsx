@@ -125,28 +125,33 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   // Fetch story data and redirect to slugged URL if needed
   useEffect(() => {
     const fetchStory = async () => {
-      // CRITICAL FIX: Resolve workspace ID with multiple fallbacks (same as AddStacksModal)
+      // CRITICAL FIX: Always prioritize URL workspace slug as source of truth
       // This ensures consistent workspace resolution between bug creation and lookup
-      let workspaceId = ui.activeWorkspace?.id;
+      // The URL slug is the most reliable source since it's what the user is actually viewing
+      const workspaceSlug = pathname.split('/')[1];
+      let workspaceId: string | null = null;
       
-      // Fallback 1: Get from URL workspace slug if UI workspace is missing
-      if (!workspaceId) {
-        const workspaceSlug = pathname.split('/')[1];
-        if (workspaceSlug) {
-          try {
-            const { getWorkspaceIdBySlug } = await import('@/platform/config/workspace-mapping');
-            const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
-            if (urlWorkspaceId) {
-              console.log(`🔍 [StoryDetailView] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
-              workspaceId = urlWorkspaceId;
-            }
-          } catch (error) {
-            console.warn('⚠️ [StoryDetailView] Failed to resolve workspace from URL slug:', error);
+      // Priority 1: Get from URL workspace slug (MOST RELIABLE - source of truth)
+      if (workspaceSlug) {
+        try {
+          const { getWorkspaceIdBySlug } = await import('@/platform/config/workspace-mapping');
+          const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+          if (urlWorkspaceId) {
+            console.log(`🔍 [StoryDetailView] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+            workspaceId = urlWorkspaceId;
           }
+        } catch (error) {
+          console.warn('⚠️ [StoryDetailView] Failed to resolve workspace from URL slug:', error);
         }
       }
       
-      // Fallback 2: Use user's active workspace ID
+      // Fallback 2: Use UI active workspace (only if URL slug didn't work)
+      if (!workspaceId && ui.activeWorkspace?.id) {
+        console.log(`🔍 [StoryDetailView] Using UI activeWorkspace: ${ui.activeWorkspace.id}`);
+        workspaceId = ui.activeWorkspace.id;
+      }
+      
+      // Fallback 3: Use user's active workspace ID (last resort)
       if (!workspaceId && user?.activeWorkspaceId) {
         console.log(`🔍 [StoryDetailView] Using user activeWorkspaceId: ${user.activeWorkspaceId}`);
         workspaceId = user.activeWorkspaceId;

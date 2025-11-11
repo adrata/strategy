@@ -19,7 +19,7 @@ interface OverviewTabProps {
   isLoadingReports: boolean;
   onReportClick: (reportUrl: string) => void;
   onCompanyDetailClick: () => void;
-  onInlineFieldSave?: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
+  onInlineFieldSave?: (field: string, value: string | null, recordId: string, recordType: string) => Promise<void>;
 }
 
   const getRoleColor = (role: string) => {
@@ -52,18 +52,36 @@ export function OverviewTab({
   // Fetch action logs for this person
   const { actionLogs, loading: actionLogsLoading } = useActionLogs(person.id?.toString() || '', workspaceId);
   
-  // Handle inline field updates for speedrun
-  const handleSpeedrunInlineFieldSave = onInlineFieldSave || (async (field: string, value: string, recordId: string, recordType: string) => {
+  // Handle inline field updates for speedrun - use the passed-in handler
+  const handleSpeedrunInlineFieldSave = onInlineFieldSave || (async (field: string, value: string | null, recordId: string, recordType: string) => {
     try {
       console.log(`🔄 [SPEEDRUN-OVERVIEW] Inline updating ${field} for person:`, recordId, 'to:', value);
       
-      // TODO: Implement actual speedrun inline update API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Prepare update data
+      const updateData: any = {
+        [field]: field === 'globalRank' && value !== null ? parseInt(value as string) : value,
+        updatedAt: new Date().toISOString()
+      };
       
-      // Update the person object locally (this would normally come from state management)
-      (person as any)[field] = value;
+      // Make API call to update person
+      const response = await fetch(`/api/v1/people/${recordId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update ${field}`);
+      }
+
+      const result = await response.json();
+      console.log(`✅ [SPEEDRUN-OVERVIEW] Successfully updated ${field} for person:`, recordId, result.data);
       
-      console.log(`✅ [SPEEDRUN-OVERVIEW] Inline saved ${field} for speedrun person:`, recordId);
+      // Update the person object locally to reflect changes immediately
+      (person as any)[field] = field === 'globalRank' && value !== null ? parseInt(value as string) : value;
       
     } catch (error) {
       console.error(`❌ [SPEEDRUN-OVERVIEW] Error inline saving ${field}:`, error);
@@ -221,19 +239,18 @@ export function OverviewTab({
           </div>
           <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
             <div className="font-semibold text-muted mb-1">
-              Last Engagement
+              Last Action
             </div>
             <div className="text-lg text-foreground">
-              {(() => {
-                const monaco = person.customFields?.monacoEnrichment;
-                const recentActivity =
-                  monaco?.enrichedProfiles?.recentActivity?.[0];
-                const lastEngagement =
-                  recentActivity?.timestamp || person.lastContact;
-                return lastEngagement
-                  ? formatRelativeDate(lastEngagement)
-                  : "-";
-              })()}
+              <InlineEditField
+                value={person.lastAction || ''}
+                field="lastAction"
+                recordId={person.id?.toString() || ''}
+                recordType="speedrun"
+                placeholder="Enter last action"
+                onSave={handleSpeedrunInlineFieldSave}
+                className="text-lg text-foreground"
+              />
             </div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
@@ -241,12 +258,20 @@ export function OverviewTab({
               Next Step
             </div>
             <div className="text-lg text-foreground">
-              {(() => {
-                const monaco = person.customFields?.monacoEnrichment;
-                const nextBestAction =
-                  monaco?.opportunityIntelligence?.nextBestAction;
-                return nextBestAction || person.nextAction || "-";
-              })()}
+              <InlineEditField
+                value={(() => {
+                  const monaco = person.customFields?.monacoEnrichment;
+                  const nextBestAction =
+                    monaco?.opportunityIntelligence?.nextBestAction;
+                  return nextBestAction || person.nextAction || '';
+                })()}
+                field="nextAction"
+                recordId={person.id?.toString() || ''}
+                recordType="speedrun"
+                placeholder="Enter next action"
+                onSave={handleSpeedrunInlineFieldSave}
+                className="text-lg text-foreground"
+              />
             </div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
@@ -428,77 +453,59 @@ export function OverviewTab({
             </div>
             <div>
               <label className="block text-sm font-medium text-muted">
-                LinkedIn Profile
+                LinkedIn
               </label>
-              {(() => {
-                const monacoLinkedIn =
-                  person.customFields?.monacoEnrichment?.contactInformation
-                    ?.linkedin_profile;
-                const linkedinUrl = monacoLinkedIn || person.linkedin;
-                return linkedinUrl ? (
-                  <button
-                    onClick={async () => {
-                      const fullUrl = linkedinUrl.startsWith("http")
-                        ? linkedinUrl
-                        : `https://${linkedinUrl}`;
-                      console.log("🔗 Opening LinkedIn profile:", fullUrl);
-
-                      // Enhanced approach for both web and Tauri desktop
-                      try {
-                        // Check if we're in Tauri desktop environment
-                        if (
-                          typeof window !== "undefined" &&
-                          (window as any).__TAURI__
-                        ) {
-                          console.log(
-                            "🖥️ Tauri desktop detected - opening external URL",
-                          );
-                          // For Tauri desktop, we'll use window.open which should work
-                          // The Tauri window will handle opening in system browser
-                          const opened = window.open(
-                            fullUrl,
-                            "_blank",
-                            "noopener,noreferrer",
-                          );
-                          if (opened) {
-                            console.log(
-                              "✅ LinkedIn profile opened in system browser",
-                            );
-                          } else {
-                            console.warn(
-                              "⚠️ Window.open blocked - user may need to allow popups",
-                            );
-                          }
-                        } else {
-                          console.log("🌐 Web environment - using window.open");
-                          window.open(fullUrl, "_blank", "noopener,noreferrer");
-                          console.log("✅ LinkedIn profile opened in new tab");
-                        }
-                      } catch (error) {
-                        console.error(
-                          "❌ Failed to open LinkedIn profile:",
-                          error,
-                        );
-                        // Fallback attempt
-                        try {
-                          window.open(fullUrl, "_blank", "noopener,noreferrer");
-                        } catch (fallbackError) {
-                          console.error(
-                            "❌ Fallback also failed:",
-                            fallbackError,
-                          );
-                        }
-                      }
-                    }}
-                    className="mt-1 text-lg font-semibold text-[#2563EB] hover:text-[#1d4ed8] transition-colors cursor-pointer bg-none border-none p-0 text-left"
-                    style={{ color: "#2563EB !important" }}
-                  >
-                    View LinkedIn Profile
-                  </button>
-                ) : (
-                  <p className="mt-1 text-lg text-muted">-</p>
-                );
-              })()}
+              <div className="mt-1">
+                <InlineEditField
+                  value={(() => {
+                    const monacoLinkedIn =
+                      person.customFields?.monacoEnrichment?.contactInformation
+                        ?.linkedin_profile;
+                    return monacoLinkedIn || person.linkedin || person.linkedinUrl || '';
+                  })()}
+                  field="linkedinUrl"
+                  recordId={person.id?.toString() || ''}
+                  recordType="speedrun"
+                  inputType="url"
+                  placeholder="Enter LinkedIn URL"
+                  onSave={handleSpeedrunInlineFieldSave}
+                  className="text-lg text-foreground"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted">
+                LinkedIn Navigator
+              </label>
+              <div className="mt-1">
+                <InlineEditField
+                  value={person.linkedinNavigatorUrl || ''}
+                  field="linkedinNavigatorUrl"
+                  recordId={person.id?.toString() || ''}
+                  recordType="speedrun"
+                  inputType="url"
+                  placeholder="Enter LinkedIn Navigator URL"
+                  onSave={handleSpeedrunInlineFieldSave}
+                  className="text-lg text-foreground"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted">
+                LinkedIn Connection Date
+              </label>
+              <div className="mt-1">
+                <InlineEditField
+                  value={person.linkedinConnectionDate || ''}
+                  field="linkedinConnectionDate"
+                  recordId={person.id?.toString() || ''}
+                  recordType="speedrun"
+                  variant="date"
+                  placeholder="Select connection date"
+                  onSave={handleSpeedrunInlineFieldSave}
+                  className="text-lg text-foreground"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-muted">
@@ -575,6 +582,38 @@ export function OverviewTab({
                   : "Recently added"}
               </p>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-muted">
+                Influencer Level
+              </label>
+              <div className="mt-1">
+                <InlineEditField
+                  value={(person as any).influenceLevel || ''}
+                  field="influenceLevel"
+                  recordId={person.id?.toString() || ''}
+                  recordType="speedrun"
+                  placeholder="Enter influencer level"
+                  onSave={handleSpeedrunInlineFieldSave}
+                  className="text-lg text-foreground"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted">
+                Engagement Strategy
+              </label>
+              <div className="mt-1">
+                <InlineEditField
+                  value={(person as any).engagementStrategy || ''}
+                  field="engagementStrategy"
+                  recordId={person.id?.toString() || ''}
+                  recordType="speedrun"
+                  placeholder="Enter engagement strategy"
+                  onSave={handleSpeedrunInlineFieldSave}
+                  className="text-lg text-foreground"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -612,6 +651,59 @@ export function OverviewTab({
               {generatePersonalNeeds(person)}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Last Actions - Show real action logs */}
+      <div className="bg-background border border-border rounded-xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Last Actions
+            </h3>
+            <p className="text-sm text-muted mt-1">
+              Recent actions and activity logs
+            </p>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          {actionLogsLoading ? (
+            <div className="bg-background border border-border rounded-lg p-4">
+              <div className="animate-pulse flex items-center gap-3">
+                <div className="w-8 h-8 bg-loading-bg rounded-full"></div>
+                <div className="flex-1">
+                  <div className="w-3/4 h-4 bg-loading-bg rounded mb-2"></div>
+                  <div className="w-1/2 h-3 bg-loading-bg rounded"></div>
+                </div>
+              </div>
+            </div>
+          ) : actionLogs.length > 0 ? (
+            <ul className="space-y-2">
+              {actionLogs.slice(0, 10).map((log) => {
+                // Get user display name - prefer userName from log, fallback to checking if it's current user
+                const userName = log.userName || 
+                  (log.userId && authUser?.id === log.userId ? 'You' : 
+                   (log.userEmail || 'Unknown User'));
+                
+                return (
+                  <li key={log.id} className="text-sm text-foreground">
+                    <span className="text-muted">`{log.type}`</span>{' '}
+                    {log.notes || log.actionLog || 'Action completed'}{' '}
+                    <span className="text-muted">- {userName} - {formatRelativeDate(log.timestamp.toISOString())}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <div className="bg-background border border-border rounded-lg p-6 text-center">
+              <div className="text-muted mb-2">📋</div>
+              <p className="text-muted text-sm">
+                No actions yet. Use the "Add Action" button to log activities!
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
