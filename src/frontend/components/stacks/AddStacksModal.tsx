@@ -38,7 +38,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    product: '' as '' | 'API' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
+    product: '' as '' | 'Adrata AI' | 'API' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
     priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
     section: '',
     status: 'up-next' as 'up-next' | 'todo' | 'in-progress' | 'built' | 'qa1' | 'qa2' | 'shipped',
@@ -154,6 +154,20 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     { value: 'chronicle', label: 'Chronicle' },
     { value: 'metrics', label: 'Metrics' },
     { value: 'dashboard', label: 'Dashboard' }
+  ];
+
+  // Adrata AI sections for the section dropdown
+  const adrataAISections = [
+    { value: 'chat', label: 'Chat' },
+    { value: 'intelligence', label: 'Intelligence' },
+    { value: 'person-analysis', label: 'Person Analysis' },
+    { value: 'company-analysis', label: 'Company Analysis' },
+    { value: 'outreach-strategy', label: 'Outreach Strategy' },
+    { value: 'message-generation', label: 'Message Generation' },
+    { value: 'buyer-group', label: 'Buyer Group' },
+    { value: 'pipeline-insights', label: 'Pipeline Insights' },
+    { value: 'competitive-intelligence', label: 'Competitive Intelligence' },
+    { value: 'voice-assistant', label: 'Voice Assistant' }
   ];
 
   // Reset form when modal closes or when switching tabs
@@ -420,6 +434,12 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
     if (!formData.title.trim()) {
       alert('Please enter a title');
+      return;
+    }
+
+    // Prevent double-submission
+    if (isLoading) {
+      console.warn('⚠️ [AddStacksModal] Submission already in progress, ignoring duplicate submit');
       return;
     }
 
@@ -724,15 +744,16 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             </label>
             <Select
               value={formData.product}
-              onChange={(newProduct) => {
-                setFormData(prev => ({ 
-                  ...prev, 
-                  product: newProduct as typeof formData.product,
-                  section: newProduct !== 'RevenueOS' ? '' : prev.section // Clear section if product changes away from RevenueOS
-                }));
-              }}
+                onChange={(newProduct) => {
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    product: newProduct as typeof formData.product,
+                    section: (newProduct !== 'RevenueOS' && newProduct !== 'Adrata AI') ? '' : prev.section // Clear section if product changes away from RevenueOS or Adrata AI
+                  }));
+                }}
               options={[
                 { value: '', label: 'Select a product...' },
+                { value: 'Adrata AI', label: 'Adrata AI' },
                 { value: 'API', label: 'API' },
                 { value: 'RevenueOS', label: 'RevenueOS' },
                 { value: 'Workshop', label: 'Workshop' },
@@ -772,8 +793,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             </div>
           )}
 
-          {/* Features Dropdown - Only show when RevenueOS is selected and not Notary Everyday */}
-          {!isNotaryEveryday && formData.product === 'RevenueOS' && (
+          {/* Features Dropdown - Show when RevenueOS or Adrata AI is selected and not Notary Everyday */}
+          {!isNotaryEveryday && (formData.product === 'RevenueOS' || formData.product === 'Adrata AI') && (
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Features
@@ -783,10 +804,16 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 onChange={(value) => setFormData(prev => ({ ...prev, section: value }))}
                 options={[
                   { value: '', label: 'Select a feature...' },
-                  ...revenueOSSections.map((section) => ({
-                    value: section.value,
-                    label: section.label
-                  }))
+                  ...(formData.product === 'RevenueOS' 
+                    ? revenueOSSections.map((section) => ({
+                        value: section.value,
+                        label: section.label
+                      }))
+                    : adrataAISections.map((section) => ({
+                        value: section.value,
+                        label: section.label
+                      }))
+                  )
                 ]}
                 placeholder="Select a feature..."
                 className="w-full"

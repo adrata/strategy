@@ -1,0 +1,247 @@
+{
+  "company": {
+    "name": "Leavitt School of Health",
+    "website": "https://www.wgu.edu/lp/health/lead/bshs.html",
+    "linkedinUrl": "https://www.linkedin.com/company/leavitt-school-of-health",
+    "industry": "Public Health",
+    "employeeCount": 100,
+    "revenue": null
+  },
+  "product": {
+    "name": "Student Retention Solution",
+    "category": "custom",
+    "dealSize": 950000,
+    "dealSizeRange": {
+      "min": 500000,
+      "max": 1400000
+    }
+  },
+  "buyerGroup": {
+    "totalMembers": 0,
+    "members": [],
+    "cohesionScore": null,
+    "overallConfidence": null
+  },
+  "report": {
+    "id": "report_1762966513153_4x7l66e6x",
+    "generatedAt": "2025-11-12T16:55:18.029Z",
+    "executiveSummary": "Identified 0-person buyer group for Leavitt School of Health ($950,000 deal) with NaN% cohesion score. Group includes 0 decision maker(s), 0 champion(s), and comprehensive cross-functional coverage. Research methodology validated 0 final members from 0 initial candidates.",
+    "researchMethodology": {
+      "approach": "Double-waterfall discovery with multi-dimensional scoring",
+      "stages": [
+        {
+          "stage": 1,
+          "name": "Company Intelligence",
+          "description": "Database-first company research with Coresignal API fallback",
+          "result": "Optimal search parameters calculated"
+        },
+        {
+          "stage": 2,
+          "name": "Wide Preview Search",
+          "description": "Cross-departmental employee discovery using Coresignal Preview API",
+          "result": "0 employees discovered across all functions"
+        },
+        {
+          "stage": 3,
+          "name": "Smart Scoring",
+          "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+          "result": "Top candidates identified before expensive collect API"
+        },
+        {
+          "stage": 4,
+          "name": "Role Assignment",
+          "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+          "result": "Appropriate roles assigned based on deal size"
+        },
+        {
+          "stage": 5,
+          "name": "Cross-Functional Validation",
+          "description": "Stakeholder completeness validation across all relevant functions",
+          "result": "Missing stakeholders added for comprehensive coverage"
+        },
+        {
+          "stage": 6,
+          "name": "Full Profile Collection",
+          "description": "Coresignal Collect API for final buyer group members only",
+          "result": "Complete profiles for final buyer group"
+        },
+        {
+          "stage": 7,
+          "name": "Cohesion Analysis",
+          "description": "Multi-factor cohesion validation",
+          "result": "NaN% cohesion score with detailed analysis"
+        }
+      ],
+      "searchParameters": {
+        "searchSize": 100,
+        "maxPreviewPages": 5,
+        "buyerGroupSize": {
+          "min": 6,
+          "max": 9,
+          "ideal": 8
+        },
+        "companySize": 100,
+        "industry": "Public Health",
+        "searchStrategy": "comprehensive",
+        "filteringLevel": "none"
+      },
+      "dataSources": [
+        "Coresignal API",
+        "Internal Database",
+        "AI Analysis"
+      ],
+      "confidenceLevel": null
+    },
+    "companyIntelligence": {
+      "employeeCount": 100,
+      "revenue": 0,
+      "industry": "Public Health",
+      "growthRate": 0,
+      "activeHiring": 0,
+      "fundingStage": "bootstrapped",
+      "dataSource": "coresignal",
+      "lastUpdated": "2025-11-12T16:55:15.521Z",
+      "insights": [
+        "Company size: Medium",
+        "Growth trajectory: Stable",
+        "Hiring activity: Limited",
+        "Funding status: bootstrapped"
+      ]
+    },
+    "buyerGroupJustification": [],
+    "crossFunctionalCoverage": {
+      "summary": {
+        "primaryCovered": false,
+        "technicalCovered": false,
+        "riskCovered": false,
+        "financialCovered": false,
+        "overallScore": 0
+      },
+      "byFunction": {
+        "primary": {
+          "covered": [],
+          "missing": [
+            "Sales",
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": []
+        },
+        "technical": {
+          "covered": [],
+          "missing": [
+            "IT",
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": []
+        },
+        "risk": {
+          "covered": [],
+          "missing": [
+            "Security",
+            "Legal",
+            "Compliance"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      },
+      "gaps": [
+        "Primary business functions",
+        "Technical implementation",
+        "Risk management",
+        "Financial approval"
+      ],
+      "recommendations": [
+        "Add IT stakeholder for technical implementation",
+        "Add Security/Legal stakeholder for risk management",
+        "Add Finance stakeholder for budget approval"
+      ]
+    },
+    "cohesionAnalysis": {
+      "overallScore": null,
+      "confidence": "VERY_LOW",
+      "factors": {
+        "reportingProximity": {
+          "score": 0,
+          "explanation": "Executive reporting relationships"
+        },
+        "departmentClustering": {
+          "score": 50,
+          "explanation": "Department collaboration patterns"
+        },
+        "seniorityBalance": {
+          "score": null,
+          "explanation": "Appropriate seniority distribution"
+        },
+        "geographicAlignment": {
+          "score": 75,
+          "explanation": "Location-based collaboration"
+        },
+        "functionalInterdependence": {
+          "score": 0,
+          "explanation": "Cross-functional work relationships"
+        }
+      },
+      "reasoning": "Limited reporting proximity; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from interdependent functions"
+      ]
+    },
+    "championAnalysis": {
+      "count": 0,
+      "champions": [],
+      "analysis": "No champions identified - consider adding internal advocates"
+    },
+    "costEfficiency": {
+      "methodology": "Double-waterfall approach (preview then collect)",
+      "costs": {
+        "preview": 0,
+        "collect": 0,
+        "total": 0
+      },
+      "comparison": {
+        "naiveApproach": 0,
+        "smartApproach": 0,
+        "savings": 0,
+        "savingsPercentage": 0
+      },
+      "efficiency": {
+        "previewToCollectRatio": 0,
+        "costPerFinalMember": 0
+      }
+    },
+    "qualityMetrics": {
+      "averageConfidence": null,
+      "averageInfluence": null,
+      "averageRelevance": null,
+      "decisionMakerCount": 0,
+      "championCount": 0,
+      "stakeholderCount": 0,
+      "blockerCount": 0,
+      "introducerCount": 0,
+      "qualityGrade": "D"
+    },
+    "recommendations": [
+      "Ensure primary business functions are represented",
+      "Critical: Add appropriate decision maker for deal size",
+      "Critical: Add internal champion for advocacy",
+      "Consider adding more stakeholders for comprehensive coverage"
+    ]
+  },
+  "metadata": {
+    "generatedAt": "2025-11-12T16:55:19.109Z",
+    "pipelineVersion": "1.0",
+    "workspaceId": "01K9WFW99WEGDQY2RARPCVC4JD"
+  }
+}

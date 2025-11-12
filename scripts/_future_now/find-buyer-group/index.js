@@ -73,8 +73,8 @@ class SmartBuyerGroupPipeline {
     try {
       // Stage 1: Company Intelligence
       const intelligence = await this.executeStage('company-intelligence', async () => {
-        // Use company name, website, or LinkedIn URL as identifier
-        const identifier = company.linkedinUrl || company.website || company.name;
+        // Use original identifier if available (for fresh Coresignal lookup), otherwise fall back to company data
+        const identifier = company.originalIdentifier || company.linkedinUrl || company.website || company.name;
         return await this.companyIntel.research(identifier);
       });
       
@@ -183,26 +183,60 @@ class SmartBuyerGroupPipeline {
           }
         }
         
-        // Strategy 4: Try company name variations (if we have name but no results)
-        if (previewEmployees.length === 0 && intelligence.companyName) {
-          console.log('🔍 Strategy 4: Trying company name variations...');
-          // Remove filtering to cast wider net
-          const variationEmployees = await this.previewSearch.discoverAllStakeholders(
+        // Strategy 4: Try company name search (if we have very few results or no results)
+        // If we got very few employees (< 5), try searching by company name with no filtering to get more candidates
+        if ((previewEmployees.length === 0 || previewEmployees.length < 5) && intelligence.companyName) {
+          console.log(`🔍 Strategy 4: Trying company name search (found ${previewEmployees.length} employees, need more)...`);
+          // Search by company name only (no LinkedIn URL) with no filtering to cast wider net
+          const nameEmployees = await this.previewSearch.discoverAllStakeholders(
             {
               companyName: intelligence.companyName,
-              linkedinUrl: intelligence.linkedinUrl,
+              linkedinUrl: null, // Don't use LinkedIn URL - search by name only
               website: intelligence.website
             },
-            params.maxPreviewPages + 2, // Search more pages
-            'none', // No filtering
+            params.maxPreviewPages + 5, // Search more pages
+            'none', // No filtering - we'll filter after getting all candidates
             this.productCategory,
             this.options.customFiltering || null,
             this.options.usaOnly || false
           );
-          if (variationEmployees.length > 0) {
-            previewEmployees = variationEmployees;
-            console.log(`✅ Found ${previewEmployees.length} employees via name variations`);
+          if (nameEmployees.length > previewEmployees.length) {
+            // Merge results, preferring name search results (they're more comprehensive)
+            const existingIds = new Set(previewEmployees.map(e => e.id));
+            const newEmployees = nameEmployees.filter(e => !existingIds.has(e.id));
+            previewEmployees = [...previewEmployees, ...newEmployees];
+            console.log(`✅ Found ${newEmployees.length} additional employees via company name search (total: ${previewEmployees.length})`);
+          } else if (nameEmployees.length > 0 && previewEmployees.length === 0) {
+            // If we had 0 and name search found some, use those
+            previewEmployees = nameEmployees;
+            console.log(`✅ Found ${previewEmployees.length} employees via company name search`);
           }
+        }
+      }
+      
+      // Strategy 4: Try company name search if we have very few results (< 5 employees)
+      // This helps when LinkedIn URL search returns limited results but we need more candidates
+      if (previewEmployees.length > 0 && previewEmployees.length < 5 && intelligence.companyName) {
+        console.log(`🔍 Strategy 4: Trying company name search (found ${previewEmployees.length} employees, need more)...`);
+        // Search by company name only (no LinkedIn URL) with no filtering to cast wider net
+        const nameEmployees = await this.previewSearch.discoverAllStakeholders(
+          {
+            companyName: intelligence.companyName,
+            linkedinUrl: null, // Don't use LinkedIn URL - search by name only
+            website: intelligence.website
+          },
+          params.maxPreviewPages + 5, // Search more pages
+          'none', // No filtering - we'll filter after getting all candidates
+          this.productCategory,
+          this.options.customFiltering || null,
+          this.options.usaOnly || false
+        );
+        if (nameEmployees.length > previewEmployees.length) {
+          // Merge results, preferring name search results (they're more comprehensive)
+          const existingIds = new Set(previewEmployees.map(e => e.id));
+          const newEmployees = nameEmployees.filter(e => !existingIds.has(e.id));
+          previewEmployees = [...previewEmployees, ...newEmployees];
+          console.log(`✅ Found ${newEmployees.length} additional employees via company name search (total: ${previewEmployees.length})`);
         }
       }
       
@@ -270,13 +304,29 @@ class SmartBuyerGroupPipeline {
         console.log(`🎯 CEO/C-level filtering: ${relevantEmployees.length} relevant candidates`);
       }
       
-      // Absolute fallback: take top 5 by overall score
+      // Absolute fallback: take top candidates by overall score, but exclude clearly irrelevant roles
       if (relevantEmployees.length === 0 && scoredEmployees.length > 0) {
-        console.log('⚠️ CEO filter yielded 0 results, taking top 5 by score...');
-        relevantEmployees = scoredEmployees
+        console.log('⚠️ CEO filter yielded 0 results, taking top candidates by score with basic filtering...');
+        // Apply basic filtering to exclude clearly irrelevant roles (AV, facilities, maintenance, etc.)
+        const basicFiltered = scoredEmployees.filter(emp => {
+          const title = (emp.title || '').toLowerCase();
+          const dept = (emp.department || '').toLowerCase();
+          // Exclude AV, facilities, maintenance, custodial, security, dining, housing
+          const excludedKeywords = ['av operations', 'audio visual', 'av technician', 'facilities', 'maintenance', 'custodial', 'security', 'dining', 'housing'];
+          const isExcluded = excludedKeywords.some(keyword => title.includes(keyword) || dept.includes(keyword));
+          if (isExcluded) {
+            console.log(`   ⚠️ Excluding ${emp.name || 'unknown'} - ${title} (excluded keyword match)`);
+            return false;
+          }
+          // Prefer people with some relevance or influence
+          return (emp.relevance || 0) > 0.05 || (emp.scores?.influence || 0) > 0 || (emp.scores?.departmentFit || 0) > 0;
+        });
+        
+        // Sort by total score and take top candidates
+        relevantEmployees = basicFiltered
           .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))
-          .slice(0, 5);
-        console.log(`🎯 Top 5 fallback: ${relevantEmployees.length} relevant candidates`);
+          .slice(0, Math.min(10, basicFiltered.length)); // Take up to 10, not just 5
+        console.log(`🎯 Top candidates fallback: ${relevantEmployees.length} relevant candidates (after excluding AV/facilities/maintenance)`);
       }
       
       // Final safety net: if we still have 0, use ALL scored employees (we need at least 1)
@@ -593,16 +643,39 @@ class SmartBuyerGroupPipeline {
       this.pipelineState.costs.phone = phoneEnrichedBuyerGroup.reduce((sum, m) => sum + (m.phoneVerificationCost || 0), 0);
       this.pipelineState.costs.total = this.pipelineState.costs.preview + this.pipelineState.costs.collect + this.pipelineState.costs.email + this.pipelineState.costs.phone;
       
+      // Stage 10.5: Add Pain Points to Buyer Group Members
+      const buyerGroupWithPainPoints = await this.executeStage('pain-points-enrichment', async () => {
+        console.log('🎯 Enriching buyer group members with pain points...');
+        const enrichedMembers = [];
+        for (const member of phoneEnrichedBuyerGroup) {
+          try {
+            const painPoints = await this.generateEnhancedPainPoints(member, intelligence);
+            enrichedMembers.push({
+              ...member,
+              painPoints: painPoints
+            });
+          } catch (error) {
+            console.warn(`⚠️  Failed to generate pain points for ${member.name}: ${error.message}`);
+            enrichedMembers.push({
+              ...member,
+              painPoints: []
+            });
+          }
+        }
+        console.log(`✅ Added pain points to ${enrichedMembers.length} buyer group members`);
+        return enrichedMembers;
+      });
+      
       // Stage 11: Database Persistence (conditional)
       if (!this.options.skipDatabase) {
         await this.executeStage('database-persistence', async () => {
-          return await this.saveBuyerGroupToDatabase(phoneEnrichedBuyerGroup, report, intelligence);
+          return await this.saveBuyerGroupToDatabase(buyerGroupWithPainPoints, report, intelligence);
         });
       } else {
         console.log('⏭️  Skipping database persistence (skipDatabase flag set)');
       }
       
-      this.pipelineState.finalBuyerGroup = phoneEnrichedBuyerGroup;
+      this.pipelineState.finalBuyerGroup = buyerGroupWithPainPoints;
       this.pipelineState.stage = 'completed';
       
       const processingTime = Date.now() - this.pipelineState.startTime;
@@ -610,11 +683,11 @@ class SmartBuyerGroupPipeline {
       console.log('✅ Pipeline completed successfully!');
       console.log(`⏱️ Processing time: ${processingTime}ms`);
       console.log(`💰 Total cost: $${this.pipelineState.costs.total.toFixed(2)}`);
-      console.log(`👥 Final buyer group: ${phoneEnrichedBuyerGroup.length} members`);
+      console.log(`👥 Final buyer group: ${buyerGroupWithPainPoints.length} members`);
       console.log(`📊 Cohesion score: ${cohesion.score}%`);
       
       return {
-        buyerGroup: phoneEnrichedBuyerGroup,
+        buyerGroup: buyerGroupWithPainPoints,
         report,
         cohesion,
         coverage,
@@ -1621,7 +1694,61 @@ class SmartBuyerGroupPipeline {
   }
 
   /**
-   * Generate pain points based on role, department, and industry
+   * Generate enhanced pain points using AI reasoning
+   * @param {object} member - Buyer group member
+   * @param {object} intelligence - Company intelligence
+   * @returns {Promise<Array>} Array of pain points
+   */
+  async generateEnhancedPainPoints(member, intelligence) {
+    // Use AI reasoning if available
+    if (this.aiReasoning) {
+      try {
+        const productContext = {
+          productName: this.options.productName || this.productCategory,
+          productCategory: this.productCategory,
+          dealSize: this.dealSize,
+          focusArea: this.options.productName || 'General business improvement'
+        };
+        
+        const companyContext = {
+          companyName: intelligence.companyName,
+          industry: intelligence.industry,
+          employeeCount: intelligence.employeeCount,
+          revenue: intelligence.revenue,
+          website: intelligence.website,
+          linkedinUrl: intelligence.linkedinUrl
+        };
+        
+        // Gather research data from member's full profile
+        const researchData = {
+          fullProfile: member.fullProfile || {},
+          experience: member.fullProfile?.experience || [],
+          skills: member.fullProfile?.inferred_skills || [],
+          connections: member.fullProfile?.connections_count || 0,
+          followers: member.fullProfile?.followers_count || 0,
+          productContext: productContext // Include product context for research analysis
+        };
+        
+        // Generate pain points with directional intelligence
+        const painPoints = await this.aiReasoning.generatePainPoints(
+          member, 
+          productContext, 
+          companyContext,
+          researchData
+        );
+        return painPoints;
+      } catch (error) {
+        console.warn(`⚠️  Failed to generate AI pain points for ${member.name}: ${error.message}`);
+        // Fallback to basic pain points
+      }
+    }
+    
+    // Fallback to basic pain points
+    return this.generatePainPoints(member.title, member.department, intelligence.industry);
+  }
+
+  /**
+   * Generate pain points based on role, department, and industry (fallback method)
    * @param {string} title - Job title
    * @param {string} department - Department
    * @param {string} industry - Industry
@@ -1634,24 +1761,65 @@ class SmartBuyerGroupPipeline {
     
     // Role-specific pain points
     if (titleLower.includes('sales') || deptLower.includes('sales')) {
-      painPoints.push('Lead quality and conversion rates', 'Sales process efficiency', 'Revenue forecasting accuracy');
+      painPoints.push({
+        title: 'Lead quality and conversion rates',
+        description: 'Struggling with low-quality leads and poor conversion rates.',
+        impact: 'Reduced revenue and inefficient sales processes.',
+        urgency: 'high'
+      });
+      painPoints.push({
+        title: 'Sales process efficiency',
+        description: 'Manual processes slowing down sales cycles.',
+        impact: 'Lost opportunities and decreased productivity.',
+        urgency: 'medium'
+      });
     }
     if (titleLower.includes('marketing') || deptLower.includes('marketing')) {
-      painPoints.push('Lead generation ROI', 'Marketing attribution', 'Content performance measurement');
+      painPoints.push({
+        title: 'Lead generation ROI',
+        description: 'Difficulty measuring and optimizing marketing ROI.',
+        impact: 'Unclear marketing effectiveness and budget allocation.',
+        urgency: 'high'
+      });
     }
     if (titleLower.includes('ceo') || titleLower.includes('president')) {
-      painPoints.push('Revenue growth', 'Operational efficiency', 'Market expansion');
+      painPoints.push({
+        title: 'Revenue growth',
+        description: 'Challenges in achieving sustainable revenue growth.',
+        impact: 'Competitive pressure and market expansion needs.',
+        urgency: 'high'
+      });
     }
     if (titleLower.includes('cfo') || titleLower.includes('finance')) {
-      painPoints.push('Cost optimization', 'Financial forecasting', 'Budget management');
+      painPoints.push({
+        title: 'Cost optimization',
+        description: 'Need to reduce costs while maintaining quality.',
+        impact: 'Pressure to improve profitability and efficiency.',
+        urgency: 'high'
+      });
     }
     
     // Industry-specific pain points
     if (industry && industry.toLowerCase().includes('technology')) {
-      painPoints.push('Digital transformation', 'Data security', 'Scalability challenges');
+      painPoints.push({
+        title: 'Digital transformation',
+        description: 'Challenges in modernizing technology infrastructure.',
+        impact: 'Competitive disadvantage and operational inefficiencies.',
+        urgency: 'high'
+      });
     }
     
-    return painPoints.slice(0, 3); // Limit to 3 most relevant
+    // Default if nothing matches
+    if (painPoints.length === 0) {
+      painPoints.push({
+        title: 'Operational efficiency',
+        description: 'Seeking ways to improve processes and reduce manual work.',
+        impact: 'Time and resource constraints limiting growth.',
+        urgency: 'medium'
+      });
+    }
+    
+    return painPoints.slice(0, 5); // Limit to 5 most relevant
   }
 
   /**
@@ -1998,7 +2166,7 @@ class SmartBuyerGroupPipeline {
           decisionMaking: this.determineDecisionMaking(member.title, member.department),
           preferredContact: this.determinePreferredContact(member),
           responseTime: this.determineResponseTime(member.title),
-          painPoints: this.generatePainPoints(member.title, member.department, intelligence.industry),
+          painPoints: await this.generateEnhancedPainPoints(member, intelligence),
           interests: coresignalData.interests || [],
           goals: this.generateGoals(member.title, member.department),
           challenges: this.generateChallenges(member.title, member.department, intelligence.industry),

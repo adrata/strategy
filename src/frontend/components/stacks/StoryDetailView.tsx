@@ -346,9 +346,17 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       return;
     }
 
+    // Prevent any form submission
+    const originalStoryId = story.id;
+    console.log('🔄 [StoryDetailView] Advancing status:', {
+      storyId: originalStoryId,
+      currentStatus: story.status,
+      nextStatus: nextStatus
+    });
+
     try {
       setIsUpdating(true);
-      const response = await fetch(`/api/v1/stacks/stories/${story.id}`, {
+      const response = await fetch(`/api/v1/stacks/stories/${originalStoryId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -361,13 +369,45 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
 
       if (response.ok) {
         const data = await response.json();
-        setStory(data.story);
+        if (data.story) {
+          // Verify we got the same story back (not a new one)
+          if (data.story.id !== originalStoryId) {
+            console.error('❌ [StoryDetailView] CRITICAL: Received different story ID after update!', {
+              originalId: originalStoryId,
+              receivedId: data.story.id,
+              receivedTitle: data.story.title
+            });
+            alert('Error: Story ID mismatch. Please refresh the page.');
+            return;
+          }
+          console.log('✅ [StoryDetailView] Status advanced successfully:', {
+            storyId: data.story.id,
+            oldStatus: story.status,
+            newStatus: data.story.status
+          });
+          setStory(data.story);
+        } else {
+          console.error('❌ [StoryDetailView] No story in response');
+          alert('Error: No story data returned. Please refresh the page.');
+        }
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Failed to advance status:', errorData);
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: errorText };
+        }
+        console.error('❌ [StoryDetailView] Failed to advance status:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
+        alert(`Failed to advance status: ${errorData.message || errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error advancing status:', error);
+      console.error('❌ [StoryDetailView] Error advancing status:', error);
+      alert(`Error: ${error instanceof Error ? error.message : 'Failed to advance status'}`);
     } finally {
       setIsUpdating(false);
     }
@@ -601,7 +641,12 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
             <button
-              onClick={handleUpdate}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleUpdate();
+              }}
               disabled={isUpdating}
               className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
@@ -634,7 +679,12 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
             </button>
             {nextStatus && nextStatusLabel && (
               <button
-                onClick={handleAdvanceStatus}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleAdvanceStatus();
+                }}
                 disabled={isUpdating}
                 className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >

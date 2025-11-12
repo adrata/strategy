@@ -850,12 +850,28 @@ export async function PATCH(
         project: {
           workspaceId: workspaceId
         }
+      },
+      select: {
+        id: true,
+        status: true,
+        title: true
       }
     });
 
     if (!existingStory) {
+      console.error('❌ [STACKS API PATCH] Story not found:', {
+        storyId,
+        workspaceId,
+        paramValue
+      });
       return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
     }
+
+    console.log('✅ [STACKS API PATCH] Found existing story:', {
+      storyId: existingStory.id,
+      currentStatus: existingStory.status,
+      title: existingStory.title
+    });
 
     // Update story
     // Build update data - handle all editable fields
@@ -905,8 +921,15 @@ export async function PATCH(
       updateData.rank = rank === null || rank === '' ? null : parseInt(rank as string, 10);
     }
 
+    // CRITICAL: Use update (not upsert) to ensure we never create a new record
+    // If the story doesn't exist, Prisma will throw an error which we'll catch
+    console.log('🔄 [STACKS API PATCH] Updating story:', {
+      storyId,
+      updateData: Object.keys(updateData)
+    });
+
     const story = await prisma.stacksStory.update({
-      where: { id: storyId },
+      where: { id: storyId }, // This will throw if story doesn't exist
       data: updateData,
       select: {
         id: true,

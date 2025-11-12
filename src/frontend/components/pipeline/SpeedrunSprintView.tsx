@@ -927,18 +927,73 @@ export function SpeedrunSprintView() {
   };
 
   // Handle add action submission
-  const handleAddAction = async (actionData: any) => {
+  const handleAddAction = async (actionData: ActionLogData) => {
+    if (!selectedRecord || !user) return;
+
     setIsSubmittingAction(true);
+    
     try {
       console.log('🚀 [SPEEDRUN] Adding new action:', actionData);
       
-      // Here you would typically make an API call to add the action
-      // For now, we'll just log it and close the modal
-      console.log('✅ [SPEEDRUN] Action added successfully');
+      // Save action log to backend using v1 API
+      const result = await authFetch('/api/v1/actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: actionData.type,
+          subject: `${actionData.type} - ${selectedRecord.fullName || selectedRecord.name || 'Unknown'}`,
+          description: actionData.action,
+          outcome: (actionData as any).nextAction || '',
+          scheduledAt: (actionData as any).nextActionDate || null,
+          completedAt: new Date().toISOString(),
+          status: 'COMPLETED',
+          priority: 'NORMAL',
+          personId: selectedRecord.id,
+          // Conditionally include companyId only if it exists and is valid
+          ...(actionData.companyId && typeof actionData.companyId === 'string' && actionData.companyId.trim() !== '' && { companyId: actionData.companyId }),
+        }),
+      });
+
+      console.log(`✅ Action added successfully for ${selectedRecord.name || selectedRecord.fullName}:`, result);
+
+      // Dispatch speedrunActionLogged event to update UI
+      const eventDetail = {
+        currentRecord: selectedRecord,
+        actionData: actionData,
+        timestamp: new Date().toISOString()
+      };
       
+      document.dispatchEvent(new CustomEvent('speedrunActionLogged', {
+        detail: eventDetail
+      }));
+
+      // Close the modal
       setShowAddActionModal(false);
+
+      // Refresh data to ensure UI updates
+      refresh();
+
+      // Navigate to next record
+      const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
+      const nextRecord = data[currentIndex + 1];
+      
+      if (nextRecord) {
+        console.log(`🎯 [SPEEDRUN] Auto-progressing to next record: ${nextRecord.name || nextRecord.fullName}`);
+        setSelectedRecord(nextRecord);
+      } else {
+        // No more records in current sprint
+        console.log(`🏃‍♂️ [SPEEDRUN] No more records in current sprint`);
+        // If all sprints are done, go back to speedrun list
+        if (!hasNextSprint) {
+          navigateToPipeline('speedrun');
+        }
+      }
+      
     } catch (error) {
       console.error('❌ [SPEEDRUN] Failed to add action:', error);
+      alert(`Failed to add action: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmittingAction(false);
     }

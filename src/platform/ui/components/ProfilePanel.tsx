@@ -33,7 +33,8 @@ import {
   ClockIcon,
   CheckIcon,
   ExclamationTriangleIcon,
-  KeyIcon
+  KeyIcon,
+  RocketLaunchIcon
 } from "@heroicons/react/24/outline";
 import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -335,6 +336,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const getCurrentAppFromPath = (): string => {
     // Check for speedrun/pipeline first (before adrata) since /adrata/speedrun should be revenueos
     if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
+    // Check for test-drive before stacks
+    if (pathname.includes('/test-drive')) return 'test-drive';
     // Check for stacks before adrata since /adrata/stacks should be stacks
     if (pathname.includes('/stacks')) return 'stacks';
     if (pathname.includes('/oasis')) return 'oasis';
@@ -865,6 +868,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <EnvelopeIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Inbox</span>
+            </button>
+
+            {/* Test Drive */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'test-drive' 
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-foreground hover:bg-hover'
+              }`}
+              onClick={() => handleNavigation("/test-drive")}
+            >
+              <RocketLaunchIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Test Drive</span>
             </button>
 
             {/* Stacks */}
