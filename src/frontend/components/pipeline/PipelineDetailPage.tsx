@@ -800,6 +800,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
+    if (section === 'companies') {
+      console.log('🔍 [BACK NAVIGATION] Navigating to companies list');
+      navigateToPipeline('companies');
+      return;
+    }
+    
     // Default behavior for other sections
     navigateToPipeline(section);
   };

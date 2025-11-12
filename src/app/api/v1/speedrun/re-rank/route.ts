@@ -132,12 +132,24 @@ export async function POST(request: NextRequest) {
       take: 1000
     });
 
+    // 🎯 SMART FILTERING: Exclude people contacted today or yesterday
+    // Calculate date thresholds for filtering
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+    
     // Then, get people assigned to this user
+    // Exclude people who were contacted today or yesterday
     const allPeople = await prisma.people.findMany({
       where: {
         workspaceId,
         isActive: true,
-        mainSellerId: userId // Only rank people assigned to this specific user
+        mainSellerId: userId, // Only rank people assigned to this specific user
+        // Exclude people contacted today or yesterday (include only those contacted before yesterday or never contacted)
+        OR: [
+          { lastActionDate: null }, // No action date = include them
+          { lastActionDate: { lt: yesterday } }, // Action before yesterday = include them
+        ]
       },
       include: {
         company: true,
@@ -162,7 +174,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🔄 [RE-RANK] Found ${allPeople.length} people to rank (including recently contacted)`);
+    console.log(`🔄 [RE-RANK] Found ${allPeople.length} people to rank (excluding those contacted today or yesterday)`);
+    console.log(`🔍 [RE-RANK] Filter criteria: yesterday threshold = ${yesterday.toISOString()}, today = ${today.toISOString()}`);
 
     console.log(`🔄 [RE-RANK] Found ${allCompanies.length} companies and ${allPeople.length} people to rank`);
 

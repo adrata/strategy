@@ -3994,19 +3994,30 @@ export function UniversalRecordTemplate({
       
       // Navigate back to the list page immediately using onBack callback
       // This ensures we navigate to the correct list page and don't try to reload the deleted record
-      if (onBack) {
-        console.log(`🔄 [UniversalRecordTemplate] Navigating back to list page using onBack callback`);
-        onBack();
-      } else {
-        // Fallback: Navigate manually if onBack is not provided
+      try {
+        if (onBack) {
+          console.log(`🔄 [UniversalRecordTemplate] Navigating back to list page using onBack callback`);
+          onBack();
+        } else {
+          // Fallback: Navigate manually if onBack is not provided
+          const currentPath = window.location.pathname;
+          const pathParts = currentPath.split('/').filter(part => part.length > 0);
+          const workspaceIndex = pathParts.findIndex(part => part.length > 0);
+          const workspace = pathParts[workspaceIndex] || pathParts[0];
+          
+          // Construct the list page URL - ensure we use the correct route structure
+          const listPageUrl = `/${workspace}/${recordType}`;
+          console.log(`🔄 [UniversalRecordTemplate] Redirecting to list page: ${listPageUrl}`);
+          router.push(listPageUrl);
+        }
+      } catch (navError) {
+        console.error('❌ [UniversalRecordTemplate] Navigation error, using fallback:', navError);
+        // Fallback navigation if onBack fails
         const currentPath = window.location.pathname;
         const pathParts = currentPath.split('/').filter(part => part.length > 0);
         const workspaceIndex = pathParts.findIndex(part => part.length > 0);
         const workspace = pathParts[workspaceIndex] || pathParts[0];
-        
-        // Construct the list page URL - ensure we use the correct route structure
         const listPageUrl = `/${workspace}/${recordType}`;
-        console.log(`🔄 [UniversalRecordTemplate] Redirecting to list page: ${listPageUrl}`);
         router.push(listPageUrl);
       }
     } catch (error) {

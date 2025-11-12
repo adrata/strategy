@@ -39,8 +39,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
   const router = useRouter();
   
-  // Track previous companyId to detect changes and invalidate cache
+  // Track previous companyId and recordId to detect changes and invalidate cache
   const previousCompanyIdRef = useRef<string | null>(null);
+  const previousRecordIdRef = useRef<string | null>(null);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -153,10 +154,17 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       console.log('🔍 [BUYER GROUPS DEBUG] Record:', record);
       console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
       
+      // 🔄 CRITICAL: Check if record ID changed first - this catches company switches
+      const previousRecordId = previousRecordIdRef.current;
+      const recordIdChanged = previousRecordId !== null && previousRecordId !== record?.id;
+      
       if (!record?.id) {
         console.log('🔍 [BUYER GROUPS DEBUG] No record ID, clearing state and setting loading to false');
         setBuyerGroups([]); // Clear state immediately
         setLoading(false);
+        setIsFetching(false);
+        previousRecordIdRef.current = null;
+        previousCompanyIdRef.current = null;
         return;
       }
       
@@ -178,20 +186,23 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         companyId = record.id; // For company records, the record ID is the company ID
       }
       
-      // 🔄 CACHE INVALIDATION: Check if companyId changed
+      // 🔄 CACHE INVALIDATION: Check if recordId or companyId changed
       const previousCompanyId = previousCompanyIdRef.current;
       const companyIdChanged = previousCompanyId !== null && previousCompanyId !== companyId;
       
-      console.log('🔍 [BUYER GROUPS DEBUG] Company change check:', {
+      console.log('🔍 [BUYER GROUPS DEBUG] Change check:', {
+        previousRecordId,
+        currentRecordId: record?.id,
+        recordIdChanged,
         previousCompanyId,
         currentCompanyId: companyId,
         companyIdChanged,
         recordType
       });
       
-      // If company changed, clear stale cache and reset state
-      if (companyIdChanged) {
-        console.log('🔄 [BUYER GROUPS] Company changed, clearing state immediately and invalidating cache');
+      // If record or company changed, clear stale cache and reset state IMMEDIATELY
+      if (recordIdChanged || companyIdChanged) {
+        console.log('🔄 [BUYER GROUPS] Record or company changed, clearing state immediately and invalidating cache');
         setBuyerGroups([]); // Clear immediately before any async work
         setLastFetchTime(null); // Reset fetch throttle to allow immediate re-fetch
         setIsFetching(false);
@@ -211,11 +222,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         console.log('🗑️ [BUYER GROUPS] Cleared current company cache to force fresh fetch:', currentCacheKey);
       }
       
-      // Update the ref with current companyId
+      // Update the refs with current values
+      previousRecordIdRef.current = record?.id;
       previousCompanyIdRef.current = companyId;
       
-      // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched (unless company changed)
-      if (isFetching || (!companyIdChanged && lastFetchTime && Date.now() - lastFetchTime < 5000)) {
+      // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched (unless record or company changed)
+      if (isFetching || ((!recordIdChanged && !companyIdChanged) && lastFetchTime && Date.now() - lastFetchTime < 5000)) {
         console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
         return;
       }
