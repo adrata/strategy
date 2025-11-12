@@ -565,6 +565,41 @@ export async function POST(request: NextRequest) {
       finalProjectId = project.id;
     }
 
+    // DUPLICATE PREVENTION: Check if a story with the same title already exists in this project
+    // Use case-insensitive comparison by fetching and filtering in memory
+    const normalizedTitle = title.trim().toLowerCase();
+    const existingStories = await prisma.stacksStory.findMany({
+      where: {
+        projectId: finalProjectId
+      },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        createdAt: true
+      }
+    });
+
+    // Check for exact match (case-insensitive, trimmed)
+    const existingStory = existingStories.find(
+      story => story.title.trim().toLowerCase() === normalizedTitle
+    );
+
+    if (existingStory) {
+      console.warn('⚠️ [STACKS API POST] Duplicate story detected:', {
+        existingStoryId: existingStory.id,
+        existingTitle: existingStory.title,
+        newTitle: title,
+        projectId: finalProjectId,
+        workspaceId: workspaceId
+      });
+      return createErrorResponse(
+        `A story with the title "${title}" already exists in this project.`,
+        'DUPLICATE_STORY',
+        409
+      );
+    }
+
     // Build create data - only include defined fields, exclude undefined values
     const createData: any = {
       title,

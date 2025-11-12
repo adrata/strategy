@@ -85,30 +85,76 @@ class SmartScoring {
     const title = employee.title?.toLowerCase() || '';
     const mgmtLevel = employee.managementLevel?.toLowerCase() || '';
     
+    // Check if this is an education-specific product
+    const isEducation = this.productCategory === 'custom' && this.customFiltering;
+    
     // C-level executives always get max score for any deal size
     if (this.isCLevelExecutive(employee.title)) {
       return 10;
     }
     
-    // Score based on deal size appropriateness
-    if (this.dealSize < 150000) {
-      // $75K-$150K deals: VP/Senior Director level
-      if (title.includes('vp') || title.includes('vice president')) return 10;
-      if (title.includes('senior director')) return 9;
-      if (title.includes('director')) return 8;
-      if (title.includes('manager')) return 6;
-      if (title.includes('lead')) return 5;
-    } else if (this.dealSize < 500000) {
-      // $150K-$500K deals: SVP/VP level
-      if (title.includes('svp') || title.includes('senior vice president')) return 10;
-      if (title.includes('vp') || title.includes('vice president')) return 9;
-      if (title.includes('senior director')) return 8;
-      if (title.includes('director')) return 7;
-    } else {
-      // $500K+ deals: C-level
-      if (title.includes('chief') || title.includes('president') || title.includes('ceo')) return 10;
-      if (title.includes('svp') || title.includes('senior vice president')) return 9;
-      if (title.includes('vp') || title.includes('vice president')) return 8;
+    // Education-specific seniority scoring
+    if (isEducation) {
+      // Education hierarchy: Provost > VP > Dean > Director
+      // $500K+ deals: Provost/VP level
+      if (this.dealSize >= 500000) {
+        if (title.includes('provost') && !title.includes('assistant') && !title.includes('associate')) return 10;
+        if (title.includes('vice provost')) return 9;
+        if (title.includes('vp') || title.includes('vice president')) return 9;
+        if (title.includes('svp') || title.includes('senior vice president')) return 10;
+        if (title.includes('executive dean') || title.includes('dean of')) return 8;
+        if (title.includes('director')) return 7;
+      }
+      // $200K-$500K deals: VP/Dean level
+      else if (this.dealSize >= 200000) {
+        if (title.includes('provost') || title.includes('vice provost')) return 10;
+        if (title.includes('vp') || title.includes('vice president')) return 9;
+        if (title.includes('svp') || title.includes('senior vice president')) return 10;
+        if (title.includes('executive dean') || title.includes('dean of')) return 8;
+        if (title.includes('senior director')) return 7;
+        if (title.includes('director')) return 6;
+      }
+      // $100K-$200K deals: Dean/Director level
+      else if (this.dealSize >= 100000) {
+        if (title.includes('provost') || title.includes('vice provost')) return 10;
+        if (title.includes('vp') || title.includes('vice president')) return 9;
+        if (title.includes('executive dean') || title.includes('dean of')) return 8;
+        if (title.includes('senior director')) return 7;
+        if (title.includes('director')) return 7;
+        if (title.includes('manager')) return 5;
+      }
+      // <$100K deals: Director/Manager level
+      else {
+        if (title.includes('provost') || title.includes('vice provost')) return 10;
+        if (title.includes('vp') || title.includes('vice president')) return 9;
+        if (title.includes('dean')) return 8;
+        if (title.includes('senior director')) return 8;
+        if (title.includes('director')) return 7;
+        if (title.includes('manager')) return 6;
+      }
+    }
+    // Standard B2B scoring
+    else {
+      // Score based on deal size appropriateness
+      if (this.dealSize < 150000) {
+        // $75K-$150K deals: VP/Senior Director level
+        if (title.includes('vp') || title.includes('vice president')) return 10;
+        if (title.includes('senior director')) return 9;
+        if (title.includes('director')) return 8;
+        if (title.includes('manager')) return 6;
+        if (title.includes('lead')) return 5;
+      } else if (this.dealSize < 500000) {
+        // $150K-$500K deals: SVP/VP level
+        if (title.includes('svp') || title.includes('senior vice president')) return 10;
+        if (title.includes('vp') || title.includes('vice president')) return 9;
+        if (title.includes('senior director')) return 8;
+        if (title.includes('director')) return 7;
+      } else {
+        // $500K+ deals: C-level
+        if (title.includes('chief') || title.includes('president') || title.includes('ceo')) return 10;
+        if (title.includes('svp') || title.includes('senior vice president')) return 9;
+        if (title.includes('vp') || title.includes('vice president')) return 8;
+      }
     }
     
     // Default scoring based on management level
@@ -129,10 +175,42 @@ class SmartScoring {
     const dept = employee.department?.toLowerCase() || '';
     const title = employee.title?.toLowerCase() || '';
     
+    // Check if this is an education-specific product
+    const isEducation = this.productCategory === 'custom' && this.customFiltering;
+    
+    // Retention keyword boost (highest priority - indicates direct relevance)
+    if (isEducation) {
+      if (title.includes('retention') || dept.includes('retention')) {
+        // Boost for retention-specific roles/departments
+        let baseScore = 10;
+        // Additional boost for CRO or Director of Retention
+        if (title.includes('chief retention officer') || title.includes('cro') || 
+            title.includes('director retention')) {
+          return 10; // Max score
+        }
+        return baseScore;
+      }
+    }
+    
     // Use custom filtering if provided
     if (this.customFiltering && this.customFiltering.departments) {
       const primary = this.customFiltering.departments.primary || [];
       const secondary = this.customFiltering.departments.secondary || [];
+      
+      // Prioritize Financial Aid (financial barriers are #1 dropout reason)
+      if (isEducation && (dept.includes('financial aid') || title.includes('financial aid'))) {
+        return 10;
+      }
+      
+      // Prioritize Counseling Services (mental health critical for retention)
+      if (isEducation && (dept.includes('counseling') || title.includes('counseling'))) {
+        return 10;
+      }
+      
+      // Better recognition of Enrollment Management (manages retention strategy)
+      if (isEducation && (dept.includes('enrollment management') || title.includes('enrollment management'))) {
+        return 10;
+      }
       
       // Check primary departments
       if (primary.some(d => dept.includes(d.toLowerCase()) || title.includes(d.toLowerCase()))) {
@@ -251,14 +329,47 @@ class SmartScoring {
     const dept = employee.department?.toLowerCase() || '';
     let score = 0;
     
+    // Check if this is an education-specific product
+    const isEducation = this.productCategory === 'custom' && this.customFiltering;
+    
+    // Retention-specific role scoring (highest priority)
+    if (isEducation) {
+      // CRO and dedicated retention roles get highest scores (use systems daily, advocate strongly)
+      if (title.includes('chief retention officer') || title.includes('cro')) score += 15;
+      if (title.includes('director retention') || title.includes('director student success')) score += 12;
+      if (title.includes('retention') && title.includes('director')) score += 10;
+      
+      // Education-specific champion roles (Deans, Directors of Student Success)
+      if (title.includes('dean of student success') || title.includes('dean of student services')) score += 11;
+      if (title.includes('director student success') || title.includes('director student engagement')) score += 10;
+      if (title.includes('director academic advising') || title.includes('director first-year experience')) score += 9;
+      
+      // Titles with "retention" keyword get boost
+      if (title.includes('retention')) score += 5;
+      if (title.includes('student success')) score += 4;
+    }
+    
     // Right level (Director/Senior Manager - can advocate but doesn't sign)
-    if (title.includes('director') && !title.includes('senior director')) score += 10;
-    if (title.includes('senior manager') || title.includes('sr manager')) score += 8;
-    if (title.includes('manager') && !title.includes('senior')) score += 6;
+    // Directors use systems daily, so they get higher scores than managers
+    if (title.includes('director') && !title.includes('senior director')) {
+      score += isEducation ? 8 : 10; // Slightly lower for education (already scored above)
+    }
+    if (title.includes('senior director')) score += 7;
+    if (title.includes('senior manager') || title.includes('sr manager')) score += 6;
+    if (title.includes('manager') && !title.includes('senior')) score += 4;
     
     // Relevant department for advocacy
-    if (dept.includes('sales') || dept.includes('revenue') || dept.includes('operations')) score += 8;
-    if (dept.includes('product') || dept.includes('marketing')) score += 6;
+    if (isEducation) {
+      // Education-specific departments
+      if (dept.includes('retention') || dept.includes('student success')) score += 8;
+      if (dept.includes('student affairs') || dept.includes('academic affairs')) score += 7;
+      if (dept.includes('enrollment management') || dept.includes('academic advising')) score += 6;
+      if (dept.includes('financial aid') || dept.includes('counseling services')) score += 5;
+    } else {
+      // Standard B2B departments
+      if (dept.includes('sales') || dept.includes('revenue') || dept.includes('operations')) score += 8;
+      if (dept.includes('product') || dept.includes('marketing')) score += 6;
+    }
     
     // Network influence for internal advocacy
     const connections = employee.connectionsCount || 0;
