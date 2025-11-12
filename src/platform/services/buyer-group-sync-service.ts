@@ -10,19 +10,25 @@ import { prisma } from '@/platform/database/prisma-client';
 /**
  * Calculate influence level from buyer group role
  * Maps buyer group roles to influence levels for consistency
+ * Handles case-insensitive and various formats (spaces, underscores, etc.)
  */
 function calculateInfluenceLevelFromRole(role: string | null | undefined): 'High' | 'Medium' | 'Low' | null {
   if (!role) return null;
   
-  const normalizedRole = role.toLowerCase().trim();
+  // Normalize: lowercase, replace underscores/hyphens with spaces, trim
+  const normalizedRole = role.toLowerCase().replace(/[_-]/g, ' ').trim();
   
   // Decision Maker and Champion have high influence
-  if (normalizedRole === 'decision maker' || normalizedRole === 'champion') {
+  if (normalizedRole === 'decision maker' || 
+      normalizedRole === 'champion' ||
+      normalizedRole === 'decision' ||
+      normalizedRole.includes('decision')) {
     return 'High';
   }
   
   // Blocker and Stakeholder have medium influence
-  if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') {
+  if (normalizedRole === 'blocker' || 
+      normalizedRole === 'stakeholder') {
     return 'Medium';
   }
   
@@ -33,6 +39,39 @@ function calculateInfluenceLevelFromRole(role: string | null | undefined): 'High
   
   // Default to Medium for unknown roles
   return 'Medium';
+}
+
+/**
+ * Infer buyer group role from job title
+ * Returns null if role cannot be confidently inferred
+ */
+function inferBuyerGroupRoleFromTitle(jobTitle: string | null | undefined): string | null {
+  if (!jobTitle) return null;
+  
+  const title = jobTitle.toLowerCase().trim();
+  
+  // Decision Makers - C-suite, VP, President, Director
+  if (title.match(/\b(ceo|cto|cfo|coo|cio|cmo|president|vp|vice president|director)\b/i)) {
+    return 'Decision Maker';
+  }
+  
+  // Champions - Managers, Leads, Heads
+  if (title.match(/\b(manager|lead|head of|senior|principal)\b/i)) {
+    return 'Champion';
+  }
+  
+  // Blockers - Procurement, Legal, Compliance, Security
+  if (title.match(/\b(procurement|legal|compliance|security|audit|risk)\b/i)) {
+    return 'Blocker';
+  }
+  
+  // Introducers - Sales, Marketing, BD
+  if (title.match(/\b(sales|marketing|business development|bd|account)\b/i)) {
+    return 'Introducer';
+  }
+  
+  // Stakeholders - Everyone else
+  return 'Stakeholder';
 }
 
 export class BuyerGroupSyncService {
@@ -231,6 +270,7 @@ export class BuyerGroupSyncService {
       },
       select: {
         id: true,
+        fullName: true,
         buyerGroupRole: true,
         isBuyerGroupMember: true,
         influenceLevel: true,
@@ -246,6 +286,7 @@ export class BuyerGroupSyncService {
           synced++;
           if (!dryRun) {
             updated++;
+            console.log(`✅ [BUYER GROUP SYNC] Updated ${person.fullName}:`, result.changes);
           }
         }
       } catch (error) {
@@ -257,6 +298,79 @@ export class BuyerGroupSyncService {
     console.log(`✅ [BUYER GROUP SYNC] Synced ${synced} people for company ${companyId}, updated ${updated}, errors ${errors}`);
 
     return { synced, updated, errors };
+  }
+
+  /**
+   * Infer and persist buyer group roles for people without explicit roles
+   * Uses job title to infer likely role, then persists it to database
+   */
+  static async inferAndPersistRoles(
+    companyId: string,
+    workspaceId: string,
+    options?: { dryRun?: boolean; persistInferred?: boolean }
+  ): Promise<{ inferred: number; persisted: number; errors: number }> {
+    const dryRun = options?.dryRun || false;
+    const persistInferred = options?.persistInferred ?? true;
+
+    let inferred = 0;
+    let persisted = 0;
+    let errors = 0;
+
+    // Find people without buyer group roles
+    const people = await prisma.people.findMany({
+      where: {
+        companyId,
+        workspaceId,
+        deletedAt: null,
+        buyerGroupRole: null,
+      },
+      select: {
+        id: true,
+        fullName: true,
+        jobTitle: true,
+        buyerGroupRole: true,
+        isBuyerGroupMember: true,
+        influenceLevel: true,
+      },
+    });
+
+    console.log(`🔍 [INFER ROLES] Found ${people.length} people without buyer group roles for company ${companyId}`);
+
+    for (const person of people) {
+      try {
+        const inferredRole = inferBuyerGroupRoleFromTitle(person.jobTitle);
+        
+        if (inferredRole) {
+          inferred++;
+          
+          if (persistInferred && !dryRun) {
+            const influenceLevel = calculateInfluenceLevelFromRole(inferredRole);
+            
+            await prisma.people.update({
+              where: { id: person.id },
+              data: {
+                buyerGroupRole: inferredRole,
+                isBuyerGroupMember: true,
+                influenceLevel: influenceLevel,
+                updatedAt: new Date(),
+              },
+            });
+            persisted++;
+            console.log(`✅ [INFER ROLES] Persisted ${person.fullName}: ${inferredRole} (${influenceLevel} influence)`);
+          } else if (dryRun) {
+            const influenceLevel = calculateInfluenceLevelFromRole(inferredRole);
+            console.log(`[DRY RUN] Would set ${person.fullName}: ${inferredRole} (${influenceLevel} influence)`);
+          }
+        }
+      } catch (error) {
+        errors++;
+        console.error(`❌ [INFER ROLES] Error processing person ${person.id}:`, error);
+      }
+    }
+
+    console.log(`✅ [INFER ROLES] Inferred ${inferred} roles, persisted ${persisted}, errors ${errors}`);
+
+    return { inferred, persisted, errors };
   }
 }
 

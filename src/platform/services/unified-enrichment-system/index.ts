@@ -1326,11 +1326,15 @@ export class UnifiedEnrichmentSystem {
   }
   
   private async updatePersonWithBuyerGroupRole(person: any, member: any): Promise<any> {
+    // Calculate influence level from role
+    const influenceLevel = this.calculateInfluenceLevelFromRole(member.role);
+    
     return await this.prisma.people.update({
       where: { id: person.id },
       data: {
         buyerGroupRole: member.role,
         isBuyerGroupMember: true, // Always set to true when assigning a role
+        influenceLevel: influenceLevel, // Set influence level based on role
         influenceScore: member.influenceScore || member.confidence || person.influenceScore || 0,
         authorityLevel: this.mapRoleToAuthority(member.role),
         email: member.email || person.email,
@@ -1344,6 +1348,26 @@ export class UnifiedEnrichmentSystem {
         updatedAt: new Date()
       }
     });
+  }
+  
+  private calculateInfluenceLevelFromRole(role: string | null | undefined): 'High' | 'Medium' | 'Low' | null {
+    if (!role) return null;
+    
+    const normalizedRole = role.toLowerCase().replace(/[_-]/g, ' ').trim();
+    
+    if (normalizedRole === 'decision maker' || normalizedRole === 'champion' || normalizedRole === 'decision' || normalizedRole.includes('decision')) {
+      return 'High';
+    }
+    
+    if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') {
+      return 'Medium';
+    }
+    
+    if (normalizedRole === 'introducer') {
+      return 'Low';
+    }
+    
+    return 'Medium';
   }
   
   private mapRoleToAuthority(role: string): string {

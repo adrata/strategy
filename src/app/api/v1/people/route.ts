@@ -485,6 +485,12 @@ export async function GET(request: NextRequest) {
             deletedAt: true,
             mainSellerId: true,
             vertical: true,
+            // Buyer group fields for consistency
+            buyerGroupRole: true,
+            influenceLevel: true,
+            isBuyerGroupMember: true,
+            buyerGroupStatus: true,
+            buyerGroupOptimized: true,
             // Include relations with minimal fields
             corePerson: {
               select: {

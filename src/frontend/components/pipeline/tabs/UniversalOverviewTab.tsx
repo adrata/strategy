@@ -582,7 +582,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     hqState: record?.hqState || record?.company?.hqState || null,
     
     // CoreSignal intelligence - check top-level fields first, then customFields
-    influenceLevel: record.influenceLevel ?? record.customFields?.influenceLevel ?? null,
+    // Calculate influence level from role FIRST (buyerGroupRole is source of truth)
+    influenceLevel: (() => {
+      // PRIORITY 1: Calculate from buyerGroupRole (source of truth)
+      const role = record.buyerGroupRole ?? record.customFields?.buyerGroupRole ?? null;
+      if (role) {
+        const normalizedRole = role.toLowerCase().trim();
+        if (normalizedRole === 'decision maker' || normalizedRole === 'champion') return 'High';
+        if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') return 'Medium';
+        if (normalizedRole === 'introducer') return 'Low';
+      }
+      // PRIORITY 2: Use stored value as fallback
+      return record.influenceLevel ?? record.customFields?.influenceLevel ?? null;
+    })(),
     engagementStrategy: record.customFields?.engagementStrategy || null,
     isBuyerGroupMember: record.isBuyerGroupMember ?? record.customFields?.isBuyerGroupMember ?? !!record.buyerGroupRole ?? false,
     buyerGroupOptimized: record.buyerGroupOptimized ?? record.customFields?.buyerGroupOptimized ?? false,

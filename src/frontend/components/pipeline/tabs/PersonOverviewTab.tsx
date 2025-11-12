@@ -201,11 +201,9 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     location: coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || null,
     
     // CoreSignal intelligence - check top-level fields first, then customFields
-    // Calculate influence level from role if missing (consistent with Company views)
+    // Calculate influence level from role FIRST (buyerGroupRole is source of truth)
     influenceLevel: (() => {
-      const stored = record.influenceLevel ?? record.customFields?.influenceLevel ?? null;
-      if (stored) return stored;
-      // If no stored influence level but we have a buyerGroupRole, calculate it
+      // PRIORITY 1: Calculate from buyerGroupRole (source of truth)
       const role = record.buyerGroupRole ?? record.customFields?.buyerGroupRole ?? null;
       if (role) {
         const normalizedRole = role.toLowerCase().trim();
@@ -213,7 +211,9 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
         if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') return 'Medium';
         if (normalizedRole === 'introducer') return 'Low';
       }
-      return null;
+      // PRIORITY 2: Use stored value as fallback
+      const stored = record.influenceLevel ?? record.customFields?.influenceLevel ?? null;
+      return stored;
     })(),
     engagementStrategy: record.customFields?.engagementStrategy || null,
     // Buyer group membership: check buyerGroupRole OR isBuyerGroupMember (consistent with Company views)

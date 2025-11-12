@@ -268,11 +268,9 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     
     // Buyer Group and Influence (existing fields) - Enhanced mapping
     buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || null,
-    // Calculate influence level from role if missing (consistent with Company views)
+    // Calculate influence level from role FIRST (buyerGroupRole is source of truth)
     influenceLevel: (() => {
-      const stored = record?.influenceLevel || record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.customFields?.influence || null;
-      if (stored) return stored;
-      // If no stored influence level but we have a buyerGroupRole, calculate it
+      // PRIORITY 1: Calculate from buyerGroupRole (source of truth)
       const role = record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || null;
       if (role) {
         const normalizedRole = role.toLowerCase().trim();
@@ -280,7 +278,9 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
         if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') return 'Medium';
         if (normalizedRole === 'introducer') return 'Low';
       }
-      return null;
+      // PRIORITY 2: Use stored value as fallback
+      const stored = record?.influenceLevel || record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.customFields?.influence || null;
+      return stored;
     })(),
     // Buyer group membership: check buyerGroupRole OR isBuyerGroupMember (consistent with Company views)
     isBuyerGroupMember: (() => {

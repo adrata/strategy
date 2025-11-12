@@ -240,12 +240,14 @@ function getBuyerGroupRole(jobTitle: string): string {
 }
 
 // Helper function to determine influence level
+// FIXED: Champion should have HIGH influence (same as Decision Maker)
 function getInfluenceLevel(role: string): string {
   switch (role) {
     case 'Decision Maker': return 'high';
-    case 'Champion': return 'medium';
+    case 'Champion': return 'high'; // FIXED: was 'medium', should be 'high'
     case 'Blocker': return 'medium';
-    case 'Stakeholder': return 'low';
-    default: return 'low';
+    case 'Stakeholder': return 'medium'; // FIXED: was 'low', should be 'medium'
+    case 'Introducer': return 'low';
+    default: return 'medium';
   }
 }
