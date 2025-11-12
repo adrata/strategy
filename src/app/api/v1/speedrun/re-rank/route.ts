@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     const allPeople = await prisma.people.findMany({
       where: {
         workspaceId,
-        isActive: true,
+        deletedAt: null, // Only active (non-deleted) people
         mainSellerId: userId, // Only rank people assigned to this specific user
         // Exclude people contacted today or yesterday (include only those contacted before yesterday or never contacted)
         OR: [
