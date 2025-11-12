@@ -3,6 +3,20 @@ import { prisma } from '@/platform/database/prisma-client';
 import { rankContacts } from '@/products/speedrun/ranking';
 import { getDefaultUserSettings } from '@/products/speedrun/state';
 import { StateRankingService } from '@/products/speedrun/state-ranking';
+// 🏆 ENHANCED RANKING: Import sophisticated scoring algorithms
+import { 
+  calculateIndividualScore, 
+  calculateDaysSinceContact,
+  calculateTimingUrgency,
+  detectEmailEngagement,
+  calculateSpeedScore,
+  calculateRevenueScore,
+  calculateCombinedScore,
+  generateEnhancedRankingReason,
+  determineCompanySize,
+  extractDealValue,
+  calculateFreshnessFactor
+} from '@/products/speedrun/scoring';
 
 // Force dynamic rendering for API routes (required for authentication)
 export const dynamic = 'force-dynamic';
@@ -244,16 +258,75 @@ export async function POST(request: NextRequest) {
         return rankA - rankB;
       });
     
-    // Sort people within each company
+    // 🏆 ENHANCED RANKING: Use sophisticated scoring algorithms instead of simple sorting
+    const userSettings = getDefaultUserSettings();
+    
+    // Sort people within each company using comprehensive scoring
     for (const [companyId, companyPeople] of sortedPeopleByCompany) {
-      companyPeople.sort((a, b) => {
-        const statusPriority: Record<string, number> = { 'LEAD': 3, 'PROSPECT': 2, 'OPPORTUNITY': 4, 'CUSTOMER': 5 };
+      // Convert Prisma person records to RankedContact format for scoring
+      const scoredPeople = companyPeople.map(person => {
+        const daysSinceContact = calculateDaysSinceContact(person.lastActionDate?.toISOString());
+        const emailEngagement = detectEmailEngagement({
+          notes: person.notes || '',
+          nextAction: person.nextAction || '',
+          recentActivity: '',
+          lastEmail: '',
+          lastActionDate: person.lastActionDate?.toISOString()
+        });
+        
+        // Create RankedContact-like object for scoring
+        const contactForScoring: any = {
+          ...person,
+          daysSinceLastContact: daysSinceContact,
+          estimatedDealValue: extractDealValue({ value: '', dealValue: '', revenue: '' }), // Will be calculated from company if available
+          companySize: determineCompanySize({ 
+            size: person.company?.size || '', 
+            industry: person.company?.industry || '',
+            notes: '',
+            value: ''
+          }),
+          freshnessFactor: calculateFreshnessFactor(person.id),
+          emailEngagementScore: emailEngagement.emailScore,
+          readyToBuyScore: emailEngagement.readyToBuyScore,
+          relationship: '', // Will be inferred from status
+          buyerGroupRole: person.buyerGroupRole || '',
+          dealStage: person.status || '',
+          title: person.jobTitle || '',
+          company: person.company?.name || ''
+        };
+        
+        // Calculate comprehensive individual score
+        const individualScore = calculateIndividualScore(contactForScoring, userSettings);
+        
+        return {
+          ...person,
+          calculatedScore: individualScore,
+          daysSinceLastContact: daysSinceContact,
+          emailEngagementScore: emailEngagement.emailScore,
+          readyToBuyScore: emailEngagement.readyToBuyScore
+        };
+      });
+      
+      // Sort by calculated score (highest first), then by status, then by title
+      scoredPeople.sort((a, b) => {
+        // Primary: Comprehensive score (higher = better)
+        const scoreDiff = (b.calculatedScore || 0) - (a.calculatedScore || 0);
+        if (Math.abs(scoreDiff) > 0.1) return scoreDiff;
+        
+        // Secondary: Status priority
+        const statusPriority: Record<string, number> = { 
+          'OPPORTUNITY': 5, 
+          'CUSTOMER': 4, 
+          'PROSPECT': 3, 
+          'LEAD': 2 
+        };
         const statusDiff = (statusPriority[b.status] || 1) - (statusPriority[a.status] || 1);
         if (statusDiff !== 0) return statusDiff;
         
+        // Tertiary: Title/role priority
         const titleScore = (title: string | null) => {
           const t = (title || '').toLowerCase();
-          if (t.includes('ceo') || t.includes('president') || t.includes('owner')) return 5;
+          if (t.includes('ceo') || t.includes('president') || t.includes('founder') || t.includes('owner')) return 5;
           if (t.includes('vp') || t.includes('vice president') || t.includes('director')) return 4;
           if (t.includes('manager') || t.includes('head')) return 3;
           if (t.includes('senior') || t.includes('lead')) return 2;
@@ -263,10 +336,17 @@ export async function POST(request: NextRequest) {
         const titleDiff = titleScore(b.jobTitle) - titleScore(a.jobTitle);
         if (titleDiff !== 0) return titleDiff;
         
-        const lastContactA = a.lastActionDate || new Date(0);
-        const lastContactB = b.lastActionDate || new Date(0);
-        return lastContactB.getTime() - lastContactA.getTime();
+        // Quaternary: Days since last contact (longer = higher priority for re-engagement)
+        const daysDiff = (a.daysSinceLastContact || 999) - (b.daysSinceLastContact || 999);
+        return daysDiff;
       });
+      
+      // Replace companyPeople array with scored and sorted version
+      companyPeople.length = 0;
+      companyPeople.push(...scoredPeople.map(p => ({
+        ...p,
+        calculatedScore: undefined // Remove calculatedScore before storing
+      })));
     }
     
     // Step 5: Create unified ranked list (people first, then companies)

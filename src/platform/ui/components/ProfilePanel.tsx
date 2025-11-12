@@ -334,10 +334,10 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     // Not in OasisProvider context, keep count at 0
   }
 
-  // Get speedrun counts for pills - use remaining count (total - records with actions)
+  // Get speedrun counts for pills - REMOVED: Don't show pills if count is 0
   const { counts: fastCounts } = useFastCounts();
-  const revenueOSSpeedrunCount = fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0;
-  const partnerOSSpeedrunCount = fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0; // Same count for now, can be filtered later
+  const revenueOSSpeedrunCount = (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) > 0 ? (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) : 0;
+  const partnerOSSpeedrunCount = (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) > 0 ? (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) : 0; // Same count for now, can be filtered later
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
@@ -857,15 +857,15 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 handleNavigation("/speedrun");
               }}
             >
-              <div className="flex items-center">
-                <ChartBarIcon className="w-4 h-4 mr-3" />
+              <div className="flex items-center gap-2">
+                <ChartBarIcon className="w-4 h-4" />
+                {revenueOSSpeedrunCount > 0 && (
+                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20">
+                    <span className="text-xs font-semibold">{revenueOSSpeedrunCount}</span>
+                  </div>
+                )}
                 <span className="font-medium">RevenueOS</span>
               </div>
-              {revenueOSSpeedrunCount > 0 && (
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted/10 text-muted border border-muted/20">
-                  <span className="text-xs font-semibold">{revenueOSSpeedrunCount}</span>
-                </div>
-              )}
             </button>
 
             {/* PartnerOS */}
@@ -883,15 +883,15 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   handleNavigation("/partner-os/speedrun");
                 }}
               >
-                <div className="flex items-center">
-                  <BuildingOffice2Icon className="w-4 h-4 mr-3" />
+                <div className="flex items-center gap-2">
+                  <BuildingOffice2Icon className="w-4 h-4" />
+                  {partnerOSSpeedrunCount > 0 && (
+                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20">
+                      <span className="text-xs font-semibold">{partnerOSSpeedrunCount}</span>
+                    </div>
+                  )}
                   <span className="font-medium">PartnerOS</span>
                 </div>
-                {partnerOSSpeedrunCount > 0 && (
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted/10 text-muted border border-muted/20">
-                    <span className="text-xs font-semibold">{partnerOSSpeedrunCount}</span>
-                  </div>
-                )}
               </button>
             )}
 

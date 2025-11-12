@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { authFetch } from '@/platform/api-fetch';
 import { useRouter } from "next/navigation";
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
@@ -1068,9 +1068,20 @@ export function PipelineLeftPanelStandalone({
     return () => clearTimeout(timer);
   }, []);
 
-  // Check if data is actually loaded (not just loading state)
-  const isDataLoaded = acquisitionData && !acquisitionData.isLoading && acquisitionData.acquireData;
-  const shouldShowLoading = !minLoadingTimeElapsed || acquisitionData?.isLoading || !isDataLoaded;
+  // 🚀 PERFORMANCE FIX: Memoize loading state to prevent unnecessary reloads
+  // Only show loading when data is actually changing, not on every render
+  const isDataLoaded = useMemo(() => {
+    return acquisitionData && !acquisitionData.isLoading && acquisitionData.acquireData;
+  }, [acquisitionData?.isLoading, !!acquisitionData?.acquireData]);
+  
+  const shouldShowLoading = useMemo(() => {
+    // Only show loading if minimum time hasn't elapsed OR if data is actively loading
+    // Don't reload if we already have data and it's not actively loading
+    if (isDataLoaded && !acquisitionData?.isLoading) {
+      return false; // We have data, don't show loading
+    }
+    return !minLoadingTimeElapsed || acquisitionData?.isLoading || !isDataLoaded;
+  }, [minLoadingTimeElapsed, acquisitionData?.isLoading, isDataLoaded]);
 
   // Workspace branding state
   const [workspaceBranding, setWorkspaceBranding] = useState({

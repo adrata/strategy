@@ -103,6 +103,7 @@ export async function GET(request: NextRequest) {
       try {
         // 1. Get companies without people (these get Speedrun ranks)
         // 🚀 PERFORMANCE: Filter by globalRank to use index and limit scan
+        // 🚀 SPEEDRUN FILTERING: Exclude companies that have had meaningful actions EVER
         const companiesWhere: any = {
           workspaceId: context.workspaceId,
           deletedAt: null,
@@ -114,7 +115,20 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               mainSellerId: context.userId // Only people assigned to this user
             }
-          }
+          },
+          // 🚀 FILTER: Exclude records with meaningful actions EVER
+          AND: [
+            {
+              OR: [
+                { lastActionDate: null },
+                { lastAction: null },
+                { lastAction: 'No action taken' },
+                { lastAction: 'Record created' },
+                { lastAction: 'Company record created' },
+                { lastAction: 'Record added' }
+              ]
+            }
+          ]
         };
         
         // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
@@ -159,12 +173,28 @@ export async function GET(request: NextRequest) {
 
         // 2. Get people from companies that have people (these get Speedrun ranks)
         // 🚀 PERFORMANCE: Filter by globalRank to use index and limit scan
+        // 🚀 SPEEDRUN FILTERING: Exclude people who have had meaningful actions EVER
+        const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
+        
         const peopleWhere: any = {
           workspaceId: context.workspaceId,
           deletedAt: null,
           companyId: { not: null }, // Only people with company relationships
           mainSellerId: context.userId, // Only people assigned to this user
-          globalRank: { not: null, gte: 1, lte: 50 } // Only people with ranks 1-50 for performance
+          globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 for performance
+          // 🚀 FILTER: Exclude records with meaningful actions EVER
+          AND: [
+            {
+              OR: [
+                { lastActionDate: null },
+                { lastAction: null },
+                { lastAction: 'No action taken' },
+                { lastAction: 'Record created' },
+                { lastAction: 'Company record created' },
+                { lastAction: 'Record added' }
+              ]
+            }
+          ]
         };
         
         // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
@@ -292,12 +322,17 @@ export async function GET(request: NextRequest) {
         }))
       );
 
-      // 🚀 BATCH QUERY ACTIONS: Get action counts for all people in one query
+      // 🚀 BATCH QUERY ACTIONS: Get action counts AND filter out records with meaningful actions
       const personIds = speedrunRecords
         .filter(r => r.type === 'person')
         .map(r => r.id);
       
+      const companyIds = speedrunRecords
+        .filter(r => r.type === 'company')
+        .map(r => r.id);
+      
       let actionCountsMap: Record<string, number> = {};
+      const recordsWithMeaningfulActions = new Set<string>();
       
       if (personIds.length > 0) {
         try {
@@ -313,10 +348,11 @@ export async function GET(request: NextRequest) {
             }
           });
 
-          // Count meaningful actions per person
+          // Count meaningful actions per person AND track which records have meaningful actions
           for (const action of actions) {
             if (action.personId && isMeaningfulAction(action.type)) {
               actionCountsMap[action.personId] = (actionCountsMap[action.personId] || 0) + 1;
+              recordsWithMeaningfulActions.add(action.personId);
             }
           }
 
@@ -326,6 +362,62 @@ export async function GET(request: NextRequest) {
           // Continue with empty map if action query fails
         }
       }
+      
+      // Also check company actions
+      if (companyIds.length > 0) {
+        try {
+          const companyActions = await prisma.actions.findMany({
+            where: {
+              companyId: { in: companyIds },
+              status: 'COMPLETED'
+            },
+            select: {
+              companyId: true,
+              type: true
+            }
+          });
+          
+          for (const action of companyActions) {
+            if (action.companyId && isMeaningfulAction(action.type)) {
+              recordsWithMeaningfulActions.add(action.companyId);
+            }
+          }
+        } catch (actionError) {
+          console.error('❌ [SPEEDRUN API] Error querying company actions:', actionError);
+        }
+      }
+      
+      // 🚀 FILTER: Remove records that have meaningful actions EVER
+      speedrunRecords = speedrunRecords.filter(record => {
+        const recordId = record.id;
+        const hasMeaningfulAction = recordsWithMeaningfulActions.has(recordId);
+        
+        // Also check lastAction/lastActionDate fields as fallback
+        const lastAction = record.lastAction;
+        const lastActionDate = record.lastActionDate;
+        const hasNonMeaningfulLastAction = !lastActionDate || 
+          !lastAction || 
+          lastAction === 'No action taken' ||
+          lastAction === 'Record created' ||
+          lastAction === 'Company record created' ||
+          lastAction === 'Record added';
+        
+        // Exclude if has meaningful action OR if lastAction/lastActionDate indicate meaningful action
+        if (hasMeaningfulAction) {
+          console.log(`🚫 [SPEEDRUN API] Filtering out ${record.displayName || record.name} - has meaningful action`);
+          return false;
+        }
+        
+        // If lastActionDate exists and lastAction is not in the non-meaningful list, exclude
+        if (lastActionDate && !hasNonMeaningfulLastAction) {
+          console.log(`🚫 [SPEEDRUN API] Filtering out ${record.displayName || record.name} - lastAction: ${lastAction}, lastActionDate: ${lastActionDate}`);
+          return false;
+        }
+        
+        return true;
+      });
+      
+      console.log(`🔍 [SPEEDRUN API] After filtering meaningful actions: ${speedrunRecords.length} records remaining`);
 
       // 🚀 TRANSFORM: Pre-format data for frontend (unified companies and people)
       const speedrunPeopleData = speedrunRecords.map((record, index) => {

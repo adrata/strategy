@@ -17,6 +17,8 @@ import { TableDataSkeleton } from './table/TableDataSkeleton';
 import { EditRecordModal } from './EditRecordModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
+import { SpeedrunContextMenu } from './SpeedrunContextMenu';
+import { authFetch } from '@/platform/api-fetch';
 
 // -------- Types --------
 interface PipelineRecord {
@@ -323,6 +325,17 @@ export function PipelineTable({
   const [addingAction, setAddingAction] = useState<PipelineRecord | null>(null);
   const [viewingRecord, setViewingRecord] = useState<PipelineRecord | null>(null);
   
+  // 🚀 SPEEDRUN CONTEXT MENU: State for speedrun rank reordering
+  const [speedrunContextMenu, setSpeedrunContextMenu] = useState<{
+    isVisible: boolean;
+    position: { x: number; y: number };
+    recordId: string;
+  }>({
+    isVisible: false,
+    position: { x: 0, y: 0 },
+    recordId: ''
+  });
+  
   // Real-time timestamp refresh state
   const [timestampRefresh, setTimestampRefresh] = useState(0);
   
@@ -334,6 +347,104 @@ export function PipelineTable({
 
     return () => clearInterval(interval);
   }, []);
+  
+  // 🚀 SPEEDRUN CONTEXT MENU: Handlers for rank reordering
+  const closeSpeedrunContextMenu = () => {
+    setSpeedrunContextMenu(prev => ({ ...prev, isVisible: false }));
+  };
+  
+  const moveSpeedrunRecord = async (recordId: string, direction: 'top' | 'up' | 'bottom') => {
+    if (!workspaceId || !authUser?.id) {
+      console.error('Missing workspace or user context');
+      return;
+    }
+
+    const record = processedData.find((r: any) => r.id === recordId);
+    if (!record) {
+      console.error('Record not found');
+      return;
+    }
+
+    const currentRank = record.globalRank || record.rank || 999999;
+    let newRank: number;
+
+    // Calculate new rank based on direction
+    switch (direction) {
+      case 'top':
+        newRank = 1;
+        break;
+      case 'up':
+        if (currentRank <= 1) {
+          closeSpeedrunContextMenu();
+          return; // Already at top
+        }
+        newRank = currentRank - 1;
+        break;
+      case 'bottom':
+        // Find the maximum rank from all data
+        const maxRank = Math.max(...processedData.map((r: any) => r.globalRank || r.rank || 0));
+        newRank = maxRank;
+        break;
+      default:
+        return;
+    }
+
+    // Optimistic update - close menu immediately
+    closeSpeedrunContextMenu();
+
+    try {
+      const response = await authFetch('/api/v1/speedrun/re-rank', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          manualRankUpdate: {
+            personId: recordId,
+            oldRank: currentRank,
+            newRank: newRank,
+          },
+        }),
+      });
+
+      if (response?.success) {
+        console.log(`✅ [SPEEDRUN] Successfully moved record ${recordId} to rank ${newRank}`);
+        // Trigger cache invalidation event
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cache-invalidate', {
+            detail: { pattern: 'speedrun', reason: 'manual-rank-update' }
+          }));
+        }
+        // Force refresh data
+        window.location.reload(); // Simple refresh for now
+      } else {
+        console.error('Failed to move record:', response?.error);
+      }
+    } catch (error) {
+      console.error('Error moving record:', error);
+    }
+  };
+
+  const handleMoveToTop = () => {
+    if (!speedrunContextMenu.recordId) return;
+    moveSpeedrunRecord(speedrunContextMenu.recordId, 'top');
+  };
+
+  const handleMoveUp = () => {
+    if (!speedrunContextMenu.recordId) return;
+    moveSpeedrunRecord(speedrunContextMenu.recordId, 'up');
+  };
+
+  const handleMoveToBottom = () => {
+    if (!speedrunContextMenu.recordId) return;
+    moveSpeedrunRecord(speedrunContextMenu.recordId, 'bottom');
+  };
+
+  const handleSnooze = () => {
+    // TODO: Implement snooze functionality
+    console.log('Snooze:', speedrunContextMenu.recordId);
+    closeSpeedrunContextMenu();
+  };
   
   // Handle record click
   const handleRecordClick = (record: PipelineRecord) => {
@@ -443,6 +554,17 @@ export function PipelineTable({
                         : 'hover:bg-panel-background border-border'
                     }`}
                     onClick={() => onRecordClick(record)}
+                    onContextMenu={(e) => {
+                      if (section === 'speedrun') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSpeedrunContextMenu({
+                          isVisible: true,
+                          position: { x: e.clientX, y: e.clientY },
+                          recordId: record.id
+                        });
+                      }
+                    }}
                   >
                   {headers.map((header, headerIndex) => {
                     let cellContent = '';
@@ -879,6 +1001,19 @@ export function PipelineTable({
           record={viewingRecord}
           section={section}
           onClose={closeDetailModal}
+        />
+      )}
+      
+      {/* 🚀 SPEEDRUN CONTEXT MENU */}
+      {section === 'speedrun' && (
+        <SpeedrunContextMenu
+          isVisible={speedrunContextMenu.isVisible}
+          position={speedrunContextMenu.position}
+          onClose={closeSpeedrunContextMenu}
+          onMoveToTop={handleMoveToTop}
+          onMoveUp={handleMoveUp}
+          onMoveToBottom={handleMoveToBottom}
+          onSnooze={handleSnooze}
         />
       )}
     </div>

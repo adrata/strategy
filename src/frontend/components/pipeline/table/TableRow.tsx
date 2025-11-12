@@ -12,6 +12,7 @@ import { formatDate } from '@/platform/utils/dateUtils';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { ProfileAvatar, ProfileAvatarGroup } from '@/platform/ui/components/ProfileAvatar';
 import { ContextMenu } from './ContextMenu';
+import { SpeedrunContextMenu } from '../SpeedrunContextMenu';
 import { TableCell } from './TableCell';
 
 // -------- Types --------
@@ -114,7 +115,12 @@ export function TableRow({
   onDeleteRecord,
   getColumnWidth,
 }: TableRowProps) {
-  const [contextMenu, setContextMenu] = useState<{x: number, y: number} | null>(null);
+  const [contextMenu, setContextMenu] = useState<{x: number, y: number, recordId?: string} | null>(null);
+  const [speedrunContextMenu, setSpeedrunContextMenu] = useState<{isVisible: boolean, position: {x: number, y: number}, recordId: string}>({
+    isVisible: false,
+    position: { x: 0, y: 0 },
+    recordId: ''
+  });
 
   // Check if this record is completed (for speedrun section)
   const isCompleted = React.useMemo(() => {
@@ -156,11 +162,23 @@ export function TableRow({
     e.preventDefault();
     e.stopPropagation();
     console.log('🖱️ Context menu triggered for record:', record.id);
-    setContextMenu({ x: e.clientX, y: e.clientY });
+    
+    // For speedrun section, use SpeedrunContextMenu
+    if (section === 'speedrun') {
+      setSpeedrunContextMenu({
+        isVisible: true,
+        position: { x: e.clientX, y: e.clientY },
+        recordId: record.id
+      });
+    } else {
+      // For other sections, use regular ContextMenu
+      setContextMenu({ x: e.clientX, y: e.clientY });
+    }
   };
 
   const handleCloseContextMenu = () => {
     setContextMenu(null);
+    setSpeedrunContextMenu(prev => ({ ...prev, isVisible: false }));
   };
 
   const handleDelete = (recordToDelete: PipelineRecord) => {
