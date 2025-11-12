@@ -156,6 +156,7 @@ export async function GET(request: NextRequest) {
         where.relationshipType = {
           in: ['PARTNER', 'FUTURE_PARTNER']
         };
+        console.log('🚀 [V1 PEOPLE API] PartnerOS mode enabled - filtering by relationshipType PARTNER/FUTURE_PARTNER');
       }
 
       // 🔍 DIAGNOSTIC: Check what data actually exists
@@ -524,17 +525,8 @@ export async function GET(request: NextRequest) {
                 name: true,
                 email: true
               }
-            },
-            _count: {
-              select: {
-                actions: {
-                  where: {
-                    deletedAt: null,
-                    status: 'COMPLETED'
-                  }
-                }
-              }
             }
+            // 🚀 PERFORMANCE: Removed _count.actions to avoid N+1 queries - will batch count separately
           }
         }),
           prisma.people.count({ where }),
@@ -657,7 +649,7 @@ export async function GET(request: NextRequest) {
         mergeCorePersonWithWorkspace(person, person.corePerson || null)
       );
 
-      // 🚀 PERFORMANCE FIX: Fetch all last actions in a single query instead of N+1 queries
+      // 🚀 PERFORMANCE FIX: Fetch all last actions AND action counts in batch queries instead of N+1 queries
       const personIds = peopleWithCore.map(p => p.id);
       const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
       
@@ -678,11 +670,34 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      // Create a map of personId -> last action (only meaningful actions, most recent first)
+      // 🚀 PERFORMANCE: Batch count actions for all people in one query
+      const actionCounts = await prisma.actions.groupBy({
+        by: ['personId'],
+        where: {
+          personId: { in: personIds },
+          deletedAt: null,
+          status: 'COMPLETED'
+        },
+        _count: {
+          id: true
+        }
+      });
+
+      // Create maps for fast lookup
       const lastActionsMap = new Map<string, typeof allLastActions[0]>();
+      const actionCountsMap = new Map<string, number>();
+      
+      // Map last actions (only meaningful actions, most recent first)
       for (const action of allLastActions) {
         if (isMeaningfulAction(action.type) && !lastActionsMap.has(action.personId)) {
           lastActionsMap.set(action.personId, action);
+        }
+      }
+      
+      // Map action counts
+      for (const count of actionCounts) {
+        if (count.personId) {
+          actionCountsMap.set(count.personId, count._count.id);
         }
       }
 
@@ -789,7 +804,11 @@ export async function GET(request: NextRequest) {
             nextAction: nextAction || person.nextAction,
             nextActionDate: nextActionDate || person.nextActionDate,
             nextActionTiming: nextActionTiming, // NEW: Timing text
-            lastActionType: lastAction?.type || null
+            lastActionType: lastAction?.type || null,
+            // 🚀 PERFORMANCE: Add action count from batched query
+            _count: {
+              actions: actionCountsMap.get(person.id) || 0
+            }
           };
           
           // DEBUG: Log the final result

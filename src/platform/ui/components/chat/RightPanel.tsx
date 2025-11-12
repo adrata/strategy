@@ -1568,6 +1568,12 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     const searchParams = new URLSearchParams(window.location.search);
     const pathSegments = pathname.split('/').filter(Boolean);
     
+    // 🚀 PARTNEROS DETECTION: Check if we're in PartnerOS mode
+    const isPartnerOS = typeof window !== 'undefined' && (
+      pathname.includes('/partner-os/') || 
+      sessionStorage.getItem('activeSubApp') === 'partneros'
+    );
+    
     // Extract context from URL structure
     let primaryApp = '';
     let secondarySection = '';
@@ -1582,9 +1588,23 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     // Parse URL segments
     if (pathSegments.length >= 2) {
       primaryApp = pathSegments[1]; // workspace
-      if (pathSegments.length >= 3) {
-        secondarySection = pathSegments[2]; // database, grand-central, olympus, etc.
-        if (pathSegments.length >= 4) {
+        if (pathSegments.length >= 3) {
+        // Check if second segment is 'partner-os', then use third segment as section
+        if (pathSegments[2] === 'partner-os' && pathSegments.length >= 4) {
+          secondarySection = pathSegments[3]; // speedrun, leads, prospects, etc.
+          // For PartnerOS detail pages, the ID is in the 5th segment
+          if (pathSegments.length >= 5) {
+            const potentialId = pathSegments[4];
+            if (potentialId && (!isNaN(Number(potentialId)) || potentialId.match(/^[a-f0-9-]{8,}$/i))) {
+              itemId = potentialId;
+              isDetailPage = true;
+              viewType = 'detail';
+            }
+          }
+        } else {
+          secondarySection = pathSegments[2]; // database, grand-central, olympus, etc.
+        }
+        if (pathSegments.length >= 4 && !isPartnerOS) {
           detailView = pathSegments[3]; // tables, apis, connectors, etc.
           if (pathSegments.length >= 5) {
             // Check if this is a detail page with an ID
@@ -1679,7 +1699,10 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       itemName: itemName || undefined,
       viewType,
       filters: Object.keys(filters).length > 0 ? filters : undefined,
-      apiContext
+      apiContext,
+      // 🚀 PARTNEROS CONTEXT: Include PartnerOS mode information
+      isPartnerOS,
+      appMode: isPartnerOS ? 'PartnerOS' : (primaryApp === 'adrata' ? 'RevenueOS' : primaryApp)
     };
   };
 
@@ -1842,6 +1865,14 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
       const startTime = performance.now();
       
+      // 🚀 PARTNEROS DETECTION: Determine if we're in PartnerOS mode
+      const isPartnerOSMode = typeof window !== 'undefined' && (
+        window.location.pathname.includes('/partner-os/') || 
+        sessionStorage.getItem('activeSubApp') === 'partneros'
+      );
+      // Use 'partneros' as appType when in PartnerOS mode, otherwise use activeSubApp
+      const effectiveAppType = isPartnerOSMode ? 'partneros' : activeSubApp;
+      
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: { 
@@ -1852,7 +1883,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         },
         body: JSON.stringify({
           message: input,
-          appType: activeSubApp,
+          appType: effectiveAppType,
           workspaceId,
           userId,
           conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-5), // Reduced history for speed
@@ -1868,7 +1899,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             currentUrl: window.location.href,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
-            sessionId: `session-${Date.now()}`
+            sessionId: `session-${Date.now()}`,
+            // 🚀 PARTNEROS CONTEXT: Include PartnerOS mode in context
+            isPartnerOS: isPartnerOSMode
           },
           // Add page context for better AI awareness
           pageContext: currentPageContext || getPageContext()

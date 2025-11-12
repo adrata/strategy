@@ -153,7 +153,8 @@ export async function GET(request: NextRequest) {
     }
     
     // Check cache first (skip if force refresh)
-    const cacheKey = `companies-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}`;
+    // 🚀 FIX: Include isPartnerOS in cache key to prevent stale PartnerOS-filtered results
+    const cacheKey = `companies-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}-${isPartnerOS}`;
     const cached = responseCache.get(cacheKey);
     
     console.log(`💾 [V1 COMPANIES API] Cache check:`, {
@@ -190,6 +191,7 @@ export async function GET(request: NextRequest) {
       where.relationshipType = {
         in: ['PARTNER', 'FUTURE_PARTNER']
       };
+      console.log('🚀 [V1 COMPANIES API] PartnerOS mode enabled - filtering by relationshipType PARTNER/FUTURE_PARTNER');
     }
 
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);

@@ -47,6 +47,7 @@ export async function GET(request: NextRequest) {
   // Check for cache-busting parameter
   const url = new URL(request.url);
   const forceRefresh = url.searchParams.has('t');
+  const isPartnerOS = url.searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
   
   try {
     // 1. Authenticate and authorize user
@@ -110,18 +111,39 @@ export async function GET(request: NextRequest) {
     let speedrunCompaniesNoActionsCount: number = 0;
     
     try {
+      // 🚀 PARTNEROS FILTERING: Build base where clauses with relationshipType filter when in PartnerOS mode
+      const peopleBaseWhere: any = {
+        workspaceId,
+        deletedAt: null,
+        OR: [
+          { mainSellerId: userId },
+          { mainSellerId: null }
+        ]
+      };
+      
+      const companiesBaseWhere: any = {
+        workspaceId,
+        deletedAt: null,
+        OR: [
+          { mainSellerId: userId },
+          { mainSellerId: null }
+        ]
+      };
+      
+      if (isPartnerOS) {
+        peopleBaseWhere.relationshipType = {
+          in: ['PARTNER', 'FUTURE_PARTNER']
+        };
+        companiesBaseWhere.relationshipType = {
+          in: ['PARTNER', 'FUTURE_PARTNER']
+        };
+      }
+      
       [peopleCounts, companiesCounts, speedrunPeopleCount, speedrunCompaniesCount, speedrunPeopleNoActionsCount, speedrunCompaniesNoActionsCount] = await Promise.all([
         // Get people counts by status - Include records where user is main seller OR mainSellerId is null (consistent with list API)
         prisma.people.groupBy({
           by: ['status'],
-          where: {
-            workspaceId,
-            deletedAt: null, // Only count non-deleted records
-            OR: [
-              { mainSellerId: userId }, // Records assigned to this user
-              { mainSellerId: null }    // Unassigned records (consistent with list API)
-            ]
-          },
+          where: peopleBaseWhere,
           _count: { id: true }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching people counts:', error);
@@ -130,14 +152,7 @@ export async function GET(request: NextRequest) {
         // Get companies counts by status - Include records where user is main seller OR mainSellerId is null (consistent with list API)
         prisma.companies.groupBy({
           by: ['status'],
-          where: {
-            workspaceId,
-            deletedAt: null, // Only count non-deleted records
-            OR: [
-              { mainSellerId: userId }, // Records assigned to this user
-              { mainSellerId: null }    // Unassigned records (consistent with list API)
-            ]
-          },
+          where: companiesBaseWhere,
           _count: { id: true }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching companies counts:', error);
@@ -146,14 +161,9 @@ export async function GET(request: NextRequest) {
         // Get speedrun people count - count people with ranks 1-50 (per-user)
         prisma.people.count({
           where: {
-            workspaceId,
-            deletedAt: null, // Only count non-deleted records
+            ...peopleBaseWhere,
             companyId: { not: null }, // Only people with companies
-            globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
-            OR: [
-              { mainSellerId: userId }, // Records assigned to this user
-              { mainSellerId: null }    // Unassigned records (consistent with list API)
-            ]
+            globalRank: { not: null, gte: 1, lte: 50 } // Only people with ranks 1-50 (per-user)
           }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun people count:', error);
@@ -162,14 +172,9 @@ export async function GET(request: NextRequest) {
         // Get speedrun companies count - count companies with ranks 1-50 and 0 people
         prisma.companies.count({
           where: {
-            workspaceId,
-            deletedAt: null,
+            ...companiesBaseWhere,
             globalRank: { not: null, gte: 1, lte: 50 }, // Only companies with ranks 1-50
-            people: { none: {} }, // CRITICAL: Only companies with 0 people (companies with people are represented by their people)
-            OR: [
-              { mainSellerId: userId }, // Records assigned to this user
-              { mainSellerId: null }    // Unassigned records (consistent with list API)
-            ]
+            people: { none: {} } // CRITICAL: Only companies with 0 people (companies with people are represented by their people)
           }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
@@ -180,17 +185,10 @@ export async function GET(request: NextRequest) {
         // If lastActionDate is today AND lastAction is meaningful, they're NOT "Ready"
         prisma.people.count({
           where: {
-            workspaceId,
-            deletedAt: null,
+            ...peopleBaseWhere,
             companyId: { not: null },
             globalRank: { not: null, gte: 1, lte: 50 },
             AND: [
-              {
-                OR: [
-                  { mainSellerId: userId }, // Records assigned to this user
-                  { mainSellerId: null }    // Unassigned records (consistent with list API)
-                ]
-              },
               {
                 OR: [
                   { lastActionDate: null },
@@ -231,17 +229,10 @@ export async function GET(request: NextRequest) {
         // 🏆 FIX: Count companies where lastActionDate is null OR before today OR (today but not meaningful action)
         prisma.companies.count({
           where: {
-            workspaceId,
-            deletedAt: null,
+            ...companiesBaseWhere,
             globalRank: { not: null, gte: 1, lte: 50 },
             people: { none: {} },
             AND: [
-              {
-                OR: [
-                  { mainSellerId: userId }, // Records assigned to this user
-                  { mainSellerId: null }    // Unassigned records (consistent with list API)
-                ]
-              },
               {
                 OR: [
                   { lastActionDate: null },
@@ -310,24 +301,20 @@ export async function GET(request: NextRequest) {
     // 🚀 LEADS: Include companies with 0 people in leads count - Include records where user is main seller OR mainSellerId is null
     let companiesWithNoPeopleCount = 0;
     try {
+      const leadsCompaniesWhere: any = {
+        ...companiesBaseWhere,
+        people: { none: {} }, // Companies with 0 people
+        AND: [
+          {
+            OR: [
+              { status: 'LEAD' as any },
+              { status: null } // Include companies without status set
+            ]
+          }
+        ]
+      };
       companiesWithNoPeopleCount = await prisma.companies.count({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          OR: [
-            { mainSellerId: userId }, // Records assigned to this user
-            { mainSellerId: null }    // Unassigned records (consistent with list API)
-          ],
-          AND: [
-            { people: { none: {} } }, // Companies with 0 people
-            {
-              OR: [
-                { status: 'LEAD' as any },
-                { status: null } // Include companies without status set
-              ]
-            }
-          ]
-        }
+        where: leadsCompaniesWhere
       });
     } catch (error) {
       console.error('❌ [COUNTS API] Error fetching companies with no people count:', error);
@@ -337,19 +324,13 @@ export async function GET(request: NextRequest) {
     // 🚀 PROSPECTS: Include companies with 0 people and PROSPECT status - Include records where user is main seller OR mainSellerId is null
     let companiesProspectsCount = 0;
     try {
+      const prospectsCompaniesWhere: any = {
+        ...companiesBaseWhere,
+        people: { none: {} }, // Companies with 0 people
+        status: 'PROSPECT' as any
+      };
       companiesProspectsCount = await prisma.companies.count({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          OR: [
-            { mainSellerId: userId }, // Records assigned to this user
-            { mainSellerId: null }    // Unassigned records (consistent with list API)
-          ],
-          AND: [
-            { people: { none: {} } }, // Companies with 0 people
-            { status: 'PROSPECT' as any }
-          ]
-        }
+        where: prospectsCompaniesWhere
       });
     } catch (error) {
       console.error('❌ [COUNTS API] Error fetching prospect companies count:', error);
@@ -373,16 +354,16 @@ export async function GET(request: NextRequest) {
     // 🚀 CLIENTS: Count people with CLIENT status (primary or additionalStatuses) - Only show records where user is main seller
     let clientsWithAdditionalStatusCount = 0;
     try {
+      const clientsWhere: any = {
+        ...peopleBaseWhere,
+        mainSellerId: userId, // Only count records where user is the main seller
+        AND: [
+          { additionalStatuses: { has: 'CLIENT' } },
+          { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
+        ]
+      };
       clientsWithAdditionalStatusCount = await prisma.people.count({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          mainSellerId: userId, // Only count records where user is the main seller
-          AND: [
-            { additionalStatuses: { has: 'CLIENT' } },
-            { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
-          ]
-        }
+        where: clientsWhere
       });
     } catch (error) {
       console.error('❌ [COUNTS API] Error fetching clients with additionalStatuses count:', error);
@@ -392,16 +373,16 @@ export async function GET(request: NextRequest) {
     // Also count companies with CLIENT in additionalStatuses - Only show records where user is main seller
     let companiesClientsWithAdditionalStatusCount = 0;
     try {
+      const companiesClientsWhere: any = {
+        ...companiesBaseWhere,
+        mainSellerId: userId, // Only count records where user is the main seller
+        AND: [
+          { additionalStatuses: { has: 'CLIENT' } },
+          { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
+        ]
+      };
       companiesClientsWithAdditionalStatusCount = await prisma.companies.count({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          mainSellerId: userId, // Only count records where user is the main seller
-          AND: [
-            { additionalStatuses: { has: 'CLIENT' } },
-            { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
-          ]
-        }
+        where: companiesClientsWhere
       });
     } catch (error) {
       console.error('❌ [COUNTS API] Error fetching companies with CLIENT in additionalStatuses count:', error);
@@ -425,6 +406,63 @@ export async function GET(request: NextRequest) {
     const actualSpeedrunCount = speedrunPeopleCount + speedrunCompaniesCount;
     const speedrunReadyCount = speedrunPeopleNoActionsCount + speedrunCompaniesNoActionsCount;
     
+    // 🚀 REMAINING COUNT: Calculate records with no meaningful actions EVER (not just today)
+    // This counts records that have never had a meaningful action, regardless of when
+    let speedrunRemainingCount = 0;
+    try {
+      const remainingPeopleWhere: any = {
+        ...peopleBaseWhere,
+        companyId: { not: null },
+        globalRank: { not: null, gte: 1, lte: 50 },
+        AND: [
+          {
+            OR: [
+              { lastActionDate: null },
+              { lastAction: null },
+              { lastAction: 'No action taken' },
+              { lastAction: 'Record created' },
+              { lastAction: 'Company record created' },
+              { lastAction: 'Record added' }
+            ]
+          }
+        ]
+      };
+      
+      const remainingCompaniesWhere: any = {
+        ...companiesBaseWhere,
+        globalRank: { not: null, gte: 1, lte: 50 },
+        people: { none: {} },
+        AND: [
+          {
+            OR: [
+              { lastActionDate: null },
+              { lastAction: null },
+              { lastAction: 'No action taken' },
+              { lastAction: 'Record created' },
+              { lastAction: 'Company record created' },
+              { lastAction: 'Record added' }
+            ]
+          }
+        ]
+      };
+      
+      const [peopleWithNoActionsEver, companiesWithNoActionsEver] = await Promise.all([
+        // Count people with no meaningful actions EVER
+        prisma.people.count({
+          where: remainingPeopleWhere
+        }),
+        // Count companies with no meaningful actions EVER
+        prisma.companies.count({
+          where: remainingCompaniesWhere
+        })
+      ]);
+      speedrunRemainingCount = peopleWithNoActionsEver + companiesWithNoActionsEver;
+    } catch (error) {
+      console.error('❌ [COUNTS API] Error calculating speedrun remaining count:', error);
+      // Fallback to ready count if remaining calculation fails
+      speedrunRemainingCount = speedrunReadyCount;
+    }
+    
     const counts = {
       leads: leadsCount,
       prospects: prospectsCount,
@@ -435,7 +473,8 @@ export async function GET(request: NextRequest) {
       partners: partnersCount,
       sellers: sellersCount,
       speedrun: actualSpeedrunCount,
-      speedrunReady: speedrunReadyCount, // New count for records with no meaningful actions
+      speedrunReady: speedrunReadyCount, // Count for records with no meaningful actions TODAY
+      speedrunRemaining: speedrunRemainingCount, // Count for records with no meaningful actions EVER
       metrics: 16, // Fixed count for tracked metrics
       chronicle: 0 // Will be updated when Chronicle reports are created
     };

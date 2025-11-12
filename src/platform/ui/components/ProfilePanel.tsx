@@ -334,10 +334,10 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     // Not in OasisProvider context, keep count at 0
   }
 
-  // Get speedrun counts for pills
+  // Get speedrun counts for pills - use remaining count (total - records with actions)
   const { counts: fastCounts } = useFastCounts();
-  const revenueOSSpeedrunCount = fastCounts?.speedrun || 0;
-  const partnerOSSpeedrunCount = fastCounts?.speedrun || 0; // Same count for now, can be filtered later
+  const revenueOSSpeedrunCount = fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0;
+  const partnerOSSpeedrunCount = fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0; // Same count for now, can be filtered later
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
@@ -862,7 +862,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 <span className="font-medium">RevenueOS</span>
               </div>
               {revenueOSSpeedrunCount > 0 && (
-                <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted/10 text-muted border border-muted/20">
                   <span className="text-xs font-semibold">{revenueOSSpeedrunCount}</span>
                 </div>
               )}
@@ -888,7 +888,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   <span className="font-medium">PartnerOS</span>
                 </div>
                 {partnerOSSpeedrunCount > 0 && (
-                  <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted/10 text-muted border border-muted/20">
                     <span className="text-xs font-semibold">{partnerOSSpeedrunCount}</span>
                   </div>
                 )}

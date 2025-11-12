@@ -42,9 +42,11 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100); // Cap at 100, default 50
     const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0); // Default 0, minimum 0
     const forceRefresh = searchParams.get('refresh') === 'true' || searchParams.get('t'); // Force refresh if timestamp provided
+    const isPartnerOS = searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
-    const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-${limit}-${offset}`;
+    // 🚀 FIX: Include isPartnerOS in cache key to prevent stale PartnerOS-filtered results
+    const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-${limit}-${offset}-${isPartnerOS}`;
     
     // Define the fetch function for cache
     const fetchSpeedrunData = async () => {
@@ -100,19 +102,31 @@ export async function GET(request: NextRequest) {
       let speedrunRecords = [];
       try {
         // 1. Get companies without people (these get Speedrun ranks)
-        const companiesWithoutPeople = await prisma.companies.findMany({
-          where: {
-            workspaceId: context.workspaceId,
-            deletedAt: null,
-            mainSellerId: context.userId, // Only companies assigned to this user
-            // Only companies with 0 people
-            people: {
-              none: {
-                deletedAt: null,
-                mainSellerId: context.userId // Only people assigned to this user
-              }
+        // 🚀 PERFORMANCE: Filter by globalRank to use index and limit scan
+        const companiesWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          mainSellerId: context.userId, // Only companies assigned to this user
+          globalRank: { not: null, gte: 1, lte: 50 }, // Only companies with ranks 1-50 for performance
+          // Only companies with 0 people
+          people: {
+            none: {
+              deletedAt: null,
+              mainSellerId: context.userId // Only people assigned to this user
             }
-          },
+          }
+        };
+        
+        // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+        if (isPartnerOS) {
+          companiesWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+          console.log('🚀 [SPEEDRUN API] PartnerOS mode enabled - filtering companies by relationshipType PARTNER/FUTURE_PARTNER');
+        }
+        
+        const companiesWithoutPeople = await prisma.companies.findMany({
+          where: companiesWhere,
           select: {
             id: true,
             name: true,
@@ -144,13 +158,25 @@ export async function GET(request: NextRequest) {
         });
 
         // 2. Get people from companies that have people (these get Speedrun ranks)
+        // 🚀 PERFORMANCE: Filter by globalRank to use index and limit scan
+        const peopleWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          companyId: { not: null }, // Only people with company relationships
+          mainSellerId: context.userId, // Only people assigned to this user
+          globalRank: { not: null, gte: 1, lte: 50 } // Only people with ranks 1-50 for performance
+        };
+        
+        // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+        if (isPartnerOS) {
+          peopleWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+          console.log('🚀 [SPEEDRUN API] PartnerOS mode enabled - filtering people by relationshipType PARTNER/FUTURE_PARTNER');
+        }
+        
         const peopleFromCompaniesWithPeople = await prisma.people.findMany({
-          where: {
-            workspaceId: context.workspaceId,
-            deletedAt: null,
-            companyId: { not: null }, // Only people with company relationships
-            mainSellerId: context.userId // Only people assigned to this user
-          },
+          where: peopleWhere,
           select: {
             id: true,
             firstName: true,

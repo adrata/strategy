@@ -21,6 +21,7 @@ interface FastCounts {
   sellers: number | string;
   speedrun: number | string;
   speedrunReady: number | string;
+  speedrunRemaining: number | string;
   metrics: number | string;
   chronicle: number | string;
 }
@@ -49,6 +50,7 @@ export function useFastCounts(): UseFastCountsReturn {
     sellers: 0,
     speedrun: 0,
     speedrunReady: 0,
+    speedrunRemaining: 0,
     metrics: 0,
     chronicle: 0
   });
@@ -139,8 +141,12 @@ export function useFastCounts(): UseFastCountsReturn {
         });
       }
       
+      // Check if we're in PartnerOS mode
+      const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+      const partnerosParam = isPartnerOS ? '&partneros=true' : '';
+      
       // 🚀 PERFORMANCE: Use the unified counts API for all counts including speedrun
-      const countsResponse = await fetch(`/api/data/counts${forceRefresh ? `?t=${Date.now()}` : ''}`, {
+      const countsResponse = await fetch(`/api/data/counts${forceRefresh ? `?t=${Date.now()}${partnerosParam}` : partnerosParam ? `?${partnerosParam.slice(1)}` : ''}`, {
         credentials: 'include',
         signal: abortController.signal
       });
@@ -176,6 +182,7 @@ export function useFastCounts(): UseFastCountsReturn {
         // Speedrun: Use the speedrun count directly from counts API
         speedrun: counts.speedrun ?? 0,
         speedrunReady: counts.speedrunReady ?? 0,
+        speedrunRemaining: counts.speedrunRemaining ?? counts.speedrunReady ?? 0, // Use remaining count, fallback to ready
         
         // Sellers: Use the sellers count from counts API
         sellers: counts.sellers ?? 0,
