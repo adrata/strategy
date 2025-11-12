@@ -543,60 +543,47 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       <div className="flex-shrink-0 border-b border-border px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {/* Rank Squircle - similar to leads */}
-            {currentIndex !== null && (() => {
-              // Calculate alphanumeric rank (1A, 2B, etc.)
-              // Group stories by priority, then assign letters within each priority group
-              const priorityOrder = ['urgent', 'high', 'medium', 'low'];
-              const currentStory = stories[currentIndex];
-              const currentPriority = currentStory?.priority || 'medium';
+            {/* Rank Squircle - match backlog table format */}
+            {(() => {
+              // Use the same rank calculation logic as StacksBacklogTable
+              // Group by status (Up Next vs Backlog) and calculate position within section
+              const currentStoryStatus = story?.status || 'todo';
+              const isUpNext = currentStoryStatus === 'up-next' || currentStoryStatus === 'todo';
               
-              // Group stories by priority
-              const groupedByPriority: Record<string, any[]> = {};
-              stories.forEach((s, idx) => {
-                const priority = s.priority || 'medium';
-                if (!groupedByPriority[priority]) {
-                  groupedByPriority[priority] = [];
+              // Get all stories in the same status section
+              const sectionStories = stories.filter(s => {
+                if (isUpNext) {
+                  return s.status === 'up-next' || s.status === 'todo';
+                } else if (currentStoryStatus === 'backlog') {
+                  return s.status === 'backlog';
+                } else if (currentStoryStatus === 'deep-backlog') {
+                  return s.status === 'deep-backlog';
                 }
-                groupedByPriority[priority].push({ ...s, originalIndex: idx });
+                return false;
               });
               
-              // Calculate rank within priority group
-              let rankNumber = 1;
-              for (const priority of priorityOrder) {
-                if (priority === currentPriority) {
-                  const groupStories = groupedByPriority[priority] || [];
-                  const storyInGroup = groupStories.find(s => s.id === currentStory?.id);
-                  const letterIndex = storyInGroup ? groupStories.indexOf(storyInGroup) : 0;
-                  const letter = String.fromCharCode(65 + letterIndex); // A, B, C, etc.
-                  
-                  // Calculate the base number: count stories in higher priority groups
-                  let baseNumber = 1;
-                  for (const higherPriority of priorityOrder) {
-                    if (higherPriority === priority) break;
-                    baseNumber += (groupedByPriority[higherPriority]?.length || 0);
-                  }
-                  
-                  // If there are multiple stories in the same priority group, use the same number
-                  rankNumber = baseNumber;
-                  const rankDisplay = `${rankNumber}${letter}`;
-                  
-                  return (
-                    <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative">
-                      <span className="text-sm font-semibold text-foreground">
-                        {rankDisplay}
-                      </span>
-                    </div>
-                  );
-                }
-                rankNumber += (groupedByPriority[priority]?.length || 0);
+              // Find position within section
+              const sectionIndex = sectionStories.findIndex(s => s.id === story?.id);
+              
+              // Calculate display rank based on status (same format as backlog table)
+              let displayRank: string;
+              if (isUpNext) {
+                // Up Next items: 1A, 1B, 1C, etc.
+                const letterIndex = sectionIndex >= 0 ? sectionIndex : 0;
+                const letter = String.fromCharCode(65 + letterIndex); // A, B, C, etc.
+                displayRank = `1${letter}`;
+              } else if (currentStoryStatus === 'deep-backlog') {
+                // Deep Backlog items: DB1, DB2, DB3, etc.
+                displayRank = `DB${sectionIndex >= 0 ? sectionIndex + 1 : 1}`;
+              } else {
+                // Backlog items: B1, B2, B3, etc.
+                displayRank = `B${sectionIndex >= 0 ? sectionIndex + 1 : 1}`;
               }
               
-              // Fallback to numeric if calculation fails
               return (
                 <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative">
                   <span className="text-sm font-semibold text-foreground">
-                    {currentIndex + 1}
+                    {displayRank}
                   </span>
                 </div>
               );

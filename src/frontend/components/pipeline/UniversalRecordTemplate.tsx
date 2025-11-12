@@ -2366,11 +2366,20 @@ export function UniversalRecordTemplate({
           console.log(`🔄 [LINKEDIN NAVIGATOR LOCAL STATE] Preserving saved value in local state:`, value);
         }
         
+        // 🚀 CRITICAL: For status field, always preserve the saved value and update both status and stage
+        if (field === 'status') {
+          // Always use the value we just saved for status
+          actualValue = value;
+          console.log(`🔄 [STATUS LOCAL STATE] Preserving status value in local state:`, value);
+        }
+        
         const updatedRecord = {
           ...prev,
           [field]: actualValue,
           // Also update the API field name if different
           ...(apiField !== field ? { [apiField]: actualValue } : {}),
+          // 🚀 CRITICAL: For status field, also update stage field (they're often used interchangeably)
+          ...(field === 'status' ? { stage: actualValue } : {}),
           // If updating person fields, update the person object as well
           ...(personalFields.includes(field) && prev.person ? {
             person: {
@@ -2443,6 +2452,20 @@ export function UniversalRecordTemplate({
             savedValue: value,
             apiResponseValue: result.data[apiField],
             preservedValue: navigatorValue
+          });
+        }
+        
+        // 🚀 CRITICAL: For status field, always preserve the saved value
+        if (field === 'status') {
+          // Always use the value we just saved for status
+          const statusValue = value;
+          preservedFields[field] = statusValue;
+          preservedFields['stage'] = statusValue; // Also update stage field
+          preservedFields[apiField] = statusValue;
+          console.log(`🔄 [STATUS PRESERVE] Ensuring status is preserved:`, {
+            savedValue: value,
+            apiResponseValue: result.data[apiField],
+            preservedValue: statusValue
           });
         }
         
@@ -2557,7 +2580,73 @@ export function UniversalRecordTemplate({
         }
       }));
       
-      showMessage(`Updated ${field} successfully`);
+      // 🚀 SPECIAL HANDLING: Status field updates need to trigger count refreshes
+      if (field === 'status') {
+        const newStatus = value as string;
+        const oldStatus = record.status || record.stage || 'LEAD';
+        
+        // Determine which sections are affected
+        const getSectionForStatus = (status: string): string | null => {
+          const statusUpper = status?.toUpperCase() || '';
+          if (statusUpper === 'LEAD') return 'leads';
+          if (statusUpper === 'PROSPECT') return 'prospects';
+          if (statusUpper === 'OPPORTUNITY') return 'opportunities';
+          if (statusUpper === 'CLIENT' || statusUpper === 'CUSTOMER') return 'clients';
+          return null;
+        };
+        
+        const newSection = getSectionForStatus(newStatus);
+        const oldSection = getSectionForStatus(oldStatus);
+        
+        console.log(`🔄 [STATUS UPDATE] Status changed from ${oldStatus} to ${newStatus}`, {
+          oldSection,
+          newSection,
+          recordId
+        });
+        
+        // Trigger pipeline data refresh for both old and new sections
+        if (newSection) {
+          window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+            detail: { 
+              section: newSection,
+              type: 'status-change',
+              fromSection: oldSection || 'unknown',
+              recordId: record.id 
+            }
+          }));
+        }
+        
+        if (oldSection && oldSection !== newSection) {
+          window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+            detail: { 
+              section: oldSection,
+              type: 'status-change',
+              toSection: newSection || 'unknown',
+              recordId: record.id 
+            }
+          }));
+        }
+        
+        // Trigger count refresh for left panel
+        window.dispatchEvent(new CustomEvent('refresh-counts', {
+          detail: { 
+            reason: 'status-change',
+            recordId: record.id,
+            oldStatus,
+            newStatus
+          }
+        }));
+        
+        // Show success message with status change info
+        const statusLabel = newStatus === 'LEAD' ? 'Lead' : 
+                           newStatus === 'PROSPECT' ? 'Prospect' :
+                           newStatus === 'OPPORTUNITY' ? 'Opportunity' :
+                           newStatus === 'CLIENT' || newStatus === 'CUSTOMER' ? 'Client' :
+                           newStatus;
+        showMessage(`Successfully updated status to ${statusLabel}!`);
+      } else {
+        showMessage(`Updated ${field} successfully`);
+      }
       
       // Dispatch actionUpdated event for action record types
       if (targetModel === 'actions') {
@@ -4744,28 +4833,6 @@ export function UniversalRecordTemplate({
                 <h1 className="text-2xl font-bold text-foreground mb-1">{getDisplayName()}</h1>
                 <p className="text-sm text-muted">{getSubtitle()}</p>
               </div>
-              
-              {/* Stage Badge - Show for all records including company records */}
-              {(() => {
-                const stageValue = record?.stage || record?.status;
-                if (stageValue && recordType !== 'opportunities') {
-                  const stageColors: Record<string, string> = {
-                    'LEAD': 'bg-warning/20 text-warning border-warning/50',
-                    'PROSPECT': 'bg-primary/20 text-primary border-primary/50',
-                    'OPPORTUNITY': 'bg-info/20 text-info border-info/50',
-                    'CUSTOMER': 'bg-success/20 text-success border-success/50',
-                    'CLIENT': 'bg-success/20 text-success border-success/50',
-                    'SUPERFAN': 'bg-info/20 text-info border-info/50'
-                  };
-                  const colorClass = stageColors[stageValue.toUpperCase()] || 'bg-hover/50 text-foreground border-border';
-                  return (
-                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border ${colorClass} ml-2`}>
-                      {stageValue}
-                    </span>
-                  );
-                }
-                return null;
-              })()}
             </div>
           </div>
           
@@ -6545,66 +6612,98 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   }, [record?.id, getInitialNotes]);
 
   // Sync notes state when record.notes prop changes (after initial mount)
+  // Simplified to prevent glitches - only sync when absolutely necessary
   React.useEffect(() => {
+    // Skip sync entirely during initial mount or if user is actively editing
+    if (isInitialMountRef.current || isFocused || isTypingRef.current || saveStatus === 'saving' || hasUnsavedChanges) {
+      return;
+    }
+
     const newNotes = getInitialNotes;
     const timeSinceLastSave = Date.now() - lastSavedTimestampRef.current;
-    const wasJustSaved = timeSinceLastSave < 5000; // Prevent syncing for 5 seconds after save
+    const wasJustSaved = timeSinceLastSave < 10000; // Prevent syncing for 10 seconds after save
     
-    // Only sync if:
-    // 1. Notes have actually changed from what's currently displayed
-    // 2. User is not currently focused on the textarea
-    // 3. User is not actively typing (wait 2 seconds after last keystroke)
-    // 4. Not currently saving
-    // 5. No unsaved changes
-    // 6. Notes from prop are different from our last saved version (prevents stale cache overwrites)
-    // 7. CRITICAL: Notes were not just saved (prevent overwriting recently saved notes)
-    // 8. CRITICAL: Don't overwrite saved notes with empty/null from prop unless prop actually has content
+    // Only sync if notes actually changed and we haven't just saved
     if (newNotes !== notes && 
         newNotes !== lastSavedNotes &&
-        !isFocused && 
-        !isTypingRef.current &&
-        saveStatus !== 'saving' && 
-        !hasUnsavedChanges &&
-        !isInitialMountRef.current &&
-        !wasJustSaved && // Prevent syncing immediately after save
-        (newNotes.trim().length > 0 || notes.trim().length === 0)) { // Don't overwrite saved notes with empty prop unless local is also empty
-      console.log('🔄 [NOTES] Syncing notes from prop:', { newNotes, currentNotes: notes, lastSavedNotes, timeSinceLastSave });
-      setNotes(newNotes);
-      setLastSavedNotes(newNotes);
-    } else if (wasJustSaved && newNotes !== notes) {
-      console.log('⏭️ [NOTES] Skipping sync - notes were just saved:', { timeSinceLastSave, newNotes, currentNotes: notes });
+        !wasJustSaved) {
+      // Use requestAnimationFrame to batch the update and prevent visual glitches
+      requestAnimationFrame(() => {
+        if (!isFocused && !isTypingRef.current && saveStatus !== 'saving' && !hasUnsavedChanges) {
+          setNotes(newNotes);
+          setLastSavedNotes(newNotes);
+        }
+      });
     }
   }, [getInitialNotes, notes, lastSavedNotes, isFocused, saveStatus, hasUnsavedChanges]);
 
   // Silently refresh notes from API in background (no loading state)
+  // Simplified to prevent glitches - only refresh on record ID change, not continuously
   React.useEffect(() => {
     const refreshNotes = async () => {
       if (!record?.id) return;
 
       const isInitialMount = isInitialMountRef.current;
       
-      // Wait a bit to ensure user is not actively typing
-      if (!isInitialMount) {
-        // Wait 3 seconds after component mount to ensure user has finished typing
-        await new Promise(resolve => setTimeout(resolve, 3000));
+      // On initial mount, use notes from props (already set in getInitialNotes)
+      // Only refresh from API if we don't have notes and user isn't typing
+      if (isInitialMount) {
+        // Mark initial mount as complete immediately to prevent sync conflicts
+        isInitialMountRef.current = false;
         
-        // Double-check that user is still not typing
-        if (isTypingRef.current || isFocused) {
-          console.log('⏭️ [NOTES] Skipping refresh - user is typing');
-          return;
+        // Get current notes value
+        const currentInitialNotes = notesRef.current || notes;
+        
+        // Only fetch from API if we don't have notes from props
+        if (!currentInitialNotes || currentInitialNotes.trim().length === 0) {
+          try {
+            const apiEndpoint = recordType === 'companies' 
+              ? `/api/v1/companies/${record.id}`
+              : `/api/v1/people/${record.id}`;
+
+            const response = await fetch(apiEndpoint, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success && result.data?.notes !== undefined) {
+                const freshNotes = typeof result.data.notes === 'string' 
+                  ? result.data.notes 
+                  : result.data.notes?.content || result.data.notes?.text || '';
+                
+                if (freshNotes && freshNotes.trim().length > 0) {
+                  // Use requestAnimationFrame to batch update and prevent glitches
+                  requestAnimationFrame(() => {
+                    setNotes(freshNotes);
+                    setLastSavedNotes(freshNotes);
+                    notesRef.current = freshNotes;
+                    if (result.data.updatedAt) {
+                      setLastSavedAt(new Date(result.data.updatedAt));
+                    }
+                  });
+                }
+              }
+            }
+          } catch (error) {
+            // Silently fail - user already has notes from record prop
+          }
         }
+        return;
+      }
+      
+      // After initial mount, only refresh if user is not actively editing
+      // Wait longer to ensure user has finished typing
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      
+      if (isTypingRef.current || isFocused || saveStatus === 'saving' || hasUnsavedChanges) {
+        return;
       }
       
       try {
-        console.log('🔄 [NOTES] Silently refreshing notes for:', { 
-          recordId: record.id, 
-          recordType,
-          isInitialMount,
-          currentNotes: notesRef.current,
-          lastSavedNotes: lastSavedNotes
-        });
-
-        // Map record types to v1 API endpoints
         const apiEndpoint = recordType === 'companies' 
           ? `/api/v1/companies/${record.id}`
           : `/api/v1/people/${record.id}`;
@@ -6623,97 +6722,37 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
               ? result.data.notes 
               : result.data.notes?.content || result.data.notes?.text || '';
             
-            // CRITICAL: On initial mount, always use notes from API if they exist
-            // If API has notes but we don't have any, use API notes
-            // If we have notes but API doesn't, preserve our notes (might be unsaved)
             const currentNotes = notesRef.current;
-            const hasCurrentNotes = currentNotes && currentNotes.trim().length > 0;
-            const hasFreshNotes = freshNotes && freshNotes.trim().length > 0;
+            const timeSinceLastSave = Date.now() - lastSavedTimestampRef.current;
+            const wasJustSaved = timeSinceLastSave < 10000; // Don't overwrite if just saved
             
-            if (isInitialMount) {
-              // On initial mount, prefer API notes if available, otherwise keep current
-              if (hasFreshNotes) {
-                console.log('✅ [NOTES] Initial mount - using API notes:', { length: freshNotes.length });
-                setNotes(freshNotes);
-                setLastSavedNotes(freshNotes);
-                notesRef.current = freshNotes;
-                if (result.data.updatedAt) {
-                  setLastSavedAt(new Date(result.data.updatedAt));
-                }
-              } else if (hasCurrentNotes) {
-                // We have notes but API doesn't - preserve them (might be unsaved)
-                console.log('💾 [NOTES] Initial mount - preserving local notes (API empty):', { length: currentNotes.length });
-              }
-            } else {
-              // After initial mount, only update if conditions are met to prevent overwriting user edits
-              const shouldUpdate = hasFreshNotes && 
-                freshNotes !== currentNotes && 
-                saveStatus !== 'saving' && 
+            // Only update if notes changed, not just saved, and user isn't editing
+            if (freshNotes !== currentNotes && 
+                !wasJustSaved && 
                 !isFocused && 
                 !isTypingRef.current && 
-                !hasUnsavedChanges;
-              
-              if (shouldUpdate) {
-                console.log('✅ [NOTES] Updating notes from API:', { 
-                  length: freshNotes.length, 
-                  isInitialMount,
-                  currentNotes: currentNotes,
-                  freshNotes 
-                });
-                setNotes(freshNotes);
-                setLastSavedNotes(freshNotes);
-                notesRef.current = freshNotes;
-                if (result.data.updatedAt) {
-                  setLastSavedAt(new Date(result.data.updatedAt));
+                saveStatus !== 'saving' && 
+                !hasUnsavedChanges) {
+              // Use requestAnimationFrame to batch update and prevent glitches
+              requestAnimationFrame(() => {
+                if (!isFocused && !isTypingRef.current && saveStatus !== 'saving' && !hasUnsavedChanges) {
+                  setNotes(freshNotes);
+                  setLastSavedNotes(freshNotes);
+                  notesRef.current = freshNotes;
+                  if (result.data.updatedAt) {
+                    setLastSavedAt(new Date(result.data.updatedAt));
+                  }
                 }
-              } else {
-                console.log('⏭️ [NOTES] Skipping update:', { 
-                  freshNotes,
-                  currentNotes: currentNotes,
-                  isInitialMount,
-                  saveStatus,
-                  isFocused,
-                  isTyping: isTypingRef.current,
-                  hasUnsavedChanges,
-                  hasFreshNotes,
-                  hasCurrentNotes
-                });
-              }
-            }
-          } else if (result.success && result.data?.notes === null) {
-            // API returned null/empty notes
-            // CRITICAL: Only clear if we don't have any saved notes AND user is not typing
-            // This prevents clearing notes that were just saved but API hasn't synced yet
-            console.log('📝 [NOTES] API returned empty notes, checking if safe to clear');
-            const hasSavedNotes = lastSavedNotes && lastSavedNotes.trim().length > 0;
-            const isSafeToClear = (isInitialMount && !hasSavedNotes) || 
-              (!isFocused && !isTypingRef.current && saveStatus !== 'saving' && !hasUnsavedChanges && !hasSavedNotes);
-            
-            if (isSafeToClear) {
-              console.log('🧹 [NOTES] Clearing notes (API empty and no saved notes)');
-              setNotes('');
-              setLastSavedNotes('');
-              notesRef.current = '';
-            } else {
-              console.log('⏭️ [NOTES] Not clearing notes - has saved notes or user is typing:', {
-                hasSavedNotes,
-                isFocused,
-                isTyping: isTypingRef.current,
-                hasUnsavedChanges
               });
             }
           }
         }
       } catch (error) {
-        console.error('❌ [NOTES] Error refreshing notes:', error);
         // Silently fail - user already has notes from record prop
-      } finally {
-        // Mark initial mount as complete after first refresh
-        isInitialMountRef.current = false;
       }
     };
 
-    // Only refresh on initial load or when record ID changes, not on every notes change
+    // Only refresh on record ID change
     refreshNotes();
   }, [record?.id, recordType]);
 
@@ -6911,6 +6950,22 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
 
   return (
     <div className="h-full flex flex-col">
+      {/* Notes Header with static auto-save message */}
+      <div className="flex items-center justify-end px-4 py-2 border-b border-border bg-background">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted">
+            Notes auto-save
+          </span>
+          {saveStatus === 'error' && (
+            <span className="text-xs text-red-500 flex items-center gap-1">
+              <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+              Save failed
+            </span>
+          )}
+        </div>
+      </div>
+      
+      {/* Notes Editor */}
       <div className="flex-1">
         <NotesEditor
           key={`notes-${record?.id || 'unknown'}`}
@@ -6925,6 +6980,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
           debounceMs={1000}
           lastSavedAt={lastSavedAt}
           className="h-full"
+          showHeader={false}
         />
       </div>
 

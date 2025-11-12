@@ -94,7 +94,7 @@ export async function GET(
     console.log('🔍 [STACKS API] ID type check - CUID:', /^c[a-z0-9]{24}$/.test(finalStoryId), 'ULID:', /^[0-9A-HJKMNP-TV-Z]{26}$/i.test(finalStoryId));
 
     // Fetch the story with workspace validation
-    // Use explicit select to avoid selecting viewType column that may not exist in database
+    // Try with viewType first, fall back without it if column doesn't exist
     let story;
     try {
       story = await prisma.stacksStory.findFirst({
@@ -145,18 +145,76 @@ export async function GET(
           }
         }
       });
-    } catch (storyQueryError) {
-      console.error('❌ [STACKS API] Error querying story:', storyQueryError);
-      console.error('❌ [STACKS API] Story query error details:', {
-        message: storyQueryError instanceof Error ? storyQueryError.message : String(storyQueryError),
-        name: storyQueryError instanceof Error ? storyQueryError.name : 'Unknown',
-        stack: storyQueryError instanceof Error ? storyQueryError.stack : undefined,
-        code: (storyQueryError as any)?.code,
-        meta: (storyQueryError as any)?.meta,
-        queryId: finalStoryId,
-        workspaceId: workspaceId
-      });
-      throw storyQueryError;
+    } catch (storyQueryError: any) {
+      // If viewType column doesn't exist, retry without it
+      if (storyQueryError?.code === 'P2022' && storyQueryError?.meta?.column_name === 'viewType') {
+        console.warn('⚠️ [STACKS API] viewType column does not exist, fetching story without it');
+        try {
+          story = await prisma.stacksStory.findFirst({
+            where: {
+              id: finalStoryId,
+              project: {
+                workspaceId: workspaceId
+              }
+            },
+            select: {
+              id: true,
+              epochId: true,
+              projectId: true,
+              title: true,
+              description: true,
+              acceptanceCriteria: true,
+              status: true,
+              priority: true,
+              assigneeId: true,
+              product: true,
+              section: true,
+              // Omit viewType field
+              isFlagged: true,
+              rank: true,
+              statusChangedAt: true,
+              createdAt: true,
+              updatedAt: true,
+              epoch: {
+                select: {
+                  id: true,
+                  title: true,
+                  description: true
+                }
+              },
+              assignee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              },
+              project: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          });
+        } catch (retryError) {
+          console.error('❌ [STACKS API] Error querying story (retry without viewType):', retryError);
+          throw retryError;
+        }
+      } else {
+        console.error('❌ [STACKS API] Error querying story:', storyQueryError);
+        console.error('❌ [STACKS API] Story query error details:', {
+          message: storyQueryError instanceof Error ? storyQueryError.message : String(storyQueryError),
+          name: storyQueryError instanceof Error ? storyQueryError.name : 'Unknown',
+          stack: storyQueryError instanceof Error ? storyQueryError.stack : undefined,
+          code: storyQueryError?.code,
+          meta: storyQueryError?.meta,
+          queryId: finalStoryId,
+          workspaceId: workspaceId
+        });
+        throw storyQueryError;
+      }
     }
 
     // If story not found, check if it's a task
@@ -165,12 +223,63 @@ export async function GET(
       
       try {
         // Try to fetch as a task
-        // Find task by ID first, then validate workspace separately
-        // This is more robust and handles edge cases (e.g., newly created bugs, tasks without projects)
-        console.log('🔍 [STACKS API] Looking up task by ID:', finalStoryId);
-        let taskById;
-        try {
-          taskById = await prisma.stacksTask.findFirst({
+        // Note: attachments field doesn't exist in StacksTask schema, so we don't select it
+        let task = await prisma.stacksTask.findFirst({
+          where: {
+            id: finalStoryId,
+            project: {
+              workspaceId: workspaceId
+            }
+          },
+          select: {
+            id: true,
+            storyId: true,
+            projectId: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            type: true,
+            assigneeId: true,
+            product: true,
+            section: true,
+            rank: true,
+            // attachments field doesn't exist in schema, so we don't select it
+            createdAt: true,
+            updatedAt: true,
+            assignee: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true
+              }
+            },
+            story: {
+              select: {
+                id: true,
+                title: true
+              }
+            },
+            project: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        });
+
+        if (!task) {
+          console.log('⚠️ [STACKS API] Task not found with workspace validation, trying alternative lookup');
+          console.log('🔍 [STACKS API] Searched for ID:', finalStoryId);
+          console.log('🔍 [STACKS API] In workspace:', workspaceId);
+          console.log('🔍 [STACKS API] Original param value:', paramValue);
+          
+          // Try to find the task by ID first, then validate workspace separately
+          // This handles cases where the nested relation filter fails but the task exists
+          // Note: attachments field doesn't exist in StacksTask schema, so we don't select it
+          const taskById = await prisma.stacksTask.findFirst({
             where: { id: finalStoryId },
             select: {
               id: true,
@@ -185,7 +294,7 @@ export async function GET(
               product: true,
               section: true,
               rank: true,
-              attachments: true,
+              // attachments field doesn't exist in schema, so we don't select it
               createdAt: true,
               updatedAt: true,
               assignee: {
@@ -211,256 +320,114 @@ export async function GET(
               }
             }
           });
-        } catch (attachmentsError: any) {
-          // If attachments column doesn't exist, try without it
-          if (attachmentsError?.code === 'P2022' && attachmentsError?.meta?.column_name === 'attachments') {
-            console.warn('⚠️ [STACKS API] Attachments column does not exist, fetching task without it');
-            taskById = await prisma.stacksTask.findFirst({
-              where: { id: finalStoryId },
-              select: {
-                id: true,
-                storyId: true,
-                projectId: true,
-                title: true,
-                description: true,
-                status: true,
-                priority: true,
-                type: true,
-                assigneeId: true,
-                product: true,
-                section: true,
-                rank: true,
-                createdAt: true,
-                updatedAt: true,
-                assignee: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true
-                  }
-                },
-                story: {
-                  select: {
-                    id: true,
-                    title: true
-                  }
-                },
-                project: {
-                  select: {
-                    id: true,
-                    name: true,
-                    workspaceId: true
-                  }
-                }
-              }
-            });
-          } else {
-            throw attachmentsError;
-          }
-        }
-        
-        if (taskById) {
-          // Validate workspace - check if task's project belongs to the requested workspace
-          // Safely access project workspace ID (project might be null)
-          const taskWorkspaceId = taskById.project?.workspaceId || null;
-          const isValidWorkspace = taskWorkspaceId === workspaceId;
           
-          console.log('🔍 [STACKS API] Task found by ID:', {
-            taskId: taskById.id,
-            taskTitle: taskById.title,
-            taskType: taskById.type,
-            taskProjectId: taskById.projectId,
-            taskProject: taskById.project,
-            taskWorkspaceId: taskWorkspaceId,
-            requestedWorkspaceId: workspaceId,
-            isValidWorkspace: isValidWorkspace,
-            hasProject: !!taskById.project,
-            willReturn: isValidWorkspace || !taskById.project
-          });
-          
-          // CRITICAL: For debugging, also check if task exists without workspace filter
-          if (!isValidWorkspace && taskById.project) {
-            console.error('❌ [STACKS API] WORKSPACE MISMATCH DETECTED:', {
-              bugId: taskById.id,
-              bugTitle: taskById.title,
-              bugProjectWorkspaceId: taskWorkspaceId,
-              requestedWorkspaceId: workspaceId,
-              mismatchReason: 'Project workspace does not match requested workspace',
-              suggestion: 'Check workspace ID resolution in frontend'
-            });
-          }
-          
-          // Return task if workspace matches, or if task has no project (edge case for bugs)
-          if (isValidWorkspace || !taskById.project) {
-            console.log('✅ [STACKS API] Returning task found by ID (workspace valid or no project)');
+          if (taskById) {
+            // Validate workspace - check if task's project belongs to the requested workspace
+            // Safely handle null project case
+            const taskWorkspaceId = taskById.project?.workspaceId || null;
+            const isValidWorkspace = taskWorkspaceId === workspaceId;
+            const hasProject = !!taskById.project;
             
-            // Transform the task data to match expected format
-            let taskAttachments: any[] = [];
-            if ((taskById as any).attachments) {
-              if (Array.isArray((taskById as any).attachments)) {
-                taskAttachments = (taskById as any).attachments;
-              } else if (typeof (taskById as any).attachments === 'object') {
-                taskAttachments = [(taskById as any).attachments];
-              }
-            }
-            
-            const transformedStory = {
-              id: taskById.id,
-              title: taskById.title,
-              description: taskById.description,
-              acceptanceCriteria: null,
-              status: taskById.status,
-              priority: taskById.priority,
-              viewType: taskById.type === 'bug' ? 'bug' : 'detail',
-              product: taskById.product || null,
-              section: taskById.section || null,
-              rank: taskById.rank || null,
-              type: taskById.type || 'task',
-              attachments: taskAttachments,
-              assignee: taskById.assignee ? {
-                id: taskById.assignee.id,
-                name: (() => {
-                  const firstName = taskById.assignee.firstName != null ? String(taskById.assignee.firstName) : '';
-                  const lastName = taskById.assignee.lastName != null ? String(taskById.assignee.lastName) : '';
-                  const fullName = `${firstName} ${lastName}`.trim();
-                  return fullName || 'Unknown';
-                })(),
-                email: taskById.assignee.email || ''
-              } : null,
-              epoch: null,
-              story: taskById.story ? {
-                id: taskById.story.id,
-                title: taskById.story.title
-              } : null,
-              project: taskById.project && isValidWorkspace ? {
-                id: taskById.project.id,
-                name: taskById.project.name
-              } : null,
-              dueDate: null,
-              tags: taskById.type === 'bug' ? ['bug'] : [],
-              isFlagged: false,
-              points: null,
-              createdAt: taskById.createdAt,
-              updatedAt: taskById.updatedAt,
-              timeInStatus: 0
-            };
-            
-            return NextResponse.json({
-              story: transformedStory,
-              type: taskById.type || 'task'
-            });
-          } else {
-            console.error('❌ [STACKS API] Task exists but in different workspace:', {
+            console.log('🔍 [STACKS API] Task found by ID:', {
+              taskId: taskById.id,
+              taskProjectId: taskById.projectId,
               taskWorkspaceId: taskWorkspaceId,
               requestedWorkspaceId: workspaceId,
-              bugWillNotBeReturned: true
+              isValidWorkspace: isValidWorkspace,
+              hasProject: hasProject,
+              taskType: taskById.type
             });
             
-            // TEMPORARY WORKAROUND: Return the task anyway for debugging
-            // This helps identify workspace mismatch issues
-            console.warn('⚠️ [STACKS API] RETURNING TASK DESPITE WORKSPACE MISMATCH FOR DEBUGGING');
+            // Return task if workspace matches, if task has no project, or if it's a bug (bugs can have workspace mismatches)
+            const isBug = taskById.type === 'bug';
+            const shouldReturn = isValidWorkspace || !hasProject || isBug;
             
-            const transformedStory = {
-              id: taskById.id,
-              title: taskById.title,
-              description: taskById.description,
-              acceptanceCriteria: null,
-              status: taskById.status,
-              priority: taskById.priority,
-              viewType: taskById.type === 'bug' ? 'bug' : 'detail',
-              product: taskById.product || null,
-              section: taskById.section || null,
-              rank: taskById.rank || null,
-              type: taskById.type || 'task',
-              attachments: [],
-              assignee: taskById.assignee ? {
-                id: taskById.assignee.id,
-                name: (() => {
-                  const firstName = taskById.assignee.firstName != null ? String(taskById.assignee.firstName) : '';
-                  const lastName = taskById.assignee.lastName != null ? String(taskById.assignee.lastName) : '';
-                  const fullName = `${firstName} ${lastName}`.trim();
-                  return fullName || 'Unknown';
-                })(),
-                email: taskById.assignee.email || ''
-              } : null,
-              epoch: null,
-              story: taskById.story ? {
-                id: taskById.story.id,
-                title: taskById.story.title
-              } : null,
-              project: taskById.project ? {
-                id: taskById.project.id,
-                name: taskById.project.name
-              } : null,
-              dueDate: null,
-              tags: taskById.type === 'bug' ? ['bug'] : [],
-              isFlagged: false,
-              points: null,
-              createdAt: taskById.createdAt,
-              updatedAt: taskById.updatedAt,
-              timeInStatus: 0,
-              _workspaceMismatch: true, // Flag for debugging
-              _bugWorkspaceId: taskWorkspaceId,
-              _requestedWorkspaceId: workspaceId
-            };
-            
-            return NextResponse.json({
-              story: transformedStory,
-              type: taskById.type || 'task',
-              warning: 'Workspace mismatch detected - check console logs'
-            });
-          }
-        } else {
-          console.error('❌ [STACKS API] Task not found in database:', {
-            searchedId: finalStoryId,
-            requestedWorkspaceId: workspaceId
-          });
-          
-          // CRITICAL DEBUG: Check if task exists in database WITHOUT workspace filter
-          // Wrap in try-catch to prevent 500 errors if query fails
-          try {
-            const taskWithoutWorkspace = await prisma.stacksTask.findFirst({
-              where: { id: finalStoryId },
-              select: { 
-                id: true, 
-                title: true,
-                type: true,
-                projectId: true, 
-                project: { 
-                  select: { 
-                    id: true,
-                    name: true,
-                    workspaceId: true 
-                  } 
-                } 
+            if (shouldReturn) {
+              if (isBug && !isValidWorkspace) {
+                console.warn('⚠️ [STACKS API] Returning bug despite workspace mismatch:', {
+                  bugId: taskById.id,
+                  bugWorkspaceId: taskWorkspaceId,
+                  requestedWorkspaceId: workspaceId,
+                  reason: 'Bug lookup - allowing workspace mismatch for bugs'
+                });
+              } else {
+                console.log('✅ [STACKS API] Returning task found by ID (workspace valid or no project)');
               }
-            });
-            
-            if (taskWithoutWorkspace) {
-              console.error('🚨 [STACKS API] BUG EXISTS IN DATABASE BUT FAILED VALIDATION:', {
-                bugId: taskWithoutWorkspace.id,
-                bugTitle: taskWithoutWorkspace.title,
-                bugType: taskWithoutWorkspace.type,
-                bugProjectId: taskWithoutWorkspace.projectId,
-                bugProjectWorkspaceId: taskWithoutWorkspace.project?.workspaceId,
-                requestedWorkspaceId: workspaceId,
-                workspaceMismatch: taskWithoutWorkspace.project?.workspaceId !== workspaceId,
-                SOLUTION: 'Bug was created in different workspace than being queried'
+              
+              // Transform the task data to match expected format
+              // Note: attachments field doesn't exist in StacksTask schema, so we use empty array
+              const taskAttachments: any[] = [];
+              
+              // Safely transform task data with null checks
+              const transformedStory = {
+                id: taskById.id,
+                title: taskById.title || '',
+                description: taskById.description || null,
+                acceptanceCriteria: null,
+                status: taskById.status || 'todo',
+                priority: taskById.priority || null,
+                viewType: taskById.type === 'bug' ? 'bug' : 'detail',
+                product: taskById.product || null,
+                section: taskById.section || null,
+                rank: taskById.rank || null,
+                type: taskById.type || 'task',
+                attachments: taskAttachments,
+                assignee: taskById.assignee ? {
+                  id: taskById.assignee.id,
+                  name: (() => {
+                    try {
+                      const firstName = taskById.assignee?.firstName != null ? String(taskById.assignee.firstName) : '';
+                      const lastName = taskById.assignee?.lastName != null ? String(taskById.assignee.lastName) : '';
+                      const fullName = `${firstName} ${lastName}`.trim();
+                      return fullName || 'Unknown';
+                    } catch (e) {
+                      console.warn('⚠️ [STACKS API] Error formatting assignee name for taskById:', e);
+                      return 'Unknown';
+                    }
+                  })(),
+                  email: taskById.assignee?.email || ''
+                } : null,
+                epoch: null,
+                story: taskById.story ? {
+                  id: taskById.story.id,
+                  title: taskById.story.title || ''
+                } : null,
+                // Include project even for bugs with workspace mismatches (but only if project exists)
+                project: taskById.project ? {
+                  id: taskById.project.id,
+                  name: taskById.project.name || ''
+                } : null,
+                dueDate: null,
+                tags: taskById.type === 'bug' ? ['bug'] : [],
+                isFlagged: false,
+                points: null,
+                createdAt: taskById.createdAt ? new Date(taskById.createdAt).toISOString() : new Date().toISOString(),
+                updatedAt: taskById.updatedAt ? new Date(taskById.updatedAt).toISOString() : new Date().toISOString(),
+                timeInStatus: 0
+              };
+              
+              // Ensure JSON serialization is safe
+              const serializableStory = {
+                ...transformedStory,
+                createdAt: typeof transformedStory.createdAt === 'string' 
+                  ? transformedStory.createdAt 
+                  : new Date(transformedStory.createdAt).toISOString(),
+                updatedAt: typeof transformedStory.updatedAt === 'string'
+                  ? transformedStory.updatedAt
+                  : new Date(transformedStory.updatedAt).toISOString()
+              };
+              
+              return NextResponse.json({
+                story: serializableStory,
+                type: taskById.type || 'task'
               });
             } else {
-              console.error('🚨 [STACKS API] BUG DOES NOT EXIST IN DATABASE AT ALL:', {
-                searchedId: finalStoryId,
-                suggestion: 'Bug may not have been created successfully'
+              console.log('⚠️ [STACKS API] Task exists but in different workspace:', {
+                taskWorkspaceId: taskWorkspaceId,
+                requestedWorkspaceId: workspaceId,
+                taskType: taskById.type
               });
             }
-          } catch (debugQueryError) {
-            // Log but don't throw - this is just for debugging
-            console.warn('⚠️ [STACKS API] Error in debug query (non-fatal):', {
-              error: debugQueryError instanceof Error ? debugQueryError.message : String(debugQueryError),
-              code: (debugQueryError as any)?.code,
-              searchedId: finalStoryId
-            });
           }
           
           console.log('❌ [STACKS API] Task not found by ID or workspace mismatch');
@@ -587,27 +554,130 @@ export async function GET(
           
           return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
         }
-      } catch (taskError) {
-          console.error('❌ [STACKS API] Error fetching task:', taskError);
-          console.error('❌ [STACKS API] Task error details:', {
-            message: taskError instanceof Error ? taskError.message : String(taskError),
-            name: taskError instanceof Error ? taskError.name : 'Unknown',
-            stack: taskError instanceof Error ? taskError.stack : undefined,
-            code: (taskError as any)?.code,
-            meta: (taskError as any)?.meta,
-            queryId: finalStoryId,
-            workspaceId: workspaceId,
-            paramValue: paramValue
-          });
-          // Re-throw to be caught by outer catch block
-          throw taskError;
-        }
-      }
-    }
 
-    // If we reach here, story should exist (if it didn't, we would have returned a task or 404)
-    if (!story) {
-      return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
+        console.log('✅ [STACKS API] Task found:', task.id, 'type:', task.type);
+
+        // Transform task data to match story response format
+        // Note: attachments field doesn't exist in StacksTask schema, so we use empty array
+        const taskAttachments: any[] = [];
+
+        // Safely transform task data
+        let transformedStory;
+        try {
+          transformedStory = {
+            id: task.id,
+            title: task.title || '',
+            description: task.description || null,
+            acceptanceCriteria: null, // Tasks don't have acceptance criteria
+            status: task.status || 'todo',
+            priority: task.priority || null,
+            viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs, 'detail' for other tasks
+            product: task.product || null,
+            section: task.section || null,
+            rank: task.rank || null, // Tasks have rank field
+            type: task.type || 'task', // Include type to distinguish from stories
+            attachments: taskAttachments, // Include attachments from task
+            assignee: task.assignee ? {
+              id: task.assignee.id,
+              name: (() => {
+                try {
+                  const firstName = task.assignee?.firstName != null ? String(task.assignee.firstName) : '';
+                  const lastName = task.assignee?.lastName != null ? String(task.assignee.lastName) : '';
+                  const fullName = `${firstName} ${lastName}`.trim();
+                  return fullName || 'Unknown';
+                } catch (e) {
+                  console.warn('⚠️ [STACKS API] Error formatting assignee name:', e);
+                  return 'Unknown';
+                }
+              })(),
+              email: task.assignee?.email || ''
+            } : null,
+            epoch: null, // Tasks don't have epochs
+            story: task.story ? {
+              id: task.story.id,
+              title: task.story.title || ''
+            } : null,
+            project: task.project ? {
+              id: task.project.id,
+              name: task.project.name || ''
+            } : null,
+            dueDate: null,
+            tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
+            isFlagged: false, // Tasks don't have isFlagged
+            points: null, // Tasks don't have points
+            createdAt: task.createdAt ? new Date(task.createdAt).toISOString() : new Date().toISOString(),
+            updatedAt: task.updatedAt ? new Date(task.updatedAt).toISOString() : new Date().toISOString(),
+            timeInStatus: 0 // Tasks don't track statusChangedAt
+          };
+        } catch (transformError) {
+          console.error('❌ [STACKS API] Error transforming task:', transformError);
+          console.error('❌ [STACKS API] Task data:', {
+            id: task?.id,
+            hasTitle: !!task?.title,
+            hasDescription: !!task?.description,
+            hasAssignee: !!task?.assignee,
+            hasProject: !!task?.project,
+            hasStory: !!task?.story,
+            createdAt: task?.createdAt,
+            updatedAt: task?.updatedAt
+          });
+          throw transformError;
+        }
+
+        console.log('✅ [STACKS API] Task found and transformed');
+        
+        // Safely create response - ensure all values are JSON-serializable
+        try {
+          // Double-check that all Date objects are converted to strings
+          const serializableStory = {
+            ...transformedStory,
+            createdAt: typeof transformedStory.createdAt === 'string' 
+              ? transformedStory.createdAt 
+              : new Date(transformedStory.createdAt).toISOString(),
+            updatedAt: typeof transformedStory.updatedAt === 'string'
+              ? transformedStory.updatedAt
+              : new Date(transformedStory.updatedAt).toISOString()
+          };
+          
+          const response = NextResponse.json({ story: serializableStory, type: 'task' });
+          console.log('✅ [STACKS API] Response created successfully');
+          return response;
+        } catch (responseError) {
+          console.error('❌ [STACKS API] Error creating response:', responseError);
+          console.error('❌ [STACKS API] Response error details:', {
+            message: responseError instanceof Error ? responseError.message : String(responseError),
+            name: responseError instanceof Error ? responseError.name : 'Unknown',
+            stack: responseError instanceof Error ? responseError.stack?.substring(0, 500) : undefined
+          });
+          console.error('❌ [STACKS API] Transformed story data:', {
+            hasId: !!transformedStory?.id,
+            hasTitle: !!transformedStory?.title,
+            hasType: !!transformedStory?.type,
+            viewType: transformedStory?.viewType,
+            hasAssignee: !!transformedStory?.assignee,
+            hasProject: !!transformedStory?.project,
+            hasStory: !!transformedStory?.story,
+            attachmentsLength: transformedStory?.attachments?.length,
+            createdAtType: typeof transformedStory?.createdAt,
+            updatedAtType: typeof transformedStory?.updatedAt
+          });
+          throw responseError;
+        }
+      } catch (taskError) {
+        console.error('❌ [STACKS API] Error fetching task:', taskError);
+        console.error('❌ [STACKS API] Task error details:', {
+          message: taskError instanceof Error ? taskError.message : String(taskError),
+          name: taskError instanceof Error ? taskError.name : 'Unknown',
+          stack: taskError instanceof Error ? taskError.stack?.substring(0, 500) : undefined,
+          code: (taskError as any)?.code,
+          meta: (taskError as any)?.meta,
+          queryId: finalStoryId,
+          workspaceId: workspaceId,
+          paramValue: paramValue
+        });
+        // Re-throw to be caught by outer catch block
+        throw taskError;
+      }
     }
 
     // Transform the data to match the expected format
