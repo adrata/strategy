@@ -154,30 +154,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     const abortController = new AbortController();
     const signal = abortController.signal;
     
-    const fetchBuyerGroups = async () => {
-      console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
-      console.log('🔍 [BUYER GROUPS DEBUG] Record:', record);
-      console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
-      
-      // 🔄 CRITICAL: Check if record ID changed first - this catches company switches
-      const previousRecordId = previousRecordIdRef.current;
-      const recordIdChanged = previousRecordId !== null && previousRecordId !== record?.id;
-      
-      if (!record?.id) {
-        console.log('🔍 [BUYER GROUPS DEBUG] No record ID, clearing state and setting loading to false');
-        setBuyerGroups([]); // Clear state immediately
-        setLoading(false);
-        setIsFetching(false);
-        previousRecordIdRef.current = null;
-        previousCompanyIdRef.current = null;
-        previousCompanyNameRef.current = null;
-        return;
-      }
-      
-      // Get the company name and ID from the record
-      let companyName = '';
-      let companyId = '';
-      
+    // 🚨 STEP 1: SYNCHRONOUSLY check for company changes and clear state IMMEDIATELY (before any async work)
+    const previousRecordId = previousRecordIdRef.current;
+    const recordIdChanged = previousRecordId !== null && previousRecordId !== record?.id;
+    
+    // Get the company name and ID from the record (synchronously)
+    let companyName = '';
+    let companyId = '';
+    
+    if (record?.id) {
       if (recordType === 'people') {
         // For person records, get company from companyId or company object
         companyId = record.companyId;
@@ -191,80 +176,92 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                      '';
         companyId = record.id; // For company records, the record ID is the company ID
       }
-      
-      // 🔍 DEFENSIVE CHECK: Ensure both companyId and companyName are present before proceeding
-      if (!companyId || !companyName) {
-        console.log('⚠️ [BUYER GROUPS] Missing companyId or companyName, clearing state:', { companyId, companyName });
-        setBuyerGroups([]);
-        setLoading(false);
-        setIsFetching(false);
-        return;
-      }
-      
-      // 🔄 CACHE INVALIDATION: Check if recordId, companyId, or companyName changed
-      const previousCompanyId = previousCompanyIdRef.current;
-      const previousCompanyName = previousCompanyNameRef.current;
-      const companyIdChanged = previousCompanyId !== null && previousCompanyId !== companyId;
-      const companyNameChanged = previousCompanyName !== null && previousCompanyName !== companyName;
-      
-      console.log('🔍 [BUYER GROUPS DEBUG] Change check:', {
+    }
+    
+    const previousCompanyId = previousCompanyIdRef.current;
+    const previousCompanyName = previousCompanyNameRef.current;
+    const companyIdChanged = previousCompanyId !== null && previousCompanyId !== companyId;
+    const companyNameChanged = previousCompanyName !== null && previousCompanyName !== companyName;
+    
+    // 🚨 CRITICAL: If company changed, clear state and cache IMMEDIATELY (synchronously, before async work)
+    if (recordIdChanged || companyIdChanged || companyNameChanged) {
+      console.log('🔄 [BUYER GROUPS] Company changed - clearing state immediately:', {
         previousRecordId,
         currentRecordId: record?.id,
-        recordIdChanged,
         previousCompanyId,
         currentCompanyId: companyId,
-        companyIdChanged,
         previousCompanyName,
-        currentCompanyName: companyName,
-        companyNameChanged,
-        recordType
+        currentCompanyName: companyName
       });
       
-      // 🚨 CRITICAL: Update refs IMMEDIATELY when record changes to prevent race conditions
-      // This ensures subsequent checks use the correct current values
-      if (recordIdChanged || companyIdChanged || companyNameChanged) {
-        previousRecordIdRef.current = record?.id;
-        previousCompanyIdRef.current = companyId;
-        previousCompanyNameRef.current = companyName;
+      // Clear state IMMEDIATELY (synchronously, before any async operations)
+      setBuyerGroups([]);
+      setLoading(false);
+      setIsFetching(false);
+      setLastFetchTime(null);
+      
+      // Clear cache for previous company (both ID and name-based keys)
+      if (previousCompanyId || previousCompanyName) {
+        const workspaceId = record?.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1';
+        if (previousCompanyId) {
+          const previousCacheKeyById = `buyer-groups-${previousCompanyId}-${workspaceId}`;
+          localStorage.removeItem(previousCacheKeyById);
+          safeGetItem(previousCacheKeyById, 0); // Force TTL expiration
+          console.log('🗑️ [BUYER GROUPS] Cleared cache for previous company ID:', previousCacheKeyById);
+        }
+        if (previousCompanyName) {
+          const previousCacheKeyByName = `buyer-groups-${previousCompanyName}-${workspaceId}`;
+          localStorage.removeItem(previousCacheKeyByName);
+          safeGetItem(previousCacheKeyByName, 0); // Force TTL expiration
+          console.log('🗑️ [BUYER GROUPS] Cleared cache for previous company name:', previousCacheKeyByName);
+        }
       }
       
-      // If record or company changed, clear stale cache and reset state IMMEDIATELY
-      if (recordIdChanged || companyIdChanged || companyNameChanged) {
-        console.log('🔄 [BUYER GROUPS] Record or company changed, clearing state immediately and invalidating cache');
-        setBuyerGroups([]); // Clear immediately before any async work
-        setLoading(false); // Reset loading state
-        setLastFetchTime(null); // Reset fetch throttle to allow immediate re-fetch
-        setIsFetching(false); // Reset fetching flag
-        
-        // Clear buyer group specific cache for previous company (both ID and name-based keys)
-        if (previousCompanyId || previousCompanyName) {
-          const workspaceId = record.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1';
-          if (previousCompanyId) {
-            const previousCacheKeyById = `buyer-groups-${previousCompanyId}-${workspaceId}`;
-            localStorage.removeItem(previousCacheKeyById);
-            safeGetItem(previousCacheKeyById, 0); // Force TTL expiration
-            console.log('🗑️ [BUYER GROUPS] Cleared cache for previous company ID:', previousCacheKeyById);
-          }
-          if (previousCompanyName) {
-            const previousCacheKeyByName = `buyer-groups-${previousCompanyName}-${workspaceId}`;
-            localStorage.removeItem(previousCacheKeyByName);
-            safeGetItem(previousCacheKeyByName, 0); // Force TTL expiration
-            console.log('🗑️ [BUYER GROUPS] Cleared cache for previous company name:', previousCacheKeyByName);
-          }
+      // Also clear current company cache to force fresh fetch
+      if (companyId || companyName) {
+        const workspaceId = record?.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1';
+        if (companyId) {
+          const currentCacheKeyById = `buyer-groups-${companyId}-${workspaceId}`;
+          localStorage.removeItem(currentCacheKeyById);
+          safeGetItem(currentCacheKeyById, 0); // Force TTL expiration
+          console.log('🗑️ [BUYER GROUPS] Cleared current company cache (ID):', currentCacheKeyById);
         }
-        
-        // Also clear current company cache to force fresh fetch
-        const workspaceId = record.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1';
-        const currentCacheKey = `buyer-groups-${companyId}-${workspaceId}`;
-        localStorage.removeItem(currentCacheKey);
-        safeGetItem(currentCacheKey, 0); // Force TTL expiration
-        console.log('🗑️ [BUYER GROUPS] Cleared current company cache to force fresh fetch:', currentCacheKey);
-      } else {
-        // Update refs with current values if no change detected
-        previousRecordIdRef.current = record?.id;
-        previousCompanyIdRef.current = companyId;
-        previousCompanyNameRef.current = companyName;
+        if (companyName) {
+          const currentCacheKeyByName = `buyer-groups-${companyName}-${workspaceId}`;
+          localStorage.removeItem(currentCacheKeyByName);
+          safeGetItem(currentCacheKeyByName, 0); // Force TTL expiration
+          console.log('🗑️ [BUYER GROUPS] Cleared current company cache (name):', currentCacheKeyByName);
+        }
       }
+      
+      // Update refs immediately
+      previousRecordIdRef.current = record?.id || null;
+      previousCompanyIdRef.current = companyId || null;
+      previousCompanyNameRef.current = companyName || null;
+    } else {
+      // Update refs with current values if no change detected
+      previousRecordIdRef.current = record?.id || null;
+      previousCompanyIdRef.current = companyId || null;
+      previousCompanyNameRef.current = companyName || null;
+    }
+    
+    // 🚨 STEP 2: Handle missing record or company data
+    if (!record?.id) {
+      console.log('🔍 [BUYER GROUPS DEBUG] No record ID, state already cleared');
+      return;
+    }
+    
+    if (!companyId || !companyName) {
+      console.log('⚠️ [BUYER GROUPS] Missing companyId or companyName, state already cleared:', { companyId, companyName });
+      return;
+    }
+    
+    // 🚨 STEP 3: Now proceed with async fetch (state is already cleared if company changed)
+    const fetchBuyerGroups = async () => {
+      console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
+      console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
+      console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
+      console.log('🔍 [BUYER GROUPS DEBUG] Company ID:', companyId);
       
       // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched (unless record or company changed)
       // Skip this check if record/company changed to ensure fresh data
@@ -396,14 +393,49 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               console.log('⚡ [BUYER GROUPS] Performance:', fastResult.meta?.processingTime);
               console.log('⚡ [BUYER GROUPS] Members:', members);
               
-              // Convert to people format for compatibility
-              peopleData = members.map(member => ({
+              // 🚨 VALIDATION: Filter API response to only include members that match the current company
+              // The API uses company name matching which can return wrong company's data
+              const validatedMembers = members.filter((member: any) => {
+                // Check if member's company matches (by name or ID)
+                const memberCompanyMatches = 
+                  (member.company && member.company.toLowerCase() === companyName.toLowerCase()) ||
+                  (member.companyId && member.companyId === companyId);
+                
+                if (!memberCompanyMatches) {
+                  console.warn('⚠️ [BUYER GROUPS] API returned member from wrong company, filtering out:', {
+                    memberName: member.name,
+                    memberCompany: member.company,
+                    memberCompanyId: member.companyId,
+                    expectedCompany: companyName,
+                    expectedCompanyId: companyId
+                  });
+                }
+                
+                return memberCompanyMatches;
+              });
+              
+              console.log(`🔍 [BUYER GROUPS] After validation: ${validatedMembers.length} members (was ${members.length})`);
+              
+              // Sync buyer group data for all people in the company (background, non-blocking)
+              if (companyId) {
+                authFetch(`/api/v1/companies/${companyId}/sync-buyer-group`, {
+                  method: 'POST'
+                }).catch(error => {
+                  // Silently fail - sync is best effort
+                  if (process.env.NODE_ENV === 'development') {
+                    console.warn('⚠️ [BUYER GROUPS] Failed to sync company buyer group data:', error);
+                  }
+                });
+              }
+              
+              // Convert to people format for compatibility (only validated members)
+              peopleData = validatedMembers.map((member: any) => ({
                 id: member.id,
                 fullName: member.name,
                 firstName: member.name.split(' ')[0],
                 lastName: member.name.split(' ').slice(1).join(' '),
-                company: member.company,
-                companyId: companyId,
+                company: companyName, // Use current company name, not member.company (which might be wrong)
+                companyId: companyId, // Always use current companyId
                 jobTitle: member.title,
                 email: member.email,
                 phone: member.phone,
@@ -655,15 +687,55 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           return;
         }
         
-        // 🔍 VALIDATION: Ensure all members have correct companyId and company before caching
-        const validatedBuyerGroups = sortedBuyerGroups.map(member => ({
+        // 🚨 STRICT VALIDATION: Filter out any members that don't match the current companyId
+        // This prevents displaying buyer groups from wrong companies due to API name matching issues
+        const companyValidatedBuyerGroups = sortedBuyerGroups.filter(member => {
+          // Only include members that match the current companyId
+          const memberCompanyId = member.companyId || (member as any).companyId;
+          const matchesCompanyId = memberCompanyId === companyId;
+          
+          if (!matchesCompanyId) {
+            console.warn('⚠️ [BUYER GROUPS] Filtering out member with mismatched companyId:', {
+              memberName: member.name,
+              memberCompanyId,
+              expectedCompanyId: companyId,
+              memberCompany: member.company
+            });
+          }
+          
+          return matchesCompanyId;
+        });
+        
+        // 🔍 VALIDATION: Ensure all remaining members have correct companyId and company before caching
+        const validatedBuyerGroups = companyValidatedBuyerGroups.map(member => ({
           ...member,
           companyId: companyId, // Ensure companyId is set
           company: companyName   // Ensure company name is set
         }));
         
+        // 🚨 FINAL VALIDATION: Double-check that ALL members match before setting state
+        const allMembersValid = validatedBuyerGroups.every(member => 
+          member.companyId === companyId && member.company === companyName
+        );
+        
+        if (!allMembersValid) {
+          console.error('❌ [BUYER GROUPS] Validation failed - not all members match company:', {
+            companyId,
+            companyName,
+            memberCount: validatedBuyerGroups.length,
+            invalidMembers: validatedBuyerGroups.filter(m => 
+              m.companyId !== companyId || m.company !== companyName
+            ).map(m => ({ name: m.name, companyId: m.companyId, company: m.company }))
+          });
+          // Don't set state if validation fails
+          setBuyerGroups([]);
+          setLoading(false);
+          setIsFetching(false);
+          return;
+        }
+        
         // Cache the validated buyer group data with proper company scoping
-        if (companyId && companyName) {
+        if (companyId && companyName && validatedBuyerGroups.length > 0) {
           safeSetItem(buyerGroupCacheKey, validatedBuyerGroups);
           console.log('📦 [BUYER GROUPS] Cached buyer group data for company:', companyName, 'ID:', companyId);
         }
@@ -671,7 +743,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         setBuyerGroups(validatedBuyerGroups);
         setLoading(false);
         setIsFetching(false);
-        console.log(`✅ [BUYER GROUPS] Found ${validatedBuyerGroups.length} people from ${companyName} (ID: ${companyId})`);
+        console.log(`✅ [BUYER GROUPS] Found ${validatedBuyerGroups.length} validated people from ${companyName} (ID: ${companyId})`);
         
       } catch (error) {
         // 🚨 Don't set error state if fetch was aborted (expected behavior)

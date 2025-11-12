@@ -500,13 +500,31 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 const relationshipType = mergedRecord?.relationshipType;
                 
                 if (relationshipType === 'CLIENT' || relationshipType === 'FUTURE_CLIENT' || relationshipType === 'PARTNER' || relationshipType === 'FUTURE_PARTNER') {
-                  const typeLabel = relationshipType === 'CLIENT' ? 'Client' : 
-                                   relationshipType === 'FUTURE_CLIENT' ? 'Future Client' :
-                                   relationshipType === 'PARTNER' ? 'Partner' : 'Future Partner';
+                  // Define options based on app type
+                  const typeOptions = isPartnerOS
+                    ? [
+                        { value: 'PARTNER', label: 'Partner' },
+                        { value: 'FUTURE_PARTNER', label: 'Future Partner' }
+                      ]
+                    : [
+                        { value: 'CLIENT', label: 'Client' },
+                        { value: 'FUTURE_CLIENT', label: 'Future Client' }
+                      ];
+                  
                   return (
                     <div className="flex items-center">
                       <span className="text-sm text-muted w-24">Type:</span>
-                      <span className="text-sm font-medium text-foreground">{typeLabel}</span>
+                      <InlineEditField
+                        value={relationshipType}
+                        field="relationshipType"
+                        onSave={onSave}
+                        recordId={record.id}
+                        recordType={recordType}
+                        onSuccess={handleSuccess}
+                        inputType="select"
+                        options={typeOptions}
+                        className="text-sm font-medium text-foreground"
+                      />
                     </div>
                   );
                 }

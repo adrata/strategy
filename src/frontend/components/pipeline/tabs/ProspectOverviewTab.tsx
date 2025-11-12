@@ -70,6 +70,30 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     }
   }, [record?.id, recordType]);
 
+  // Sync buyer group data when record loads
+  useEffect(() => {
+    const syncBuyerGroupData = async () => {
+      if (!record?.id) return;
+      
+      try {
+        // Sync buyer group data via API to ensure consistency
+        const response = await authFetch(`/api/v1/people/${record.id}/sync-buyer-group`, {
+          method: 'POST'
+        });
+        if (response?.success) {
+          console.log('✅ [PROSPECT OVERVIEW] Synced buyer group data for person:', record.id);
+        }
+      } catch (error) {
+        // Silently fail - sync is best effort
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ [PROSPECT OVERVIEW] Failed to sync buyer group data:', error);
+        }
+      }
+    };
+
+    syncBuyerGroupData();
+  }, [record?.id]);
+
   // Fetch actions when component mounts or record changes
   useEffect(() => {
     fetchActions();
@@ -244,7 +268,26 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     
     // Buyer Group and Influence (existing fields) - Enhanced mapping
     buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || null,
-    influenceLevel: record?.influenceLevel || record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.customFields?.influence || null,
+    // Calculate influence level from role if missing (consistent with Company views)
+    influenceLevel: (() => {
+      const stored = record?.influenceLevel || record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.customFields?.influence || null;
+      if (stored) return stored;
+      // If no stored influence level but we have a buyerGroupRole, calculate it
+      const role = record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || null;
+      if (role) {
+        const normalizedRole = role.toLowerCase().trim();
+        if (normalizedRole === 'decision maker' || normalizedRole === 'champion') return 'High';
+        if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') return 'Medium';
+        if (normalizedRole === 'introducer') return 'Low';
+      }
+      return null;
+    })(),
+    // Buyer group membership: check buyerGroupRole OR isBuyerGroupMember (consistent with Company views)
+    isBuyerGroupMember: (() => {
+      const hasRole = !!(record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role);
+      const isMember = record?.isBuyerGroupMember ?? record?.customFields?.isBuyerGroupMember ?? false;
+      return hasRole || isMember;
+    })(),
     engagementPriority: record?.priority || record?.customFields?.priority || record?.customFields?.enrichedData?.overview?.priority || null,
     
     // Engagement History (existing fields) - Enhanced mapping

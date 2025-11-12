@@ -3,6 +3,7 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getV1AuthUser } from '../../auth';
 import { findOrCreateCompany } from '@/platform/services/company-linking-service';
 import { mergeCorePersonWithWorkspace } from '@/platform/services/core-entity-service';
+import { BuyerGroupSyncService } from '@/platform/services/buyer-group-sync-service';
 
 /**
  * Individual Person CRUD API v1
@@ -99,8 +100,74 @@ export async function GET(
       );
     }
 
+    // Sync buyer group data to ensure consistency before returning
+    let personToUse = person;
+    try {
+      await BuyerGroupSyncService.syncPersonBuyerGroupData(id);
+      // Re-fetch person to get synced data
+      const syncedPerson = await prisma.people.findUnique({
+        where: { id },
+        include: {
+          corePerson: true,
+          company: {
+            select: {
+              id: true,
+              name: true,
+              website: true,
+              industry: true,
+              status: true,
+              priority: true,
+            },
+            where: {
+              deletedAt: null
+            }
+          },
+          mainSeller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              name: true,
+              email: true,
+            },
+          },
+          actions: {
+            select: {
+              id: true,
+              type: true,
+              subject: true,
+              status: true,
+              priority: true,
+              scheduledAt: true,
+              completedAt: true,
+            },
+            where: {
+              deletedAt: null
+            },
+            take: 10,
+            orderBy: { createdAt: 'desc' },
+          },
+          _count: {
+            select: {
+              actions: {
+                where: {
+                  deletedAt: null
+                }
+              },
+            },
+          },
+        },
+      });
+      if (syncedPerson) {
+        personToUse = syncedPerson;
+      }
+    } catch (syncError) {
+      // Log but don't fail - sync is best effort
+      console.warn('⚠️ [PEOPLE API] Failed to sync buyer group data:', syncError);
+    }
+
     // Merge core person data with workspace data
-    const mergedPerson = mergeCorePersonWithWorkspace(person, person.corePerson || null);
+    const mergedPerson = mergeCorePersonWithWorkspace(personToUse, personToUse.corePerson || null);
 
     // Transform to use mainSeller terminology like speedrun
     const transformedPerson = {

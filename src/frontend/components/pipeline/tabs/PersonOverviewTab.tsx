@@ -83,6 +83,30 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     }
   }, [record?.id, recordType]);
 
+  // Sync buyer group data when record loads
+  useEffect(() => {
+    const syncBuyerGroupData = async () => {
+      if (!record?.id) return;
+      
+      try {
+        // Sync buyer group data via API to ensure consistency
+        const response = await authFetch(`/api/v1/people/${record.id}/sync-buyer-group`, {
+          method: 'POST'
+        });
+        if (response?.success) {
+          console.log('✅ [PERSON OVERVIEW] Synced buyer group data for person:', record.id);
+        }
+      } catch (error) {
+        // Silently fail - sync is best effort
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ [PERSON OVERVIEW] Failed to sync buyer group data:', error);
+        }
+      }
+    };
+
+    syncBuyerGroupData();
+  }, [record?.id]);
+
   // Fetch actions when component mounts or record changes
   useEffect(() => {
     fetchActions();
@@ -177,9 +201,27 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     location: coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || null,
     
     // CoreSignal intelligence - check top-level fields first, then customFields
-    influenceLevel: record.influenceLevel ?? record.customFields?.influenceLevel ?? null,
+    // Calculate influence level from role if missing (consistent with Company views)
+    influenceLevel: (() => {
+      const stored = record.influenceLevel ?? record.customFields?.influenceLevel ?? null;
+      if (stored) return stored;
+      // If no stored influence level but we have a buyerGroupRole, calculate it
+      const role = record.buyerGroupRole ?? record.customFields?.buyerGroupRole ?? null;
+      if (role) {
+        const normalizedRole = role.toLowerCase().trim();
+        if (normalizedRole === 'decision maker' || normalizedRole === 'champion') return 'High';
+        if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') return 'Medium';
+        if (normalizedRole === 'introducer') return 'Low';
+      }
+      return null;
+    })(),
     engagementStrategy: record.customFields?.engagementStrategy || null,
-    isBuyerGroupMember: record.isBuyerGroupMember ?? record.customFields?.isBuyerGroupMember ?? false,
+    // Buyer group membership: check buyerGroupRole OR isBuyerGroupMember (consistent with Company views)
+    isBuyerGroupMember: (() => {
+      const hasRole = !!(record.buyerGroupRole ?? record.customFields?.buyerGroupRole);
+      const isMember = record.isBuyerGroupMember ?? record.customFields?.isBuyerGroupMember ?? false;
+      return hasRole || isMember;
+    })(),
     buyerGroupOptimized: record.buyerGroupOptimized ?? record.customFields?.buyerGroupOptimized ?? false,
     buyerGroupRole: record.buyerGroupRole ?? record.customFields?.buyerGroupRole ?? null,
     

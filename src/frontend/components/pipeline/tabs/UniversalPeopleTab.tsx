@@ -264,6 +264,18 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
               peopleData = response.data;
               console.log('⚡ [PEOPLE] API returned:', peopleData.length, 'people');
               
+              // Sync buyer group data for all people in the company (background, non-blocking)
+              if (companyId) {
+                authFetch(`/api/v1/companies/${companyId}/sync-buyer-group`, {
+                  method: 'POST'
+                }).catch(error => {
+                  // Silently fail - sync is best effort
+                  if (process.env.NODE_ENV === 'development') {
+                    console.warn('⚠️ [PEOPLE] Failed to sync company buyer group data:', error);
+                  }
+                });
+              }
+              
               // Cache the data immediately
               const essentialData = peopleData.map(person => ({
                 id: person.id,
