@@ -94,7 +94,7 @@ export async function GET(
     console.log('🔍 [STACKS API] ID type check - CUID:', /^c[a-z0-9]{24}$/.test(finalStoryId), 'ULID:', /^[0-9A-HJKMNP-TV-Z]{26}$/i.test(finalStoryId));
 
     // Fetch the story with workspace validation
-    // Use explicit select to avoid selecting viewType column that may not exist in database
+    // Try with viewType first, fall back without it if column doesn't exist
     let story;
     try {
       story = await prisma.stacksStory.findFirst({
@@ -145,18 +145,76 @@ export async function GET(
           }
         }
       });
-    } catch (storyQueryError) {
-      console.error('❌ [STACKS API] Error querying story:', storyQueryError);
-      console.error('❌ [STACKS API] Story query error details:', {
-        message: storyQueryError instanceof Error ? storyQueryError.message : String(storyQueryError),
-        name: storyQueryError instanceof Error ? storyQueryError.name : 'Unknown',
-        stack: storyQueryError instanceof Error ? storyQueryError.stack : undefined,
-        code: (storyQueryError as any)?.code,
-        meta: (storyQueryError as any)?.meta,
-        queryId: finalStoryId,
-        workspaceId: workspaceId
-      });
-      throw storyQueryError;
+    } catch (storyQueryError: any) {
+      // If viewType column doesn't exist, retry without it
+      if (storyQueryError?.code === 'P2022' && storyQueryError?.meta?.column_name === 'viewType') {
+        console.warn('⚠️ [STACKS API] viewType column does not exist, fetching story without it');
+        try {
+          story = await prisma.stacksStory.findFirst({
+            where: {
+              id: finalStoryId,
+              project: {
+                workspaceId: workspaceId
+              }
+            },
+            select: {
+              id: true,
+              epochId: true,
+              projectId: true,
+              title: true,
+              description: true,
+              acceptanceCriteria: true,
+              status: true,
+              priority: true,
+              assigneeId: true,
+              product: true,
+              section: true,
+              // Omit viewType field
+              isFlagged: true,
+              rank: true,
+              statusChangedAt: true,
+              createdAt: true,
+              updatedAt: true,
+              epoch: {
+                select: {
+                  id: true,
+                  title: true,
+                  description: true
+                }
+              },
+              assignee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              },
+              project: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          });
+        } catch (retryError) {
+          console.error('❌ [STACKS API] Error querying story (retry without viewType):', retryError);
+          throw retryError;
+        }
+      } else {
+        console.error('❌ [STACKS API] Error querying story:', storyQueryError);
+        console.error('❌ [STACKS API] Story query error details:', {
+          message: storyQueryError instanceof Error ? storyQueryError.message : String(storyQueryError),
+          name: storyQueryError instanceof Error ? storyQueryError.name : 'Unknown',
+          stack: storyQueryError instanceof Error ? storyQueryError.stack : undefined,
+          code: storyQueryError?.code,
+          meta: storyQueryError?.meta,
+          queryId: finalStoryId,
+          workspaceId: workspaceId
+        });
+        throw storyQueryError;
+      }
     }
 
     // If story not found, check if it's a task
@@ -587,61 +645,97 @@ export async function GET(
         }
 
         console.log('✅ [STACKS API] Task found:', task.id, 'type:', task.type);
-        console.log('📎 [STACKS API] Task attachments:', JSON.stringify((task as any).attachments));
+        
+        // Safely log attachments
+        try {
+          console.log('📎 [STACKS API] Task attachments:', JSON.stringify((task as any).attachments || null));
+        } catch (e) {
+          console.warn('⚠️ [STACKS API] Could not stringify attachments:', e);
+        }
 
         // Transform task data to match story response format
         // Handle attachments - they can be null, an array, or a single object
         let taskAttachments: any[] = [];
-        if ((task as any).attachments) {
-          if (Array.isArray((task as any).attachments)) {
-            taskAttachments = (task as any).attachments;
-          } else if (typeof (task as any).attachments === 'object') {
-            // If it's a single object, wrap it in an array
-            taskAttachments = [(task as any).attachments];
+        try {
+          if ((task as any).attachments) {
+            if (Array.isArray((task as any).attachments)) {
+              taskAttachments = (task as any).attachments;
+            } else if (typeof (task as any).attachments === 'object') {
+              // If it's a single object, wrap it in an array
+              taskAttachments = [(task as any).attachments];
+            }
           }
+        } catch (e) {
+          console.warn('⚠️ [STACKS API] Error processing attachments:', e);
+          taskAttachments = [];
         }
-        console.log('📎 [STACKS API] Processed attachments:', JSON.stringify(taskAttachments));
+        
+        try {
+          console.log('📎 [STACKS API] Processed attachments:', JSON.stringify(taskAttachments));
+        } catch (e) {
+          console.warn('⚠️ [STACKS API] Could not stringify processed attachments:', e);
+        }
 
-        const transformedStory = {
-          id: task.id,
-          title: task.title,
-          description: task.description,
-          acceptanceCriteria: null, // Tasks don't have acceptance criteria
-          status: task.status,
-          priority: task.priority,
-          viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs, 'detail' for other tasks
-          product: task.product || null,
-          section: task.section || null,
-          rank: task.rank || null, // Tasks have rank field
-          type: task.type || 'task', // Include type to distinguish from stories
-          attachments: taskAttachments, // Include attachments from task
-          assignee: task.assignee ? {
-            id: task.assignee.id,
-            name: (() => {
-              const firstName = task.assignee.firstName != null ? String(task.assignee.firstName) : '';
-              const lastName = task.assignee.lastName != null ? String(task.assignee.lastName) : '';
-              const fullName = `${firstName} ${lastName}`.trim();
-              return fullName || 'Unknown';
-            })(),
-            email: task.assignee.email || ''
-          } : null,
-          epoch: null, // Tasks don't have epochs
-          story: task.story ? {
-            id: task.story.id,
-            title: task.story.title
-          } : null,
-          project: task.project ? {
-            id: task.project.id,
-            name: task.project.name
-          } : null,
-          dueDate: null,
-          tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
-          isFlagged: false, // Tasks don't have isFlagged
-          points: null, // Tasks don't have points
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
-          timeInStatus: 0 // Tasks don't track statusChangedAt
-        };
+        // Safely transform task data
+        let transformedStory;
+        try {
+          transformedStory = {
+            id: task.id,
+            title: task.title || '',
+            description: task.description || null,
+            acceptanceCriteria: null, // Tasks don't have acceptance criteria
+            status: task.status || 'todo',
+            priority: task.priority || null,
+            viewType: task.type === 'bug' ? 'bug' : 'detail', // Set viewType to 'bug' for bugs, 'detail' for other tasks
+            product: task.product || null,
+            section: task.section || null,
+            rank: task.rank || null, // Tasks have rank field
+            type: task.type || 'task', // Include type to distinguish from stories
+            attachments: taskAttachments, // Include attachments from task
+            assignee: task.assignee ? {
+              id: task.assignee.id,
+              name: (() => {
+                try {
+                  const firstName = task.assignee?.firstName != null ? String(task.assignee.firstName) : '';
+                  const lastName = task.assignee?.lastName != null ? String(task.assignee.lastName) : '';
+                  const fullName = `${firstName} ${lastName}`.trim();
+                  return fullName || 'Unknown';
+                } catch (e) {
+                  console.warn('⚠️ [STACKS API] Error formatting assignee name:', e);
+                  return 'Unknown';
+                }
+              })(),
+              email: task.assignee?.email || ''
+            } : null,
+            epoch: null, // Tasks don't have epochs
+            story: task.story ? {
+              id: task.story.id,
+              title: task.story.title || ''
+            } : null,
+            project: task.project ? {
+              id: task.project.id,
+              name: task.project.name || ''
+            } : null,
+            dueDate: null,
+            tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
+            isFlagged: false, // Tasks don't have isFlagged
+            points: null, // Tasks don't have points
+            createdAt: task.createdAt || new Date(),
+            updatedAt: task.updatedAt || new Date(),
+            timeInStatus: 0 // Tasks don't track statusChangedAt
+          };
+        } catch (transformError) {
+          console.error('❌ [STACKS API] Error transforming task:', transformError);
+          console.error('❌ [STACKS API] Task data:', {
+            id: task?.id,
+            hasTitle: !!task?.title,
+            hasDescription: !!task?.description,
+            hasAssignee: !!task?.assignee,
+            hasProject: !!task?.project,
+            hasStory: !!task?.story
+          });
+          throw transformError;
+        }
 
         console.log('✅ [STACKS API] Task found and transformed');
         return NextResponse.json({ story: transformedStory, type: 'task' });
