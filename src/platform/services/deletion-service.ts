@@ -124,8 +124,8 @@ export class DeletionService {
         };
       }
 
-      // Log the deletion for audit trail
-      await this.logDeletion(entityType, id, userId, 'SOFT_DELETE');
+      // Log the deletion for audit trail (non-blocking - deletion succeeds even if logging fails)
+      await this.logDeletion(entityType, id, userId, user.activeWorkspaceId, 'SOFT_DELETE');
       
       console.log(`✅ [DELETION] Soft deleted ${entityType} ${id} (${updateResult.count} records affected)`);
       return {
@@ -234,8 +234,8 @@ export class DeletionService {
           break;
       }
 
-      // Log the restoration
-      await this.logDeletion(entityType, id, userId, 'RESTORE');
+      // Log the restoration (non-blocking - restoration succeeds even if logging fails)
+      await this.logDeletion(entityType, id, userId, user.activeWorkspaceId, 'RESTORE');
       
       console.log(`✅ [DELETION] Restored ${entityType} ${id}`);
       return true;
@@ -325,8 +325,8 @@ export class DeletionService {
           break;
       }
 
-      // Log the permanent deletion
-      await this.logDeletion(entityType, id, userId, 'HARD_DELETE');
+      // Log the permanent deletion (non-blocking - deletion succeeds even if logging fails)
+      await this.logDeletion(entityType, id, userId, user.activeWorkspaceId, 'HARD_DELETE');
       
       console.log(`✅ [DELETION] Hard deleted ${entityType} ${id}`);
       return true;
@@ -542,12 +542,13 @@ export class DeletionService {
     entityType: string,
     entityId: string,
     userId: string,
+    workspaceId: string,
     action: 'SOFT_DELETE' | 'RESTORE' | 'HARD_DELETE'
   ): Promise<void> {
     try {
       await prisma.audit_logs.create({
         data: {
-          workspaceId: 'system', // You might want to get this from context
+          workspaceId,
           userId,
           entityType,
           entityId,
@@ -556,6 +557,7 @@ export class DeletionService {
         },
       });
     } catch (error) {
+      // Log error but don't throw - deletion should succeed even if audit logging fails
       console.error(`❌ [AUDIT] Failed to log deletion:`, error);
     }
   }
