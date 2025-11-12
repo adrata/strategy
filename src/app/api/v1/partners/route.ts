@@ -90,33 +90,44 @@ export async function GET(request: NextRequest) {
     
     // Define the fetch function for cache
     const fetchPartnersData = async () => {
-      // Enhanced where clause for partners (status = 'PARTNER')
+      // Enhanced where clause for partners (relationshipType = 'PARTNER' OR 'FUTURE_PARTNER')
+      // Note: status is for pipeline stage (LEAD, PROSPECT, OPPORTUNITY), relationshipType is for relationship type
       console.log('🔍 [V1 PARTNERS API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
-        status: 'PARTNER', // Filter for partners only
-        OR: [
-          { mainSellerId: context.userId },
-          { mainSellerId: null }
+        relationshipType: {
+          in: ['PARTNER', 'FUTURE_PARTNER'] // Filter by relationship type
+        },
+        AND: [
+          {
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ]
+          }
         ]
       };
 
       // 🔍 DIAGNOSTIC: Check what data actually exists
-      const [totalPartners, partnersByStatus] = await Promise.all([
+      const [totalPartners, partnersByRelationshipType] = await Promise.all([
         prisma.people.count({
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            status: 'PARTNER'
+            relationshipType: {
+              in: ['PARTNER', 'FUTURE_PARTNER']
+            }
           }
         }),
         prisma.people.groupBy({
-          by: ['status'],
+          by: ['relationshipType'],
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            status: 'PARTNER'
+            relationshipType: {
+              in: ['PARTNER', 'FUTURE_PARTNER']
+            }
           },
           _count: { id: true }
         })
@@ -124,8 +135,8 @@ export async function GET(request: NextRequest) {
 
       console.log(`🔍 [V1 PARTNERS API] Data diagnostic:`, {
         totalPartners,
-        partnersByStatus: partnersByStatus.reduce((acc, stat) => {
-          acc[stat.status || 'NULL'] = stat._count.id;
+        partnersByRelationshipType: partnersByRelationshipType.reduce((acc, rel) => {
+          acc[rel.relationshipType || 'NULL'] = rel._count.id;
           return acc;
         }, {} as Record<string, number>),
         requestedSection: section

@@ -261,18 +261,20 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE, OPPORTUNITY)
-    // For CLIENT status, also check additionalStatuses array
+    // Pipeline status filtering (PROSPECT, OPPORTUNITY, ACTIVE, INACTIVE, LEAD)
+    // Note: status is for pipeline stage, relationshipType is separate for CLIENT/PARTNER filtering
     if (status) {
-      if (status === 'CLIENT') {
-        // Check both primary status and additionalStatuses for CLIENT
-        where.OR = [
-          { status: 'CLIENT' as any },
-          { additionalStatuses: { has: 'CLIENT' } }
-        ];
-        // If there's already an OR clause from search, we need to combine them
-        // For now, we'll prioritize the status filter
+      // For CLIENT/PARTNER filtering, use relationshipType instead of status
+      if (status === 'CLIENT' || status === 'FUTURE_CLIENT') {
+        where.relationshipType = {
+          in: ['CLIENT', 'FUTURE_CLIENT'] as any
+        };
+      } else if (status === 'PARTNER' || status === 'FUTURE_PARTNER') {
+        where.relationshipType = {
+          in: ['PARTNER', 'FUTURE_PARTNER'] as any
+        };
       } else {
+        // For pipeline stages (LEAD, PROSPECT, OPPORTUNITY, etc.), use status
         where.status = status as any; // Type casting to handle Prisma enum validation
       }
     }

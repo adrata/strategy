@@ -20,6 +20,8 @@ import {
   PlusIcon,
   ArrowsUpDownIcon
 } from '@heroicons/react/24/outline';
+import { CompanyListsDropdown } from './CompanyListsDropdown';
+import { CompanyList } from '@/platform/hooks/useCompanyLists';
 
 interface PipelineFiltersProps {
   section: string;
@@ -39,9 +41,13 @@ interface PipelineFiltersProps {
   onCompanySizeChange?: (size: string) => void;
   onLocationChange?: (location: string) => void;
   onTechnologyChange?: (technology: string) => void;
+  // Company lists
+  selectedListId?: string | null;
+  onListSelect?: (list: CompanyList | null) => void;
+  onUpdateList?: (listId: string) => void;
 }
 
-export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns, onCompanySizeChange, onLocationChange, onTechnologyChange }: PipelineFiltersProps) {
+export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns, onCompanySizeChange, onLocationChange, onTechnologyChange, selectedListId, onListSelect, onUpdateList }: PipelineFiltersProps) {
   // Get workspace context for persistence
   const { user } = useUnifiedAuth();
   const workspaceId = user?.activeWorkspaceId || 'default';
@@ -684,8 +690,36 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     onStatusChange?.(value);
   };
 
+  // Get current filters for list management
+  const currentFilters = {
+    searchQuery,
+    statusFilter,
+    priorityFilter,
+    verticalFilter,
+    revenueFilter,
+    lastContactedFilter,
+    timezoneFilter,
+    companySizeFilter,
+    locationFilter,
+    technologyFilter,
+    sortField: sortBy,
+    sortDirection: preferences.sortDirection
+  };
+
   return (
     <div className="flex items-center gap-4 py-2 w-full bg-background">
+      {/* Company Lists Dropdown - only for companies section */}
+      {section === 'companies' && (
+        <CompanyListsDropdown
+          section={section}
+          selectedListId={selectedListId || null}
+          onListSelect={onListSelect || (() => {})}
+          currentFilters={currentFilters}
+          onUpdateList={onUpdateList}
+          workspaceId={workspaceId}
+        />
+      )}
+
       {/* Search - full width with icon on right */}
       <div className="relative flex-1">
         <input

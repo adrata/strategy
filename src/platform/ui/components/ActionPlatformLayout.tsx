@@ -15,6 +15,7 @@ import {
   SparklesIcon,
   CommandLineIcon,
   TableCellsIcon,
+  BuildingOffice2Icon,
 } from "@heroicons/react/24/outline";
 import { useZoom } from "@/platform/ui/components/ZoomProvider";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
@@ -356,6 +357,11 @@ function AcquisitionOSLayoutInner({
   const getDisplayApps = (): ActionPlatformApp[] => {
     // Get workspace context for section filtering
     const workspaceSlug = workspaceContext?.workspaceName || authUser?.activeWorkspaceId || 'default';
+    const workspaceName = workspaceContext?.workspaceName || authUser?.workspaces?.find(w => w['id'] === authUser.activeWorkspaceId)?.name || '';
+    const normalizedWorkspace = workspaceName.toLowerCase().replace(/\s+/g, '-');
+    
+    // Check if this is Adrata workspace (for PartnerOS visibility)
+    const isAdrataWorkspace = normalizedWorkspace === 'adrata' || workspaceSlug === 'adrata';
     
     // For admin users, show all platform apps from ThinLeftPanel
     const isAdminUser = authUser?.email && ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
@@ -366,6 +372,7 @@ function AcquisitionOSLayoutInner({
         { id: "Speedrun", name: "Speedrun", description: "Take better action.", icon: PaperAirplaneIcon, color: "#6B7280", sections: ["inbox", "prospects", "leads", "pipeline", "analytics", "settings"] },
         { id: "pipeline", name: "Pipeline", description: "Win major deals.", icon: FunnelIcon, color: "#059669", sections: ["speedrun", "chronicle", "opportunities", "leads", "prospects", "clients", "partners", "companies", "people", "metrics"] },
         { id: "monaco", name: "Monaco", description: "Make connections.", icon: UserGroupIcon, color: "#7C3AED", sections: ["companies", "people", "sellers", "sequences", "analytics"] },
+        ...(isAdrataWorkspace ? [{ id: "partneros", name: "PartnerOS", description: "Manage partner relationships", icon: BuildingOffice2Icon, color: "#F59E0B", sections: ["speedrun", "leads", "prospects", "partners", "companies", "people"] }] : []),
         { id: "stacks", name: "Stacks", description: "Product + Engineering collaboration.", icon: Squares2X2Icon, color: "#7C3AED", sections: ["stacks", "backlog", "epics", "stories", "bugs"] },
         { id: "workshop", name: "Workshop", description: "Document collaboration & management.", icon: DocumentIcon, color: "#10B981", sections: ["documents", "templates", "shared"] },
         { id: "tower", name: "Tower", description: "Operations control center.", icon: ChartBarIcon, color: "#8B5CF6", sections: ["operations", "control", "optimization"] },
@@ -399,7 +406,12 @@ function AcquisitionOSLayoutInner({
     }
 
     // For non-admin users, apply section filtering to ACTION_PLATFORM_APPS
-    const filteredApps = ACTION_PLATFORM_APPS.map(app => ({
+    // Filter out PartnerOS for non-Adrata workspaces
+    const baseApps = isAdrataWorkspace 
+      ? ACTION_PLATFORM_APPS 
+      : ACTION_PLATFORM_APPS.filter(app => app.id !== 'partneros');
+    
+    const filteredApps = baseApps.map(app => ({
       ...app,
       sections: getFilteredSectionsForWorkspace({
         workspaceSlug,
@@ -452,6 +464,12 @@ function AcquisitionOSLayoutInner({
                     // Update state immediately for instant UI response
                     console.log("🔥 ThinLeftPanel: Setting activeSubApp to", slug);
                     setActiveSubApp(slug);
+                    
+                    // Clear PartnerOS mode if switching to a different app
+                    if (slug !== "partneros" && typeof window !== 'undefined') {
+                      sessionStorage.removeItem('activeSubApp');
+                    }
+                    
                     const selectedApp = ACTION_PLATFORM_APPS.find(
                       (app) => app['id'] === slug,
                     );
@@ -477,6 +495,15 @@ function AcquisitionOSLayoutInner({
                     } else if (slug === "Speedrun") {
                       newUrl = `/aos/speedrun`;
                       console.log("🔥 ThinLeftPanel: Navigating to Speedrun at", newUrl);
+                    } else if (slug === "partneros") {
+                      // For PartnerOS, navigate to first section (speedrun) and set mode
+                      const workspaceFromUrl = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : workspaceContext?.workspaceName?.toLowerCase() || 'adrata';
+                      newUrl = `/${workspaceFromUrl}/speedrun`;
+                      // Set PartnerOS mode in sessionStorage so layout knows to show PartnerOS left panel
+                      if (typeof window !== 'undefined') {
+                        sessionStorage.setItem('activeSubApp', 'partneros');
+                      }
+                      console.log("🔥 ThinLeftPanel: Navigating to PartnerOS at", newUrl);
                     } else if (slug === "grand-central") {
                       // Grand Central should navigate to integrations page
                       // Get workspace from URL path or context

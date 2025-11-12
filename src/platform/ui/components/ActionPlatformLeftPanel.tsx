@@ -11,6 +11,7 @@ import { MonacoProvider } from "@/products/monaco/context/MonacoContext";
 import { SpeedrunProvider } from "@/products/speedrun/context/SpeedrunProvider";
 import { SpeedrunLeftPanel } from "@/platform/ui/panels/speedrun-left-panel";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
+import { PartnerOSLeftPanel } from "@/products/partneros/components/PartnerOSLeftPanel";
 import { flushSync } from "react-dom";
 
 export function RevenueOSLeftPanel() {
@@ -79,6 +80,17 @@ export function RevenueOSLeftPanel() {
         onSectionChange={setActiveSection}
         isSpeedrunVisible={true}
         isOpportunitiesVisible={true}
+      />
+    );
+  }
+
+  // Special case for PartnerOS app - PartnerOS uses its own left panel
+  if (activeSubApp === "partneros") {
+    console.log("🔥 RevenueOSLeftPanel: Rendering PartnerOS left panel");
+    return (
+      <PartnerOSLeftPanel 
+        activeSection={activeSection} 
+        onSectionChange={setActiveSection}
       />
     );
   }

@@ -43,6 +43,10 @@ export function getFilteredSectionsForWorkspace(config: SectionFilterConfig): st
     'Speedrun': {
       all: ['inbox', 'prospects', 'leads', 'pipeline', 'analytics', 'settings'],
       core: ['inbox', 'prospects', 'leads', 'pipeline', 'analytics', 'settings']
+    },
+    'partneros': {
+      all: ['speedrun', 'leads', 'prospects', 'partners', 'companies', 'people'],
+      core: ['speedrun', 'leads', 'prospects', 'partners', 'companies', 'people']
     }
   };
   
@@ -89,7 +93,8 @@ export function getDefaultSectionForWorkspace(config: SectionFilterConfig): stri
   const defaultSections: Record<string, string> = {
     'pipeline': 'opportunities',
     'monaco': 'companies',
-    'Speedrun': 'inbox'
+    'Speedrun': 'inbox',
+    'partneros': 'speedrun'
   };
   
   const preferredDefault = defaultSections[config.appId];
