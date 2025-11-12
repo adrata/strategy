@@ -223,16 +223,64 @@ export async function GET(
       
       try {
         // Try to fetch as a task
-        // First, try without attachments to see if that's the issue
-        let task;
-        try {
-          task = await prisma.stacksTask.findFirst({
-            where: {
-              id: finalStoryId,
-              project: {
-                workspaceId: workspaceId
+        // Note: attachments field doesn't exist in StacksTask schema, so we don't select it
+        let task = await prisma.stacksTask.findFirst({
+          where: {
+            id: finalStoryId,
+            project: {
+              workspaceId: workspaceId
+            }
+          },
+          select: {
+            id: true,
+            storyId: true,
+            projectId: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            type: true,
+            assigneeId: true,
+            product: true,
+            section: true,
+            rank: true,
+            // attachments field doesn't exist in schema, so we don't select it
+            createdAt: true,
+            updatedAt: true,
+            assignee: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true
               }
             },
+            story: {
+              select: {
+                id: true,
+                title: true
+              }
+            },
+            project: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        });
+
+        if (!task) {
+          console.log('⚠️ [STACKS API] Task not found with workspace validation, trying alternative lookup');
+          console.log('🔍 [STACKS API] Searched for ID:', finalStoryId);
+          console.log('🔍 [STACKS API] In workspace:', workspaceId);
+          console.log('🔍 [STACKS API] Original param value:', paramValue);
+          
+          // Try to find the task by ID first, then validate workspace separately
+          // This handles cases where the nested relation filter fails but the task exists
+          // Note: attachments field doesn't exist in StacksTask schema, so we don't select it
+          const taskById = await prisma.stacksTask.findFirst({
+            where: { id: finalStoryId },
             select: {
               id: true,
               storyId: true,
@@ -246,7 +294,7 @@ export async function GET(
               product: true,
               section: true,
               rank: true,
-              attachments: true, // Include attachments field - will fail gracefully if column doesn't exist
+              // attachments field doesn't exist in schema, so we don't select it
               createdAt: true,
               updatedAt: true,
               assignee: {
@@ -266,165 +314,12 @@ export async function GET(
               project: {
                 select: {
                   id: true,
-                  name: true
+                  name: true,
+                  workspaceId: true
                 }
               }
             }
           });
-        } catch (attachmentsError: any) {
-          // If attachments column doesn't exist, try without it
-          if (attachmentsError?.code === 'P2022' && attachmentsError?.meta?.column_name === 'attachments') {
-            console.warn('⚠️ [STACKS API] Attachments column does not exist, fetching task without it');
-            task = await prisma.stacksTask.findFirst({
-              where: {
-                id: finalStoryId,
-                project: {
-                  workspaceId: workspaceId
-                }
-              },
-              select: {
-                id: true,
-                storyId: true,
-                projectId: true,
-                title: true,
-                description: true,
-                status: true,
-                priority: true,
-                type: true,
-                assigneeId: true,
-                product: true,
-                section: true,
-                rank: true,
-                // Omit attachments field
-                createdAt: true,
-                updatedAt: true,
-                assignee: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true
-                  }
-                },
-                story: {
-                  select: {
-                    id: true,
-                    title: true
-                  }
-                },
-                project: {
-                  select: {
-                    id: true,
-                    name: true
-                  }
-                }
-              }
-            });
-          } else {
-            // Re-throw if it's a different error
-            throw attachmentsError;
-          }
-        }
-
-        if (!task) {
-          console.log('⚠️ [STACKS API] Task not found with workspace validation, trying alternative lookup');
-          console.log('🔍 [STACKS API] Searched for ID:', finalStoryId);
-          console.log('🔍 [STACKS API] In workspace:', workspaceId);
-          console.log('🔍 [STACKS API] Original param value:', paramValue);
-          
-          // Try to find the task by ID first, then validate workspace separately
-          // This handles cases where the nested relation filter fails but the task exists
-          let taskById;
-          try {
-            taskById = await prisma.stacksTask.findFirst({
-              where: { id: finalStoryId },
-              select: {
-                id: true,
-                storyId: true,
-                projectId: true,
-                title: true,
-                description: true,
-                status: true,
-                priority: true,
-                type: true,
-                assigneeId: true,
-                product: true,
-                section: true,
-                rank: true,
-                attachments: true,
-                createdAt: true,
-                updatedAt: true,
-                assignee: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true
-                  }
-                },
-                story: {
-                  select: {
-                    id: true,
-                    title: true
-                  }
-                },
-                project: {
-                  select: {
-                    id: true,
-                    name: true,
-                    workspaceId: true
-                  }
-                }
-              }
-            });
-          } catch (attachmentsError: any) {
-            // If attachments column doesn't exist, try without it
-            if (attachmentsError?.code === 'P2022' && attachmentsError?.meta?.column_name === 'attachments') {
-              console.warn('⚠️ [STACKS API] Attachments column does not exist, fetching task without it');
-              taskById = await prisma.stacksTask.findFirst({
-                where: { id: finalStoryId },
-                select: {
-                  id: true,
-                  storyId: true,
-                  projectId: true,
-                  title: true,
-                  description: true,
-                  status: true,
-                  priority: true,
-                  type: true,
-                  assigneeId: true,
-                  product: true,
-                  section: true,
-                  rank: true,
-                  createdAt: true,
-                  updatedAt: true,
-                  assignee: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true
-                    }
-                  },
-                  story: {
-                    select: {
-                      id: true,
-                      title: true
-                    }
-                  },
-                  project: {
-                    select: {
-                      id: true,
-                      name: true,
-                      workspaceId: true
-                    }
-                  }
-                }
-              });
-            } else {
-              throw attachmentsError;
-            }
-          }
           
           if (taskById) {
             // Validate workspace - check if task's project belongs to the requested workspace
@@ -460,20 +355,8 @@ export async function GET(
               }
               
               // Transform the task data to match expected format
-              // Safely handle attachments
-              let taskAttachments: any[] = [];
-              try {
-                if ((taskById as any).attachments) {
-                  if (Array.isArray((taskById as any).attachments)) {
-                    taskAttachments = (taskById as any).attachments;
-                  } else if (typeof (taskById as any).attachments === 'object') {
-                    taskAttachments = [(taskById as any).attachments];
-                  }
-                }
-              } catch (e) {
-                console.warn('⚠️ [STACKS API] Error processing attachments for taskById:', e);
-                taskAttachments = [];
-              }
+              // Note: attachments field doesn't exist in StacksTask schema, so we use empty array
+              const taskAttachments: any[] = [];
               
               // Safely transform task data with null checks
               const transformedStory = {
@@ -673,36 +556,10 @@ export async function GET(
         }
 
         console.log('✅ [STACKS API] Task found:', task.id, 'type:', task.type);
-        
-        // Safely log attachments
-        try {
-          console.log('📎 [STACKS API] Task attachments:', JSON.stringify((task as any).attachments || null));
-        } catch (e) {
-          console.warn('⚠️ [STACKS API] Could not stringify attachments:', e);
-        }
 
         // Transform task data to match story response format
-        // Handle attachments - they can be null, an array, or a single object
-        let taskAttachments: any[] = [];
-        try {
-          if ((task as any).attachments) {
-            if (Array.isArray((task as any).attachments)) {
-              taskAttachments = (task as any).attachments;
-            } else if (typeof (task as any).attachments === 'object') {
-              // If it's a single object, wrap it in an array
-              taskAttachments = [(task as any).attachments];
-            }
-          }
-        } catch (e) {
-          console.warn('⚠️ [STACKS API] Error processing attachments:', e);
-          taskAttachments = [];
-        }
-        
-        try {
-          console.log('📎 [STACKS API] Processed attachments:', JSON.stringify(taskAttachments));
-        } catch (e) {
-          console.warn('⚠️ [STACKS API] Could not stringify processed attachments:', e);
-        }
+        // Note: attachments field doesn't exist in StacksTask schema, so we use empty array
+        const taskAttachments: any[] = [];
 
         // Safely transform task data
         let transformedStory;
@@ -816,9 +673,7 @@ export async function GET(
           meta: (taskError as any)?.meta,
           queryId: finalStoryId,
           workspaceId: workspaceId,
-          paramValue: paramValue,
-          taskId: task?.id,
-          taskType: task?.type
+          paramValue: paramValue
         });
         // Re-throw to be caught by outer catch block
         throw taskError;
