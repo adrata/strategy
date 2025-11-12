@@ -350,7 +350,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         if (revenueOSResponse.ok) {
           const revenueOSData = await revenueOSResponse.json();
           if (revenueOSData.success) {
-            const speedrunCount = revenueOSData.data?.speedrunRemaining || revenueOSData.data?.speedrunReady || 0;
+            // Use speedrun field which represents the actual Speedrun count (matches Speedrun table)
+            const speedrunCount = revenueOSData.data?.speedrun || 0;
             setRevenueOSSpeedrunCount(speedrunCount);
           }
         }
@@ -362,7 +363,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         if (partnerOSResponse.ok) {
           const partnerOSData = await partnerOSResponse.json();
           if (partnerOSData.success) {
-            const speedrunCount = partnerOSData.data?.speedrunRemaining || partnerOSData.data?.speedrunReady || 0;
+            // Use speedrun field which represents the actual Speedrun count (matches Speedrun table)
+            const speedrunCount = partnerOSData.data?.speedrun || 0;
             setPartnerOSSpeedrunCount(speedrunCount);
           }
         }
