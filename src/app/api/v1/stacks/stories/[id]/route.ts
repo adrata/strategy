@@ -331,10 +331,8 @@ export async function GET(
 
           console.log('✅ [STACKS API] Task found and transformed');
           return NextResponse.json({ story: transformedStory, type: 'task' });
-        }
-
-        // If task not found, try alternative lookup
-        if (!task) {
+        } else {
+          // If task not found, try alternative lookup
           console.log('⚠️ [STACKS API] Task not found with workspace validation, trying alternative lookup');
           console.log('🔍 [STACKS API] Searched for ID:', finalStoryId);
           console.log('🔍 [STACKS API] In workspace:', workspaceId);
