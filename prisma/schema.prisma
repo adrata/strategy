@@ -386,8 +386,9 @@ model companies {
   domain                 String?               @db.VarChar(255)
   logoUrl                String?               @db.VarChar(500)
   status                 CompanyStatus?        @default(ACTIVE)
+  relationshipType       RelationshipType?
   additionalStatuses     String[]              @default([])
-  priority               CompanyPriority?      @default(MEDIUM)
+  priority               CompanyPriority?       @default(MEDIUM)
   tags                   String[]              @default([])
   customFields           Json?
   notes                  String?
@@ -494,6 +495,7 @@ model companies {
   @@index([entityId])
   @@index([deletedAt])
   @@index([workspaceId, status])
+  @@index([workspaceId, relationshipType])
   @@index([workspaceId, mainSellerId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
@@ -703,6 +705,7 @@ model people {
   @@index([entityId])
   @@index([deletedAt])
   @@index([workspaceId, status])
+  @@index([workspaceId, relationshipType])
   @@index([workspaceId, companyId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
