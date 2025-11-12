@@ -428,20 +428,24 @@ export async function GET(
           
           if (taskById) {
             // Validate workspace - check if task's project belongs to the requested workspace
-            const taskWorkspaceId = taskById.project?.workspaceId;
+            // Safely handle null project case
+            const taskWorkspaceId = taskById.project?.workspaceId || null;
             const isValidWorkspace = taskWorkspaceId === workspaceId;
+            const hasProject = !!taskById.project;
             
             console.log('🔍 [STACKS API] Task found by ID:', {
               taskId: taskById.id,
               taskProjectId: taskById.projectId,
               taskWorkspaceId: taskWorkspaceId,
               requestedWorkspaceId: workspaceId,
-              isValidWorkspace: isValidWorkspace
+              isValidWorkspace: isValidWorkspace,
+              hasProject: hasProject,
+              taskType: taskById.type
             });
             
             // Return task if workspace matches, if task has no project, or if it's a bug (bugs can have workspace mismatches)
             const isBug = taskById.type === 'bug';
-            const shouldReturn = isValidWorkspace || !taskById.project || isBug;
+            const shouldReturn = isValidWorkspace || !hasProject || isBug;
             
             if (shouldReturn) {
               if (isBug && !isValidWorkspace) {
@@ -456,22 +460,29 @@ export async function GET(
               }
               
               // Transform the task data to match expected format
+              // Safely handle attachments
               let taskAttachments: any[] = [];
-              if ((taskById as any).attachments) {
-                if (Array.isArray((taskById as any).attachments)) {
-                  taskAttachments = (taskById as any).attachments;
-                } else if (typeof (taskById as any).attachments === 'object') {
-                  taskAttachments = [(taskById as any).attachments];
+              try {
+                if ((taskById as any).attachments) {
+                  if (Array.isArray((taskById as any).attachments)) {
+                    taskAttachments = (taskById as any).attachments;
+                  } else if (typeof (taskById as any).attachments === 'object') {
+                    taskAttachments = [(taskById as any).attachments];
+                  }
                 }
+              } catch (e) {
+                console.warn('⚠️ [STACKS API] Error processing attachments for taskById:', e);
+                taskAttachments = [];
               }
               
+              // Safely transform task data with null checks
               const transformedStory = {
                 id: taskById.id,
-                title: taskById.title,
-                description: taskById.description,
+                title: taskById.title || '',
+                description: taskById.description || null,
                 acceptanceCriteria: null,
-                status: taskById.status,
-                priority: taskById.priority,
+                status: taskById.status || 'todo',
+                priority: taskById.priority || null,
                 viewType: taskById.type === 'bug' ? 'bug' : 'detail',
                 product: taskById.product || null,
                 section: taskById.section || null,
@@ -481,28 +492,34 @@ export async function GET(
                 assignee: taskById.assignee ? {
                   id: taskById.assignee.id,
                   name: (() => {
-                    const firstName = taskById.assignee.firstName != null ? String(taskById.assignee.firstName) : '';
-                    const lastName = taskById.assignee.lastName != null ? String(taskById.assignee.lastName) : '';
-                    const fullName = `${firstName} ${lastName}`.trim();
-                    return fullName || 'Unknown';
+                    try {
+                      const firstName = taskById.assignee?.firstName != null ? String(taskById.assignee.firstName) : '';
+                      const lastName = taskById.assignee?.lastName != null ? String(taskById.assignee.lastName) : '';
+                      const fullName = `${firstName} ${lastName}`.trim();
+                      return fullName || 'Unknown';
+                    } catch (e) {
+                      console.warn('⚠️ [STACKS API] Error formatting assignee name for taskById:', e);
+                      return 'Unknown';
+                    }
                   })(),
-                  email: taskById.assignee.email || ''
+                  email: taskById.assignee?.email || ''
                 } : null,
                 epoch: null,
                 story: taskById.story ? {
                   id: taskById.story.id,
-                  title: taskById.story.title
+                  title: taskById.story.title || ''
                 } : null,
-                project: taskById.project && isValidWorkspace ? {
+                // Include project even for bugs with workspace mismatches (but only if project exists)
+                project: taskById.project ? {
                   id: taskById.project.id,
-                  name: taskById.project.name
+                  name: taskById.project.name || ''
                 } : null,
                 dueDate: null,
                 tags: taskById.type === 'bug' ? ['bug'] : [],
                 isFlagged: false,
                 points: null,
-                createdAt: taskById.createdAt,
-                updatedAt: taskById.updatedAt,
+                createdAt: taskById.createdAt || new Date(),
+                updatedAt: taskById.updatedAt || new Date(),
                 timeInStatus: 0
               };
               
