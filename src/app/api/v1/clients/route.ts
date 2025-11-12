@@ -93,21 +93,16 @@ export async function GET(request: NextRequest) {
     
     // Define the fetch function for cache
     const fetchClientsData = async () => {
-      // Enhanced where clause for clients (status = 'CLIENT' OR 'FUTURE_CLIENT' OR in additionalStatuses)
+      // Enhanced where clause for clients (relationshipType = 'CLIENT' OR 'FUTURE_CLIENT')
+      // Note: status is for pipeline stage (LEAD, PROSPECT, OPPORTUNITY), relationshipType is for relationship type
       console.log('🔍 [V1 CLIENTS API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
+        relationshipType: {
+          in: ['CLIENT', 'FUTURE_CLIENT'] // Filter by relationship type
+        },
         AND: [
-          // Client status filter: check both primary status and additionalStatuses
-          {
-            OR: [
-              { status: 'CLIENT' }, // Current clients
-              { status: 'FUTURE_CLIENT' }, // Future clients
-              { additionalStatuses: { has: 'CLIENT' } }, // Additional statuses
-              { additionalStatuses: { has: 'FUTURE_CLIENT' } } // Additional statuses
-            ]
-          },
           // Assignment filter
           {
             OR: [
@@ -118,31 +113,25 @@ export async function GET(request: NextRequest) {
         ]
       };
 
-      // 🔍 DIAGNOSTIC: Check what data actually exists (including additionalStatuses)
-      const [totalClients, clientsByStatus] = await Promise.all([
+      // 🔍 DIAGNOSTIC: Check what data actually exists
+      const [totalClients, clientsByRelationshipType] = await Promise.all([
         prisma.people.count({
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            OR: [
-              { status: 'CLIENT' },
-              { status: 'FUTURE_CLIENT' },
-              { additionalStatuses: { has: 'CLIENT' } },
-              { additionalStatuses: { has: 'FUTURE_CLIENT' } }
-            ]
+            relationshipType: {
+              in: ['CLIENT', 'FUTURE_CLIENT']
+            }
           }
         }),
         prisma.people.groupBy({
-          by: ['status'],
+          by: ['relationshipType'],
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            OR: [
-              { status: 'CLIENT' },
-              { status: 'FUTURE_CLIENT' },
-              { additionalStatuses: { has: 'CLIENT' } },
-              { additionalStatuses: { has: 'FUTURE_CLIENT' } }
-            ]
+            relationshipType: {
+              in: ['CLIENT', 'FUTURE_CLIENT']
+            }
           },
           _count: { id: true }
         })
@@ -150,8 +139,8 @@ export async function GET(request: NextRequest) {
 
       console.log(`🔍 [V1 CLIENTS API] Data diagnostic:`, {
         totalClients,
-        clientsByStatus: clientsByStatus.reduce((acc, stat) => {
-          acc[stat.status || 'NULL'] = stat._count.id;
+        clientsByRelationshipType: clientsByRelationshipType.reduce((acc, rel) => {
+          acc[rel.relationshipType || 'NULL'] = rel._count.id;
           return acc;
         }, {} as Record<string, number>),
         requestedSection: section
