@@ -92,7 +92,6 @@ async function manualTriggerRerankSafe() {
       prisma.people.count({
         where: {
           workspaceId,
-          isActive: true,
           mainSellerId: userId,
           deletedAt: null
         }
@@ -100,7 +99,6 @@ async function manualTriggerRerankSafe() {
       prisma.people.count({
         where: {
           workspaceId,
-          isActive: true,
           mainSellerId: userId,
           deletedAt: null,
           lastActionDate: {
