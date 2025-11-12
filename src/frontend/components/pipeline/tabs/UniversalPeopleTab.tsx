@@ -22,8 +22,9 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
   const router = useRouter();
   
-  // Track previous companyId to detect changes and invalidate cache
+  // Track previous companyId and recordId to detect changes and invalidate cache
   const previousCompanyIdRef = useRef<string | null>(null);
+  const previousRecordIdRef = useRef<string | null>(null);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -136,10 +137,17 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       console.log('🔍 [PEOPLE DEBUG] Record:', record);
       console.log('🔍 [PEOPLE DEBUG] Record ID:', record?.id);
       
+      // 🔄 CRITICAL: Check if record ID changed first - this catches company switches
+      const previousRecordId = previousRecordIdRef.current;
+      const recordIdChanged = previousRecordId !== null && previousRecordId !== record?.id;
+      
       if (!record?.id) {
         console.log('🔍 [PEOPLE DEBUG] No record ID, clearing state and setting loading to false');
         setPeople([]);
         setLoading(false);
+        setIsFetching(false);
+        previousRecordIdRef.current = null;
+        previousCompanyIdRef.current = null;
         return;
       }
       
@@ -161,20 +169,23 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         companyId = record.id; // For company records, the record ID is the company ID
       }
       
-      // Check if companyId changed
+      // 🔄 CACHE INVALIDATION: Check if recordId or companyId changed
       const previousCompanyId = previousCompanyIdRef.current;
       const companyIdChanged = previousCompanyId !== null && previousCompanyId !== companyId;
       
-      console.log('🔍 [PEOPLE DEBUG] Company change check:', {
+      console.log('🔍 [PEOPLE DEBUG] Change check:', {
+        previousRecordId,
+        currentRecordId: record?.id,
+        recordIdChanged,
         previousCompanyId,
         currentCompanyId: companyId,
         companyIdChanged,
         recordType
       });
       
-      // If company changed, clear stale cache and reset state
-      if (companyIdChanged) {
-        console.log('🔄 [PEOPLE] Company changed, clearing state immediately and invalidating cache');
+      // If record or company changed, clear stale cache and reset state IMMEDIATELY
+      if (recordIdChanged || companyIdChanged) {
+        console.log('🔄 [PEOPLE] Record or company changed, clearing state immediately and invalidating cache');
         setPeople([]);
         setLastFetchTime(null);
         setIsFetching(false);
@@ -194,11 +205,12 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         console.log('🗑️ [PEOPLE] Cleared current company cache to force fresh fetch:', currentCacheKey);
       }
       
-      // Update the ref with current companyId
+      // Update the refs with current values
+      previousRecordIdRef.current = record?.id;
       previousCompanyIdRef.current = companyId;
       
-      // Prevent multiple fetches
-      if (isFetching || (!companyIdChanged && lastFetchTime && Date.now() - lastFetchTime < 5000)) {
+      // Prevent multiple fetches (unless record or company changed)
+      if (isFetching || ((!recordIdChanged && !companyIdChanged) && lastFetchTime && Date.now() - lastFetchTime < 5000)) {
         console.log('🔍 [PEOPLE DEBUG] Already fetching or recently fetched, skipping');
         return;
       }

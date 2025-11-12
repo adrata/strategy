@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton, Skeleton } from '@/platform/ui/components/Loader';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
@@ -15,6 +16,7 @@ interface CompanyOverviewTabProps {
 }
 
 export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: CompanyOverviewTabProps) {
+  const router = useRouter();
   const { currentRecord: contextRecord } = useRecordContext();
   const { user: currentUser } = useUnifiedAuth();
   const record = recordProp || contextRecord;
@@ -259,14 +261,62 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       const result = await response.json();
       console.log(`✅ [COMPANY OVERVIEW] Successfully updated ${field} for company:`, targetCompanyId, result.data);
       
+      // CRITICAL: Update local state with API response data to ensure UI reflects changes immediately
+      if (result.data) {
+        // Update fullCompanyData state if it exists, otherwise set it
+        if (fullCompanyData) {
+          setFullCompanyData((prev: any) => ({
+            ...prev,
+            ...result.data
+          }));
+        } else {
+          // If we don't have fullCompanyData yet, set it with the response
+          setFullCompanyData(result.data);
+        }
+      }
+      
+      // Clear caches to ensure fresh data on next load
+      if (typeof window !== 'undefined' && targetCompanyId) {
+        // Clear sessionStorage cache for this company
+        sessionStorage.removeItem(`cached-companies-${targetCompanyId}`);
+        sessionStorage.removeItem(`current-record-companies`);
+        // Also clear any record-specific cache
+        if (record?.id) {
+          sessionStorage.removeItem(`cached-${recordType}-${record.id}`);
+          sessionStorage.removeItem(`current-record-${recordType}`);
+        }
+        
+        // Set force refresh flag to ensure fresh data on next load
+        sessionStorage.setItem(`force-refresh-companies-${targetCompanyId}`, Date.now().toString());
+        
+        // Dispatch cache invalidation event for other components
+        window.dispatchEvent(new CustomEvent('cache-invalidated', {
+          detail: {
+            recordType: 'companies',
+            recordId: targetCompanyId,
+            field
+          }
+        }));
+      }
+      
       // Call the parent's onSave function if provided (for compatibility)
       if (onSave) {
         await onSave(field, value, targetCompanyId, targetRecordType);
       }
       
-      // Trigger a data refresh to ensure UI updates
-      if (hasPartialCompanyData && companyId) {
+      // Always refresh full company data to ensure we have the latest from the server
+      // This ensures data consistency even if we already have fullCompanyData
+      if (companyId) {
         await fetchFullCompanyData();
+      }
+      
+      // Trigger Next.js router refresh to invalidate client-side cache
+      // This ensures fresh data is loaded when navigating back to the record
+      try {
+        router.refresh();
+        console.log('🔄 [COMPANY OVERVIEW] Called router.refresh() to invalidate Next.js client-side cache');
+      } catch (error) {
+        console.warn('⚠️ [COMPANY OVERVIEW] Failed to call router.refresh():', error);
       }
       
       handleSuccess(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
@@ -633,6 +683,28 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 options={[
                   { value: 'true', label: 'Public' },
                   { value: 'false', label: 'Private' }
+                ]}
+                className="text-sm font-medium text-foreground"
+              />
+            </div>
+            <div className="flex items-center">
+              <span className="text-sm text-muted w-32">Stage:</span>
+              <InlineEditField
+                value={mergedRecord?.status || ''}
+                field="status"
+                onSave={handleSave}
+                recordId={companyId}
+                recordType="companies"
+                onSuccess={handleSuccess}
+                inputType="select"
+                options={[
+                  { value: 'LEAD', label: 'Lead' },
+                  { value: 'PROSPECT', label: 'Prospect' },
+                  { value: 'OPPORTUNITY', label: 'Opportunity' },
+                  { value: 'CLIENT', label: 'Client' },
+                  { value: 'SUPERFAN', label: 'Superfan' },
+                  { value: 'ACTIVE', label: 'Active' },
+                  { value: 'INACTIVE', label: 'Inactive' }
                 ]}
                 className="text-sm font-medium text-foreground"
               />
