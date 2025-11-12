@@ -10,6 +10,8 @@ import { formatUrlForDisplay, getUrlDisplayName } from '@/platform/utils/urlForm
 import { DatePicker } from '@/platform/ui/components/DatePicker';
 import { ClockIcon } from '@heroicons/react/24/outline';
 import { extractBestCurrentTitle } from '@/platform/utils/title-extraction';
+import { extractTitleFromEnrichment } from '@/platform/utils/extract-title-from-enrichment';
+import { sanitizeName } from '@/platform/utils/name-normalization';
 
 // Helper function to format future dates as "In 2 weeks"
 function formatNextActionDate(dateString: string | Date | null | undefined): string {
@@ -475,9 +477,10 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
 
   // Extract comprehensive record data from CoreSignal with database fallback
   // This needs to be reactive to actions state
-  const recordData = React.useMemo(() => ({
+  const recordData = React.useMemo(() => {
+    return {
     // Basic info - Database fields first, then CoreSignal fallback - no fallback to '-'
-    name: record?.fullName || record?.name || coresignalData.full_name || null,
+    name: sanitizeName(record?.fullName || record?.name || coresignalData.full_name) || null,
     title: (() => {
       // First try database fields (manual entry)
       if (record?.jobTitle || record?.title) {
@@ -489,7 +492,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         ? record.company 
         : (record?.company?.name || record?.companyName);
       
-      // Use title extraction utility for intelligent title selection
+      // Use title extraction utility for intelligent title selection from CoreSignal experience
       const titleResult = extractBestCurrentTitle(
         {
           experience: coresignalData.experience,
@@ -501,7 +504,22 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         null // manual title already checked above
       );
       
-      return titleResult.title || null;
+      // If we got a title from CoreSignal experience, use it
+      if (titleResult.title) {
+        return titleResult.title;
+      }
+      
+      // Fallback: Try extracting title from enrichment data in customFields
+      // This helps populate titles for leads that have enrichment data but no CoreSignal experience
+      // (e.g., leads enriched via Lusha, PDL, or other sources)
+      if (record?.customFields) {
+        const enrichmentTitle = extractTitleFromEnrichment(record.customFields);
+        if (enrichmentTitle) {
+          return enrichmentTitle;
+        }
+      }
+      
+      return null;
     })(),
     email: (() => {
       const emailValue = record?.email || record?.workEmail || coresignalData.primary_professional_email || null;
@@ -598,7 +616,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     status: record.status || record.stage || 'LEAD', // Use stage as fallback, default to LEAD not 'active'
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.seniority ?? record.customFields?.seniority ?? 'Mid-level'
-  }), [record, coresignalData, actions, linkedinUrl, linkedinNavigatorUrl]);
+    };
+  }, [record, coresignalData, actions, linkedinUrl, linkedinNavigatorUrl]);
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
     console.log('🔍 [FORMAT DEBUG] formatRelativeDate called with:', {

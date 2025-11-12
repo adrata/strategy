@@ -81,24 +81,40 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                                (recordType === 'leads' && record?.isCompanyLead === true) ||
                                (recordType === 'prospects' && record?.isCompanyLead === true);
     
-    // For company-only records, check if the record itself has the key company fields
+    // For company-only records, check if the record has enriched intelligence fields
     if (isCompanyOnlyRecord) {
-      // If record has key company fields, don't fetch
-      const hasKeyFields = record?.name || record?.description || record?.website || 
-                          record?.revenue || record?.employeeCount;
-      return !hasKeyFields; // Only fetch if we don't have key fields
+      // Check for enriched intelligence fields, not just basic contact info
+      const hasEnrichedFields = record?.industry || record?.revenue || record?.employeeCount ||
+                                record?.foundedYear || record?.descriptionEnriched ||
+                                record?.customFields?.intelligence || record?.linkedinFollowers;
+      // Always fetch if we're missing enriched intelligence (even if we have website/LinkedIn/address)
+      return !hasEnrichedFields;
     }
     
-    // For regular company records, don't fetch
+    // For regular company records, don't fetch (they should already have full data)
     if (recordType === 'companies') {
       return false;
     }
     
-    // For person records, check if we're missing key company fields that indicate partial data
-    const hasKeyFields = record?.description || record?.website || record?.revenue || 
-                        record?.linkedinUrl || record?.hqFullAddress || record?.legalName;
+    // For person records (leads, prospects, etc.) viewing their company, always fetch full company data
+    // to ensure we get enriched intelligence fields (industry, revenue, employeeCount, etc.)
+    // Don't rely on basic contact fields (website, LinkedIn, address) as indicators of full data
     
-    return !hasKeyFields; // If we don't have key fields, we likely have partial data
+    // Check if company object has enriched intelligence
+    const companyHasIntelligence = record?.company && typeof record.company === 'object' && (
+      record.company.industry || record.company.revenue || record.company.employeeCount ||
+      record.company.foundedYear || record.company.descriptionEnriched || 
+      record.company.customFields?.intelligence || record.company.linkedinFollowers
+    );
+    
+    // Check if record itself has enriched intelligence (for company-only records)
+    const recordHasIntelligence = record?.industry || record?.revenue || record?.employeeCount ||
+                                  record?.foundedYear || record?.descriptionEnriched ||
+                                  record?.customFields?.intelligence || record?.linkedinFollowers;
+    
+    // Always fetch if we don't have enriched intelligence fields
+    // This ensures lead/prospect records get full company intelligence even if they have basic contact info
+    return !(companyHasIntelligence || recordHasIntelligence);
   }, [companyId, record, recordType]);
 
   // Fetch full company data when we have partial data
@@ -621,6 +637,23 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         <div className="space-y-6">
           <h3 className="text-lg font-semibold text-foreground">Company Details</h3>
           <div className="bg-background p-4 rounded-lg border border-border space-y-3">
+            {(() => {
+              const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+              const relationshipType = mergedRecord?.relationshipType;
+              
+              if (relationshipType === 'CLIENT' || relationshipType === 'FUTURE_CLIENT' || relationshipType === 'PARTNER' || relationshipType === 'FUTURE_PARTNER') {
+                const typeLabel = relationshipType === 'CLIENT' ? 'Client' : 
+                                 relationshipType === 'FUTURE_CLIENT' ? 'Future Client' :
+                                 relationshipType === 'PARTNER' ? 'Partner' : 'Future Partner';
+                return (
+                  <div className="flex items-center">
+                    <span className="text-sm text-muted w-32">Type:</span>
+                    <span className="text-sm font-medium text-foreground">{typeLabel}</span>
+                  </div>
+                );
+              }
+              return null;
+            })()}
             <div className="flex items-center">
               <span className="text-sm text-muted w-32">Legal Name:</span>
               <InlineEditField

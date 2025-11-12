@@ -1110,12 +1110,32 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     
     // For companies, render company-specific fields
     if (isCompanyRecord) {
+      // Determine Type label
+      const relationshipType = record?.relationshipType;
+      const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+      let typeLabel = null;
+      if (relationshipType === 'CLIENT' || relationshipType === 'FUTURE_CLIENT' || relationshipType === 'PARTNER' || relationshipType === 'FUTURE_PARTNER') {
+        typeLabel = relationshipType === 'CLIENT' ? 'Client' : 
+                   relationshipType === 'FUTURE_CLIENT' ? 'Future Client' :
+                   relationshipType === 'PARTNER' ? 'Partner' : 'Future Partner';
+      }
+
       return (
         <div className="p-6 space-y-6">
           {/* Section 1: Company Information */}
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-4">Company Information</h3>
             <div className="grid grid-cols-2 gap-4">
+              {typeLabel && (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Type
+                  </label>
+                  <div className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg">
+                    {typeLabel}
+                  </div>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
                   Company Name *

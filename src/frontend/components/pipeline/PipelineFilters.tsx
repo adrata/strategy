@@ -22,6 +22,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { CompanyListsDropdown } from './CompanyListsDropdown';
 import { CompanyList } from '@/platform/hooks/useCompanyLists';
+import { getSectionTechnologyOptions } from './config/section-config';
 
 interface PipelineFiltersProps {
   section: string;
@@ -406,6 +407,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const companySizeOptions = getCompanySizeOptions();
   const locationOptions = getLocationOptions();
   const stageOptions = getStageOptions();
+  const technologyOptions = getSectionTechnologyOptions(section) || [];
 
   // Helper function to check if filter has meaningful data
   const hasFilterData = (options: {value: string, label: string}[]) => {
@@ -685,6 +687,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     onLocationChange?.(value);
   };
 
+  const handleTechnologyChange = (value: string) => {
+    setTechnologyFilter(value);
+    onTechnologyChange?.(value);
+  };
+
   const handleStageChange = (value: string) => {
     setStatusFilter(value); // Use status filter for stage
     onStatusChange?.(value);
@@ -775,6 +782,10 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                         setLocationFilter('all');
                         onLocationChange?.('all');
                       }
+                      if (hasFilterData(technologyOptions)) {
+                        setTechnologyFilter('all');
+                        onTechnologyChange?.('all');
+                      }
                     }}
                     className="text-xs text-muted hover:text-gray-700"
                   >
@@ -843,6 +854,24 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 </div>
               )}
 
+              {/* Technology Filter - Only show if options exist */}
+              {hasFilterData(technologyOptions) && (
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Technology</label>
+                  <select
+                    value={technologyFilter}
+                    onChange={(e) => handleTechnologyChange(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                  >
+                    {technologyOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               {/* Apply/Cancel Buttons */}
               <div className="flex gap-2 pt-2 border-t border-border justify-end">
                 <button
@@ -855,6 +884,10 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     if (hasFilterData(locationOptions)) {
                       setLocationFilter('all');
                       onLocationChange?.('all');
+                    }
+                    if (hasFilterData(technologyOptions)) {
+                      setTechnologyFilter('all');
+                      onTechnologyChange?.('all');
                     }
                     setIsDropdownOpen(false);
                   }}

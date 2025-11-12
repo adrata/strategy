@@ -156,10 +156,6 @@ export function CompanyListsDropdown({
     setEditingList(null);
   };
 
-  // Check if current filters differ from selected list
-  const filtersDiffer = selectedListId && selectedListId !== 'all-companies' && currentFilters && selectedList.filters;
-  const showUpdateButton = filtersDiffer && onUpdateList && selectedListId;
-
   return (
     <>
       <div className="relative min-w-40" ref={dropdownRef}>
@@ -273,26 +269,6 @@ export function CompanyListsDropdown({
                 </button>
               </div>
 
-              {/* Update List Button */}
-              {showUpdateButton && selectedList && (
-                <div className="border-t border-border mt-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingList(selectedList);
-                      setIsCreateModalOpen(true);
-                      setIsDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 hover:bg-panel-background focus:outline-none focus:bg-panel-background text-blue-600 dark:text-blue-400"
-                    role="menuitem"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    <span>Update list with current filters</span>
-                  </button>
-                </div>
-              )}
             </div>
           </div>,
           document.body

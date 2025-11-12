@@ -495,6 +495,23 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
           <div className="bg-background p-4 rounded-lg border border-border">
             <h4 className="font-medium text-foreground mb-3">Basic Information</h4>
             <div className="space-y-2">
+              {(() => {
+                const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+                const relationshipType = mergedRecord?.relationshipType;
+                
+                if (relationshipType === 'CLIENT' || relationshipType === 'FUTURE_CLIENT' || relationshipType === 'PARTNER' || relationshipType === 'FUTURE_PARTNER') {
+                  const typeLabel = relationshipType === 'CLIENT' ? 'Client' : 
+                                   relationshipType === 'FUTURE_CLIENT' ? 'Future Client' :
+                                   relationshipType === 'PARTNER' ? 'Partner' : 'Future Partner';
+                  return (
+                    <div className="flex items-center">
+                      <span className="text-sm text-muted w-24">Type:</span>
+                      <span className="text-sm font-medium text-foreground">{typeLabel}</span>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Company Name:</span>
                 <InlineEditField

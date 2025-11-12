@@ -397,11 +397,27 @@ export function TableRow({
                 return (
                   <TableCell
                     key="title"
-                    value={record['title'] || 
-                           record['jobTitle'] || 
-                           record?.['customFields']?.enrichedData?.overview?.title ||
-                           record?.['customFields']?.rawData?.active_experience_title ||
-                           '-'}
+                    value={(() => {
+                      // First try database fields
+                      if (record['title'] || record['jobTitle']) {
+                        return record['title'] || record['jobTitle'];
+                      }
+                      
+                      // Fallback: Try extracting title from enrichment data in customFields
+                      // This helps populate titles for leads that have enrichment data
+                      if (record?.['customFields']) {
+                        const { extractTitleFromEnrichment } = require('@/platform/utils/extract-title-from-enrichment');
+                        const enrichmentTitle = extractTitleFromEnrichment(record['customFields']);
+                        if (enrichmentTitle) {
+                          return enrichmentTitle;
+                        }
+                      }
+                      
+                      // Legacy fallbacks for backward compatibility
+                      return record?.['customFields']?.enrichedData?.overview?.title ||
+                             record?.['customFields']?.rawData?.active_experience_title ||
+                             '-';
+                    })()}
                     field="title"
                     recordId={record.id}
                     recordType={section}
@@ -873,11 +889,27 @@ export function TableRow({
                 return (
                   <TableCell
                     key="title"
-                    value={record['title'] || 
-                           record['jobTitle'] || 
-                           record?.['customFields']?.enrichedData?.overview?.title ||
-                           record?.['customFields']?.rawData?.active_experience_title ||
-                           '-'}
+                    value={(() => {
+                      // First try database fields
+                      if (record['title'] || record['jobTitle']) {
+                        return record['title'] || record['jobTitle'];
+                      }
+                      
+                      // Fallback: Try extracting title from enrichment data in customFields
+                      // This helps populate titles for leads that have enrichment data
+                      if (record?.['customFields']) {
+                        const { extractTitleFromEnrichment } = require('@/platform/utils/extract-title-from-enrichment');
+                        const enrichmentTitle = extractTitleFromEnrichment(record['customFields']);
+                        if (enrichmentTitle) {
+                          return enrichmentTitle;
+                        }
+                      }
+                      
+                      // Legacy fallbacks for backward compatibility
+                      return record?.['customFields']?.enrichedData?.overview?.title ||
+                             record?.['customFields']?.rawData?.active_experience_title ||
+                             '-';
+                    })()}
                     field="title"
                     recordId={record.id}
                     recordType={section}

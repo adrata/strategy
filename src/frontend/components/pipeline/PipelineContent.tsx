@@ -115,6 +115,7 @@ export const PipelineContent = React.memo(function PipelineContent({
   // 🎯 NEW SELLER FILTERS
   const [companySizeFilter, setCompanySizeFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [technologyFilter, setTechnologyFilter] = useState<string>('all');
   
   // Company Lists
   const [selectedListId, setSelectedListId] = useState<string | null>('all-companies');
@@ -152,6 +153,7 @@ export const PipelineContent = React.memo(function PipelineContent({
       if (filters.timezoneFilter) setTimezoneFilter(filters.timezoneFilter);
       if (filters.companySizeFilter) setCompanySizeFilter(filters.companySizeFilter);
       if (filters.locationFilter) setLocationFilter(filters.locationFilter);
+      if (filters.technologyFilter) setTechnologyFilter(filters.technologyFilter);
     }
 
     // Apply sort
@@ -186,7 +188,8 @@ export const PipelineContent = React.memo(function PipelineContent({
           lastContactedFilter,
           timezoneFilter,
           companySizeFilter,
-          locationFilter
+          locationFilter,
+          technologyFilter
         },
         sortField,
         sortDirection,
@@ -196,7 +199,7 @@ export const PipelineContent = React.memo(function PipelineContent({
       console.error('Failed to update list:', error);
       alert('Failed to update list. Please try again.');
     }
-  }, [updateList, statusFilter, priorityFilter, verticalFilter, revenueFilter, lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, sortField, sortDirection, searchQuery]);
+  }, [updateList, statusFilter, priorityFilter, verticalFilter, revenueFilter, lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, technologyFilter, sortField, sortDirection, searchQuery]);
   
   // Get workspace context at component level
   const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
@@ -728,6 +731,17 @@ export const PipelineContent = React.memo(function PipelineContent({
                (state && state.toLowerCase().replace(/\s+/g, '_') === location);
       })();
 
+      // Technology filter
+      const matchesTechnology = technologyFilter === 'all' || (() => {
+        const technology = record.technology || record.company?.technology;
+        if (!technology) return false;
+        
+        const filterTech = technologyFilter.toLowerCase();
+        const recordTech = typeof technology === 'string' ? technology.toLowerCase() : '';
+        
+        return recordTech === filterTech || recordTech.includes(filterTech);
+      })();
+
       // Last contacted filter (including 'uncontacted' for company lists)
       const matchesLastContacted = lastContactedFilter === 'all' || (() => {
         const lastContact = record.lastContactDate || record.lastContact || record.lastAction;
@@ -762,7 +776,7 @@ export const PipelineContent = React.memo(function PipelineContent({
         }
       })();
 
-      return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesLastContacted;
+      return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesTechnology && matchesLastContacted;
     });
 
     // Apply sorting for all fields including rank
@@ -804,7 +818,7 @@ export const PipelineContent = React.memo(function PipelineContent({
 
     return filtered;
   }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, 
-      lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, 
+      lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, technologyFilter,
       sortField, sortDirection, section, getSortableValue]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
@@ -1324,6 +1338,7 @@ export const PipelineContent = React.memo(function PipelineContent({
             // 🎯 NEW SELLER FILTERS
             onCompanySizeChange={setCompanySizeFilter}
             onLocationChange={setLocationFilter}
+            onTechnologyChange={setTechnologyFilter}
             // Company Lists
             selectedListId={selectedListId}
             onListSelect={handleListSelect}

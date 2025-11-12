@@ -72,6 +72,15 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'GMT', label: 'GMT' },
       { value: 'CET', label: 'Central European (CET)' },
       { value: 'JST', label: 'Japan Standard (JST)' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   },
   
@@ -119,6 +128,15 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'GMT', label: 'GMT' },
       { value: 'CET', label: 'Central European (CET)' },
       { value: 'JST', label: 'Japan Standard (JST)' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   },
   
@@ -151,6 +169,15 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'medium', label: 'Medium ($10M-$100M)' },
       { value: 'small', label: 'Small ($1M-$10M)' },
       { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   },
   
@@ -240,6 +267,15 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'medium', label: 'Medium ($10M-$100M)' },
       { value: 'small', label: 'Small ($1M-$10M)' },
       { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   },
   
@@ -290,6 +326,15 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'GMT', label: 'GMT' },
       { value: 'CET', label: 'Central European (CET)' },
       { value: 'JST', label: 'Japan Standard (JST)' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   },
   
@@ -320,6 +365,15 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'medium', label: 'Medium ($10M-$100M)' },
       { value: 'small', label: 'Small ($1M-$10M)' },
       { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   },
   
@@ -350,6 +404,15 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'medium', label: 'Medium ($10M-$100M)' },
       { value: 'small', label: 'Small ($1M-$10M)' },
       { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   }
 };

@@ -674,12 +674,17 @@ export function UniversalRecordTemplate({
 
   // Get record display name with fallbacks
   const getDisplayName = () => {
-    return localRecord?.name || 
-           localRecord?.fullName || 
-           (localRecord?.firstName && localRecord?.lastName ? `${localRecord.firstName} ${localRecord.lastName}` : '') ||
-           localRecord?.companyName ||
-           localRecord?.title ||
-           'Unknown Record';
+    // Get the raw name first
+    const rawName = localRecord?.name || 
+                    localRecord?.fullName || 
+                    (localRecord?.firstName && localRecord?.lastName ? `${localRecord.firstName} ${localRecord.lastName}` : '') ||
+                    localRecord?.companyName ||
+                    localRecord?.title ||
+                    'Unknown Record';
+    
+    // Sanitize the name to remove bullet points and other unwanted characters
+    // This ensures the display name is clean even if the database has unsanitized data
+    return sanitizeName(rawName) || rawName;
   };
 
   // Normalize string for comparison (remove punctuation, normalize whitespace, lowercase)
@@ -4929,8 +4934,8 @@ export function UniversalRecordTemplate({
                 {/* Stage and Type Pills - Only show for company records */}
                 {(recordType === 'companies' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') && (
                   <div className="flex items-center gap-2 mb-2">
-                    {/* Type Pill */}
-                    {(() => {
+                    {/* Type Pill - Hidden for companies (shown in Basic Information instead) */}
+                    {recordType !== 'companies' && (() => {
                       const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
                       const relationshipType = localRecord?.relationshipType;
                       
@@ -7150,7 +7155,10 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   return (
     <div className="h-full flex flex-col">
       {/* Notes Header with static auto-save message */}
-      <div className="flex items-center justify-end px-4 py-2 border-b border-border bg-background">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-background">
+        <h2 className="text-sm font-medium text-foreground">
+          Notes
+        </h2>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted">
             Notes auto-save

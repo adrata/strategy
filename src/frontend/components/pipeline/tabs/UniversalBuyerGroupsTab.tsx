@@ -150,6 +150,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   }, [buyerGroups]);
 
   useEffect(() => {
+    // 🚨 CRITICAL: Use an abort controller to cancel stale fetches when record changes
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    
     const fetchBuyerGroups = async () => {
       console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
       console.log('🔍 [BUYER GROUPS DEBUG] Record:', record);
@@ -216,6 +220,14 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         recordType
       });
       
+      // 🚨 CRITICAL: Update refs IMMEDIATELY when record changes to prevent race conditions
+      // This ensures subsequent checks use the correct current values
+      if (recordIdChanged || companyIdChanged || companyNameChanged) {
+        previousRecordIdRef.current = record?.id;
+        previousCompanyIdRef.current = companyId;
+        previousCompanyNameRef.current = companyName;
+      }
+      
       // If record or company changed, clear stale cache and reset state IMMEDIATELY
       if (recordIdChanged || companyIdChanged || companyNameChanged) {
         console.log('🔄 [BUYER GROUPS] Record or company changed, clearing state immediately and invalidating cache');
@@ -247,17 +259,20 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         localStorage.removeItem(currentCacheKey);
         safeGetItem(currentCacheKey, 0); // Force TTL expiration
         console.log('🗑️ [BUYER GROUPS] Cleared current company cache to force fresh fetch:', currentCacheKey);
+      } else {
+        // Update refs with current values if no change detected
+        previousRecordIdRef.current = record?.id;
+        previousCompanyIdRef.current = companyId;
+        previousCompanyNameRef.current = companyName;
       }
       
-      // Update the refs with current values
-      previousRecordIdRef.current = record?.id;
-      previousCompanyIdRef.current = companyId;
-      previousCompanyNameRef.current = companyName;
-      
       // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched (unless record or company changed)
-      if (isFetching || ((!recordIdChanged && !companyIdChanged && !companyNameChanged) && lastFetchTime && Date.now() - lastFetchTime < 5000)) {
-        console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
-        return;
+      // Skip this check if record/company changed to ensure fresh data
+      if (!recordIdChanged && !companyIdChanged && !companyNameChanged) {
+        if (isFetching || (lastFetchTime && Date.now() - lastFetchTime < 5000)) {
+          console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
+          return;
+        }
       }
       
       setIsFetching(true);
@@ -352,6 +367,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         
         // Only fetch if no cache or cache is stale
         if (peopleData.length === 0) {
+          // 🚨 Check if fetch was aborted before making API call
+          if (signal.aborted) {
+            console.log('🚫 [BUYER GROUPS] Fetch aborted, skipping API call');
+            return;
+          }
+          
           console.log('🔍 [BUYER GROUPS] Fetching fresh buyer group data for company:', companyName, 'ID:', companyId);
           
           // 🚀 ULTRA-FAST: Use dedicated fast buyer group API
@@ -359,6 +380,13 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/v1/intelligence/buyer-group?company=${encodeURIComponent(companyName)}`);
             console.log('🔍 [BUYER GROUPS] authFetch function:', typeof authFetch);
             const fastResult = await authFetch(`/api/v1/intelligence/buyer-group?company=${encodeURIComponent(companyName)}`);
+            
+            // 🚨 Check if fetch was aborted after API call
+            if (signal.aborted) {
+              console.log('🚫 [BUYER GROUPS] Fetch aborted after API call, discarding results');
+              return;
+            }
+            
             console.log('🔍 [BUYER GROUPS] API response:', fastResult);
             console.log('🔍 [BUYER GROUPS] API response success:', fastResult?.success);
             console.log('🔍 [BUYER GROUPS] API response data length:', fastResult?.data?.length);
@@ -436,12 +464,29 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         //   console.log(`🔍 [BUYER GROUPS] Person ${index + 1}: ${person.fullName}, Company ID: ${person.companyId}, Company Name: ${person.company?.name || person.company}`);
         // });
 
+        // 🚨 Check if fetch was aborted before processing empty state
+        if (signal.aborted) {
+          console.log('🚫 [BUYER GROUPS] Fetch aborted before processing empty state');
+          return;
+        }
+        
         // If no people found, show empty state (no hardcoded fallbacks)
         if (uniqueCompanyPeople.length === 0) {
+          // 🚨 Validate we're still on the same company before setting empty state
+          const currentRecordId = previousRecordIdRef.current;
+          const currentCompanyId = previousCompanyIdRef.current;
+          const currentCompanyName = previousCompanyNameRef.current;
+          
+          if (currentRecordId !== record?.id || currentCompanyId !== companyId || currentCompanyName !== companyName) {
+            console.log('🚫 [BUYER GROUPS] Company changed, discarding empty state');
+            return;
+          }
+          
           console.log('🔍 [BUYER GROUPS] No people found in database for this company:', companyName, 'ID:', companyId);
           console.log('🔍 [BUYER GROUPS] peopleData length:', peopleData.length);
           setBuyerGroups([]);
           setLoading(false);
+          setIsFetching(false);
           return;
         }
 
@@ -586,6 +631,30 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         console.log('🔍 [BUYER GROUPS DEBUG] Final buyer groups before setting:', sortedBuyerGroups);
         console.log('🔍 [BUYER GROUPS DEBUG] Setting buyer groups with length:', sortedBuyerGroups.length);
         
+        // 🚨 CRITICAL: Check if fetch was aborted before setting state
+        if (signal.aborted) {
+          console.log('🚫 [BUYER GROUPS] Fetch aborted before setting state, discarding results');
+          return;
+        }
+        
+        // 🚨 CRITICAL: Validate that we're still on the same company before setting state
+        // This prevents race conditions where a new company was loaded while fetch was in progress
+        const currentRecordId = previousRecordIdRef.current;
+        const currentCompanyId = previousCompanyIdRef.current;
+        const currentCompanyName = previousCompanyNameRef.current;
+        
+        if (currentRecordId !== record?.id || currentCompanyId !== companyId || currentCompanyName !== companyName) {
+          console.log('🚫 [BUYER GROUPS] Company changed during fetch, discarding stale results', {
+            currentRecordId,
+            recordId: record?.id,
+            currentCompanyId,
+            companyId,
+            currentCompanyName,
+            companyName
+          });
+          return;
+        }
+        
         // 🔍 VALIDATION: Ensure all members have correct companyId and company before caching
         const validatedBuyerGroups = sortedBuyerGroups.map(member => ({
           ...member,
@@ -605,7 +674,24 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         console.log(`✅ [BUYER GROUPS] Found ${validatedBuyerGroups.length} people from ${companyName} (ID: ${companyId})`);
         
       } catch (error) {
+        // 🚨 Don't set error state if fetch was aborted (expected behavior)
+        if (signal.aborted) {
+          console.log('🚫 [BUYER GROUPS] Fetch aborted, ignoring error');
+          return;
+        }
+        
         console.error('Error fetching buyer groups:', error);
+        
+        // 🚨 Validate we're still on the same company before setting error state
+        const currentRecordId = previousRecordIdRef.current;
+        const currentCompanyId = previousCompanyIdRef.current;
+        const currentCompanyName = previousCompanyNameRef.current;
+        
+        if (currentRecordId !== record?.id || currentCompanyId !== companyId || currentCompanyName !== companyName) {
+          console.log('🚫 [BUYER GROUPS] Company changed during error, discarding error state');
+          return;
+        }
+        
         setBuyerGroups([]);
         setLoading(false);
         setIsFetching(false);
@@ -614,8 +700,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
     fetchBuyerGroups();
     
-    // Cleanup function to reset fetching state
+    // 🚨 CRITICAL: Cleanup function to abort stale fetches and reset state
     return () => {
+      abortController.abort(); // Cancel any in-flight fetches
       setIsFetching(false);
     };
   }, [record?.id, record, recordType]); // Depend on record ID, full record object, and record type to ensure proper re-fetching
