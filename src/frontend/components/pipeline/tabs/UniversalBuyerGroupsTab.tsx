@@ -372,11 +372,11 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           
           console.log('🔍 [BUYER GROUPS] Fetching fresh buyer group data for company:', companyName, 'ID:', companyId);
           
-          // 🚀 ULTRA-FAST: Use dedicated fast buyer group API
+          // 🚀 ULTRA-FAST: Use dedicated fast buyer group API with companyId (exact match, no fuzzy name matching)
           try {
-            console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/v1/intelligence/buyer-group?company=${encodeURIComponent(companyName)}`);
+            console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/data/buyer-groups/fast?companyId=${companyId}`);
             console.log('🔍 [BUYER GROUPS] authFetch function:', typeof authFetch);
-            const fastResult = await authFetch(`/api/v1/intelligence/buyer-group?company=${encodeURIComponent(companyName)}`);
+            const fastResult = await authFetch(`/api/data/buyer-groups/fast?companyId=${companyId}`);
             
             // 🚨 Check if fetch was aborted after API call
             if (signal.aborted) {
@@ -394,12 +394,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               console.log('⚡ [BUYER GROUPS] Members:', members);
               
               // 🚨 VALIDATION: Filter API response to only include members that match the current company
-              // The API uses company name matching which can return wrong company's data
+              // NOTE: This validation is now redundant since we use companyId exact matching, but kept as defense in depth
               const validatedMembers = members.filter((member: any) => {
-                // Check if member's company matches (by name or ID)
+                // Fast API should only return members with matching companyId, but validate anyway
                 const memberCompanyMatches = 
-                  (member.company && member.company.toLowerCase() === companyName.toLowerCase()) ||
-                  (member.companyId && member.companyId === companyId);
+                  (member.companyId && member.companyId === companyId) ||
+                  (member.company && typeof member.company === 'string' && member.company === companyId);
                 
                 if (!memberCompanyMatches) {
                   console.warn('⚠️ [BUYER GROUPS] API returned member from wrong company, filtering out:', {
@@ -428,19 +428,22 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                 });
               }
               
-              // Convert to people format for compatibility (only validated members)
+              // Convert fast API response format to people format for compatibility
+              // Fast API returns: { id, name, title, email, phone, linkedinUrl, role, buyerGroupStatus, influence, company }
               peopleData = validatedMembers.map((member: any) => ({
                 id: member.id,
                 fullName: member.name,
-                firstName: member.name.split(' ')[0],
-                lastName: member.name.split(' ').slice(1).join(' '),
-                company: companyName, // Use current company name, not member.company (which might be wrong)
+                firstName: member.name?.split(' ')[0] || '',
+                lastName: member.name?.split(' ').slice(1).join(' ') || '',
+                company: companyName, // Use current company name (fast API may return companyId in company field)
                 companyId: companyId, // Always use current companyId
                 jobTitle: member.title,
                 email: member.email,
                 phone: member.phone,
                 linkedinUrl: member.linkedinUrl,
-                buyerGroupRole: member.role
+                buyerGroupRole: member.role,
+                buyerGroupStatus: member.buyerGroupStatus, // Include buyer group status from fast API
+                status: member.status // Include status if available
               }));
               
               // Cache the data immediately

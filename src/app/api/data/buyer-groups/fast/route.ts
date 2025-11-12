@@ -38,42 +38,25 @@ export async function GET(request: NextRequest) {
     console.log(`🚀 [FAST BUYER GROUPS] Loading buyer group for company: ${companyId}`);
     console.log(`🚀 [FAST BUYER GROUPS] Workspace ID: ${workspaceId}, User ID: ${userId}`);
 
-    // First, get the company name to search by email domain
+    // Get the company name for response (not for matching - we use companyId exact match)
     const company = await prisma.companies.findUnique({
       where: { id: companyId },
       select: { name: true }
     });
     
-    // Extract email domain from company name (e.g., "Southern California Edison (SCE)" -> "sce.com")
     const companyName = company?.name || '';
-    let emailDomain = '';
-    
-    if (companyName.toLowerCase().includes('southern california edison')) {
-      emailDomain = 'sce.com';
-    } else {
-      // Generic domain extraction
-      emailDomain = companyName.toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '') // Remove special characters
-        .replace(/\s+/g, '') // Remove spaces
-        + '.com';
-    }
     
     console.log(`🚀 [FAST BUYER GROUPS] Company found:`, company);
-    console.log(`🚀 [FAST BUYER GROUPS] Searching for people with companyId: ${companyId} or email domain: ${emailDomain}`);
+    console.log(`🚀 [FAST BUYER GROUPS] Searching for people with companyId: ${companyId} (exact match only)`);
 
     // Single optimized query to get people with buyer group roles for the company
+    // STRICT: Only use companyId exact match - no email domain fallback to prevent cross-company leakage
     const people = await prisma.people.findMany({
       where: {
         AND: [
           {
-            OR: [
-              { companyId: companyId },
-              { 
-                email: {
-                  endsWith: emailDomain
-                }
-              }
-            ]
+            // PRIMARY FILTER: Exact companyId match only (no email domain fallback)
+            companyId: companyId
           },
           {
             workspaceId: workspaceId,
@@ -120,8 +103,25 @@ export async function GET(request: NextRequest) {
       take: 50 // Limit to 50 people for performance
     });
 
+    // 🚨 POST-QUERY VALIDATION: Filter out any people that don't match the exact companyId
+    // This is defense in depth - the query should already filter by companyId, but validate anyway
+    const validatedPeople = people.filter(person => {
+      if (person.companyId !== companyId) {
+        console.warn(`⚠️ [FAST BUYER GROUPS] Filtering out person with mismatched companyId:`, {
+          personId: person.id,
+          personName: person.fullName,
+          personCompanyId: person.companyId,
+          expectedCompanyId: companyId
+        });
+        return false;
+      }
+      return true;
+    });
+
+    console.log(`🔍 [FAST BUYER GROUPS] After validation: ${validatedPeople.length} people (was ${people.length})`);
+
     // Transform to buyer group format
-    const buyerGroupMembers = people.map(person => {
+    const buyerGroupMembers = validatedPeople.map(person => {
       const jobTitle = person.jobTitle || '';
       
       // Use stored role or infer from job title
@@ -143,7 +143,8 @@ export async function GET(request: NextRequest) {
         buyerGroupStatus: buyerGroupStatus,  // ADD THIS
         influence: getInfluenceLevel(buyerRole),
         isPrimary: false, // Will be set by caller if needed
-        company: companyId,
+        company: companyName, // Use actual company name, not companyId
+        companyId: companyId, // Include companyId for client-side validation
         createdAt: person.createdAt,
         updatedAt: person.updatedAt
       };
