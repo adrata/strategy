@@ -246,12 +246,9 @@ function PipelineLayoutInner({
                             pathname.includes('/workbench') ||
                             pathname.includes('/partner-os/');
     
-    // Check if we're in PartnerOS mode (check URL for partner-os/ prefix, search params, or sessionStorage)
-    const isPartnerOSMode = typeof window !== 'undefined' && (
-      pathname.includes('/partner-os/') ||
-      sessionStorage.getItem('activeSubApp') === 'partneros' ||
-      new URLSearchParams(window.location.search).get('app') === 'partneros'
-    );
+    // Check if we're in PartnerOS mode - prioritize URL check over sessionStorage
+    // If URL has /partner-os/ prefix, it's PartnerOS; otherwise it's RevenueOS
+    const isPartnerOSMode = typeof window !== 'undefined' && pathname.includes('/partner-os/');
     
     // Check for specific app routes FIRST (before generic /adrata check)
     // This ensures /adrata/oasis, /adrata/stacks, and /adrata/workshop get their proper left panels
@@ -471,6 +468,17 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('activeSubApp', 'partneros');
         }
+      } else {
+        // If NOT in partner-os route, clear PartnerOS mode from sessionStorage
+        // This ensures RevenueOS routes don't stay in PartnerOS mode
+        if (typeof window !== 'undefined') {
+          const currentActiveSubApp = sessionStorage.getItem('activeSubApp');
+          // Only clear if we're navigating to a pipeline route (not other apps)
+          const isPipelineSection = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'].includes(section);
+          if (isPipelineSection && currentActiveSubApp === 'partneros') {
+            sessionStorage.removeItem('activeSubApp');
+          }
+        }
       }
       
       // Validate it's a known section
@@ -557,14 +565,18 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     const segments = pathname.split('/').filter(Boolean);
     const workspaceSlug = segments[0]; // First segment is the workspace slug
     
-    // Check if we're in PartnerOS mode
-    const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+    // Check if we're currently in PartnerOS mode (from URL or sessionStorage)
+    // Only use PartnerOS mode if URL explicitly has partner-os/ prefix
+    const isCurrentlyPartnerOS = typeof window !== 'undefined' && (
+      pathname.includes('/partner-os/') || 
+      sessionStorage.getItem('activeSubApp') === 'partneros'
+    );
     
     // For PartnerOS mode, use partner-os/ prefix for partners section and related sections
     // For speedrun, leads, prospects - it's fine to keep them without prefix
     // But when viewing partners section, use partner-os/ prefix for all sections
     let targetSection = section;
-    if (isPartnerOS && (section === 'partners' || section === 'speedrun' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'companies' || section === 'people')) {
+    if (isCurrentlyPartnerOS && (section === 'partners' || section === 'speedrun' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'companies' || section === 'people')) {
       // Use partner-os/ prefix for partners section and related sections in PartnerOS mode
       targetSection = `partner-os/${section}`;
     }

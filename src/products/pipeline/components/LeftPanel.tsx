@@ -719,58 +719,7 @@ function PipelineSections({
       description: "Drive revenue",
       count: loading ? (
         <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
-      ) : (() => {
-        const totalPeople = productionCounts.people || 0;
-        const speedrunCount = productionCounts.speedrun || 0;
-        const speedrunReadyCount = productionCounts.speedrunReady || 0;
-        
-        // Debug logging
-        console.log('🔍 [SPEEDRUN COUNT] Display logic:', {
-          speedrunCount,
-          speedrunReadyCount,
-          totalPeople,
-          productionCounts
-        });
-        
-        // Always show remaining speedrun count as a pill
-        if (speedrunCount > 0) {
-          // If there are speedrun records with no meaningful actions, show Ready + remaining count
-          if (speedrunReadyCount > 0) {
-            console.log('✅ [SPEEDRUN COUNT] Showing Ready pill + remaining - speedrunReadyCount:', speedrunReadyCount, 'speedrunCount:', speedrunCount);
-            return (
-              <div className="flex items-center gap-1.5">
-                <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                  <span className="text-xs font-semibold">Ready</span>
-                </div>
-                <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
-                  <span className="text-xs font-semibold">{speedrunCount} remaining</span>
-                </div>
-              </div>
-            );
-          }
-          
-          // Show remaining count as a pill
-          console.log('📊 [SPEEDRUN COUNT] Showing remaining count pill - speedrunCount:', speedrunCount);
-          return (
-            <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
-              <span className="text-xs font-semibold">{speedrunCount} remaining</span>
-            </div>
-          );
-        }
-        
-        // If people exist but speedrun is 0, show Done
-        if (totalPeople > 0 && speedrunCount === 0) {
-          return (
-            <div className="flex items-center gap-1 bg-success/10 text-success px-2 py-0.5 rounded-full">
-              <CheckIcon className="w-3 h-3" />
-              <span className="text-xs font-semibold">Done</span>
-            </div>
-          );
-        }
-        
-        // Otherwise (no speedrun, no people) → show 0
-        return 0;
-      })(),
+      ) : productionCounts.speedrun || 0,
       visible: allowedSections.includes('speedrun') && (isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true))
     },
     {

@@ -13,6 +13,7 @@ import { useFeatureAccess } from "@/platform/ui/context/FeatureAccessProvider";
 import { useChecklist, type ChecklistItem } from "./useChecklist";
 import { getPresetTemplate, type PresetTemplateId } from "./daily100Presets";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
+import { useFastCounts } from "@/platform/hooks/useFastCounts";
 import {
   UserIcon,
   CogIcon,
@@ -332,6 +333,11 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   } catch (e) {
     // Not in OasisProvider context, keep count at 0
   }
+
+  // Get speedrun counts for pills
+  const { counts: fastCounts } = useFastCounts();
+  const revenueOSSpeedrunCount = fastCounts?.speedrun || 0;
+  const partnerOSSpeedrunCount = fastCounts?.speedrun || 0; // Same count for now, can be filtered later
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
@@ -838,21 +844,34 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <div className="space-y-0.5">
             {/* RevenueOS */}
             <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'revenueos' 
                   ? 'bg-slate-100 text-slate-700' 
                   : 'text-foreground hover:bg-hover'
               }`}
-              onClick={() => handleNavigation("/speedrun")}
+              onClick={() => {
+                // Clear PartnerOS mode when switching to RevenueOS
+                if (typeof window !== 'undefined') {
+                  sessionStorage.removeItem('activeSubApp');
+                }
+                handleNavigation("/speedrun");
+              }}
             >
-              <ChartBarIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">RevenueOS</span>
+              <div className="flex items-center">
+                <ChartBarIcon className="w-4 h-4 mr-3" />
+                <span className="font-medium">RevenueOS</span>
+              </div>
+              {revenueOSSpeedrunCount > 0 && (
+                <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold">{revenueOSSpeedrunCount}</span>
+                </div>
+              )}
             </button>
 
             {/* PartnerOS */}
             {authUser?.workspaces?.some(w => w.name === 'Adrata' || w.id === authUser.activeWorkspaceId) && (
               <button
-                className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-colors group ${
                   currentApp === 'partneros' 
                     ? 'bg-slate-100 text-slate-700' 
                     : 'text-foreground hover:bg-hover'
@@ -864,8 +883,15 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   handleNavigation("/partner-os/speedrun");
                 }}
               >
-                <BuildingOffice2Icon className="w-4 h-4 mr-3" />
-                <span className="font-medium">PartnerOS</span>
+                <div className="flex items-center">
+                  <BuildingOffice2Icon className="w-4 h-4 mr-3" />
+                  <span className="font-medium">PartnerOS</span>
+                </div>
+                {partnerOSSpeedrunCount > 0 && (
+                  <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-semibold">{partnerOSSpeedrunCount}</span>
+                  </div>
+                )}
               </button>
             )}
 
