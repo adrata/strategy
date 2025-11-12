@@ -322,24 +322,38 @@ export async function GET(request: NextRequest) {
       if (countsOnly) {
         // Special handling for leads section to include companies with 0 people
         if (section === 'leads') {
-          const [peopleCount, companyCount] = await Promise.all([
-            prisma.people.count({ where: { ...where, status: 'LEAD' } }),
-            prisma.companies.count({
-              where: {
-                workspaceId: context.workspaceId,
-                deletedAt: null,
-                mainSellerId: context.userId, // Only show companies assigned to the current user
-                AND: [
-                  { people: { none: {} } }, // Companies with 0 people
-                  {
-                    OR: [
-                      { status: 'LEAD' },
-                      { status: null } // Include companies without status set
-                    ]
-                  }
+          const peopleCountWhere: any = { ...where, status: 'LEAD' };
+          const companyCountWhere: any = {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ],
+            AND: [
+              { people: { none: {} } }, // Companies with 0 people
+              {
+                OR: [
+                  { status: 'LEAD' },
+                  { status: null } // Include companies without status set
                 ]
               }
-            })
+            ]
+          };
+          
+          // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+          if (isPartnerOS) {
+            peopleCountWhere.relationshipType = {
+              in: ['PARTNER', 'FUTURE_PARTNER']
+            };
+            companyCountWhere.relationshipType = {
+              in: ['PARTNER', 'FUTURE_PARTNER']
+            };
+          }
+          
+          const [peopleCount, companyCount] = await Promise.all([
+            prisma.people.count({ where: peopleCountWhere }),
+            prisma.companies.count({ where: companyCountWhere })
           ]);
           
           return {
@@ -354,19 +368,33 @@ export async function GET(request: NextRequest) {
 
         // Special handling for prospects section to include companies with 0 people
         if (section === 'prospects') {
+          const peopleCountWhere: any = { ...where, status: 'PROSPECT' };
+          const companyCountWhere: any = {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ],
+            AND: [
+              { people: { none: {} } },
+              { status: 'PROSPECT' }
+            ]
+          };
+          
+          // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+          if (isPartnerOS) {
+            peopleCountWhere.relationshipType = {
+              in: ['PARTNER', 'FUTURE_PARTNER']
+            };
+            companyCountWhere.relationshipType = {
+              in: ['PARTNER', 'FUTURE_PARTNER']
+            };
+          }
+          
           const [peopleCount, companyCount] = await Promise.all([
-            prisma.people.count({ where: { ...where, status: 'PROSPECT' } }),
-            prisma.companies.count({
-              where: {
-                workspaceId: context.workspaceId,
-                deletedAt: null,
-                mainSellerId: context.userId, // Only show companies assigned to the current user
-                AND: [
-                  { people: { none: {} } },
-                  { status: 'PROSPECT' }
-                ]
-              }
-            })
+            prisma.people.count({ where: peopleCountWhere }),
+            prisma.companies.count({ where: companyCountWhere })
           ]);
           
           return {
@@ -800,24 +828,33 @@ export async function GET(request: NextRequest) {
       if (section === 'leads') {
         console.log(`🏢 [V1 PEOPLE API] Fetching companies with 0 people for leads section`);
         
+        const companiesWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          OR: [
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
+          ],
+          AND: [
+            { people: { none: {} } }, // Companies with 0 people
+            {
+              OR: [
+                { status: 'LEAD' },
+                { status: null } // Include companies without status set
+              ]
+            }
+          ]
+        };
+        
+        // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+        if (isPartnerOS) {
+          companiesWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+        }
+        
         const companiesWithNoPeople = await prisma.companies.findMany({
-          where: {
-            workspaceId: context.workspaceId,
-            deletedAt: null,
-            OR: [
-              { mainSellerId: context.userId },
-              { mainSellerId: null }
-            ],
-            AND: [
-              { people: { none: {} } }, // Companies with 0 people
-              {
-                OR: [
-                  { status: 'LEAD' },
-                  { status: null } // Include companies without status set
-                ]
-              }
-            ]
-          },
+          where: companiesWhere,
           select: {
             id: true,
             name: true,
@@ -898,19 +935,28 @@ export async function GET(request: NextRequest) {
       if (section === 'prospects') {
         console.log(`🏢 [V1 PEOPLE API] Fetching companies with 0 people for prospects section`);
         
+        const companiesWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          OR: [
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
+          ],
+          AND: [
+            { people: { none: {} } }, // Companies with 0 people
+            { status: 'PROSPECT' }
+          ]
+        };
+        
+        // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+        if (isPartnerOS) {
+          companiesWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+        }
+        
         const companiesWithNoPeople = await prisma.companies.findMany({
-          where: {
-            workspaceId: context.workspaceId,
-            deletedAt: null,
-            OR: [
-              { mainSellerId: context.userId },
-              { mainSellerId: null }
-            ],
-            AND: [
-              { people: { none: {} } }, // Companies with 0 people
-              { status: 'PROSPECT' }
-            ]
-          },
+          where: companiesWhere,
           select: {
             id: true,
             name: true,
@@ -1006,66 +1052,86 @@ export async function GET(request: NextRequest) {
       // For leads/prospects, we need to count companies with 0 people separately
       let accurateTotalCount = totalCount;
       if (section === 'leads') {
-        const [peopleCount, companyCount] = await Promise.all([
-          prisma.people.count({ 
-            where: { 
-              workspaceId: context.workspaceId,
-              deletedAt: null,
-              status: 'LEAD',
+        const peopleWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          status: 'LEAD',
+          OR: [
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
+          ]
+        };
+        
+        const companiesWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          OR: [
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
+          ],
+          AND: [
+            { people: { none: {} } },
+            {
               OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
-            } 
-          }),
-          prisma.companies.count({
-            where: {
-              workspaceId: context.workspaceId,
-              deletedAt: null,
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ],
-              AND: [
-                { people: { none: {} } },
-                {
-                  OR: [
-                    { status: 'LEAD' },
-                    { status: null }
-                  ]
-                }
+                { status: 'LEAD' },
+                { status: null }
               ]
             }
-          })
+          ]
+        };
+        
+        // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+        if (isPartnerOS) {
+          peopleWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+          companiesWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+        }
+        
+        const [peopleCount, companyCount] = await Promise.all([
+          prisma.people.count({ where: peopleWhere }),
+          prisma.companies.count({ where: companiesWhere })
         ]);
         accurateTotalCount = peopleCount + companyCount;
       } else if (section === 'prospects') {
+        const peopleWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          status: 'PROSPECT',
+          OR: [
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
+          ]
+        };
+        
+        const companiesWhere: any = {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          OR: [
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
+          ],
+          AND: [
+            { people: { none: {} } },
+            { status: 'PROSPECT' }
+          ]
+        };
+        
+        // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+        if (isPartnerOS) {
+          peopleWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+          companiesWhere.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+        }
+        
         const [peopleCount, companyCount] = await Promise.all([
-          prisma.people.count({ 
-            where: { 
-              workspaceId: context.workspaceId,
-              deletedAt: null,
-              status: 'PROSPECT',
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
-            } 
-          }),
-          prisma.companies.count({
-            where: {
-              workspaceId: context.workspaceId,
-              deletedAt: null,
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ],
-              AND: [
-                { people: { none: {} } },
-                { status: 'PROSPECT' }
-              ]
-            }
-          })
+          prisma.people.count({ where: peopleWhere }),
+          prisma.companies.count({ where: companiesWhere })
         ]);
         accurateTotalCount = peopleCount + companyCount;
       } else {
