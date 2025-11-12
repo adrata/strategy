@@ -45,8 +45,8 @@ export function getFilteredSectionsForWorkspace(config: SectionFilterConfig): st
       core: ['inbox', 'prospects', 'leads', 'pipeline', 'analytics', 'settings']
     },
     'partneros': {
-      all: ['speedrun', 'leads', 'prospects', 'partners', 'companies', 'people'],
-      core: ['speedrun', 'leads', 'prospects', 'partners', 'companies', 'people']
+      all: ['speedrun', 'leads', 'prospects', 'opportunities', 'partners', 'companies', 'people'],
+      core: ['speedrun', 'leads', 'prospects', 'opportunities', 'partners', 'companies', 'people']
     }
   };
   

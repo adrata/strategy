@@ -69,18 +69,31 @@ function PartnerOSSections({
         const speedrunCount = productionCounts.speedrun || 0;
         const speedrunReadyCount = productionCounts.speedrunReady || 0;
         
-        if (speedrunReadyCount > 0) {
+        // Always show remaining speedrun count as a pill
+        if (speedrunCount > 0) {
+          // If there are speedrun records with no meaningful actions, show Ready + remaining count
+          if (speedrunReadyCount > 0) {
+            return (
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold">Ready</span>
+                </div>
+                <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold">{speedrunCount} remaining</span>
+                </div>
+              </div>
+            );
+          }
+          
+          // Show remaining count as a pill
           return (
-            <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-              <span className="text-xs font-semibold">Ready</span>
+            <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+              <span className="text-xs font-semibold">{speedrunCount} remaining</span>
             </div>
           );
         }
         
-        if (speedrunCount > 0) {
-          return speedrunCount;
-        }
-        
+        // If people exist but speedrun is 0, show Done
         if (totalPeople > 0 && speedrunCount === 0) {
           return (
             <div className="flex items-center gap-1 bg-success/10 text-success px-2 py-0.5 rounded-full">
@@ -111,6 +124,15 @@ function PartnerOSSections({
         <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : (productionCounts.prospects || 0),
       visible: allowedSections.includes('prospects')
+    },
+    {
+      id: "opportunities",
+      name: "Opportunities",
+      description: "Partner opportunities",
+      count: loading ? (
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
+      ) : productionCounts.opportunities || 0,
+      visible: allowedSections.includes('opportunities')
     },
     {
       id: "partners",
@@ -306,6 +328,40 @@ export function PartnerOSLeftPanel({
               <div className="text-xs text-muted font-medium" style={{ marginTop: '-1px' }}>
                 Partner Relationships
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Executive Performance Dashboard - Matching RevenueOS */}
+        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Partners</span>
+              <span className="text-xs font-semibold text-foreground">
+                {fastCountsLoading ? (
+                  <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
+                ) : (fastCounts?.partners || 0).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Opportunities</span>
+              <span className="text-xs font-semibold text-foreground">
+                {fastCountsLoading ? (
+                  <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
+                ) : (fastCounts?.opportunities || 0).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-muted">Active</span>
+              <span className="text-xs font-semibold text-foreground">
+                {fastCountsLoading ? (
+                  <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
+                ) : (() => {
+                  const partners = fastCounts?.partners || 0;
+                  const opportunities = fastCounts?.opportunities || 0;
+                  return (partners + opportunities).toLocaleString();
+                })()}
+              </span>
             </div>
           </div>
         </div>

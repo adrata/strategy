@@ -229,6 +229,7 @@ function PipelineLayoutInner({
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
     // Check if this is a pipeline route (speedrun, leads, prospects, etc.)
+    // Also check for partneros/ prefix routes
     const isPipelineRoute = pathname.includes('/speedrun') || 
                             pathname.includes('/leads') || 
                             pathname.includes('/prospects') || 
@@ -242,10 +243,12 @@ function PipelineLayoutInner({
                             pathname.includes('/stacks') ||
                             pathname.includes('/oasis') ||
                             pathname.includes('/workshop') ||
-                            pathname.includes('/workbench');
+                            pathname.includes('/workbench') ||
+                            pathname.includes('/partner-os/');
     
-    // Check if we're in PartnerOS mode (check URL search params or sessionStorage)
+    // Check if we're in PartnerOS mode (check URL for partner-os/ prefix, search params, or sessionStorage)
     const isPartnerOSMode = typeof window !== 'undefined' && (
+      pathname.includes('/partner-os/') ||
       sessionStorage.getItem('activeSubApp') === 'partneros' ||
       new URLSearchParams(window.location.search).get('app') === 'partneros'
     );
@@ -456,9 +459,20 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     const segments = pathname.split('/').filter(Boolean);
     
     // Handle routes like /[workspace]/speedrun, /[workspace]/leads, etc.
-    // The first segment is the workspace slug, the second is the section
+    // Also handle /[workspace]/partner-os/speedrun, /[workspace]/partner-os/leads, etc.
+    // The first segment is the workspace slug, the second might be 'partner-os', third is the section
     if (segments.length >= 2) {
-      const section = segments[1];
+      let section = segments[1];
+      
+      // Check if second segment is 'partner-os', then use third segment as section
+      if (section === 'partner-os' && segments.length >= 3) {
+        section = segments[2];
+        // Set PartnerOS mode in sessionStorage when detected from URL
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('activeSubApp', 'partneros');
+        }
+      }
+      
       // Validate it's a known section
       const validSections = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'metrics', 'dashboard', 'chronicle', 'oasis', 'stacks', 'inbox', 'workbench', 'olympus', 'grand-central', 'tower', 'database', 'atrium', 'encode', 'particle', 'docs'];
       if (validSections.includes(section)) {
@@ -543,9 +557,21 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     const segments = pathname.split('/').filter(Boolean);
     const workspaceSlug = segments[0]; // First segment is the workspace slug
     
+    // Check if we're in PartnerOS mode
+    const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+    
+    // For PartnerOS mode, use partner-os/ prefix for partners section and related sections
+    // For speedrun, leads, prospects - it's fine to keep them without prefix
+    // But when viewing partners section, use partner-os/ prefix for all sections
+    let targetSection = section;
+    if (isPartnerOS && (section === 'partners' || section === 'speedrun' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'companies' || section === 'people')) {
+      // Use partner-os/ prefix for partners section and related sections in PartnerOS mode
+      targetSection = `partner-os/${section}`;
+    }
+    
     // Navigate using Next.js router for client-side navigation
     if (workspaceSlug) {
-      router.push(`/${workspaceSlug}/${section}`);
+      router.push(`/${workspaceSlug}/${targetSection}`);
     }
   };
 

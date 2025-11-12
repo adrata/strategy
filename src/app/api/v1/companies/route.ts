@@ -135,11 +135,12 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sortOrder') || 'asc';
     const countsOnly = searchParams.get('counts') === 'true';
     const forceRefresh = searchParams.get('refresh') === 'true';
+    const isPartnerOS = searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
     
     const offset = (page - 1) * limit;
     
     console.log(`📋 [V1 COMPANIES API] Query parameters:`, {
-      page, limit, search, status, priority, industry, sortBy, sortOrder, countsOnly, forceRefresh, offset
+      page, limit, search, status, priority, industry, sortBy, sortOrder, countsOnly, forceRefresh, offset, isPartnerOS
     });
     
     // 🔧 CRITICAL FIX: Override workspace ID from query params if present (for multi-workspace support)
@@ -183,6 +184,14 @@ export async function GET(request: NextRequest) {
         { mainSellerId: null }
       ]
     };
+
+    // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+    if (isPartnerOS) {
+      where.relationshipType = {
+        in: ['PARTNER', 'FUTURE_PARTNER']
+      };
+    }
+
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     
     console.log(`🗄️ [V1 COMPANIES API] Starting database query...`);

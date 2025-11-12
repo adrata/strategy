@@ -335,7 +335,9 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
-    // Check for partneros first (before speedrun) since it uses same routes
+    // Check for partner-os/ prefix in URL first (before speedrun) since it uses same routes
+    if (pathname.includes('/partner-os/')) return 'partneros';
+    // Check for partneros in sessionStorage
     if (typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros') return 'partneros';
     // Check for speedrun/pipeline first (before adrata) since /adrata/speedrun should be revenueos
     if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
@@ -859,7 +861,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   if (typeof window !== 'undefined') {
                     sessionStorage.setItem('activeSubApp', 'partneros');
                   }
-                  handleNavigation("/speedrun");
+                  handleNavigation("/partner-os/speedrun");
                 }}
               >
                 <BuildingOffice2Icon className="w-4 h-4 mr-3" />

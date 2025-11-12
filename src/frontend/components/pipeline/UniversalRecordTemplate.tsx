@@ -4896,6 +4896,109 @@ export function UniversalRecordTemplate({
             </div>
             <div className="flex items-center gap-3">
               <div>
+                {/* Stage and Type Pills - Only show for company records */}
+                {(recordType === 'companies' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') && (
+                  <div className="flex items-center gap-2 mb-2">
+                    {/* Type Pill */}
+                    {(() => {
+                      const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+                      const relationshipType = localRecord?.relationshipType;
+                      
+                      if (isPartnerOS) {
+                        // PartnerOS: Future Partner or Partner
+                        if (relationshipType === 'PARTNER' || relationshipType === 'FUTURE_PARTNER') {
+                          const typeLabel = relationshipType === 'PARTNER' ? 'Partner' : 'Future Partner';
+                          const typeColor = relationshipType === 'PARTNER' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-muted/10 text-muted border-muted/20';
+                          return (
+                            <>
+                              <span className="text-xs text-muted font-medium">Type:</span>
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${typeColor}`}>
+                                {typeLabel}
+                              </span>
+                            </>
+                          );
+                        }
+                      } else {
+                        // RevenueOS: Future Client or Client
+                        if (relationshipType === 'CLIENT' || relationshipType === 'FUTURE_CLIENT') {
+                          const typeLabel = relationshipType === 'CLIENT' ? 'Client' : 'Future Client';
+                          const typeColor = relationshipType === 'CLIENT' ? 'bg-success/10 text-success border-success/20' : 'bg-muted/10 text-muted border-muted/20';
+                          return (
+                            <>
+                              <span className="text-xs text-muted font-medium">Type:</span>
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${typeColor}`}>
+                                {typeLabel}
+                              </span>
+                            </>
+                          );
+                        }
+                      }
+                      return null;
+                    })()}
+                    
+                    {/* Stage Pill */}
+                    {(() => {
+                      const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+                      const status = localRecord?.status;
+                      
+                      // Map status to display labels
+                      const stageMap: Record<string, string> = {
+                        'LEAD': 'Lead',
+                        'PROSPECT': 'Prospect',
+                        'OPPORTUNITY': 'Opportunity',
+                        'CLIENT': isPartnerOS ? 'Partner' : 'Client',
+                        'ACTIVE': 'Active',
+                        'INACTIVE': 'Inactive'
+                      };
+                      
+                      // For PartnerOS, limit stages to Lead, Prospect, Partner
+                      if (isPartnerOS) {
+                        if (status === 'CLIENT' || relationshipType === 'PARTNER' || relationshipType === 'FUTURE_PARTNER') {
+                          const stageLabel = 'Partner';
+                          const stageColor = 'bg-primary/10 text-primary border-primary/20';
+                          return (
+                            <>
+                              <span className="text-xs text-muted font-medium ml-2">Stage:</span>
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${stageColor}`}>
+                                {stageLabel}
+                              </span>
+                            </>
+                          );
+                        } else if (status === 'LEAD' || status === 'PROSPECT') {
+                          const stageLabel = stageMap[status] || status;
+                          const stageColor = status === 'LEAD' ? 'bg-warning/10 text-warning border-warning/20' : 'bg-info/10 text-info border-info/20';
+                          return (
+                            <>
+                              <span className="text-xs text-muted font-medium ml-2">Stage:</span>
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${stageColor}`}>
+                                {stageLabel}
+                              </span>
+                            </>
+                          );
+                        }
+                      } else {
+                        // RevenueOS: Lead, Prospect, Opportunity, Client
+                        if (status && (status === 'LEAD' || status === 'PROSPECT' || status === 'OPPORTUNITY' || status === 'CLIENT')) {
+                          const stageLabel = stageMap[status] || status;
+                          const stageColor = 
+                            status === 'LEAD' ? 'bg-warning/10 text-warning border-warning/20' :
+                            status === 'PROSPECT' ? 'bg-info/10 text-info border-info/20' :
+                            status === 'OPPORTUNITY' ? 'bg-primary/10 text-primary border-primary/20' :
+                            'bg-success/10 text-success border-success/20';
+                          return (
+                            <>
+                              <span className="text-xs text-muted font-medium ml-2">Stage:</span>
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${stageColor}`}>
+                                {stageLabel}
+                              </span>
+                            </>
+                          );
+                        }
+                      }
+                      return null;
+                    })()}
+                  </div>
+                )}
                 <h1 className="text-2xl font-bold text-foreground mb-1">{getDisplayName()}</h1>
                 <p className="text-sm text-muted">{getSubtitle()}</p>
               </div>

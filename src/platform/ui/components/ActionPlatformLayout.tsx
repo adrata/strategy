@@ -496,9 +496,9 @@ function AcquisitionOSLayoutInner({
                       newUrl = `/aos/speedrun`;
                       console.log("🔥 ThinLeftPanel: Navigating to Speedrun at", newUrl);
                     } else if (slug === "partneros") {
-                      // For PartnerOS, navigate to first section (speedrun) and set mode
+                      // For PartnerOS, navigate to first section (speedrun) with partner-os/ prefix and set mode
                       const workspaceFromUrl = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : workspaceContext?.workspaceName?.toLowerCase() || 'adrata';
-                      newUrl = `/${workspaceFromUrl}/speedrun`;
+                      newUrl = `/${workspaceFromUrl}/partner-os/speedrun`;
                       // Set PartnerOS mode in sessionStorage so layout knows to show PartnerOS left panel
                       if (typeof window !== 'undefined') {
                         sessionStorage.setItem('activeSubApp', 'partneros');

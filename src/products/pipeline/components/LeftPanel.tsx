@@ -131,8 +131,8 @@ function PipelineSections({
     !userRestrictions.disabledFeatures.includes('CHRONICLE'));
   const shouldShowMetrics = hasMetrics && (!userRestrictions.hasRestrictions || 
     !userRestrictions.disabledFeatures.includes('METRICS'));
-  const shouldShowPartners = !isPinpointWorkspace && !isTopWorkspace && !isCloudCaddieWorkspace && (!userRestrictions.hasRestrictions || 
-    (userRestrictions.allowedSections['pipeline']?.includes('partners') ?? false));
+  // Partners section removed from RevenueOS - only available in PartnerOS
+  const shouldShowPartners = false;
   const shouldShowClients = !userRestrictions.hasRestrictions || 
     (userRestrictions.allowedSections['pipeline']?.includes('clients') ?? false);
   
@@ -732,20 +732,30 @@ function PipelineSections({
           productionCounts
         });
         
-        // If there are speedrun records with no meaningful actions, show Ready
-        if (speedrunReadyCount > 0) {
-          console.log('✅ [SPEEDRUN COUNT] Showing Ready pill - speedrunReadyCount:', speedrunReadyCount);
+        // Always show remaining speedrun count as a pill
+        if (speedrunCount > 0) {
+          // If there are speedrun records with no meaningful actions, show Ready + remaining count
+          if (speedrunReadyCount > 0) {
+            console.log('✅ [SPEEDRUN COUNT] Showing Ready pill + remaining - speedrunReadyCount:', speedrunReadyCount, 'speedrunCount:', speedrunCount);
+            return (
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold">Ready</span>
+                </div>
+                <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold">{speedrunCount} remaining</span>
+                </div>
+              </div>
+            );
+          }
+          
+          // Show remaining count as a pill
+          console.log('📊 [SPEEDRUN COUNT] Showing remaining count pill - speedrunCount:', speedrunCount);
           return (
-            <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-              <span className="text-xs font-semibold">Ready</span>
+            <div className="flex items-center gap-1 bg-muted/10 text-muted px-2 py-0.5 rounded-full">
+              <span className="text-xs font-semibold">{speedrunCount} remaining</span>
             </div>
           );
-        }
-        
-        // If speedrun count > 0 but all have actions, show the count number
-        if (speedrunCount > 0) {
-          console.log('📊 [SPEEDRUN COUNT] Showing count number - speedrunCount:', speedrunCount, 'speedrunReadyCount:', speedrunReadyCount);
-          return speedrunCount;
         }
         
         // If people exist but speedrun is 0, show Done
@@ -831,15 +841,6 @@ function PipelineSections({
         <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.companies,
       visible: allowedSections.includes('companies') && true
-    },
-    {
-      id: "partners",
-      name: "Partners",
-      description: "Strategic Alliances",
-      count: loading ? (
-        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
-      ) : productionCounts.partners,
-      visible: allowedSections.includes('partners') && shouldShowPartners
     },
     {
       id: "chronicle",

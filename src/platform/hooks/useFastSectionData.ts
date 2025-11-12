@@ -158,36 +158,40 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       // Add refresh parameter to bypass backend cache when force refreshing
       const refreshParam = shouldForceRefresh ? '&refresh=true' : '';
       
+      // Check if we're in PartnerOS mode
+      const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+      const partnerosParam = isPartnerOS ? '&partneros=true' : '';
+
       switch (section) {
         case 'speedrun':
-          url = `/api/v1/speedrun?limit=${limit}${refreshParam}`;
+          url = `/api/v1/speedrun?limit=${limit}${refreshParam}${partnerosParam}`;
           break;
         case 'leads':
           // For leads, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=leads&limit=10000${refreshParam}`;
+          url = `/api/v1/people?section=leads&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'prospects':
           // For prospects, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=prospects&limit=10000${refreshParam}`;
+          url = `/api/v1/people?section=prospects&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'opportunities':
           // For opportunities, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=opportunities&limit=10000${refreshParam}`;
+          url = `/api/v1/people?section=opportunities&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'people':
           // 🚀 PERFORMANCE: Use reasonable limit for people, but allow fetching all records
           // Client-side pagination will handle larger datasets efficiently
           // Remove 500 cap to allow fetching all people records
-          url = `/api/v1/people?limit=${Math.max(limit, 10000)}${refreshParam}`;
+          url = `/api/v1/people?limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
           break;
         case 'companies':
           // For companies, use v1 API with increased limit (now supports up to 10000 records)
           // Pass workspaceId to ensure correct workspace filtering
           const workspaceParam = workspaceId ? `&workspaceId=${encodeURIComponent(workspaceId)}` : '';
-          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}`;
+          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}${partnerosParam}`;
           break;
         case 'partners':
-          url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}`;
+          url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
           break;
         default:
           // Fallback to old section API for unsupported sections

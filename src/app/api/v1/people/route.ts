@@ -128,16 +128,17 @@ export async function GET(request: NextRequest) {
     const section = searchParams.get('section') || ''; // 🚀 NEW: Section parameter for pre-filtered results
     const cursor = searchParams.get('cursor') || ''; // 🚀 NEW: Cursor-based pagination
     const forceRefresh = searchParams.get('refresh') === 'true';
+    const isPartnerOS = searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
     
     const offset = (page - 1) * limit;
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
-    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${excludeCompanyId}-${includeAllUsers}-${limit}-${page}`;
+    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${excludeCompanyId}-${includeAllUsers}-${isPartnerOS}-${limit}-${page}`;
     
     // Define the fetch function for cache
     const fetchPeopleData = async () => {
       // Enhanced where clause for pipeline management
-      console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section, 'includeAllUsers:', includeAllUsers);
+      console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section, 'includeAllUsers:', includeAllUsers, 'isPartnerOS:', isPartnerOS);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
@@ -149,6 +150,13 @@ export async function GET(request: NextRequest) {
           ]
         })
       };
+
+      // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+      if (isPartnerOS) {
+        where.relationshipType = {
+          in: ['PARTNER', 'FUTURE_PARTNER']
+        };
+      }
 
       // 🔍 DIAGNOSTIC: Check what data actually exists
       const [totalPeople, peopleByStatus] = await Promise.all([
