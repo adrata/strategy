@@ -518,13 +518,24 @@ export async function GET(
                 tags: taskById.type === 'bug' ? ['bug'] : [],
                 isFlagged: false,
                 points: null,
-                createdAt: taskById.createdAt || new Date(),
-                updatedAt: taskById.updatedAt || new Date(),
+                createdAt: taskById.createdAt ? new Date(taskById.createdAt).toISOString() : new Date().toISOString(),
+                updatedAt: taskById.updatedAt ? new Date(taskById.updatedAt).toISOString() : new Date().toISOString(),
                 timeInStatus: 0
               };
               
+              // Ensure JSON serialization is safe
+              const serializableStory = {
+                ...transformedStory,
+                createdAt: typeof transformedStory.createdAt === 'string' 
+                  ? transformedStory.createdAt 
+                  : new Date(transformedStory.createdAt).toISOString(),
+                updatedAt: typeof transformedStory.updatedAt === 'string'
+                  ? transformedStory.updatedAt
+                  : new Date(transformedStory.updatedAt).toISOString()
+              };
+              
               return NextResponse.json({
-                story: transformedStory,
+                story: serializableStory,
                 type: taskById.type || 'task'
               });
             } else {
@@ -737,8 +748,8 @@ export async function GET(
             tags: task.type === 'bug' ? ['bug'] : [], // Add bug tag if type is bug
             isFlagged: false, // Tasks don't have isFlagged
             points: null, // Tasks don't have points
-            createdAt: task.createdAt || new Date(),
-            updatedAt: task.updatedAt || new Date(),
+            createdAt: task.createdAt ? new Date(task.createdAt).toISOString() : new Date().toISOString(),
+            updatedAt: task.updatedAt ? new Date(task.updatedAt).toISOString() : new Date().toISOString(),
             timeInStatus: 0 // Tasks don't track statusChangedAt
           };
         } catch (transformError) {
@@ -749,24 +760,65 @@ export async function GET(
             hasDescription: !!task?.description,
             hasAssignee: !!task?.assignee,
             hasProject: !!task?.project,
-            hasStory: !!task?.story
+            hasStory: !!task?.story,
+            createdAt: task?.createdAt,
+            updatedAt: task?.updatedAt
           });
           throw transformError;
         }
 
         console.log('✅ [STACKS API] Task found and transformed');
-        return NextResponse.json({ story: transformedStory, type: 'task' });
+        
+        // Safely create response - ensure all values are JSON-serializable
+        try {
+          // Double-check that all Date objects are converted to strings
+          const serializableStory = {
+            ...transformedStory,
+            createdAt: typeof transformedStory.createdAt === 'string' 
+              ? transformedStory.createdAt 
+              : new Date(transformedStory.createdAt).toISOString(),
+            updatedAt: typeof transformedStory.updatedAt === 'string'
+              ? transformedStory.updatedAt
+              : new Date(transformedStory.updatedAt).toISOString()
+          };
+          
+          const response = NextResponse.json({ story: serializableStory, type: 'task' });
+          console.log('✅ [STACKS API] Response created successfully');
+          return response;
+        } catch (responseError) {
+          console.error('❌ [STACKS API] Error creating response:', responseError);
+          console.error('❌ [STACKS API] Response error details:', {
+            message: responseError instanceof Error ? responseError.message : String(responseError),
+            name: responseError instanceof Error ? responseError.name : 'Unknown',
+            stack: responseError instanceof Error ? responseError.stack?.substring(0, 500) : undefined
+          });
+          console.error('❌ [STACKS API] Transformed story data:', {
+            hasId: !!transformedStory?.id,
+            hasTitle: !!transformedStory?.title,
+            hasType: !!transformedStory?.type,
+            viewType: transformedStory?.viewType,
+            hasAssignee: !!transformedStory?.assignee,
+            hasProject: !!transformedStory?.project,
+            hasStory: !!transformedStory?.story,
+            attachmentsLength: transformedStory?.attachments?.length,
+            createdAtType: typeof transformedStory?.createdAt,
+            updatedAtType: typeof transformedStory?.updatedAt
+          });
+          throw responseError;
+        }
       } catch (taskError) {
         console.error('❌ [STACKS API] Error fetching task:', taskError);
         console.error('❌ [STACKS API] Task error details:', {
           message: taskError instanceof Error ? taskError.message : String(taskError),
           name: taskError instanceof Error ? taskError.name : 'Unknown',
-          stack: taskError instanceof Error ? taskError.stack : undefined,
+          stack: taskError instanceof Error ? taskError.stack?.substring(0, 500) : undefined,
           code: (taskError as any)?.code,
           meta: (taskError as any)?.meta,
           queryId: finalStoryId,
           workspaceId: workspaceId,
-          paramValue: paramValue
+          paramValue: paramValue,
+          taskId: task?.id,
+          taskType: task?.type
         });
         // Re-throw to be caught by outer catch block
         throw taskError;
