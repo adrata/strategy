@@ -794,7 +794,7 @@ export async function GET(
         // Re-throw to be caught by outer catch block
         throw taskError;
       }
-    }
+    }  // Close if (!story) block that started at line 163
 
     // If we reach here, story should exist (if it didn't, we would have returned a task or 404)
     if (!story) {
