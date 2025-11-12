@@ -1,0 +1,288 @@
+{
+  "company": {
+    "name": "Western Governors University",
+    "website": "https://www.wgu.edu",
+    "linkedinUrl": "https://www.linkedin.com/company/western-governors-university",
+    "industry": "Higher Education",
+    "employeeCount": 11629,
+    "revenue": null
+  },
+  "product": {
+    "name": "Student Retention Solution",
+    "category": "custom",
+    "dealSize": 950000,
+    "dealSizeRange": {
+      "min": 500000,
+      "max": 1400000
+    }
+  },
+  "buyerGroup": {
+    "totalMembers": 1,
+    "members": [
+      {
+        "name": "Kevin Swim",
+        "title": "Workforce Analyst",
+        "department": "Research",
+        "role": "decision",
+        "email": "",
+        "phone": "",
+        "linkedin": "https://www.linkedin.com/in/kevin-swim",
+        "influenceScore": 0,
+        "confidence": 0,
+        "painPoints": [
+          {
+            "title": "Operational efficiency",
+            "description": "Seeking ways to improve processes and reduce manual work.",
+            "impact": "Time and resource constraints limiting growth.",
+            "urgency": "medium"
+          }
+        ],
+        "personalizedStrategy": null,
+        "archetype": null
+      }
+    ],
+    "cohesionScore": null,
+    "overallConfidence": null
+  },
+  "report": {
+    "id": "report_1762969959730_0mtwgrjtj",
+    "generatedAt": "2025-11-12T17:53:28.810Z",
+    "executiveSummary": "Identified 1-person buyer group for Western Governors University ($950,000 deal) with 37% cohesion score. Group includes 1 decision maker(s), 0 champion(s), and comprehensive cross-functional coverage. Research methodology validated 1 final members from 2 initial candidates.",
+    "researchMethodology": {
+      "approach": "Double-waterfall discovery with multi-dimensional scoring",
+      "stages": [
+        {
+          "stage": 1,
+          "name": "Company Intelligence",
+          "description": "Database-first company research with Coresignal API fallback",
+          "result": "Optimal search parameters calculated"
+        },
+        {
+          "stage": 2,
+          "name": "Wide Preview Search",
+          "description": "Cross-departmental employee discovery using Coresignal Preview API",
+          "result": "2 employees discovered across all functions"
+        },
+        {
+          "stage": 3,
+          "name": "Smart Scoring",
+          "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+          "result": "Top candidates identified before expensive collect API"
+        },
+        {
+          "stage": 4,
+          "name": "Role Assignment",
+          "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+          "result": "Appropriate roles assigned based on deal size"
+        },
+        {
+          "stage": 5,
+          "name": "Cross-Functional Validation",
+          "description": "Stakeholder completeness validation across all relevant functions",
+          "result": "Missing stakeholders added for comprehensive coverage"
+        },
+        {
+          "stage": 6,
+          "name": "Full Profile Collection",
+          "description": "Coresignal Collect API for final buyer group members only",
+          "result": "Complete profiles for final buyer group"
+        },
+        {
+          "stage": 7,
+          "name": "Cohesion Analysis",
+          "description": "Multi-factor cohesion validation",
+          "result": "37% cohesion score with detailed analysis"
+        }
+      ],
+      "searchParameters": {
+        "searchSize": 3488,
+        "maxPreviewPages": 70,
+        "buyerGroupSize": {
+          "min": 12,
+          "max": 15,
+          "ideal": 14
+        },
+        "companySize": 11629,
+        "industry": "Higher Education",
+        "searchStrategy": "focused",
+        "filteringLevel": "strict"
+      },
+      "dataSources": [
+        "Coresignal API",
+        "Internal Database",
+        "AI Analysis"
+      ],
+      "confidenceLevel": 54
+    },
+    "companyIntelligence": {
+      "employeeCount": 11629,
+      "revenue": 0,
+      "industry": "Higher Education",
+      "growthRate": 12.205712080277884,
+      "activeHiring": 0,
+      "fundingStage": "funded",
+      "dataSource": "coresignal",
+      "lastUpdated": "2025-11-12T17:52:45.167Z",
+      "insights": [
+        "Company size: Enterprise",
+        "Growth trajectory: Growing",
+        "Hiring activity: Limited",
+        "Funding status: funded"
+      ]
+    },
+    "buyerGroupJustification": [
+      {
+        "name": "Kevin Swim",
+        "title": "Workforce Analyst",
+        "department": "Research",
+        "role": "decision",
+        "confidence": "70%",
+        "detailedReasoning": "Single person buyer group - automatically assigned as decision maker",
+        "keyInsights": [
+          "Seniority score: 3/10",
+          "Champion potential: 0/25",
+          "Influence score: 0/10",
+          "Network: 33 connections",
+          "Relevance: 10%"
+        ],
+        "addedForCoverage": false,
+        "justification": "**Kevin Swim (Workforce Analyst) - DECISION**\n\n**Budget Authority**: **Department Relevance**: \n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 0/10\n- Network Size: 33 connections\n- Role Confidence: 70%\n"
+      }
+    ],
+    "crossFunctionalCoverage": {
+      "summary": {
+        "primaryCovered": false,
+        "technicalCovered": false,
+        "riskCovered": false,
+        "financialCovered": false,
+        "overallScore": 0
+      },
+      "byFunction": {
+        "primary": {
+          "covered": [],
+          "missing": [
+            "Sales",
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": []
+        },
+        "technical": {
+          "covered": [],
+          "missing": [
+            "IT",
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": []
+        },
+        "risk": {
+          "covered": [],
+          "missing": [
+            "Security",
+            "Legal",
+            "Compliance"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      },
+      "gaps": [
+        "Primary business functions",
+        "Technical implementation",
+        "Risk management",
+        "Financial approval"
+      ],
+      "recommendations": [
+        "Add IT stakeholder for technical implementation",
+        "Add Security/Legal stakeholder for risk management",
+        "Add Finance stakeholder for budget approval"
+      ]
+    },
+    "cohesionAnalysis": {
+      "overallScore": 37,
+      "confidence": "VERY_LOW",
+      "factors": {
+        "reportingProximity": {
+          "score": 0,
+          "explanation": "Executive reporting relationships"
+        },
+        "departmentClustering": {
+          "score": 50,
+          "explanation": "Department collaboration patterns"
+        },
+        "seniorityBalance": {
+          "score": 64,
+          "explanation": "Appropriate seniority distribution"
+        },
+        "geographicAlignment": {
+          "score": 75,
+          "explanation": "Location-based collaboration"
+        },
+        "functionalInterdependence": {
+          "score": 0,
+          "explanation": "Cross-functional work relationships"
+        }
+      },
+      "reasoning": "Limited reporting proximity; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from interdependent functions",
+        "Overall cohesion could be improved with better stakeholder selection"
+      ]
+    },
+    "championAnalysis": {
+      "count": 0,
+      "champions": [],
+      "analysis": "No champions identified - consider adding internal advocates"
+    },
+    "costEfficiency": {
+      "methodology": "Double-waterfall approach (preview then collect)",
+      "costs": {
+        "preview": 0.2,
+        "collect": 1,
+        "total": 0
+      },
+      "comparison": {
+        "naiveApproach": 2,
+        "smartApproach": 0,
+        "savings": 2,
+        "savingsPercentage": 100
+      },
+      "efficiency": {
+        "previewToCollectRatio": 50,
+        "costPerFinalMember": 0
+      }
+    },
+    "qualityMetrics": {
+      "averageConfidence": 70,
+      "averageInfluence": 0,
+      "averageRelevance": 10,
+      "decisionMakerCount": 1,
+      "championCount": 0,
+      "stakeholderCount": 0,
+      "blockerCount": 0,
+      "introducerCount": 0,
+      "qualityGrade": "D"
+    },
+    "recommendations": [
+      "Consider improving buyer group cohesion through better stakeholder selection",
+      "Ensure primary business functions are represented",
+      "Critical: Add internal champion for advocacy",
+      "Consider adding more stakeholders for comprehensive coverage"
+    ]
+  },
+  "metadata": {
+    "generatedAt": "2025-11-12T17:53:31.746Z",
+    "pipelineVersion": "1.0",
+    "workspaceId": "01K9WFW99WEGDQY2RARPCVC4JD"
+  }
+}

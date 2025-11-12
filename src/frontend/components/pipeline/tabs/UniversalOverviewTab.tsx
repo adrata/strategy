@@ -595,7 +595,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     // Metadata
     lastEnrichedAt: record.customFields?.lastEnrichedAt || record.updatedAt || new Date().toISOString(),
     totalFields: record.customFields?.totalFields || 13,
-    status: record.status || 'active',
+    status: record.status || record.stage || 'LEAD', // Use stage as fallback, default to LEAD not 'active'
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.seniority ?? record.customFields?.seniority ?? 'Mid-level'
   }), [record, coresignalData, actions, linkedinUrl, linkedinNavigatorUrl]);

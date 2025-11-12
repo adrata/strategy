@@ -1054,17 +1054,71 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               // Always refresh the current section
               refreshPromises.push(currentSectionHook.refresh());
               
-              // If status changed but section didn't change, refresh counts
+              // If status changed, refresh counts for both old and new sections
               if (statusChanged) {
-                window.dispatchEvent(new CustomEvent('refresh-counts', {
-                  detail: { 
-                    section: section,
-                    type: 'status-update',
-                    oldStatus,
-                    newStatus,
-                    recordId: updatedRecord.id
+                // Determine sections for old and new status
+                const getSectionForStatus = (status: string): string | null => {
+                  if (!status) return null;
+                  const statusUpper = status.toUpperCase();
+                  if (statusUpper === 'LEAD') return 'leads';
+                  if (statusUpper === 'PROSPECT') return 'prospects';
+                  if (statusUpper === 'OPPORTUNITY') return 'opportunities';
+                  if (statusUpper === 'CLIENT' || statusUpper === 'CUSTOMER' || statusUpper === 'SUPERFAN') return 'clients';
+                  return null;
+                };
+                
+                const oldSection = getSectionForStatus(oldStatus);
+                const newSection = getSectionForStatus(newStatus);
+                
+                // Refresh counts for both old and new sections
+                if (oldSection) {
+                  window.dispatchEvent(new CustomEvent('refresh-counts', {
+                    detail: { 
+                      section: oldSection,
+                      type: 'status-change',
+                      oldStatus,
+                      newStatus,
+                      recordId: updatedRecord.id
+                    }
+                  }));
+                }
+                
+                if (newSection && newSection !== oldSection) {
+                  window.dispatchEvent(new CustomEvent('refresh-counts', {
+                    detail: { 
+                      section: newSection,
+                      type: 'status-change',
+                      oldStatus,
+                      newStatus,
+                      recordId: updatedRecord.id
+                    }
+                  }));
+                }
+                
+                // Also refresh the current section if it's different from old/new sections
+                if (section !== oldSection && section !== newSection) {
+                  window.dispatchEvent(new CustomEvent('refresh-counts', {
+                    detail: { 
+                      section: section,
+                      type: 'status-update',
+                      oldStatus,
+                      newStatus,
+                      recordId: updatedRecord.id
+                    }
+                  }));
+                }
+                
+                // Refresh the record from API to ensure we have the latest data
+                // This is important because the status change might affect other fields
+                // Use longer delay to ensure database transaction has fully completed
+                console.log('🔄 [PIPELINE] Refreshing record from API after status change');
+                setTimeout(async () => {
+                  try {
+                    await loadDirectRecord(updatedRecord.id);
+                  } catch (error) {
+                    console.error('⚠️ [PIPELINE] Error refreshing record after status change:', error);
                   }
-                }));
+                }, 1000); // Increased delay to ensure API has fully processed the update and database transaction is complete
               }
               
               // Note: With the performance optimization, we only load the current section's data

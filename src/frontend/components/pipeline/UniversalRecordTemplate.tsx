@@ -315,6 +315,19 @@ export function UniversalRecordTemplate({
             console.log(`🔄 [UNIVERSAL] Preserving linkedinNavigatorUrl from localRecord (recently updated): ${prevLocalRecord.linkedinNavigatorUrl}`);
           }
           
+          // CRITICAL: Always preserve status/stage from localRecord if it was recently updated
+          // This ensures status changes are not overwritten by stale API responses
+          if (recentlyUpdatedFields.has('status') && prevLocalRecord?.status !== undefined) {
+            mergedRecord.status = prevLocalRecord.status;
+            mergedRecord.stage = prevLocalRecord.stage || prevLocalRecord.status; // Also sync stage field
+            console.log(`🔄 [UNIVERSAL] Preserving status from localRecord (recently updated): ${prevLocalRecord.status}`);
+          } else if (prevLocalRecord?.status && (!record?.status || record?.status === null)) {
+            // If status exists in localRecord but not in record prop, preserve it
+            mergedRecord.status = prevLocalRecord.status;
+            mergedRecord.stage = prevLocalRecord.stage || prevLocalRecord.status;
+            console.log(`🔄 [UNIVERSAL] Preserving status from localRecord (missing in record prop): ${prevLocalRecord.status}`);
+          }
+          
           console.log(`🔄 [UNIVERSAL] Final merged record:`, {
             id: mergedRecord.id,
             tradingName: mergedRecord.tradingName,
@@ -364,6 +377,23 @@ export function UniversalRecordTemplate({
               (!record?.linkedinNavigatorUrl || record?.linkedinNavigatorUrl === null)) {
             mergedRecord.linkedinNavigatorUrl = prevLocalRecord.linkedinNavigatorUrl;
             console.log(`🔄 [UNIVERSAL] Preserving linkedinNavigatorUrl from prevLocalRecord (no recent updates): ${prevLocalRecord.linkedinNavigatorUrl}`);
+          }
+          
+          // CRITICAL: Preserve status/stage from prevLocalRecord if record prop doesn't have it or has null
+          // This ensures status changes persist even when API response is incomplete
+          if (prevLocalRecord?.status && (!record?.status || record?.status === null)) {
+            mergedRecord.status = prevLocalRecord.status;
+            mergedRecord.stage = prevLocalRecord.stage || prevLocalRecord.status;
+            console.log(`🔄 [UNIVERSAL] Preserving status from prevLocalRecord (missing in record prop): ${prevLocalRecord.status}`);
+          } else if (prevLocalRecord?.status && record?.status && prevLocalRecord.status !== record.status) {
+            // If both have status but they differ, prefer prevLocalRecord if it's more recent (check updatedAt)
+            const prevUpdated = prevLocalRecord.updatedAt ? new Date(prevLocalRecord.updatedAt).getTime() : 0;
+            const recordUpdated = record.updatedAt ? new Date(record.updatedAt).getTime() : 0;
+            if (prevUpdated >= recordUpdated) {
+              mergedRecord.status = prevLocalRecord.status;
+              mergedRecord.stage = prevLocalRecord.stage || prevLocalRecord.status;
+              console.log(`🔄 [UNIVERSAL] Preserving status from prevLocalRecord (more recent): ${prevLocalRecord.status}`);
+            }
           }
           
           console.log(`🔄 [UNIVERSAL] Merged record fields:`, {
@@ -2627,7 +2657,32 @@ export function UniversalRecordTemplate({
           }));
         }
         
-        // Trigger count refresh for left panel
+        // Trigger count refresh for left panel - refresh both old and new sections
+        if (oldSection) {
+          window.dispatchEvent(new CustomEvent('refresh-counts', {
+            detail: { 
+              reason: 'status-change',
+              section: oldSection,
+              recordId: record.id,
+              oldStatus,
+              newStatus
+            }
+          }));
+        }
+        
+        if (newSection && newSection !== oldSection) {
+          window.dispatchEvent(new CustomEvent('refresh-counts', {
+            detail: { 
+              reason: 'status-change',
+              section: newSection,
+              recordId: record.id,
+              oldStatus,
+              newStatus
+            }
+          }));
+        }
+        
+        // Also trigger a general refresh-counts event for any listeners that don't specify a section
         window.dispatchEvent(new CustomEvent('refresh-counts', {
           detail: { 
             reason: 'status-change',

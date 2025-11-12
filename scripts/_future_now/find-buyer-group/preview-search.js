@@ -101,13 +101,14 @@ class PreviewSearch {
    */
   normalizeLinkedInUrl(linkedinUrl) {
     if (!linkedinUrl) return linkedinUrl;
-    // Extract company ID from URL
-    const match = linkedinUrl.match(/linkedin\.com\/company\/([^\/\?]+)/);
+    // Extract company/school ID from URL (support both /company/ and /school/)
+    const match = linkedinUrl.match(/linkedin\.com\/(?:company|school)\/([^\/\?]+)/);
     if (match) {
       let companyId = match[1];
+      const urlType = linkedinUrl.includes('/school/') ? 'school' : 'company';
       // Remove common suffixes
       companyId = companyId.replace(/-(com|inc|llc|ltd|corp)$/i, '');
-      return `https://www.linkedin.com/company/${companyId}`;
+      return `https://www.linkedin.com/${urlType}/${companyId}`;
     }
     return linkedinUrl;
   }
@@ -128,6 +129,8 @@ class PreviewSearch {
       
       console.log(`🎯 Using LinkedIn URL for precise matching: ${normalizedLinkedIn}`);
       
+      // Build a hybrid query that searches by BOTH LinkedIn URL AND company name
+      // This ensures we get all employees even if LinkedIn URL matching is incomplete
       const linkedinQuery = {
         query: {
           bool: {
@@ -140,10 +143,16 @@ class PreviewSearch {
                       { term: { "experience.active_experience": 1 } }
                     ],
                     should: [
+                      // LinkedIn URL matching (precise)
                       { match: { "experience.company_linkedin_url": normalizedLinkedIn } },
-                      { match: { "experience.company_linkedin_url": originalLinkedIn } }
+                      { match: { "experience.company_linkedin_url": originalLinkedIn } },
+                      // Company name matching (broader coverage)
+                      ...(companyName ? [
+                        { match_phrase: { "experience.company_name": companyName } },
+                        { match: { "experience.company_name": { query: companyName, fuzziness: "AUTO" } } }
+                      ] : [])
                     ],
-                    minimum_should_match: 1
+                    minimum_should_match: 1 // Must match at least one (LinkedIn URL OR company name)
                   }
                 }
               }
@@ -151,15 +160,6 @@ class PreviewSearch {
           }
         }
       };
-      
-      // If we also have company name, add it as a should clause for better matching
-      if (companyName) {
-        linkedinQuery.query.bool.should = [
-          { match_phrase: { "experience.company_name": companyName } },
-          { match: { "experience.company_name": { query: companyName, fuzziness: "AUTO" } } }
-        ];
-        linkedinQuery.query.bool.minimum_should_match = 0; // Optional boost
-      }
       
       return linkedinQuery;
     }
@@ -283,26 +283,47 @@ class PreviewSearch {
     const dept = employee.department?.toLowerCase() || '';
     const title = employee.title?.toLowerCase() || '';
     
-    // Check for excluded departments
-    if (filterConfig.exclude.some(exclude => dept.includes(exclude))) {
+    // Check for excluded titles first (highest priority)
+    if (filterConfig.titles.exclude.some(exclude => title.includes(exclude))) {
+      return false;
+    }
+    
+    // Check for primary title match (high priority - can override department exclusions)
+    const primaryTitleMatch = filterConfig.titles.primary.some(titleName => title.includes(titleName));
+    if (primaryTitleMatch) {
+      // Even if department is excluded, include if title is primary match
+      // Exception: Don't include if it's clearly wrong (e.g., "AV Operations" title with "av operations" in exclude)
+      const isExcludedDept = filterConfig.exclude.some(exclude => dept.includes(exclude));
+      if (isExcludedDept) {
+        // Check if this is a false positive (e.g., "AV Operations Technician" matching "operations" in title)
+        const isFalsePositive = filterConfig.exclude.some(exclude => 
+          title.includes(exclude) || (dept.includes(exclude) && !title.match(/academic|student|enrollment|retention/i))
+        );
+        if (isFalsePositive) {
+          return false;
+        }
+      }
+      return true;
+    }
+    
+    // Check for excluded departments (but allow if title is secondary match)
+    const isExcludedDept = filterConfig.exclude.some(exclude => dept.includes(exclude));
+    if (isExcludedDept) {
       // Special case: Customer Success managing sales
       if (dept.includes('customer success') && 
           (title.includes('sales') || title.includes('revenue') || title.includes('business development'))) {
         return true; // Include if managing sales
       }
-      return false;
-    }
-    
-    // Check for excluded titles
-    if (filterConfig.titles.exclude.some(exclude => title.includes(exclude))) {
-      return false;
+      // Allow if title is secondary match (e.g., "Academic Operations" in title overrides "Operations" department exclusion)
+      const secondaryTitleMatch = filterConfig.titles.secondary.some(titleName => title.includes(titleName));
+      if (!secondaryTitleMatch) {
+        return false;
+      }
     }
     
     // Check for primary relevance
     const primaryDeptMatch = filterConfig.primary.some(deptName => dept.includes(deptName));
-    const primaryTitleMatch = filterConfig.titles.primary.some(titleName => title.includes(titleName));
-    
-    if (primaryDeptMatch || primaryTitleMatch) {
+    if (primaryDeptMatch) {
       return true;
     }
     
@@ -319,9 +340,9 @@ class PreviewSearch {
    * @returns {string} Company name
    */
   extractCompanyName(identifier) {
-    // If it's a LinkedIn URL, extract company name
-    if (identifier.includes('linkedin.com/company/')) {
-      const match = identifier.match(/linkedin\.com\/company\/([^\/\?]+)/);
+    // If it's a LinkedIn URL, extract company/school name
+    if (identifier.includes('linkedin.com/company/') || identifier.includes('linkedin.com/school/')) {
+      const match = identifier.match(/linkedin\.com\/(?:company|school)\/([^\/\?]+)/);
       if (match) {
         // Convert URL slug to readable company name
         return match[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());

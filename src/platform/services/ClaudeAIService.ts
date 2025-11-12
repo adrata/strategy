@@ -300,6 +300,7 @@ export class ClaudeAIService {
 
   /**
    * Handle person search queries by searching the database first
+   * Enhanced to handle queries with both person name and company name
    */
   private async handlePersonSearchQuery(request: ClaudeChatRequest): Promise<any> {
     if (!request.workspaceId) {
@@ -308,7 +309,7 @@ export class ClaudeAIService {
 
     const message = request.message.toLowerCase();
     
-    // Check if this is a person search query
+    // Check if this is a person search query - including messaging advice queries
     const personSearchPatterns = [
       /show me (.+)/i,
       /find (.+)/i,
@@ -319,70 +320,89 @@ export class ClaudeAIService {
       /get me (.+)/i,
       /can you find (.+)/i,
       /do you know (.+)/i,
-      /(.+) in the database/i
+      /(.+) in the database/i,
+      // Messaging advice patterns
+      /advice.*?message.*?to (.+)/i,
+      /message.*?to (.+)/i,
+      /messaging (.+)/i,
+      /li message.*?to (.+)/i,
+      /linkedin message.*?to (.+)/i
     ];
 
-    let personName = null;
+    let extractedText = null;
     for (const pattern of personSearchPatterns) {
       const match = message.match(pattern);
       if (match && match[1]) {
-        personName = match[1].trim();
+        extractedText = match[1].trim();
         break;
       }
     }
 
-    if (!personName) {
+    if (!extractedText) {
       return null;
     }
 
-    console.log(`🔍 [PERSON SEARCH] Searching for: "${personName}"`);
+    // Extract person name and company name from the query
+    // Patterns: "Amanda Hope at Everee", "Amanda at Everee", "Amanda Hope", etc.
+    let personName = extractedText;
+    let companyName = null;
+    
+    // Try to extract company name if "at" is present
+    const atPattern = /(.+?)\s+at\s+(.+)/i;
+    const atMatch = extractedText.match(atPattern);
+    if (atMatch) {
+      personName = atMatch[1].trim();
+      companyName = atMatch[2].trim();
+    }
+
+    console.log(`🔍 [PERSON SEARCH] Searching for: "${personName}"${companyName ? ` at company "${companyName}"` : ''}`);
 
     try {
+      // Build person name search conditions
+      const nameParts = personName.split(' ').filter(p => p.length > 0);
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+      // Build the where clause
+      const whereClause: any = {
+        workspaceId: request.workspaceId,
+        deletedAt: null,
+        OR: [
+          {
+            fullName: {
+              contains: personName,
+              mode: 'insensitive'
+            }
+          },
+          {
+            firstName: {
+              contains: firstName,
+              mode: 'insensitive'
+            },
+            ...(lastName ? {
+              lastName: {
+                contains: lastName,
+                mode: 'insensitive'
+              }
+            } : {})
+          }
+        ]
+      };
+
+      // If company name is specified, add company filter
+      if (companyName) {
+        whereClause.company = {
+          name: {
+            contains: companyName,
+            mode: 'insensitive'
+          },
+          deletedAt: null
+        };
+      }
+
       // Search for people in the database with comprehensive matching
       const people = await prisma.people.findMany({
-        where: {
-          workspaceId: request.workspaceId,
-          deletedAt: null,
-          OR: [
-            {
-              firstName: {
-                contains: personName,
-                mode: 'insensitive'
-              }
-            },
-            {
-              lastName: {
-                contains: personName,
-                mode: 'insensitive'
-              }
-            },
-            {
-              fullName: {
-                contains: personName,
-                mode: 'insensitive'
-              }
-            },
-            {
-              email: {
-                contains: personName,
-                mode: 'insensitive'
-              }
-            },
-            // Also search for partial matches
-            {
-              firstName: {
-                contains: personName.split(' ')[0],
-                mode: 'insensitive'
-              }
-            },
-            {
-              lastName: {
-                contains: personName.split(' ')[1] || personName.split(' ')[0],
-                mode: 'insensitive'
-              }
-            }
-          ]
-        },
+        where: whereClause,
         include: {
           company: {
             select: {
@@ -405,12 +425,27 @@ export class ClaudeAIService {
         take: 10
       });
 
-      console.log(`✅ [PERSON SEARCH] Found ${people.length} matches for "${personName}"`);
+      // If we have company name and multiple results, prioritize exact company matches
+      let sortedPeople = people;
+      if (companyName && people.length > 1) {
+        sortedPeople = people.sort((a, b) => {
+          const aCompanyMatch = a.company?.name?.toLowerCase().includes(companyName.toLowerCase()) ? 1 : 0;
+          const bCompanyMatch = b.company?.name?.toLowerCase().includes(companyName.toLowerCase()) ? 1 : 0;
+          const aFullNameMatch = a.fullName?.toLowerCase().includes(personName.toLowerCase()) ? 1 : 0;
+          const bFullNameMatch = b.fullName?.toLowerCase().includes(personName.toLowerCase()) ? 1 : 0;
+          
+          // Prioritize: exact company match + full name match
+          return (bCompanyMatch + bFullNameMatch) - (aCompanyMatch + aFullNameMatch);
+        });
+      }
+
+      console.log(`✅ [PERSON SEARCH] Found ${sortedPeople.length} matches for "${personName}"${companyName ? ` at "${companyName}"` : ''}`);
 
       return {
         query: personName,
-        results: people,
-        count: people.length
+        company: companyName,
+        results: sortedPeople,
+        count: sortedPeople.length
       };
 
     } catch (error) {

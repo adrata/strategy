@@ -23,22 +23,62 @@ class CompanyIntelligence {
     console.log(`🔍 Researching company: ${companyIdentifier}`);
     console.log(`   Workspace: ${this.workspaceId}`);
     
+    // For simple domain identifiers (like "wgu.edu"), be extra careful about sub-entities
+    // If the database company name suggests it's a sub-entity (contains "school", "college", etc.)
+    // and we're searching for a simple domain, force fresh lookup to get the main company
+    const isSimpleDomain = companyIdentifier && 
+                           !companyIdentifier.includes('/') && 
+                           !companyIdentifier.includes('http') && 
+                           companyIdentifier.includes('.');
+    
     // 1. Check database first (free) - uses workspace-specific data
     const dbCompany = await this.queryDatabase(companyIdentifier);
+    let isLikelySubEntity = false;
     
     if (dbCompany) {
       console.log(`   ✅ Found workspace-specific company: ${dbCompany.name}`);
       console.log(`   📊 Using workspace company data as context`);
       
-      // 2. Use cached Coresignal data if fresh (<30 days)
-      if (isDataFresh(dbCompany, 30) && dbCompany.customFields?.coresignalData) {
-        console.log('✅ Using cached company data from database');
-        const intelligence = this.extractIntelligence(dbCompany.customFields?.coresignalData, dbCompany);
-        // ENHANCED: Merge workspace-specific data (industry, size, etc.) with Coresignal data
-        if (dbCompany.industry) intelligence.industry = dbCompany.industry;
-        if (dbCompany.employeeCount) intelligence.employeeCount = dbCompany.employeeCount;
-        if (dbCompany.revenue) intelligence.revenue = dbCompany.revenue;
-        return intelligence;
+      // 2. Use cached Coresignal data if fresh (<30 days) AND it matches the identifier
+      // Check if cached data matches the identifier we're searching for
+      const cachedData = dbCompany.customFields?.coresignalData;
+      
+      if (isSimpleDomain) {
+        const dbCompanyName = (dbCompany.name || '').toLowerCase();
+        isLikelySubEntity = dbCompanyName.includes('school') || 
+                           dbCompanyName.includes('college') ||
+                           dbCompanyName.includes('department') ||
+                           dbCompanyName.includes('division');
+        
+        if (isLikelySubEntity) {
+          console.log(`   ⚠️  Database company (${dbCompany.name}) appears to be a sub-entity - forcing fresh lookup for main company`);
+        }
+      }
+      
+      if (!isLikelySubEntity && isDataFresh(dbCompany, 30) && cachedData) {
+        // For simple domains, check if cached company website matches the domain
+        // If searching for "wgu.edu", cached company should have website containing "wgu.edu"
+        let identifierMatches = true;
+        if (isSimpleDomain) {
+          const cachedWebsite = cachedData?.website || dbCompany.website || '';
+          const domainMatch = cachedWebsite.toLowerCase().includes(companyIdentifier.toLowerCase());
+          if (!domainMatch) {
+            identifierMatches = false;
+            console.log(`   ⚠️  Cached company website (${cachedWebsite}) doesn't match identifier (${companyIdentifier})`);
+          }
+        }
+        
+        if (identifierMatches) {
+          console.log('✅ Using cached company data from database');
+          const intelligence = this.extractIntelligence(cachedData, dbCompany);
+          // ENHANCED: Merge workspace-specific data (industry, size, etc.) with Coresignal data
+          if (dbCompany.industry) intelligence.industry = dbCompany.industry;
+          if (dbCompany.employeeCount) intelligence.employeeCount = dbCompany.employeeCount;
+          if (dbCompany.revenue) intelligence.revenue = dbCompany.revenue;
+          return intelligence;
+        } else {
+          console.log('⚠️  Cached data exists but doesn\'t match identifier - forcing fresh lookup');
+        }
       }
     }
     
@@ -51,14 +91,21 @@ class CompanyIntelligence {
       await this.cacheInDatabase(dbCompany.id, coresignalData);
     }
     
-    // ENHANCED: Always prioritize workspace-specific company data over Coresignal
+    // ENHANCED: Always prioritize Coresignal data over database company
+    // When we force a fresh lookup (e.g., for sub-entities), use Coresignal data exclusively
     const intelligence = this.extractIntelligence(coresignalData, dbCompany);
     
-    // Merge workspace-specific fields if available
-    if (dbCompany) {
-      if (dbCompany.industry) intelligence.industry = dbCompany.industry;
-      if (dbCompany.employeeCount) intelligence.employeeCount = dbCompany.employeeCount || intelligence.employeeCount;
-      if (dbCompany.revenue) intelligence.revenue = dbCompany.revenue || intelligence.revenue;
+    // Debug: Log what we extracted
+    if (coresignalData) {
+      console.log(`   📊 Extracted from Coresignal: name=${intelligence.companyName}, linkedin=${intelligence.linkedinUrl}, website=${intelligence.website}`);
+    }
+    
+    // Only merge workspace-specific fields if they don't conflict with Coresignal data
+    // Don't overwrite company name, LinkedIn URL, or website from Coresignal
+    if (dbCompany && !isLikelySubEntity) {
+      if (dbCompany.industry && !intelligence.industry) intelligence.industry = dbCompany.industry;
+      if (dbCompany.employeeCount && !intelligence.employeeCount) intelligence.employeeCount = dbCompany.employeeCount;
+      if (dbCompany.revenue && !intelligence.revenue) intelligence.revenue = dbCompany.revenue;
       if (dbCompany.size) intelligence.size = dbCompany.size;
       console.log(`   📊 Merged workspace-specific data: industry=${intelligence.industry}, employees=${intelligence.employeeCount}`);
     }
@@ -123,16 +170,20 @@ class CompanyIntelligence {
       lastUpdated: new Date().toISOString()
     };
 
-    // Add company identifiers from database
-    if (dbCompany) {
-      baseIntelligence.companyName = dbCompany.name;
-      baseIntelligence.linkedinUrl = dbCompany.linkedinUrl;
-      baseIntelligence.website = dbCompany.website;
-    } else if (coresignalData) {
-      // Extract from Coresignal data if no database company
+    // Add company identifiers - prioritize Coresignal data when available
+    // This ensures we use the correct company data even if database has a different company
+    if (coresignalData) {
+      // Extract from Coresignal data first (most accurate)
       baseIntelligence.companyName = coresignalData.name || coresignalData.company_name;
       baseIntelligence.linkedinUrl = coresignalData.linkedin_url;
       baseIntelligence.website = coresignalData.website;
+    }
+    
+    // Only use database company data as fallback if Coresignal data is missing
+    if (dbCompany && !coresignalData) {
+      baseIntelligence.companyName = dbCompany.name;
+      baseIntelligence.linkedinUrl = dbCompany.linkedinUrl;
+      baseIntelligence.website = dbCompany.website;
     }
 
     return baseIntelligence;
@@ -224,7 +275,11 @@ class CompanyIntelligence {
     
     // CRITICAL FIX: Don't extract domain from LinkedIn URLs
     // If identifier is a LinkedIn URL, search by LinkedIn instead
-    const isLinkedInUrl = companyIdentifier && companyIdentifier.includes('linkedin.com/company/');
+    // Support both /company/ and /school/ URLs
+    const isLinkedInUrl = companyIdentifier && (
+      companyIdentifier.includes('linkedin.com/company/') || 
+      companyIdentifier.includes('linkedin.com/school/')
+    );
     const isThirdPartyPlatform = this.isThirdPartyPlatform(companyIdentifier);
     
     // Only extract domain if it's actually a website URL (not LinkedIn, not third-party)
@@ -242,7 +297,9 @@ class CompanyIntelligence {
       // Priority 1: Search by LinkedIn URL if we have one
       if (isLinkedInUrl) {
         console.log('   🔍 Searching by LinkedIn URL (not domain)...');
-        const linkedinId = companyIdentifier.match(/linkedin\.com\/company\/([^\/\?]+)/)?.[1];
+        // Support both /company/ and /school/ URLs
+        const linkedinMatch = companyIdentifier.match(/linkedin\.com\/(?:company|school)\/([^\/\?]+)/);
+        const linkedinId = linkedinMatch?.[1];
         if (linkedinId) {
           const linkedinResult = await this.searchByLinkedInUrl(linkedinId);
           if (linkedinResult) {
@@ -258,11 +315,79 @@ class CompanyIntelligence {
         }
       }
       
-      // Priority 2: Search by domain (only if valid domain)
+      // Priority 2: Try enrich endpoint first (simpler and more reliable for domains)
       if (domain) {
-        console.log(`   🔍 Searching by domain: ${domain}...`);
+        console.log(`   🔍 Trying enrich endpoint with domain: ${domain}...`);
+        try {
+          const enrichUrl = `${baseUrl}/company_multi_source/enrich?website=${encodeURIComponent(domain)}`;
+          const enrichResponse = await fetch(enrichUrl, {
+            method: 'GET',
+            headers: {
+              'apikey': apiKey,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+
+          if (enrichResponse.ok) {
+            const enrichData = await enrichResponse.json();
+            // Enrich endpoint can return data in two formats:
+            // 1. { type: 'Success', data: { id, company_name, ... } }
+            // 2. { id, company_name, type: 'Nonprofit', ... } (direct data)
+            let companyId = null;
+            let companyName = null;
+            
+            if (enrichData?.type === 'Success' && enrichData.data) {
+              // Format 1: nested data
+              companyId = enrichData.data.id;
+              companyName = enrichData.data.company_name;
+            } else if (enrichData?.id) {
+              // Format 2: direct data (e.g., type: 'Nonprofit')
+              companyId = enrichData.id;
+              companyName = enrichData.company_name;
+            }
+            
+            if (companyId) {
+              console.log(`   ✅ Found company via enrich endpoint (ID: ${companyId}, Name: ${companyName})`);
+              
+              // Get full company data using collect endpoint
+              const companyResponse = await fetch(`${baseUrl}/company_multi_source/collect/${companyId}`, {
+                method: 'GET',
+                headers: {
+                  'apikey': apiKey,
+                  'Accept': 'application/json'
+                }
+              });
+
+              if (companyResponse.ok) {
+                const companyData = await companyResponse.json();
+                const isValidMatch = this.validateCompanyMatch(companyData, companyIdentifier, domain);
+                if (isValidMatch) {
+                  console.log(`✅ Found company via enrich endpoint: ${companyData.name || companyData.company_name}`);
+                  return companyData;
+                } else {
+                  console.log(`⚠️ Enrich endpoint match failed validation for: ${companyData.name || companyData.company_name}`);
+                }
+              } else {
+                console.log(`   ⚠️ Collect endpoint failed: ${companyResponse.status}`);
+              }
+            } else {
+              console.log(`   ⚠️ Enrich endpoint response missing company ID`);
+            }
+          } else {
+            const errorText = await enrichResponse.text().catch(() => '');
+            console.log(`   ⚠️ Enrich endpoint returned status: ${enrichResponse.status}, error: ${errorText.substring(0, 100)}`);
+          }
+        } catch (enrichError) {
+          console.log(`   ⚠️ Enrich endpoint failed: ${enrichError.message}`);
+        }
       } else {
         console.log('   ⚠️ No valid domain available, skipping domain search');
+      }
+      
+      // Priority 3: Search for company by domain using Elasticsearch queries (fallback)
+      if (domain) {
+        console.log(`   🔍 Trying Elasticsearch queries with domain: ${domain}...`);
       }
       
       // Search for company by domain using multiple approaches

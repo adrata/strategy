@@ -428,6 +428,46 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // DUPLICATE PREVENTION: Check if a task with the same title already exists in this project
+    // For bugs, check by title and type to prevent duplicate bugs
+    // Use case-insensitive comparison by fetching and filtering in memory
+    const normalizedTitle = title.trim().toLowerCase();
+    const existingTasks = await prisma.stacksTask.findMany({
+      where: {
+        projectId: finalProjectId,
+        ...(type === 'bug' ? { type: 'bug' } : {}) // For bugs, also filter by type
+      },
+      select: {
+        id: true,
+        title: true,
+        type: true,
+        status: true,
+        createdAt: true
+      }
+    });
+
+    // Check for exact match (case-insensitive, trimmed)
+    const existingTask = existingTasks.find(
+      task => task.title.trim().toLowerCase() === normalizedTitle
+    );
+
+    if (existingTask) {
+      console.warn('⚠️ [STACKS TASKS API POST] Duplicate task detected:', {
+        existingTaskId: existingTask.id,
+        existingTitle: existingTask.title,
+        existingType: existingTask.type,
+        newTitle: title,
+        newType: type,
+        projectId: finalProjectId,
+        workspaceId: workspaceId
+      });
+      return createErrorResponse(
+        `A ${type === 'bug' ? 'bug' : 'task'} with the title "${title}" already exists in this project.`,
+        'DUPLICATE_TASK',
+        409
+      );
+    }
+
     // Build create data - only include defined fields
     const createData: any = {
       projectId: finalProjectId,

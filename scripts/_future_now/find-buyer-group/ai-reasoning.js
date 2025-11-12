@@ -85,7 +85,39 @@ class AIReasoning {
    * @returns {string} Claude prompt
    */
   buildRelevancePrompt(employee, productContext) {
-    return `You are an expert B2B sales strategist analyzing whether a person is relevant for selling ${productContext.productName || 'sales software'}.
+    const isEducation = productContext.productCategory === 'custom' && 
+                        (productContext.productName?.toLowerCase().includes('retention') ||
+                         productContext.productName?.toLowerCase().includes('student') ||
+                         productContext.productName?.toLowerCase().includes('education'));
+    
+    const educationContext = isEducation ? `
+
+HIGHER EDUCATION CONTEXT:
+- Higher education institutions have unique organizational structures:
+  * Provost/Vice Provost: Chief academic officer, often approves major academic initiatives
+  * VP Student Affairs/Academic Affairs: Senior executives with budget authority for student services
+  * Deans: College/school leaders, operational decision makers
+  * Directors: Department heads, implementation leaders
+- Retention solutions typically involve:
+  * Student Affairs (student services, engagement, support)
+  * Academic Affairs (academic advising, academic support)
+  * Enrollment Management (retention strategy, student success)
+  * Institutional Research (data analysis, metrics)
+- Decision-making in education often involves shared governance and committee approval
+- Budget authority varies: Provost/VP level ($500K+), Dean level ($100K-$500K), Director level (<$100K)
+
+WHY EACH ROLE CARES ABOUT RETENTION:
+- Provost/VP: Retention directly affects enrollment, revenue, institutional reputation, and accreditation metrics. Poor retention = financial and reputational damage.
+- Chief Retention Officer (CRO): Dedicated role measured on retention metrics. Their job success depends on improving retention rates.
+- Directors of Retention/Student Success: Use retention systems daily, see impact directly, advocate for solutions that help them succeed.
+- Directors of Academic Advising: Retention is their core mission - they guide students to success and see dropouts as failures.
+- Financial Aid Directors: Financial barriers are the #1 reason for dropout. They see students leave due to financial stress daily.
+- Counseling Services Directors: Mental health issues significantly affect retention. They work with struggling students who may drop out.
+- Registrar: Administrative inefficiencies cause student frustration and contribute to dropout. They see the impact of poor systems.
+- Enrollment Management Directors: Manage BOTH recruitment AND retention strategies. Retention is half their responsibility.
+- Institutional Research Directors: Data-driven decision making informs all retention strategies. They analyze what works and what doesn't.` : '';
+
+    return `You are an expert B2B sales strategist analyzing whether a person is relevant for selling ${productContext.productName || 'sales software'}.${educationContext}
 
 EMPLOYEE PROFILE:
 - Name: ${employee.name || 'Unknown'}
@@ -110,9 +142,10 @@ ANALYSIS REQUIRED:
 
 Consider:
 - Does their title/department suggest they would use, approve, or influence this product?
-- Are there any red flags (e.g., Customer Success VP who explicitly doesn't manage sales)?
+${isEducation ? '- In education: Does their role relate to student retention, student success, academic advising, or enrollment management?\n- Education hierarchy: Provost > VP > Dean > Director for decision-making authority\n- Why they care: Consider their specific motivations (financial impact, job performance, daily use, student outcomes)' : '- Are there any red flags (e.g., Customer Success VP who explicitly doesn\'t manage sales)?'}
 - What is their seniority and decision-making authority?
 - How likely are they to be involved in this type of purchase?
+${isEducation ? '- Education purchasing: Often requires Provost/VP approval for $500K+ deals, Dean approval for $100K-$500K\n- Retention committees: Many institutions have cross-departmental retention committees - members may have titles that don\'t explicitly say "retention"\n- Cross-departmental collaboration: Retention requires coordination across Academic Affairs, Student Affairs, Enrollment Management, Financial Aid, and Counseling' : ''}
 
 Respond in JSON format:
 {
@@ -191,7 +224,43 @@ Respond in JSON format:
       ? buyerGroupContext.map(member => `${member.name} (${member.buyerGroupRole})`).join(', ')
       : 'None yet';
 
-    return `You are an expert B2B sales strategist assigning a role to a buyer group member.
+    const isEducation = productContext.productCategory === 'custom' && 
+                        (productContext.productName?.toLowerCase().includes('retention') ||
+                         productContext.productName?.toLowerCase().includes('student') ||
+                         productContext.productName?.toLowerCase().includes('education'));
+    
+    const educationContext = isEducation ? `
+
+HIGHER EDUCATION CONTEXT:
+- Education hierarchy for retention solutions:
+  * Provost/Vice Provost: Decision makers for $500K+ deals, approve major academic initiatives
+  * VP Student Affairs/Academic Affairs: Decision makers for $200K-$1M deals, budget authority
+  * Deans: Champions/Decision makers for $100K-$500K deals, operational leaders
+  * Directors: Champions/Stakeholders, implementation leaders, use the system daily
+  * Managers/Specialists: Stakeholders, end users
+- Retention solutions typically need:
+  * Decision: Provost, VP Student Affairs, VP Academic Affairs (budget approval)
+  * Champion: Dean of Student Success, Director of Retention, Director of Student Success
+  * Stakeholder: Directors of Academic Advising, First-Year Experience, Academic Support
+  * Blocker: CFO, Procurement, Legal (for data privacy), IT Security
+
+RETENTION-SPECIFIC ROLE PATTERNS:
+- Chief Retention Officer (CRO): Decision maker - dedicated role with budget authority, measured on retention metrics
+- Directors of Retention/Student Success: Champions - use systems daily, see impact directly, advocate internally
+- Directors of Academic Advising: Champions - core mission is retention, guide students to success
+- Directors of Enrollment Management: Decision makers/Champions - manage BOTH recruitment AND retention strategies
+- Directors of Financial Aid: Stakeholders - financial barriers are #1 dropout reason, critical support role
+- Directors of Counseling Services: Stakeholders - mental health affects retention, critical support role
+- Registrar: Stakeholders - administrative efficiency impacts retention, sees frustration from poor systems
+- Institutional Research Directors: Champions/Stakeholders - data-driven decision making, inform retention strategies
+
+RETENTION COMMITTEES:
+- Many institutions have cross-departmental retention committees
+- Committee members may have titles that don't explicitly say "retention"
+- Cross-departmental collaboration is essential for retention success
+- Committee members often include: Provost/VP, Deans, Directors from Student Affairs, Academic Affairs, Enrollment Management, Financial Aid, Counseling, Institutional Research` : '';
+
+    return `You are an expert B2B sales strategist assigning a role to a buyer group member.${educationContext}
 
 EMPLOYEE TO ASSIGN:
 - Name: ${employee.name || 'Unknown'}
@@ -221,10 +290,12 @@ ASSIGNMENT REQUIRED:
 
 Consider:
 - Their seniority and authority level
+${isEducation ? '- Education hierarchy: Provost > VP > Dean > Director\n- Budget authority: Provost/VP ($500K+), Dean ($100K-$500K), Director (<$100K)\n- Retention-specific roles: CRO = Decision maker, Directors of Retention/Student Success = Champions, Financial Aid/Counseling = Stakeholders' : ''}
 - Their department's relevance to the product
 - The deal size and their likely involvement
 - Whether they would use, approve, or influence this purchase
 - The current composition of the buyer group
+${isEducation ? '- Education purchasing: Often requires multiple approvals (Provost + VP + Dean)\n- Retention solutions need both academic and student affairs representation\n- Retention committees: Members may have diverse titles but all care about retention\n- Cross-departmental collaboration: Retention requires coordination across multiple departments' : ''}
 
 Respond in JSON format:
 {
@@ -440,6 +511,217 @@ Respond in JSON format:
       reasoning: 'Fallback assignment due to AI error',
       alternativeRoles: []
     };
+  }
+
+  /**
+   * Generate pain points using AI with directional intelligence
+   * @param {object} member - Buyer group member
+   * @param {object} productContext - Product context
+   * @param {object} companyContext - Company context
+   * @param {object} researchData - Research data including full profile
+   * @returns {Promise<Array>} Array of pain points
+   */
+  async generatePainPoints(member, productContext, companyContext, researchData) {
+    const prompt = this.buildPainPointsPrompt(member, productContext, companyContext, researchData);
+    
+    try {
+      const response = await this.callClaude(prompt);
+      return this.parsePainPointsResponse(response);
+    } catch (error) {
+      console.error('❌ AI pain points generation failed:', error.message);
+      return this.getFallbackPainPoints(member, productContext);
+    }
+  }
+
+  /**
+   * Build prompt for pain points generation
+   * @param {object} member - Buyer group member
+   * @param {object} productContext - Product context
+   * @param {object} companyContext - Company context
+   * @param {object} researchData - Research data
+   * @returns {string} Claude prompt
+   */
+  buildPainPointsPrompt(member, productContext, companyContext, researchData) {
+    const isEducation = productContext.productCategory === 'custom' && 
+                        (productContext.productName?.toLowerCase().includes('retention') ||
+                         productContext.productName?.toLowerCase().includes('student') ||
+                         productContext.productName?.toLowerCase().includes('education'));
+
+    const experienceSummary = researchData?.experience?.slice(0, 5).map(exp => 
+      `- ${exp.title || 'Unknown'} at ${exp.company_name || 'Unknown'} (${exp.start_date || 'Unknown'} - ${exp.end_date || 'Present'})`
+    ).join('\n') || 'No experience data available';
+
+    const skillsSummary = researchData?.skills?.slice(0, 10).join(', ') || 'No skills data available';
+
+    return `You are an expert B2B sales strategist analyzing pain points for a potential buyer.
+
+MEMBER PROFILE:
+- Name: ${member.name || 'Unknown'}
+- Title: ${member.title || 'Unknown'}
+- Department: ${member.department || 'Unknown'}
+- Company: ${companyContext?.companyName || 'Unknown'}
+- LinkedIn: ${member.linkedinUrl || 'N/A'}
+- Connections: ${researchData?.connections || member.connectionsCount || 0}
+- Followers: ${researchData?.followers || member.followersCount || 0}
+
+CAREER HISTORY (Recent):
+${experienceSummary}
+
+SKILLS:
+${skillsSummary}
+
+PRODUCT CONTEXT:
+- Product: ${productContext?.productName || 'Business Solution'}
+- Category: ${productContext?.productCategory || 'general'}
+- Deal Size: $${productContext?.dealSize || 150000}
+- Focus Area: ${productContext?.focusArea || 'General business improvement'}
+
+COMPANY CONTEXT:
+- Company: ${companyContext?.companyName || 'Unknown'}
+- Industry: ${companyContext?.industry || 'Unknown'}
+- Size: ${companyContext?.employeeCount || 'Unknown'} employees
+- Revenue: ${companyContext?.revenue || 'Unknown'}
+
+${isEducation ? `
+HIGHER EDUCATION CONTEXT:
+- Retention solutions address student dropout, academic performance, and student success
+- Key pain points include: low retention rates, poor student engagement, lack of early warning systems, financial barriers, mental health support gaps, administrative inefficiencies
+- Roles care about retention because it affects enrollment, revenue, accreditation, and institutional reputation
+` : ''}
+
+ANALYSIS REQUIRED:
+Generate 3-5 specific, actionable pain points this person likely experiences related to ${productContext?.productName || 'this solution'}.
+
+Each pain point should include:
+- Title: Specific pain point (4-8 words)
+- Description: Detailed explanation (2-3 sentences)
+- Root Cause: Underlying factor (1 sentence)
+- Frequency: How often it manifests (daily/weekly/monthly/quarterly)
+- Impact: Specific consequences (2 sentences)
+- Urgency: High/medium/low with urgency drivers
+- Related Metrics: KPIs they're likely struggling with
+
+Consider:
+- Their role and responsibilities
+- Their department's challenges
+- Industry-specific pain points
+- Company size and stage
+- Their career trajectory and tenure
+- Common challenges for their role type
+
+Respond in JSON format:
+{
+  "painPoints": [
+    {
+      "title": "Pain point title",
+      "description": "Detailed description",
+      "rootCause": "Root cause explanation",
+      "frequency": "daily|weekly|monthly|quarterly",
+      "impact": "Impact description",
+      "urgency": "high|medium|low",
+      "urgencyDrivers": "What makes this urgent",
+      "relatedMetrics": ["metric1", "metric2"]
+    }
+  ]
+}`;
+  }
+
+  /**
+   * Parse pain points response from Claude
+   * @param {string} response - Claude response
+   * @returns {Array} Array of pain points
+   */
+  parsePainPointsResponse(response) {
+    try {
+      // Handle markdown-wrapped JSON responses
+      let jsonString = response;
+      if (response.includes('```json')) {
+        const match = response.match(/```json\s*([\s\S]*?)\s*```/);
+        if (match) {
+          jsonString = match[1];
+        }
+      } else if (response.includes('```')) {
+        // Handle code blocks without json tag
+        const match = response.match(/```\s*([\s\S]*?)\s*```/);
+        if (match) {
+          jsonString = match[1];
+        }
+      }
+      
+      const parsed = JSON.parse(jsonString);
+      const painPoints = parsed.painPoints || [];
+      
+      // Validate and ensure all required fields
+      return painPoints.map(pp => ({
+        title: pp.title || 'Unspecified pain point',
+        description: pp.description || '',
+        rootCause: pp.rootCause || '',
+        frequency: pp.frequency || 'monthly',
+        impact: pp.impact || '',
+        urgency: pp.urgency || 'medium',
+        urgencyDrivers: pp.urgencyDrivers || '',
+        relatedMetrics: Array.isArray(pp.relatedMetrics) ? pp.relatedMetrics : []
+      }));
+    } catch (error) {
+      console.error('❌ Failed to parse AI pain points response:', error.message);
+      return this.getFallbackPainPoints(null, null);
+    }
+  }
+
+  /**
+   * Get fallback pain points
+   * @param {object} member - Buyer group member (optional)
+   * @param {object} productContext - Product context (optional)
+   * @returns {Array} Array of basic pain points
+   */
+  getFallbackPainPoints(member, productContext) {
+    const title = member?.title?.toLowerCase() || '';
+    const dept = member?.department?.toLowerCase() || '';
+    const productName = productContext?.productName || 'this solution';
+    
+    const painPoints = [];
+    
+    if (title.includes('director') || title.includes('manager')) {
+      painPoints.push({
+        title: `Lack of visibility into ${productName} performance`,
+        description: `As a ${member?.title || 'leader'}, they struggle to track key metrics and make data-driven decisions.`,
+        rootCause: 'Insufficient data and reporting capabilities',
+        frequency: 'weekly',
+        impact: 'Affects decision-making and team performance',
+        urgency: 'medium',
+        urgencyDrivers: 'Need for better performance tracking',
+        relatedMetrics: ['Performance metrics', 'KPIs']
+      });
+    }
+    
+    if (dept.includes('student') || dept.includes('academic')) {
+      painPoints.push({
+        title: `Challenges with ${productName} implementation`,
+        description: `Their department faces operational challenges that impact efficiency and outcomes.`,
+        rootCause: 'Operational inefficiencies and resource constraints',
+        frequency: 'daily',
+        impact: 'Affects daily operations and team productivity',
+        urgency: 'high',
+        urgencyDrivers: 'Operational pressure and resource needs',
+        relatedMetrics: ['Efficiency metrics', 'Outcome metrics']
+      });
+    }
+    
+    // Default pain point if none added
+    if (painPoints.length === 0) {
+      painPoints.push({
+        title: `Need for improved ${productName} capabilities`,
+        description: `They face challenges that could be addressed by ${productName}.`,
+        rootCause: 'Current limitations and constraints',
+        frequency: 'monthly',
+        impact: 'Affects their ability to achieve goals',
+        urgency: 'medium',
+        urgencyDrivers: 'Business needs and objectives',
+        relatedMetrics: ['Key performance indicators']
+      });
+    }
+    
+    return painPoints;
   }
 }
 
