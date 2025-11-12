@@ -381,9 +381,21 @@ export async function GET(
               isValidWorkspace: isValidWorkspace
             });
             
-            // Return task if workspace matches, or if task has no project (edge case for bugs)
-            if (isValidWorkspace || !taskById.project) {
-              console.log('✅ [STACKS API] Returning task found by ID (workspace valid or no project)');
+            // Return task if workspace matches, if task has no project, or if it's a bug (bugs can have workspace mismatches)
+            const isBug = taskById.type === 'bug';
+            const shouldReturn = isValidWorkspace || !taskById.project || isBug;
+            
+            if (shouldReturn) {
+              if (isBug && !isValidWorkspace) {
+                console.warn('⚠️ [STACKS API] Returning bug despite workspace mismatch:', {
+                  bugId: taskById.id,
+                  bugWorkspaceId: taskWorkspaceId,
+                  requestedWorkspaceId: workspaceId,
+                  reason: 'Bug lookup - allowing workspace mismatch for bugs'
+                });
+              } else {
+                console.log('✅ [STACKS API] Returning task found by ID (workspace valid or no project)');
+              }
               
               // Transform the task data to match expected format
               let taskAttachments: any[] = [];
@@ -443,7 +455,8 @@ export async function GET(
             } else {
               console.log('⚠️ [STACKS API] Task exists but in different workspace:', {
                 taskWorkspaceId: taskWorkspaceId,
-                requestedWorkspaceId: workspaceId
+                requestedWorkspaceId: workspaceId,
+                taskType: taskById.type
               });
             }
           }
