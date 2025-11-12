@@ -4931,10 +4931,10 @@ export function UniversalRecordTemplate({
             </div>
             <div className="flex items-center gap-3">
               <div>
-                {/* Stage and Type Pills - Only show for company records */}
+                {/* Stage and Type Pills - Show for all company-related records */}
                 {(recordType === 'companies' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') && (
                   <div className="flex items-center gap-2 mb-2">
-                    {/* Type Pill - Hidden for companies (shown in Basic Information instead) */}
+                    {/* Type Pill - Show for leads/prospects with relationship types, hidden for regular companies */}
                     {recordType !== 'companies' && (() => {
                       const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
                       const relationshipType = localRecord?.relationshipType;
@@ -4971,10 +4971,11 @@ export function UniversalRecordTemplate({
                       return null;
                     })()}
                     
-                    {/* Stage Pill */}
+                    {/* Stage Pill - Now shown for companies too */}
                     {(() => {
                       const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
                       const status = localRecord?.status;
+                      const relationshipType = localRecord?.relationshipType;
                       
                       // Map status to display labels
                       const stageMap: Record<string, string> = {

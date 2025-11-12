@@ -672,6 +672,44 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               }
               return null;
             })()}
+            
+            {/* Stage Field - Inline editable with pill styling */}
+            <div className="flex items-center">
+              <span className="text-sm text-muted w-32">Stage:</span>
+              <InlineEditField
+                value={mergedRecord?.status || 'LEAD'}
+                field="status"
+                onSave={onSave}
+                recordId={record.id}
+                recordType={recordType}
+                onSuccess={handleSuccess}
+                inputType="select"
+                options={(() => {
+                  const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+                  if (isPartnerOS) {
+                    return [
+                      { value: 'LEAD', label: 'Lead' },
+                      { value: 'PROSPECT', label: 'Prospect' },
+                      { value: 'CLIENT', label: 'Partner' }
+                    ];
+                  }
+                  return [
+                    { value: 'LEAD', label: 'Lead' },
+                    { value: 'PROSPECT', label: 'Prospect' },
+                    { value: 'OPPORTUNITY', label: 'Opportunity' },
+                    { value: 'CLIENT', label: 'Client' }
+                  ];
+                })()}
+                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
+                  mergedRecord?.status === 'LEAD' ? 'bg-warning/10 text-warning border-warning/20' :
+                  mergedRecord?.status === 'PROSPECT' ? 'bg-info/10 text-info border-info/20' :
+                  mergedRecord?.status === 'OPPORTUNITY' ? 'bg-primary/10 text-primary border-primary/20' :
+                  mergedRecord?.status === 'CLIENT' ? 'bg-success/10 text-success border-success/20' :
+                  'bg-hover/50 text-foreground border-border'
+                }`}
+              />
+            </div>
+            
             <div className="flex items-center">
               <span className="text-sm text-muted w-32">Legal Name:</span>
               <InlineEditField
