@@ -6,6 +6,7 @@ import { IntelligentNextActionService } from '@/platform/services/IntelligentNex
 import { findOrCreateCompany } from '@/platform/services/company-linking-service';
 import { findOrCreateCorePerson, mergeCorePersonWithWorkspace } from '@/platform/services/core-entity-service';
 import { addBusinessDays } from '@/platform/utils/actionUtils';
+import { extractTitleWithFallback } from '@/platform/utils/extract-title-from-enrichment';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
 const PEOPLE_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for leads/prospects
@@ -798,7 +799,6 @@ export async function GET(request: NextRequest) {
           }
           
           // 🎯 TITLE FALLBACK: Populate title from jobTitle if title is missing, then check enrichment data
-          const { extractTitleWithFallback } = await import('@/platform/utils/extract-title-from-enrichment');
           const extractedTitle = extractTitleWithFallback(
             person.title,
             person.jobTitle,
