@@ -34,7 +34,8 @@ import {
   CheckIcon,
   ExclamationTriangleIcon,
   KeyIcon,
-  RocketLaunchIcon
+  PlayIcon,
+  BuildingOffice2Icon
 } from "@heroicons/react/24/outline";
 import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -334,6 +335,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
+    // Check for partneros first (before speedrun) since it uses same routes
+    if (typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros') return 'partneros';
     // Check for speedrun/pipeline first (before adrata) since /adrata/speedrun should be revenueos
     if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
     // Check for test-drive before stacks
@@ -844,6 +847,26 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">RevenueOS</span>
             </button>
 
+            {/* PartnerOS */}
+            {authUser?.workspaces?.some(w => w.name === 'Adrata' || w.id === authUser.activeWorkspaceId) && (
+              <button
+                className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                  currentApp === 'partneros' 
+                    ? 'bg-slate-100 text-slate-700' 
+                    : 'text-foreground hover:bg-hover'
+                }`}
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    sessionStorage.setItem('activeSubApp', 'partneros');
+                  }
+                  handleNavigation("/speedrun");
+                }}
+              >
+                <BuildingOffice2Icon className="w-4 h-4 mr-3" />
+                <span className="font-medium">PartnerOS</span>
+              </button>
+            )}
+
             {/* Workbench */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -879,7 +902,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               }`}
               onClick={() => handleNavigation("/test-drive")}
             >
-              <RocketLaunchIcon className="w-4 h-4 mr-3" />
+              <PlayIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Test Drive</span>
             </button>
 

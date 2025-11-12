@@ -254,15 +254,24 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE)
+      // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE, LEAD, OPPORTUNITY)
+      // Note: status is for pipeline stage, relationshipType is separate for CLIENT/PARTNER filtering
+      // Track if we're using relationshipType so we can fall back if column doesn't exist
+      let usingRelationshipType = false;
       if (status) {
-        // For CLIENT status, also check additionalStatuses array
-        if (status === 'CLIENT') {
-          where.OR = [
-            { status: 'CLIENT' },
-            { additionalStatuses: { has: 'CLIENT' } }
-          ];
+        // For CLIENT/PARTNER filtering, use relationshipType instead of status
+        if (status === 'CLIENT' || status === 'FUTURE_CLIENT') {
+          where.relationshipType = {
+            in: ['CLIENT', 'FUTURE_CLIENT']
+          };
+          usingRelationshipType = true;
+        } else if (status === 'PARTNER' || status === 'FUTURE_PARTNER') {
+          where.relationshipType = {
+            in: ['PARTNER', 'FUTURE_PARTNER']
+          };
+          usingRelationshipType = true;
         } else {
+          // For pipeline stages (LEAD, PROSPECT, OPPORTUNITY, etc.), use status
           where.status = status;
         }
       }
@@ -387,15 +396,17 @@ export async function GET(request: NextRequest) {
 
       // Optimized query with Prisma ORM for reliability
       // 🚀 PERFORMANCE: Use select instead of include for corePerson to reduce data transfer
-      const [people, totalCount] = await Promise.all([
-        prisma.people.findMany({
-          where,
-          orderBy: { 
-            [mappedSortField]: sortOrder 
-          },
-          skip: offset,
-          take: limit,
-          select: {
+      let people, totalCount;
+      try {
+        [people, totalCount] = await Promise.all([
+          prisma.people.findMany({
+            where,
+            orderBy: { 
+              [mappedSortField]: sortOrder 
+            },
+            skip: offset,
+            take: limit,
+            select: {
             // Select only fields needed for the response
             id: true,
             workspaceId: true,
@@ -490,8 +501,110 @@ export async function GET(request: NextRequest) {
             }
           }
         }),
-        prisma.people.count({ where }),
-      ]);
+          prisma.people.count({ where }),
+        ]);
+      } catch (queryError: any) {
+        // If relationshipType column doesn't exist (migration not run), fall back to query without it
+        if (usingRelationshipType && queryError?.code === 'P2022' && queryError?.meta?.column_name === 'relationshipType') {
+          console.warn('⚠️ [V1 PEOPLE API] relationshipType column not found, falling back to query without it');
+          const fallbackWhere = { ...where };
+          delete fallbackWhere.relationshipType;
+          
+          [people, totalCount] = await Promise.all([
+            prisma.people.findMany({
+              where: fallbackWhere,
+              orderBy: { 
+                [mappedSortField]: sortOrder 
+              },
+              skip: offset,
+              take: limit,
+              select: {
+                // Select only fields needed for the response
+                id: true,
+                workspaceId: true,
+                corePersonId: true,
+                companyId: true,
+                firstName: true,
+                lastName: true,
+                fullName: true,
+                fullNameOverride: true,
+                emailOverride: true,
+                jobTitleOverride: true,
+                displayName: true,
+                jobTitle: true,
+                email: true,
+                workEmail: true,
+                personalEmail: true,
+                phone: true,
+                mobilePhone: true,
+                workPhone: true,
+                linkedinUrl: true,
+                status: true,
+                priority: true,
+                source: true,
+                tags: true,
+                customFields: true,
+                notes: true,
+                timezone: true,
+                lastAction: true,
+                lastActionDate: true,
+                nextAction: true,
+                nextActionDate: true,
+                globalRank: true,
+                createdAt: true,
+                updatedAt: true,
+                deletedAt: true,
+                corePerson: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    fullName: true,
+                    email: true,
+                    workEmail: true,
+                    personalEmail: true,
+                    phone: true,
+                    mobilePhone: true,
+                    workPhone: true,
+                    linkedinUrl: true,
+                    jobTitle: true,
+                    companyName: true,
+                    currentCompany: true,
+                    currentRole: true,
+                    city: true,
+                    state: true,
+                    country: true,
+                    profilePictureUrl: true
+                  }
+                },
+                company: {
+                  select: {
+                    id: true,
+                    name: true,
+                    industry: true,
+                    size: true,
+                    globalRank: true,
+                    hqState: true
+                  }
+                },
+                mainSeller: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    name: true,
+                    email: true
+                  }
+                }
+              }
+            }),
+            prisma.people.count({ where: fallbackWhere }),
+          ]);
+        } else {
+          // Re-throw if it's a different error
+          throw queryError;
+        }
+      }
 
       console.log(`🔍 [V1 PEOPLE API] Query results:`, {
         peopleFound: people.length,

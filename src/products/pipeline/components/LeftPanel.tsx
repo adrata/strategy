@@ -12,6 +12,7 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
+import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
 import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
 import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
@@ -244,7 +245,15 @@ function PipelineSections({
   const hasAnyCounts = fastCounts && Object.keys(fastCounts).length > 0 && 
                        Object.values(fastCounts).some(count => count !== 0 && count !== '0');
   const hasCachedData = actualCounts && Object.keys(actualCounts).length > 0;
-  const loading = (fastCountsLoading && !hasAnyCounts && !hasCachedData) || authLoading;
+  
+  // 🔄 SYNC: Check if the active section's data is loading (matches middle panel timing)
+  // This ensures left panel shows skeleton loaders when middle panel shows skeletons
+  const activeSectionData = useFastSectionData(activeSection, 30);
+  const activeSectionLoading = activeSectionData?.loading || false;
+  
+  // Show loading if: fastCounts is loading AND no counts exist, OR active section is loading, OR auth is loading
+  // This syncs the left panel loading state with the middle panel's skeleton timing
+  const loading = (fastCountsLoading && !hasAnyCounts && !hasCachedData) || activeSectionLoading || authLoading;
   
   // Use acquisitionData counts that were working before
   const leadsData = {

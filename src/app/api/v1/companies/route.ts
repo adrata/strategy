@@ -263,16 +263,20 @@ export async function GET(request: NextRequest) {
 
     // Pipeline status filtering (PROSPECT, OPPORTUNITY, ACTIVE, INACTIVE, LEAD)
     // Note: status is for pipeline stage, relationshipType is separate for CLIENT/PARTNER filtering
+    // Track if we're using relationshipType so we can fall back if column doesn't exist
+    let usingRelationshipType = false;
     if (status) {
       // For CLIENT/PARTNER filtering, use relationshipType instead of status
       if (status === 'CLIENT' || status === 'FUTURE_CLIENT') {
         where.relationshipType = {
           in: ['CLIENT', 'FUTURE_CLIENT'] as any
         };
+        usingRelationshipType = true;
       } else if (status === 'PARTNER' || status === 'FUTURE_PARTNER') {
         where.relationshipType = {
           in: ['PARTNER', 'FUTURE_PARTNER'] as any
         };
+        usingRelationshipType = true;
       } else {
         // For pipeline stages (LEAD, PROSPECT, OPPORTUNITY, etc.), use status
         where.status = status as any; // Type casting to handle Prisma enum validation
@@ -293,11 +297,28 @@ export async function GET(request: NextRequest) {
     
     if (countsOnly) {
       // Fast count query using Prisma ORM
-      const statusCounts = await prisma.companies.groupBy({
-        by: ['status'],
-        where,
-        _count: { id: true }
-      });
+      let statusCounts;
+      try {
+        statusCounts = await prisma.companies.groupBy({
+          by: ['status'],
+          where,
+          _count: { id: true }
+        });
+      } catch (queryError: any) {
+        // If relationshipType column doesn't exist (migration not run), fall back to query without it
+        if (usingRelationshipType && queryError?.code === 'P2022' && queryError?.meta?.column_name === 'relationshipType') {
+          console.warn('⚠️ [V1 COMPANIES API] relationshipType column not found in counts query, falling back');
+          const fallbackWhere = { ...where };
+          delete fallbackWhere.relationshipType;
+          statusCounts = await prisma.companies.groupBy({
+            by: ['status'],
+            where: fallbackWhere,
+            _count: { id: true }
+          });
+        } else {
+          throw queryError;
+        }
+      }
 
       const counts = statusCounts.reduce((acc, stat) => {
         acc[stat.status || 'ACTIVE'] = stat._count.id;
@@ -309,30 +330,73 @@ export async function GET(request: NextRequest) {
       // Optimized query with Prisma ORM for reliability
       console.log(`🗄️ [V1 COMPANIES API] Executing main database query with where clause:`, where);
       
-      const [companies, totalCount] = await Promise.all([
-        prisma.companies.findMany({
-          where,
-          orderBy: { 
-            [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
-          },
-          skip: offset,
-          take: limit,
-          include: {
-            coreCompany: true,
-            _count: {
-              select: {
-                actions: {
-                  where: {
-                    deletedAt: null,
-                    status: 'COMPLETED'
+      let companies, totalCount;
+      try {
+        [companies, totalCount] = await Promise.all([
+          prisma.companies.findMany({
+            where,
+            orderBy: { 
+              [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+            },
+            skip: offset,
+            take: limit,
+            include: {
+              coreCompany: true,
+              _count: {
+                select: {
+                  actions: {
+                    where: {
+                      deletedAt: null,
+                      status: 'COMPLETED'
+                    }
                   }
                 }
               }
             }
+          }),
+          prisma.companies.count({ where }),
+        ]);
+      } catch (queryError: any) {
+        // If relationshipType column doesn't exist (migration not run), fall back to status filter
+        if (usingRelationshipType && queryError?.code === 'P2022' && queryError?.meta?.column_name === 'relationshipType') {
+          console.warn('⚠️ [V1 COMPANIES API] relationshipType column not found, falling back to status filter');
+          // Remove relationshipType from where clause and use status instead
+          const fallbackWhere = { ...where };
+          delete fallbackWhere.relationshipType;
+          if (status === 'CLIENT' || status === 'FUTURE_CLIENT' || status === 'PARTNER' || status === 'FUTURE_PARTNER') {
+            // Don't filter by status if it was a relationshipType filter - show all companies
+            // This allows companies to show up even if migration hasn't been run
           }
-        }),
-        prisma.companies.count({ where }),
-      ]);
+          
+          [companies, totalCount] = await Promise.all([
+            prisma.companies.findMany({
+              where: fallbackWhere,
+              orderBy: { 
+                [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+              },
+              skip: offset,
+              take: limit,
+              include: {
+                coreCompany: true,
+                _count: {
+                  select: {
+                    actions: {
+                      where: {
+                        deletedAt: null,
+                        status: 'COMPLETED'
+                      }
+                    }
+                  }
+                }
+              }
+            }),
+            prisma.companies.count({ where: fallbackWhere }),
+          ]);
+        } else {
+          // Re-throw if it's a different error
+          throw queryError;
+        }
+      }
 
       console.log(`🗄️ [V1 COMPANIES API] Database query completed:`, {
         companiesFound: companies.length,

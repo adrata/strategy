@@ -8,6 +8,7 @@ import { usePipeline } from "@/products/pipeline/context/PipelineContext";
 import { useProfilePopup } from "@/platform/ui/components/ProfilePopupContext";
 import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
+import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
 import { getFilteredSectionsForWorkspace } from "@/platform/utils/section-filter";
 import { ChevronDownIcon, ChevronRightIcon, CheckIcon } from "@heroicons/react/24/outline";
 
@@ -43,7 +44,14 @@ function PartnerOSSections({
     appId: 'partneros'
   });
 
-  const loading = fastCountsLoading || false;
+  // 🔄 SYNC: Check if the active section's data is loading (matches middle panel timing)
+  // This ensures left panel shows skeleton loaders when middle panel shows skeletons
+  const activeSectionData = useFastSectionData(activeSection, 30);
+  const activeSectionLoading = activeSectionData?.loading || false;
+  
+  // Show loading if: fastCounts is loading OR active section is loading
+  // This syncs the left panel loading state with the middle panel's skeleton timing
+  const loading = fastCountsLoading || activeSectionLoading || false;
   
   // Use fastCounts or fallback to acquisitionData counts
   const productionCounts = fastCounts && Object.keys(fastCounts).length > 0 ? fastCounts : 
