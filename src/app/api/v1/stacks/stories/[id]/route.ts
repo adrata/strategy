@@ -165,9 +165,7 @@ export async function GET(
       
       try {
         // Try to fetch as a task
-        // CRITICAL FIX: First try with workspace filter, but if that fails,
-        // we'll fall back to finding by ID and validating workspace separately
-        // This handles cases where workspace ID resolution differs between creation and lookup
+        // First, try without attachments to see if that's the issue
         let task;
         try {
           task = await prisma.stacksTask.findFirst({
@@ -270,18 +268,14 @@ export async function GET(
           }
         }
 
-        // If task not found, try alternative lookup
         if (!task) {
           console.log('⚠️ [STACKS API] Task not found with workspace validation, trying alternative lookup');
           console.log('🔍 [STACKS API] Searched for ID:', finalStoryId);
           console.log('🔍 [STACKS API] In workspace:', workspaceId);
           console.log('🔍 [STACKS API] Original param value:', paramValue);
           
-          // CRITICAL FIX: Try to find the task by ID first, then validate workspace separately
-          // This handles cases where:
-          // 1. The nested relation filter fails but the task exists
-          // 2. Workspace ID resolution differs between creation and lookup
-          // 3. Recently created bugs haven't fully propagated in the database
+          // Try to find the task by ID first, then validate workspace separately
+          // This handles cases where the nested relation filter fails but the task exists
           let taskById;
           try {
             taskById = await prisma.stacksTask.findFirst({
@@ -376,53 +370,20 @@ export async function GET(
           
           if (taskById) {
             // Validate workspace - check if task's project belongs to the requested workspace
-            // Safely access project workspace ID (project might be null)
-            const taskWorkspaceId = taskById.project?.workspaceId || null;
+            const taskWorkspaceId = taskById.project?.workspaceId;
             const isValidWorkspace = taskWorkspaceId === workspaceId;
             
             console.log('🔍 [STACKS API] Task found by ID:', {
               taskId: taskById.id,
-              taskTitle: taskById.title,
-              taskType: taskById.type,
               taskProjectId: taskById.projectId,
-              taskProject: taskById.project,
               taskWorkspaceId: taskWorkspaceId,
               requestedWorkspaceId: workspaceId,
-              isValidWorkspace: isValidWorkspace,
-              hasProject: !!taskById.project,
-              willReturn: isValidWorkspace || !taskById.project
+              isValidWorkspace: isValidWorkspace
             });
             
-            // CRITICAL: For debugging, also check if task exists without workspace filter
-            if (!isValidWorkspace && taskById.project) {
-              console.error('❌ [STACKS API] WORKSPACE MISMATCH DETECTED:', {
-                bugId: taskById.id,
-                bugTitle: taskById.title,
-                bugProjectWorkspaceId: taskWorkspaceId,
-                requestedWorkspaceId: workspaceId,
-                mismatchReason: 'Project workspace does not match requested workspace',
-                suggestion: 'Check workspace ID resolution in frontend'
-              });
-            }
-            
-            // CRITICAL FIX: Return task if workspace matches, or if task has no project
-            // For bugs specifically, be more lenient - if the task was just created, it might
-            // have a workspace mismatch due to timing/resolution differences
-            // We'll return it anyway and let the frontend handle any workspace issues
-            const isBug = taskById.type === 'bug';
-            const shouldReturn = isValidWorkspace || !taskById.project || isBug;
-            
-            if (shouldReturn) {
-              if (isBug && !isValidWorkspace) {
-                console.warn('⚠️ [STACKS API] Returning bug despite workspace mismatch (bug workaround):', {
-                  bugId: taskById.id,
-                  bugWorkspaceId: taskWorkspaceId,
-                  requestedWorkspaceId: workspaceId,
-                  reason: 'Bug lookup - allowing workspace mismatch for recently created bugs'
-                });
-              } else {
-                console.log('✅ [STACKS API] Returning task found by ID (workspace valid or no project)');
-              }
+            // Return task if workspace matches, or if task has no project (edge case for bugs)
+            if (isValidWorkspace || !taskById.project) {
+              console.log('✅ [STACKS API] Returning task found by ID (workspace valid or no project)');
               
               // Transform the task data to match expected format
               let taskAttachments: any[] = [];
@@ -480,177 +441,69 @@ export async function GET(
                 type: taskById.type || 'task'
               });
             } else {
-              // This should rarely happen now since we return bugs anyway above
-              // But keep this as a fallback for non-bug tasks
-              console.error('❌ [STACKS API] Task exists but in different workspace:', {
+              console.log('⚠️ [STACKS API] Task exists but in different workspace:', {
                 taskWorkspaceId: taskWorkspaceId,
-                requestedWorkspaceId: workspaceId,
-                taskType: taskById.type,
-                bugWillNotBeReturned: taskById.type !== 'bug'
-              });
-              
-              // For non-bug tasks, still return them but with a warning
-              // This helps identify workspace mismatch issues
-              console.warn('⚠️ [STACKS API] RETURNING TASK DESPITE WORKSPACE MISMATCH (non-bug task)');
-              
-              const transformedStory = {
-                id: taskById.id,
-                title: taskById.title,
-                description: taskById.description,
-                acceptanceCriteria: null,
-                status: taskById.status,
-                priority: taskById.priority,
-                viewType: taskById.type === 'bug' ? 'bug' : 'detail',
-                product: taskById.product || null,
-                section: taskById.section || null,
-                rank: taskById.rank || null,
-                type: taskById.type || 'task',
-                attachments: [],
-                assignee: taskById.assignee ? {
-                  id: taskById.assignee.id,
-                  name: (() => {
-                    const firstName = taskById.assignee.firstName != null ? String(taskById.assignee.firstName) : '';
-                    const lastName = taskById.assignee.lastName != null ? String(taskById.assignee.lastName) : '';
-                    const fullName = `${firstName} ${lastName}`.trim();
-                    return fullName || 'Unknown';
-                  })(),
-                  email: taskById.assignee.email || ''
-                } : null,
-                epoch: null,
-                story: taskById.story ? {
-                  id: taskById.story.id,
-                  title: taskById.story.title
-                } : null,
-                project: taskById.project ? {
-                  id: taskById.project.id,
-                  name: taskById.project.name
-                } : null,
-                dueDate: null,
-                tags: taskById.type === 'bug' ? ['bug'] : [],
-                isFlagged: false,
-                points: null,
-                createdAt: taskById.createdAt,
-                updatedAt: taskById.updatedAt,
-                timeInStatus: 0,
-                _workspaceMismatch: true, // Flag for debugging
-                _bugWorkspaceId: taskWorkspaceId,
-                _requestedWorkspaceId: workspaceId
-              };
-              
-              return NextResponse.json({
-                story: transformedStory,
-                type: taskById.type || 'task',
-                warning: 'Workspace mismatch detected - check console logs'
+                requestedWorkspaceId: workspaceId
               });
             }
-          } else {
-            console.error('❌ [STACKS API] Task not found in database:', {
-              searchedId: finalStoryId,
-              requestedWorkspaceId: workspaceId
-            });
-            
-            // CRITICAL DEBUG: Check if task exists in database WITHOUT workspace filter
-            // Wrap in try-catch to prevent 500 errors if query fails
-            try {
-              const taskWithoutWorkspace = await prisma.stacksTask.findFirst({
-                where: { id: finalStoryId },
-                select: { 
-                  id: true, 
-                  title: true,
-                  type: true,
-                  projectId: true, 
-                  project: { 
-                    select: { 
-                      id: true,
-                      name: true,
-                      workspaceId: true 
-                    } 
-                  } 
-                }
-              });
-              
-              if (taskWithoutWorkspace) {
-                console.error('🚨 [STACKS API] BUG EXISTS IN DATABASE BUT FAILED VALIDATION:', {
-                  bugId: taskWithoutWorkspace.id,
-                  bugTitle: taskWithoutWorkspace.title,
-                  bugType: taskWithoutWorkspace.type,
-                  bugProjectId: taskWithoutWorkspace.projectId,
-                  bugProjectWorkspaceId: taskWithoutWorkspace.project?.workspaceId,
-                  requestedWorkspaceId: workspaceId,
-                  workspaceMismatch: taskWithoutWorkspace.project?.workspaceId !== workspaceId,
-                  SOLUTION: 'Bug was created in different workspace than being queried'
-                });
-              } else {
-                console.error('🚨 [STACKS API] BUG DOES NOT EXIST IN DATABASE AT ALL:', {
-                  searchedId: finalStoryId,
-                  suggestion: 'Bug may not have been created successfully'
-                });
-              }
-            } catch (debugQueryError) {
-              // Log but don't throw - this is just for debugging
-              console.warn('⚠️ [STACKS API] Error in debug query (non-fatal):', {
-                error: debugQueryError instanceof Error ? debugQueryError.message : String(debugQueryError),
-                code: (debugQueryError as any)?.code,
-                searchedId: finalStoryId
-              });
-            }
-            
-            console.log('❌ [STACKS API] Task not found by ID or workspace mismatch');
-            
-            // Also check story without workspace
-            const storyWithoutWorkspace = await prisma.stacksStory.findFirst({
-              where: { id: finalStoryId },
-              select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
-            });
-            
-            if (storyWithoutWorkspace) {
-              console.log('⚠️ [STACKS API] Story exists but in different workspace:', storyWithoutWorkspace.project?.workspaceId);
-              console.log('⚠️ [STACKS API] Requested workspace:', workspaceId);
-              console.log('⚠️ [STACKS API] Story project ID:', storyWithoutWorkspace.projectId);
-              // Check if story has no project or project is in different workspace
-              if (!storyWithoutWorkspace.project || storyWithoutWorkspace.project.workspaceId !== workspaceId) {
-                console.log('⚠️ [STACKS API] Story exists but has no project or wrong workspace');
-                // If story exists but has no project, try to return it anyway
-                // This handles edge cases where stories might not have projects assigned
-                try {
-                  const storyWithoutProject = await prisma.stacksStory.findFirst({
-                    where: { id: finalStoryId },
-                    select: {
-                      id: true,
-                      epochId: true,
-                      projectId: true,
-                      title: true,
-                      description: true,
-                      acceptanceCriteria: true,
-                      status: true,
-                      priority: true,
-                      assigneeId: true,
-                      product: true,
-                      section: true,
-                      viewType: true,
-                      isFlagged: true,
-                      rank: true,
-                      statusChangedAt: true,
-                      createdAt: true,
-                      updatedAt: true,
-                      epoch: {
-                        select: {
-                          id: true,
-                          title: true,
-                          description: true
-                        }
-                      },
-                      assignee: {
-                        select: {
-                          id: true,
-                          firstName: true,
-                          lastName: true,
-                          email: true
-                        }
+          }
+          
+          console.log('❌ [STACKS API] Task not found by ID or workspace mismatch');
+          
+          // Also check story without workspace
+          const storyWithoutWorkspace = await prisma.stacksStory.findFirst({
+            where: { id: finalStoryId },
+            select: { id: true, projectId: true, project: { select: { workspaceId: true } } }
+          });
+          
+          if (storyWithoutWorkspace) {
+            console.log('⚠️ [STACKS API] Story exists but in different workspace:', storyWithoutWorkspace.project?.workspaceId);
+            console.log('⚠️ [STACKS API] Requested workspace:', workspaceId);
+            console.log('⚠️ [STACKS API] Story project ID:', storyWithoutWorkspace.projectId);
+            // Check if story has no project or project is in different workspace
+            if (!storyWithoutWorkspace.project || storyWithoutWorkspace.project.workspaceId !== workspaceId) {
+              console.log('⚠️ [STACKS API] Story exists but has no project or wrong workspace');
+              // If story exists but has no project, try to return it anyway
+              // This handles edge cases where stories might not have projects assigned
+              try {
+                const storyWithoutProject = await prisma.stacksStory.findFirst({
+                  where: { id: finalStoryId },
+                  select: {
+                    id: true,
+                    epochId: true,
+                    projectId: true,
+                    title: true,
+                    description: true,
+                    acceptanceCriteria: true,
+                    status: true,
+                    priority: true,
+                    assigneeId: true,
+                    product: true,
+                    section: true,
+                    viewType: true,
+                    isFlagged: true,
+                    rank: true,
+                    statusChangedAt: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    epoch: {
+                      select: {
+                        id: true,
+                        title: true,
+                        description: true
                       }
-                      // Omit project from select since it doesn't exist or is wrong workspace
+                    },
+                    assignee: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true
+                      }
                     }
-                  });
+                    // Omit project from select since it doesn't exist or is wrong workspace
+                  }
+                });
                 
                 if (storyWithoutProject) {
                   console.log('✅ [STACKS API] Returning story without project validation');
@@ -720,7 +573,6 @@ export async function GET(
           return createErrorResponse('Story or task not found', 'STORY_NOT_FOUND', 404);
         }
 
-        // If we reach here, task was found with workspace filter
         console.log('✅ [STACKS API] Task found:', task.id, 'type:', task.type);
         console.log('📎 [STACKS API] Task attachments:', JSON.stringify((task as any).attachments));
 
@@ -795,11 +647,6 @@ export async function GET(
         // Re-throw to be caught by outer catch block
         throw taskError;
       }
-    }  // Close if (!story) block that started at line 163
-
-    // If we reach here, story should exist (if it didn't, we would have returned a task or 404)
-    if (!story) {
-      return createErrorResponse('Story not found', 'STORY_NOT_FOUND', 404);
     }
 
     // Transform the data to match the expected format
