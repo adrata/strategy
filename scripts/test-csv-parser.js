@@ -22,3 +22,4 @@ fs.createReadStream('top-li-2.csv')
     console.log(`Rows with LinkedIn: ${withLinkedIn.length}`);
   });
 
+

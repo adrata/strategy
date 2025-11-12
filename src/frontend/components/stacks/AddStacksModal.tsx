@@ -566,30 +566,10 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           
           onStacksAdded(createdTask);
           
-          // Navigate to the bug detail page after creation
-          if (createdTask?.id && createdTask?.title) {
-            const workspaceSlug = window.location.pathname.split('/')[1];
-            const slug = generateSlug(createdTask.title, createdTask.id);
-            
-            console.log('🔗 [AddStacksModal] Navigating to bug after creation:', {
-              bugId: createdTask.id,
-              bugSlug: slug,
-              workspaceSlug,
-              workspaceId,
-              targetUrl: `/${workspaceSlug}/stacks/${slug}`
-            });
-            
-            // CRITICAL FIX: Add delay before navigation to ensure:
-            // 1. Database commit completes
-            // 2. Workspace context loads in destination page
-            // 3. Project association is fully established
-            setTimeout(() => {
-              console.log('🚀 [AddStacksModal] Executing delayed navigation to bug');
-              router.push(`/${workspaceSlug}/stacks/${slug}`);
-            }, 800); // 800ms delay ensures database and context are ready
-          } else {
-            onClose();
-          }
+          // CRITICAL FIX: Match story behavior - close modal instead of navigating immediately
+          // This avoids workspace resolution timing issues and lets the user navigate manually
+          // Stories work perfectly because they don't navigate immediately
+          onClose();
         } else {
           let errorMessage = 'Failed to create bug';
           try {
