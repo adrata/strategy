@@ -316,13 +316,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Get workspace ID - prefer query parameter over context (frontend may have different active workspace)
+    // CRITICAL: Always use query parameter if provided - this ensures consistency with frontend workspace resolution
+    // The frontend always passes workspaceId from URL slug, so query param should always be present
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
     const contextWorkspaceId = context.workspaceId;
     const userId = context.userId;
     
     // Use query parameter if provided, otherwise fall back to authenticated context
+    // But log a warning if query param is missing - this could cause workspace mismatches
     const workspaceId = queryWorkspaceId || contextWorkspaceId;
+    
+    if (!queryWorkspaceId) {
+      console.error('❌ [STACKS TASKS API POST] CRITICAL: No workspaceId query parameter provided!');
+      console.error('❌ [STACKS TASKS API POST] Falling back to context workspace:', contextWorkspaceId);
+      console.error('❌ [STACKS TASKS API POST] This WILL cause workspace mismatches - frontend should always pass workspaceId');
+      console.error('❌ [STACKS TASKS API POST] Request URL:', request.url);
+    } else if (queryWorkspaceId !== contextWorkspaceId) {
+      console.warn('⚠️ [STACKS TASKS API POST] Workspace ID mismatch - Query:', queryWorkspaceId, 'Context:', contextWorkspaceId);
+      console.warn('⚠️ [STACKS TASKS API POST] Using query parameter (correct) - user is viewing different workspace than their active workspace');
+    }
     
     console.log('✅ [STACKS TASKS API POST] Authenticated user:', userId);
     console.log('🔍 [STACKS TASKS API POST] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
