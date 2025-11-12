@@ -90,15 +90,24 @@ export async function GET(request: NextRequest) {
     
     // Define the fetch function for cache
     const fetchPartnersData = async () => {
-      // Enhanced where clause for partners (status = 'PARTNER')
+      // Enhanced where clause for partners (status = 'PARTNER' OR 'FUTURE_PARTNER')
       console.log('🔍 [V1 PARTNERS API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
-        status: 'PARTNER', // Filter for partners only
         OR: [
-          { mainSellerId: context.userId },
-          { mainSellerId: null }
+          { status: 'PARTNER' }, // Current partners
+          { status: 'FUTURE_PARTNER' }, // Future partners
+          { additionalStatuses: { has: 'PARTNER' } }, // Additional statuses
+          { additionalStatuses: { has: 'FUTURE_PARTNER' } } // Additional statuses
+        ],
+        AND: [
+          {
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ]
+          }
         ]
       };
 
@@ -108,7 +117,12 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            status: 'PARTNER'
+            OR: [
+              { status: 'PARTNER' },
+              { status: 'FUTURE_PARTNER' },
+              { additionalStatuses: { has: 'PARTNER' } },
+              { additionalStatuses: { has: 'FUTURE_PARTNER' } }
+            ]
           }
         }),
         prisma.people.groupBy({
@@ -116,7 +130,12 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            status: 'PARTNER'
+            OR: [
+              { status: 'PARTNER' },
+              { status: 'FUTURE_PARTNER' },
+              { additionalStatuses: { has: 'PARTNER' } },
+              { additionalStatuses: { has: 'FUTURE_PARTNER' } }
+            ]
           },
           _count: { id: true }
         })

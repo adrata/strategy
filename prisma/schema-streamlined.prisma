@@ -376,6 +376,7 @@ model companies {
   domain                 String?            @db.VarChar(255)
   logoUrl                String?            @db.VarChar(500)
   status                 CompanyStatus?     @default(ACTIVE)
+  relationshipType       RelationshipType?
   priority               CompanyPriority?   @default(MEDIUM)
   tags                   String[]           @default([])
   customFields           Json?
@@ -577,6 +578,7 @@ model people {
   bio                    String?
   profilePictureUrl      String?             @db.VarChar(500)
   status                 PersonStatus?       @default(LEAD)
+  relationshipType       RelationshipType?
   priority               PersonPriority?     @default(MEDIUM)
   source                 String?
   tags                   String[]            @default([])
@@ -1652,6 +1654,13 @@ enum PersonPriority {
   LOW
   MEDIUM
   HIGH
+}
+
+enum RelationshipType {
+  CLIENT
+  FUTURE_CLIENT
+  PARTNER
+  FUTURE_PARTNER
 }
 
 enum BuyerGroupRole {

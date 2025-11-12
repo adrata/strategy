@@ -1,0 +1,220 @@
+import { NextRequest } from 'next/server';
+import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+
+export const dynamic = 'force-dynamic';
+
+// GET /api/v1/company-lists/[id] - Get a specific list
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const resolvedParams = await params;
+    const listId = resolvedParams.id;
+
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response;
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const workspaceId = queryWorkspaceId || context.workspaceId;
+    const userId = context.userId;
+
+    if (!workspaceId) {
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
+    }
+
+    const list = await prisma.company_lists.findFirst({
+      where: {
+        id: listId,
+        workspaceId,
+        userId,
+        deletedAt: null
+      }
+    });
+
+    if (!list) {
+      return createErrorResponse('List not found', 'NOT_FOUND', 404);
+    }
+
+    return createSuccessResponse(list);
+  } catch (error) {
+    console.error('Error fetching company list:', error);
+    return createErrorResponse(
+      'Failed to fetch company list',
+      'FETCH_ERROR',
+      500
+    );
+  }
+}
+
+// PUT /api/v1/company-lists/[id] - Update existing list
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const resolvedParams = await params;
+    const listId = resolvedParams.id;
+
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response;
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const body = await request.json();
+    const { name, description, filters, sortField, sortDirection, searchQuery, isDefault } = body;
+
+    const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const workspaceId = queryWorkspaceId || context.workspaceId;
+    const userId = context.userId;
+
+    if (!workspaceId) {
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
+    }
+
+    // Verify list exists and belongs to user
+    const existingList = await prisma.company_lists.findFirst({
+      where: {
+        id: listId,
+        workspaceId,
+        userId,
+        deletedAt: null
+      }
+    });
+
+    if (!existingList) {
+      return createErrorResponse('List not found', 'NOT_FOUND', 404);
+    }
+
+    // If name is being changed, check for duplicates
+    if (name && name.trim() !== existingList.name) {
+      const duplicateList = await prisma.company_lists.findFirst({
+        where: {
+          workspaceId,
+          userId,
+          name: name.trim(),
+          id: { not: listId },
+          deletedAt: null
+        }
+      });
+
+      if (duplicateList) {
+        return createErrorResponse('A list with this name already exists', 'DUPLICATE_NAME', 409);
+      }
+    }
+
+    // Update the list
+    const updatedList = await prisma.company_lists.update({
+      where: { id: listId },
+      data: {
+        ...(name !== undefined && { name: name.trim() }),
+        ...(description !== undefined && { description: description?.trim() || null }),
+        ...(isDefault !== undefined && { isDefault }),
+        ...(filters !== undefined && { filters }),
+        ...(sortField !== undefined && { sortField: sortField || null }),
+        ...(sortDirection !== undefined && { sortDirection: sortDirection || null }),
+        ...(searchQuery !== undefined && { searchQuery: searchQuery?.trim() || null })
+      }
+    });
+
+    return createSuccessResponse(updatedList, { message: 'List updated successfully' });
+  } catch (error) {
+    console.error('Error updating company list:', error);
+    return createErrorResponse(
+      'Failed to update company list',
+      'UPDATE_ERROR',
+      500
+    );
+  }
+}
+
+// DELETE /api/v1/company-lists/[id] - Delete list (soft delete)
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const resolvedParams = await params;
+    const listId = resolvedParams.id;
+
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response;
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const workspaceId = queryWorkspaceId || context.workspaceId;
+    const userId = context.userId;
+
+    if (!workspaceId) {
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
+    }
+
+    // Verify list exists and belongs to user
+    const existingList = await prisma.company_lists.findFirst({
+      where: {
+        id: listId,
+        workspaceId,
+        userId,
+        deletedAt: null
+      }
+    });
+
+    if (!existingList) {
+      return createErrorResponse('List not found', 'NOT_FOUND', 404);
+    }
+
+    // Prevent deletion of default lists
+    if (existingList.isDefault) {
+      return createErrorResponse('Cannot delete default lists', 'CANNOT_DELETE_DEFAULT', 400);
+    }
+
+    // Soft delete
+    await prisma.company_lists.update({
+      where: { id: listId },
+      data: {
+        deletedAt: new Date()
+      }
+    });
+
+    return createSuccessResponse({ id: listId }, { message: 'List deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting company list:', error);
+    return createErrorResponse(
+      'Failed to delete company list',
+      'DELETE_ERROR',
+      500
+    );
+  }
+}
+

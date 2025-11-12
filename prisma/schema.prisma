@@ -109,6 +109,7 @@ model workspaces {
   audit_logs                audit_logs[]
   auth_sessions             auth_sessions[]
   companies                 companies[]
+  company_lists             company_lists[]
   emails                    email_messages[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
@@ -164,6 +165,7 @@ model users {
   api_cost_tracking                                                     api_cost_tracking[]
   audit_logs                                                            audit_logs[]
   auth_sessions                                                         auth_sessions[]
+  company_lists                                                         company_lists[]
   main_seller_companies                                                 companies[]                 @relation("MainSellerCompanies")
   grand_central_connections                                             grand_central_connections[]
   grand_central_workflows                                               grand_central_workflows[]
@@ -588,6 +590,7 @@ model people {
   bio                    String?
   profilePictureUrl      String?             @db.VarChar(500)
   status                 PersonStatus?       @default(LEAD)
+  relationshipType       RelationshipType?
   additionalStatuses     String[]            @default([])
   priority               PersonPriority?     @default(MEDIUM)
   source                 String?
@@ -822,6 +825,31 @@ model audit_logs {
   @@index([workspaceId, entityType, timestamp])
   @@index([workspaceId, action, timestamp])
   @@index([success])
+}
+
+/// Saved company lists with filters and sort preferences
+model company_lists {
+  id           String     @id @default(ulid()) @db.VarChar(30)
+  workspaceId String     @db.VarChar(30)
+  userId      String     @db.VarChar(30)
+  name        String     @db.VarChar(100)
+  description String?    @db.VarChar(500)
+  isDefault   Boolean    @default(false)
+  filters     Json?      // Stores filter criteria (status, priority, vertical, companySize, location, etc.)
+  sortField   String?    @db.VarChar(50)
+  sortDirection String?  @db.VarChar(10) // 'asc' or 'desc'
+  searchQuery String?    @db.VarChar(500)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  user        users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([workspaceId, userId])
+  @@index([isDefault])
+  @@index([deletedAt])
 }
 
 /// Track API costs for intelligence operations
@@ -1757,6 +1785,8 @@ enum CompanyStatus {
   PROSPECT
   OPPORTUNITY
   CLIENT
+  FUTURE_CLIENT
+  FUTURE_PARTNER
   SUPERFAN
   ACTIVE
   INACTIVE
@@ -1773,7 +1803,9 @@ enum PersonStatus {
   PROSPECT
   OPPORTUNITY
   CLIENT
+  FUTURE_CLIENT
   PARTNER
+  FUTURE_PARTNER
   SUPERFAN
 }
 
@@ -1781,6 +1813,13 @@ enum PersonPriority {
   LOW
   MEDIUM
   HIGH
+}
+
+enum RelationshipType {
+  CLIENT
+  FUTURE_CLIENT
+  PARTNER
+  FUTURE_PARTNER
 }
 
 enum BuyerGroupRole {

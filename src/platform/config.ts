@@ -14,6 +14,7 @@ import {
   HomeIcon,
   CalendarDaysIcon,
   UsersIcon,
+  BuildingOffice2Icon,
 } from "@heroicons/react/24/outline";
 import type { RevenueOSApp } from "./types";
 import { BullIcon } from "./ui/components/BullIcon";
@@ -42,6 +43,14 @@ export const REVENUE_OS_APPS: RevenueOSApp[] = [
     icon: UserGroupIcon,
     color: "#7C3AED",
     sections: ["companies", "people", "sellers", "sequences", "analytics"],
+  },
+  {
+    id: "partneros",
+    name: "PartnerOS",
+    description: "Manage partner relationships",
+    icon: BuildingOffice2Icon,
+    color: "#F59E0B",
+    sections: ["speedrun", "leads", "prospects", "partners", "companies", "people"],
   },
   {
     id: "settings",
@@ -130,6 +139,12 @@ export const QUICK_ACTIONS: Record<string, string[]> = {
     "Show top prospects",
     "Start Speedrun mode",
     "Pipeline health check",
+  ],
+  partneros: [
+    "Analyze partner pipeline",
+    "Review partner relationships",
+    "Identify partnership opportunities",
+    "Track partner engagement",
   ],
   stacks: [
     "Create a new story",

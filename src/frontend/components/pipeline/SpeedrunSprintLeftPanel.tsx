@@ -12,6 +12,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 import { useUnifiedAuth } from '@/platform/auth';
+import { SpeedrunContextMenu } from './SpeedrunContextMenu';
+import { SnoozeRemoveModal } from '@/products/speedrun/SnoozeRemoveModal';
+import { authFetch } from '@/platform/api-fetch';
 
 // Helper to safely get company name from string or object
 function getCompanyName(company: any): string {
@@ -50,9 +53,25 @@ export function SpeedrunSprintLeftPanel({
   const rawData = fastSectionData.data || [];
   const dataLoading = fastSectionData.loading || false;
   const error = fastSectionData.error || null;
+  const refreshData = fastSectionData.refresh;
 
   // Fallback: Load completed records from localStorage on mount if prop is empty
   const [localCompletedRecords, setLocalCompletedRecords] = React.useState<string[]>([]);
+  
+  // Context menu state
+  const [contextMenu, setContextMenu] = React.useState<{
+    isVisible: boolean;
+    position: { x: number; y: number };
+    recordId: string;
+  }>({
+    isVisible: false,
+    position: { x: 0, y: 0 },
+    recordId: '',
+  });
+
+  // Snooze modal state
+  const [showSnoozeModal, setShowSnoozeModal] = React.useState(false);
+  const [snoozeRecord, setSnoozeRecord] = React.useState<any>(null);
   
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -199,6 +218,137 @@ export function SpeedrunSprintLeftPanel({
   const totalSprints = Math.ceil(data.length / SPRINT_SIZE); // Calculate based on actual data
   const hasNextSprint = currentSprintIndex < totalSprints - 1;
   const currentSprintNumber = currentSprintIndex + 1;
+  const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
+
+  // Handle context menu
+  const handleContextMenu = (e: React.MouseEvent, recordId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      isVisible: true,
+      position: { x: e.clientX, y: e.clientY },
+      recordId,
+    });
+  };
+
+  const closeContextMenu = () => {
+    setContextMenu(prev => ({ ...prev, isVisible: false }));
+  };
+
+  // Move record operations
+  const moveRecord = async (recordId: string, direction: 'top' | 'up' | 'bottom') => {
+    if (!workspaceId || !userId) {
+      console.error('Missing workspace or user context');
+      return;
+    }
+
+    const record = allData.find((r: any) => r.id === recordId);
+    if (!record) {
+      console.error('Record not found');
+      return;
+    }
+
+    const currentRank = record.globalRank || record.rank || 999999;
+    let newRank: number;
+
+    // Calculate new rank based on direction
+    switch (direction) {
+      case 'top':
+        newRank = 1;
+        break;
+      case 'up':
+        if (currentRank <= 1) {
+          closeContextMenu();
+          return; // Already at top
+        }
+        newRank = currentRank - 1;
+        break;
+      case 'bottom':
+        // Find the maximum rank from all data
+        const maxRank = Math.max(...allData.map((r: any) => r.globalRank || r.rank || 0));
+        newRank = maxRank;
+        break;
+      default:
+        return;
+    }
+
+    // Optimistic update - close menu immediately
+    closeContextMenu();
+
+    try {
+      const response = await authFetch('/api/v1/speedrun/re-rank', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          manualRankUpdate: {
+            personId: recordId,
+            oldRank: currentRank,
+            newRank: newRank,
+          },
+        }),
+      });
+
+      if (response?.success) {
+        console.log(`✅ [SPEEDRUN] Successfully moved record ${recordId} to rank ${newRank}`);
+        // Refresh data to sync with database
+        if (refreshData) {
+          refreshData();
+        }
+        // Also trigger cache invalidation event
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cache-invalidate', {
+            detail: { pattern: 'speedrun', reason: 'manual-rank-update' }
+          }));
+        }
+      } else {
+        console.error('Failed to move record:', response?.error);
+      }
+    } catch (error) {
+      console.error('Error moving record:', error);
+    }
+  };
+
+  const handleMoveToTop = () => {
+    if (!contextMenu.recordId) return;
+    moveRecord(contextMenu.recordId, 'top');
+  };
+
+  const handleMoveUp = () => {
+    if (!contextMenu.recordId) return;
+    moveRecord(contextMenu.recordId, 'up');
+  };
+
+  const handleMoveToBottom = () => {
+    if (!contextMenu.recordId) return;
+    moveRecord(contextMenu.recordId, 'bottom');
+  };
+
+  // Snooze functionality
+  const handleSnooze = () => {
+    if (!contextMenu.recordId) return;
+    const record = allData.find((r: any) => r.id === contextMenu.recordId);
+    if (record) {
+      setSnoozeRecord(record);
+      setShowSnoozeModal(true);
+      closeContextMenu();
+    }
+  };
+
+  const handleSnoozeAction = (action: "snoozed" | "removed", leadId: string) => {
+    console.log(`[SPEEDRUN] Snooze action: ${action} for lead ${leadId}`);
+    // Refresh data after snooze/remove
+    if (refreshData) {
+      refreshData();
+    }
+    // Trigger cache invalidation
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cache-invalidate', {
+        detail: { pattern: 'speedrun', reason: 'snooze-action' }
+      }));
+    }
+  };
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] h-full flex flex-col bg-background border-r border-gray-100">
@@ -249,6 +399,7 @@ export function SpeedrunSprintLeftPanel({
             <div
               key={record.id || index}
               onClick={() => onRecordSelect(record)}
+              onContextMenu={(e) => handleContextMenu(e, record.id)}
               className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border relative ${
                 isCompleted
                   ? 'bg-green-100 text-foreground border-green-300 hover:bg-green-100'
@@ -298,6 +449,32 @@ export function SpeedrunSprintLeftPanel({
           );
         })}
       </div>
+
+      {/* Context Menu */}
+      <SpeedrunContextMenu
+        isVisible={contextMenu.isVisible}
+        position={contextMenu.position}
+        onClose={closeContextMenu}
+        onMoveToTop={handleMoveToTop}
+        onMoveUp={handleMoveUp}
+        onMoveToBottom={handleMoveToBottom}
+        onSnooze={handleSnooze}
+      />
+
+      {/* Snooze Modal */}
+      {showSnoozeModal && snoozeRecord && (
+        <SnoozeRemoveModal
+          isOpen={showSnoozeModal}
+          onClose={() => {
+            setShowSnoozeModal(false);
+            setSnoozeRecord(null);
+          }}
+          leadId={snoozeRecord.id}
+          leadName={snoozeRecord.fullName || snoozeRecord.name || 'Unknown'}
+          leadCompany={getCompanyName(snoozeRecord.company)}
+          onAction={handleSnoozeAction}
+        />
+      )}
     </div>
   );
 }

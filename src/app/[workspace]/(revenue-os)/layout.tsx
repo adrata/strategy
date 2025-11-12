@@ -4,6 +4,7 @@ import React, { useState, useEffect, createContext, useContext } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
+import { PartnerOSLeftPanel } from "@/products/partneros/components/PartnerOSLeftPanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { ConversationsListGrouped } from "@/platform/ui/components/chat/ConversationsListGrouped";
 import { SpeedrunSprintLeftPanel } from "@/frontend/components/pipeline/SpeedrunSprintLeftPanel";
@@ -243,6 +244,12 @@ function PipelineLayoutInner({
                             pathname.includes('/workshop') ||
                             pathname.includes('/workbench');
     
+    // Check if we're in PartnerOS mode (check URL search params or sessionStorage)
+    const isPartnerOSMode = typeof window !== 'undefined' && (
+      sessionStorage.getItem('activeSubApp') === 'partneros' ||
+      new URLSearchParams(window.location.search).get('app') === 'partneros'
+    );
+    
     // Check for specific app routes FIRST (before generic /adrata check)
     // This ensures /adrata/oasis, /adrata/stacks, and /adrata/workshop get their proper left panels
     if (pathname.includes('/oasis')) {
@@ -260,8 +267,17 @@ function PipelineLayoutInner({
     } else if (pathname.includes('/speedrun/sprint')) {
       // Special left panel for sprint view - use SprintContext
       return <SprintLeftPanelWrapper />;
+    } else if (isPartnerOSMode && isPipelineRoute) {
+      // Show PartnerOS left panel when in PartnerOS mode
+      return (
+        <PartnerOSLeftPanel 
+          key={`partneros-left-panel-${currentSection}`}
+          activeSection={currentSection}
+          onSectionChange={onSectionChange}
+        />
+      );
     } else {
-      // Default to Speedrun left panel for other routes
+      // Default to Pipeline left panel for other routes
       return (
         <LeftPanel 
           key={`left-panel-${isNovaActive ? "nova" : currentSection}`}

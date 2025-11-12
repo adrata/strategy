@@ -261,17 +261,27 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE, OPPORTUNITY)
-    // For CLIENT status, also check additionalStatuses array
+    // Pipeline status filtering (PROSPECT, CLIENT, FUTURE_CLIENT, FUTURE_PARTNER, ACTIVE, INACTIVE, OPPORTUNITY)
+    // For CLIENT status, also check additionalStatuses array and include FUTURE_CLIENT
     if (status) {
       if (status === 'CLIENT') {
-        // Check both primary status and additionalStatuses for CLIENT
+        // Check both primary status and additionalStatuses for CLIENT and FUTURE_CLIENT
         where.OR = [
           { status: 'CLIENT' as any },
-          { additionalStatuses: { has: 'CLIENT' } }
+          { status: 'FUTURE_CLIENT' as any },
+          { additionalStatuses: { has: 'CLIENT' } },
+          { additionalStatuses: { has: 'FUTURE_CLIENT' } }
         ];
         // If there's already an OR clause from search, we need to combine them
         // For now, we'll prioritize the status filter
+      } else if (status === 'PARTNER' || status === 'FUTURE_PARTNER') {
+        // For partners, check both PARTNER and FUTURE_PARTNER
+        where.OR = [
+          { status: 'PARTNER' as any },
+          { status: 'FUTURE_PARTNER' as any },
+          { additionalStatuses: { has: 'PARTNER' } },
+          { additionalStatuses: { has: 'FUTURE_PARTNER' } }
+        ];
       } else {
         where.status = status as any; // Type casting to handle Prisma enum validation
       }

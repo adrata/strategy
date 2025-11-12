@@ -36,6 +36,8 @@ import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModa
 import { useSpeedrunSignals } from "@/platform/hooks/useSpeedrunSignals";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { PipelineHydrationFix } from './PipelineHydrationFix';
+import { CompanyList } from '@/platform/hooks/useCompanyLists';
+import { useCompanyLists } from '@/platform/hooks/useCompanyLists';
 
 interface PipelineContentProps {
   section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun' | 'metrics' | 'dashboard';
@@ -113,6 +115,88 @@ export const PipelineContent = React.memo(function PipelineContent({
   // 🎯 NEW SELLER FILTERS
   const [companySizeFilter, setCompanySizeFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
+  
+  // Company Lists
+  const [selectedListId, setSelectedListId] = useState<string | null>('all-companies');
+  const { updateList } = useCompanyLists(user?.activeWorkspaceId);
+  
+  // Handle list selection - apply filters from selected list
+  const handleListSelect = useCallback((list: CompanyList | null) => {
+    if (!list) {
+      setSelectedListId('all-companies');
+      // Reset all filters for "All Companies"
+      setSearchQuery('');
+      setStatusFilter('all');
+      setPriorityFilter('all');
+      setVerticalFilter('all');
+      setRevenueFilter('all');
+      setLastContactedFilter('all');
+      setTimezoneFilter('all');
+      setCompanySizeFilter('all');
+      setLocationFilter('all');
+      setSortField('rank');
+      setSortDirection('desc');
+      return;
+    }
+
+    setSelectedListId(list.id);
+
+    // Apply filters from list
+    if (list.filters) {
+      const filters = list.filters as any;
+      if (filters.statusFilter) setStatusFilter(filters.statusFilter);
+      if (filters.priorityFilter) setPriorityFilter(filters.priorityFilter);
+      if (filters.verticalFilter) setVerticalFilter(filters.verticalFilter);
+      if (filters.revenueFilter) setRevenueFilter(filters.revenueFilter);
+      if (filters.lastContactedFilter) setLastContactedFilter(filters.lastContactedFilter);
+      if (filters.timezoneFilter) setTimezoneFilter(filters.timezoneFilter);
+      if (filters.companySizeFilter) setCompanySizeFilter(filters.companySizeFilter);
+      if (filters.locationFilter) setLocationFilter(filters.locationFilter);
+    }
+
+    // Apply sort
+    if (list.sortField) {
+      setSortField(list.sortField);
+    }
+    if (list.sortDirection) {
+      setSortDirection(list.sortDirection as 'asc' | 'desc');
+    }
+
+    // Apply search query
+    if (list.searchQuery) {
+      setSearchQuery(list.searchQuery);
+    } else {
+      setSearchQuery('');
+    }
+  }, []);
+
+  // Handle updating list with current filters
+  const handleUpdateList = useCallback(async (listId: string) => {
+    if (!listId || listId === 'all-companies' || listId === 'uncontacted') {
+      return;
+    }
+
+    try {
+      await updateList(listId, {
+        filters: {
+          statusFilter,
+          priorityFilter,
+          verticalFilter,
+          revenueFilter,
+          lastContactedFilter,
+          timezoneFilter,
+          companySizeFilter,
+          locationFilter
+        },
+        sortField,
+        sortDirection,
+        searchQuery: searchQuery || undefined
+      });
+    } catch (error) {
+      console.error('Failed to update list:', error);
+      alert('Failed to update list. Please try again.');
+    }
+  }, [updateList, statusFilter, priorityFilter, verticalFilter, revenueFilter, lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, sortField, sortDirection, searchQuery]);
   
   // Get workspace context at component level
   const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
@@ -644,9 +728,21 @@ export const PipelineContent = React.memo(function PipelineContent({
                (state && state.toLowerCase().replace(/\s+/g, '_') === location);
       })();
 
-      // Last contacted filter
+      // Last contacted filter (including 'uncontacted' for company lists)
       const matchesLastContacted = lastContactedFilter === 'all' || (() => {
         const lastContact = record.lastContactDate || record.lastContact || record.lastAction;
+        
+        // Handle 'uncontacted' - companies with no contact or very old contact (>90 days)
+        if (lastContactedFilter === 'uncontacted') {
+          if (!lastContact) {
+            return true; // Never contacted
+          }
+          const contactDate = new Date(lastContact);
+          const now = new Date();
+          const daysDiff = Math.floor((now.getTime() - contactDate.getTime()) / (1000 * 60 * 60 * 24));
+          return daysDiff > 90; // Contacted more than 90 days ago
+        }
+        
         if (!lastContact) {
           return lastContactedFilter === 'never';
         }
@@ -1228,6 +1324,10 @@ export const PipelineContent = React.memo(function PipelineContent({
             // 🎯 NEW SELLER FILTERS
             onCompanySizeChange={setCompanySizeFilter}
             onLocationChange={setLocationFilter}
+            // Company Lists
+            selectedListId={selectedListId}
+            onListSelect={handleListSelect}
+            onUpdateList={handleUpdateList}
           />
         </div>
       )}

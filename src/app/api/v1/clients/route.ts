@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     
     // Define the fetch function for cache
     const fetchClientsData = async () => {
-      // Enhanced where clause for clients (status = 'CLIENT' OR 'CLIENT' IN additionalStatuses)
+      // Enhanced where clause for clients (status = 'CLIENT' OR 'FUTURE_CLIENT' OR in additionalStatuses)
       console.log('🔍 [V1 CLIENTS API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
@@ -102,8 +102,10 @@ export async function GET(request: NextRequest) {
           // Client status filter: check both primary status and additionalStatuses
           {
             OR: [
-              { status: 'CLIENT' }, // Primary status
-              { additionalStatuses: { has: 'CLIENT' } } // Additional statuses
+              { status: 'CLIENT' }, // Current clients
+              { status: 'FUTURE_CLIENT' }, // Future clients
+              { additionalStatuses: { has: 'CLIENT' } }, // Additional statuses
+              { additionalStatuses: { has: 'FUTURE_CLIENT' } } // Additional statuses
             ]
           },
           // Assignment filter
@@ -124,7 +126,9 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             OR: [
               { status: 'CLIENT' },
-              { additionalStatuses: { has: 'CLIENT' } }
+              { status: 'FUTURE_CLIENT' },
+              { additionalStatuses: { has: 'CLIENT' } },
+              { additionalStatuses: { has: 'FUTURE_CLIENT' } }
             ]
           }
         }),
@@ -135,7 +139,9 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             OR: [
               { status: 'CLIENT' },
-              { additionalStatuses: { has: 'CLIENT' } }
+              { status: 'FUTURE_CLIENT' },
+              { additionalStatuses: { has: 'CLIENT' } },
+              { additionalStatuses: { has: 'FUTURE_CLIENT' } }
             ]
           },
           _count: { id: true }
