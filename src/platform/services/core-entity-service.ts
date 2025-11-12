@@ -443,24 +443,53 @@ export function mergeCorePersonWithWorkspace(
   // Extract corePerson from workspacePerson if it exists (from Prisma relation)
   const actualCorePerson = corePerson || workspacePerson.corePerson || null;
   
+  // Helper function to extract title from enrichment data (synchronous)
+  const extractTitleFromEnrichment = (customFields: any): string | null => {
+    if (!customFields) return null;
+    
+    // Try CoreSignal
+    const coresignal = customFields.coresignalData || customFields.coresignal;
+    if (coresignal?.active_experience_title) return coresignal.active_experience_title;
+    if (coresignal?.job_title) return coresignal.job_title;
+    if (coresignal?.experience?.[0]?.position_title) return coresignal.experience[0].position_title;
+    
+    // Try Lusha
+    const lusha = customFields.lusha || customFields.enrichedData;
+    if (lusha?.currentTitle) return lusha.currentTitle;
+    if (lusha?.jobTitle) return lusha.jobTitle;
+    
+    return null;
+  };
+  
   if (!actualCorePerson) {
     // No core entity, return workspace data as-is (without corePerson relation)
     const { corePerson: _, ...workspaceData } = workspacePerson;
+    // 🎯 TITLE FALLBACK: Populate title from jobTitle if missing, then check enrichment data
+    const enrichmentTitle = extractTitleFromEnrichment(workspacePerson.customFields);
+    const finalTitle = workspacePerson.title || workspacePerson.jobTitle || enrichmentTitle || null;
+    const finalJobTitle = workspacePerson.jobTitle || workspacePerson.title || enrichmentTitle || null;
     return {
       ...workspaceData,
       fullName: workspacePerson.fullName,
       email: workspacePerson.email || workspacePerson.workEmail,
-      jobTitle: workspacePerson.jobTitle
+      jobTitle: finalJobTitle,
+      title: finalTitle
     };
   }
 
   // Merge: workspace overrides > core data > workspace fallback
   const { corePerson: __, ...workspaceData } = workspacePerson;
+  // 🎯 TITLE FALLBACK: Populate title from jobTitle if missing, with core person fallback, then enrichment data
+  const coreJobTitle = workspacePerson.jobTitleOverride || actualCorePerson.jobTitle || workspacePerson.jobTitle || null;
+  const enrichmentTitle = extractTitleFromEnrichment(workspacePerson.customFields);
+  const finalJobTitle = coreJobTitle || workspacePerson.jobTitle || enrichmentTitle || null;
+  const finalTitle = workspacePerson.title || coreJobTitle || enrichmentTitle || null;
   return {
     ...workspaceData,
     fullName: workspacePerson.fullNameOverride || actualCorePerson.fullName || workspacePerson.fullName,
     email: workspacePerson.emailOverride || actualCorePerson.email || actualCorePerson.workEmail || workspacePerson.email || workspacePerson.workEmail,
-    jobTitle: workspacePerson.jobTitleOverride || actualCorePerson.jobTitle || workspacePerson.jobTitle,
+    jobTitle: finalJobTitle,
+    title: finalTitle,
     // Include core entity for reference
     corePerson: {
       id: actualCorePerson.id,

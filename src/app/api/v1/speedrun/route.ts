@@ -139,6 +139,7 @@ export async function GET(request: NextRequest) {
           console.log('🚀 [SPEEDRUN API] PartnerOS mode enabled - filtering companies by relationshipType PARTNER/FUTURE_PARTNER');
         }
         
+        // 🏆 FIX: Fetch more records initially to account for filtering (fetch up to 200 to ensure we have enough after filtering)
         const companiesWithoutPeople = await prisma.companies.findMany({
           where: companiesWhere,
           select: {
@@ -165,10 +166,10 @@ export async function GET(request: NextRequest) {
             }
           },
           orderBy: [
-            { globalRank: 'desc' }, // Sort by rank if available (50-1 descending)
+            { globalRank: 'asc' }, // Sort by rank ascending (1-50) to get top priority first
             { createdAt: 'desc' } // Fallback to creation date
           ],
-          take: 50 // Limit to top 50
+          take: 200 // 🏆 FIX: Fetch more records initially to ensure we have enough after filtering meaningful actions
         });
 
         // 2. Get people from companies that have people (these get Speedrun ranks)
@@ -205,6 +206,7 @@ export async function GET(request: NextRequest) {
           console.log('🚀 [SPEEDRUN API] PartnerOS mode enabled - filtering people by relationshipType PARTNER/FUTURE_PARTNER');
         }
         
+        // 🏆 FIX: Fetch more records initially to account for filtering (fetch up to 200 to ensure we have enough after filtering)
         const peopleFromCompaniesWithPeople = await prisma.people.findMany({
           where: peopleWhere,
           select: {
@@ -250,10 +252,10 @@ export async function GET(request: NextRequest) {
             }
           },
           orderBy: [
-            { globalRank: 'desc' }, // Sort by rank if available (50-1 descending)
+            { globalRank: 'asc' }, // Sort by rank ascending (1-50) to get top priority first
             { createdAt: 'desc' } // Fallback to creation date
           ],
-          take: 50 // Limit to top 50
+          take: 200 // 🏆 FIX: Fetch more records initially to ensure we have enough after filtering meaningful actions
         });
 
         // 3. Combine and sort by globalRank (descending: 50-1)
@@ -285,11 +287,11 @@ export async function GET(request: NextRequest) {
           }))
         ];
 
-        // Sort by globalRank descending (50-1) if available, otherwise by creation date
+        // Sort by globalRank ascending (1-50) - rank 1 is highest priority
         allRecords.sort((a, b) => {
           // First sort by globalRank if both have it
           if (a.globalRank && b.globalRank) {
-            return b.globalRank - a.globalRank; // Descending: 50-1
+            return a.globalRank - b.globalRank; // Ascending: 1-50 (rank 1 = highest priority)
           }
           // If only one has rank, prioritize it
           if (a.globalRank && !b.globalRank) return -1;
@@ -300,11 +302,11 @@ export async function GET(request: NextRequest) {
           return bDate - aDate;
         });
         
-        // 🏆 FIX: Assign sequential ranks (1, 2, 3, ...) for proper display
-        // After sorting, assign ranks in ascending order (1, 2, 3, ...) for display
-        speedrunRecords = allRecords.slice(0, 50).map((record, index) => ({
+        // 🏆 FIX: Don't limit here - we'll filter meaningful actions first, then limit to top 50
+        // Assign sequential ranks (1, 2, 3, ...) for proper display
+        speedrunRecords = allRecords.map((record, index) => ({
           ...record,
-          displayRank: index + 1, // Sequential rank: 1, 2, 3, ..., 50
+          displayRank: index + 1, // Sequential rank: 1, 2, 3, ...
           globalRank: record.globalRank || (index + 1) // Use existing rank or assign sequential
         }));
         
@@ -418,6 +420,9 @@ export async function GET(request: NextRequest) {
       });
       
       console.log(`🔍 [SPEEDRUN API] After filtering meaningful actions: ${speedrunRecords.length} records remaining`);
+      
+      // 🏆 FIX: Now limit to top 50 AFTER filtering meaningful actions
+      speedrunRecords = speedrunRecords.slice(0, 50);
 
       // 🚀 TRANSFORM: Pre-format data for frontend (unified companies and people)
       const speedrunPeopleData = speedrunRecords.map((record, index) => {

@@ -12,6 +12,7 @@ import { AddPersonToCompanyModal } from './AddPersonToCompanyModal';
 import { AddCompanyModal } from '@/platform/ui/components/AddCompanyModal';
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
+import { sanitizeName } from '@/platform/utils/name-normalization';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from './InlineEditField';
@@ -987,20 +988,25 @@ export function UniversalRecordTemplate({
         const nameValue = updatedData['name'];
         // Only process name if it's not empty - preserve existing values if name is empty
         if (typeof nameValue === 'string' && nameValue.trim() !== '') {
-          if (recordType === 'companies') {
-            // For companies, 'name' is the company name
-            updatePayload['name'] = nameValue.trim();
-          } else {
-            // For people, split name into firstName/lastName with validation
-            const { firstName, lastName } = parseFullName(nameValue);
-            // Only update firstName/lastName if we got valid values from parsing
-            // Don't default to "Unknown User" - preserve existing values if name parsing fails
-            if (firstName || lastName) {
-              updatePayload['firstName'] = firstName;
-              updatePayload['lastName'] = lastName;
+          // Sanitize the name to remove bullet characters and other unwanted characters
+          const sanitizedName = sanitizeName(nameValue);
+          if (sanitizedName) {
+            if (recordType === 'companies') {
+              // For companies, 'name' is the company name
+              updatePayload['name'] = sanitizedName;
+            } else {
+              // For people, split name into firstName/lastName with validation
+              const { firstName, lastName } = parseFullName(sanitizedName);
+              // Only update firstName/lastName if we got valid values from parsing
+              // Don't default to "Unknown User" - preserve existing values if name parsing fails
+              if (firstName || lastName) {
+                updatePayload['firstName'] = firstName;
+                updatePayload['lastName'] = lastName;
+              }
+              updatePayload['fullName'] = sanitizedName;
             }
-            updatePayload['fullName'] = nameValue.trim();
           }
+          // If sanitization results in empty string, skip processing to preserve existing values
         }
         // If name is empty, skip processing to preserve existing firstName/lastName values
       }
@@ -1008,21 +1014,30 @@ export function UniversalRecordTemplate({
         // Only update if value is not empty - preserve existing value if empty
         const firstNameValue = updatedData['firstName'];
         if (typeof firstNameValue === 'string' && firstNameValue.trim() !== '') {
-          updatePayload['firstName'] = firstNameValue.trim();
+          const sanitizedFirstName = sanitizeName(firstNameValue);
+          if (sanitizedFirstName) {
+            updatePayload['firstName'] = sanitizedFirstName;
+          }
         }
       }
       if ('lastName' in updatedData && updatedData['lastName'] !== undefined) {
         // Only update if value is not empty - preserve existing value if empty
         const lastNameValue = updatedData['lastName'];
         if (typeof lastNameValue === 'string' && lastNameValue.trim() !== '') {
-          updatePayload['lastName'] = lastNameValue.trim();
+          const sanitizedLastName = sanitizeName(lastNameValue);
+          if (sanitizedLastName) {
+            updatePayload['lastName'] = sanitizedLastName;
+          }
         }
       }
       if ('fullName' in updatedData && updatedData['fullName'] !== undefined) {
         // Only update fullName if it's not empty
         const fullNameValue = updatedData['fullName'];
         if (typeof fullNameValue === 'string' && fullNameValue.trim() !== '') {
-          updatePayload['fullName'] = fullNameValue.trim();
+          const sanitizedFullName = sanitizeName(fullNameValue);
+          if (sanitizedFullName) {
+            updatePayload['fullName'] = sanitizedFullName;
+          }
         }
       }
       
@@ -1285,28 +1300,43 @@ export function UniversalRecordTemplate({
       // Section-level flags are cleared by useFastSectionData before PipelineDetailPage can read them
       // Record-specific flags are only read/cleared by loadDirectRecord, preventing race conditions
 
-      // Update local record state
-      setLocalRecord(result.data);
+      // Sanitize name fields in API response to ensure consistency
+      const sanitizedApiData = { ...result.data };
+      if (sanitizedApiData.fullName) {
+        sanitizedApiData.fullName = sanitizeName(sanitizedApiData.fullName) || sanitizedApiData.fullName;
+      }
+      if (sanitizedApiData.firstName) {
+        sanitizedApiData.firstName = sanitizeName(sanitizedApiData.firstName) || sanitizedApiData.firstName;
+      }
+      if (sanitizedApiData.lastName) {
+        sanitizedApiData.lastName = sanitizeName(sanitizedApiData.lastName) || sanitizedApiData.lastName;
+      }
+      if (sanitizedApiData.name && recordType !== 'companies') {
+        sanitizedApiData.name = sanitizeName(sanitizedApiData.name) || sanitizedApiData.name;
+      }
+
+      // Update local record state with sanitized API response
+      setLocalRecord(sanitizedApiData);
 
       // Call the parent onRecordUpdate callback
       if (onRecordUpdate) {
         console.log('🔄 [UNIVERSAL] Calling onRecordUpdate callback');
-        await onRecordUpdate(result.data);
+        await onRecordUpdate(sanitizedApiData);
       }
       
-      // Update local record state with API response data
+      // Update local record state with API response data (using sanitized data)
       const updatedRecord = {
         ...localRecord,
         ...updatedData,
         ...updatePayload,
-        ...result.data // Include any additional data from API response
+        ...sanitizedApiData // Include sanitized data from API response
       };
       
       console.log('🔄 [UNIVERSAL] Updated local record state:', {
         originalRecord: localRecord,
         updateData: updatedData,
         updatePayload: updatePayload,
-        apiResponse: result.data,
+        apiResponse: sanitizedApiData,
         finalRecord: updatedRecord
       });
       

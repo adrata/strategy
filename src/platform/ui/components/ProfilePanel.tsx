@@ -859,12 +859,12 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <div className="flex items-center gap-2">
                 <ChartBarIcon className="w-4 h-4" />
+                <span className="font-medium">RevenueOS</span>
                 {revenueOSSpeedrunCount > 0 && (
-                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20">
+                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20 ml-auto">
                     <span className="text-xs font-semibold">{revenueOSSpeedrunCount}</span>
                   </div>
                 )}
-                <span className="font-medium">RevenueOS</span>
               </div>
             </button>
 
@@ -885,12 +885,13 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <BuildingOffice2Icon className="w-4 h-4" />
+                  <span className="font-medium">PartnerOS</span>
+                  {/* PartnerOS: Only show pill if count > 0 (should be 0 since no partner data) */}
                   {partnerOSSpeedrunCount > 0 && (
-                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20">
+                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20 ml-auto">
                       <span className="text-xs font-semibold">{partnerOSSpeedrunCount}</span>
                     </div>
                   )}
-                  <span className="font-medium">PartnerOS</span>
                 </div>
               </button>
             )}

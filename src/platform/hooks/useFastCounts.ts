@@ -141,9 +141,16 @@ export function useFastCounts(): UseFastCountsReturn {
         });
       }
       
-      // Check if we're in PartnerOS mode
-      const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
+      // Check if we're in PartnerOS mode - check both sessionStorage and URL
+      const isPartnerOS = typeof window !== 'undefined' && (
+        sessionStorage.getItem('activeSubApp') === 'partneros' ||
+        window.location.pathname.includes('/partner-os/')
+      );
       const partnerosParam = isPartnerOS ? '&partneros=true' : '';
+      
+      if (isPartnerOS) {
+        console.log('🚀 [FAST COUNTS] PartnerOS mode detected - filtering counts by relationshipType PARTNER/FUTURE_PARTNER');
+      }
       
       // 🚀 PERFORMANCE: Use the unified counts API for all counts including speedrun
       const countsResponse = await fetch(`/api/data/counts${forceRefresh ? `?t=${Date.now()}${partnerosParam}` : partnerosParam ? `?${partnerosParam.slice(1)}` : ''}`, {

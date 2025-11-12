@@ -75,3 +75,27 @@ export function normalizeFullName(fullName: string | null | undefined): string |
   return normalizeName(fullName);
 }
 
+/**
+ * Sanitizes a name by removing unwanted characters like bullet points and HTML entities
+ * @param name - The name to sanitize (can be string, null, or undefined)
+ * @returns Sanitized name string, or null if input was null/undefined/empty
+ */
+export function sanitizeName(name: string | null | undefined): string | null {
+  if (!name) return null;
+  
+  // Remove bullet characters and HTML entities
+  // • (U+2022), &bull;, &#8226;, &bullet;
+  let sanitized = name
+    .replace(/•/g, '') // Remove bullet character (U+2022)
+    .replace(/&bull;/g, '') // Remove HTML entity &bull;
+    .replace(/&#8226;/g, '') // Remove HTML numeric entity &#8226;
+    .replace(/&bullet;/g, '') // Remove HTML entity &bullet;
+    .trim();
+  
+  // Normalize multiple spaces to single space
+  sanitized = sanitized.replace(/\s+/g, ' ').trim();
+  
+  // Return null for empty strings (to distinguish from actual values)
+  return sanitized === '' ? null : sanitized;
+}
+

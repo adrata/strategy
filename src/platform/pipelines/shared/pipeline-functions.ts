@@ -168,6 +168,34 @@ export const updateCacheStep: PipelineStep<
 // ============================================================================
 
 /**
+ * Calculate influence level from buyer group role
+ * Maps buyer group roles to influence levels for consistency
+ */
+function calculateInfluenceLevelFromRole(role: string | null | undefined): 'High' | 'Medium' | 'Low' | null {
+  if (!role) return null;
+  
+  const normalizedRole = role.toLowerCase().trim();
+  
+  // Decision Maker and Champion have high influence
+  if (normalizedRole === 'decision maker' || normalizedRole === 'champion') {
+    return 'High';
+  }
+  
+  // Blocker and Stakeholder have medium influence
+  if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') {
+    return 'Medium';
+  }
+  
+  // Introducer has low influence
+  if (normalizedRole === 'introducer') {
+    return 'Low';
+  }
+  
+  // Default to Medium for unknown roles
+  return 'Medium';
+}
+
+/**
  * Save buyer group to database (idempotent with upsert)
  */
 export const saveBuyerGroupStep: PipelineStep<
@@ -191,6 +219,9 @@ export const saveBuyerGroupStep: PipelineStep<
       for (const member of input.buyerGroup.members) {
         if (!member.email) continue;
         
+        // Calculate influence level from role
+        const influenceLevel = calculateInfluenceLevelFromRole(member.role);
+        
         // Check if person exists
         const existingPerson = await prisma.people.findFirst({
           where: {
@@ -210,6 +241,7 @@ export const saveBuyerGroupStep: PipelineStep<
             data: {
               buyerGroupRole: member.role,
               isBuyerGroupMember: true, // Always set to true when assigning a role
+              influenceLevel: influenceLevel, // Set influence level based on role
               influenceScore: member.influenceScore || member.confidence || 0,
               updatedAt: new Date()
             }
@@ -230,6 +262,7 @@ export const saveBuyerGroupStep: PipelineStep<
                 linkedinUrl: member.linkedin || null,
                 buyerGroupRole: member.role,
                 isBuyerGroupMember: true, // Always set to true when creating with a role
+                influenceLevel: influenceLevel, // Set influence level based on role
                 influenceScore: member.influenceScore || member.confidence || 0,
                 status: 'PROSPECT',
                 createdAt: new Date(),

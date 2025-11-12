@@ -771,6 +771,34 @@ class BuyerGroupPipeline {
     }
 
     /**
+     * Calculate influence level from buyer group role
+     * Maps buyer group roles to influence levels for consistency
+     */
+    calculateInfluenceLevelFromRole(role) {
+        if (!role) return null;
+        
+        const normalizedRole = role.toLowerCase().trim();
+        
+        // Decision Maker and Champion have high influence
+        if (normalizedRole === 'decision maker' || normalizedRole === 'champion') {
+            return 'High';
+        }
+        
+        // Blocker and Stakeholder have medium influence
+        if (normalizedRole === 'blocker' || normalizedRole === 'stakeholder') {
+            return 'Medium';
+        }
+        
+        // Introducer has low influence
+        if (normalizedRole === 'introducer') {
+            return 'Low';
+        }
+        
+        // Default to Medium for unknown roles
+        return 'Medium';
+    }
+
+    /**
      * SAVE BUYER GROUP TO DATABASE (STREAMLINED)
      * 
      * Simple approach: Update existing people records with buyer group roles
@@ -787,6 +815,9 @@ class BuyerGroupPipeline {
             
             // Update people records with buyer group roles
             for (const [role, members] of Object.entries(result.buyerGroup.roles || {})) {
+                // Calculate influence level from role
+                const influenceLevel = this.calculateInfluenceLevelFromRole(role);
+                
                 for (const member of members) {
                     if (member && member.name && member.email) {
                         try {
@@ -808,6 +839,8 @@ class BuyerGroupPipeline {
                                     where: { id: existingPerson.id },
                                     data: {
                                         buyerGroupRole: role,
+                                        isBuyerGroupMember: true, // Always set to true when assigning a role
+                                        influenceLevel: influenceLevel, // Set influence level based on role
                                         influenceScore: member.influenceScore || member.confidence || 0,
                                         updatedAt: new Date()
                                     }
@@ -827,6 +860,8 @@ class BuyerGroupPipeline {
                                         phone: member.phone || null,
                                         linkedinUrl: member.linkedin || null,
                                         buyerGroupRole: role,
+                                        isBuyerGroupMember: true, // Always set to true when creating with a role
+                                        influenceLevel: influenceLevel, // Set influence level based on role
                                         influenceScore: member.influenceScore || member.confidence || 0,
                                         status: 'PROSPECT',
                                         createdAt: new Date(),

@@ -457,6 +457,7 @@ export async function GET(request: NextRequest) {
             jobTitleOverride: true,
             displayName: true,
             jobTitle: true,
+            title: true,
             email: true,
             workEmail: true,
             personalEmail: true,
@@ -560,6 +561,7 @@ export async function GET(request: NextRequest) {
                 jobTitleOverride: true,
                 displayName: true,
                 jobTitle: true,
+                title: true,
                 email: true,
                 workEmail: true,
                 personalEmail: true,
@@ -795,8 +797,21 @@ export async function GET(request: NextRequest) {
             else nextActionTiming = 'Future';
           }
           
+          // 🎯 TITLE FALLBACK: Populate title from jobTitle if title is missing, then check enrichment data
+          const { extractTitleWithFallback } = await import('@/platform/utils/extract-title-from-enrichment');
+          const extractedTitle = extractTitleWithFallback(
+            person.title,
+            person.jobTitle,
+            person.customFields as any
+          );
+          const finalTitle = extractedTitle || person.title || person.jobTitle || null;
+          const finalJobTitle = person.jobTitle || extractedTitle || person.title || null;
+          
           const result = {
             ...person,
+            // Ensure both title and jobTitle are populated with fallback logic
+            title: finalTitle,
+            jobTitle: finalJobTitle,
             // Use computed lastAction if available, otherwise fall back to stored fields
             lastAction: lastActionText || person.lastAction,
             lastActionDate: lastActionDate || person.lastActionDate,

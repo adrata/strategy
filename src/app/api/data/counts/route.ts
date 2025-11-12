@@ -10,16 +10,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 // 🚀 PERFORMANCE: Ultra-aggressive caching for counts
 const COUNTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const countsCache = new Map<string, { data: any; timestamp: number }>();
 
 // 🧹 WORKSPACE SWITCH CACHE CLEARING: Clear counts cache when workspace changes
-export function clearCountsCache(workspaceId: string, userId: string): void {
-  const cacheKey = `counts-${workspaceId}-${userId}`;
-  countsCache.delete(cacheKey);
-  console.log(`🧹 [COUNTS CACHE] Cleared cache for workspace: ${workspaceId}, user: ${userId}`);
+export function clearCountsCache(workspaceId: string, userId: string, isPartnerOS?: boolean): void {
+  // Clear both PartnerOS and RevenueOS cache keys
+  const revenueOSCacheKey = `counts-${workspaceId}-${userId}-revenueos`;
+  const partnerOSCacheKey = `counts-${workspaceId}-${userId}-partneros`;
+  countsCache.delete(revenueOSCacheKey);
+  countsCache.delete(partnerOSCacheKey);
+  console.log(`🧹 [COUNTS CACHE] Cleared cache for workspace: ${workspaceId}, user: ${userId} (both RevenueOS and PartnerOS)`);
 }
 
 export async function POST(request: NextRequest) {
@@ -48,6 +52,10 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const forceRefresh = url.searchParams.has('t');
   const isPartnerOS = url.searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
+  
+  if (isPartnerOS) {
+    console.log('🚀 [COUNTS API] PartnerOS mode detected - filtering all counts by relationshipType PARTNER/FUTURE_PARTNER');
+  }
   
   try {
     // 1. Authenticate and authorize user
@@ -80,7 +88,8 @@ export async function GET(request: NextRequest) {
     }
     
     // 🚀 PERFORMANCE: Check cache first (unless force refresh)
-    const cacheKey = `counts-${workspaceId}-${userId}`;
+    // 🏆 FIX: Include isPartnerOS in cache key to prevent stale PartnerOS-filtered results
+    const cacheKey = `counts-${workspaceId}-${userId}-${isPartnerOS ? 'partneros' : 'revenueos'}`;
     const cached = countsCache.get(cacheKey);
     
     if (!forceRefresh && cached && Date.now() - cached.timestamp < COUNTS_CACHE_TTL) {
@@ -159,27 +168,130 @@ export async function GET(request: NextRequest) {
           return [];
         }),
         // Get speedrun people count - count people with ranks 1-50 (per-user)
-        prisma.people.count({
-          where: {
-            ...peopleBaseWhere,
-            companyId: { not: null }, // Only people with companies
-            globalRank: { not: null, gte: 1, lte: 50 } // Only people with ranks 1-50 (per-user)
+        // 🏆 FIX: Match speedrun API filtering - exclude records with meaningful actions EVER
+        // First get the IDs, then filter by checking actions table (same logic as speedrun API)
+        (async () => {
+          try {
+            // Step 1: Get all people with ranks 1-50
+            const speedrunPeople = await prisma.people.findMany({
+              where: {
+                ...peopleBaseWhere,
+                companyId: { not: null },
+                globalRank: { not: null, gte: 1, lte: 50 }
+              },
+              select: { id: true, lastAction: true, lastActionDate: true }
+            });
+            
+            if (speedrunPeople.length === 0) return 0;
+            
+            // Step 2: Check actions table for meaningful actions (same as speedrun API)
+            const personIds = speedrunPeople.map(p => p.id);
+            const meaningfulActions = await prisma.actions.findMany({
+              where: {
+                personId: { in: personIds },
+                status: 'COMPLETED'
+              },
+              select: { personId: true, type: true }
+            });
+            
+            const recordsWithMeaningfulActions = new Set<string>();
+            for (const action of meaningfulActions) {
+              if (action.personId && isMeaningfulAction(action.type)) {
+                recordsWithMeaningfulActions.add(action.personId);
+              }
+            }
+            
+            // Step 3: Filter out records with meaningful actions (same logic as speedrun API)
+            const filteredPeople = speedrunPeople.filter(person => {
+              const hasMeaningfulAction = recordsWithMeaningfulActions.has(person.id);
+              if (hasMeaningfulAction) return false;
+              
+              // Also check lastAction/lastActionDate fields as fallback
+              const lastAction = person.lastAction;
+              const lastActionDate = person.lastActionDate;
+              const hasNonMeaningfulLastAction = !lastActionDate || 
+                !lastAction || 
+                lastAction === 'No action taken' ||
+                lastAction === 'Record created' ||
+                lastAction === 'Company record created' ||
+                lastAction === 'Record added';
+              
+              // If lastActionDate exists and lastAction is not in the non-meaningful list, exclude
+              if (lastActionDate && !hasNonMeaningfulLastAction) {
+                return false;
+              }
+              
+              return true;
+            });
+            
+            return filteredPeople.length;
+          } catch (error) {
+            console.error('❌ [COUNTS API] Error fetching speedrun people count:', error);
+            return 0;
           }
-        }).catch((error) => {
-          console.error('❌ [COUNTS API] Error fetching speedrun people count:', error);
-          return 0;
-        }),
+        })(),
         // Get speedrun companies count - count companies with ranks 1-50 and 0 people
-        prisma.companies.count({
-          where: {
-            ...companiesBaseWhere,
-            globalRank: { not: null, gte: 1, lte: 50 }, // Only companies with ranks 1-50
-            people: { none: {} } // CRITICAL: Only companies with 0 people (companies with people are represented by their people)
+        // 🏆 FIX: Match speedrun API filtering - exclude records with meaningful actions EVER
+        (async () => {
+          try {
+            // Step 1: Get all companies with ranks 1-50 and 0 people
+            const speedrunCompanies = await prisma.companies.findMany({
+              where: {
+                ...companiesBaseWhere,
+                globalRank: { not: null, gte: 1, lte: 50 },
+                people: { none: {} }
+              },
+              select: { id: true, lastAction: true, lastActionDate: true }
+            });
+            
+            if (speedrunCompanies.length === 0) return 0;
+            
+            // Step 2: Check actions table for meaningful actions (same as speedrun API)
+            const companyIds = speedrunCompanies.map(c => c.id);
+            const meaningfulActions = await prisma.actions.findMany({
+              where: {
+                companyId: { in: companyIds },
+                status: 'COMPLETED'
+              },
+              select: { companyId: true, type: true }
+            });
+            
+            const recordsWithMeaningfulActions = new Set<string>();
+            for (const action of meaningfulActions) {
+              if (action.companyId && isMeaningfulAction(action.type)) {
+                recordsWithMeaningfulActions.add(action.companyId);
+              }
+            }
+            
+            // Step 3: Filter out records with meaningful actions (same logic as speedrun API)
+            const filteredCompanies = speedrunCompanies.filter(company => {
+              const hasMeaningfulAction = recordsWithMeaningfulActions.has(company.id);
+              if (hasMeaningfulAction) return false;
+              
+              // Also check lastAction/lastActionDate fields as fallback
+              const lastAction = company.lastAction;
+              const lastActionDate = company.lastActionDate;
+              const hasNonMeaningfulLastAction = !lastActionDate || 
+                !lastAction || 
+                lastAction === 'No action taken' ||
+                lastAction === 'Record created' ||
+                lastAction === 'Company record created' ||
+                lastAction === 'Record added';
+              
+              // If lastActionDate exists and lastAction is not in the non-meaningful list, exclude
+              if (lastActionDate && !hasNonMeaningfulLastAction) {
+                return false;
+              }
+              
+              return true;
+            });
+            
+            return filteredCompanies.length;
+          } catch (error) {
+            console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
+            return 0;
           }
-        }).catch((error) => {
-          console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
-          return 0;
-        }),
+        })(),
         // Get speedrun people with no meaningful actions TODAY count
         // 🏆 FIX: Count people where lastActionDate is null OR before today OR (today but not meaningful action)
         // If lastActionDate is today AND lastAction is meaningful, they're NOT "Ready"

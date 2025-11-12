@@ -20,6 +20,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
+import { sanitizeName } from '@/platform/utils/name-normalization';
 import { UniversalBuyerGroupsTab } from './tabs/UniversalBuyerGroupsTab';
 import { UniversalPeopleTab } from './tabs/UniversalPeopleTab';
 import { UniversalActionsTab } from './tabs/UniversalActionsTab';
@@ -441,9 +442,9 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         // Person/other record types
         setFormData({
           // Basic info
-          name: record.fullName || record.name || '',
-          firstName: record.firstName || '',
-          lastName: record.lastName || '',
+          name: sanitizeName(record.fullName || record.name) || '',
+          firstName: sanitizeName(record.firstName) || '',
+          lastName: sanitizeName(record.lastName) || '',
           email: record.email || record.workEmail || '',
           phone: record.phone || record.mobilePhone || record.workPhone || '',
           
