@@ -13,7 +13,6 @@ import { useFeatureAccess } from "@/platform/ui/context/FeatureAccessProvider";
 import { useChecklist, type ChecklistItem } from "./useChecklist";
 import { getPresetTemplate, type PresetTemplateId } from "./daily100Presets";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
-import { useFastCounts } from "@/platform/hooks/useFastCounts";
 import {
   UserIcon,
   CogIcon,
@@ -334,10 +333,46 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     // Not in OasisProvider context, keep count at 0
   }
 
-  // Get speedrun counts for pills - REMOVED: Don't show pills if count is 0
-  const { counts: fastCounts } = useFastCounts();
-  const revenueOSSpeedrunCount = (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) > 0 ? (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) : 0;
-  const partnerOSSpeedrunCount = (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) > 0 ? (fastCounts?.speedrunRemaining || fastCounts?.speedrunReady || 0) : 0; // Same count for now, can be filtered later
+  // Get speedrun counts for pills - fetch separately for RevenueOS and PartnerOS
+  const [revenueOSSpeedrunCount, setRevenueOSSpeedrunCount] = useState<number>(0);
+  const [partnerOSSpeedrunCount, setPartnerOSSpeedrunCount] = useState<number>(0);
+
+  // Fetch counts separately for RevenueOS and PartnerOS
+  useEffect(() => {
+    if (!workspaceId || !userId) return;
+
+    const fetchCounts = async () => {
+      try {
+        // Fetch RevenueOS counts (without partneros parameter)
+        const revenueOSResponse = await fetch('/api/data/counts', {
+          credentials: 'include'
+        });
+        if (revenueOSResponse.ok) {
+          const revenueOSData = await revenueOSResponse.json();
+          if (revenueOSData.success) {
+            const speedrunCount = revenueOSData.data?.speedrunRemaining || revenueOSData.data?.speedrunReady || 0;
+            setRevenueOSSpeedrunCount(speedrunCount);
+          }
+        }
+
+        // Fetch PartnerOS counts (with partneros=true parameter)
+        const partnerOSResponse = await fetch('/api/data/counts?partneros=true', {
+          credentials: 'include'
+        });
+        if (partnerOSResponse.ok) {
+          const partnerOSData = await partnerOSResponse.json();
+          if (partnerOSData.success) {
+            const speedrunCount = partnerOSData.data?.speedrunRemaining || partnerOSData.data?.speedrunReady || 0;
+            setPartnerOSSpeedrunCount(speedrunCount);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch speedrun counts:', error);
+      }
+    };
+
+    fetchCounts();
+  }, [workspaceId, userId]);
 
   // Automatically detect current app from pathname if not provided
   const getCurrentAppFromPath = (): string => {
