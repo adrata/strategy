@@ -128,6 +128,12 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
     // Defensive guard: for speedrun person records with no linked company
     if (!companyId) {
+      // Check if we have company data from the record itself
+      if (record?.company && typeof record.company === 'object' && record.company.id) {
+        console.log(`🏢 [COMPANY OVERVIEW] Using company data from record relation`);
+        setFullCompanyData(record.company);
+        return;
+      }
       if (recordType === 'speedrun' && record?.recordType !== 'company') {
         setCompanyError('No linked company found for this person');
       }
@@ -151,15 +157,43 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         console.log(`✅ [COMPANY OVERVIEW] Successfully fetched full company data:`, result.data.name);
       } else {
         const errorMessage = (result && (result.error || result.message)) || 'Failed to fetch company data';
-        throw new Error(errorMessage);
+        
+        // Fallback: Check if we have company data from the record relation
+        if (record?.company && typeof record.company === 'object' && record.company.id === companyId) {
+          console.log(`⚠️ [COMPANY OVERVIEW] API call failed, but using company data from record relation`);
+          setFullCompanyData(record.company);
+          setCompanyError(null); // Clear error since we have fallback data
+        } else {
+          throw new Error(errorMessage);
+        }
       }
     } catch (error) {
       console.error('❌ [COMPANY OVERVIEW] Error fetching company data:', error);
-      setCompanyError(error instanceof Error ? error.message : 'Failed to fetch company data');
+      
+      // Fallback: Check if we have company data from the record relation
+      if (record?.company && typeof record.company === 'object' && record.company.id === companyId) {
+        console.log(`⚠️ [COMPANY OVERVIEW] API call failed, but using company data from record relation`);
+        setFullCompanyData(record.company);
+        setCompanyError(null); // Clear error since we have fallback data
+      } else {
+        setCompanyError(error instanceof Error ? error.message : 'Failed to fetch company data');
+      }
     } finally {
       setIsLoadingCompany(false);
     }
   }, [companyId, hasPartialCompanyData, fullCompanyData, record, recordType]);
+
+  // Initialize with company data from record if available (before fetching)
+  useEffect(() => {
+    // If we don't have fullCompanyData yet, check if record has company data we can use
+    if (!fullCompanyData && record?.company && typeof record.company === 'object' && record.company.id) {
+      // Only use record company data if we have a matching companyId or if companyId is missing
+      if (!companyId || record.company.id === companyId) {
+        console.log(`🏢 [COMPANY OVERVIEW] Initializing with company data from record`);
+        setFullCompanyData(record.company);
+      }
+    }
+  }, [record, companyId, fullCompanyData]);
 
   // Fetch full company data when component mounts or dependencies change
   useEffect(() => {
@@ -545,8 +579,8 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     return <CompanyDetailSkeleton message="Loading full company details..." />;
   }
 
-  // Show error state if company data fetch failed
-  if (companyError) {
+  // Show error state if company data fetch failed AND we don't have fallback data
+  if (companyError && !fullCompanyData && !(record?.company && typeof record.company === 'object')) {
     return (
       <div className="p-8 text-center">
         <div className="bg-error/10 border border-error text-error px-4 py-3 rounded mb-4">
@@ -564,7 +598,8 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   }
   
   // Show error if no company ID is available (for person records without a company)
-  if (!companyId && recordType !== 'companies') {
+  // But only if we also don't have company data from the record relation
+  if (!companyId && recordType !== 'companies' && !(record?.company && typeof record.company === 'object')) {
     return (
       <div className="p-8 text-center">
         <div className="bg-warning/10 border border-warning text-warning px-4 py-3 rounded mb-4">
