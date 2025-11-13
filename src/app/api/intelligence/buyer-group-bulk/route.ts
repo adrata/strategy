@@ -346,7 +346,7 @@ function assignRealisticRoles(people: any[]): any[] {
 
   for (const person of sortedPeople) {
     let role = 'stakeholder'; // Default role
-    const titleLower = person.title.toLowerCase();
+    const titleLower = (person.jobTitle || '').toLowerCase();
 
     // Decision Makers (C-level, VPs with budget authority)
     if (decisionMakers < targets['decision'] && 
