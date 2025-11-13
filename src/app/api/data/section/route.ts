@@ -16,7 +16,7 @@ import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Ultra-aggressive caching for section data
 const SECTION_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
-const sectionCache = new Map<string, { data: any; timestamp: number }>();
+export const sectionCache = new Map<string, { data: any; timestamp: number }>();
 
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
@@ -358,8 +358,7 @@ export async function GET(request: NextRequest) {
             AND: [
               {
                 OR: [
-                  { status: 'new' },
-                  { status: 'lead' }
+                  { status: 'LEAD' }
                 ]
               }
             ]
@@ -385,7 +384,6 @@ export async function GET(request: NextRequest) {
             linkedinConnectionDate: true,
             buyerGroupRole: true,
             influenceLevel: true,
-            engagementPriority: true,
             engagementStrategy: true,
             company: {
               select: {
@@ -598,8 +596,7 @@ export async function GET(request: NextRequest) {
             AND: [
               {
                 OR: [
-                  { status: 'engaged' },
-                  { status: 'prospect' }
+                  { status: 'PROSPECT' }
                 ]
               }
             ]
@@ -625,7 +622,6 @@ export async function GET(request: NextRequest) {
             linkedinConnectionDate: true,
             buyerGroupRole: true,
             influenceLevel: true,
-            engagementPriority: true,
             engagementStrategy: true,
             company: {
               select: {
@@ -779,8 +775,10 @@ export async function GET(request: NextRequest) {
         console.log(`🏢 [PROSPECTS API] Combined prospects: ${deduplicatedProspects.length} people + ${companyProspects.length} companies = ${allProspects.length} total`);
         
         sectionData = allProspects.map((person, index) => {
-          // Extract Coresignal data
-          const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+          // Extract Coresignal data (only available on people records, not company records)
+          const coresignalData = ('customFields' in person && person.customFields) 
+            ? ((person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {})
+            : {};
           
           // Get company from Coresignal data (active experience)
           const coresignalCompany = coresignalData.active_experience_company || 
@@ -792,9 +790,9 @@ export async function GET(request: NextRequest) {
           let lastAction = person.lastAction;
           let lastActionDate = person.lastActionDate;
           
-          // Check if we have a meaningful action from the database
-          if (person.actions && person.actions.length > 0) {
-            const meaningfulAction = person.actions.find(action => isMeaningfulAction(action.type));
+          // Check if we have a meaningful action from the database (only available on people records)
+          if ('actions' in person && person.actions && person.actions.length > 0) {
+            const meaningfulAction = person.actions.find((action: any) => isMeaningfulAction(action.type));
             if (meaningfulAction) {
               lastAction = meaningfulAction.subject || meaningfulAction.type;
               lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
@@ -995,7 +993,6 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             industry: true,
-            vertical: true,
             size: true,
             mainSellerId: true,
             createdAt: true,
@@ -1410,115 +1407,10 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'sellers':
-        // 🚀 SELLERS: Load sellers data from both sellers table and people table with role 'seller'
-        const [sellersTableData, peopleSellersData] = await Promise.all([
-          // Check sellers table
-          prisma.sellers.findMany({
-            where: {
-              workspaceId,
-              deletedAt: null,
-              OR: [
-                { mainSellerId: userId },
-                { mainSellerId: null }
-              ]
-            },
-            orderBy: [
-              { updatedAt: 'desc' }
-            ],
-            take: limit,
-            select: {
-              id: true,
-              name: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-              phone: true,
-              jobTitle: true,
-              department: true,
-              company: true,
-              mainSellerId: true,
-              workspaceId: true,
-              tags: true,
-              metadata: true,
-              createdAt: true,
-              updatedAt: true
-            }
-          }),
-          // Check people table for sellers
-          prisma.people.findMany({
-            where: {
-              workspaceId,
-              deletedAt: null,
-              role: 'seller',
-              OR: [
-                { mainSellerId: userId },
-                { mainSellerId: null }
-              ]
-            },
-            orderBy: [
-              { updatedAt: 'desc' }
-            ],
-            take: limit,
-            select: {
-              id: true,
-              fullName: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-              phone: true,
-              jobTitle: true,
-              department: true,
-              company: true,
-              mainSellerId: true,
-              workspaceId: true,
-              tags: true,
-              createdAt: true,
-              updatedAt: true
-            }
-          })
-        ]);
-        
-        // Combine both data sources
-        const allSellersData = [...sellersTableData, ...peopleSellersData];
-        
-        // 🎯 DEDUPLICATION: Remove duplicate sellers by name (keep first occurrence)
-        const seenSellerNames = new Set();
-        const deduplicatedSellers = allSellersData.filter(seller => {
-          const fullName = seller.name || seller.fullName || `${seller.firstName || ''} ${seller.lastName || ''}`.trim();
-          if (seenSellerNames.has(fullName)) {
-            return false; // Skip duplicate
-          }
-          seenSellerNames.add(fullName);
-          return true;
-        });
-        
-        sectionData = deduplicatedSellers.map((seller, index) => {
-          // Extract status from metadata
-          const metadata = seller.metadata || {};
-          const status = metadata.status || 'offline';
-          const isOnline = status === 'online';
-          
-          return {
-            id: seller.id,
-            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after deduplication
-            name: seller.name || seller.fullName || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller',
-            firstName: seller.firstName,
-            lastName: seller.lastName,
-            email: seller.email || 'Unknown Email',
-            phone: seller.phone || 'Unknown Phone',
-            title: seller.jobTitle || 'Unknown Title',
-            department: seller.department || 'Unknown Department',
-            company: seller.company || 'Unknown Company',
-            mainSellerId: seller.mainSellerId,
-            workspaceId: seller.workspaceId,
-            tags: seller.tags || [],
-            status: status,
-            isOnline: isOnline,
-            metadata: metadata,
-            createdAt: seller.createdAt,
-            updatedAt: seller.updatedAt
-          };
-        });
+        // 🚀 SELLERS: Return empty data for now
+        // Note: sellers table doesn't exist in current schema
+        // Users don't have direct workspace relationship - would need to query through workspace_users join table
+        sectionData = [];
         break;
         
       default:
@@ -1540,10 +1432,11 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'prospects':
-          // Use same logic as counts API (prospects table without user filters)
-          totalCount = await prisma.prospects.count({
+          // Count people with PROSPECT status (prospects table doesn't exist in current schema)
+          totalCount = await prisma.people.count({
             where: {
               workspaceId,
+              status: 'PROSPECT',
               deletedAt: null
             }
           });
@@ -1605,13 +1498,8 @@ export async function GET(request: NextRequest) {
           totalCount = Math.min(50, speedrunPeopleCount + speedrunCompaniesCount);
           break;
         case 'sellers':
-          // Use same logic as counts API (sellers table without user filters)
-          totalCount = await prisma.sellers.count({
-            where: {
-              workspaceId,
-              deletedAt: null
-            }
-          });
+          // Return 0 for sellers (sellers table doesn't exist in current schema)
+          totalCount = 0;
           break;
         default:
           totalCount = sectionData.length;
