@@ -7,6 +7,7 @@ import { getWorkspaceBySlug, parseWorkspaceFromUrl } from "@/platform/auth/works
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useWorkspaceSwitch } from "@/platform/hooks/useWorkspaceSwitch";
 import { initSpeedrunPrefetch } from "@/platform/services/speedrun-prefetch";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 
 interface WorkspaceLayoutProps {
   children: React.ReactNode;
@@ -88,5 +89,9 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
   //   );
   // }
 
-  return <>{children}</>;
+  return (
+    <RevenueOSProvider>
+      {children}
+    </RevenueOSProvider>
+  );
 }

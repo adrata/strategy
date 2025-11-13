@@ -241,6 +241,8 @@ function PipelineLayoutInner({
                             pathname.includes('/partners') ||
                             pathname.includes('/sellers') ||
                             pathname.includes('/customers') ||
+                            pathname.includes('/chronicle') ||
+                            pathname.includes('/metrics') ||
                             pathname.includes('/stacks') ||
                             pathname.includes('/oasis') ||
                             pathname.includes('/workshop') ||
@@ -475,7 +477,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
         if (typeof window !== 'undefined') {
           const currentActiveSubApp = sessionStorage.getItem('activeSubApp');
           // Only clear if we're navigating to a pipeline route (not other apps)
-          const isPipelineSection = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'].includes(section);
+          const isPipelineSection = ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'chronicle', 'metrics'].includes(section);
           if (isPipelineSection && currentActiveSubApp === 'partneros') {
             sessionStorage.removeItem('activeSubApp');
           }

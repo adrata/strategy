@@ -1495,7 +1495,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={isLoading}
+                  isLoading={sectionData.loading}
                   searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : sectionData.count} // Pass total count for correct pagination
                 />

@@ -1,7 +1,10 @@
-"use client";
-
+import { Metadata } from "next";
 import { PipelineContent } from "@/frontend/components/pipeline/PipelineContent";
 
+export const metadata: Metadata = {
+  title: "Companies • Pipeline",
+  description: "Companies management",
+};
 
 
 export default function WorkspaceCompaniesPage() {
