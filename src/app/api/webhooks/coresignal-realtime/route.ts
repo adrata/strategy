@@ -227,14 +227,17 @@ async function handlePersonCompanyChange(event: any) {
 }
 
 /**
- * Handle person title change
+ * Handle person title change (updates jobTitle field in database)
  */
 async function handlePersonTitleChange(event: any) {
-  console.log(`📋 [WEBHOOK] Title change detected`);
+  console.log(`📋 [WEBHOOK] Job title change detected`);
   console.log(`   ${event.person.name}: ${event.oldTitle} → ${event.newTitle}`);
   
-  // Find and update person, store for AI notification
-  // Similar to company change but less critical
+  // TODO: Implement full update logic
+  // 1. Find person by corePersonId or name
+  // 2. Update jobTitle field (note: 'title' field was removed from schema)
+  // 3. Store notification for AI analysis of career trajectory
+  // Similar to company change but less critical for buyer group re-runs
   
   return {
     processed: true,

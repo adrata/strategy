@@ -948,7 +948,6 @@ export async function GET(request: NextRequest) {
           lastName: null,
           email: null,
           jobTitle: null,
-          title: null,
           phone: null,
           department: null,
           status: company.status || 'LEAD', // Use actual company status
@@ -1050,7 +1049,6 @@ export async function GET(request: NextRequest) {
           lastName: null,
           email: null,
           jobTitle: null,
-          title: null,
           phone: null,
           department: null,
           status: company.status || 'PROSPECT',
