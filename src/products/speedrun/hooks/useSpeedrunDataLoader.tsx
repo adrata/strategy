@@ -266,6 +266,26 @@ export function useSpeedrunDataLoader() {
     refresh();
   }, [clearCache, setIsDataLoaded, refresh]);
 
+  // Listen for speedrun data update events to refresh when fields are saved
+  useEffect(() => {
+    const handleSpeedrunDataUpdated = (event: CustomEvent) => {
+      const { personId, field, value } = event.detail;
+      console.log(`🔄 [SPEEDRUN DATA LOADER] Data updated event received for person ${personId}, field ${field}`);
+      // Clear cache and refresh to ensure fresh data
+      clearCache();
+      // Small delay to ensure database update is complete
+      setTimeout(() => {
+        refresh();
+      }, 500);
+    };
+
+    window.addEventListener('speedrun-data-updated', handleSpeedrunDataUpdated as EventListener);
+    
+    return () => {
+      window.removeEventListener('speedrun-data-updated', handleSpeedrunDataUpdated as EventListener);
+    };
+  }, [clearCache, refresh]);
+
   // Check for daily reset and auto-progression
   useEffect(() => {
     const checkDailyReset = () => {
