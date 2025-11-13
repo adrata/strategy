@@ -84,17 +84,12 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
       const response = await authFetch(url);
       
       if (!response.ok) {
-        // Try to get error details from response
-        let errorMessage = 'Failed to fetch lists';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorData.message || errorMessage;
-          console.error('API error response:', errorData);
-        } catch {
-          // If response isn't JSON, use status text
-          errorMessage = response.statusText || `HTTP ${response.status}`;
-        }
-        throw new Error(errorMessage);
+        // Log error but don't throw - empty lists is a valid state
+        const status = response.status;
+        const statusText = response.statusText;
+        console.warn(`Failed to fetch lists (${status} ${statusText}). Using empty list.`);
+        setLists([]);
+        return;
       }
       
       const result = await response.json();
@@ -107,13 +102,14 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
           localStorage.setItem(storageKey, JSON.stringify({ lists: result.data, ts: Date.now() }));
         } catch {}
       } else {
-        // If result doesn't have success/data, still set empty array (no lists found is valid)
+        // No lists found is valid - set empty array
         setLists([]);
       }
     } catch (err) {
       console.error('Error fetching lists:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch lists');
+      // Don't set error state - empty lists is acceptable
       // Don't clear lists on error - keep cached data if available
+      setLists([]);
     } finally {
       setLoading(false);
     }

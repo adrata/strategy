@@ -231,7 +231,7 @@ export function ListsDropdown({
         </button>
 
         {/* Dropdown Menu */}
-        {isDropdownOpen && isClient && createPortal(
+        {isDropdownOpen && isClient && typeof document !== 'undefined' && document.body && createPortal(
           <div
             ref={dropdownContentRef}
             className="fixed z-[9999] mt-1 w-64 bg-background border border-border rounded-lg shadow-lg"
