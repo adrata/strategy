@@ -714,18 +714,24 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     sortDirection: preferences.sortDirection
   };
 
+  // Only show lists dropdown for supported sections (excludes speedrun)
+  const SUPPORTED_SECTIONS = ['companies', 'people', 'leads', 'prospects', 'opportunities', 'clients'];
+  const showListsDropdown = SUPPORTED_SECTIONS.includes(section);
+
   return (
     <div className="flex items-center gap-4 py-2 w-full bg-background">
-      {/* Lists Dropdown - for all supported sections */}
-      <ListsDropdown
-        section={section}
-        selectedListId={selectedListId || null}
-        onListSelect={onListSelect || (() => {})}
-        currentFilters={currentFilters}
-        currentVisibleFields={currentVisibleFields || externalVisibleColumns}
-        onUpdateList={onUpdateList}
-        workspaceId={workspaceId}
-      />
+      {/* Lists Dropdown - only for supported sections */}
+      {showListsDropdown && (
+        <ListsDropdown
+          section={section}
+          selectedListId={selectedListId || null}
+          onListSelect={onListSelect || (() => {})}
+          currentFilters={currentFilters}
+          currentVisibleFields={currentVisibleFields || externalVisibleColumns}
+          onUpdateList={onUpdateList}
+          workspaceId={workspaceId}
+        />
+      )}
 
       {/* Search - full width with icon on right */}
       <div className="relative flex-1">
