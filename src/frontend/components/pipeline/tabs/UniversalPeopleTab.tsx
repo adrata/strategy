@@ -284,7 +284,9 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           console.log('🔍 [PEOPLE] Fetching fresh people data for company:', companyName, 'ID:', companyId);
           
           try {
-            const response = await authFetch(`/api/v1/people?companyId=${companyId}&limit=1000`);
+            // 🚀 PERFORMANCE FIX: Fetch only 200 people initially for faster load times
+            // Users can paginate if needed
+            const response = await authFetch(`/api/v1/people?companyId=${companyId}&limit=200&sortBy=updatedAt&sortOrder=desc`);
             console.log('🔍 [PEOPLE] API response:', response);
             
             if (response && response.success && response.data) {

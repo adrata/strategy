@@ -154,6 +154,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
+    { id: 'co-workers', label: 'People', component: UniversalPeopleTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: NotesTab }
   ],
@@ -163,6 +165,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
+    { id: 'co-workers', label: 'People', component: UniversalPeopleTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: NotesTab }
   ],
@@ -255,10 +259,11 @@ export function getTabsForRecordType(recordType: string, record?: any): TabConfi
       )
     : baseTabs;
   
-  // For people records, show either buyer-groups or co-workers based on buyer group membership
-  if (recordType === 'people' && record) {
+  // For people/leads/prospects records, show either buyer-groups or co-workers based on buyer group membership
+  // SAFETY: Only filter if we have valid record data to prevent blank pages during loading
+  if ((recordType === 'people' || recordType === 'leads' || recordType === 'prospects') && record && record.id) {
     const isInBuyerGroup = record.isBuyerGroupMember || record.buyerGroupRole || record.customFields?.buyerGroupRole;
-    filteredTabs = baseTabs.filter(tab => {
+    filteredTabs = filteredTabs.filter(tab => {
       if (tab.id === 'buyer-groups' && !isInBuyerGroup) return false;
       if (tab.id === 'co-workers' && isInBuyerGroup) return false;
       return true;

@@ -2657,7 +2657,33 @@ class SmartBuyerGroupPipeline {
       }
     }
     
-    // Check 5: Fuzzy name similarity (last resort)
+    // Check 5: Email domain validation (CRITICAL for preventing mismatches)
+    // This prevents cases like underline.com vs underline.cz being grouped together
+    const memberEmail = member.email || member.workEmail;
+    if (memberEmail && memberEmail.includes('@')) {
+      const emailDomain = memberEmail.split('@')[1]?.toLowerCase();
+      const companyWebsite = intelligence.website || company.website;
+      
+      if (emailDomain && companyWebsite) {
+        const extractDomainHelper = (url) => {
+          if (!url) return '';
+          return url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase();
+        };
+        
+        const companyDomain = extractDomainHelper(companyWebsite);
+        
+        // Root domains must match exactly (including TLD)
+        // underline.com !== underline.cz
+        if (!this.domainsMatchStrict(emailDomain, companyDomain)) {
+          return {
+            isValid: false,
+            reason: `Email domain mismatch: ${emailDomain} does not match company domain ${companyDomain}`
+          };
+        }
+      }
+    }
+    
+    // Check 6: Fuzzy name similarity (last resort)
     const similarity = this.calculateNameSimilarity(employeeCompanyName, targetCompanyName);
     if (similarity > 0.85) {
       return { isValid: true, reason: `High name similarity (${(similarity * 100).toFixed(1)}%)` };
@@ -2730,6 +2756,32 @@ class SmartBuyerGroupPipeline {
       }
     }
     return matrix[str2.length][str1.length];
+  }
+
+  /**
+   * Strict domain matching for email validation
+   * Ensures exact root domain match (including TLD)
+   * @param {string} emailDomain - Email domain (e.g., 'underline.cz')
+   * @param {string} companyDomain - Company domain (e.g., 'underline.com')
+   * @returns {boolean} True if domains match exactly
+   */
+  domainsMatchStrict(emailDomain, companyDomain) {
+    if (!emailDomain || !companyDomain) return false;
+    
+    const parts1 = emailDomain.split('.');
+    const parts2 = companyDomain.split('.');
+    
+    // Need at least 2 parts for a valid domain (name.tld)
+    if (parts1.length < 2 || parts2.length < 2) return false;
+    
+    // Get root domain (last 2 parts: domain.tld)
+    const root1 = parts1.slice(-2).join('.');
+    const root2 = parts2.slice(-2).join('.');
+    
+    // Must match exactly (including TLD)
+    // This ensures underline.com !== underline.cz
+    // But allows mail.underline.com === underline.com
+    return root1 === root2;
   }
 
   /**

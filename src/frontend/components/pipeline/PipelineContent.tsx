@@ -708,8 +708,8 @@ export const PipelineContent = React.memo(function PipelineContent({
         (record['status'] && record.status.toLowerCase() === statusFilter.toLowerCase()) ||
         (record['stage'] && record.stage.toLowerCase() === statusFilter.toLowerCase());
 
-      // Priority filter - handle sections that don't use priority filtering
-      const sectionsWithPriority = ['leads', 'prospects', 'opportunities', 'speedrun'];
+      // Priority filter - FIXED: Companies also have priority field
+      const sectionsWithPriority = ['leads', 'prospects', 'opportunities', 'speedrun', 'companies', 'people'];
       const matchesPriority = !sectionsWithPriority.includes(section) || // Skip priority filter for sections that don't use it
         priorityFilter === 'all' ||
         (record['priority'] && record.priority.toLowerCase() === priorityFilter.toLowerCase()) ||

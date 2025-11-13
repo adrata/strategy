@@ -913,6 +913,38 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     return <CompanyDetailSkeleton message="Loading record details..." />;
   }
 
+  // ⚠️ ERROR HANDLING: Show error message if record loading failed
+  if (directRecordError && !selectedRecord && !previousRecord && slug) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-background">
+        <div className="max-w-md w-full mx-auto p-8">
+          <div className="bg-error/10 border border-error text-error px-6 py-4 rounded-lg mb-6">
+            <h3 className="text-lg font-semibold mb-2">Failed to Load Record</h3>
+            <p className="text-sm mb-4">{directRecordError}</p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => {
+                  setDirectRecordError(null);
+                  const recordId = extractIdFromSlug(slug);
+                  loadDirectRecord(recordId);
+                }}
+                className="px-4 py-2 bg-error text-white rounded hover:bg-error/90 transition-colors"
+              >
+                Try Again
+              </button>
+              <button 
+                onClick={handleBack}
+                className="px-4 py-2 bg-background border border-border text-foreground rounded hover:bg-hover transition-colors"
+              >
+                Go Back
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Show record details if found (or use previous record as fallback during transitions)
   // 🚫 FALLBACK: Create a basic record if none found to prevent infinite loading
   if (selectedRecord || (previousRecord && slug)) {
@@ -1324,6 +1356,55 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   // Get user data from PipelineContext to match PipelineLeftPanelStandalone
   // Note: pipelineUser, company, workspace are now available from the top-level hook call
 
+  // 🔍 BLANK PAGE FIX: If we have a slug but no record and not loading, show helpful message
+  if (slug && !selectedRecord && !previousRecord && !loading && !directRecordLoading) {
+    console.error(`❌ [BLANK PAGE] No record found and not loading:`, {
+      slug,
+      section,
+      directRecordError,
+      acquisitionDataError: acquisitionData.error,
+      hasData: data.length > 0,
+      dataLength: data.length
+    });
+    
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-background">
+        <div className="max-w-md w-full mx-auto p-8">
+          <div className="bg-warning/10 border border-warning text-warning px-6 py-4 rounded-lg mb-6">
+            <h3 className="text-lg font-semibold mb-2">Record Not Found</h3>
+            <p className="text-sm mb-4">
+              The {section} record you're looking for could not be found. It may have been deleted or moved.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => {
+                  const recordId = extractIdFromSlug(slug);
+                  console.log(`🔄 [BLANK PAGE FIX] Retrying load for record: ${recordId}`);
+                  setDirectRecordError(null);
+                  loadDirectRecord(recordId);
+                }}
+                className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+              >
+                Try Again
+              </button>
+              <button 
+                onClick={handleBack}
+                className="px-4 py-2 bg-background border border-border text-foreground rounded hover:bg-hover transition-colors"
+              >
+                Go Back to List
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Final fallback - show loading skeleton
+  if (slug && !selectedRecord && !previousRecord) {
+    console.log(`🔄 [FALLBACK] Showing loading skeleton as final fallback for slug: ${slug}`);
+    return <CompanyDetailSkeleton message="Loading record details..." />;
+  }
 
   // No fallback states - only show real data
   return null;

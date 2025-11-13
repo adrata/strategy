@@ -144,7 +144,8 @@ async function enrichPerson(body: any, context: any) {
   }
 
   // Check for CoreSignal API key
-  const coresignalApiKey = process.env.CORESIGNAL_API_KEY;
+  // CRITICAL: Trim and sanitize API key to remove any trailing newlines or whitespace
+  const coresignalApiKey = process.env.CORESIGNAL_API_KEY?.trim().replace(/\\n/g, '');
   if (!coresignalApiKey) {
     console.error('❌ CORESIGNAL_API_KEY not configured');
     return {
@@ -405,7 +406,8 @@ async function enrichCompany(body: any, context: any) {
   }
 
   // Check for CoreSignal API key
-  const coresignalApiKey = process.env.CORESIGNAL_API_KEY;
+  // CRITICAL: Trim and sanitize API key to remove any trailing newlines or whitespace
+  const coresignalApiKey = process.env.CORESIGNAL_API_KEY?.trim().replace(/\\n/g, '');
   if (!coresignalApiKey) {
     console.error('❌ CORESIGNAL_API_KEY not configured');
     return {

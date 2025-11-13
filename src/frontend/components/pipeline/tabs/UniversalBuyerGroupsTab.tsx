@@ -32,7 +32,7 @@ interface BuyerGroupMember {
 
 export function UniversalBuyerGroupsTab({ record, recordType, onSave }: UniversalBuyerGroupsTabProps) {
   const [buyerGroups, setBuyerGroups] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // 🚨 CRITICAL FIX: Start with loading=true to prevent empty state flash
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [riskAssessments, setRiskAssessments] = useState<Record<string, RiskAssessment>>({});
   const [isFetching, setIsFetching] = useState(false); // Prevent multiple simultaneous fetches
@@ -43,6 +43,35 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const previousCompanyIdRef = useRef<string | null>(null);
   const previousCompanyNameRef = useRef<string | null>(null);
   const previousRecordIdRef = useRef<string | null>(null);
+  
+  // 🚨 CRITICAL FIX: Extract companyId and companyName into memos to track changes properly
+  // This ensures the effect re-runs when companyId/companyName become available
+  const companyId = React.useMemo(() => {
+    if (!record) return '';
+    
+    if (recordType === 'people') {
+      // For person records, get company from companyId field
+      return record.companyId || '';
+    } else {
+      // For company records, the record ID is the company ID
+      return record.id || '';
+    }
+  }, [record?.id, record?.companyId, recordType]);
+  
+  const companyName = React.useMemo(() => {
+    if (!record) return '';
+    
+    if (recordType === 'people') {
+      // For person records, get company name from company object
+      return (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+             record.companyName || '';
+    } else {
+      // For company records, use the record name as company name
+      return record.name || 
+             (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+             record.companyName || '';
+    }
+  }, [record?.id, record?.name, record?.company, record?.companyName, recordType]);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -154,29 +183,36 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     const abortController = new AbortController();
     const signal = abortController.signal;
     
+    // 🚨 CRITICAL FIX: Check if record ID is available - if not, show loading and wait
+    if (!record?.id) {
+      console.log('🔍 [BUYER GROUPS DEBUG] No record ID, showing loading while waiting for record');
+      setBuyerGroups([]);
+      setLoading(true); // 🚨 CRITICAL FIX: Show loading while waiting for record
+      setIsFetching(false);
+      previousRecordIdRef.current = null;
+      previousCompanyIdRef.current = null;
+      previousCompanyNameRef.current = null;
+      return;
+    }
+    
+    // 🚨 CRITICAL FIX: Check if companyId is available - if not, show loading and wait
+    if (!companyId || companyId.trim() === '') {
+      console.log('⚠️ [BUYER GROUPS] No valid companyId found, waiting for company data to load:', {
+        recordType,
+        recordId: record?.id,
+        recordName: record?.name,
+        hasCompanyId: !!companyId
+      });
+      // Show loading while waiting for companyId to become available
+      setBuyerGroups([]);
+      setLoading(true); // 🚨 CRITICAL FIX: Show loading while waiting for companyId
+      setIsFetching(false);
+      return;
+    }
+    
     // 🚨 STEP 1: SYNCHRONOUSLY check for company changes and clear state IMMEDIATELY (before any async work)
     const previousRecordId = previousRecordIdRef.current;
     const recordIdChanged = previousRecordId !== null && previousRecordId !== record?.id;
-    
-    // Get the company name and ID from the record (synchronously)
-    let companyName = '';
-    let companyId = '';
-    
-    if (record?.id) {
-      if (recordType === 'people') {
-        // For person records, get company from companyId or company object
-        companyId = record.companyId;
-        companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                     record.companyName || '';
-      } else {
-        // For company records, use the record name as company name
-        companyName = record.name || 
-                     (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                     record.companyName ||
-                     '';
-        companyId = record.id; // For company records, the record ID is the company ID
-      }
-    }
     
     const previousCompanyId = previousCompanyIdRef.current;
     const previousCompanyName = previousCompanyNameRef.current;
@@ -245,18 +281,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       previousCompanyNameRef.current = companyName || null;
     }
     
-      // 🚨 STEP 2: Handle missing record or company data
-    if (!record?.id) {
-      console.log('🔍 [BUYER GROUPS DEBUG] No record ID, state already cleared');
-      return;
-    }
-    
-    if (!companyId || !companyName) {
-      console.log('⚠️ [BUYER GROUPS] Missing companyId or companyName, state already cleared:', { companyId, companyName });
-      return;
-    }
-    
-    // 🚨 STEP 3: Now proceed with async fetch (state is already cleared if company changed)
+      // 🚨 STEP 2: Now proceed with async fetch (state is already cleared if company changed)
     const fetchBuyerGroups = async () => {
       console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
       console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
@@ -417,16 +442,41 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               
               console.log(`🔍 [BUYER GROUPS] After validation: ${validatedMembers.length} members (was ${members.length})`);
               
-              // Sync buyer group data for all people in the company (background, non-blocking)
+              // Sync buyer group data for all people in the company to ensure consistency
+              // This updates isBuyerGroupMember and influenceLevel fields based on buyerGroupRole
               if (companyId) {
-                authFetch(`/api/v1/companies/${companyId}/sync-buyer-group`, {
-                  method: 'POST'
-                }).catch(error => {
-                  // Silently fail - sync is best effort
-                  if (process.env.NODE_ENV === 'development') {
-                    console.warn('⚠️ [BUYER GROUPS] Failed to sync company buyer group data:', error);
+                try {
+                  const syncResponse = await authFetch(`/api/v1/companies/${companyId}/sync-buyer-group`, {
+                    method: 'POST'
+                  });
+                  
+                  if (syncResponse && syncResponse.success) {
+                    console.log('✅ [BUYER GROUPS] Sync completed:', {
+                      synced: syncResponse.synced,
+                      updated: syncResponse.updated,
+                      errors: syncResponse.errors
+                    });
+                    
+                    // If any records were updated, refresh the data to show updated membership status
+                    if (syncResponse.updated > 0) {
+                      console.log('🔄 [BUYER GROUPS] Refreshing data after sync updates');
+                      // Re-fetch the data to get updated membership status
+                      const refreshResult = await authFetch(`/api/data/buyer-groups/fast?companyId=${companyId}`);
+                      if (refreshResult && refreshResult.success && refreshResult.data) {
+                        validatedMembers = refreshResult.data.filter((member: any) => {
+                          const memberCompanyMatches = 
+                            (member.companyId && member.companyId === companyId) ||
+                            (member.company && typeof member.company === 'string' && member.company === companyId);
+                          return memberCompanyMatches;
+                        });
+                        console.log('✅ [BUYER GROUPS] Refreshed data after sync');
+                      }
+                    }
                   }
-                });
+                } catch (error) {
+                  // Log error but continue - sync is best effort
+                  console.warn('⚠️ [BUYER GROUPS] Failed to sync company buyer group data:', error);
+                }
               }
               
               // Convert fast API response format to people format for compatibility
@@ -781,7 +831,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       abortController.abort(); // Cancel any in-flight fetches
       setIsFetching(false);
     };
-  }, [record?.id, record, recordType]); // Depend on record ID, full record object, and record type to ensure proper re-fetching
+  }, [record?.id, recordType, companyId, companyName]); // 🚨 CRITICAL FIX: Added companyId and companyName to dependencies to re-run when they become available
 
   const handleInlineSave = async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
     if (onSave) {

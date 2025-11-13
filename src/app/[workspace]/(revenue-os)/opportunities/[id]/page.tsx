@@ -6,7 +6,7 @@ import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
-import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
+// import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 
 export default function OpportunityDetailPage() {
@@ -14,21 +14,19 @@ export default function OpportunityDetailPage() {
   const slug = params['id'] as string;
 
   return (
-    <ZoomProvider>
-      <RevenueOSProvider>
-        <PipelineProvider>
-          <SpeedrunDataProvider>
-            <RecordContextProvider>
-              <ProfilePopupProvider>
-                <PipelineDetailPage
-                  section="opportunities"
-                  slug={slug}
-                />
-              </ProfilePopupProvider>
-            </RecordContextProvider>
-          </SpeedrunDataProvider>
-        </PipelineProvider>
-      </RevenueOSProvider>
-    </ZoomProvider>
+    <RevenueOSProvider>
+      <PipelineProvider>
+        <SpeedrunDataProvider>
+          <RecordContextProvider>
+            <ProfilePopupProvider>
+              <PipelineDetailPage
+                section="opportunities"
+                slug={slug}
+              />
+            </ProfilePopupProvider>
+          </RecordContextProvider>
+        </SpeedrunDataProvider>
+      </PipelineProvider>
+    </RevenueOSProvider>
   );
 }

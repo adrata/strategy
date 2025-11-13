@@ -185,7 +185,8 @@ export async function POST(request: NextRequest) {
  * Get real people data from CoreSignal API
  */
 async function getRealPeopleFromCoreSignal(companyName: string): Promise<any[]> {
-  const apiKey = process['env']['CORESIGNAL_API_KEY'];
+  // CRITICAL: Trim and sanitize API key to remove any trailing newlines or whitespace
+  const apiKey = process['env']['CORESIGNAL_API_KEY']?.trim().replace(/\\n/g, '');
   console.log(`🔍 [CORESIGNAL] API Key configured: ${apiKey ? 'YES' : 'NO'}`);
   console.log(`🔍 [CORESIGNAL] API Key length: ${apiKey ? apiKey.length : 0}`);
   if (!apiKey) {

@@ -490,6 +490,12 @@ export async function GET(request: NextRequest) {
             deletedAt: true,
             mainSellerId: true,
             vertical: true,
+            // Location fields
+            address: true,
+            city: true,
+            state: true,
+            country: true,
+            postalCode: true,
             // Buyer group fields for consistency
             buyerGroupRole: true,
             influenceLevel: true,
@@ -595,6 +601,12 @@ export async function GET(request: NextRequest) {
                 createdAt: true,
                 updatedAt: true,
                 deletedAt: true,
+                // Location fields
+                address: true,
+                city: true,
+                state: true,
+                country: true,
+                postalCode: true,
                 corePerson: {
                   select: {
                     id: true,

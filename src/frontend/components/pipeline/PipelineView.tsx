@@ -838,12 +838,59 @@ export const PipelineView = React.memo(function PipelineView({
     const dataToFilter = Array.isArray(sectionDataArray) ? sectionDataArray : [];
     if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
+    // 🔍 ENHANCED FILTER LOGGING: Track active filters
+    const activeFilters = {
+      searchQuery: searchQuery !== '',
+      verticalFilter: verticalFilter !== 'all',
+      revenueFilter: revenueFilter !== 'all',
+      statusFilter: statusFilter !== 'all',
+      priorityFilter: priorityFilter !== 'all',
+      timezoneFilter: timezoneFilter !== 'all',
+      companySizeFilter: companySizeFilter !== 'all',
+      locationFilter: locationFilter !== 'all',
+      lastContactedFilter: lastContactedFilter !== 'all'
+    };
+    
+    const activeFiltersList = Object.entries(activeFilters).filter(([_, isActive]) => isActive).map(([name]) => name);
+    
+    if (activeFiltersList.length > 0) {
+      console.log(`🔍 [FILTER DEBUG] Active filters for ${section}:`, {
+        filters: activeFiltersList,
+        values: {
+          searchQuery,
+          verticalFilter,
+          revenueFilter,
+          statusFilter,
+          priorityFilter,
+          timezoneFilter,
+          companySizeFilter,
+          locationFilter,
+          lastContactedFilter
+        },
+        totalRecords: dataToFilter.length
+      });
+    }
+    
     // Apply timeframe filtering for speedrun section
     let timeframeFilteredData = dataToFilter;
     if (section === 'speedrun') {
       const dataCount = getTimeframeDataCount(timeframeFilter);
       timeframeFilteredData = dataToFilter.slice(0, dataCount);
     }
+
+    // Track filter pass counts for debugging
+    let filterStats = {
+      total: timeframeFilteredData.length,
+      afterSearch: 0,
+      afterVertical: 0,
+      afterRevenue: 0,
+      afterStatus: 0,
+      afterPriority: 0,
+      afterTimezone: 0,
+      afterCompanySize: 0,
+      afterLocation: 0,
+      afterLastContacted: 0
+    };
 
     let filtered = timeframeFilteredData.filter((record: any) => {
       // Search filter
@@ -890,8 +937,8 @@ export const PipelineView = React.memo(function PipelineView({
         console.log(`🔍 [STATUS FILTER DEBUG] Record: ${record.name}, Stage: ${record.stage}, Filter: ${statusFilter}, Matches: ${matchesStatus}`);
       }
 
-      // Priority filter - handle sections that don't use priority filtering
-      const sectionsWithPriority = ['leads', 'prospects', 'opportunities', 'speedrun'];
+      // Priority filter - FIXED: Companies also have priority field
+      const sectionsWithPriority = ['leads', 'prospects', 'opportunities', 'speedrun', 'companies', 'people'];
       const matchesPriority = !sectionsWithPriority.includes(section) || // Skip priority filter for sections that don't use it
         priorityFilter === 'all' ||
         (record['priority'] && record.priority.toLowerCase() === priorityFilter.toLowerCase()) ||
@@ -972,8 +1019,76 @@ export const PipelineView = React.memo(function PipelineView({
         }
       })();
 
+      // Track filter progression for debugging
+      if (matchesSearch) filterStats.afterSearch++;
+      if (matchesSearch && matchesVertical) filterStats.afterVertical++;
+      if (matchesSearch && matchesVertical && matchesRevenue) filterStats.afterRevenue++;
+      if (matchesSearch && matchesVertical && matchesRevenue && matchesStatus) filterStats.afterStatus++;
+      if (matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority) filterStats.afterPriority++;
+      if (matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone) filterStats.afterTimezone++;
+      if (matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize) filterStats.afterCompanySize++;
+      if (matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation) filterStats.afterLocation++;
+      if (matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesLastContacted) filterStats.afterLastContacted++;
+
       return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesLastContacted;
     });
+
+    // 🔍 LOG FILTER RESULTS: Show which filter is eliminating records
+    if (activeFiltersList.length > 0 && filtered.length !== filterStats.total) {
+      console.log(`🔍 [FILTER DEBUG] Filter progression for ${section}:`, {
+        total: filterStats.total,
+        afterSearch: filterStats.afterSearch,
+        afterVertical: filterStats.afterVertical,
+        afterRevenue: filterStats.afterRevenue,
+        afterStatus: filterStats.afterStatus,
+        afterPriority: filterStats.afterPriority,
+        afterTimezone: filterStats.afterTimezone,
+        afterCompanySize: filterStats.afterCompanySize,
+        afterLocation: filterStats.afterLocation,
+        afterLastContacted: filterStats.afterLastContacted,
+        final: filtered.length
+      });
+      
+      // Identify which filter caused the biggest drop
+      const drops = [
+        { name: 'searchQuery', before: filterStats.total, after: filterStats.afterSearch, value: searchQuery },
+        { name: 'verticalFilter', before: filterStats.afterSearch, after: filterStats.afterVertical, value: verticalFilter },
+        { name: 'revenueFilter', before: filterStats.afterVertical, after: filterStats.afterRevenue, value: revenueFilter },
+        { name: 'statusFilter', before: filterStats.afterRevenue, after: filterStats.afterStatus, value: statusFilter },
+        { name: 'priorityFilter', before: filterStats.afterStatus, after: filterStats.afterPriority, value: priorityFilter },
+        { name: 'timezoneFilter', before: filterStats.afterPriority, after: filterStats.afterTimezone, value: timezoneFilter },
+        { name: 'companySizeFilter', before: filterStats.afterTimezone, after: filterStats.afterCompanySize, value: companySizeFilter },
+        { name: 'locationFilter', before: filterStats.afterCompanySize, after: filterStats.afterLocation, value: locationFilter },
+        { name: 'lastContactedFilter', before: filterStats.afterLocation, after: filterStats.afterLastContacted, value: lastContactedFilter }
+      ];
+      
+      const biggestDrop = drops.reduce((max, curr) => {
+        const drop = curr.before - curr.after;
+        const maxDrop = max.before - max.after;
+        return drop > maxDrop ? curr : max;
+      });
+      
+      if (biggestDrop.before - biggestDrop.after > 0) {
+        console.warn(`⚠️ [FILTER DEBUG] Biggest filter impact: ${biggestDrop.name} = "${biggestDrop.value}" (eliminated ${biggestDrop.before - biggestDrop.after} records)`);
+      }
+      
+      if (filtered.length === 0 && filterStats.total > 0) {
+        console.error(`❌ [FILTER DEBUG] All ${filterStats.total} ${section} records filtered out!`, {
+          activeFilters: activeFiltersList,
+          filterValues: {
+            searchQuery,
+            verticalFilter,
+            revenueFilter,
+            statusFilter,
+            priorityFilter,
+            timezoneFilter,
+            companySizeFilter,
+            locationFilter,
+            lastContactedFilter
+          }
+        });
+      }
+    }
 
     // Apply smart ranking or sorting
     if (section === 'speedrun' && (!sortField || sortField === 'rank' || sortField === 'globalRank')) {
@@ -1716,12 +1831,33 @@ export const PipelineView = React.memo(function PipelineView({
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-muted p-6">
+              <svg className="mx-auto h-12 w-12 text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
               <h4 className="text-lg font-medium text-foreground mb-2">
                 No results found
               </h4>
-              <p className="text-sm text-muted max-w-sm">
-                No {section} match your current filters. Try adjusting your search or filters.
+              <p className="text-sm text-muted max-w-sm mb-4">
+                All {sectionDataArray.length} {section} are hidden by active filters.
               </p>
+              <button
+                onClick={() => {
+                  // Clear all filters
+                  setSearchQuery('');
+                  setStatusFilter('all');
+                  setPriorityFilter('all');
+                  setVerticalFilter('all');
+                  setRevenueFilter('all');
+                  setLastContactedFilter('all');
+                  setTimezoneFilter('all');
+                  setCompanySizeFilter('all');
+                  setLocationFilter('all');
+                  console.log('🔄 [FILTER RESET] All filters cleared for section:', section);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Clear all filters
+              </button>
             </div>
           </div>
         ) : !hasData && !error && section !== 'opportunities' && workspaceId && userId ? (

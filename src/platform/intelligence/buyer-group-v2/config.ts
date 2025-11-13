@@ -32,9 +32,10 @@ export class BuyerGroupV2ConfigManager {
       return this.config;
     }
 
-    const coresignalApiKey = process.env.CORESIGNAL_API_KEY;
-    const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-    const webhookSecret = process.env.CORESIGNAL_WEBHOOK_SECRET;
+    // CRITICAL: Trim and sanitize API keys to remove any trailing newlines or whitespace
+    const coresignalApiKey = process.env.CORESIGNAL_API_KEY?.trim().replace(/\\n/g, '');
+    const anthropicApiKey = process.env.ANTHROPIC_API_KEY?.trim().replace(/\\n/g, '');
+    const webhookSecret = process.env.CORESIGNAL_WEBHOOK_SECRET?.trim().replace(/\\n/g, '');
     const databaseUrl = process.env.DATABASE_URL;
 
     // Validate required environment variables
