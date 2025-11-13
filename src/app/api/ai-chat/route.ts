@@ -72,6 +72,28 @@ export async function POST(request: NextRequest) {
       useOpenRouter
     });
 
+    // 🔍 ENHANCED RECORD CONTEXT LOGGING: Show detailed record information received
+    if (currentRecord) {
+      console.log('🎯 [AI CHAT] Current record context received:', {
+        recordType,
+        id: currentRecord.id,
+        name: currentRecord.name || currentRecord.fullName,
+        company: currentRecord.company || currentRecord.companyName,
+        title: currentRecord.title || currentRecord.jobTitle,
+        website: currentRecord.website,
+        industry: currentRecord.industry,
+        employeeCount: currentRecord.employeeCount || currentRecord.size,
+        hasDescription: !!currentRecord.description,
+        descriptionLength: currentRecord.description?.length || 0,
+        hasTechStack: !!currentRecord.techStack,
+        hasBusinessChallenges: !!currentRecord.businessChallenges,
+        totalFieldsPopulated: Object.keys(currentRecord).filter(key => currentRecord[key] != null).length,
+        allFields: Object.keys(currentRecord)
+      });
+    } else {
+      console.warn('⚠️ [AI CHAT] No current record context provided. AI will respond with general guidance only.');
+    }
+
     // 2. INPUT VALIDATION AND SANITIZATION - Critical security requirement
     if (!message || typeof message !== 'string') {
       return NextResponse.json({

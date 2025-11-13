@@ -59,11 +59,16 @@ export async function GET(
       );
     }
 
-    const company = await prisma.companies.findUnique({
+    const company = await prisma.companies.findFirst({
       where: { 
         id,
         deletedAt: null, // Only show non-deleted records
-        workspaceId: authUser.workspaceId // Ensure company belongs to user's workspace
+        workspaceId: authUser.workspaceId, // Ensure company belongs to user's workspace
+        // 🔒 SECURITY: Enforce seller-level access control
+        OR: [
+          { mainSellerId: authUser.userId },
+          { mainSellerId: null }
+        ]
       },
       include: {
         // Relations

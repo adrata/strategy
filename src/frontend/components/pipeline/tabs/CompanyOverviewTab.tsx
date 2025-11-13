@@ -243,11 +243,13 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       } else if (!hasContactInfo && missingBasicData) {
         // No website - just generate intelligence with available data
         await generateIntelligence();
-      } else if (!missingBasicData) {
-        // Already has data - just generate intelligence if needed
+      } else {
+        // ALWAYS check if intelligence is needed, regardless of whether company has basic data
+        // This ensures all companies get a summary populated
         const needsIntelligence = !companyData?.descriptionEnriched && 
                                   !companyData?.customFields?.intelligence;
         if (needsIntelligence) {
+          console.log(`🤖 [COMPANY OVERVIEW] Company missing intelligence, triggering generation for: ${companyId}`);
           await generateIntelligence();
         }
       }
@@ -256,10 +258,19 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     // Helper function to generate intelligence
     const generateIntelligence = async () => {
       const companyData = fullCompanyData || record;
-      const needsIntelligence = !companyData?.descriptionEnriched && 
-                                !companyData?.customFields?.intelligence;
-
-      if (!needsIntelligence || !companyId) {
+      
+      // Check if intelligence is needed
+      const hasDescriptionEnriched = companyData?.descriptionEnriched && 
+                                      companyData.descriptionEnriched.trim() !== '' &&
+                                      companyData.descriptionEnriched !== 'No description available';
+      const hasIntelligence = companyData?.customFields?.intelligence;
+      
+      // Always generate if missing either field
+      if ((hasDescriptionEnriched || hasIntelligence) || !companyId) {
+        // Already has intelligence, skip
+        if (hasDescriptionEnriched || hasIntelligence) {
+          console.log(`ℹ️ [COMPANY OVERVIEW] Company already has intelligence, skipping generation for: ${companyId}`);
+        }
         return;
       }
 
@@ -271,10 +282,8 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         if (result?.success) {
           console.log(`✅ [COMPANY OVERVIEW] Successfully generated intelligence for company: ${companyId}`);
           
-          // Refresh company data to get the newly generated intelligence
-          setTimeout(() => {
-            fetchFullCompanyData();
-          }, 1000);
+          // Refresh company data immediately to get the newly generated intelligence
+          await fetchFullCompanyData();
         } else {
           console.warn('⚠️ [COMPANY OVERVIEW] Intelligence generation returned unsuccessful result:', result);
         }
@@ -683,6 +692,72 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                      (typeof mergedRecord?.company === 'string' ? mergedRecord.company : mergedRecord?.company?.name) || 
                      'Company';
 
+  // Generate a fallback summary from available data if no description exists
+  const getCompanySummary = (): string => {
+    // Prioritize the longer, more detailed description for better seller context
+    const originalDesc = mergedRecord?.description && mergedRecord.description.trim() !== '' ? mergedRecord.description : '';
+    const enrichedDesc = mergedRecord?.descriptionEnriched && mergedRecord.descriptionEnriched.trim() !== '' ? mergedRecord.descriptionEnriched : '';
+    
+    // Use the longer description for better context, or enriched if original is not available
+    if (originalDesc && enrichedDesc) {
+      return originalDesc.length > enrichedDesc.length ? originalDesc : enrichedDesc;
+    } else if (originalDesc) {
+      return originalDesc;
+    } else if (enrichedDesc) {
+      return enrichedDesc;
+    }
+    
+    // Generate a basic summary from available company data
+    if (mergedRecord) {
+      const parts: string[] = [];
+      
+      // Start with company name and type
+      if (mergedRecord.name) {
+        const companyType = mergedRecord.isPublic === true ? 'public' : 
+                           mergedRecord.isPublic === false ? 'private' : '';
+        parts.push(`${mergedRecord.name} is${companyType ? ` a ${companyType}` : ''}`);
+      }
+      
+      // Add industry
+      if (mergedRecord.industry) {
+        parts.push(`${parts.length > 0 ? '' : 'This is a'} ${mergedRecord.industry.toLowerCase()} company`);
+      }
+      
+      // Add location
+      const location = mergedRecord.hqCity && mergedRecord.hqState 
+        ? `${mergedRecord.hqCity}, ${mergedRecord.hqState}` 
+        : mergedRecord.hqCity || mergedRecord.hqState || null;
+      if (location) {
+        parts.push(`based in ${location}`);
+      }
+      
+      // Add employee count
+      if (mergedRecord.employeeCount) {
+        parts.push(`with approximately ${mergedRecord.employeeCount.toLocaleString()} employees`);
+      }
+      
+      // Combine parts into a sentence
+      if (parts.length > 0) {
+        let summary = parts.join(' ');
+        // Ensure proper sentence structure
+        summary = summary.charAt(0).toUpperCase() + summary.slice(1);
+        if (!summary.endsWith('.')) {
+          summary += '.';
+        }
+        
+        // Add website if available
+        if (mergedRecord.website) {
+          summary += ` Website: ${mergedRecord.website}`;
+        }
+        
+        return summary;
+      }
+    }
+    
+    // Final fallback if no data available
+    return 'No description available. Click to add company details.';
+  };
+
   return (
     <div>
       <div className="space-y-6">
@@ -691,23 +766,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         <h3 className="text-lg font-semibold text-foreground">{companyName} Overview</h3>
         <div className="bg-background p-4 rounded-lg border border-border">
           <InlineEditField
-            value={(() => {
-              // Prioritize the longer, more detailed description for better seller context
-              const originalDesc = mergedRecord?.description && mergedRecord.description.trim() !== '' ? mergedRecord.description : '';
-              const enrichedDesc = mergedRecord?.descriptionEnriched && mergedRecord.descriptionEnriched.trim() !== '' ? mergedRecord.descriptionEnriched : '';
-              
-              // Use the longer description for better context, or enriched if original is not available
-              if (originalDesc && enrichedDesc) {
-                return originalDesc.length > enrichedDesc.length ? originalDesc : enrichedDesc;
-              } else if (originalDesc) {
-                return originalDesc;
-              } else if (enrichedDesc) {
-                return enrichedDesc;
-              }
-              
-              // Fallback to basic description if no data
-              return 'No description available';
-            })()}
+            value={getCompanySummary()}
             field="description"
             onSave={handleSave}
             recordId={companyId}

@@ -94,6 +94,22 @@ export function useTablePreferences(
             }
           }
           
+          // 🛡️ SAFEGUARD: Reset timezone filter for sections that don't use it
+          // Prevents persisted timezone filters from hiding all records in companies/people sections
+          if (!['speedrun', 'leads'].includes(section) && mergedPrefs.timezoneFilter !== 'all') {
+            console.warn(`🔧 [TablePreferences] Clearing invalid timezone filter for ${section} section`);
+            mergedPrefs.timezoneFilter = 'all';
+          }
+          
+          // 🛡️ SAFEGUARD: Log any active filters for debugging
+          const activeFilters = Object.entries(mergedPrefs)
+            .filter(([key, value]) => key.includes('Filter') && value !== 'all')
+            .map(([key, value]) => `${key}=${value}`);
+          
+          if (activeFilters.length > 0) {
+            console.log(`📋 [TablePreferences] Loaded ${activeFilters.length} active filters for ${section}:`, activeFilters);
+          }
+          
           return mergedPrefs;
         }
       } catch (error) {

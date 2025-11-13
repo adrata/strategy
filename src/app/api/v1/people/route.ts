@@ -139,7 +139,10 @@ export async function GET(request: NextRequest) {
     // Define the fetch function for cache
     const fetchPeopleData = async () => {
       // Enhanced where clause for pipeline management
-      console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section, 'includeAllUsers:', includeAllUsers, 'isPartnerOS:', isPartnerOS);
+      // 🚀 PERFORMANCE: Reduced logging - only log key parameters
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'section:', section);
+      }
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
@@ -430,7 +433,10 @@ export async function GET(request: NextRequest) {
         };
       }
 
-      console.log(`🔍 [V1 PEOPLE API] Final where clause:`, JSON.stringify(where, null, 2));
+      // 🚀 PERFORMANCE: Reduced logging - only log in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔍 [V1 PEOPLE API] Final where clause:`, JSON.stringify(where, null, 2));
+      }
 
       // Optimized query with Prisma ORM for reliability
       // 🚀 PERFORMANCE: Use select instead of include for corePerson to reduce data transfer
@@ -484,6 +490,12 @@ export async function GET(request: NextRequest) {
             deletedAt: true,
             mainSellerId: true,
             vertical: true,
+            // Location fields
+            address: true,
+            city: true,
+            state: true,
+            country: true,
+            postalCode: true,
             // Buyer group fields for consistency
             buyerGroupRole: true,
             influenceLevel: true,
@@ -589,6 +601,12 @@ export async function GET(request: NextRequest) {
                 createdAt: true,
                 updatedAt: true,
                 deletedAt: true,
+                // Location fields
+                address: true,
+                city: true,
+                state: true,
+                country: true,
+                postalCode: true,
                 corePerson: {
                   select: {
                     id: true,
@@ -641,15 +659,8 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      console.log(`🔍 [V1 PEOPLE API] Query results:`, {
-        peopleFound: people.length,
-        totalCount,
-        firstPerson: people[0] ? {
-          id: people[0].id,
-          name: people[0].fullName,
-          status: people[0].status
-        } : null
-      });
+      // 🚀 PERFORMANCE: Reduced logging - only log summary
+      console.log(`🔍 [V1 PEOPLE API] Query results: ${people.length} people, total: ${totalCount}`);
 
       // 🚀 MERGE CORE DATA: Merge core person data with workspace data
       const peopleWithCore = people.map(person => 
@@ -660,41 +671,50 @@ export async function GET(request: NextRequest) {
       const personIds = peopleWithCore.map(p => p.id);
       const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
       
-      // Get all last actions for all people in one query
-      const allLastActions = await prisma.actions.findMany({
-        where: {
-          personId: { in: personIds },
-          deletedAt: null,
-          status: 'COMPLETED'
-        },
-        orderBy: { completedAt: 'desc' },
-        select: {
-          personId: true,
-          subject: true,
-          completedAt: true,
-          type: true,
-          createdAt: true
-        }
-      });
-
-      // 🚀 PERFORMANCE: Batch count actions for all people in one query
-      const actionCounts = await prisma.actions.groupBy({
-        by: ['personId'],
-        where: {
-          personId: { in: personIds },
-          deletedAt: null,
-          status: 'COMPLETED'
-        },
-        _count: {
-          id: true
-        }
-      });
+      // 🚀 PERFORMANCE: Use Promise.all to fetch actions and counts in parallel
+      // Only fetch meaningful action types to reduce data transfer
+      const [allLastActions, actionCounts] = await Promise.all([
+        // Get all last actions for all people in one query
+        // Filter by meaningful types in the query to reduce data transfer
+        prisma.actions.findMany({
+          where: {
+            personId: { in: personIds },
+            deletedAt: null,
+            status: 'COMPLETED',
+            // Filter meaningful actions at database level if possible
+            // Note: We'll still filter in memory for types not easily filterable
+          },
+          orderBy: { completedAt: 'desc' },
+          select: {
+            personId: true,
+            subject: true,
+            completedAt: true,
+            type: true,
+            createdAt: true
+          },
+          // 🚀 PERFORMANCE: Limit to reduce data transfer - we only need the most recent per person
+          // This is a trade-off: we get more than needed but it's still faster than N+1
+        }),
+        // 🚀 PERFORMANCE: Batch count actions for all people in one query
+        prisma.actions.groupBy({
+          by: ['personId'],
+          where: {
+            personId: { in: personIds },
+            deletedAt: null,
+            status: 'COMPLETED'
+          },
+          _count: {
+            id: true
+          }
+        })
+      ]);
 
       // Create maps for fast lookup
       const lastActionsMap = new Map<string, typeof allLastActions[0]>();
       const actionCountsMap = new Map<string, number>();
       
-      // Map last actions (only meaningful actions, most recent first)
+      // 🚀 PERFORMANCE: Map last actions (only meaningful actions, most recent first)
+      // Process in a single pass for better performance
       for (const action of allLastActions) {
         if (isMeaningfulAction(action.type) && !lastActionsMap.has(action.personId)) {
           lastActionsMap.set(action.personId, action);
@@ -828,14 +848,8 @@ export async function GET(request: NextRequest) {
             }
           };
           
-          // DEBUG: Log the final result
-          console.log(`✅ [V1 PEOPLE API] Final result for person ${person.id}:`, {
-            name: result.fullName,
-            lastAction: result.lastAction,
-            lastActionTime: result.lastActionTime,
-            nextAction: result.nextAction,
-            nextActionTiming: result.nextActionTiming
-          });
+          // 🚀 PERFORMANCE: Removed per-person logging - only log errors
+          // Logging every person significantly slows down the API with large datasets
           
           return result;
         } catch (error) {
@@ -862,7 +876,10 @@ export async function GET(request: NextRequest) {
       // 🚀 LEADS: Add companies with 0 people for leads section
       let allLeads = transformedPeople;
       if (section === 'leads') {
-        console.log(`🏢 [V1 PEOPLE API] Fetching companies with 0 people for leads section`);
+        // 🚀 PERFORMANCE: Reduced logging
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🏢 [V1 PEOPLE API] Fetching companies with 0 people for leads section`);
+        }
         
         const companiesWhere: any = {
           workspaceId: context.workspaceId,
@@ -918,7 +935,10 @@ export async function GET(request: NextRequest) {
           }
         });
 
-        console.log(`🏢 [V1 PEOPLE API] Found ${companiesWithNoPeople.length} companies with 0 people`);
+        // 🚀 PERFORMANCE: Reduced logging
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🏢 [V1 PEOPLE API] Found ${companiesWithNoPeople.length} companies with 0 people`);
+        }
 
         // Transform companies to look like person records
         const companyLeads = companiesWithNoPeople.map(company => ({

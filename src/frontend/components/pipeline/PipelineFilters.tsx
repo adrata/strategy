@@ -292,6 +292,19 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           { value: 'inactive', label: 'Inactive' },
           { value: 'churned', label: 'Churned' }
         ];
+      case 'companies':
+        return [
+          { value: 'all', label: 'All Status' },
+          { value: 'lead', label: 'Lead' },
+          { value: 'prospect', label: 'Prospect' },
+          { value: 'opportunity', label: 'Opportunity' },
+          { value: 'client', label: 'Client' },
+          { value: 'future_client', label: 'Future Client' },
+          { value: 'future_partner', label: 'Future Partner' },
+          { value: 'superfan', label: 'Superfan' },
+          { value: 'active', label: 'Active' },
+          { value: 'inactive', label: 'Inactive' }
+        ];
       default:
         return [
           { value: 'all', label: 'All Status' },

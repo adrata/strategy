@@ -1873,6 +1873,36 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       // Use 'partneros' as appType when in PartnerOS mode, otherwise use activeSubApp
       const effectiveAppType = isPartnerOSMode ? 'partneros' : activeSubApp;
       
+      // 🔍 ENHANCED LOGGING: Show what record context is being sent to AI
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🤖 [AI CHAT REQUEST] Sending context to AI:', {
+          hasCurrentRecord: !!currentRecord,
+          recordType,
+          recordId: currentRecord?.id,
+          recordName: currentRecord?.name || currentRecord?.fullName,
+          recordCompany: currentRecord?.company || currentRecord?.companyName,
+          recordTitle: currentRecord?.title || currentRecord?.jobTitle,
+          recordWebsite: currentRecord?.website,
+          recordIndustry: currentRecord?.industry,
+          recordEmployeeCount: currentRecord?.employeeCount || currentRecord?.size,
+          recordDescription: currentRecord?.description ? 'Yes' : 'No',
+          hasListViewContext: !!listViewContext,
+          listViewRecordCount: listViewContext?.visibleRecords?.length || 0,
+          currentUrl: window.location.href,
+          pathname: window.location.pathname
+        });
+      }
+      
+      // 🔍 VISUAL FEEDBACK: Warn user if no record context available on a record page
+      const isOnRecordPage = window.location.pathname.match(/\/(companies|people|leads|prospects|opportunities)\/[^/]+$/);
+      if (isOnRecordPage && !currentRecord) {
+        console.warn('⚠️ [AI CHAT] User is on a record page but no record context is available:', {
+          pathname: window.location.pathname,
+          hasCurrentRecord: !!currentRecord,
+          recordType
+        });
+      }
+      
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: { 
@@ -2517,6 +2547,34 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             {/* Messages at top when there are messages */}
             {chatMessages['length'] > 0 && (
               <div className="flex-1 flex flex-col">
+                {/* 🔍 CONTEXT WARNING BANNER: Show when on record page but no context available */}
+                {(() => {
+                  const isOnRecordPage = typeof window !== 'undefined' && 
+                    window.location.pathname.match(/\/(companies|people|leads|prospects|opportunities)\/[^/]+$/);
+                  const hasRecordContext = !!currentRecord;
+                  
+                  if (isOnRecordPage && !hasRecordContext) {
+                    return (
+                      <div className="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                        <div className="flex items-start gap-2">
+                          <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <div className="flex-1 text-sm">
+                            <p className="font-medium text-yellow-800 dark:text-yellow-200">
+                              Limited Context Available
+                            </p>
+                            <p className="text-yellow-700 dark:text-yellow-300 mt-1">
+                              The AI is responding without full record context. For better insights about this specific record, try refreshing the page or asking about general strategies.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+                
                 <MessageList
                   messages={chatMessages}
                   chatEndRef={chatEndRef}

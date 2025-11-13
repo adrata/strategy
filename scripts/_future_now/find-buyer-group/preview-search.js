@@ -54,6 +54,30 @@ class PreviewSearch {
       }
     }
     
+    // Filter employees by email domain if company website is available
+    // This prevents mixing employees from different companies with similar names
+    // Example: underline.com vs underline.cz
+    if (companyData.website && allEmployeesRaw.length > 0) {
+      const companyDomain = this.extractDomain(companyData.website);
+      const beforeDomainFilter = allEmployeesRaw.length;
+      
+      allEmployeesRaw = allEmployeesRaw.filter(emp => {
+        const email = emp.email || emp.work_email;
+        if (!email || !email.includes('@')) {
+          // Keep employees without email data for now
+          return true;
+        }
+        
+        const emailDomain = email.split('@')[1].toLowerCase();
+        return this.domainsMatchStrict(emailDomain, companyDomain);
+      });
+      
+      const filteredOut = beforeDomainFilter - allEmployeesRaw.length;
+      if (filteredOut > 0) {
+        console.log(`🔒 Email domain filter: ${beforeDomainFilter} → ${allEmployeesRaw.length} employees (filtered out ${filteredOut} with non-matching domains)`);
+      }
+    }
+    
     // Apply filtering based on company size and product category
     let relevantEmployees;
     
@@ -238,6 +262,32 @@ class PreviewSearch {
     if (!url) return '';
     const match = url.match(/(?:https?:\/\/)?(?:www\.)?([^\/]+)/);
     return match ? match[1] : url;
+  }
+
+  /**
+   * Strict domain matching for email validation
+   * Ensures exact root domain match (including TLD)
+   * @param {string} emailDomain - Email domain (e.g., 'underline.cz')
+   * @param {string} companyDomain - Company domain (e.g., 'underline.com')
+   * @returns {boolean} True if domains match exactly
+   */
+  domainsMatchStrict(emailDomain, companyDomain) {
+    if (!emailDomain || !companyDomain) return false;
+    
+    const parts1 = emailDomain.split('.');
+    const parts2 = companyDomain.split('.');
+    
+    // Need at least 2 parts for a valid domain (name.tld)
+    if (parts1.length < 2 || parts2.length < 2) return false;
+    
+    // Get root domain (last 2 parts: domain.tld)
+    const root1 = parts1.slice(-2).join('.');
+    const root2 = parts2.slice(-2).join('.');
+    
+    // Must match exactly (including TLD)
+    // This ensures underline.com !== underline.cz
+    // But allows mail.underline.com === underline.com
+    return root1 === root2;
   }
 
   /**

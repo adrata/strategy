@@ -285,7 +285,17 @@ CRUD OPERATIONS CAPABILITY:
    * Build record-specific context with structured extraction and strategic fit analysis
    */
   private static buildRecordContext(currentRecord: any, recordType: string | null): string {
+    // 🔍 ENHANCED LOGGING: Track what record context is being built
+    console.log('🎯 [AIContextService] Building record context:', {
+      hasCurrentRecord: !!currentRecord,
+      recordType,
+      recordId: currentRecord?.id,
+      recordName: currentRecord?.fullName || currentRecord?.name,
+      recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0
+    });
+
     if (!currentRecord || !recordType) {
+      console.warn('⚠️ [AIContextService] No record context available - returning general guidance');
       return `GENERAL APPLICATION CONTEXT:
 - No specific record selected
 - Provide general guidance about methodology and best practices
@@ -295,6 +305,17 @@ CRUD OPERATIONS CAPABILITY:
     const recordName = currentRecord.fullName || currentRecord.name || 'Unknown';
     const recordCompany = currentRecord.company || currentRecord.companyName || (recordType === 'companies' ? recordName : 'Unknown Company');
     const recordTitle = currentRecord.title || currentRecord.jobTitle || 'Unknown Title';
+    
+    // 🔍 LOG RECORD DATA COMPLETENESS
+    console.log('🔍 [AIContextService] Record data completeness:', {
+      hasName: !!recordName,
+      hasCompany: !!recordCompany,
+      hasIndustry: !!currentRecord.industry,
+      hasDescription: !!currentRecord.description,
+      hasWebsite: !!currentRecord.website,
+      hasEmployeeCount: !!(currentRecord.employeeCount || currentRecord.size),
+      descriptionLength: currentRecord.description?.length || 0
+    });
     
     // Build structured context based on record type
     let context;
