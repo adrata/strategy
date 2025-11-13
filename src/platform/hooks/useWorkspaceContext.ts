@@ -51,7 +51,10 @@ export function useWorkspaceContext(): UseWorkspaceContextReturn {
             'notary-everyday': '01K7DNYR5VZ7JY36KGKKN76XZ1',
             'top-engineering-plus': '01K75ZD7DWHG1XF16HAF2YVKCK',
             'cloudcaddie': '01K7DSWP8ZBA75K5VSWVXPEMAH',
-            'pinpoint': '01K90EQWJCCN2JDMRQF12F49GN'
+            'pinpoint': '01K90EQWJCCN2JDMRQF12F49GN',
+            'top-temp': '01K9QAP09FHT6EAP1B4G2KP3D2',
+            'toptemp': '01K9QAP09FHT6EAP1B4G2KP3D2',
+            'ei-cooperative': '01K9WFW99WEGDQY2RARPCVC4JD'
           };
           
           const workspaceId = workspaceMapping[workspaceSlug];

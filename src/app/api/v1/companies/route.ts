@@ -1096,6 +1096,30 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    // Generate AI-powered company summary (async, don't await)
+    setImmediate(async () => {
+      try {
+        // Call the generate-summary endpoint
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/api/v1/companies/${company.id}/generate-summary`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': request.headers.get('Authorization') || '',
+          },
+        });
+        
+        if (response.ok) {
+          console.log('✅ [COMPANIES API] Generated AI summary for new company', company.id);
+        } else {
+          console.warn('⚠️ [COMPANIES API] Failed to generate AI summary:', response.status);
+        }
+      } catch (error) {
+        console.error('⚠️ [COMPANIES API] Failed to generate AI summary:', error);
+        // Don't fail the request if summary generation fails
+      }
+    });
+
     // Auto-trigger enrichment/intelligence gathering (async, don't await)
     setImmediate(async () => {
       try {

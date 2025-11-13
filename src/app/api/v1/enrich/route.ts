@@ -633,6 +633,28 @@ async function enrichCompany(body: any, context: any) {
 
     console.log(`✅ [ENRICHMENT] Successfully enriched company ${company.name} with ${fieldsPopulated.length} fields:`, fieldsPopulated);
 
+    // Generate AI-powered company summary in the background (async, don't await)
+    setImmediate(async () => {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/api/v1/companies/${company.id}/generate-summary`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          console.log('✅ [ENRICHMENT] Generated AI summary for enriched company', company.id);
+        } else {
+          console.warn('⚠️ [ENRICHMENT] Failed to generate AI summary:', response.status);
+        }
+      } catch (error) {
+        console.error('⚠️ [ENRICHMENT] Failed to generate AI summary:', error);
+        // Don't fail the enrichment if summary generation fails
+      }
+    });
+
     return {
       type: 'company',
       entityId: company.id,

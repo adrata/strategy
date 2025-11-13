@@ -101,9 +101,14 @@ export async function GET(request: NextRequest) {
       // People are included from companies that HAVE people
       let speedrunRecords = [];
       try {
+        // 🎯 SMART FILTERING: Calculate date thresholds (exclude contacts from today/yesterday only)
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+        
         // 1. Get companies without people (these get Speedrun ranks)
         // 🚀 PERFORMANCE: Filter by globalRank to use index and limit scan
-        // 🚀 SPEEDRUN FILTERING: Exclude companies that have had meaningful actions EVER
+        // 🚀 SPEEDRUN FILTERING: Exclude companies contacted today or yesterday (allow older contacts)
         const companiesWhere: any = {
           workspaceId: context.workspaceId,
           deletedAt: null,
@@ -116,18 +121,10 @@ export async function GET(request: NextRequest) {
               mainSellerId: context.userId // Only people assigned to this user
             }
           },
-          // 🚀 FILTER: Exclude records with meaningful actions EVER
-          AND: [
-            {
-              OR: [
-                { lastActionDate: null },
-                { lastAction: null },
-                { lastAction: 'No action taken' },
-                { lastAction: 'Record created' },
-                { lastAction: 'Company record created' },
-                { lastAction: 'Record added' }
-              ]
-            }
+          // 🚀 FILTER: Exclude records contacted today or yesterday (include older contacts or never contacted)
+          OR: [
+            { lastActionDate: null }, // No action date = include them
+            { lastActionDate: { lt: yesterday } } // Action before yesterday = include them (excludes today and yesterday)
           ]
         };
         
@@ -174,7 +171,7 @@ export async function GET(request: NextRequest) {
 
         // 2. Get people from companies that have people (these get Speedrun ranks)
         // 🚀 PERFORMANCE: Filter by globalRank to use index and limit scan
-        // 🚀 SPEEDRUN FILTERING: Exclude people who have had meaningful actions EVER
+        // 🚀 SPEEDRUN FILTERING: Exclude people contacted today or yesterday (allow older contacts)
         const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
         
         const peopleWhere: any = {
@@ -183,18 +180,10 @@ export async function GET(request: NextRequest) {
           companyId: { not: null }, // Only people with company relationships
           mainSellerId: context.userId, // Only people assigned to this user
           globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 for performance
-          // 🚀 FILTER: Exclude records with meaningful actions EVER
-          AND: [
-            {
-              OR: [
-                { lastActionDate: null },
-                { lastAction: null },
-                { lastAction: 'No action taken' },
-                { lastAction: 'Record created' },
-                { lastAction: 'Company record created' },
-                { lastAction: 'Record added' }
-              ]
-            }
+          // 🚀 FILTER: Exclude records contacted today or yesterday (include older contacts or never contacted)
+          OR: [
+            { lastActionDate: null }, // No action date = include them
+            { lastActionDate: { lt: yesterday } } // Action before yesterday = include them (excludes today and yesterday)
           ]
         };
         
@@ -324,7 +313,12 @@ export async function GET(request: NextRequest) {
         }))
       );
 
-      // 🚀 BATCH QUERY ACTIONS: Get action counts AND filter out records with meaningful actions
+      // 🚀 BATCH QUERY ACTIONS: Get action counts AND filter out records with meaningful actions from today/yesterday
+      // Calculate date thresholds for action filtering
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      
       const personIds = speedrunRecords
         .filter(r => r.type === 'person')
         .map(r => r.id);
@@ -334,12 +328,12 @@ export async function GET(request: NextRequest) {
         .map(r => r.id);
       
       let actionCountsMap: Record<string, number> = {};
-      const recordsWithMeaningfulActions = new Set<string>();
+      const recordsWithRecentMeaningfulActions = new Set<string>();
       
       if (personIds.length > 0) {
         try {
-          // Query all actions for these people in one batch
-          const actions = await prisma.actions.findMany({
+          // Query 1: Get ALL meaningful actions for action counts (display purposes)
+          const allActions = await prisma.actions.findMany({
             where: {
               personId: { in: personIds },
               status: 'COMPLETED'
@@ -350,15 +344,34 @@ export async function GET(request: NextRequest) {
             }
           });
 
-          // Count meaningful actions per person AND track which records have meaningful actions
-          for (const action of actions) {
+          // Count ALL meaningful actions per person for display
+          for (const action of allActions) {
             if (action.personId && isMeaningfulAction(action.type)) {
               actionCountsMap[action.personId] = (actionCountsMap[action.personId] || 0) + 1;
-              recordsWithMeaningfulActions.add(action.personId);
             }
           }
 
-          console.log(`🔍 [SPEEDRUN API] Action counts queried: ${Object.keys(actionCountsMap).length} people with actions`);
+          // Query 2: Get recent meaningful actions (today/yesterday) for filtering
+          const recentActions = await prisma.actions.findMany({
+            where: {
+              personId: { in: personIds },
+              status: 'COMPLETED',
+              createdAt: { gte: yesterday } // Only actions from yesterday or today
+            },
+            select: {
+              personId: true,
+              type: true
+            }
+          });
+
+          // Track which records have recent meaningful actions (for filtering)
+          for (const action of recentActions) {
+            if (action.personId && isMeaningfulAction(action.type)) {
+              recordsWithRecentMeaningfulActions.add(action.personId);
+            }
+          }
+
+          console.log(`🔍 [SPEEDRUN API] Action counts queried: ${Object.keys(actionCountsMap).length} people with actions, ${recordsWithRecentMeaningfulActions.size} with recent actions`);
         } catch (actionError) {
           console.error('❌ [SPEEDRUN API] Error querying actions:', actionError);
           // Continue with empty map if action query fails
@@ -371,17 +384,20 @@ export async function GET(request: NextRequest) {
           const companyActions = await prisma.actions.findMany({
             where: {
               companyId: { in: companyIds },
-              status: 'COMPLETED'
+              status: 'COMPLETED',
+              createdAt: { gte: yesterday } // Only actions from yesterday or today
             },
             select: {
               companyId: true,
-              type: true
+              type: true,
+              createdAt: true
             }
           });
           
           for (const action of companyActions) {
             if (action.companyId && isMeaningfulAction(action.type)) {
-              recordsWithMeaningfulActions.add(action.companyId);
+              // Track records with recent meaningful actions for filtering
+              recordsWithRecentMeaningfulActions.add(action.companyId);
             }
           }
         } catch (actionError) {
@@ -389,37 +405,46 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      // 🚀 FILTER: Remove records that have meaningful actions EVER
+      // 🚀 FILTER: Remove records that have meaningful actions from today or yesterday only
       speedrunRecords = speedrunRecords.filter(record => {
         const recordId = record.id;
-        const hasMeaningfulAction = recordsWithMeaningfulActions.has(recordId);
+        const hasRecentMeaningfulAction = recordsWithRecentMeaningfulActions.has(recordId);
         
-        // Also check lastAction/lastActionDate fields as fallback
+        // Check lastAction/lastActionDate fields - exclude if contacted today or yesterday
         const lastAction = record.lastAction;
         const lastActionDate = record.lastActionDate;
-        const hasNonMeaningfulLastAction = !lastActionDate || 
-          !lastAction || 
-          lastAction === 'No action taken' ||
-          lastAction === 'Record created' ||
-          lastAction === 'Company record created' ||
-          lastAction === 'Record added';
         
-        // Exclude if has meaningful action OR if lastAction/lastActionDate indicate meaningful action
-        if (hasMeaningfulAction) {
-          console.log(`🚫 [SPEEDRUN API] Filtering out ${record.displayName || record.name} - has meaningful action`);
+        // Exclude if has recent meaningful action (from today/yesterday)
+        if (hasRecentMeaningfulAction) {
+          console.log(`🚫 [SPEEDRUN API] Filtering out ${record.displayName || record.name} - has meaningful action from today/yesterday`);
           return false;
         }
         
-        // If lastActionDate exists and lastAction is not in the non-meaningful list, exclude
-        if (lastActionDate && !hasNonMeaningfulLastAction) {
-          console.log(`🚫 [SPEEDRUN API] Filtering out ${record.displayName || record.name} - lastAction: ${lastAction}, lastActionDate: ${lastActionDate}`);
-          return false;
+        // Check lastActionDate - exclude if it's from today or yesterday and indicates meaningful action
+        if (lastActionDate) {
+          const actionDate = new Date(lastActionDate);
+          const actionDateOnly = new Date(actionDate.getFullYear(), actionDate.getMonth(), actionDate.getDate());
+          
+          // If lastActionDate is today or yesterday, check if it's a meaningful action
+          if (actionDateOnly >= yesterday) {
+            const hasNonMeaningfulLastAction = !lastAction || 
+              lastAction === 'No action taken' ||
+              lastAction === 'Record created' ||
+              lastAction === 'Company record created' ||
+              lastAction === 'Record added';
+            
+            // If lastAction exists and is meaningful (not in the non-meaningful list), exclude
+            if (!hasNonMeaningfulLastAction) {
+              console.log(`🚫 [SPEEDRUN API] Filtering out ${record.displayName || record.name} - lastAction: ${lastAction}, lastActionDate: ${lastActionDate} (today/yesterday)`);
+              return false;
+            }
+          }
         }
         
         return true;
       });
       
-      console.log(`🔍 [SPEEDRUN API] After filtering meaningful actions: ${speedrunRecords.length} records remaining`);
+      console.log(`🔍 [SPEEDRUN API] After filtering recent meaningful actions (today/yesterday): ${speedrunRecords.length} records remaining`);
       
       // 🏆 FIX: Now limit to top 50 AFTER filtering meaningful actions
       speedrunRecords = speedrunRecords.slice(0, 50);

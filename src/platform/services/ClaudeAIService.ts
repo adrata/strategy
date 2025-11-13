@@ -504,7 +504,7 @@ export class ClaudeAIService {
                   industry: true, 
                   size: true,
                   website: true,
-                  linkedin: true,
+                  linkedinUrl: true,
                   description: true
                 } 
               },
@@ -521,7 +521,7 @@ export class ClaudeAIService {
                   industry: true, 
                   size: true,
                   website: true,
-                  linkedin: true,
+                  linkedinUrl: true,
                   description: true
                 } 
               },
@@ -535,9 +535,9 @@ export class ClaudeAIService {
               people: { 
                 select: { 
                   fullName: true, 
-                  title: true, 
+                  jobTitle: true, 
                   email: true,
-                  linkedin: true
+                  linkedinUrl: true
                 },
                 take: 5
               },
@@ -554,7 +554,7 @@ export class ClaudeAIService {
                   industry: true, 
                   size: true,
                   website: true,
-                  linkedin: true,
+                  linkedinUrl: true,
                   description: true
                 } 
               },
@@ -571,7 +571,7 @@ export class ClaudeAIService {
                   industry: true, 
                   size: true,
                   website: true,
-                  linkedin: true,
+                  linkedinUrl: true,
                   description: true
                 } 
               },
@@ -788,7 +788,7 @@ Please acknowledge these limitations in your response and suggest how the user c
       const industry = currentRecord.company?.industry || 'Unknown Industry';
       const companySize = currentRecord.company?.size || 'Unknown Size';
       const website = currentRecord.company?.website || currentRecord.website || 'No website';
-      const linkedin = currentRecord.company?.linkedin || currentRecord.linkedin || 'No LinkedIn';
+      const linkedin = currentRecord.company?.linkedinUrl || currentRecord.linkedinUrl || 'No LinkedIn';
       const description = currentRecord.company?.description || currentRecord.description || 'No description available';
       const email = currentRecord.email || 'No email available';
       const phone = currentRecord.phone || 'No phone available';

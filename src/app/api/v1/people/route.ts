@@ -1352,15 +1352,72 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle company linking if company name is provided without companyId
-    if (body.company && typeof body.company === 'string' && body.company.trim() && !body.companyId) {
+    // Support both 'company' and 'currentCompany' fields for backwards compatibility
+    const companyNameToLink = body.company || body.currentCompany;
+    if (companyNameToLink && typeof companyNameToLink === 'string' && companyNameToLink.trim() && !body.companyId) {
       try {
-        console.log(`🏢 [PEOPLE API] Auto-linking company: "${body.company}"`);
+        console.log(`🏢 [PEOPLE API] Auto-linking company: "${companyNameToLink}"`);
         const companyResult = await findOrCreateCompany(
-          body.company,
+          companyNameToLink,
           context.workspaceId
         );
-        body.companyId = companyResult.id;
-        console.log(`✅ [PEOPLE API] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
+        
+        // Validate email domain against company domain to prevent cross-company pollution
+        const personEmail = body.email || body.workEmail;
+        if (personEmail && personEmail.includes('@')) {
+          const personDomain = personEmail.split('@')[1].toLowerCase();
+          
+          // Get company details to check domain
+          const companyDetails = await prisma.companies.findUnique({
+            where: { id: companyResult.id },
+            select: { website: true, domain: true }
+          });
+          
+          if (companyDetails) {
+            const companyWebsite = companyDetails.website || companyDetails.domain;
+            if (companyWebsite) {
+              const companyDomain = companyWebsite
+                .toLowerCase()
+                .replace(/^https?:\/\//, '')
+                .replace(/^www\./, '')
+                .split('/')[0];
+              
+              // Check for domain mismatch (different TLDs with same base domain)
+              const personBase = personDomain.replace(/\.[^.]+$/, '');
+              const companyBase = companyDomain.replace(/\.[^.]+$/, '');
+              
+              if (personBase === companyBase && personDomain !== companyDomain) {
+                console.warn(`⚠️ [PEOPLE API] Domain mismatch detected: ${personDomain} vs ${companyDomain} - Not linking to prevent cross-company pollution`);
+                // Don't set companyId, but set currentCompany for reference
+                body.currentCompany = companyNameToLink;
+              } else if (personDomain === companyDomain) {
+                // Perfect match - link the company
+                body.companyId = companyResult.id;
+                body.currentCompany = companyResult.name;
+                console.log(`✅ [PEOPLE API] ${companyResult.isNew ? 'Created' : 'Found'} and linked company: ${companyResult.name} (${companyResult.id})`);
+              } else {
+                // Set company regardless if domains are completely different
+                // (might be personal email or company doesn't have a domain set)
+                body.companyId = companyResult.id;
+                body.currentCompany = companyResult.name;
+                console.log(`✅ [PEOPLE API] ${companyResult.isNew ? 'Created' : 'Found'} and linked company: ${companyResult.name} (${companyResult.id}) - No domain to validate`);
+              }
+            } else {
+              // No company domain to validate against, set company anyway
+              body.companyId = companyResult.id;
+              body.currentCompany = companyResult.name;
+              console.log(`✅ [PEOPLE API] ${companyResult.isNew ? 'Created' : 'Found'} and linked company: ${companyResult.name} (${companyResult.id}) - No company domain`);
+            }
+          } else {
+            body.companyId = companyResult.id;
+            body.currentCompany = companyResult.name;
+          }
+        } else {
+          // No email to validate, set company anyway
+          body.companyId = companyResult.id;
+          body.currentCompany = companyResult.name;
+          console.log(`✅ [PEOPLE API] ${companyResult.isNew ? 'Created' : 'Found'} and linked company: ${companyResult.name} (${companyResult.id})`);
+        }
       } catch (error) {
         console.error('⚠️ [PEOPLE API] Failed to link company:', error);
         // Continue without company linking rather than failing the entire request
@@ -1463,6 +1520,7 @@ export async function POST(request: NextRequest) {
           companyRank: body.companyRank || 0,
           workspaceId: context.workspaceId,
           companyId: body.companyId,
+          currentCompany: body.currentCompany, // Store company name string for reference
           mainSellerId: body.mainSellerId || context.userId, // Auto-assign current user as main seller
           createdAt: new Date(),
           updatedAt: new Date(),
