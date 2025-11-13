@@ -20,6 +20,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   const [riskAssessments, setRiskAssessments] = useState<Record<string, RiskAssessment>>({});
   const [isFetching, setIsFetching] = useState(false);
   const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const router = useRouter();
   
   // Track previous companyId and recordId to detect changes and invalidate cache
@@ -156,9 +157,9 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       const recordIdChanged = previousRecordId !== null && previousRecordId !== record?.id;
       
       if (!record?.id) {
-        console.log('🔍 [PEOPLE DEBUG] No record ID, clearing state and setting loading to false');
+        console.log('🔍 [PEOPLE DEBUG] No record ID, clearing state and showing loading while waiting for record');
         setPeople([]);
-        setLoading(false);
+        setLoading(true); // Show loading while waiting for record
         setIsFetching(false);
         previousRecordIdRef.current = null;
         previousCompanyIdRef.current = null;
@@ -188,8 +189,9 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           recordName: record?.name,
           hasCompanyId: !!companyId
         });
-        // Don't set loading state - allow the effect to retry when companyId becomes available
+        // Show loading while waiting for companyId to become available
         setPeople([]);
+        setLoading(true); // Show loading while waiting for companyId
         setIsFetching(false);
         return;
       }
@@ -341,6 +343,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           console.log('🔍 [PEOPLE] No people found in database for this company:', companyName, 'ID:', companyId);
           setPeople([]);
           setLoading(false);
+          setHasFetchedOnce(true); // Mark that we've attempted fetch
           return;
         }
 
@@ -487,6 +490,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         console.log('🔍 [PEOPLE DEBUG] Final people before setting:', sortedPeople);
         setPeople(sortedPeople);
         setLoading(false);
+        setHasFetchedOnce(true); // Mark that we've attempted fetch
         setIsFetching(false);
         console.log(`Found ${sortedPeople.length} people from ${companyName}:`, sortedPeople);
         
@@ -494,6 +498,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         console.error('Error fetching people:', error);
         setPeople([]);
         setLoading(false);
+        setHasFetchedOnce(true); // Mark that we've attempted fetch
         setIsFetching(false);
       }
     };
@@ -537,7 +542,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       )}
 
       {/* Empty State */}
-      {!loading && people.length === 0 && (
+      {!loading && people.length === 0 && hasFetchedOnce && (
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-muted mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">

@@ -344,7 +344,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               />
               
               <StrategySummaryCard
-                title="Complication"
+                title="Pain"
                 content={strategyData?.complication || record?.customFields?.strategyComplication || ''}
                 color="orange"
               />

@@ -27,6 +27,9 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   const [actionsLoading, setActionsLoading] = useState(false);
   const [actionsError, setActionsError] = useState<string | null>(null);
   
+  // Enrichment status state (silent - no UI)
+  const [hasTriggeredEnrichment, setHasTriggeredEnrichment] = useState(false);
+  
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
@@ -106,6 +109,63 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
 
     syncBuyerGroupData();
   }, [record?.id]);
+
+  // Auto-trigger enrichment if person has LinkedIn/email but missing key data (SILENT - no UI)
+  useEffect(() => {
+    const triggerEnrichment = async () => {
+      // Only trigger if we have a person ID and haven't triggered yet
+      if (!record?.id || hasTriggeredEnrichment) {
+        return;
+      }
+
+      // Check if person has LinkedIn or email but missing key data
+      const hasIdentifier = record?.linkedinUrl || record?.email;
+      const missingBasicData = !record?.jobTitle || !record?.department;
+      const hasBeenEnriched = record?.customFields?.coresignalId || record?.lastEnriched;
+      
+      // Check data staleness (only re-enrich if > 90 days old)
+      const isStale = record?.lastEnriched && 
+        (Date.now() - new Date(record.lastEnriched).getTime()) > 90 * 24 * 60 * 60 * 1000;
+      
+      // Only trigger if: has identifier, missing data, and (not enriched OR stale)
+      if (hasIdentifier && missingBasicData && (!hasBeenEnriched || isStale)) {
+        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering silent enrichment for person: ${record.id}`);
+        setHasTriggeredEnrichment(true);
+        
+        try {
+          const enrichResult = await authFetch(`/api/v1/enrich`, {
+            method: 'POST',
+            body: JSON.stringify({
+              type: 'person',
+              entityId: record.id,
+              options: {
+                verifyEmail: true,
+                verifyPhone: true
+              }
+            })
+          });
+          
+          console.log(`📊 [PERSON OVERVIEW] Enrichment result:`, enrichResult);
+          
+          if (enrichResult?.status === 'completed') {
+            console.log(`✅ [PERSON OVERVIEW] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
+            
+            // Trigger page refresh to show new data
+            window.location.reload();
+          } else if (enrichResult?.status === 'failed') {
+            console.warn(`⚠️ [PERSON OVERVIEW] Enrichment failed:`, enrichResult.message);
+          }
+        } catch (error) {
+          console.error('❌ [PERSON OVERVIEW] Error triggering enrichment:', error);
+        }
+      }
+    };
+
+    // Only trigger once when component mounts and we have person data
+    if (record && !hasTriggeredEnrichment) {
+      triggerEnrichment();
+    }
+  }, [record, hasTriggeredEnrichment]);
 
   // Fetch actions when component mounts or record changes
   useEffect(() => {

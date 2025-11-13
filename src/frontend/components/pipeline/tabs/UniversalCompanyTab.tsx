@@ -48,11 +48,20 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       return false; // No company ID or already a company record
     }
     
-    // Check if we're missing key company fields that indicate partial data
-    const hasKeyFields = record?.description || record?.website || record?.revenue || 
-                        record?.linkedinUrl || record?.hqFullAddress || record?.legalName;
+    // For person/lead records, check if company object has detailed fields
+    // The company include from people API only has: id, name, industry, size, globalRank, hqState
+    // We need to check if we have more detailed fields beyond these basics
+    const companyData = record?.company && typeof record.company === 'object' ? record.company : record;
     
-    return !hasKeyFields; // If we don't have key fields, we likely have partial data
+    // Check if we have detailed company fields beyond the basic 6 from the people API
+    const hasDetailedFields = companyData?.website || companyData?.linkedinUrl || 
+                              companyData?.revenue || companyData?.employeeCount ||
+                              companyData?.hqFullAddress || companyData?.foundedYear ||
+                              companyData?.description || companyData?.legalName ||
+                              companyData?.phone || companyData?.email;
+    
+    // If we don't have detailed fields, we need to fetch full company data
+    return !hasDetailedFields;
   }, [companyId, record, recordType]);
   
   // Fetch full company data when we have partial data

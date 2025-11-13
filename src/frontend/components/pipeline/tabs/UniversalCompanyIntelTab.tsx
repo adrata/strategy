@@ -275,11 +275,11 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                 </div>
               </div>
               
-              {/* Complication */}
+              {/* Pain */}
               <div className="bg-white border border-border rounded-lg p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                  <h4 className="text-sm font-semibold text-foreground">Complication</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Pain</h4>
                 </div>
                 <div className="text-sm text-muted leading-relaxed">
                   {strategyData.complication}

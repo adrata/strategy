@@ -448,7 +448,7 @@ export class CompanyStrategyService {
           color: 'green'
         },
         complication: {
-          title: 'Complication', 
+          title: 'Pain', 
           content: data.complication,
           color: 'orange'
         },

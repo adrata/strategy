@@ -158,7 +158,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                 <p className="text-gray-600 text-sm bg-gray-50 p-3 rounded-md">{person.winningVariantStrategy.situation}</p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2 text-sm">Complication</h4>
+                <h4 className="font-medium text-gray-900 mb-2 text-sm">Pain</h4>
                 <p className="text-gray-600 text-sm bg-gray-50 p-3 rounded-md">{person.winningVariantStrategy.complication}</p>
               </div>
               <div>

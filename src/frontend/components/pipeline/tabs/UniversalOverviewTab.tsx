@@ -438,7 +438,15 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       employeeId: record?.customFields?.coresignal?.employeeId,
       followersCount: record?.customFields?.coresignal?.followersCount,
       connectionsCount: record?.customFields?.coresignal?.connectionsCount,
-      totalFields: record?.customFields?.totalFields
+      totalFields: record?.customFields?.totalFields,
+      // ⚠️ DEBUG: Basic info fields
+      recordId: record?.id,
+      jobTitle: record?.jobTitle,
+      title: record?.title,
+      department: record?.department,
+      state: record?.state,
+      bio: record?.bio,
+      companyState: record?.company?.state
     });
   }
 
@@ -478,7 +486,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   // Extract comprehensive record data from CoreSignal with database fallback
   // This needs to be reactive to actions state
   const recordData = React.useMemo(() => {
-    return {
+    const data = {
     // Basic info - Database fields first, then CoreSignal fallback - no fallback to '-'
     name: sanitizeName(record?.fullName || record?.name || coresignalData.full_name) || null,
     title: (() => {
@@ -565,17 +573,17 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     linkedinConnectionDate: record?.linkedinConnectionDate || null,
     bio: record?.bio || null,
     
-    // Company info - Coresignal data with database fallback
+    // Company info - Database fields first, then CoreSignal fallback
     company: (() => {
       // Handle both string and object company formats
-      const coresignalCompany = coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name;
       const recordCompany = typeof record?.company === 'string' 
         ? record.company 
         : (record?.company?.name || record?.companyName);
-      return coresignalCompany || recordCompany || null;
+      const coresignalCompany = coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name;
+      return recordCompany || coresignalCompany || null;
     })(),
-    industry: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || null,
-    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || null,
+    industry: record?.company?.industry || record?.industry || coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || null,
+    department: record?.department || coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || null,
     
     // State information
     state: record?.state || record?.company?.state || null,
@@ -629,6 +637,24 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.seniority ?? record.customFields?.seniority ?? 'Mid-level'
     };
+    
+    // ⚠️ DEBUG: Log computed recordData for basic info fields
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 [Universal Overview] Computed recordData:', {
+        recordId: record?.id,
+        title: data.title,
+        department: data.department,
+        state: data.state,
+        bio: data.bio,
+        recordState: record?.state,
+        recordDepartment: record?.department,
+        recordJobTitle: record?.jobTitle,
+        recordTitle: record?.title,
+        hasCoreSignalData: !!coresignalData && Object.keys(coresignalData).length > 0
+      });
+    }
+    
+    return data;
   }, [record, coresignalData, actions, linkedinUrl, linkedinNavigatorUrl]);
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
