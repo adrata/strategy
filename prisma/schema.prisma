@@ -478,7 +478,6 @@ model companies {
   jobPostingsChange       Json?
   productReviewsScore     Json?
   revenueRange            Json?
-  linkedinNavigatorUrl    String?               @db.VarChar(500)
   descriptionEnriched     String?
   actions                 actions[]
   mainSeller              users?                @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
