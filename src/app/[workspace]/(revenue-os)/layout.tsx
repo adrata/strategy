@@ -137,6 +137,9 @@ function PipelineLayoutInner({
                             !pathname.includes('/workbench') &&
                             !pathname.includes('/workbench');
   
+  // Check if this is a test-drive route - should match adrata AI experience
+  const isTestDriveRoute = pathname.includes('/test-drive');
+  
   // Get thread data from OasisLayoutContext if available
   // Use a hook-like pattern to ensure reactivity
   let threadData = null;
@@ -172,6 +175,9 @@ function PipelineLayoutInner({
     if (pathname.includes('/pinpoint/adrata') || isBaseAdrataRoute) {
       // Base Adrata routes - show conversation list (chat conversations)
       return <ConversationsListGrouped />;
+    } else if (pathname.includes('/test-drive')) {
+      // Test-drive route - show AI chat (matches adrata AI experience)
+      return <RightPanel />;
     } else if (pathname.includes('/stacks')) {
       // Stacks - show detail panel if item selected, otherwise AI chat
       if (stacksContext?.selectedItem) {
@@ -186,7 +192,7 @@ function PipelineLayoutInner({
       // All other apps (RevenueOS, Oasis, Workbench, /adrata/oasis, /adrata/stacks, etc.) - show AI chat
       return <RightPanel />;
     }
-  }, [pathname, threadData, isBaseAdrataRoute, stacksContext?.selectedItem]);
+  }, [pathname, threadData, isBaseAdrataRoute, isTestDriveRoute, stacksContext?.selectedItem]);
   
   // Initialize profile panel state from sessionStorage on mount if needed
   useEffect(() => {
@@ -263,6 +269,9 @@ function PipelineLayoutInner({
       return <InboxLeftPanel key="inbox-left-panel" />;
     } else if (pathname.includes('/workbench')) {
       return <WorkbenchLeftPanel key="workbench-left-panel" />;
+    } else if (pathname.includes('/test-drive')) {
+      // Test-drive route - no left panel (matches adrata AI experience)
+      return null;
     } else if (pathname.includes('/adrata') && !isPipelineRoute) {
       // Only hide left panel for base /adrata chat route, not pipeline routes
       // Base Adrata chat route - minimal or null left panel since chat is in middle
@@ -309,6 +318,8 @@ function PipelineLayoutInner({
   // Show right panel if thread is open, or based on route/UI state
   const isRightPanelVisible = pathname.includes('/pinpoint/adrata') 
     ? true 
+    : pathname.includes('/test-drive')
+    ? true
     : (threadData !== null && pathname.includes('/oasis')) 
     ? true 
     : ui.isRightPanelVisible;
@@ -319,20 +330,20 @@ function PipelineLayoutInner({
   // Get left panel visibility from UI context
   const isLeftPanelVisible = ui.isLeftPanelVisible;
   
-  // Hide left panel for base Adrata routes (since chat is in middle panel)
+  // Hide left panel for base Adrata routes and test-drive (since chat is in middle panel)
   // Always show left panel for inbox routes
-  const shouldShowLeftPanel = pathname.includes('/inbox') ? true : (!isBaseAdrataRoute && isLeftPanelVisible);
+  const shouldShowLeftPanel = pathname.includes('/inbox') ? true : (!isBaseAdrataRoute && !isTestDriveRoute && isLeftPanelVisible);
   
-  // For base /adrata routes, automatically open profile panel
+  // For base /adrata routes and test-drive, automatically open profile panel
   useEffect(() => {
-    if (isBaseAdrataRoute && !isProfilePanelVisible) {
+    if ((isBaseAdrataRoute || isTestDriveRoute) && !isProfilePanelVisible) {
       setIsProfilePanelVisible(true);
       // Set sessionStorage flag to keep it open
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('profilePanelShouldStayOpen', 'true');
       }
     }
-  }, [isBaseAdrataRoute, isProfilePanelVisible, setIsProfilePanelVisible]);
+  }, [isBaseAdrataRoute, isTestDriveRoute, isProfilePanelVisible, setIsProfilePanelVisible]);
 
   // Ensure right panel is visible when thread is opened
   useEffect(() => {
@@ -392,8 +403,8 @@ function PipelineLayoutInner({
     }
   }, [pathname, shouldKeepProfilePanelOpen, isProfilePanelVisible, setIsProfilePanelVisible]);
   
-  // Force profile panel visible for base Adrata routes and Pinpoint Adrata routes
-  const forcedProfilePanelVisible = (isBaseAdrataRoute || isPinpointAdrataRoute) ? true : isProfilePanelVisible;
+  // Force profile panel visible for base Adrata routes, Pinpoint Adrata routes, and test-drive
+  const forcedProfilePanelVisible = (isBaseAdrataRoute || isPinpointAdrataRoute || isTestDriveRoute) ? true : isProfilePanelVisible;
 
   return (
     <>
@@ -408,7 +419,7 @@ function PipelineLayoutInner({
             company={company}
             workspace={workspace}
             isOpen={forcedProfilePanelVisible}
-            onClose={(isBaseAdrataRoute || isPinpointAdrataRoute) ? () => {} : () => {
+            onClose={(isBaseAdrataRoute || isPinpointAdrataRoute || isTestDriveRoute) ? () => {} : () => {
               // Clear sessionStorage flag when user manually closes the panel
               if (typeof window !== 'undefined') {
                 sessionStorage.removeItem('profilePanelShouldStayOpen');
@@ -420,7 +431,7 @@ function PipelineLayoutInner({
             userId={authUser?.id}
             userEmail={authUser?.email}
             onToggleLeftPanel={ui.toggleLeftPanel}
-            hideCloseButton={isBaseAdrataRoute || isPinpointAdrataRoute}
+            hideCloseButton={isBaseAdrataRoute || isPinpointAdrataRoute || isTestDriveRoute}
           />
         }
         isProfilePanelVisible={forcedProfilePanelVisible}
