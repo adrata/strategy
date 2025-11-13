@@ -68,6 +68,7 @@ function getDefaultLists(section: string, workspaceId?: string): List[] {
   // Add section-specific default lists
   const defaults: List[] = [allItems];
 
+  // Companies: Uncontacted
   if (section === 'companies') {
     defaults.push({
       id: 'uncontacted-companies',
@@ -90,14 +91,107 @@ function getDefaultLists(section: string, workspaceId?: string): List[] {
     });
   }
 
-  if (section === 'leads' || section === 'prospects') {
+  // People: Uncontacted
+  if (section === 'people') {
     defaults.push({
-      id: `uncontacted-${section}`,
+      id: 'uncontacted-people',
       workspaceId: workspaceId || '',
       userId: '',
       section,
       name: 'Uncontacted',
-      description: `${section === 'leads' ? 'Leads' : 'Prospects'} with no recent contact`,
+      description: 'People with no recent contact',
+      isDefault: true,
+      filters: {
+        lastContactedFilter: 'uncontacted'
+      },
+      sortField: 'rank',
+      sortDirection: 'desc',
+      searchQuery: null,
+      visibleFields: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null
+    });
+  }
+
+  // Leads: Uncontacted
+  if (section === 'leads') {
+    defaults.push({
+      id: 'uncontacted-leads',
+      workspaceId: workspaceId || '',
+      userId: '',
+      section,
+      name: 'Uncontacted',
+      description: 'Leads with no recent contact',
+      isDefault: true,
+      filters: {
+        lastContactedFilter: 'uncontacted'
+      },
+      sortField: 'rank',
+      sortDirection: 'desc',
+      searchQuery: null,
+      visibleFields: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null
+    });
+  }
+
+  // Prospects: Uncontacted this month
+  if (section === 'prospects') {
+    defaults.push({
+      id: 'uncontacted-prospects',
+      workspaceId: workspaceId || '',
+      userId: '',
+      section,
+      name: 'Uncontacted this month',
+      description: 'Prospects with no contact this month',
+      isDefault: true,
+      filters: {
+        lastContactedFilter: 'uncontacted'
+      },
+      sortField: 'rank',
+      sortDirection: 'desc',
+      searchQuery: null,
+      visibleFields: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null
+    });
+  }
+
+  // Opportunities: Uncontacted this month
+  if (section === 'opportunities') {
+    defaults.push({
+      id: 'uncontacted-opportunities',
+      workspaceId: workspaceId || '',
+      userId: '',
+      section,
+      name: 'Uncontacted this month',
+      description: 'Opportunities with no contact this month',
+      isDefault: true,
+      filters: {
+        lastContactedFilter: 'uncontacted'
+      },
+      sortField: 'rank',
+      sortDirection: 'desc',
+      searchQuery: null,
+      visibleFields: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null
+    });
+  }
+
+  // Clients: Uncontacted (optional, but consistent)
+  if (section === 'clients') {
+    defaults.push({
+      id: 'uncontacted-clients',
+      workspaceId: workspaceId || '',
+      userId: '',
+      section,
+      name: 'Uncontacted',
+      description: 'Clients with no recent contact',
       isDefault: true,
       filters: {
         lastContactedFilter: 'uncontacted'
