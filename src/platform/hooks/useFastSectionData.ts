@@ -108,28 +108,40 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
     }
 
-    // 🚀 SPEEDRUN: Skip localStorage cache for speedrun to ensure fresh ranking data
-    // Speedrun uses dynamic per-user rankings that update based on actions, so we always
-    // fetch fresh data from the API which has proper Redis caching with invalidation
-    if (!shouldForceRefresh && section !== 'speedrun') {
+    // 🚀 SMART CACHE: Use localStorage cache with TTL checking for instant loading
+    // Speedrun now uses cache but with shorter TTL (2 minutes) and background prefetch
+    if (!shouldForceRefresh) {
       try {
         const storageKey = `adrata-${section}-${workspaceId}`;
         const cached = localStorage.getItem(storageKey);
         if (cached) {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed?.data)) {
-            console.log(`⚡ [FAST SECTION DATA] Loading ${section} from localStorage cache:`, {
-              section,
-              cachedCount: parsed.data.length,
-              cacheTimestamp: parsed.ts
-            });
-            setData(parsed.data);
-            setCount(parsed.data.length);
-            setLoading(false);
-            setError(null);
-            // Still mark as loaded in memory cache
-            loadedSectionsRef.current.add(section);
-            return;
+            // Check cache age - speedrun has shorter TTL (2 minutes)
+            const cacheAge = Date.now() - (parsed.ts || 0);
+            const maxAge = section === 'speedrun' ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2min for speedrun, 5min for others
+            
+            if (cacheAge < maxAge) {
+              console.log(`⚡ [FAST SECTION DATA] Loading ${section} from localStorage cache:`, {
+                section,
+                cachedCount: parsed.data.length,
+                cacheTimestamp: parsed.ts,
+                cacheAge: Math.round(cacheAge / 1000) + 's'
+              });
+              setData(parsed.data);
+              setCount(parsed.data.length);
+              setLoading(false);
+              setError(null);
+              // Still mark as loaded in memory cache
+              loadedSectionsRef.current.add(section);
+              return;
+            } else {
+              console.log(`🔄 [FAST SECTION DATA] Cache expired for ${section}, fetching fresh data:`, {
+                cacheAge: Math.round(cacheAge / 1000) + 's',
+                maxAge: Math.round(maxAge / 1000) + 's'
+              });
+              localStorage.removeItem(storageKey);
+            }
           }
         }
       } catch (e) {
@@ -137,8 +149,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
     }
 
-    // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh or speedrun)
-    if (!shouldForceRefresh && section !== 'speedrun' && loadedSectionsRef.current.has(section)) {
+    // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh)
+    // Now includes speedrun - relies on cache TTL and background prefetch for freshness
+    if (!shouldForceRefresh && loadedSectionsRef.current.has(section)) {
       console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded in memory`);
       setLoading(false);
       return;

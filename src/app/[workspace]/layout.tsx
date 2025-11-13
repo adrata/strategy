@@ -6,6 +6,7 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { getWorkspaceBySlug, parseWorkspaceFromUrl } from "@/platform/auth/workspace-slugs";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useWorkspaceSwitch } from "@/platform/hooks/useWorkspaceSwitch";
+import { initSpeedrunPrefetch } from "@/platform/services/speedrun-prefetch";
 
 interface WorkspaceLayoutProps {
   children: React.ReactNode;
@@ -64,6 +65,21 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
 
     validateWorkspace();
   }, [authUser, isLoading, router]);
+
+  // Initialize speedrun background prefetch service
+  useEffect(() => {
+    if (!authUser?.id || !authUser?.activeWorkspaceId) return;
+
+    console.log('🚀 [WORKSPACE LAYOUT] Initializing speedrun prefetch service');
+    
+    const cleanup = initSpeedrunPrefetch(
+      authUser.activeWorkspaceId,
+      authUser.id
+    );
+
+    // Cleanup on unmount or when workspace/user changes
+    return cleanup;
+  }, [authUser?.id, authUser?.activeWorkspaceId]);
 
   // EMERGENCY BYPASS: Skip authentication blocking for production demo
   // if (false) { // TEMPORARILY DISABLED
