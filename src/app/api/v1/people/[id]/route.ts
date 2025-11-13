@@ -531,7 +531,7 @@ export async function PATCH(
     // Whitelist of allowed fields for people updates
     const ALLOWED_PEOPLE_FIELDS = [
       'firstName', 'lastName', 'fullName', 'displayName', 'salutation', 'suffix',
-      'jobTitle', 'title', 'department', 'status', 'priority', 
+      'jobTitle', 'department', 'status', 'priority', 
       'email', 'workEmail', 'personalEmail', 'phone', 'mobilePhone', 'workPhone', 
       'linkedinUrl', 'linkedinNavigatorUrl', 'linkedinConnectionDate', 
       'city', 'nextAction', 'nextActionDate', 'notes', 'tags', 'seniority',

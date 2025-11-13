@@ -291,7 +291,6 @@ pub struct Person {
     pub salutation: Option<String>,
     pub suffix: Option<String>,
     pub job_title: Option<String>,
-    pub title: Option<String>,
     pub department: Option<String>,
     pub seniority: Option<String>,
     pub email: Option<String>,

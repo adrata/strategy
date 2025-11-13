@@ -58,9 +58,7 @@ async function backfillTitles(workspaceId) {
         deletedAt: null,
         OR: [
           { jobTitle: null },
-          { jobTitle: '' },
-          { title: null },
-          { title: '' }
+          { jobTitle: '' }
         ],
         AND: [
           {
@@ -75,7 +73,6 @@ async function backfillTitles(workspaceId) {
         fullName: true,
         email: true,
         jobTitle: true,
-        title: true,
         customFields: true
       }
     });
@@ -100,7 +97,6 @@ async function backfillTitles(workspaceId) {
           where: { id: person.id },
           data: {
             jobTitle: person.jobTitle || extractedTitle,
-            title: person.title || extractedTitle,
             updatedAt: new Date()
           }
         });

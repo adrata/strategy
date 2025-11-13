@@ -369,7 +369,6 @@ async function convertProspectToLead(
       vertical: prospect.vertical,
       companySize: prospect.companySize,
       jobTitle: prospect.jobTitle,
-      title: prospect.title,
       department: prospect.department,
       linkedinUrl: prospect.linkedinUrl,
       address: prospect.address,

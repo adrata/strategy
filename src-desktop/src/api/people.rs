@@ -249,7 +249,6 @@ pub async fn get_people(
             salutation: row.get("salutation"),
             suffix: row.get("suffix"),
             job_title: row.get("job_title"),
-            title: row.get("title"),
             department: row.get("department"),
             seniority: row.get("seniority"),
             email: row.get("email"),
