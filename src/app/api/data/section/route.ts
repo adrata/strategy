@@ -14,9 +14,9 @@ import { calculateLastActionTiming, calculateNextActionTiming, addBusinessDays }
 import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
-// 🚀 PERFORMANCE: Ultra-aggressive caching for section data
-const SECTION_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
-export const sectionCache = new Map<string, { data: any; timestamp: number }>();
+// 🚀 PERFORMANCE: Workspace-aware caching for section data (prevents data leakage)
+const SECTION_CACHE_TTL = 90 * 1000; // 90 seconds (1.5 minutes) for fresh data
+const speedrunCache = new Map<string, { data: any; timestamp: number; workspaceId: string }>();
 
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
@@ -82,9 +82,9 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
   }
 }
 
-// 🚨 CRITICAL FIX: Force dynamic rendering to prevent caching issues
-export const dynamic = 'force-dynamic';;
-export const revalidate = 0;
+// 🚀 BALANCED CACHING: Enable dynamic rendering with workspace-aware caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
@@ -124,15 +124,33 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const section = url.searchParams.get('section') || 'speedrun';
     const limit = parseInt(url.searchParams.get('limit') || '30');
-    const forceRefresh = url.searchParams.has('t'); // Check for cache-busting timestamp
+    const forceRefresh = url.searchParams.has('t') || url.searchParams.has('refresh'); // Check for cache-busting
     
-    // 🚨 CRITICAL FIX: Disable caching for workspace-specific data to prevent data leakage
-    // Always fetch fresh data to ensure workspace isolation
-    console.log(`🔄 [SECTION API] Fetching fresh data for workspace: ${workspaceId}, user: ${userId}, section: ${section}`);
+    // 🚀 WORKSPACE-AWARE CACHE: Check cache for speedrun section only
+    // Cache key includes workspaceId to prevent data leakage between workspaces
+    const cacheKey = `${section}-${workspaceId}-${limit}`;
     
-    if (forceRefresh) {
-      console.log(`🔄 [SECTION API] Force refresh requested for ${section} - bypassing cache`);
+    if (!forceRefresh && section === 'speedrun') {
+      const cached = speedrunCache.get(cacheKey);
+      if (cached && cached.workspaceId === workspaceId) {
+        const age = Date.now() - cached.timestamp;
+        if (age < SECTION_CACHE_TTL) {
+          console.log(`⚡ [SECTION API] Cache HIT for ${section} (age: ${Math.round(age/1000)}s, workspace: ${workspaceId})`);
+          const response = createSuccessResponse(cached.data, {
+            userId,
+            workspaceId,
+            cached: true,
+            cacheAge: age
+          });
+          return response;
+        } else {
+          console.log(`🔄 [SECTION API] Cache EXPIRED for ${section} (age: ${Math.round(age/1000)}s)`);
+          speedrunCache.delete(cacheKey);
+        }
+      }
     }
+    
+    console.log(`🔄 [SECTION API] Cache MISS - Fetching fresh data for workspace: ${workspaceId}, section: ${section}`);
     
     // Only log in development
     if (process.env.NODE_ENV === 'development') {
@@ -1517,11 +1535,24 @@ export async function GET(request: NextRequest) {
       limit
     };
     
-    // 🚨 CRITICAL FIX: Skip caching to prevent workspace data leakage
-    // Always return fresh data for workspace isolation
-    
     const responseTime = Date.now() - startTime;
     console.log(`✅ [SECTION API] Loaded ${section} data in ${responseTime}ms: ${sectionData.length} items`);
+    
+    // 🚀 WORKSPACE-AWARE CACHE: Save to cache for speedrun section only
+    if (section === 'speedrun' && !forceRefresh) {
+      speedrunCache.set(cacheKey, {
+        data: result,
+        timestamp: Date.now(),
+        workspaceId: workspaceId
+      });
+      console.log(`💾 [SECTION API] Cached ${section} data for workspace ${workspaceId} (TTL: ${SECTION_CACHE_TTL/1000}s)`);
+      
+      // Cleanup old cache entries (keep only last 50 entries per workspace)
+      if (speedrunCache.size > 50) {
+        const oldestKey = speedrunCache.keys().next().value;
+        speedrunCache.delete(oldestKey);
+      }
+    }
     
     const response = createSuccessResponse(result, {
       userId: context.userId,
@@ -1529,11 +1560,10 @@ export async function GET(request: NextRequest) {
       responseTime: Date.now() - startTime
     });
     
-    // 🚨 CRITICAL FIX: Add cache-busting headers to prevent browser caching
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
-    response.headers.set('Surrogate-Control', 'no-store');
+    // 🚀 BALANCED CACHING: Allow short-term browser caching for better UX
+    // Using max-age=60 (1 minute) with workspace isolation prevents data leakage
+    response.headers.set('Cache-Control', 'private, max-age=60, must-revalidate');
+    response.headers.set('Vary', 'Cookie'); // Ensure different users get different cache
     
     return response;
     
