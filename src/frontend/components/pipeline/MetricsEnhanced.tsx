@@ -272,8 +272,8 @@ export function MetricsEnhanced() {
     );
   }
 
-  // Show loading skeleton while metrics are loading
-  if (loading || !metrics) {
+  // Show loading skeleton only while actually loading (not for non-NE workspaces)
+  if (loading && isNotaryEveryday) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
         <div className="p-6 bg-background min-h-full">
