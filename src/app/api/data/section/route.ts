@@ -187,7 +187,7 @@ export async function GET(request: NextRequest) {
               city: true,
               state: true,
               country: true,
-              owner: {
+              mainSeller: {
                 select: {
                   id: true,
                   firstName: true,
@@ -251,12 +251,12 @@ export async function GET(request: NextRequest) {
             };
 
             // Format owner name - show "Me" for current user
-            const ownerName = person.owner 
-              ? (person.owner.id === userId
+            const ownerName = person.mainSeller 
+              ? (person.mainSeller.id === userId
                   ? 'Me'
-                  : person.owner.firstName && person.owner.lastName 
-                    ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
-                    : person.owner.name || person.owner.email || '-')
+                  : person.mainSeller.firstName && person.mainSeller.lastName 
+                    ? `${person.mainSeller.firstName} ${person.mainSeller.lastName}`.trim()
+                    : person.mainSeller.name || person.mainSeller.email || '-')
               : '-';
 
             // Format co-sellers names - show "Me" for current user
@@ -335,7 +335,7 @@ export async function GET(request: NextRequest) {
               // Add main-seller and co-sellers data
               mainSeller: ownerName,
               coSellers: coSellersNames,
-              mainSellerData: person.owner,
+              mainSellerData: person.mainSeller,
               coSellersData: person.coSellers,
               currentUserId: userId
             };
@@ -378,7 +378,6 @@ export async function GET(request: NextRequest) {
             email: true,
             phone: true,
             jobTitle: true,
-            title: true,
             department: true,
             bio: true,
             linkedinUrl: true,
@@ -619,7 +618,6 @@ export async function GET(request: NextRequest) {
             email: true,
             phone: true,
             jobTitle: true,
-            title: true,
             department: true,
             bio: true,
             linkedinUrl: true,
@@ -1435,7 +1433,7 @@ export async function GET(request: NextRequest) {
               lastName: true,
               email: true,
               phone: true,
-              title: true,
+              jobTitle: true,
               department: true,
               company: true,
               mainSellerId: true,
@@ -1508,7 +1506,7 @@ export async function GET(request: NextRequest) {
             lastName: seller.lastName,
             email: seller.email || 'Unknown Email',
             phone: seller.phone || 'Unknown Phone',
-            title: seller.title || seller.jobTitle || 'Unknown Title',
+            title: seller.jobTitle || 'Unknown Title',
             department: seller.department || 'Unknown Department',
             company: seller.company || 'Unknown Company',
             mainSellerId: seller.mainSellerId,
