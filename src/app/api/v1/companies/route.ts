@@ -403,6 +403,31 @@ export async function GET(request: NextRequest) {
             }),
             prisma.companies.count({ where: fallbackWhere }),
           ]);
+        } else if (queryError?.code === 'P2022') {
+          // Handle other P2022 errors (column doesn't exist)
+          const columnName = queryError?.meta?.column_name;
+          console.error('❌ [V1 COMPANIES API] P2022 Error - Column does not exist:', {
+            columnName,
+            tableName: queryError?.meta?.table_name,
+            error: queryError
+          });
+          
+          // If it's the linkedinnavigatorurl column (old typo), provide helpful error
+          if (columnName === 'linkedinnavigatorurl') {
+            console.error('❌ [V1 COMPANIES API] linkedinnavigatorurl column missing - Prisma client needs regeneration');
+            return createErrorResponse(
+              'Database schema mismatch: The Prisma client was generated with an outdated schema. Please regenerate the Prisma client from the streamlined schema.',
+              'SCHEMA_MISMATCH',
+              500
+            );
+          }
+          
+          // Generic P2022 error
+          return createErrorResponse(
+            `Database column '${columnName}' does not exist. This indicates a schema mismatch between the Prisma client and database. Please regenerate the Prisma client.`,
+            'SCHEMA_MISMATCH',
+            500
+          );
         } else {
           // Re-throw if it's a different error
           throw queryError;
