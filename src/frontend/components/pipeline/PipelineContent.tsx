@@ -133,6 +133,78 @@ export const PipelineContent = React.memo(function PipelineContent({
   const [selectedListId, setSelectedListId] = useState<string | null>(getDefaultListId(section));
   const { updateList } = useLists(section, user?.activeWorkspaceId);
   
+  // Get workspace context at component level (needed for getDefaultVisibleColumns)
+  const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
+  
+  // Section-specific default visible columns with workspace-specific configuration
+  // NOTE: This function must be defined before visibleColumns state to avoid temporal dead zone errors
+  const getDefaultVisibleColumns = (section: string): string[] => {
+    // Get workspace-specific column configuration
+    const currentWorkspaceId = user?.activeWorkspaceId || '';
+    const sectionConfig = getSectionColumns(currentWorkspaceId, section, workspaceName);
+    
+    console.log(`🔍 [COLUMN CONFIG] Section: ${section}, WorkspaceId: ${currentWorkspaceId}`, {
+      sectionConfig,
+      hasColumns: !!sectionConfig.columns,
+      hasColumnOrder: !!sectionConfig.columnOrder,
+      columns: sectionConfig.columns,
+      columnOrder: sectionConfig.columnOrder
+    });
+    
+    // Use workspace-specific column order (field names) if available, otherwise use defaults
+    let columns = sectionConfig.columnOrder;
+    
+    if (!columns) {
+      console.log(`⚠️ [COLUMN CONFIG] Using fallback config for ${section}`);
+      
+      // Fallback to default configuration (field names)
+      switch (section) {
+        case 'speedrun':
+          columns = ['rank', 'name', 'company', 'state', 'stage', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'companies':
+          columns = ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'leads':
+          columns = ['company', 'name', 'state', 'title', 'email', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'prospects':
+          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'opportunities':
+          columns = ['rank', 'name', 'company', 'status', 'lastAction', 'nextAction'];
+          break;
+        case 'people':
+          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'clients':
+          columns = ['rank', 'company', 'industry', 'status', 'lastAction', 'nextAction'];
+          break;
+        case 'partners':
+          columns = ['rank', 'company', 'lastAction', 'nextAction'];
+          break;
+        default:
+          columns = ['rank', 'company', 'name', 'title', 'lastAction'];
+      }
+    }
+    
+    // CRITICAL FIX: Ensure company field is always included for People and Leads
+    if ((section === 'people' || section === 'leads') && !columns.includes('company')) {
+      console.log(`🔧 [COLUMN FIX] Adding missing company field to ${section} section`);
+      columns = ['name', 'company', ...columns.filter(col => col !== 'name')];
+    }
+    
+    // Filter out hidden columns for this workspace and section
+    const hiddenColumns = sectionConfig.hiddenColumns || [];
+    const filteredColumns = columns.filter(col => !hiddenColumns.includes(col));
+    
+    console.log(`✅ [COLUMN CONFIG] Final columns for ${section}:`, filteredColumns);
+    return filteredColumns;
+  };
+  
+  // Declare visibleColumns state BEFORE handleUpdateList callback to avoid temporal dead zone error
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));
+  
   // Handle list selection - apply filters and visible fields from selected list
   const handleListSelect = useCallback((list: List | null) => {
     if (!list) {
@@ -228,76 +300,6 @@ export const PipelineContent = React.memo(function PipelineContent({
       alert('Failed to update list. Please try again.');
     }
   }, [updateList, statusFilter, priorityFilter, verticalFilter, revenueFilter, lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, technologyFilter, sortField, sortDirection, searchQuery, visibleColumns]);
-  
-  // Get workspace context at component level
-  const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
-  
-  // Section-specific default visible columns with workspace-specific configuration
-  const getDefaultVisibleColumns = (section: string): string[] => {
-    // Get workspace-specific column configuration
-    const currentWorkspaceId = user?.activeWorkspaceId || '';
-    const sectionConfig = getSectionColumns(currentWorkspaceId, section, workspaceName);
-    
-    console.log(`🔍 [COLUMN CONFIG] Section: ${section}, WorkspaceId: ${currentWorkspaceId}`, {
-      sectionConfig,
-      hasColumns: !!sectionConfig.columns,
-      hasColumnOrder: !!sectionConfig.columnOrder,
-      columns: sectionConfig.columns,
-      columnOrder: sectionConfig.columnOrder
-    });
-    
-    // Use workspace-specific column order (field names) if available, otherwise use defaults
-    let columns = sectionConfig.columnOrder;
-    
-    if (!columns) {
-      console.log(`⚠️ [COLUMN CONFIG] Using fallback config for ${section}`);
-      
-      // Fallback to default configuration (field names)
-      switch (section) {
-        case 'speedrun':
-          columns = ['rank', 'name', 'company', 'state', 'stage', 'actions', 'lastAction', 'nextAction'];
-          break;
-        case 'companies':
-          columns = ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
-          break;
-        case 'leads':
-          columns = ['company', 'name', 'state', 'title', 'email', 'actions', 'lastAction', 'nextAction'];
-          break;
-        case 'prospects':
-          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
-          break;
-        case 'opportunities':
-          columns = ['rank', 'name', 'company', 'status', 'lastAction', 'nextAction'];
-          break;
-        case 'people':
-          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
-          break;
-        case 'clients':
-          columns = ['rank', 'company', 'industry', 'status', 'lastAction', 'nextAction'];
-          break;
-        case 'partners':
-          columns = ['rank', 'company', 'lastAction', 'nextAction'];
-          break;
-        default:
-          columns = ['rank', 'company', 'name', 'title', 'lastAction'];
-      }
-    }
-    
-    // CRITICAL FIX: Ensure company field is always included for People and Leads
-    if ((section === 'people' || section === 'leads') && !columns.includes('company')) {
-      console.log(`🔧 [COLUMN FIX] Adding missing company field to ${section} section`);
-      columns = ['name', 'company', ...columns.filter(col => col !== 'name')];
-    }
-    
-    // Filter out hidden columns for this workspace and section
-    const hiddenColumns = sectionConfig.hiddenColumns || [];
-    const filteredColumns = columns.filter(col => !hiddenColumns.includes(col));
-    
-    console.log(`✅ [COLUMN CONFIG] Final columns for ${section}:`, filteredColumns);
-    return filteredColumns;
-  };
-  
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));
   
   // 🆕 CRITICAL FIX: Get workspace ID early for localStorage access
   const currentWorkspaceId = user?.activeWorkspaceId || null;
