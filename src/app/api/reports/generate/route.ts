@@ -113,7 +113,7 @@ function buildRecordContext(record: any) {
   return {
     // Person/Contact Info
     name: record.fullName || record.name || coresignalData.full_name,
-    title: record.jobTitle || record.title || coresignalData.active_experience_title,
+    title: record.jobTitle || coresignalData.active_experience_title,
     email: record.email || coresignalData.primary_professional_email,
     phone: record.phone || coresignalData.phone,
     linkedin: record.linkedin || coresignalData.linkedin_url,

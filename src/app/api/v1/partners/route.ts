@@ -269,7 +269,6 @@ export async function GET(request: NextRequest) {
             lastName: true,
             email: true,
             jobTitle: true,
-            title: true,
             phone: true,
             department: true,
             status: true,

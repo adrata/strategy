@@ -439,7 +439,6 @@ function getUpdatedPersonFields(person: any, freshData: any, changes: any[]): an
   const titleChange = changes.find(c => c.field === 'title');
   if (titleChange && newExperience?.position_title) {
     updates.jobTitle = newExperience.position_title;
-    updates.title = newExperience.position_title;
     updates.currentRole = newExperience.position_title;
   }
 

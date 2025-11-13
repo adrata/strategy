@@ -478,7 +478,6 @@ model companies {
   jobPostingsChange       Json?
   productReviewsScore     Json?
   revenueRange            Json?
-  linkedinnavigatorurl    String?               @db.VarChar(500)
   linkedinNavigatorUrl    String?               @db.VarChar(500)
   descriptionEnriched     String?
   actions                 actions[]
@@ -581,7 +580,6 @@ model people {
   salutation              String?             @db.VarChar(50)
   suffix                  String?             @db.VarChar(50)
   jobTitle                String?             @db.VarChar(300)
-  title                   String?             @db.VarChar(300)
   department              String?             @db.VarChar(200)
   seniority               String?             @db.VarChar(50)
   email                   String?             @db.VarChar(300)

@@ -264,7 +264,6 @@ async function enrichPerson(body: any, context: any) {
     // Job title - only if missing
     if (activeExperience?.position_title && shouldUpdate(person.jobTitle, activeExperience.position_title)) {
       updateData.jobTitle = activeExperience.position_title;
-      updateData.title = activeExperience.position_title;
       fieldsPopulated.push('jobTitle');
     }
 

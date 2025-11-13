@@ -67,11 +67,11 @@ export async function POST(request: NextRequest) {
     const personData: PersonData = {
       id: person.id,
       name: person.fullName || person.firstName + ' ' + person.lastName,
-      title: person.jobTitle || person.title || '',
+      title: person.jobTitle || '',
       company: person.company?.name || person.companyName || '',
       industry: person.company?.industry || person.industry || '',
       department: person.department || '',
-      seniority: inferSeniority(person.jobTitle || person.title || ''),
+      seniority: inferSeniority(person.jobTitle || ''),
       buyerGroupRole: person.buyerGroupRole || 'Stakeholder',
       painPoints: person.customFields?.painPoints || [],
       goals: person.customFields?.goals || [],

@@ -246,7 +246,7 @@ async function processLeadData(leadData: any) {
               email: email || existingPerson.email,
               phone: leadData.Phone || existingPerson.phone,
               company: leadData.Company || existingPerson.company,
-              title: leadData.Title || leadData.Designation || existingPerson.title,
+              jobTitle: leadData.Title || leadData.Designation || existingPerson.jobTitle,
               source: 'Zoho CRM',
               status: 'LEAD',
               description: description,
@@ -386,7 +386,7 @@ async function processLeadWebhook(operation: string, data: any) {
               fullName: createFullName,
               email: leadData.Email || existingLead.email,
               phone: leadData.Phone || existingLead.phone,
-              title: leadData.Title || leadData.Designation || existingLead.title,
+              jobTitle: leadData.Title || leadData.Designation || existingLead.jobTitle,
               status: 'LEAD',
               description: leadData.Description || existingLead.notes,
               updatedAt: new Date()
@@ -984,7 +984,7 @@ async function checkForBuyingSignalsAndNotify(workspaceId: string, leadData: {
             name: signalData.contact?.name || leadData.fullName || 'Unknown Contact',
             company: signalData.contact?.company || leadData.company || 'Unknown Company',
             email: signalData.contact?.email || leadData.email || '',
-            title: signalData.contact?.title || leadData.title || '',
+            title: signalData.contact?.jobTitle || leadData.jobTitle || '',
             id: signalData.contact?.id || leadData.id || '',
             type: 'lead'
           },
