@@ -20,8 +20,13 @@ import {
   PlusIcon,
   ArrowsUpDownIcon
 } from '@heroicons/react/24/outline';
-import { ListsDropdown } from './ListsDropdown';
 import { List } from '@/platform/hooks/useLists';
+import dynamic from 'next/dynamic';
+
+// Dynamically import ListsDropdown to avoid initialization errors
+const ListsDropdown = dynamic(() => import('./ListsDropdown').then(mod => ({ default: mod.ListsDropdown })), {
+  ssr: false
+});
 import { getSectionTechnologyOptions } from './config/section-config';
 
 interface PipelineFiltersProps {
