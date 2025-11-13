@@ -528,6 +528,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
+                  companyId={record.companyId || prospectData.companyId || (typeof record.company === 'object' && record.company?.id) || null}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />

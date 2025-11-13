@@ -494,16 +494,20 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   className="text-sm font-medium text-foreground"
                 />
               </div>
+
+              {/* Churn Risk Badge - Integrated into Basic Info */}
+              {churnPrediction && churnPrediction.refreshColor && (
+                <>
+                  <div className="border-t border-border my-3 pt-3">
+                    <div className="flex items-center">
+                      <span className="text-sm text-muted w-24">Churn Risk:</span>
+                      <ChurnRiskBadge churnPrediction={churnPrediction} variant="detailed" />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
-
-          {/* Churn Risk Badge - Compact Pill Style */}
-          {churnPrediction && churnPrediction.refreshColor && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted">Churn Risk:</span>
-              <ChurnRiskBadge churnPrediction={churnPrediction} variant="detailed" />
-            </div>
-          )}
 
           {/* Intelligence Data Card */}
           <div className="bg-background p-4 rounded-lg border border-border">

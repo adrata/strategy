@@ -245,7 +245,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       previousCompanyNameRef.current = companyName || null;
     }
     
-    // 🚨 STEP 2: Handle missing record or company data
+      // 🚨 STEP 2: Handle missing record or company data
     if (!record?.id) {
       console.log('🔍 [BUYER GROUPS DEBUG] No record ID, state already cleared');
       return;
@@ -272,6 +272,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         }
       }
       
+      // 🚀 FIX: Set loading state BEFORE any async operations to prevent empty state flash
       setIsFetching(true);
       setLoading(true);
       setLastFetchTime(Date.now());

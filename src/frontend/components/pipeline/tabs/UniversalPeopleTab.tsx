@@ -25,6 +25,20 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   // Track previous companyId and recordId to detect changes and invalidate cache
   const previousCompanyIdRef = useRef<string | null>(null);
   const previousRecordIdRef = useRef<string | null>(null);
+  
+  // 🚨 CRITICAL FIX: Extract companyId into a memo to track changes properly
+  // This ensures the effect re-runs when companyId becomes available
+  const companyId = React.useMemo(() => {
+    if (!record) return '';
+    
+    if (recordType === 'people') {
+      // For person records, get company from companyId field
+      return record.companyId || '';
+    } else {
+      // For company records, the record ID is the company ID
+      return record.id || '';
+    }
+  }, [record?.id, record?.companyId, recordType]);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -151,13 +165,11 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         return;
       }
       
-      // Get the company name and ID from the record
+      // Get the company name from the record (companyId is now from the memoized value)
       let companyName = '';
-      let companyId = '';
       
       if (recordType === 'people') {
-        // For person records, get company from companyId or company object
-        companyId = record.companyId;
+        // For person records, get company name from company object
         companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
                      record.companyName || 'Company';
       } else {
@@ -166,7 +178,20 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
                      (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
                      record.companyName ||
                      'Company';
-        companyId = record.id; // For company records, the record ID is the company ID
+      }
+      
+      // 🚨 CRITICAL FIX: Validate companyId before proceeding
+      if (!companyId || companyId.trim() === '') {
+        console.log('⚠️ [PEOPLE] No valid companyId found, waiting for company data to load:', {
+          recordType,
+          recordId: record?.id,
+          recordName: record?.name,
+          hasCompanyId: !!companyId
+        });
+        // Don't set loading state - allow the effect to retry when companyId becomes available
+        setPeople([]);
+        setIsFetching(false);
+        return;
       }
       
       // 🔄 CACHE INVALIDATION: Check if recordId or companyId changed
@@ -479,7 +504,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
     return () => {
       setIsFetching(false);
     };
-  }, [record?.id, record, recordType]);
+  }, [record?.id, recordType, companyId]); // 🚨 CRITICAL FIX: Added companyId to dependencies to re-run when it becomes available
 
   const handleInlineSave = async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
     if (onSave) {
