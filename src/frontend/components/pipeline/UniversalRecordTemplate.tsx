@@ -2039,7 +2039,7 @@ export function UniversalRecordTemplate({
         'title', 'department', 'seniority',
         'email', 'workEmail', 'personalEmail', 'secondaryEmail',
         'phone', 'mobilePhone', 'workPhone',
-        'linkedinUrl', 'twitterHandle',
+        'linkedinUrl', 'linkedinNavigatorUrl', 'twitterHandle',
         'address', 'city', 'state', 'country', 'postalCode',
         'dateOfBirth', 'gender'
       ];
@@ -2122,6 +2122,30 @@ export function UniversalRecordTemplate({
           targetModel = 'companies';
           targetId = recordId;
           console.log(`🎯 [MODEL TARGETING] Universal record with company field ${field} -> companies model (${targetId})`);
+        }
+      } else if (field === 'linkedinNavigatorUrl') {
+        // Special case: linkedinNavigatorUrl can exist on both people and companies
+        // Route based on the record type being edited
+        if (recordType === 'companies') {
+          // Editing a company record - save to company
+          targetModel = 'companies';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] linkedinNavigatorUrl -> companies model (${targetId}) - saving to company`);
+        } else if (recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'speedrun') {
+          // Editing a person record - save to person
+          targetModel = 'people';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] linkedinNavigatorUrl -> people model (${targetId}) - saving to person`);
+        } else if (record?.companyId && companyFields.includes(field)) {
+          // Person record with company - but linkedinNavigatorUrl should still go to person
+          targetModel = 'people';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] linkedinNavigatorUrl -> people model (${targetId}) - person field even with company`);
+        } else {
+          // Default to current record type
+          targetModel = recordType;
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] linkedinNavigatorUrl -> ${recordType} model (${targetId}) - default`);
         }
       } else if (personalFields.includes(field)) {
         // Personal fields should go to the people model when personId exists

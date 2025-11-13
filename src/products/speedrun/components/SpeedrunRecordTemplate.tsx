@@ -184,6 +184,63 @@ export function SpeedrunRecordTemplate({
       const result = await response.json();
       console.log(`✅ [SPEEDRUN] Successfully updated ${field} for person:`, recordId, result.data);
       
+      // Update the person object with the full API response to ensure all fields are synced
+      if (result.success && result.data) {
+        Object.assign(person, result.data);
+      } else {
+        // Fallback: update just the field if response structure is different
+        (person as any)[field] = field === 'globalRank' && value !== null ? parseInt(value as string) : value;
+      }
+      
+      // CRITICAL FIX: Clear caches to ensure fresh data on next load
+      if (typeof window !== 'undefined') {
+        // Clear sessionStorage caches
+        sessionStorage.removeItem(`cached-speedrun-${recordId}`);
+        sessionStorage.removeItem(`current-record-speedrun`);
+        
+        // Clear all relevant localStorage caches to force refresh
+        const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id || '';
+        if (workspaceId) {
+          localStorage.removeItem(`adrata-people-${workspaceId}`);
+          localStorage.removeItem(`adrata-speedrun-${workspaceId}`);
+          localStorage.removeItem(`adrata-fast-counts-${workspaceId}`);
+          
+          // Clear unified cache system keys
+          const cacheKeys = Object.keys(localStorage);
+          cacheKeys.forEach(key => {
+            if (key.includes(`speedrun`) || key.includes(`people`) || key.includes(`revenue-os`)) {
+              if (key.includes(workspaceId)) {
+                localStorage.removeItem(key);
+              }
+            }
+          });
+        }
+        
+        console.log(`🗑️ [SPEEDRUN] Cleared caches after saving ${field}`);
+      }
+      
+      // Dispatch event to trigger data refresh in other components
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('speedrun-data-updated', {
+          detail: {
+            personId: recordId,
+            field,
+            value,
+            updatedRecord: result.data || person
+          }
+        }));
+        
+        // Also dispatch pipeline refresh event for consistency
+        window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+          detail: {
+            section: 'speedrun',
+            type: 'field-update',
+            recordId: recordId,
+            field
+          }
+        }));
+      }
+      
       // If this is a rank update, trigger re-ranking
       if (field === 'globalRank') {
         console.log(`🔄 [SPEEDRUN] Triggering re-ranking after manual rank update`);
@@ -217,12 +274,11 @@ export function SpeedrunRecordTemplate({
         const fieldName = field === 'name' ? 'Name' : 
                          field === 'email' ? 'Email' : 
                          field === 'phone' ? 'Phone' : 
+                         field === 'linkedinUrl' ? 'LinkedIn URL' :
+                         field === 'linkedinNavigatorUrl' ? 'LinkedIn Navigator URL' :
                          field === 'vertical' ? 'Vertical' : field;
         showSuccessMessage(`✅ ${fieldName} updated successfully!`);
       }
-      
-      // Update the person object locally to reflect changes immediately
-      (person as any)[field] = field === 'globalRank' && value !== null ? parseInt(value as string) : value;
       
       console.log(`✅ [SPEEDRUN] Inline saved ${field} for speedrun person:`, recordId);
       
