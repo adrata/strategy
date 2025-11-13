@@ -128,7 +128,27 @@ class SetVictoriaMainSeller {
       console.log(`✅ Updated ${companiesUpdateResult.count} companies records`);
       console.log('');
 
-      // Step 6: Verification - Get updated counts
+      // Step 6: Clear API caches to ensure fresh data
+      console.log('🗑️ Clearing API caches...');
+      try {
+        // Note: This script doesn't have direct access to the cache utility
+        // But we can log instructions for manual cache clearing
+        console.log('⚠️ IMPORTANT: Clear the following caches manually:');
+        console.log('   1. Redis cache (if running):');
+        console.log('      - Pattern: people-${workspaceId}-*');
+        console.log('      - Pattern: companies-${workspaceId}-*');
+        console.log('   2. Browser localStorage:');
+        console.log('      - Users should refresh their browsers (Ctrl+F5)');
+        console.log('      - Or clear localStorage manually in browser DevTools');
+        console.log('');
+        console.log('💡 TIP: Run this script during off-hours to minimize cache inconsistency');
+        console.log('');
+      } catch (cacheError) {
+        console.warn('⚠️ Note about cache clearing:', cacheError.message);
+        console.log('');
+      }
+
+      // Step 7: Verification - Get updated counts
       console.log('🔍 Verifying updates...');
       const peopleWithVictoria = await this.prisma.people.count({
         where: { 
@@ -148,7 +168,7 @@ class SetVictoriaMainSeller {
       console.log(`✅ Companies with Victoria as main seller: ${companiesWithVictoria}/${companiesCount}`);
       console.log('');
 
-      // Step 7: Show sample records
+      // Step 8: Show sample records
       console.log('📝 Sample updated records:');
       console.log('');
 

@@ -214,18 +214,20 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         return; // Wait for data to load
       }
 
-      // Check if company has a website or LinkedIn URL but missing basic enrichment data
+      // Check if company has a website or LinkedIn URL but missing enrichment data
       const hasContactInfo = companyData?.website || companyData?.linkedinUrl;
-      const missingBasicData = !companyData?.industry || !companyData?.employeeCount;
-      const hasBeenEnriched = companyData?.customFields?.coresignalId || companyData?.lastEnriched;
+      const missingBasicData = !companyData?.industry || !companyData?.employeeCount || 
+                                !companyData?.revenue || !companyData?.foundedYear ||
+                                !companyData?.description;
+      const hasBeenEnriched = companyData?.customFields?.coresignalId || companyData?.lastVerified;
       
       // Check data staleness (only re-enrich if > 90 days old)
-      const isStale = companyData?.lastEnriched && 
-        (Date.now() - new Date(companyData.lastEnriched).getTime()) > 90 * 24 * 60 * 60 * 1000;
+      const isStale = companyData?.lastVerified && 
+        (Date.now() - new Date(companyData.lastVerified).getTime()) > 90 * 24 * 60 * 60 * 1000;
       
       // Step 1: Trigger enrichment if:
       // - Has contact info (website/LinkedIn)
-      // - Missing basic data (industry/employeeCount)
+      // - Missing basic data (industry/employeeCount/revenue/foundedYear/description)
       // - NOT already enriched OR data is stale (>90 days)
       if (hasContactInfo && missingBasicData && (!hasBeenEnriched || isStale)) {
         console.log(`🤖 [COMPANY OVERVIEW] Auto-triggering silent enrichment for company: ${companyId}`);

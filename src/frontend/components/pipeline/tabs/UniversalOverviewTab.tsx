@@ -156,6 +156,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const [actionsLoading, setActionsLoading] = useState(false);
   const [actionsError, setActionsError] = useState<string | null>(null);
   
+  // Enrichment status state (silent - no UI)
+  const [hasTriggeredEnrichment, setHasTriggeredEnrichment] = useState(false);
+  
   // Timestamp refresh state
   const [timestampRefresh, setTimestampRefresh] = useState(0);
   
@@ -381,6 +384,91 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   useEffect(() => {
     fetchActions();
   }, [fetchActions]);
+
+  // Auto-trigger enrichment and intelligence if person has missing data (SILENT - no UI)
+  useEffect(() => {
+    const triggerEnrichmentAndIntelligence = async () => {
+      // Only for person records (not companies)
+      if (recordType === 'companies' || !record?.id || hasTriggeredEnrichment) {
+        return;
+      }
+
+      // Check if person has LinkedIn or email but missing key data
+      const hasIdentifier = record?.linkedinUrl || record?.email;
+      const missingBasicData = !record?.jobTitle || !record?.department || !record?.state || !record?.bio;
+      const missingIntelligence = !record?.buyerGroupRole || !record?.customFields?.influenceLevel || 
+                                   !record?.customFields?.decisionPower || !record?.customFields?.engagementLevel;
+      const hasBeenEnriched = record?.customFields?.coresignalId || record?.lastEnriched;
+      
+      // Check data staleness (only re-enrich if > 90 days old)
+      const isStale = record?.lastEnriched && 
+        (Date.now() - new Date(record.lastEnriched).getTime()) > 90 * 24 * 60 * 60 * 1000;
+      
+      // Trigger enrichment if: has identifier, missing data, and (not enriched OR stale)
+      if (hasIdentifier && missingBasicData && (!hasBeenEnriched || isStale)) {
+        console.log(`🤖 [UNIVERSAL OVERVIEW] Auto-triggering enrichment for person: ${record.id}`);
+        setHasTriggeredEnrichment(true);
+        
+        try {
+          const enrichResult = await authFetch(`/api/v1/enrich`, {
+            method: 'POST',
+            body: JSON.stringify({
+              type: 'person',
+              entityId: record.id,
+              options: {
+                verifyEmail: true,
+                verifyPhone: true
+              }
+            })
+          });
+          
+          console.log(`📊 [UNIVERSAL OVERVIEW] Enrichment result:`, enrichResult);
+          
+          if (enrichResult?.status === 'completed') {
+            console.log(`✅ [UNIVERSAL OVERVIEW] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
+            
+            // Trigger page refresh to show new data
+            window.location.reload();
+          } else if (enrichResult?.status === 'failed') {
+            console.warn(`⚠️ [UNIVERSAL OVERVIEW] Enrichment failed:`, enrichResult.message);
+          }
+        } catch (error) {
+          console.error('❌ [UNIVERSAL OVERVIEW] Error triggering enrichment:', error);
+        }
+      }
+      
+      // Trigger intelligence generation if missing intelligence fields
+      if (missingIntelligence && !hasTriggeredEnrichment) {
+        console.log(`🤖 [UNIVERSAL OVERVIEW] Auto-triggering intelligence generation for person: ${record.id}`);
+        
+        try {
+          // Dynamic import to avoid circular dependencies
+          const { generatePersonIntelligence } = await import('@/platform/services/person-intelligence-generator');
+          
+          const result = await generatePersonIntelligence({
+            personId: record.id,
+            workspaceId: record.workspaceId,
+            forceRegenerate: false
+          });
+          
+          if (result.success && !result.cached) {
+            console.log(`✅ [UNIVERSAL OVERVIEW] Successfully generated intelligence`);
+            // Trigger page refresh to show new intelligence
+            window.location.reload();
+          } else if (result.success && result.cached) {
+            console.log(`ℹ️ [UNIVERSAL OVERVIEW] Using cached intelligence`);
+          }
+        } catch (error) {
+          console.error('❌ [UNIVERSAL OVERVIEW] Error generating intelligence:', error);
+        }
+      }
+    };
+
+    // Only trigger once when component mounts and we have person data
+    if (record && !hasTriggeredEnrichment) {
+      triggerEnrichmentAndIntelligence();
+    }
+  }, [record, hasTriggeredEnrichment, recordType]);
 
   // Listen for action creation events to refresh actions
   useEffect(() => {

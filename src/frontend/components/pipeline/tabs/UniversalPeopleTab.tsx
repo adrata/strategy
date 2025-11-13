@@ -182,16 +182,30 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       }
       
       // 🚨 CRITICAL FIX: Validate companyId before proceeding
-      if (!companyId || companyId.trim() === '') {
-        console.log('⚠️ [PEOPLE] No valid companyId found, waiting for company data to load:', {
+      // 🔧 ENHANCED VALIDATION: Check for invalid values including 'undefined' and 'null' strings
+      if (!companyId || companyId.trim() === '' || companyId === 'undefined' || companyId === 'null') {
+        console.warn('⚠️ [PEOPLE] Invalid or missing companyId, cannot fetch people:', {
           recordType,
           recordId: record?.id,
           recordName: record?.name,
-          hasCompanyId: !!companyId
+          companyId: companyId,
+          hasCompanyId: !!companyId,
+          companyIdType: typeof companyId
         });
-        // Show loading while waiting for companyId to become available
+        
+        // If companyId is explicitly 'undefined' or 'null', show error instead of loading
+        if (companyId === 'undefined' || companyId === 'null') {
+          console.error('❌ [PEOPLE] Invalid companyId value detected in URL');
+          setPeople([]);
+          setLoading(false);
+          setIsFetching(false);
+          setError('Unable to load people: Invalid company identifier in URL');
+          return;
+        }
+        
+        // Otherwise, show loading while waiting for companyId to become available
         setPeople([]);
-        setLoading(true); // Show loading while waiting for companyId
+        setLoading(true);
         setIsFetching(false);
         return;
       }
@@ -306,6 +320,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
               }
               
               // Cache the data immediately
+              // 🔧 ENHANCED CACHING: Include mainSellerId, status, and updatedAt for better cache accuracy
               const essentialData = peopleData.map(person => ({
                 id: person.id,
                 fullName: person.fullName,
@@ -314,7 +329,10 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
                 company: person.company,
                 companyId: person.companyId,
                 jobTitle: person.jobTitle,
-                email: person.email
+                email: person.email,
+                mainSellerId: person.mainSellerId, // For seller ownership validation
+                status: person.status, // For status filtering
+                updatedAt: person.updatedAt // For cache freshness checks
               }));
               
               safeSetItem(cacheKey, essentialData);

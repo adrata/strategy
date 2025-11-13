@@ -69,10 +69,21 @@ export async function POST(
       );
     }
 
-    // Build context from available data
-    const contextParts: string[] = [];
+    // Extract enrichment data from customFields
+    const customFields = (company.customFields as any) || {};
+    const coresignalData = customFields.coresignalData || {};
+    const perplexityData = customFields.perplexityData || {};
+    const lushaData = customFields.lushaData || {};
     
-    // Company basics
+    // Build context from ALL available data sources
+    const contextParts: string[] = [];
+    const dataSources: string[] = [];
+    
+    if (Object.keys(coresignalData).length > 0) dataSources.push('CoreSignal');
+    if (Object.keys(perplexityData).length > 0) dataSources.push('Perplexity');
+    if (Object.keys(lushaData).length > 0) dataSources.push('Lusha');
+    
+    // Company basics (from database and CoreSignal)
     if (company.name) {
       contextParts.push(`Company Name: ${company.name}`);
     }
@@ -86,7 +97,7 @@ export async function POST(
       contextParts.push(`LinkedIn: ${company.linkedinUrl}`);
     }
     
-    // Location information
+    // Location information (from database and CoreSignal)
     const location = company.hqCity && company.hqState 
       ? `${company.hqCity}, ${company.hqState}` 
       : company.hqCity || company.hqState || company.city || company.state || company.address;
@@ -94,20 +105,54 @@ export async function POST(
       contextParts.push(`Location: ${location}`);
     }
     
-    // Company size and metrics
+    // Company size and metrics (from database, CoreSignal, and Lusha)
     if (company.employeeCount) {
       contextParts.push(`Employees: ${company.employeeCount.toLocaleString()}`);
     } else if (company.size) {
       contextParts.push(`Company Size: ${company.size}`);
+    } else if (lushaData.employees) {
+      contextParts.push(`Employees: ${lushaData.employees} (Lusha)`);
     }
+    
     if (company.revenue) {
       contextParts.push(`Revenue: $${Number(company.revenue).toLocaleString()}`);
+    } else if (perplexityData.revenue) {
+      contextParts.push(`Revenue: $${Number(perplexityData.revenue).toLocaleString()} (Perplexity)`);
     }
+    
     if (company.foundedYear) {
       contextParts.push(`Founded: ${company.foundedYear}`);
+    } else if (perplexityData.foundedYear) {
+      contextParts.push(`Founded: ${perplexityData.foundedYear} (Perplexity)`);
     }
+    
     if (company.isPublic !== null) {
       contextParts.push(`Type: ${company.isPublic ? 'Public Company' : 'Private Company'}`);
+    }
+    
+    // Market/Category/Segment from Perplexity
+    if (company.market || perplexityData.market) {
+      contextParts.push(`Market: ${company.market || perplexityData.market}`);
+    }
+    if (company.segment || perplexityData.segment) {
+      contextParts.push(`Segment: ${company.segment || perplexityData.segment}`);
+    }
+    
+    // Recent news from Perplexity
+    if (perplexityData.recentNews) {
+      contextParts.push(`Recent News: ${perplexityData.recentNews}`);
+    }
+    
+    // Technologies from Perplexity or CoreSignal
+    if (perplexityData.technologies && perplexityData.technologies.length > 0) {
+      contextParts.push(`Technologies: ${perplexityData.technologies.join(', ')}`);
+    } else if (coresignalData.technologies_used && coresignalData.technologies_used.length > 0) {
+      contextParts.push(`Technologies: ${coresignalData.technologies_used.slice(0, 5).join(', ')}`);
+    }
+    
+    // LinkedIn followers from CoreSignal
+    if (company.linkedinFollowers) {
+      contextParts.push(`LinkedIn Followers: ${company.linkedinFollowers.toLocaleString()}`);
     }
     
     // Key people at the company
@@ -140,64 +185,32 @@ export async function POST(
     }
 
     const availableContext = contextParts.join('\n');
+    const sourceInfo = dataSources.length > 0 ? ` (from ${dataSources.join(' + ')})` : '';
 
-    console.log(`📊 [COMPANY SUMMARY] Context for AI:\n${availableContext}`);
+    console.log(`📊 [COMPANY SUMMARY] Context for AI${sourceInfo}:\n${availableContext}`);
 
     // Generate summary using Claude AI
-    const prompt = `You are a B2B sales intelligence system. Generate a concise, professional company summary (2-3 sentences) based on the available information below. Focus on what's most relevant for a sales professional engaging with this company.
+    const prompt = `You are a B2B sales intelligence system. Generate a concise, professional company summary (2-3 sentences) based on the available information below${sourceInfo}. Focus on what's most relevant for a sales professional engaging with this company.
 
-Available Company Information:
+Available Company Information${sourceInfo}:
 ${availableContext}
 
 Generate a clear, factual summary that highlights:
 1. What the company does (infer from industry and name if needed)
-2. Key business characteristics (size, location, public/private status)
-3. Relevant context for sales engagement (if people/activity data is available)
+2. Key business characteristics (size, location, public/private status, technologies)
+3. Relevant context for sales engagement (recent news, market position, key contacts if available)
 
 Keep it professional, concise, and actionable. Do not make up information that isn't provided. If minimal information is available, create a brief summary from what you have.`;
 
     if (!process.env.ANTHROPIC_API_KEY) {
-      console.warn('⚠️ [COMPANY SUMMARY] No Anthropic API key configured, using fallback summary');
-      // Create a basic fallback summary
-      const fallbackParts: string[] = [];
-      
-      if (company.name) {
-        const typeStr = company.isPublic === true ? 'public' : company.isPublic === false ? 'private' : '';
-        fallbackParts.push(`${company.name} is${typeStr ? ` a ${typeStr}` : ''}`);
-      }
-      
-      if (company.industry) {
-        fallbackParts.push(`${fallbackParts.length > 0 ? '' : 'This is a'}${company.industry.toLowerCase()} company`);
-      }
-      
-      if (location) {
-        fallbackParts.push(`based in ${location}`);
-      }
-      
-      if (company.employeeCount) {
-        fallbackParts.push(`with approximately ${company.employeeCount.toLocaleString()} employees`);
-      }
-      
-      const fallbackSummary = fallbackParts.length > 0 
-        ? fallbackParts.join(' ') + '.' 
-        : `${company.name} - Professional services company.`;
-
-      // Save fallback summary
-      await prisma.companies.update({
-        where: { id: companyId },
-        data: {
-          descriptionEnriched: fallbackSummary,
-          updatedAt: new Date(),
+      console.error('❌ [COMPANY SUMMARY] Anthropic API key not configured - cannot generate summary');
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Anthropic API key not configured. Real AI summaries require API key.' 
         },
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          summary: fallbackSummary,
-          method: 'fallback',
-        },
-      });
+        { status: 503 }
+      );
     }
 
     // Call Claude AI
@@ -227,11 +240,12 @@ Keep it professional, concise, and actionable. Do not make up information that i
           ...(company.customFields as any || {}),
           aiSummaryGeneratedAt: new Date().toISOString(),
           aiSummaryModel: 'claude-3-5-sonnet-20241022',
+          aiSummaryDataSources: dataSources.length > 0 ? dataSources : ['database'],
         },
       },
     });
 
-    console.log(`💾 [COMPANY SUMMARY] Saved AI summary to database for company ${companyId}`);
+    console.log(`💾 [COMPANY SUMMARY] Saved AI summary to database for company ${companyId} using data from ${dataSources.length > 0 ? dataSources.join(' + ') : 'database'}`);
 
     return NextResponse.json({
       success: true,
@@ -239,6 +253,7 @@ Keep it professional, concise, and actionable. Do not make up information that i
         summary: aiSummary,
         method: 'ai',
         model: 'claude-3-5-sonnet-20241022',
+        dataSources: dataSources.length > 0 ? dataSources : ['database'],
       },
     });
 
