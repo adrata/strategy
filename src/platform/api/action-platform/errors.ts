@@ -92,7 +92,7 @@ export class ActionPlatformError extends Error implements IActionPlatformError {
   toUserMessage(): string {
     switch (this.code) {
       case "NETWORK_ERROR":
-        return "Unable to connect to the server. Please check your internet connection and try again.";
+        return "Unable to connect. Please try again.";
       case "VALIDATION_ERROR":
         return "The information provided is invalid. Please check your input and try again.";
       case "AUTHENTICATION_ERROR":
