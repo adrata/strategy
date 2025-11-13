@@ -34,6 +34,16 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Section is required', 'SECTION_REQUIRED', 400);
     }
 
+    // Check if prisma.lists is available (Prisma client must be regenerated)
+    if (!prisma.lists) {
+      console.error('❌ [V1 LISTS API] prisma.lists is undefined - Prisma client needs regeneration');
+      return createErrorResponse(
+        'Database schema mismatch: The Prisma client was generated with an outdated schema. The lists model is missing. Please regenerate the Prisma client from the streamlined schema.',
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+
     // Get all lists for the user in this workspace and section
     const lists = await prisma.lists.findMany({
       where: {
@@ -49,8 +59,25 @@ export async function GET(request: NextRequest) {
     });
 
     return createSuccessResponse(lists, { count: lists.length });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching lists:', error);
+    
+    // Handle P2022 errors (column/table doesn't exist)
+    if (error?.code === 'P2022') {
+      const columnName = error?.meta?.column_name;
+      const tableName = error?.meta?.table_name;
+      console.error('❌ [V1 LISTS API] P2022 Error - Schema mismatch:', {
+        columnName,
+        tableName,
+        error
+      });
+      return createErrorResponse(
+        `Database schema mismatch: Column '${columnName}' or table '${tableName}' does not exist. Please regenerate the Prisma client from the streamlined schema.`,
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+    
     return createErrorResponse(
       'Failed to fetch lists',
       'FETCH_ERROR',
@@ -96,6 +123,16 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Section is required', 'SECTION_REQUIRED', 400);
     }
 
+    // Check if prisma.lists is available (Prisma client must be regenerated)
+    if (!prisma.lists) {
+      console.error('❌ [V1 LISTS API] prisma.lists is undefined - Prisma client needs regeneration');
+      return createErrorResponse(
+        'Database schema mismatch: The Prisma client was generated with an outdated schema. The lists model is missing. Please regenerate the Prisma client from the streamlined schema.',
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+
     // Check if a list with the same name already exists for this user/workspace/section
     const existingList = await prisma.lists.findFirst({
       where: {
@@ -129,8 +166,25 @@ export async function POST(request: NextRequest) {
     });
 
     return createSuccessResponse(newList, { message: 'List created successfully' });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating list:', error);
+    
+    // Handle P2022 errors (column/table doesn't exist)
+    if (error?.code === 'P2022') {
+      const columnName = error?.meta?.column_name;
+      const tableName = error?.meta?.table_name;
+      console.error('❌ [V1 LISTS API] P2022 Error - Schema mismatch:', {
+        columnName,
+        tableName,
+        error
+      });
+      return createErrorResponse(
+        `Database schema mismatch: Column '${columnName}' or table '${tableName}' does not exist. Please regenerate the Prisma client from the streamlined schema.`,
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+    
     return createErrorResponse(
       'Failed to create list',
       'CREATE_ERROR',

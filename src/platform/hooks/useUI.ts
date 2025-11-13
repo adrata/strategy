@@ -495,7 +495,7 @@ export function useUI(): UseUIReturn {
     // Ensure Pipeline panels are configured correctly:
     // - Embedded pipeline (/aos/pipeline): hide left panel for clean UI
     // - Standalone pipeline routes: show left panel for navigation
-    if (isClient && (window.location.pathname.includes('/aos/dashboard') || window.location.pathname.includes('/aos/leads') || window.location.pathname.includes('/aos/opportunities') || window.location.pathname.includes('/aos/companies') || window.location.pathname.includes('/aos/people') || window.location.pathname.includes('/aos/partners') || window.location.pathname.includes('/aos/prospects') || window.location.pathname.includes('/aos/sellers') || window.location.pathname.includes('/aos/clients') || window.location.pathname.includes('/aos/metrics') || window.location.pathname.includes('/aos/speedrun'))) {
+    if (isClient && (window.location.pathname.includes('/aos/dashboard') || window.location.pathname.includes('/aos/leads') || window.location.pathname.includes('/aos/opportunities') || window.location.pathname.includes('/aos/companies') || window.location.pathname.includes('/aos/people') || window.location.pathname.includes('/aos/partners') || window.location.pathname.includes('/aos/prospects') || window.location.pathname.includes('/aos/sellers') || window.location.pathname.includes('/aos/clients') || window.location.pathname.includes('/aos/metrics') || window.location.pathname.includes('/aos/chronicle') || window.location.pathname.includes('/aos/speedrun'))) {
       debug("ENSURING_EMBEDDED_PIPELINE_PANELS_CONFIGURED", {
         leftPanelVisible: isLeftPanelVisible,
         rightPanelVisible: isRightPanelVisible,
@@ -517,7 +517,7 @@ export function useUI(): UseUIReturn {
       }
     }
     // Handle standalone pipeline routes and stacks - prioritize URL path over activeSubApp
-    else if (isClient && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/speedrun') || window.location.pathname.includes('/stacks'))) {
+    else if (isClient && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/chronicle') || window.location.pathname.includes('/speedrun') || window.location.pathname.includes('/stacks'))) {
       debug("ENSURING_STANDALONE_PIPELINE_OR_STACKS_PANELS_CONFIGURED", {
         leftPanelVisible: isLeftPanelVisible,
         rightPanelVisible: isRightPanelVisible,
