@@ -64,11 +64,6 @@ export async function GET(
         id,
         deletedAt: null, // Only show non-deleted records
         workspaceId: authUser.workspaceId, // Ensure company belongs to user's workspace
-        // 🔒 SECURITY: Enforce seller-level access control
-        OR: [
-          { mainSellerId: authUser.userId },
-          { mainSellerId: null }
-        ]
       },
       include: {
         // Relations

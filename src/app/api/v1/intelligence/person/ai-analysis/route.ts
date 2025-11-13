@@ -22,7 +22,7 @@ import { createErrorResponse, createSuccessResponse, generateRequestId, APIError
 interface AIAnalysisRequest {
   person: {
     name: string;
-    title: string;
+    jobTitle: string;
     company: string;
     department?: string;
     seniorityLevel?: string;
@@ -50,7 +50,7 @@ interface AIAnalysisResponse {
   data?: {
     person: {
       name: string;
-      title: string;
+      jobTitle: string;
       company: string;
     };
     wants?: {
@@ -106,9 +106,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const body: AIAnalysisRequest = await request.json();
     
     // Validate required fields
-    if (!body.person?.name || !body.person?.title || !body.person?.company) {
+    if (!body.person?.name || !body.person?.jobTitle || !body.person?.company) {
       const error = new APIError(
-        'Missing required fields: person.name, person.title, person.company',
+        'Missing required fields: person.name, person.jobTitle, person.company',
         ErrorCodes.MISSING_REQUIRED_FIELD,
         400
       );
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
     
-    console.log(`   Person: ${body.person.name} (${body.person.title} at ${body.person.company})`);
+    console.log(`   Person: ${body.person.name} (${body.person.jobTitle} at ${body.person.company})`);
     
     // Get sales intent for company context
     let salesIntentScore = 0;
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Prepare person data
     const personData: EnhancedPersonData = {
       name: body.person.name,
-      title: body.person.title,
+      title: body.person.jobTitle,
       company: body.person.company,
       department: body.person.department,
       seniorityLevel: body.person.seniorityLevel,
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       data: {
         person: {
           name: aiIntelligence.person.name,
-          title: aiIntelligence.person.title,
+          jobTitle: aiIntelligence.person.title,
           company: aiIntelligence.person.company
         },
         overallInsight: aiIntelligence.overallInsight,
@@ -244,7 +244,7 @@ export async function GET(): Promise<NextResponse> {
     requestBody: {
       person: {
         name: 'string (required)',
-        title: 'string (required)',
+        jobTitle: 'string (required)',
         company: 'string (required)',
         department: 'string (optional)',
         seniorityLevel: 'string (optional)',
@@ -288,14 +288,14 @@ export async function GET(): Promise<NextResponse> {
       basic: {
         person: {
           name: 'John Doe',
-          title: 'VP of Marketing',
+          jobTitle: 'VP of Marketing',
           company: 'Salesforce'
         }
       },
       detailed: {
         person: {
           name: 'Jane Smith',
-          title: 'CFO',
+          jobTitle: 'CFO',
           company: 'HubSpot',
           department: 'Finance',
           seniorityLevel: 'C-Level',
