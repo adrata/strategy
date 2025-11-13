@@ -55,8 +55,8 @@ function inferBuyerGroupRoleFromTitle(jobTitle: string | null | undefined): stri
     return 'Decision Maker';
   }
   
-  // Champions - Managers, Leads, Heads
-  if (title.match(/\b(manager|lead|head of|senior|principal)\b/i)) {
+  // Champions - Managers, Leads, Heads, Architects, Technical Experts
+  if (title.match(/\b(manager|lead|head of|senior|principal|architect|engineer|developer|consultant|advisor|expert)\b/i)) {
     return 'Champion';
   }
   
