@@ -503,6 +503,13 @@ model companies {
   @@index([customFields], type: Gin)
   @@index([workspaceId, globalRank])
   @@index([workspaceId, status, globalRank])
+  // 🚀 PERFORMANCE: Speedrun query optimization - critical for speedrun performance
+  @@index([workspaceId, deletedAt, mainSellerId, globalRank])
+  // 🚀 PERFORMANCE: Section filtering optimization
+  @@index([workspaceId, deletedAt, mainSellerId, status])
+  // 🚀 PERFORMANCE: Action filtering for meaningful actions check
+  @@index([workspaceId, lastActionDate])
+  @@index([workspaceId, lastAction])
   @@index([confidence])
   @@index([lastVerified])
   @@index([acquisitionDate])
@@ -715,6 +722,16 @@ model people {
   @@index([workspaceId, mainSellerId, status])
   @@index([workspaceId, globalRank])
   @@index([workspaceId, status, globalRank])
+  // 🚀 PERFORMANCE: Speedrun query optimization - critical for speedrun performance
+  @@index([workspaceId, deletedAt, mainSellerId, globalRank])
+  // 🚀 PERFORMANCE: People with companies (speedrun requirement)
+  @@index([workspaceId, deletedAt, mainSellerId, companyId])
+  // 🚀 PERFORMANCE: Section filtering optimization
+  @@index([workspaceId, deletedAt, mainSellerId, status])
+  // 🚀 PERFORMANCE: Action date sorting/filtering
+  @@index([workspaceId, lastActionDate])
+  // 🚀 PERFORMANCE: Action filtering for meaningful actions check
+  @@index([workspaceId, lastAction])
   @@index([buyerGroupRole])
   @@index([decisionPower])
   @@index([influenceLevel])
@@ -777,6 +794,10 @@ model actions {
   @@index([workspaceId, userId, status])
   @@index([workspaceId, scheduledAt])
   @@index([workspaceId, createdAt])
+  // 🚀 PERFORMANCE: Action history queries by person
+  @@index([workspaceId, personId, completedAt])
+  // 🚀 PERFORMANCE: Action history queries by company
+  @@index([workspaceId, companyId, completedAt])
 }
 
 /// Reminders for people and companies
