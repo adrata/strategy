@@ -249,7 +249,8 @@ function PipelineSections({
   // 🔄 SYNC: Check if the active section's data is loading (matches middle panel timing)
   // This ensures left panel shows skeleton loaders when middle panel shows skeletons
   const activeSectionData = useFastSectionData(activeSection, 30);
-  const activeSectionLoading = activeSectionData?.loading || false;
+  // 🚀 FIX: Only show loading if data is actually loading AND we have no data (prevents skeleton flash)
+  const activeSectionLoading = (activeSectionData?.loading || false) && (activeSectionData?.data || []).length === 0;
   
   // Show loading if: fastCounts is loading AND no counts exist, OR active section is loading, OR auth is loading
   // This syncs the left panel loading state with the middle panel's skeleton timing

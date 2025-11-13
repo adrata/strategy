@@ -412,7 +412,9 @@ export const PipelineView = React.memo(function PipelineView({
   
   // 🚀 PERFORMANCE: Use fast section data exclusively
   const finalData = fastSectionData.data || [];
-  const finalLoading = fastSectionData.loading;
+  // 🚀 FIX: Don't show skeleton if we have data, even if loading is true (prevents flicker on section switch)
+  // For speedrun, this prevents skeleton flash when switching sections since speedrun always fetches fresh
+  const finalLoading = fastSectionData.loading && finalData.length === 0;
   const finalError = fastSectionData.error;
   const finalIsEmpty = (fastSectionData.data || []).length === 0;
   
