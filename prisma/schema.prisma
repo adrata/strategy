@@ -152,6 +152,7 @@ model users {
   activeWorkspaceId                                                     String?                     @db.VarChar(30)
   username                                                              String?                     @unique @db.VarChar(50)
   speedrunRankingMode                                                   String?                     @db.VarChar(50)
+  dashboardConfig                                                       Json?
   oasis_channel_members                                                 OasisChannelMember[]
   oasis_dm_participants                                                 OasisDMParticipant[]
   OasisExternalConnection_OasisExternalConnection_externalUserIdTousers OasisExternalConnection[]   @relation("OasisExternalConnection_externalUserIdTousers")
@@ -442,6 +443,7 @@ model companies {
   lastVerified            DateTime?
   linkedinFollowers       Int?
   linkedinUrl             String?               @db.VarChar(500)
+  linkedinNavigatorUrl    String?               @db.VarChar(500)
   marketPosition          String?               @db.VarChar(100)
   marketThreats           String[]              @default([])
   naicsCodes              String[]              @default([])
@@ -587,6 +589,16 @@ model people {
   phone                   String?             @db.VarChar(50)
   mobilePhone             String?             @db.VarChar(50)
   workPhone               String?             @db.VarChar(50)
+  directDialPhone         String?             @db.VarChar(50)
+  phone1                  String?             @db.VarChar(50)
+  phone1Type              String?             @db.VarChar(20)
+  phone1Verified          Boolean?            @default(false)
+  phone2                  String?             @db.VarChar(50)
+  phone2Type              String?             @db.VarChar(20)
+  phone2Verified          Boolean?            @default(false)
+  phoneDataQuality        Float?              @default(0)
+  phoneEnrichmentDate     DateTime?
+  phoneEnrichmentSource   String?             @db.VarChar(100)
   linkedinUrl             String?             @db.VarChar(500)
   address                 String?             @db.VarChar(500)
   city                    String?             @db.VarChar(100)

@@ -132,6 +132,57 @@ export async function PUT(
       );
     }
 
+    // Validate foreign key references if provided
+    if (body.companyId) {
+      console.log('🔍 [ACTIONS PUT] Validating company reference:', { 
+        companyId: body.companyId,
+        workspaceId: authUser.workspaceId || authUser.activeWorkspaceId
+      });
+      const companyExists = await prisma.companies.findFirst({
+        where: { 
+          id: body.companyId, 
+          workspaceId: authUser.workspaceId || authUser.activeWorkspaceId,
+          deletedAt: null 
+        }
+      });
+      if (!companyExists) {
+        console.error('❌ [ACTIONS PUT] Validation failed - company not found:', {
+          companyId: body.companyId,
+          context: { userId: authUser.id, workspaceId: authUser.workspaceId }
+        });
+        return NextResponse.json(
+          { success: false, error: `Company with ID ${body.companyId} not found or has been deleted in this workspace` },
+          { status: 400 }
+        );
+      }
+      console.log('✅ [ACTIONS PUT] Company reference validated:', { companyName: companyExists.name });
+    }
+
+    if (body.personId) {
+      console.log('🔍 [ACTIONS PUT] Validating person reference:', { 
+        personId: body.personId,
+        workspaceId: authUser.workspaceId || authUser.activeWorkspaceId
+      });
+      const personExists = await prisma.people.findFirst({
+        where: { 
+          id: body.personId, 
+          workspaceId: authUser.workspaceId || authUser.activeWorkspaceId,
+          deletedAt: null 
+        }
+      });
+      if (!personExists) {
+        console.error('❌ [ACTIONS PUT] Validation failed - person not found:', {
+          personId: body.personId,
+          context: { userId: authUser.id, workspaceId: authUser.workspaceId }
+        });
+        return NextResponse.json(
+          { success: false, error: `Person with ID ${body.personId} not found or has been deleted in this workspace` },
+          { status: 400 }
+        );
+      }
+      console.log('✅ [ACTIONS PUT] Person reference validated:', { personName: personExists.fullName || personExists.firstName });
+    }
+
     // Prepare update data with automatic completion handling
     const updateData: any = {
       ...body,
@@ -343,10 +394,15 @@ export async function PATCH(
     if (body.companyId && body.companyId !== existingAction.companyId) {
       console.log('🔍 [ACTIONS PATCH] Validating company reference (being changed):', { 
         newCompanyId: body.companyId,
-        existingCompanyId: existingAction.companyId
+        existingCompanyId: existingAction.companyId,
+        workspaceId: authUser.workspaceId || authUser.activeWorkspaceId
       });
-      const companyExists = await prisma.companies.findUnique({
-        where: { id: body.companyId, deletedAt: null }
+      const companyExists = await prisma.companies.findFirst({
+        where: { 
+          id: body.companyId, 
+          workspaceId: authUser.workspaceId || authUser.activeWorkspaceId,
+          deletedAt: null 
+        }
       });
       if (!companyExists) {
         console.error('❌ [ACTIONS PATCH] Validation failed - company not found:', {
@@ -354,7 +410,7 @@ export async function PATCH(
           context: { userId: authUser.id, workspaceId: authUser.workspaceId }
         });
         return NextResponse.json(
-          { success: false, error: `Company with ID ${body.companyId} not found or has been deleted` },
+          { success: false, error: `Company with ID ${body.companyId} not found or has been deleted in this workspace` },
           { status: 400 }
         );
       }
@@ -364,10 +420,15 @@ export async function PATCH(
     if (body.personId && body.personId !== existingAction.personId) {
       console.log('🔍 [ACTIONS PATCH] Validating person reference (being changed):', { 
         newPersonId: body.personId,
-        existingPersonId: existingAction.personId
+        existingPersonId: existingAction.personId,
+        workspaceId: authUser.workspaceId || authUser.activeWorkspaceId
       });
-      const personExists = await prisma.people.findUnique({
-        where: { id: body.personId, deletedAt: null }
+      const personExists = await prisma.people.findFirst({
+        where: { 
+          id: body.personId, 
+          workspaceId: authUser.workspaceId || authUser.activeWorkspaceId,
+          deletedAt: null 
+        }
       });
       if (!personExists) {
         console.error('❌ [ACTIONS PATCH] Validation failed - person not found:', {
@@ -375,7 +436,7 @@ export async function PATCH(
           context: { userId: authUser.id, workspaceId: authUser.workspaceId }
         });
         return NextResponse.json(
-          { success: false, error: `Person with ID ${body.personId} not found or has been deleted` },
+          { success: false, error: `Person with ID ${body.personId} not found or has been deleted in this workspace` },
           { status: 400 }
         );
       }
