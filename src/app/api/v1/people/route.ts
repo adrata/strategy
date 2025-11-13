@@ -134,7 +134,8 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
-    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${excludeCompanyId}-${includeAllUsers}-${isPartnerOS}-${limit}-${page}`;
+    // 🔧 FIX: Include companyId in cache key to prevent cross-company data leakage
+    const cacheKey = `people-${context.workspaceId}-${context.userId}-${companyId || 'all'}-${section}-${status}-${excludeCompanyId}-${includeAllUsers}-${isPartnerOS}-${limit}-${page}`;
     
     // Define the fetch function for cache
     const fetchPeopleData = async () => {

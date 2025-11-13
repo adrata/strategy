@@ -661,6 +661,15 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       // Extract the record ID from the slug
       const recordId = extractIdFromSlug(slug);
       
+      // 🔧 VALIDATION: Check if extracted ID is valid
+      if (!recordId || recordId === 'undefined' || recordId === 'null' || recordId.trim() === '') {
+        console.error(`❌ [SPEEDRUN RECORD] Invalid record ID extracted from slug:`, {
+          slug,
+          extractedId: recordId
+        });
+        return;
+      }
+      
       // Only update if the selected record doesn't match the current slug
       if (selectedRecord?.id !== recordId) {
         console.log('🔍 [SPEEDRUN RECORD] Finding current record in speedrun data array:', {
@@ -726,6 +735,17 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     // Extract ID from slug
     const recordId = extractIdFromSlug(slug);
     
+    // 🔧 VALIDATION: Check if extracted ID is valid
+    if (!recordId || recordId === 'undefined' || recordId === 'null' || recordId.trim() === '') {
+      console.error(`❌ [RECORD LOADING] Invalid record ID extracted from slug:`, {
+        slug,
+        extractedId: recordId,
+        section
+      });
+      setDirectRecordError(`Invalid ${section} ID in URL. Please check the link and try again.`);
+      return;
+    }
+    
     console.log(`🔍 [RECORD LOADING] Slug: ${slug}, Extracted ID: ${recordId}`, {
       hasSelectedRecord: !!selectedRecord,
       selectedRecordId: selectedRecord?.id,
@@ -745,7 +765,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     console.log(`🔄 [RECORD LOADING] Loading record: ${recordId} (always fresh)`);
     loadDirectRecord(recordId);
     return; // Exit early - loadDirectRecord handles everything
-  }, [slug, section, data.length, selectedRecord?.id, loadDirectRecord]); // 🚀 FIX: Added loadDirectRecord to dependencies
+  }, [slug, section, data.length, selectedRecord?.id, loadDirectRecord, setDirectRecordError]); // 🚀 FIX: Added loadDirectRecord to dependencies
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {

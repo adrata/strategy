@@ -25,6 +25,9 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
   const [isLoadingCompany, setIsLoadingCompany] = useState(false);
   const [companyError, setCompanyError] = useState<string | null>(null);
   
+  // Enrichment status state (silent - no UI)
+  const [hasTriggeredEnrichment, setHasTriggeredEnrichment] = useState(false);
+  
   // Local state for immediate UI updates
   const [website, setWebsite] = useState<string | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState<string | null>(null);
@@ -101,6 +104,67 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
     fetchCompanyData();
   }, [companyId, hasPartialCompanyData]);
+
+  // Auto-trigger enrichment and intelligence generation if company has missing data
+  useEffect(() => {
+    const triggerEnrichmentAndIntelligence = async () => {
+      // Only trigger if we have a company ID and haven't triggered yet
+      if (!companyId || hasTriggeredEnrichment || isLoadingCompany) {
+        return;
+      }
+
+      const companyData = fullCompanyData || record;
+      
+      // Check if enrichment is needed (missing key fields)
+      const missingDescription = !companyData?.description && !companyData?.descriptionEnriched;
+      const missingIndustry = !companyData?.industry;
+      const missingEmployeeCount = !companyData?.employeeCount;
+      const missingRevenue = !companyData?.revenue;
+      const hasBeenEnriched = companyData?.customFields?.coresignalId || companyData?.lastVerified;
+      
+      // Check data staleness (only re-enrich if > 90 days old)
+      const isStale = companyData?.lastVerified && 
+        (Date.now() - new Date(companyData.lastVerified).getTime()) > 90 * 24 * 60 * 60 * 1000;
+      
+      // Only trigger if: missing critical data OR (has identifier and stale)
+      const needsEnrichment = (missingDescription || missingIndustry || missingEmployeeCount || missingRevenue) && 
+                               (!hasBeenEnriched || isStale);
+
+      if (needsEnrichment && (companyData?.website || companyData?.linkedinUrl)) {
+        console.log(`🤖 [UniversalCompanyTab] Auto-triggering enrichment for company: ${companyId}`);
+        setHasTriggeredEnrichment(true);
+        
+        try {
+          const enrichResult = await authFetch(`/api/v1/enrich`, {
+            method: 'POST',
+            body: JSON.stringify({
+              type: 'company',
+              entityId: companyId,
+              options: {}
+            })
+          });
+          
+          console.log(`📊 [UniversalCompanyTab] Enrichment result:`, enrichResult);
+          
+          if (enrichResult?.status === 'completed') {
+            console.log(`✅ [UniversalCompanyTab] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
+            
+            // Trigger page refresh to show new data
+            window.location.reload();
+          } else if (enrichResult?.status === 'failed') {
+            console.warn(`⚠️ [UniversalCompanyTab] Enrichment failed:`, enrichResult.message);
+          }
+        } catch (error) {
+          console.error('❌ [UniversalCompanyTab] Error triggering enrichment:', error);
+        }
+      }
+    };
+
+    // Only trigger once when component mounts and we have company data
+    if ((fullCompanyData || record) && !hasTriggeredEnrichment) {
+      triggerEnrichmentAndIntelligence();
+    }
+  }, [companyId, fullCompanyData, record, hasTriggeredEnrichment, isLoadingCompany]);
 
   // Initialize local state from record data and sync with record updates
   useEffect(() => {

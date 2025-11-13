@@ -110,9 +110,9 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     syncBuyerGroupData();
   }, [record?.id]);
 
-  // Auto-trigger enrichment if person has LinkedIn/email but missing key data (SILENT - no UI)
+  // Auto-trigger enrichment and intelligence if person has missing data (SILENT - no UI)
   useEffect(() => {
-    const triggerEnrichment = async () => {
+    const triggerEnrichmentAndIntelligence = async () => {
       // Only trigger if we have a person ID and haven't triggered yet
       if (!record?.id || hasTriggeredEnrichment) {
         return;
@@ -120,16 +120,18 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
 
       // Check if person has LinkedIn or email but missing key data
       const hasIdentifier = record?.linkedinUrl || record?.email;
-      const missingBasicData = !record?.jobTitle || !record?.department;
+      const missingBasicData = !record?.jobTitle || !record?.department || !record?.state || !record?.bio;
+      const missingIntelligence = !record?.buyerGroupRole || !record?.customFields?.influenceLevel || 
+                                   !record?.customFields?.decisionPower || !record?.customFields?.engagementLevel;
       const hasBeenEnriched = record?.customFields?.coresignalId || record?.lastEnriched;
       
       // Check data staleness (only re-enrich if > 90 days old)
       const isStale = record?.lastEnriched && 
         (Date.now() - new Date(record.lastEnriched).getTime()) > 90 * 24 * 60 * 60 * 1000;
       
-      // Only trigger if: has identifier, missing data, and (not enriched OR stale)
+      // Trigger enrichment if: has identifier, missing data, and (not enriched OR stale)
       if (hasIdentifier && missingBasicData && (!hasBeenEnriched || isStale)) {
-        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering silent enrichment for person: ${record.id}`);
+        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering enrichment for person: ${record.id}`);
         setHasTriggeredEnrichment(true);
         
         try {
@@ -159,11 +161,37 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
           console.error('❌ [PERSON OVERVIEW] Error triggering enrichment:', error);
         }
       }
+      
+      // Trigger intelligence generation if missing intelligence fields
+      if (missingIntelligence && !hasTriggeredEnrichment) {
+        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering intelligence generation for person: ${record.id}`);
+        
+        try {
+          // Dynamic import to avoid circular dependencies
+          const { generatePersonIntelligence } = await import('@/platform/services/person-intelligence-generator');
+          
+          const result = await generatePersonIntelligence({
+            personId: record.id,
+            workspaceId: record.workspaceId,
+            forceRegenerate: false
+          });
+          
+          if (result.success && !result.cached) {
+            console.log(`✅ [PERSON OVERVIEW] Successfully generated intelligence`);
+            // Trigger page refresh to show new intelligence
+            window.location.reload();
+          } else if (result.success && result.cached) {
+            console.log(`ℹ️ [PERSON OVERVIEW] Using cached intelligence`);
+          }
+        } catch (error) {
+          console.error('❌ [PERSON OVERVIEW] Error generating intelligence:', error);
+        }
+      }
     };
 
     // Only trigger once when component mounts and we have person data
     if (record && !hasTriggeredEnrichment) {
-      triggerEnrichment();
+      triggerEnrichmentAndIntelligence();
     }
   }, [record, hasTriggeredEnrichment]);
 
