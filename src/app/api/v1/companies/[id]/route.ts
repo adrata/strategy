@@ -148,7 +148,6 @@ export async function GET(
       phone: mergedCompany.phone ?? null,
       fax: mergedCompany.fax ?? null,
       linkedinUrl: mergedCompany.linkedinUrl ?? null,
-      linkedinNavigatorUrl: mergedCompany.linkedinNavigatorUrl ?? null,
       linkedinFollowers: mergedCompany.linkedinFollowers ?? null,
       // Location
       address: mergedCompany.address ?? null,
@@ -419,7 +418,7 @@ export async function PATCH(
       'marketThreats', 'keyInfluencers', 'decisionTimeline', 'marketPosition', 
       'digitalMaturity', 'techStack',
       // Social media fields
-      'linkedinUrl', 'linkedinNavigatorUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 
+      'linkedinUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 
       'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl',
       // HQ Location fields
       'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet', 
@@ -743,7 +742,6 @@ export async function PATCH(
         phone: updatedCompany.phone ?? null,
         fax: updatedCompany.fax ?? null,
         linkedinUrl: updatedCompany.linkedinUrl ?? null,
-        linkedinNavigatorUrl: updatedCompany.linkedinNavigatorUrl ?? null,
         linkedinFollowers: updatedCompany.linkedinFollowers ?? null,
         // Location
         address: updatedCompany.address ?? null,
