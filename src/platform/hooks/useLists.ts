@@ -84,7 +84,17 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
       const response = await authFetch(url);
       
       if (!response.ok) {
-        throw new Error('Failed to fetch lists');
+        // Try to get error details from response
+        let errorMessage = 'Failed to fetch lists';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+          console.error('API error response:', errorData);
+        } catch {
+          // If response isn't JSON, use status text
+          errorMessage = response.statusText || `HTTP ${response.status}`;
+        }
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
@@ -97,6 +107,7 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
           localStorage.setItem(storageKey, JSON.stringify({ lists: result.data, ts: Date.now() }));
         } catch {}
       } else {
+        // If result doesn't have success/data, still set empty array (no lists found is valid)
         setLists([]);
       }
     } catch (err) {
