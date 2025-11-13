@@ -20,8 +20,8 @@ import {
   PlusIcon,
   ArrowsUpDownIcon
 } from '@heroicons/react/24/outline';
-import { CompanyListsDropdown } from './CompanyListsDropdown';
-import { CompanyList } from '@/platform/hooks/useCompanyLists';
+import { ListsDropdown } from './ListsDropdown';
+import { List } from '@/platform/hooks/useLists';
 import { getSectionTechnologyOptions } from './config/section-config';
 
 interface PipelineFiltersProps {
@@ -42,13 +42,14 @@ interface PipelineFiltersProps {
   onCompanySizeChange?: (size: string) => void;
   onLocationChange?: (location: string) => void;
   onTechnologyChange?: (technology: string) => void;
-  // Company lists
+  // Lists (for all sections)
   selectedListId?: string | null;
-  onListSelect?: (list: CompanyList | null) => void;
+  onListSelect?: (list: List | null) => void;
   onUpdateList?: (listId: string) => void;
+  currentVisibleFields?: string[];
 }
 
-export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns, onCompanySizeChange, onLocationChange, onTechnologyChange, selectedListId, onListSelect, onUpdateList }: PipelineFiltersProps) {
+export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns, onCompanySizeChange, onLocationChange, onTechnologyChange, selectedListId, onListSelect, onUpdateList, currentVisibleFields }: PipelineFiltersProps) {
   // Get workspace context for persistence
   const { user } = useUnifiedAuth();
   const workspaceId = user?.activeWorkspaceId || 'default';
@@ -715,17 +716,16 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
   return (
     <div className="flex items-center gap-4 py-2 w-full bg-background">
-      {/* Company Lists Dropdown - only for companies section */}
-      {section === 'companies' && (
-        <CompanyListsDropdown
-          section={section}
-          selectedListId={selectedListId || null}
-          onListSelect={onListSelect || (() => {})}
-          currentFilters={currentFilters}
-          onUpdateList={onUpdateList}
-          workspaceId={workspaceId}
-        />
-      )}
+      {/* Lists Dropdown - for all supported sections */}
+      <ListsDropdown
+        section={section}
+        selectedListId={selectedListId || null}
+        onListSelect={onListSelect || (() => {})}
+        currentFilters={currentFilters}
+        currentVisibleFields={currentVisibleFields || externalVisibleColumns}
+        onUpdateList={onUpdateList}
+        workspaceId={workspaceId}
+      />
 
       {/* Search - full width with icon on right */}
       <div className="relative flex-1">

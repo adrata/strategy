@@ -4,7 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/v1/company-lists/[id] - Get a specific list
+// GET /api/v1/lists/[id] - Get a specific list
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -28,6 +28,7 @@ export async function GET(
 
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
+    const section = searchParams.get('section');
     const workspaceId = queryWorkspaceId || context.workspaceId;
     const userId = context.userId;
 
@@ -35,11 +36,12 @@ export async function GET(
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
     }
 
-    const list = await prisma.company_lists.findFirst({
+    const list = await prisma.lists.findFirst({
       where: {
         id: listId,
         workspaceId,
         userId,
+        ...(section && { section }),
         deletedAt: null
       }
     });
@@ -50,16 +52,16 @@ export async function GET(
 
     return createSuccessResponse(list);
   } catch (error) {
-    console.error('Error fetching company list:', error);
+    console.error('Error fetching list:', error);
     return createErrorResponse(
-      'Failed to fetch company list',
+      'Failed to fetch list',
       'FETCH_ERROR',
       500
     );
   }
 }
 
-// PUT /api/v1/company-lists/[id] - Update existing list
+// PUT /api/v1/lists/[id] - Update existing list
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -86,6 +88,7 @@ export async function PUT(
 
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
+    const section = searchParams.get('section');
     const workspaceId = queryWorkspaceId || context.workspaceId;
     const userId = context.userId;
 
@@ -94,11 +97,12 @@ export async function PUT(
     }
 
     // Verify list exists and belongs to user
-    const existingList = await prisma.company_lists.findFirst({
+    const existingList = await prisma.lists.findFirst({
       where: {
         id: listId,
         workspaceId,
         userId,
+        ...(section && { section }),
         deletedAt: null
       }
     });
@@ -109,10 +113,11 @@ export async function PUT(
 
     // If name is being changed, check for duplicates
     if (name && name.trim() !== existingList.name) {
-      const duplicateList = await prisma.company_lists.findFirst({
+      const duplicateList = await prisma.lists.findFirst({
         where: {
           workspaceId,
           userId,
+          section: existingList.section,
           name: name.trim(),
           id: { not: listId },
           deletedAt: null
@@ -125,7 +130,7 @@ export async function PUT(
     }
 
     // Update the list
-    const updatedList = await prisma.company_lists.update({
+    const updatedList = await prisma.lists.update({
       where: { id: listId },
       data: {
         ...(name !== undefined && { name: name.trim() }),
@@ -141,16 +146,16 @@ export async function PUT(
 
     return createSuccessResponse(updatedList, { message: 'List updated successfully' });
   } catch (error) {
-    console.error('Error updating company list:', error);
+    console.error('Error updating list:', error);
     return createErrorResponse(
-      'Failed to update company list',
+      'Failed to update list',
       'UPDATE_ERROR',
       500
     );
   }
 }
 
-// DELETE /api/v1/company-lists/[id] - Delete list (soft delete)
+// DELETE /api/v1/lists/[id] - Delete list (soft delete)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -174,6 +179,7 @@ export async function DELETE(
 
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
+    const section = searchParams.get('section');
     const workspaceId = queryWorkspaceId || context.workspaceId;
     const userId = context.userId;
 
@@ -182,11 +188,12 @@ export async function DELETE(
     }
 
     // Verify list exists and belongs to user
-    const existingList = await prisma.company_lists.findFirst({
+    const existingList = await prisma.lists.findFirst({
       where: {
         id: listId,
         workspaceId,
         userId,
+        ...(section && { section }),
         deletedAt: null
       }
     });
@@ -201,7 +208,7 @@ export async function DELETE(
     }
 
     // Soft delete
-    await prisma.company_lists.update({
+    await prisma.lists.update({
       where: { id: listId },
       data: {
         deletedAt: new Date()
@@ -210,9 +217,9 @@ export async function DELETE(
 
     return createSuccessResponse({ id: listId }, { message: 'List deleted successfully' });
   } catch (error) {
-    console.error('Error deleting company list:', error);
+    console.error('Error deleting list:', error);
     return createErrorResponse(
-      'Failed to delete company list',
+      'Failed to delete list',
       'DELETE_ERROR',
       500
     );

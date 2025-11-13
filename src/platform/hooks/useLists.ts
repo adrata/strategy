@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 import { authFetch } from '@/platform/api-fetch';
 
-export interface CompanyList {
+export interface List {
   id: string;
   workspaceId: string;
   userId: string;
+  section: string;
   name: string;
   description: string | null;
   isDefault: boolean;
@@ -19,8 +20,8 @@ export interface CompanyList {
   deletedAt: Date | null;
 }
 
-export interface UseCompanyListsReturn {
-  lists: CompanyList[];
+export interface UseListsReturn {
+  lists: List[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
@@ -31,8 +32,9 @@ export interface UseCompanyListsReturn {
     sortField?: string;
     sortDirection?: string;
     searchQuery?: string;
+    visibleFields?: string[];
     isDefault?: boolean;
-  }) => Promise<CompanyList | null>;
+  }) => Promise<List | null>;
   updateList: (id: string, data: {
     name?: string;
     description?: string;
@@ -40,21 +42,22 @@ export interface UseCompanyListsReturn {
     sortField?: string;
     sortDirection?: string;
     searchQuery?: string;
+    visibleFields?: string[];
     isDefault?: boolean;
-  }) => Promise<CompanyList | null>;
+  }) => Promise<List | null>;
   deleteList: (id: string) => Promise<boolean>;
 }
 
-export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
+export function useLists(section: string, workspaceId?: string): UseListsReturn {
   const { user } = useUnifiedAuth();
   const finalWorkspaceId = workspaceId || user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
   
-  const [lists, setLists] = useState<CompanyList[]>([]);
+  const [lists, setLists] = useState<List[]>([]);
   const [loading, setLoading] = useState(false); // Start with false since default lists are always available
   const [error, setError] = useState<string | null>(null);
 
   const fetchLists = useCallback(async () => {
-    if (!finalWorkspaceId) {
+    if (!finalWorkspaceId || !section) {
       setLoading(false);
       return;
     }
@@ -65,7 +68,7 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
       
       // Try to load from cache first for instant display
       try {
-        const storageKey = `adrata-company-lists-${finalWorkspaceId}`;
+        const storageKey = `adrata-lists-${section}-${finalWorkspaceId}`;
         const cached = localStorage.getItem(storageKey);
         if (cached) {
           const parsed = JSON.parse(cached);
@@ -77,11 +80,11 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
         }
       } catch {}
       
-      const url = `/api/v1/company-lists?workspaceId=${finalWorkspaceId}`;
+      const url = `/api/v1/lists?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
       const response = await authFetch(url);
       
       if (!response.ok) {
-        throw new Error('Failed to fetch company lists');
+        throw new Error('Failed to fetch lists');
       }
       
       const result = await response.json();
@@ -90,26 +93,26 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
         setLists(result.data);
         // Cache the result
         try {
-          const storageKey = `adrata-company-lists-${finalWorkspaceId}`;
+          const storageKey = `adrata-lists-${section}-${finalWorkspaceId}`;
           localStorage.setItem(storageKey, JSON.stringify({ lists: result.data, ts: Date.now() }));
         } catch {}
       } else {
         setLists([]);
       }
     } catch (err) {
-      console.error('Error fetching company lists:', err);
+      console.error('Error fetching lists:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch lists');
       // Don't clear lists on error - keep cached data if available
     } finally {
       setLoading(false);
     }
-  }, [finalWorkspaceId]);
+  }, [finalWorkspaceId, section]);
 
   useEffect(() => {
     // Load from cache immediately for instant display
-    if (finalWorkspaceId) {
+    if (finalWorkspaceId && section) {
       try {
-        const storageKey = `adrata-company-lists-${finalWorkspaceId}`;
+        const storageKey = `adrata-lists-${section}-${finalWorkspaceId}`;
         const cached = localStorage.getItem(storageKey);
         if (cached) {
           const parsed = JSON.parse(cached);
@@ -121,7 +124,7 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
     }
     // Then fetch fresh data in background
     fetchLists();
-  }, [fetchLists, finalWorkspaceId]);
+  }, [fetchLists, finalWorkspaceId, section]);
 
   const createList = useCallback(async (data: {
     name: string;
@@ -130,14 +133,15 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
     sortField?: string;
     sortDirection?: string;
     searchQuery?: string;
+    visibleFields?: string[];
     isDefault?: boolean;
-  }): Promise<CompanyList | null> => {
-    if (!finalWorkspaceId) {
+  }): Promise<List | null> => {
+    if (!finalWorkspaceId || !section) {
       return null;
     }
 
     try {
-      const url = `/api/v1/company-lists?workspaceId=${finalWorkspaceId}`;
+      const url = `/api/v1/lists?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
       const response = await authFetch(url, {
         method: 'POST',
         headers: {
@@ -160,10 +164,10 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
       
       return null;
     } catch (err) {
-      console.error('Error creating company list:', err);
+      console.error('Error creating list:', err);
       throw err;
     }
-  }, [finalWorkspaceId, fetchLists]);
+  }, [finalWorkspaceId, section, fetchLists]);
 
   const updateList = useCallback(async (id: string, data: {
     name?: string;
@@ -172,14 +176,15 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
     sortField?: string;
     sortDirection?: string;
     searchQuery?: string;
+    visibleFields?: string[];
     isDefault?: boolean;
-  }): Promise<CompanyList | null> => {
-    if (!finalWorkspaceId) {
+  }): Promise<List | null> => {
+    if (!finalWorkspaceId || !section) {
       return null;
     }
 
     try {
-      const url = `/api/v1/company-lists/${id}?workspaceId=${finalWorkspaceId}`;
+      const url = `/api/v1/lists/${id}?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
       const response = await authFetch(url, {
         method: 'PUT',
         headers: {
@@ -202,18 +207,18 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
       
       return null;
     } catch (err) {
-      console.error('Error updating company list:', err);
+      console.error('Error updating list:', err);
       throw err;
     }
-  }, [finalWorkspaceId, fetchLists]);
+  }, [finalWorkspaceId, section, fetchLists]);
 
   const deleteList = useCallback(async (id: string): Promise<boolean> => {
-    if (!finalWorkspaceId) {
+    if (!finalWorkspaceId || !section) {
       return false;
     }
 
     try {
-      const url = `/api/v1/company-lists/${id}?workspaceId=${finalWorkspaceId}`;
+      const url = `/api/v1/lists/${id}?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
       const response = await authFetch(url, {
         method: 'DELETE'
       });
@@ -226,10 +231,10 @@ export function useCompanyLists(workspaceId?: string): UseCompanyListsReturn {
       await fetchLists(); // Refresh lists
       return true;
     } catch (err) {
-      console.error('Error deleting company list:', err);
+      console.error('Error deleting list:', err);
       throw err;
     }
-  }, [finalWorkspaceId, fetchLists]);
+  }, [finalWorkspaceId, section, fetchLists]);
 
   return {
     lists,

@@ -3,13 +3,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDownIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { useCompanyLists, CompanyList } from '@/platform/hooks/useCompanyLists';
-import { CreateCompanyListModal } from './CreateCompanyListModal';
+import { useLists, List } from '@/platform/hooks/useLists';
+import { CreateListModal } from './CreateListModal';
 
-interface CompanyListsDropdownProps {
+interface ListsDropdownProps {
   section: string;
   selectedListId: string | null;
-  onListSelect: (list: CompanyList | null) => void;
+  onListSelect: (list: List | null) => void;
   currentFilters?: {
     searchQuery?: string;
     statusFilter?: string;
@@ -29,7 +29,93 @@ interface CompanyListsDropdownProps {
   workspaceId?: string;
 }
 
-export function CompanyListsDropdown({
+// Sections that support lists (excludes speedrun for now - will be handled separately)
+const SUPPORTED_SECTIONS = ['companies', 'people', 'leads', 'prospects', 'opportunities', 'clients'];
+
+// Get default list name for section
+function getDefaultListName(section: string): string {
+  const names: Record<string, string> = {
+    companies: 'All Companies',
+    people: 'All People',
+    leads: 'All Leads',
+    prospects: 'All Prospects',
+    opportunities: 'All Opportunities',
+    clients: 'All Clients',
+  };
+  return names[section] || 'All Items';
+}
+
+// Get default lists for section
+function getDefaultLists(section: string, workspaceId?: string): List[] {
+  const allItems: List = {
+    id: `all-${section}`,
+    workspaceId: workspaceId || '',
+    userId: '',
+    section,
+    name: getDefaultListName(section),
+    description: null,
+    isDefault: true,
+    filters: null,
+    sortField: null,
+    sortDirection: null,
+    searchQuery: null,
+    visibleFields: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: null
+  };
+
+  // Add section-specific default lists
+  const defaults: List[] = [allItems];
+
+  if (section === 'companies') {
+    defaults.push({
+      id: 'uncontacted-companies',
+      workspaceId: workspaceId || '',
+      userId: '',
+      section,
+      name: 'Uncontacted',
+      description: 'Companies with no recent contact',
+      isDefault: true,
+      filters: {
+        lastContactedFilter: 'uncontacted'
+      },
+      sortField: 'rank',
+      sortDirection: 'desc',
+      searchQuery: null,
+      visibleFields: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null
+    });
+  }
+
+  if (section === 'leads' || section === 'prospects') {
+    defaults.push({
+      id: `uncontacted-${section}`,
+      workspaceId: workspaceId || '',
+      userId: '',
+      section,
+      name: 'Uncontacted',
+      description: `${section === 'leads' ? 'Leads' : 'Prospects'} with no recent contact`,
+      isDefault: true,
+      filters: {
+        lastContactedFilter: 'uncontacted'
+      },
+      sortField: 'rank',
+      sortDirection: 'desc',
+      searchQuery: null,
+      visibleFields: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null
+    });
+  }
+
+  return defaults;
+}
+
+export function ListsDropdown({
   section,
   selectedListId,
   onListSelect,
@@ -37,16 +123,16 @@ export function CompanyListsDropdown({
   currentVisibleFields,
   onUpdateList,
   workspaceId
-}: CompanyListsDropdownProps) {
-  // Only show for companies section (will be extended to other sections later)
-  if (section !== 'companies') {
+}: ListsDropdownProps) {
+  // Only show for supported sections
+  if (!SUPPORTED_SECTIONS.includes(section)) {
     return null;
   }
 
-  const { lists, loading, deleteList } = useCompanyLists(workspaceId);
+  const { lists, loading, deleteList } = useLists(section, workspaceId);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingList, setEditingList] = useState<CompanyList | null>(null);
+  const [editingList, setEditingList] = useState<List | null>(null);
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownContentRef = useRef<HTMLDivElement>(null);
@@ -73,47 +159,14 @@ export function CompanyListsDropdown({
   }, []);
 
   // Get default lists (virtual, not stored in DB)
-  const defaultLists: CompanyList[] = [
-    {
-      id: 'all-companies',
-      workspaceId: workspaceId || '',
-      userId: '',
-      name: 'All Companies',
-      description: null,
-      isDefault: true,
-      filters: null,
-      sortField: null,
-      sortDirection: null,
-      searchQuery: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null
-    },
-    {
-      id: 'uncontacted',
-      workspaceId: workspaceId || '',
-      userId: '',
-      name: 'Uncontacted',
-      description: 'Companies with no recent contact',
-      isDefault: true,
-      filters: {
-        lastContactedFilter: 'uncontacted'
-      },
-      sortField: 'rank',
-      sortDirection: 'desc',
-      searchQuery: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null
-    }
-  ];
+  const defaultLists = getDefaultLists(section, workspaceId);
 
   // Combine default and custom lists
   const allLists = [...defaultLists, ...lists.filter(list => !list.isDefault)];
 
   const selectedList = allLists.find(list => list.id === selectedListId) || defaultLists[0];
 
-  const handleListSelect = (list: CompanyList) => {
+  const handleListSelect = (list: List) => {
     onListSelect(list);
     setIsDropdownOpen(false);
   };
@@ -124,9 +177,9 @@ export function CompanyListsDropdown({
     setIsDropdownOpen(false);
   };
 
-  const handleEditList = (list: CompanyList, e: React.MouseEvent) => {
+  const handleEditList = (list: List, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (list.isDefault && list.id !== 'all-companies' && list.id !== 'uncontacted') {
+    if (list.isDefault) {
       // Can't edit default lists
       return;
     }
@@ -135,16 +188,16 @@ export function CompanyListsDropdown({
     setIsDropdownOpen(false);
   };
 
-  const handleDeleteList = async (list: CompanyList, e: React.MouseEvent) => {
+  const handleDeleteList = async (list: List, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (list.isDefault || list.id === 'all-companies' || list.id === 'uncontacted') {
+    if (list.isDefault) {
       return;
     }
     if (confirm(`Are you sure you want to delete "${list.name}"?`)) {
       try {
         await deleteList(list.id);
         if (selectedListId === list.id) {
-          onListSelect(defaultLists[0]); // Reset to "All Companies"
+          onListSelect(defaultLists[0]); // Reset to default list
         }
       } catch (error) {
         console.error('Failed to delete list:', error);
@@ -156,6 +209,9 @@ export function CompanyListsDropdown({
   const handleModalSave = () => {
     setIsCreateModalOpen(false);
     setEditingList(null);
+    if (onUpdateList) {
+      // Refresh the list selection if needed
+    }
   };
 
   return (
@@ -279,7 +335,7 @@ export function CompanyListsDropdown({
 
       {/* Create/Edit Modal */}
       {isCreateModalOpen && (
-        <CreateCompanyListModal
+        <CreateListModal
           isOpen={isCreateModalOpen}
           onClose={() => {
             setIsCreateModalOpen(false);

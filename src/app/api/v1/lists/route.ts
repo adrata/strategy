@@ -4,7 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/v1/company-lists - Get all lists for current user/workspace
+// GET /api/v1/lists - Get all lists for current user/workspace/section
 export async function GET(request: NextRequest) {
   try {
     const { context, response } = await getSecureApiContext(request, {
@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
+    const section = searchParams.get('section');
     const workspaceId = queryWorkspaceId || context.workspaceId;
     const userId = context.userId;
 
@@ -29,11 +30,16 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
     }
 
-    // Get all lists for the user in this workspace, including defaults
-    const lists = await prisma.company_lists.findMany({
+    if (!section) {
+      return createErrorResponse('Section is required', 'SECTION_REQUIRED', 400);
+    }
+
+    // Get all lists for the user in this workspace and section
+    const lists = await prisma.lists.findMany({
       where: {
         workspaceId,
         userId,
+        section,
         deletedAt: null
       },
       orderBy: [
@@ -44,16 +50,16 @@ export async function GET(request: NextRequest) {
 
     return createSuccessResponse(lists, { count: lists.length });
   } catch (error) {
-    console.error('Error fetching company lists:', error);
+    console.error('Error fetching lists:', error);
     return createErrorResponse(
-      'Failed to fetch company lists',
+      'Failed to fetch lists',
       'FETCH_ERROR',
       500
     );
   }
 }
 
-// POST /api/v1/company-lists - Create new list
+// POST /api/v1/lists - Create new list
 export async function POST(request: NextRequest) {
   try {
     const { context, response } = await getSecureApiContext(request, {
@@ -78,6 +84,7 @@ export async function POST(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
+    const section = searchParams.get('section');
     const workspaceId = queryWorkspaceId || context.workspaceId;
     const userId = context.userId;
 
@@ -85,11 +92,16 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
     }
 
-    // Check if a list with the same name already exists for this user/workspace
-    const existingList = await prisma.company_lists.findFirst({
+    if (!section) {
+      return createErrorResponse('Section is required', 'SECTION_REQUIRED', 400);
+    }
+
+    // Check if a list with the same name already exists for this user/workspace/section
+    const existingList = await prisma.lists.findFirst({
       where: {
         workspaceId,
         userId,
+        section,
         name: name.trim(),
         deletedAt: null
       }
@@ -100,10 +112,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the list
-    const newList = await prisma.company_lists.create({
+    const newList = await prisma.lists.create({
       data: {
         workspaceId,
         userId,
+        section,
         name: name.trim(),
         description: description?.trim() || null,
         isDefault: isDefault === true,
@@ -117,9 +130,9 @@ export async function POST(request: NextRequest) {
 
     return createSuccessResponse(newList, { message: 'List created successfully' });
   } catch (error) {
-    console.error('Error creating company list:', error);
+    console.error('Error creating list:', error);
     return createErrorResponse(
-      'Failed to create company list',
+      'Failed to create list',
       'CREATE_ERROR',
       500
     );

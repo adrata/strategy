@@ -127,6 +127,7 @@ function PipelineLayoutInner({
                             !pathname.includes('/opportunities') &&
                             !pathname.includes('/people') &&
                             !pathname.includes('/companies') &&
+                            !pathname.includes('/clients') &&
                             !pathname.includes('/partners') &&
                             !pathname.includes('/sellers') &&
                             !pathname.includes('/customers') &&

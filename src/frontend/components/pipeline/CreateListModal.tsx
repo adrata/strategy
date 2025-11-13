@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useCompanyLists, CompanyList } from "@/platform/hooks/useCompanyLists";
+import { useLists, List } from "@/platform/hooks/useLists";
 import { FieldSelection } from "./FieldSelection";
 import { getDefaultVisibleFields } from "./utils/availableFields";
 
-interface CreateCompanyListModalProps {
+interface CreateListModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: () => void;
-  editingList?: CompanyList | null;
-  section?: string;
+  editingList?: List | null;
+  section: string;
   currentFilters?: {
     searchQuery?: string;
     statusFilter?: string;
@@ -30,17 +30,17 @@ interface CreateCompanyListModalProps {
   useCurrentFilters?: boolean;
 }
 
-export function CreateCompanyListModal({
+export function CreateListModal({
   isOpen,
   onClose,
   onSave,
   editingList,
-  section = 'companies',
+  section,
   currentFilters,
   currentVisibleFields,
   useCurrentFilters = false
-}: CreateCompanyListModalProps) {
-  const { createList, updateList } = useCompanyLists();
+}: CreateListModalProps) {
+  const { createList, updateList } = useLists(section);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -82,6 +82,11 @@ export function CreateCompanyListModal({
   const handleSave = async () => {
     if (!name.trim()) {
       setError("List name is required");
+      return;
+    }
+
+    if (selectedFields.length === 0) {
+      setError("At least one field must be selected");
       return;
     }
 
@@ -175,7 +180,7 @@ export function CreateCompanyListModal({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., High Priority Companies"
+              placeholder={`e.g., High Priority ${section.charAt(0).toUpperCase() + section.slice(1)}`}
               className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               disabled={isSaving}
             />

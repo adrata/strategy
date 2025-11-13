@@ -36,8 +36,8 @@ import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModa
 import { useSpeedrunSignals } from "@/platform/hooks/useSpeedrunSignals";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { PipelineHydrationFix } from './PipelineHydrationFix';
-import { CompanyList } from '@/platform/hooks/useCompanyLists';
-import { useCompanyLists } from '@/platform/hooks/useCompanyLists';
+import { List } from '@/platform/hooks/useLists';
+import { useLists } from '@/platform/hooks/useLists';
 
 interface PipelineContentProps {
   section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun' | 'metrics' | 'dashboard';
@@ -117,15 +117,27 @@ export const PipelineContent = React.memo(function PipelineContent({
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [technologyFilter, setTechnologyFilter] = useState<string>('all');
   
-  // Company Lists
-  const [selectedListId, setSelectedListId] = useState<string | null>('all-companies');
-  const { updateList } = useCompanyLists(user?.activeWorkspaceId);
+  // Lists (for all sections)
+  const getDefaultListId = (section: string) => {
+    const defaults: Record<string, string> = {
+      companies: 'all-companies',
+      people: 'all-people',
+      leads: 'all-leads',
+      prospects: 'all-prospects',
+      opportunities: 'all-opportunities',
+      clients: 'all-clients',
+    };
+    return defaults[section] || `all-${section}`;
+  };
   
-  // Handle list selection - apply filters from selected list
-  const handleListSelect = useCallback((list: CompanyList | null) => {
+  const [selectedListId, setSelectedListId] = useState<string | null>(getDefaultListId(section));
+  const { updateList } = useLists(section, user?.activeWorkspaceId);
+  
+  // Handle list selection - apply filters and visible fields from selected list
+  const handleListSelect = useCallback((list: List | null) => {
     if (!list) {
-      setSelectedListId('all-companies');
-      // Reset all filters for "All Companies"
+      setSelectedListId(getDefaultListId(section));
+      // Reset all filters for default list
       setSearchQuery('');
       setStatusFilter('all');
       setPriorityFilter('all');
@@ -135,8 +147,12 @@ export const PipelineContent = React.memo(function PipelineContent({
       setTimezoneFilter('all');
       setCompanySizeFilter('all');
       setLocationFilter('all');
-      setSortField('rank');
-      setSortDirection('desc');
+      setTechnologyFilter('all');
+      setSortField(section === 'prospects' ? 'lastContactDate' : 'rank');
+      setSortDirection(section === 'prospects' ? 'asc' : 'desc');
+      // Reset visible columns to defaults
+      const defaultColumns = getDefaultVisibleColumns(section);
+      setVisibleColumns(defaultColumns);
       return;
     }
 
@@ -170,11 +186,22 @@ export const PipelineContent = React.memo(function PipelineContent({
     } else {
       setSearchQuery('');
     }
-  }, []);
 
-  // Handle updating list with current filters
+    // Apply visible fields
+    if (list.visibleFields && Array.isArray(list.visibleFields) && list.visibleFields.length > 0) {
+      setVisibleColumns(list.visibleFields);
+    }
+  }, [section]);
+
+  // Handle updating list with current filters and visible fields
   const handleUpdateList = useCallback(async (listId: string) => {
-    if (!listId || listId === 'all-companies' || listId === 'uncontacted') {
+    // Check if it's a default list (starts with 'all-' or is a known default)
+    const defaultListIds = [
+      'all-companies', 'all-people', 'all-leads', 'all-prospects', 
+      'all-opportunities', 'all-clients',
+      'uncontacted', 'uncontacted-companies', 'uncontacted-leads', 'uncontacted-prospects'
+    ];
+    if (!listId || defaultListIds.includes(listId)) {
       return;
     }
 
@@ -193,13 +220,14 @@ export const PipelineContent = React.memo(function PipelineContent({
         },
         sortField,
         sortDirection,
-        searchQuery: searchQuery || undefined
+        searchQuery: searchQuery || undefined,
+        visibleFields: visibleColumns.length > 0 ? visibleColumns : undefined
       });
     } catch (error) {
       console.error('Failed to update list:', error);
       alert('Failed to update list. Please try again.');
     }
-  }, [updateList, statusFilter, priorityFilter, verticalFilter, revenueFilter, lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, technologyFilter, sortField, sortDirection, searchQuery]);
+  }, [updateList, statusFilter, priorityFilter, verticalFilter, revenueFilter, lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, technologyFilter, sortField, sortDirection, searchQuery, visibleColumns]);
   
   // Get workspace context at component level
   const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
@@ -275,9 +303,10 @@ export const PipelineContent = React.memo(function PipelineContent({
   const currentWorkspaceId = user?.activeWorkspaceId || null;
   const currentUserId = user?.id || null;
   
-  // Update visible columns and sort when section changes
+  // Update visible columns, sort, and selected list when section changes
   useEffect(() => {
     setVisibleColumns(getDefaultVisibleColumns(section));
+    setSelectedListId(getDefaultListId(section));
     // Clear search when changing sections
     setSearchQuery('');
     // Reset sort to default for new section
@@ -1339,10 +1368,11 @@ export const PipelineContent = React.memo(function PipelineContent({
             onCompanySizeChange={setCompanySizeFilter}
             onLocationChange={setLocationFilter}
             onTechnologyChange={setTechnologyFilter}
-            // Company Lists
+            // Lists (for all sections)
             selectedListId={selectedListId}
             onListSelect={handleListSelect}
             onUpdateList={handleUpdateList}
+            currentVisibleFields={visibleColumns}
           />
         </div>
       )}

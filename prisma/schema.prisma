@@ -110,6 +110,7 @@ model workspaces {
   auth_sessions             auth_sessions[]
   companies                 companies[]
   company_lists             company_lists[]
+  lists                     lists[]
   emails                    email_messages[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
@@ -166,6 +167,7 @@ model users {
   audit_logs                                                            audit_logs[]
   auth_sessions                                                         auth_sessions[]
   company_lists                                                         company_lists[]
+  lists                                                                 lists[]
   main_seller_companies                                                 companies[]                 @relation("MainSellerCompanies")
   grand_central_connections                                             grand_central_connections[]
   grand_central_workflows                                               grand_central_workflows[]
@@ -353,141 +355,141 @@ model core_companies {
 
 /// Company/organization data
 model companies {
-  id                     String                @id @default(ulid()) @db.VarChar(30)
-  workspaceId            String                @db.VarChar(30)
-  coreCompanyId          String?               @db.VarChar(30)
-  name                   String                @db.VarChar(255)
-  nameOverride           String?               @db.VarChar(255)
-  industryOverride       String?               @db.VarChar(100)
-  websiteOverride        String?               @db.VarChar(500)
-  legalName              String?               @db.VarChar(255)
-  tradingName            String?               @db.VarChar(255)
-  localName              String?               @db.VarChar(255)
-  description            String?
-  website                String?               @db.VarChar(500)
-  email                  String?               @db.VarChar(300)
-  phone                  String?               @db.VarChar(50)
-  fax                    String?               @db.VarChar(50)
-  address                String?
-  city                   String?               @db.VarChar(100)
-  state                  String?               @db.VarChar(100)
-  country                String?               @db.VarChar(100)
-  postalCode             String?               @db.VarChar(20)
-  industry               String?               @db.VarChar(100)
-  sector                 String?               @db.VarChar(100)
-  size                   String?               @db.VarChar(100)
-  revenue                Decimal?              @db.Decimal(15, 2)
-  currency               String?               @default("USD") @db.VarChar(3)
-  employeeCount          Int?
-  foundedYear            Int?
-  registrationNumber     String?               @db.VarChar(100)
-  taxId                  String?               @db.VarChar(100)
-  vatNumber              String?               @db.VarChar(100)
-  domain                 String?               @db.VarChar(255)
-  logoUrl                String?               @db.VarChar(500)
-  status                 CompanyStatus?        @default(ACTIVE)
-  relationshipType       RelationshipType?
-  additionalStatuses     String[]              @default([])
-  priority               CompanyPriority?       @default(MEDIUM)
-  tags                   String[]              @default([])
-  customFields           Json?
-  notes                  String?
-  lastAction             String?
-  lastActionDate         DateTime?             @db.Timestamp(6)
-  nextAction             String?
-  nextActionDate         DateTime?             @db.Timestamp(6)
+  id                      String                @id @default(ulid()) @db.VarChar(30)
+  workspaceId             String                @db.VarChar(30)
+  coreCompanyId           String?               @db.VarChar(30)
+  name                    String                @db.VarChar(255)
+  nameOverride            String?               @db.VarChar(255)
+  industryOverride        String?               @db.VarChar(100)
+  websiteOverride         String?               @db.VarChar(500)
+  legalName               String?               @db.VarChar(255)
+  tradingName             String?               @db.VarChar(255)
+  localName               String?               @db.VarChar(255)
+  description             String?
+  website                 String?               @db.VarChar(500)
+  email                   String?               @db.VarChar(300)
+  phone                   String?               @db.VarChar(50)
+  fax                     String?               @db.VarChar(50)
+  address                 String?
+  city                    String?               @db.VarChar(100)
+  state                   String?               @db.VarChar(100)
+  country                 String?               @db.VarChar(100)
+  postalCode              String?               @db.VarChar(20)
+  industry                String?               @db.VarChar(100)
+  sector                  String?               @db.VarChar(100)
+  size                    String?               @db.VarChar(100)
+  revenue                 Decimal?              @db.Decimal(15, 2)
+  currency                String?               @default("USD") @db.VarChar(3)
+  employeeCount           Int?
+  foundedYear             Int?
+  registrationNumber      String?               @db.VarChar(100)
+  taxId                   String?               @db.VarChar(100)
+  vatNumber               String?               @db.VarChar(100)
+  domain                  String?               @db.VarChar(255)
+  logoUrl                 String?               @db.VarChar(500)
+  status                  CompanyStatus?        @default(ACTIVE)
+  relationshipType        RelationshipType?
+  additionalStatuses      String[]              @default([])
+  priority                CompanyPriority?      @default(MEDIUM)
+  tags                    String[]              @default([])
+  customFields            Json?
+  notes                   String?
+  lastAction              String?
+  lastActionDate          DateTime?             @db.Timestamp(6)
+  nextAction              String?
+  nextActionDate          DateTime?             @db.Timestamp(6)
   directionalIntelligence String?
-  actionStatus           String?
-  globalRank             Int?                  @default(0)
-  createdAt              DateTime              @default(now())
-  updatedAt              DateTime              @updatedAt
-  entityId               String?               @db.VarChar(30)
-  deletedAt              DateTime?
-  mainSellerId           String?               @db.VarChar(30)
-  actualCloseDate        DateTime?
-  expectedCloseDate      DateTime?
-  opportunityAmount      Decimal?              @db.Decimal(15, 2)
-  opportunityProbability Float?
-  opportunityStage       String?               @db.VarChar(50)
-  acquisitionDate        DateTime?
-  activeJobPostings      Int?                  @default(0)
-  businessChallenges     String[]              @default([])
-  businessPriorities     String[]              @default([])
-  companyIntelligence    Json?
-  companyUpdates         Json?
-  competitiveAdvantages  String[]              @default([])
-  competitors            String[]              @default([])
-  confidence             Float?                @default(0)
-  decisionTimeline       String?               @db.VarChar(100)
-  digitalMaturity        Int?                  @default(0)
-  facebookUrl            String?               @db.VarChar(500)
-  githubUrl              String?               @db.VarChar(500)
-  growthOpportunities    String[]              @default([])
-  hqCity                 String?               @db.VarChar(100)
-  hqCountryIso2          String?               @db.VarChar(2)
-  hqCountryIso3          String?               @db.VarChar(3)
-  hqFullAddress          String?               @db.VarChar(500)
-  hqLocation             String?               @db.VarChar(200)
-  hqRegion               String[]              @default([])
-  hqState                String?               @db.VarChar(100)
-  hqStreet               String?               @db.VarChar(200)
-  hqZipcode              String?               @db.VarChar(20)
-  instagramUrl           String?               @db.VarChar(500)
-  isPublic               Boolean?              @default(false)
-  keyInfluencers         String?               @db.VarChar(200)
-  lastFundingAmount      BigInt?
-  lastFundingDate        DateTime?
-  lastVerified           DateTime?
-  linkedinFollowers      Int?
-  linkedinUrl            String?               @db.VarChar(500)
-  marketPosition         String?               @db.VarChar(100)
-  marketThreats          String[]              @default([])
-  naicsCodes             String[]              @default([])
-  numTechnologiesUsed    Int?                  @default(0)
-  parentCompanyDomain    String?               @db.VarChar(200)
-  parentCompanyName      String?               @db.VarChar(200)
-  sicCodes               String[]              @default([])
-  sources                String[]              @default([])
-  stockSymbol            String?               @db.VarChar(20)
-  strategicInitiatives   String[]              @default([])
-  successMetrics         String[]              @default([])
-  techStack              String[]              @default([])
-  technologiesUsed       String[]              @default([])
-  twitterFollowers       Int?
-  twitterUrl             String?               @db.VarChar(500)
-  youtubeUrl             String?               @db.VarChar(500)
-  nextActionReasoning    String?
-  nextActionPriority     String?               @db.VarChar(20)
-  nextActionType         String?               @db.VarChar(50)
-  nextActionUpdatedAt    DateTime?
-  acquisitionHistory     Json?
-  aiConfidence           Float?                @default(0)
-  aiIntelligence         Json?
-  aiLastUpdated          DateTime?
-  dataLastVerified       DateTime?
-  dataQualityBreakdown   Json?
-  dataQualityScore       Float?                @default(0)
-  dataSources            String[]              @default([])
-  employeeCountChange    Json?
-  employeeReviewsScore   Json?
-  executiveArrivals      Json?
-  executiveDepartures    Json?
-  fundingRounds          Json?
-  jobPostingsChange      Json?
-  productReviewsScore    Json?
-  revenueRange           Json?
-  linkedinnavigatorurl   String?               @db.VarChar(500)
-  linkedinNavigatorUrl   String?               @db.VarChar(500)
-  descriptionEnriched    String?
-  actions                actions[]
-  mainSeller             users?                @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
-  workspace              workspaces            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  coreCompany            core_companies?       @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
-  emails                 email_messages[]
-  people                 people[]
-  workshopDocuments      workshopDocument[]
-  meeting_transcripts    meeting_transcripts[]
-  documents              documents[]
+  actionStatus            String?
+  globalRank              Int?                  @default(0)
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+  entityId                String?               @db.VarChar(30)
+  deletedAt               DateTime?
+  mainSellerId            String?               @db.VarChar(30)
+  actualCloseDate         DateTime?
+  expectedCloseDate       DateTime?
+  opportunityAmount       Decimal?              @db.Decimal(15, 2)
+  opportunityProbability  Float?
+  opportunityStage        String?               @db.VarChar(50)
+  acquisitionDate         DateTime?
+  activeJobPostings       Int?                  @default(0)
+  businessChallenges      String[]              @default([])
+  businessPriorities      String[]              @default([])
+  companyIntelligence     Json?
+  companyUpdates          Json?
+  competitiveAdvantages   String[]              @default([])
+  competitors             String[]              @default([])
+  confidence              Float?                @default(0)
+  decisionTimeline        String?               @db.VarChar(100)
+  digitalMaturity         Int?                  @default(0)
+  facebookUrl             String?               @db.VarChar(500)
+  githubUrl               String?               @db.VarChar(500)
+  growthOpportunities     String[]              @default([])
+  hqCity                  String?               @db.VarChar(100)
+  hqCountryIso2           String?               @db.VarChar(2)
+  hqCountryIso3           String?               @db.VarChar(3)
+  hqFullAddress           String?               @db.VarChar(500)
+  hqLocation              String?               @db.VarChar(200)
+  hqRegion                String[]              @default([])
+  hqState                 String?               @db.VarChar(100)
+  hqStreet                String?               @db.VarChar(200)
+  hqZipcode               String?               @db.VarChar(20)
+  instagramUrl            String?               @db.VarChar(500)
+  isPublic                Boolean?              @default(false)
+  keyInfluencers          String?               @db.VarChar(200)
+  lastFundingAmount       BigInt?
+  lastFundingDate         DateTime?
+  lastVerified            DateTime?
+  linkedinFollowers       Int?
+  linkedinUrl             String?               @db.VarChar(500)
+  marketPosition          String?               @db.VarChar(100)
+  marketThreats           String[]              @default([])
+  naicsCodes              String[]              @default([])
+  numTechnologiesUsed     Int?                  @default(0)
+  parentCompanyDomain     String?               @db.VarChar(200)
+  parentCompanyName       String?               @db.VarChar(200)
+  sicCodes                String[]              @default([])
+  sources                 String[]              @default([])
+  stockSymbol             String?               @db.VarChar(20)
+  strategicInitiatives    String[]              @default([])
+  successMetrics          String[]              @default([])
+  techStack               String[]              @default([])
+  technologiesUsed        String[]              @default([])
+  twitterFollowers        Int?
+  twitterUrl              String?               @db.VarChar(500)
+  youtubeUrl              String?               @db.VarChar(500)
+  nextActionReasoning     String?
+  nextActionPriority      String?               @db.VarChar(20)
+  nextActionType          String?               @db.VarChar(50)
+  nextActionUpdatedAt     DateTime?
+  acquisitionHistory      Json?
+  aiConfidence            Float?                @default(0)
+  aiIntelligence          Json?
+  aiLastUpdated           DateTime?
+  dataLastVerified        DateTime?
+  dataQualityBreakdown    Json?
+  dataQualityScore        Float?                @default(0)
+  dataSources             String[]              @default([])
+  employeeCountChange     Json?
+  employeeReviewsScore    Json?
+  executiveArrivals       Json?
+  executiveDepartures     Json?
+  fundingRounds           Json?
+  jobPostingsChange       Json?
+  productReviewsScore     Json?
+  revenueRange            Json?
+  linkedinnavigatorurl    String?               @db.VarChar(500)
+  linkedinNavigatorUrl    String?               @db.VarChar(500)
+  descriptionEnriched     String?
+  actions                 actions[]
+  mainSeller              users?                @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
+  workspace               workspaces            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  coreCompany             core_companies?       @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
+  emails                  email_messages[]
+  people                  people[]
+  workshopDocuments       workshopDocument[]
+  meeting_transcripts     meeting_transcripts[]
+  documents               documents[]
 
   @@index([workspaceId])
   @@index([coreCompanyId])
@@ -558,146 +560,146 @@ model core_people {
 
 /// Contact/person records
 model people {
-  id                     String              @id @default(ulid()) @db.VarChar(30)
-  workspaceId            String              @db.VarChar(30)
-  corePersonId           String?             @db.VarChar(30)
-  companyId              String?             @db.VarChar(30)
-  firstName              String              @db.VarChar(100)
-  lastName               String              @db.VarChar(100)
-  fullName               String              @db.VarChar(200)
-  fullNameOverride       String?             @db.VarChar(200)
-  emailOverride          String?             @db.VarChar(300)
-  jobTitleOverride       String?             @db.VarChar(300)
-  displayName            String?             @db.VarChar(200)
-  salutation             String?             @db.VarChar(50)
-  suffix                 String?             @db.VarChar(50)
-  jobTitle               String?             @db.VarChar(300)
-  title                  String?             @db.VarChar(300)
-  department             String?             @db.VarChar(200)
-  seniority              String?             @db.VarChar(50)
-  email                  String?             @db.VarChar(300)
-  workEmail              String?             @db.VarChar(300)
-  personalEmail          String?             @db.VarChar(300)
-  phone                  String?             @db.VarChar(50)
-  mobilePhone            String?             @db.VarChar(50)
-  workPhone              String?             @db.VarChar(50)
-  linkedinUrl            String?             @db.VarChar(500)
-  address                String?             @db.VarChar(500)
-  city                   String?             @db.VarChar(100)
-  state                  String?             @db.VarChar(100)
-  country                String?             @db.VarChar(100)
-  postalCode             String?             @db.VarChar(50)
-  dateOfBirth            DateTime?           @db.Timestamp(6)
-  gender                 String?             @db.VarChar(20)
-  bio                    String?
-  profilePictureUrl      String?             @db.VarChar(500)
-  status                 PersonStatus?       @default(LEAD)
-  relationshipType       RelationshipType?
-  additionalStatuses     String[]            @default([])
-  priority               PersonPriority?     @default(MEDIUM)
-  source                 String?
-  tags                   String[]            @default([])
-  customFields           Json?
-  notes                  String?
-  preferredLanguage      String?             @db.VarChar(10)
-  timezone               String?             @db.VarChar(50)
-  emailVerified          Boolean?            @default(false)
-  phoneVerified          Boolean?            @default(false)
-  lastAction             String?
-  lastActionDate         DateTime?           @db.Timestamp(6)
-  nextAction             String?
-  nextActionDate         DateTime?           @db.Timestamp(6)
+  id                      String              @id @default(ulid()) @db.VarChar(30)
+  workspaceId             String              @db.VarChar(30)
+  corePersonId            String?             @db.VarChar(30)
+  companyId               String?             @db.VarChar(30)
+  firstName               String              @db.VarChar(100)
+  lastName                String              @db.VarChar(100)
+  fullName                String              @db.VarChar(200)
+  fullNameOverride        String?             @db.VarChar(200)
+  emailOverride           String?             @db.VarChar(300)
+  jobTitleOverride        String?             @db.VarChar(300)
+  displayName             String?             @db.VarChar(200)
+  salutation              String?             @db.VarChar(50)
+  suffix                  String?             @db.VarChar(50)
+  jobTitle                String?             @db.VarChar(300)
+  title                   String?             @db.VarChar(300)
+  department              String?             @db.VarChar(200)
+  seniority               String?             @db.VarChar(50)
+  email                   String?             @db.VarChar(300)
+  workEmail               String?             @db.VarChar(300)
+  personalEmail           String?             @db.VarChar(300)
+  phone                   String?             @db.VarChar(50)
+  mobilePhone             String?             @db.VarChar(50)
+  workPhone               String?             @db.VarChar(50)
+  linkedinUrl             String?             @db.VarChar(500)
+  address                 String?             @db.VarChar(500)
+  city                    String?             @db.VarChar(100)
+  state                   String?             @db.VarChar(100)
+  country                 String?             @db.VarChar(100)
+  postalCode              String?             @db.VarChar(50)
+  dateOfBirth             DateTime?           @db.Timestamp(6)
+  gender                  String?             @db.VarChar(20)
+  bio                     String?
+  profilePictureUrl       String?             @db.VarChar(500)
+  status                  PersonStatus?       @default(LEAD)
+  relationshipType        RelationshipType?
+  additionalStatuses      String[]            @default([])
+  priority                PersonPriority?     @default(MEDIUM)
+  source                  String?
+  tags                    String[]            @default([])
+  customFields            Json?
+  notes                   String?
+  preferredLanguage       String?             @db.VarChar(10)
+  timezone                String?             @db.VarChar(50)
+  emailVerified           Boolean?            @default(false)
+  phoneVerified           Boolean?            @default(false)
+  lastAction              String?
+  lastActionDate          DateTime?           @db.Timestamp(6)
+  nextAction              String?
+  nextActionDate          DateTime?           @db.Timestamp(6)
   directionalIntelligence String?
-  actionStatus           String?
-  engagementScore        Float?              @default(0)
-  globalRank             Int?                @default(0)
-  companyRank            Int?                @default(0)
-  createdAt              DateTime            @default(now())
-  updatedAt              DateTime            @updatedAt
-  entityId               String?             @db.VarChar(30)
-  deletedAt              DateTime?
-  mainSellerId           String?             @db.VarChar(30)
-  vertical               String?             @db.VarChar(100)
-  achievements           String[]            @default([])
-  budgetResponsibility   String?             @db.VarChar(100)
-  buyerGroupOptimized    Boolean?            @default(false)
-  buyerGroupRole         String?             @db.VarChar(50)
-  buyerGroupStatus       String?             @db.VarChar(50)
-  careerTimeline         Json?
-  certifications         String[]            @default([])
-  communicationStyle     String?             @db.VarChar(50)
-  coresignalData         Json?
-  currentCompany         String?             @db.VarChar(200)
-  currentRole            String?             @db.VarChar(200)
-  dataCompleteness       Float?              @default(0)
-  decisionMaking         String?             @db.VarChar(50)
-  decisionPower          Int?                @default(0)
-  degrees                Json?
-  emailConfidence        Float?              @default(0)
-  engagementLevel        String?             @db.VarChar(50)
-  engagementStrategy     String?             @db.VarChar(100)
-  enrichedData           Json?
-  enrichmentScore        Float?              @default(0)
-  enrichmentSources      String[]            @default([])
-  enrichmentVersion      String?             @db.VarChar(20)
-  fieldsOfStudy          String[]            @default([])
-  graduationYears        Int[]               @default([])
-  hiddenFromSections     String[]            @default([])
-  industryExperience     String?             @db.VarChar(100)
-  industrySkills         String[]            @default([])
-  influenceLevel         String?             @db.VarChar(50)
-  influenceScore         Float?              @default(0)
-  institutions           String[]            @default([])
-  isBuyerGroupMember     Boolean?            @default(false)
-  languages              String[]            @default([])
-  lastEnriched           DateTime?
-  leadershipExperience   String?             @db.VarChar(100)
-  mobileVerified         Boolean?            @default(false)
-  phoneConfidence        Float?              @default(0)
-  preferredContact       String?             @db.VarChar(50)
-  previousRoles          Json?
-  publications           String[]            @default([])
-  responseTime           String?             @db.VarChar(50)
-  roleHistory            Json?
-  rolePromoted           Json?
-  softSkills             String[]            @default([])
-  speakingEngagements    String[]            @default([])
-  statusReason           String?             @db.VarChar(200)
-  statusUpdateDate       DateTime?
-  teamSize               String?             @db.VarChar(50)
-  technicalSkills        String[]            @default([])
-  totalExperience        Int?
-  yearsAtCompany         Int?
-  yearsInRole            Int?
-  nextActionPriority     String?             @db.VarChar(20)
-  nextActionReasoning    String?
-  nextActionType         String?             @db.VarChar(50)
-  nextActionUpdatedAt    DateTime?
-  linkedinConnectionDate DateTime?           @db.Timestamp(6)
-  linkedinNavigatorUrl   String?             @db.VarChar(500)
-  decisionPowerScore     Int?                @default(0)
-  yearsExperience        Int?
-  aiConfidence           Float?              @default(0)
-  aiIntelligence         Json?
-  aiLastUpdated          DateTime?
-  dataLastVerified       DateTime?
-  dataQualityBreakdown   Json?
-  dataQualityScore       Float?              @default(0)
-  dataSources            String[]            @default([])
-  emailQualityGrade      String?             @db.VarChar(10)
-  linkedinConnections    Int?
-  linkedinFollowers      Int?
-  phoneQualityScore      Float?              @default(0)
-  salaryProjections      Json?
-  totalExperienceMonths  Int?
-  actions                actions[]
-  emails                 email_messages[]
-  documents              documents[]
-  company                companies?          @relation(fields: [companyId], references: [id])
-  mainSeller             users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
-  workspace              workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  corePerson             core_people?        @relation(fields: [corePersonId], references: [id], onDelete: SetNull)
-  coSellers              person_co_sellers[]
+  actionStatus            String?
+  engagementScore         Float?              @default(0)
+  globalRank              Int?                @default(0)
+  companyRank             Int?                @default(0)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  entityId                String?             @db.VarChar(30)
+  deletedAt               DateTime?
+  mainSellerId            String?             @db.VarChar(30)
+  vertical                String?             @db.VarChar(100)
+  achievements            String[]            @default([])
+  budgetResponsibility    String?             @db.VarChar(100)
+  buyerGroupOptimized     Boolean?            @default(false)
+  buyerGroupRole          String?             @db.VarChar(50)
+  buyerGroupStatus        String?             @db.VarChar(50)
+  careerTimeline          Json?
+  certifications          String[]            @default([])
+  communicationStyle      String?             @db.VarChar(50)
+  coresignalData          Json?
+  currentCompany          String?             @db.VarChar(200)
+  currentRole             String?             @db.VarChar(200)
+  dataCompleteness        Float?              @default(0)
+  decisionMaking          String?             @db.VarChar(50)
+  decisionPower           Int?                @default(0)
+  degrees                 Json?
+  emailConfidence         Float?              @default(0)
+  engagementLevel         String?             @db.VarChar(50)
+  engagementStrategy      String?             @db.VarChar(100)
+  enrichedData            Json?
+  enrichmentScore         Float?              @default(0)
+  enrichmentSources       String[]            @default([])
+  enrichmentVersion       String?             @db.VarChar(20)
+  fieldsOfStudy           String[]            @default([])
+  graduationYears         Int[]               @default([])
+  hiddenFromSections      String[]            @default([])
+  industryExperience      String?             @db.VarChar(100)
+  industrySkills          String[]            @default([])
+  influenceLevel          String?             @db.VarChar(50)
+  influenceScore          Float?              @default(0)
+  institutions            String[]            @default([])
+  isBuyerGroupMember      Boolean?            @default(false)
+  languages               String[]            @default([])
+  lastEnriched            DateTime?
+  leadershipExperience    String?             @db.VarChar(100)
+  mobileVerified          Boolean?            @default(false)
+  phoneConfidence         Float?              @default(0)
+  preferredContact        String?             @db.VarChar(50)
+  previousRoles           Json?
+  publications            String[]            @default([])
+  responseTime            String?             @db.VarChar(50)
+  roleHistory             Json?
+  rolePromoted            Json?
+  softSkills              String[]            @default([])
+  speakingEngagements     String[]            @default([])
+  statusReason            String?             @db.VarChar(200)
+  statusUpdateDate        DateTime?
+  teamSize                String?             @db.VarChar(50)
+  technicalSkills         String[]            @default([])
+  totalExperience         Int?
+  yearsAtCompany          Int?
+  yearsInRole             Int?
+  nextActionPriority      String?             @db.VarChar(20)
+  nextActionReasoning     String?
+  nextActionType          String?             @db.VarChar(50)
+  nextActionUpdatedAt     DateTime?
+  linkedinConnectionDate  DateTime?           @db.Timestamp(6)
+  linkedinNavigatorUrl    String?             @db.VarChar(500)
+  decisionPowerScore      Int?                @default(0)
+  yearsExperience         Int?
+  aiConfidence            Float?              @default(0)
+  aiIntelligence          Json?
+  aiLastUpdated           DateTime?
+  dataLastVerified        DateTime?
+  dataQualityBreakdown    Json?
+  dataQualityScore        Float?              @default(0)
+  dataSources             String[]            @default([])
+  emailQualityGrade       String?             @db.VarChar(10)
+  linkedinConnections     Int?
+  linkedinFollowers       Int?
+  phoneQualityScore       Float?              @default(0)
+  salaryProjections       Json?
+  totalExperienceMonths   Int?
+  actions                 actions[]
+  emails                  email_messages[]
+  documents               documents[]
+  company                 companies?          @relation(fields: [companyId], references: [id])
+  mainSeller              users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
+  workspace               workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  corePerson              core_people?        @relation(fields: [corePersonId], references: [id], onDelete: SetNull)
+  coSellers               person_co_sellers[]
 
   @@index([workspaceId])
   @@index([corePersonId])
@@ -832,25 +834,57 @@ model audit_logs {
 
 /// Saved company lists with filters and sort preferences
 model company_lists {
-  id           String     @id @default(ulid()) @db.VarChar(30)
-  workspaceId String     @db.VarChar(30)
-  userId      String     @db.VarChar(30)
-  name        String     @db.VarChar(100)
-  description String?    @db.VarChar(500)
-  isDefault   Boolean    @default(false)
-  filters     Json?      // Stores filter criteria (status, priority, vertical, companySize, location, etc.)
-  sortField   String?    @db.VarChar(50)
-  sortDirection String?  @db.VarChar(10) // 'asc' or 'desc'
-  searchQuery String?    @db.VarChar(500)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  deletedAt   DateTime?
-  user        users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id            String     @id @default(ulid()) @db.VarChar(30)
+  workspaceId   String     @db.VarChar(30)
+  userId        String     @db.VarChar(30)
+  name          String     @db.VarChar(100)
+  description   String?    @db.VarChar(500)
+  isDefault     Boolean    @default(false)
+  filters       Json? // Stores filter criteria (status, priority, vertical, companySize, location, etc.)
+  sortField     String?    @db.VarChar(50)
+  sortDirection String?    @db.VarChar(10) // 'asc' or 'desc'
+  searchQuery   String?    @db.VarChar(500)
+  visibleFields Json? // Stores array of visible column/field names (e.g., ['company', 'industry', 'revenue'])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+  user          users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
   @@index([userId])
   @@index([workspaceId, userId])
+  @@index([isDefault])
+  @@index([deletedAt])
+}
+
+/// Generic saved lists for all sections (companies, people, leads, prospects, opportunities, clients)
+/// Excludes speedrun section
+model lists {
+  id            String     @id @default(ulid()) @db.VarChar(30)
+  workspaceId   String     @db.VarChar(30)
+  userId        String     @db.VarChar(30)
+  section       String     @db.VarChar(50) // 'companies', 'people', 'leads', 'prospects', 'opportunities', 'clients'
+  name          String     @db.VarChar(100)
+  description   String?    @db.VarChar(500)
+  isDefault     Boolean    @default(false)
+  filters       Json? // Stores filter criteria (status, priority, vertical, companySize, location, etc.)
+  sortField     String?    @db.VarChar(50)
+  sortDirection String?    @db.VarChar(10) // 'asc' or 'desc'
+  searchQuery   String?    @db.VarChar(500)
+  visibleFields Json? // Stores array of visible column/field names (e.g., ['company', 'industry', 'revenue'])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+  user          users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([workspaceId, userId])
+  @@index([section])
+  @@index([workspaceId, section])
+  @@index([workspaceId, userId, section])
   @@index([isDefault])
   @@index([deletedAt])
 }
@@ -1676,52 +1710,52 @@ model workshopActivity {
 
 /// User Goals Tracking for Smart Checklist and AI Recommendations
 model user_goals {
-  id                      String    @id @default(ulid())
-  userId                  String
-  workspaceId             String
-  
+  id          String @id @default(ulid())
+  userId      String
+  workspaceId String
+
   // Revenue & Sales Goals
-  quarterlyRevenueGoal    Decimal?  @db.Decimal(15, 2)
-  yearlyRevenueGoal       Decimal?  @db.Decimal(15, 2)
-  quarterlyDealCount      Int?
-  monthlyActivityGoal     Int?
-  currentQuarterRevenue   Decimal?  @default(0) @db.Decimal(15, 2)
-  currentYearRevenue      Decimal?  @default(0) @db.Decimal(15, 2)
-  
+  quarterlyRevenueGoal  Decimal? @db.Decimal(15, 2)
+  yearlyRevenueGoal     Decimal? @db.Decimal(15, 2)
+  quarterlyDealCount    Int?
+  monthlyActivityGoal   Int?
+  currentQuarterRevenue Decimal? @default(0) @db.Decimal(15, 2)
+  currentYearRevenue    Decimal? @default(0) @db.Decimal(15, 2)
+
   // Pipeline Goals
-  pipelineValueGoal       Decimal?  @db.Decimal(15, 2)
-  currentPipelineValue    Decimal?  @default(0) @db.Decimal(15, 2)
-  avgDealSizeGoal         Decimal?  @db.Decimal(15, 2)
-  winRateGoal             Decimal?  @db.Decimal(5, 2)
-  
+  pipelineValueGoal    Decimal? @db.Decimal(15, 2)
+  currentPipelineValue Decimal? @default(0) @db.Decimal(15, 2)
+  avgDealSizeGoal      Decimal? @db.Decimal(15, 2)
+  winRateGoal          Decimal? @db.Decimal(5, 2)
+
   // Activity Goals
-  weeklyOutreachGoal      Int?
-  weeklyMeetingsGoal      Int?
-  weeklyCallsGoal         Int?
-  weeklyEmailsGoal        Int?
-  
+  weeklyOutreachGoal Int?
+  weeklyMeetingsGoal Int?
+  weeklyCallsGoal    Int?
+  weeklyEmailsGoal   Int?
+
   // Custom Goals (flexible for user-defined goals)
-  customGoals             Json?     @default("[]")
-  
+  customGoals Json? @default("[]")
+
   // Goal Period
-  goalPeriod              String?   @default("quarterly") @db.VarChar(20)
-  goalStartDate           DateTime?
-  goalEndDate             DateTime?
-  
+  goalPeriod    String?   @default("quarterly") @db.VarChar(20)
+  goalStartDate DateTime?
+  goalEndDate   DateTime?
+
   // Progress Tracking
-  lastCalculated          DateTime?
-  progressPercentage      Decimal?  @default(0) @db.Decimal(5, 2)
-  isOnTrack               Boolean?  @default(true)
-  daysRemaining           Int?
-  
+  lastCalculated     DateTime?
+  progressPercentage Decimal?  @default(0) @db.Decimal(5, 2)
+  isOnTrack          Boolean?  @default(true)
+  daysRemaining      Int?
+
   // System Fields
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  user                    users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace               workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
+  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
   @@unique([userId, workspaceId])
   @@index([userId])
   @@index([workspaceId])
