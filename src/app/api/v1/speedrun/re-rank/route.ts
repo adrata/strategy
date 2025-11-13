@@ -455,7 +455,7 @@ export async function POST(request: NextRequest) {
           id: contact.id,
           name: contact.name,
           company: contact.company,
-          title: contact.title,
+          title: contact.jobTitle,
           email: contact.email,
           phone: contact.phone,
           mobilePhone: contact.mobilePhone,

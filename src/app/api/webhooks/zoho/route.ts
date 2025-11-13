@@ -958,7 +958,7 @@ async function checkForBuyingSignalsAndNotify(workspaceId: string, leadData: {
           name: leadData.fullName,
           email: leadData.email,
           company: leadData.company,
-          title: leadData.title,
+          title: leadData.jobTitle,
           type: 'lead'
         },
         note: {
