@@ -39,13 +39,49 @@ export const WORKSPACE_MAPPINGS: WorkspaceMapping[] = [
     name: 'Pinpoint',
     isActive: true
   },
+  {
+    slug: 'top-temp',
+    id: '01K9QAP09FHT6EAP1B4G2KP3D2',
+    name: 'Top Temp',
+    isActive: true
+  },
+  {
+    slug: 'toptemp',
+    id: '01K9QAP09FHT6EAP1B4G2KP3D2',
+    name: 'Top Temp',
+    isActive: true
+  },
+  {
+    slug: 'notary-everyday',
+    id: '01K7DNYR5VZ7JY36KGKKN76XZ1',
+    name: 'Notary Everyday',
+    isActive: true
+  },
+  {
+    slug: 'demo',
+    id: '01K74N79PCW5W8D9X6EK7KJANM',
+    name: 'Demo',
+    isActive: true
+  },
+  {
+    slug: 'cloudcaddie',
+    id: '01K7DSWP8ZBA75K5VSWVXPEMAH',
+    name: 'CloudCaddie',
+    isActive: true
+  },
+  {
+    slug: 'top-engineering-plus',
+    id: '01K75ZD7DWHG1XF16HAF2YVKCK',
+    name: 'TOP Engineering Plus',
+    isActive: true
+  },
+  {
+    slug: 'ei-cooperative',
+    id: '01K9WFW99WEGDQY2RARPCVC4JD',
+    name: 'E&I Cooperative Services',
+    isActive: true
+  },
   // Add more workspaces as needed
-  // {
-  //   slug: 'demo',
-  //   id: 'demo-workspace-id',
-  //   name: 'Demo Workspace',
-  //   isActive: false
-  // }
 ];
 
 /**

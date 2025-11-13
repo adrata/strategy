@@ -6,6 +6,49 @@
 
 import { prisma } from '../src/platform/database/prisma-client';
 
+/**
+ * Calculate similarity between two strings using Levenshtein distance
+ */
+function calculateSimilarity(str1: string, str2: string): number {
+  const longer = str1.length > str2.length ? str1 : str2;
+  const shorter = str1.length > str2.length ? str2 : str1;
+  
+  if (longer.length === 0) {
+    return 1.0;
+  }
+  
+  const editDistance = levenshteinDistance(longer, shorter);
+  return (longer.length - editDistance) / longer.length;
+}
+
+function levenshteinDistance(str1: string, str2: string): number {
+  const matrix: number[][] = [];
+  
+  for (let i = 0; i <= str2.length; i++) {
+    matrix[i] = [i];
+  }
+  
+  for (let j = 0; j <= str1.length; j++) {
+    matrix[0][j] = j;
+  }
+  
+  for (let i = 1; i <= str2.length; i++) {
+    for (let j = 1; j <= str1.length; j++) {
+      if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1,     // insertion
+          matrix[i - 1][j] + 1      // deletion
+        );
+      }
+    }
+  }
+  
+  return matrix[str2.length][str1.length];
+}
+
 async function fixPersonCompanyRelationships(workspaceId: string) {
   console.log(`🔧 [FIX RELATIONSHIPS] Starting for workspace: ${workspaceId}`);
   
@@ -22,7 +65,10 @@ async function fixPersonCompanyRelationships(workspaceId: string) {
           fullName: true,
           firstName: true,
           lastName: true,
-          companyId: true
+          companyId: true,
+          currentCompany: true,
+          enrichedData: true,
+          coresignalData: true
         }
     });
 
@@ -38,15 +84,54 @@ async function fixPersonCompanyRelationships(workspaceId: string) {
 
     // Step 3: Match people to companies by company name
     let matchedCount = 0;
+    let unmatchedCount = 0;
+    const unmatchedExamples: string[] = [];
+    
     for (const person of peopleWithoutCompany) {
-      const companyName = person.company;
+      // Try to extract company name from multiple sources
+      let companyName: string | null = null;
+      
+      // Priority 1: currentCompany field
+      if (person.currentCompany && person.currentCompany.trim() !== '') {
+        companyName = person.currentCompany;
+      }
+      // Priority 2: enrichedData
+      else if (person.enrichedData && typeof person.enrichedData === 'object') {
+        const enriched = person.enrichedData as any;
+        if (enriched.overview?.companyName) {
+          companyName = enriched.overview.companyName;
+        } else if (enriched.company) {
+          companyName = enriched.company;
+        }
+      }
+      // Priority 3: coresignalData
+      else if (person.coresignalData && typeof person.coresignalData === 'object') {
+        const coresignal = person.coresignalData as any;
+        if (coresignal.company) {
+          companyName = coresignal.company;
+        } else if (coresignal.current_company) {
+          companyName = coresignal.current_company;
+        }
+      }
+      
       if (companyName && companyName !== 'Unknown Company') {
-        // Find matching company
-        const matchingCompany = companies.find(c => 
-          c.name.toLowerCase() === companyName.toLowerCase() ||
-          c.name.toLowerCase().includes(companyName.toLowerCase()) ||
-          companyName.toLowerCase().includes(c.name.toLowerCase())
-        );
+        // Find matching company using exact and fuzzy matching
+        const matchingCompany = companies.find(c => {
+          const companyLower = companyName!.toLowerCase().trim();
+          const cNameLower = c.name.toLowerCase().trim();
+          
+          // Exact match
+          if (cNameLower === companyLower) return true;
+          
+          // Contains match
+          if (cNameLower.includes(companyLower) || companyLower.includes(cNameLower)) {
+            return true;
+          }
+          
+          // Calculate similarity for fuzzy match
+          const similarity = calculateSimilarity(companyLower, cNameLower);
+          return similarity >= 0.85;
+        });
 
         if (matchingCompany) {
           await prisma.people.update({
@@ -54,8 +139,24 @@ async function fixPersonCompanyRelationships(workspaceId: string) {
             data: { companyId: matchingCompany.id }
           });
           matchedCount++;
+          console.log(`   ✅ Matched "${person.fullName}" to company "${matchingCompany.name}"`);
+        } else {
+          unmatchedCount++;
+          if (unmatchedExamples.length < 10) {
+            unmatchedExamples.push(`${person.fullName} → "${companyName}"`);
+          }
         }
       }
+    }
+    
+    console.log(`\n📊 [MATCHING RESULTS]`);
+    console.log(`   ✅ Matched: ${matchedCount}`);
+    console.log(`   ❌ Unmatched: ${unmatchedCount}`);
+    if (unmatchedExamples.length > 0) {
+      console.log(`\n   Unmatched examples (company not found):`);
+      unmatchedExamples.forEach((example, i) => {
+        console.log(`   ${i + 1}. ${example}`);
+      });
     }
 
     console.log(`✅ [STEP 3] Matched ${matchedCount} people to companies`);

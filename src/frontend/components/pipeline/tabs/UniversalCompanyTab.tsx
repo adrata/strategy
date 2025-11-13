@@ -483,7 +483,13 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         <h3 className="text-lg font-semibold text-foreground mb-4">Company Summary</h3>
         <div className="bg-background p-4 rounded-lg border border-border">
           <InlineEditField
-            value={companyData.description}
+            value={
+              (companyData.descriptionEnriched && companyData.descriptionEnriched.trim()) 
+                ? companyData.descriptionEnriched 
+                : (companyData.description && companyData.description.trim())
+                  ? companyData.description
+                  : ''
+            }
             field="description"
             onSave={onSave}
             recordId={record.id}

@@ -147,6 +147,7 @@ export async function GET(
       legalName: mergedCompany.legalName ?? null,
       tradingName: mergedCompany.tradingName ?? null,
       description: mergedCompany.description ?? null,
+      descriptionEnriched: mergedCompany.descriptionEnriched ?? null,
       website: mergedCompany.website ?? null,
       // Contact Information
       email: mergedCompany.email ?? null,

@@ -14,11 +14,17 @@ export interface WorkspaceSlug {
 const WORKSPACE_SLUGS: Record<string, string> = {
   'Retail Product Solutions': 'rps',
   'Notary Everyday': 'ne',
+  'notary-everyday': 'ne',
   'adrata': 'adrata',
   'Adrata': 'adrata',
   'TOP Engineering Plus': 'top', // Correct name from database
   'TOP Engineers Plus': 'top',   // Fallback for potential variations
+  'Top Temp': 'top-temp',        // Top Temp workspace
   'Demo Workspace': 'demo',      // Demo workspace should use /demo/ URLs
+  'Demo': 'demo',
+  'CloudCaddie': 'cloudcaddie',
+  'Pinpoint': 'pinpoint',
+  'E&I Cooperative Services': 'ei-cooperative',
   // Add more mappings as needed
 };
 
@@ -56,7 +62,23 @@ export function getWorkspaceSlugInfo(workspace: { id: string; name: string }): W
  * Get workspace by slug
  */
 export function getWorkspaceBySlug(workspaces: Array<{ id: string; name: string }>, slug: string) {
-  return workspaces.find(workspace => generateWorkspaceSlug(workspace.name) === slug);
+  // First try exact slug match
+  let workspace = workspaces.find(w => generateWorkspaceSlug(w.name) === slug);
+  
+  // If not found and slug is 'toptemp', also try 'top-temp'
+  if (!workspace && slug === 'toptemp') {
+    workspace = workspaces.find(w => generateWorkspaceSlug(w.name) === 'top-temp');
+  }
+  
+  // If not found and slug is 'top-temp', also try 'toptemp'
+  if (!workspace && slug === 'top-temp') {
+    workspace = workspaces.find(w => {
+      const generated = generateWorkspaceSlug(w.name);
+      return generated === 'toptemp' || generated === 'top-temp';
+    });
+  }
+  
+  return workspace;
 }
 
 /**

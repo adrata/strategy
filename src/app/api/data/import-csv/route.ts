@@ -22,6 +22,7 @@ import {
   generateImportPreview 
 } from '@/platform/services/csv-import-service';
 import { validatePhoneNumber } from '@/platform/utils/phone-validator';
+import { findOrCreateCompany } from '@/platform/services/company-linking-service';
 
 // Using enhanced CSV import service for better data processing
 
@@ -84,6 +85,17 @@ async function importLead(data: any, imported: number, updated: number, errors: 
     if (!phoneValidation.isValid) {
       console.log(`📞 Invalid phone number for lead ${data.fullName || data.email}: ${phoneValidation.reason}`);
       data.phone = null;
+    }
+  }
+  
+  // Link to company if company name provided but no companyId
+  if (data.company && !data.companyId && data.workspaceId) {
+    try {
+      const companyResult = await findOrCreateCompany(data.company, data.workspaceId);
+      data.companyId = companyResult.id;
+      console.log(`🔗 [CSV IMPORT] Linked lead to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+    } catch (error) {
+      console.error(`⚠️ [CSV IMPORT] Failed to link company for lead: ${error}`);
     }
   }
   
@@ -158,6 +170,17 @@ async function importContact(data: any, imported: number, updated: number, error
     if (!phoneValidation.isValid) {
       console.log(`📞 Invalid phone number for contact ${data.fullName || data.email}: ${phoneValidation.reason}`);
       data.phone = null;
+    }
+  }
+  
+  // Link to company if company name provided but no companyId
+  if (data.company && !data.companyId && data.workspaceId) {
+    try {
+      const companyResult = await findOrCreateCompany(data.company, data.workspaceId);
+      data.companyId = companyResult.id;
+      console.log(`🔗 [CSV IMPORT] Linked contact to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+    } catch (error) {
+      console.error(`⚠️ [CSV IMPORT] Failed to link company for contact: ${error}`);
     }
   }
   
