@@ -1,17 +1,17 @@
 /**
- * Check Intelligence Status for TOP Workspace
+ * Check Intelligence Status for Top-Temp Workspace
  * 
  * Quick check to see how many companies have intelligence data
  */
 
 import { prisma } from '../src/platform/database/prisma-client';
 
-const TOP_WORKSPACE_ID = '01K9QAP09FHT6EAP1B4G2KP3D2';
+const TOP_TEMP_WORKSPACE_ID = '01K9QAP09FHT6EAP1B4G2KP3D2';
 
 async function checkIntelligenceStatus() {
-  console.log('🔍 CHECKING INTELLIGENCE STATUS FOR TOP WORKSPACE\n');
+  console.log('🔍 CHECKING INTELLIGENCE STATUS FOR TOP-TEMP WORKSPACE\n');
   console.log('='.repeat(80));
-  console.log(`\n🎯 Workspace ID: ${TOP_WORKSPACE_ID}\n`);
+  console.log(`\n🎯 Workspace ID: ${TOP_TEMP_WORKSPACE_ID} (top-temp)\n`);
 
   try {
     // Connect to database
@@ -21,7 +21,7 @@ async function checkIntelligenceStatus() {
     // Get all companies
     const allCompanies = await prisma.companies.findMany({
       where: {
-        workspaceId: TOP_WORKSPACE_ID,
+        workspaceId: TOP_TEMP_WORKSPACE_ID,
         deletedAt: null
       },
       select: {

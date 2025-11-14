@@ -1,19 +1,19 @@
 /**
- * Populate Intelligence for TOP Workspace Companies
+ * Populate Intelligence for Top-Temp Workspace Companies
  * 
- * Generates intelligence (strategy data) for all companies in the TOP workspace
+ * Generates intelligence (strategy data) for all companies in the top-temp workspace
  * that don't already have it. Runs in batches to avoid overwhelming the API.
  */
 
 import { prisma } from '../src/lib/prisma';
 import { autoStrategyPopulationService } from '../src/platform/services/auto-strategy-population-service';
 
-const TOP_WORKSPACE_ID = '01K9QAP09FHT6EAP1B4G2KP3D2';
+const TOP_TEMP_WORKSPACE_ID = '01K9QAP09FHT6EAP1B4G2KP3D2';
 
 async function populateTopIntelligence() {
-  console.log('🚀 POPULATE INTELLIGENCE FOR TOP WORKSPACE COMPANIES\n');
+  console.log('🚀 POPULATE INTELLIGENCE FOR TOP-TEMP WORKSPACE COMPANIES\n');
   console.log('='.repeat(80));
-  console.log(`\n🎯 Workspace ID: ${TOP_WORKSPACE_ID}\n`);
+  console.log(`\n🎯 Workspace ID: ${TOP_TEMP_WORKSPACE_ID} (top-temp)\n`);
 
   try {
     // Connect to database
@@ -23,7 +23,7 @@ async function populateTopIntelligence() {
     // Check how many companies need intelligence
     const allCompanies = await prisma.companies.findMany({
       where: {
-        workspaceId: TOP_WORKSPACE_ID,
+        workspaceId: TOP_TEMP_WORKSPACE_ID,
         deletedAt: null
       },
       select: {
@@ -64,7 +64,7 @@ async function populateTopIntelligence() {
     while (true) {
       console.log(`\n📦 Batch ${batchNumber}:\n`);
 
-      const result = await autoStrategyPopulationService.populateStrategiesForAllCompanies(TOP_WORKSPACE_ID);
+      const result = await autoStrategyPopulationService.populateStrategiesForAllCompanies(TOP_TEMP_WORKSPACE_ID);
 
       totalProcessed += result.companiesProcessed;
       totalGenerated += result.strategiesGenerated;

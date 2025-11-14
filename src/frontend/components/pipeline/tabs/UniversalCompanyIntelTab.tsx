@@ -311,33 +311,9 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                   <span className="text-2xl">🧠</span>
                 </div>
                 <div className="flex-1">
-                  <div className="text-base text-foreground leading-relaxed mb-4">
+                  <div className="text-base text-foreground leading-relaxed">
                     {strategyData.strategySummary}
                   </div>
-                  
-                  {/* Archetype Badge */}
-                  {strategyData.archetypeName && (
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
-                        {strategyData.archetypeName}
-                      </span>
-                      <span className="text-sm text-muted">
-                        {strategyData.archetypeRole}
-                      </span>
-                      {strategyData.targetIndustry && strategyData.targetIndustry !== 'Unknown' && (
-                        <span className="text-sm text-muted">
-                          • {strategyData.targetIndustry}
-                        </span>
-                      )}
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        strategyData.strategyGeneratedBy === 'claude-3-sonnet' 
-                          ? 'bg-success/10 text-success' 
-                          : 'bg-warning/10 text-warning'
-                      }`}>
-                        {strategyData.strategyGeneratedBy === 'claude-3-sonnet' ? '🤖 AI-Powered' : '📊 Data-Driven'}
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
