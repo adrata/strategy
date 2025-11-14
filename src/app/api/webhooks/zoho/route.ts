@@ -377,20 +377,46 @@ async function processLeadWebhook(operation: string, data: any) {
         });
 
         if (existingLead) {
+          // 🔧 WEBHOOK PROTECTION: Check if name was recently updated by user (within last 5 minutes)
+          // Skip webhook name updates if record was recently updated to prevent overwriting user edits
+          const now = new Date();
+          const lastUpdate = existingLead.updatedAt ? new Date(existingLead.updatedAt) : null;
+          const timeSinceUpdate = lastUpdate ? now.getTime() - lastUpdate.getTime() : Infinity;
+          const fiveMinutesInMs = 5 * 60 * 1000;
+          const wasRecentlyUpdated = timeSinceUpdate < fiveMinutesInMs;
+          
+          // Prepare update data
+          const updateData: any = {
+            email: leadData.Email || existingLead.email,
+            phone: leadData.Phone || existingLead.phone,
+            jobTitle: leadData.Title || leadData.Designation || existingLead.jobTitle,
+            status: 'LEAD',
+            description: leadData.Description || existingLead.notes,
+            updatedAt: new Date()
+          };
+          
+          // Only update name fields if record wasn't recently updated by user
+          if (!wasRecentlyUpdated) {
+            // Clean the name from Zoho before saving (remove trailing dashes)
+            let cleanedFullName = createFullName.trim();
+            cleanedFullName = cleanedFullName.replace(/\s*-\s*$/, '').trim();
+            cleanedFullName = cleanedFullName.replace(/[\s-]+$/, '').trim();
+            
+            updateData.firstName = createFirstName;
+            updateData.lastName = createLastName;
+            updateData.fullName = cleanedFullName;
+            
+            console.log(`🔄 [ZOHO WEBHOOK] Updating name fields from Zoho: "${cleanedFullName}"`);
+          } else {
+            // Preserve existing name fields if recently updated
+            console.log(`🛡️ [ZOHO WEBHOOK] Skipping name update - record was updated ${Math.round(timeSinceUpdate / 1000)}s ago (preserving user edits)`);
+            // Keep existing name fields unchanged
+          }
+          
           // Update existing lead
           await prisma.people.update({
             where: { id: existingLead.id },
-            data: {
-              firstName: createFirstName,
-              lastName: createLastName,
-              fullName: createFullName,
-              email: leadData.Email || existingLead.email,
-              phone: leadData.Phone || existingLead.phone,
-              jobTitle: leadData.Title || leadData.Designation || existingLead.jobTitle,
-              status: 'LEAD',
-              description: leadData.Description || existingLead.notes,
-              updatedAt: new Date()
-            }
+            data: updateData
           });
         } else {
           // Create new lead - let Prisma generate ULID via @default(ulid())
@@ -583,20 +609,51 @@ async function processContactWebhook(operation: string, data: any) {
         }
 
         if (existingContact) {
+          // 🔧 WEBHOOK PROTECTION: Check if name was recently updated by user (within last 5 minutes)
+          // Skip webhook name updates if record was recently updated to prevent overwriting user edits
+          const now = new Date();
+          const lastUpdate = existingContact.updatedAt ? new Date(existingContact.updatedAt) : null;
+          const timeSinceUpdate = lastUpdate ? now.getTime() - lastUpdate.getTime() : Infinity;
+          const fiveMinutesInMs = 5 * 60 * 1000;
+          const wasRecentlyUpdated = timeSinceUpdate < fiveMinutesInMs;
+          
+          // Prepare update data
+          const updateData: any = {
+            email: contactData.Email || existingContact.email,
+            phone: contactData.Phone || existingContact.phone,
+            jobTitle: contactData.Title || existingContact.jobTitle,
+            department: contactData.Department || existingContact.department,
+            notes: contactData.Description || existingContact.notes,
+            updatedAt: new Date()
+          };
+          
+          // Only update name fields if record wasn't recently updated by user
+          if (!wasRecentlyUpdated) {
+            // Use Zoho data or fallback to existing
+            const zohoFirstName = contactData.First_Name || existingContact.firstName;
+            const zohoLastName = contactData.Last_Name || existingContact.lastName;
+            let zohoFullName = contactData.Full_Name || `${zohoFirstName} ${zohoLastName}`.trim();
+            
+            // Clean the name from Zoho before saving (remove trailing dashes)
+            zohoFullName = zohoFullName.trim();
+            zohoFullName = zohoFullName.replace(/\s*-\s*$/, '').trim();
+            zohoFullName = zohoFullName.replace(/[\s-]+$/, '').trim();
+            
+            updateData.firstName = zohoFirstName;
+            updateData.lastName = zohoLastName;
+            updateData.fullName = zohoFullName;
+            
+            console.log(`🔄 [ZOHO WEBHOOK] Updating contact name fields from Zoho: "${zohoFullName}"`);
+          } else {
+            // Preserve existing name fields if recently updated
+            console.log(`🛡️ [ZOHO WEBHOOK] Skipping contact name update - record was updated ${Math.round(timeSinceUpdate / 1000)}s ago (preserving user edits)`);
+            // Keep existing name fields unchanged
+          }
+          
           // Update existing contact
           await prisma.people.update({
             where: { id: existingContact.id },
-            data: {
-              firstName: contactData.First_Name || existingContact.firstName,
-              lastName: contactData.Last_Name || existingContact.lastName,
-              fullName: contactData.Full_Name || `${contactData.First_Name || existingContact.firstName} ${contactData.Last_Name || existingContact.lastName}`.trim(),
-              email: contactData.Email || existingContact.email,
-              phone: contactData.Phone || existingContact.phone,
-              jobTitle: contactData.Title || existingContact.jobTitle,
-              department: contactData.Department || existingContact.department,
-              notes: contactData.Description || existingContact.notes,
-              updatedAt: new Date()
-            }
+            data: updateData
           });
           console.log(`✅ [ZOHO WEBHOOK] Updated existing contact: ${contactData.First_Name} ${contactData.Last_Name}`);
         } else {

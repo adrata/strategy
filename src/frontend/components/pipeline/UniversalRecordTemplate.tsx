@@ -2282,11 +2282,21 @@ export function UniversalRecordTemplate({
       // Handle name field specially - split into firstName/lastName/fullName
       // BUT ONLY for people-related records, NOT for companies
       if ((field === 'name' || field === 'fullName') && targetModel !== 'companies') {
-        const { firstName, lastName } = parseFullName(value);
+        // 🔧 NAME CLEANING FIX: Clean trailing dashes and spaces before sending to API
+        // This provides defense-in-depth even if API cleaning fails
+        let cleanedValue = typeof value === 'string' ? value.trim() : value;
+        if (typeof cleanedValue === 'string') {
+          // Remove trailing " -" or "- " patterns that might be left over
+          cleanedValue = cleanedValue.replace(/\s*-\s*$/, '').trim();
+          // Remove any trailing dashes or spaces
+          cleanedValue = cleanedValue.replace(/[\s-]+$/, '').trim();
+        }
+        
+        const { firstName, lastName } = parseFullName(cleanedValue);
         updateData['firstName'] = firstName || '';
         updateData['lastName'] = lastName || '';
-        updateData['fullName'] = value.trim();
-        console.log(`🔄 [UNIVERSAL] Name field update - original: ${value}, firstName: ${updateData['firstName']}, lastName: ${updateData['lastName']}, fullName: ${updateData['fullName']}`);
+        updateData['fullName'] = cleanedValue;
+        console.log(`🔄 [UNIVERSAL] Name field update - original: ${value}, cleaned: ${cleanedValue}, firstName: ${updateData['firstName']}, lastName: ${updateData['lastName']}, fullName: ${updateData['fullName']}`);
       }
       
       // Map recordType to pluralized form for API
@@ -2463,6 +2473,31 @@ export function UniversalRecordTemplate({
           console.log(`🔄 [STATUS LOCAL STATE] Preserving status value in local state:`, value);
         }
         
+        // 🔧 NAME UPDATE FIX: For name/fullName fields, always preserve the saved value
+        // This ensures that user edits (like removing " -" suffix) are not overwritten by API responses
+        if (field === 'name' || field === 'fullName') {
+          // Clean the value to remove trailing dashes/spaces (same as API does)
+          const cleanedValue = typeof value === 'string' 
+            ? value.trim().replace(/\s*-\s*$/, '').trim().replace(/[\s-]+$/, '').trim()
+            : value;
+          
+          // Always use the cleaned value we just saved, not the API response
+          // This prevents the API from overwriting our update with stale/merged data
+          actualValue = cleanedValue;
+          
+          // Ensure updateData has the correct values
+          if (updateData['fullName']) {
+            updateData['fullName'] = cleanedValue;
+          }
+          
+          console.log(`🔄 [NAME LOCAL STATE] Preserving name value in local state:`, {
+            originalValue: value,
+            cleanedValue: cleanedValue,
+            apiResponseValue: result.data?.[apiField],
+            usingValue: actualValue
+          });
+        }
+        
         const updatedRecord = {
           ...prev,
           [field]: actualValue,
@@ -2488,9 +2523,9 @@ export function UniversalRecordTemplate({
           } : {}),
           // Update related fields if name was changed
           ...(field === 'name' || field === 'fullName' ? {
-            firstName: updateData['firstName'],
-            lastName: updateData['lastName'],
-            fullName: updateData['fullName']
+            firstName: updateData['firstName'] || prev.firstName || '',
+            lastName: updateData['lastName'] || prev.lastName || '',
+            fullName: updateData['fullName'] || actualValue
           } : {})
         };
         
@@ -2556,6 +2591,42 @@ export function UniversalRecordTemplate({
             savedValue: value,
             apiResponseValue: result.data[apiField],
             preservedValue: statusValue
+          });
+        }
+        
+        // 🔧 NAME UPDATE FIX: For name/fullName fields, always preserve the saved value
+        // This ensures that user edits (like removing " -" suffix) are not overwritten
+        if (field === 'name' || field === 'fullName') {
+          // Clean the value to remove trailing dashes/spaces (same as API does)
+          const cleanedValue = typeof value === 'string' 
+            ? value.trim().replace(/\s*-\s*$/, '').trim().replace(/[\s-]+$/, '').trim()
+            : value;
+          
+          // Always use the cleaned value we just saved, not the API response
+          preservedFields[field] = cleanedValue;
+          preservedFields[apiField] = cleanedValue;
+          
+          // Also preserve firstName and lastName if they were updated
+          if (updateData['firstName'] !== undefined) {
+            preservedFields['firstName'] = updateData['firstName'];
+          }
+          if (updateData['lastName'] !== undefined) {
+            preservedFields['lastName'] = updateData['lastName'];
+          }
+          if (updateData['fullName'] !== undefined) {
+            preservedFields['fullName'] = cleanedValue;
+          }
+          
+          console.log(`🔄 [NAME PRESERVE] Ensuring name is preserved:`, {
+            savedValue: value,
+            cleanedValue: cleanedValue,
+            apiResponseValue: result.data?.[apiField],
+            preservedValue: cleanedValue,
+            updateData: {
+              firstName: updateData['firstName'],
+              lastName: updateData['lastName'],
+              fullName: updateData['fullName']
+            }
           });
         }
         

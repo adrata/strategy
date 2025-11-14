@@ -127,11 +127,39 @@ async function diagnoseAndFix() {
           console.log(`   Domains Match: ${domainsMatch ? '✅ YES' : '❌ NO'}`);
           console.log('');
 
-          if (!domainsMatch && olgaLev.isBuyerGroupMember) {
+          if (!domainsMatch) {
             console.log('⚠️  ISSUE DETECTED:');
             console.log(`   Olga Lev has email domain ${emailDomain} but is assigned to company with domain ${companyDomain}`);
-            console.log(`   She is marked as a buyer group member but domains don't match!`);
+            console.log(`   These are different companies (underline.cz vs underline.com)!`);
             console.log('');
+
+            // Check BuyerGroupMembers table for records
+            const buyerGroupMemberRecords = await prisma.buyerGroupMembers.findMany({
+              where: {
+                OR: [
+                  { email: { contains: OLGA_LEV_EMAIL, mode: 'insensitive' } },
+                  { name: { contains: OLGA_LEV_NAME, mode: 'insensitive' } }
+                ]
+              },
+              include: {
+                BuyerGroups: {
+                  select: {
+                    id: true,
+                    companyName: true,
+                    website: true
+                  }
+                }
+              }
+            });
+
+            if (buyerGroupMemberRecords.length > 0) {
+              console.log(`   Found ${buyerGroupMemberRecords.length} BuyerGroupMembers record(s):`);
+              buyerGroupMemberRecords.forEach(bgm => {
+                console.log(`     - Buyer Group: ${bgm.BuyerGroups.companyName} (${bgm.BuyerGroups.website || 'N/A'})`);
+                console.log(`       Role: ${bgm.role}, Email: ${bgm.email || 'N/A'}`);
+              });
+              console.log('');
+            }
 
             // Check if there are other people from the same company in buyer groups
             const otherBuyerGroupMembers = await prisma.people.findMany({
@@ -165,15 +193,23 @@ async function diagnoseAndFix() {
             console.log('   1. Remove Olga Lev from buyer group (set isBuyerGroupMember = false)');
             console.log('   2. Clear buyerGroupRole');
             console.log('   3. Clear buyerGroupStatus');
-            console.log('   4. Keep companyId (she may still be at this company, just not in buyer group)');
+            if (buyerGroupMemberRecords.length > 0) {
+              console.log(`   4. Remove ${buyerGroupMemberRecords.length} BuyerGroupMembers record(s)`);
+            }
+            console.log('   5. Keep companyId (she may still be at this company, just not in buyer group)');
             console.log('');
 
-            // Auto-fix (can be made interactive if needed)
-            const shouldFix = process.argv.includes('--fix') || process.argv.includes('-f');
+            // Auto-fix when domain mismatch is detected
+            // Use --dry-run flag to skip the fix
+            const isDryRun = process.argv.includes('--dry-run');
             
-            if (shouldFix) {
+            if (!isDryRun) {
               console.log('🔧 APPLYING FIX...');
               
+              const notes = olgaLev.notes || '';
+              const fixNote = `\n[${new Date().toISOString()}] Removed from buyer group due to domain mismatch: email domain (${emailDomain}) does not match company domain (${companyDomain})`;
+              
+              // Update people table
               await prisma.people.update({
                 where: { id: olgaLev.id },
                 data: {
@@ -181,36 +217,39 @@ async function diagnoseAndFix() {
                   buyerGroupRole: null,
                   buyerGroupStatus: null,
                   buyerGroupOptimized: false,
+                  notes: notes + fixNote,
                   updatedAt: new Date()
                 }
               });
 
+              console.log('   ✅ Updated people table');
+
+              // Remove from BuyerGroupMembers table if records exist
+              if (buyerGroupMemberRecords.length > 0) {
+                for (const bgm of buyerGroupMemberRecords) {
+                  await prisma.buyerGroupMembers.delete({
+                    where: { id: bgm.id }
+                  });
+                  console.log(`   ✅ Removed BuyerGroupMembers record: ${bgm.id}`);
+                }
+              }
+
+              console.log('');
               console.log('✅ FIX APPLIED:');
               console.log('   - Removed from buyer group');
               console.log('   - Cleared buyer group role');
               console.log('   - Cleared buyer group status');
-              console.log('');
-
-              // Update notes to document the fix
-              const notes = olgaLev.notes || '';
-              const fixNote = `\n[${new Date().toISOString()}] Removed from buyer group due to domain mismatch: email domain (${emailDomain}) does not match company domain (${companyDomain})`;
-              
-              await prisma.people.update({
-                where: { id: olgaLev.id },
-                data: {
-                  notes: notes + fixNote
-                }
-              });
-
-              console.log('📝 Added note documenting the fix');
+              if (buyerGroupMemberRecords.length > 0) {
+                console.log(`   - Removed ${buyerGroupMemberRecords.length} BuyerGroupMembers record(s)`);
+              }
+              console.log('   - Added note documenting the fix');
             } else {
-              console.log('💡 To apply the fix, run with --fix flag:');
-              console.log(`   node scripts/fix-olga-lev-buyer-group.js --fix`);
+              console.log('🔍 DRY RUN MODE - No changes applied');
+              console.log('💡 To apply the fix, run without --dry-run flag:');
+              console.log(`   node scripts/fix-olga-lev-buyer-group.js`);
             }
           } else if (domainsMatch) {
             console.log('✅ Domain validation passed - no action needed');
-          } else if (!olgaLev.isBuyerGroupMember) {
-            console.log('✅ Not a buyer group member - no action needed');
           }
         } else {
           console.log('⚠️  Cannot validate - missing domain information');

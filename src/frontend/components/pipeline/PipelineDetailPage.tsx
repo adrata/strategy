@@ -368,6 +368,23 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const loadDirectRecord = useCallback(async (recordId: string) => {
     if (!recordId || directRecordLoading) return;
     
+    // 🔧 FIX: Skip refetching if record was just updated (within 2 seconds)
+    // This prevents overwriting recent updates with stale data from refetch
+    if (typeof window !== 'undefined') {
+      const updateTimestamp = sessionStorage.getItem(`record-updated-${recordId}`);
+      if (updateTimestamp) {
+        const timeSinceUpdate = Date.now() - parseInt(updateTimestamp, 10);
+        if (timeSinceUpdate < 2000) {
+          console.log(`🔄 [SKIP REFETCH] Record ${recordId} was updated ${timeSinceUpdate}ms ago, skipping refetch to preserve update`);
+          // Clear the timestamp after checking
+          sessionStorage.removeItem(`record-updated-${recordId}`);
+          return;
+        }
+        // Clear old timestamp if more than 2 seconds have passed
+        sessionStorage.removeItem(`record-updated-${recordId}`);
+      }
+    }
+    
     // 🚫 PREVENT RAPID-FIRE CALLS: Debounce API calls
     const now = Date.now();
     if (lastLoadAttempt && now - parseInt(lastLoadAttempt) < 2000) {
@@ -1039,6 +1056,11 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
           console.log('🔍 [PIPELINE DEBUG] onRecordUpdate called for section:', section, 'recordType:', updatedRecord?.recordType || 'unknown');
           
+          // 🔧 FIX: Track update timestamp for all updates to prevent refetch from overwriting
+          if (updatedRecord?.id && typeof window !== 'undefined') {
+            sessionStorage.setItem(`record-updated-${updatedRecord.id}`, Date.now().toString());
+          }
+          
           // Check if status changed and determine new section
           const newStatus = updatedRecord?.status || updatedRecord?.stage;
           const oldStatus = selectedRecord?.status || selectedRecord?.stage;
@@ -1169,6 +1191,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
                 // Refresh the record from API to ensure we have the latest data
                 // This is important because the status change might affect other fields
                 // Use longer delay to ensure database transaction has fully completed
+                // Note: Update timestamp is already tracked at the top of onRecordUpdate
                 console.log('🔄 [PIPELINE] Refreshing record from API after status change');
                 setTimeout(async () => {
                   try {

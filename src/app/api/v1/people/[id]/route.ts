@@ -167,6 +167,35 @@ export async function GET(
     // Merge core person data with workspace data
     const mergedPerson = mergeCorePersonWithWorkspace(personToUse, personToUse.corePerson || null);
 
+    // 🔧 FIX: If company relation is null but companyId exists, fetch company name directly
+    // This handles cases where company is soft-deleted or relation is broken
+    if (!mergedPerson.company && mergedPerson.companyId) {
+      try {
+        const company = await prisma.companies.findUnique({
+          where: { 
+            id: mergedPerson.companyId,
+            workspaceId: authUser.workspaceId
+          },
+          select: {
+            id: true,
+            name: true,
+            website: true,
+            industry: true,
+            status: true,
+            priority: true,
+            deletedAt: true,
+          },
+        });
+        
+        if (company) {
+          mergedPerson.company = company;
+        }
+      } catch (error) {
+        console.warn('⚠️ [PEOPLE API] Could not fetch company for companyId:', mergedPerson.companyId, error);
+        // Continue without company - companyId is still in the response
+      }
+    }
+
     // Transform to use mainSeller terminology like speedrun
     const transformedPerson = {
       ...mergedPerson,
@@ -249,6 +278,8 @@ export async function GET(
       linkedinUrl: transformedPerson.linkedinUrl ?? null,
       linkedinNavigatorUrl: transformedPerson.linkedinNavigatorUrl ?? null,
       linkedinConnectionDate: transformedPerson.linkedinConnectionDate ?? null,
+      // Company Information
+      companyId: transformedPerson.companyId ?? null,
       // Engagement History
       lastAction: transformedPerson.lastAction ?? null,
       nextAction: transformedPerson.nextAction ?? null,
@@ -335,17 +366,36 @@ export async function PUT(
     // 🔧 NAME SYNC FIX: Prioritize explicit fullName over reconstruction
     // If fullName is explicitly provided, use it as source of truth and split it
     if (body.fullName !== undefined) {
-      const trimmedFullName = body.fullName.trim();
-      body.fullName = trimmedFullName;
+      // Trim and clean the fullName - remove trailing dashes, spaces, and other unwanted characters
+      let trimmedFullName = body.fullName.trim();
+      // Remove trailing " -" or "- " patterns that might be left over
+      trimmedFullName = trimmedFullName.replace(/\s*-\s*$/, '').trim();
+      // Remove any trailing dashes or spaces
+      trimmedFullName = trimmedFullName.replace(/[\s-]+$/, '').trim();
       
-      // Parse fullName into firstName/lastName to keep them in sync
-      const nameParts = trimmedFullName.split(/\s+/);
-      if (nameParts.length > 0) {
-        body.firstName = nameParts[0];
-        body.lastName = nameParts.slice(1).join(' ');
+      // Only update if the trimmed name is not empty
+      if (trimmedFullName) {
+        body.fullName = trimmedFullName;
+        
+        // Parse fullName into firstName/lastName to keep them in sync
+        const nameParts = trimmedFullName.split(/\s+/).filter(part => part.length > 0);
+        if (nameParts.length > 0) {
+          body.firstName = nameParts[0];
+          body.lastName = nameParts.slice(1).join(' ');
+        } else {
+          // If no valid name parts, clear firstName/lastName
+          body.firstName = '';
+          body.lastName = '';
+        }
+        
+        console.log(`🔄 [PEOPLE API PUT] Using explicit fullName: "${body.fullName}" → firstName: "${body.firstName}", lastName: "${body.lastName}"`);
+      } else {
+        // Empty name - clear all name fields
+        body.fullName = '';
+        body.firstName = '';
+        body.lastName = '';
+        console.log(`🔄 [PEOPLE API PUT] Empty fullName provided, clearing all name fields`);
       }
-      
-      console.log(`🔄 [PEOPLE API PUT] Using explicit fullName: "${body.fullName}" → firstName: "${body.firstName}", lastName: "${body.lastName}"`);
     } else if (body.firstName !== undefined || body.lastName !== undefined) {
       // Only reconstruct fullName if it wasn't explicitly provided
       const firstName = (body.firstName !== undefined ? body.firstName : existingPerson.firstName) || '';
@@ -528,17 +578,36 @@ export async function PATCH(
     // 🔧 NAME SYNC FIX: Prioritize explicit fullName over reconstruction
     // If fullName is explicitly provided, use it as source of truth and split it
     if (body.fullName !== undefined) {
-      const trimmedFullName = body.fullName.trim();
-      body.fullName = trimmedFullName;
+      // Trim and clean the fullName - remove trailing dashes, spaces, and other unwanted characters
+      let trimmedFullName = body.fullName.trim();
+      // Remove trailing " -" or "- " patterns that might be left over
+      trimmedFullName = trimmedFullName.replace(/\s*-\s*$/, '').trim();
+      // Remove any trailing dashes or spaces
+      trimmedFullName = trimmedFullName.replace(/[\s-]+$/, '').trim();
       
-      // Parse fullName into firstName/lastName to keep them in sync
-      const nameParts = trimmedFullName.split(/\s+/);
-      if (nameParts.length > 0) {
-        body.firstName = nameParts[0];
-        body.lastName = nameParts.slice(1).join(' ');
+      // Only update if the trimmed name is not empty
+      if (trimmedFullName) {
+        body.fullName = trimmedFullName;
+        
+        // Parse fullName into firstName/lastName to keep them in sync
+        const nameParts = trimmedFullName.split(/\s+/).filter(part => part.length > 0);
+        if (nameParts.length > 0) {
+          body.firstName = nameParts[0];
+          body.lastName = nameParts.slice(1).join(' ');
+        } else {
+          // If no valid name parts, clear firstName/lastName
+          body.firstName = '';
+          body.lastName = '';
+        }
+        
+        console.log(`🔄 [PEOPLE API PATCH] Using explicit fullName: "${body.fullName}" → firstName: "${body.firstName}", lastName: "${body.lastName}"`);
+      } else {
+        // Empty name - clear all name fields
+        body.fullName = '';
+        body.firstName = '';
+        body.lastName = '';
+        console.log(`🔄 [PEOPLE API PATCH] Empty fullName provided, clearing all name fields`);
       }
-      
-      console.log(`🔄 [PEOPLE API PATCH] Using explicit fullName: "${body.fullName}" → firstName: "${body.firstName}", lastName: "${body.lastName}"`);
     } else if (body.firstName !== undefined || body.lastName !== undefined) {
       // Only reconstruct fullName if it wasn't explicitly provided
       const firstName = (body.firstName !== undefined ? body.firstName : existingPerson.firstName) || '';

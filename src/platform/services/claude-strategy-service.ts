@@ -354,6 +354,11 @@ export class ClaudeStrategyService {
       )
     ].join('\n') : '';
 
+    // Build explicit industry instructions
+    const industryInstruction = request.companyIndustry && request.companyIndustry !== 'Unknown' 
+      ? `CRITICAL: The company's actual industry is "${request.companyIndustry}". Use this EXACT industry classification in your summary. Do NOT assume Technology/SaaS unless the Industry field explicitly states "Technology", "Software", "SaaS", or similar technology-related terms. If the industry is "Utilities", "Energy", "Electric", "Power", or similar, classify them as a utilities/energy company, NOT a technology company.`
+      : `CRITICAL: The company's industry is not specified or is "Unknown". Do NOT assume Technology/SaaS. Use generic terms like "organization" or "company" without specifying an industry type unless you can confidently infer it from the company name, description, or other provided data.`;
+
     return `You are a strategic business advisor with deep expertise in ${request.targetIndustry}. Generate a comprehensive strategy summary for a company with the following profile:
 
 ${companyProfile}${opportunitiesSection}${peopleSection}${buyerGroupsSection}
@@ -361,33 +366,39 @@ ${companyProfile}${opportunitiesSection}${peopleSection}${buyerGroupsSection}
 COMPANY ARCHETYPE: ${request.archetypeName}
 Archetype Description: ${request.archetypeDescription}
 
+${industryInstruction}
+
+IMPORTANT DISTINCTION:
+- Company Industry (${request.companyIndustry}): This is what industry the company itself operates in (e.g., Utilities, Healthcare, Manufacturing)
+- Target Industry (${request.targetIndustry}): This is the industry they serve/sell to (their customers' industry)
+
 TASK: Generate a strategic analysis using the Situation-Complication-Future State framework, specifically personalized for a company serving ${request.targetIndustry}. Use ALL the real company data above to inform your analysis.
 
 REQUIREMENTS:
-1. SITUATION: Describe their current business position, strengths, and market context. Personalize for their target industry (${request.targetIndustry}). Use their actual company data (size, revenue, age, market position) to paint an accurate picture. Include specific industry terminology, challenges, and opportunities. ${request.opportunities && request.opportunities.length > 0 ? 'Reference their active opportunities and pipeline to understand their current business momentum.' : ''} ${request.people && request.people.length > 0 ? 'Consider their key contacts and relationships in your analysis.' : ''}
+1. SITUATION: Describe their current business position, strengths, and market context. Use their ACTUAL company industry (${request.companyIndustry}) when describing what type of company they are. Personalize for their target industry (${request.targetIndustry}) when describing who they serve. Use their actual company data (size, revenue, age, market position) to paint an accurate picture. Include specific industry terminology, challenges, and opportunities. ${request.opportunities && request.opportunities.length > 0 ? 'Reference their active opportunities and pipeline to understand their current business momentum.' : ''} ${request.people && request.people.length > 0 ? 'Consider their key contacts and relationships in your analysis.' : ''}
 
-2. PAIN: Identify key challenges, pain points, and strategic obstacles they face. Consider both internal challenges and external market dynamics specific to serving ${request.targetIndustry}. Be specific about industry regulations, competitive pressures, and market trends. Reference their actual company characteristics (size, growth stage, market position) to identify realistic pain points and complications. ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider their buyer group dynamics and decision-making complexity.' : ''} ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitors and competitive landscape.' : ''}
+2. PAIN: Identify key challenges, pain points, and strategic obstacles they face. Consider both internal challenges and external market dynamics specific to their actual industry (${request.companyIndustry}) and serving ${request.targetIndustry}. Be specific about industry regulations, competitive pressures, and market trends. Reference their actual company characteristics (size, growth stage, market position) to identify realistic pain points and complications. ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider their buyer group dynamics and decision-making complexity.' : ''} ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitors and competitive landscape.' : ''}
 
-3. FUTURE STATE: Paint a vision of success if they overcome these pain points. Describe tangible outcomes and competitive advantages specific to the ${request.targetIndustry} market. Include specific metrics, market positions, and strategic outcomes. Make it realistic based on their current company profile. ${request.opportunities && request.opportunities.length > 0 ? 'Consider how their current opportunities could evolve and expand.' : ''}
+3. FUTURE STATE: Paint a vision of success if they overcome these pain points. Describe tangible outcomes and competitive advantages specific to their actual industry (${request.companyIndustry}) and the ${request.targetIndustry} market they serve. Include specific metrics, market positions, and strategic outcomes. Make it realistic based on their current company profile. ${request.opportunities && request.opportunities.length > 0 ? 'Consider how their current opportunities could evolve and expand.' : ''}
 
-4. STRATEGIC RECOMMENDATIONS: Provide 3-5 actionable strategic recommendations tailored to their archetype, target industry, and actual company characteristics. ${request.people && request.people.length > 0 ? 'Include recommendations for leveraging their key relationships and contacts.' : ''} ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider how to optimize their buyer group engagement.' : ''}
+4. STRATEGIC RECOMMENDATIONS: Provide 3-5 actionable strategic recommendations tailored to their archetype, actual industry (${request.companyIndustry}), target industry, and actual company characteristics. ${request.people && request.people.length > 0 ? 'Include recommendations for leveraging their key relationships and contacts.' : ''} ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider how to optimize their buyer group engagement.' : ''}
 
-5. COMPETITIVE POSITIONING: Describe how they should position themselves in the ${request.targetIndustry} market based on their real company profile. ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitive landscape and differentiation opportunities.' : ''}
+5. COMPETITIVE POSITIONING: Describe how they should position themselves in the ${request.targetIndustry} market based on their real company profile and actual industry (${request.companyIndustry}). ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitive landscape and differentiation opportunities.' : ''}
 
-6. SUCCESS METRICS: List 3-5 key performance indicators they should track, relevant to their company size and target industry. ${request.opportunities && request.opportunities.length > 0 ? 'Include metrics related to their opportunity pipeline and conversion rates.' : ''}
+6. SUCCESS METRICS: List 3-5 key performance indicators they should track, relevant to their company size, actual industry (${request.companyIndustry}), and target industry. ${request.opportunities && request.opportunities.length > 0 ? 'Include metrics related to their opportunity pipeline and conversion rates.' : ''}
 
 FORMAT YOUR RESPONSE AS JSON:
 {
-  "strategySummary": "2-3 paragraph executive summary of their strategic position based on real company data",
-  "situation": "2-3 paragraphs describing current situation using actual company characteristics, personalized for ${request.targetIndustry}",
-  "complication": "2-3 paragraphs describing key pain points and challenges specific to their company profile and serving ${request.targetIndustry}",
-  "futureState": "2-3 paragraphs describing vision of success in ${request.targetIndustry} based on their real capabilities",
+  "strategySummary": "2-3 paragraph executive summary. CRITICAL: Use the company's actual industry (${request.companyIndustry}) when describing what type of company they are. Do NOT assume Technology/SaaS unless explicitly stated. Example: If industry is 'Utilities', say 'utilities company' or 'energy company', NOT 'technology company'.",
+  "situation": "2-3 paragraphs describing current situation using actual company characteristics. Reference their actual industry (${request.companyIndustry}) and how they serve ${request.targetIndustry}",
+  "complication": "2-3 paragraphs describing key pain points and challenges specific to their company profile (industry: ${request.companyIndustry}) and serving ${request.targetIndustry}",
+  "futureState": "2-3 paragraphs describing vision of success in ${request.targetIndustry} based on their real capabilities and actual industry (${request.companyIndustry})",
   "strategicRecommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"],
-  "competitivePositioning": "1-2 paragraphs on competitive positioning in ${request.targetIndustry}",
+  "competitivePositioning": "1-2 paragraphs on competitive positioning in ${request.targetIndustry} based on their actual industry (${request.companyIndustry})",
   "successMetrics": ["Metric 1", "Metric 2", "Metric 3"]
 }
 
-Be specific, actionable, and deeply personalized for a company serving ${request.targetIndustry}. Use their actual company data to make the analysis realistic and relevant. Reference real market dynamics and industry-specific terminology.`;
+Be specific, actionable, and deeply personalized. Use their ACTUAL company industry (${request.companyIndustry}) exactly as provided. Do NOT make assumptions about industry classification. Use their actual company data to make the analysis realistic and relevant. Reference real market dynamics and industry-specific terminology.`;
   }
 
   private parseStrategyResponse(content: string): ClaudeStrategyResponse {

@@ -484,9 +484,26 @@ export function mergeCorePersonWithWorkspace(
   const enrichmentTitle = extractTitleFromEnrichment(workspacePerson.customFields);
   const finalJobTitle = coreJobTitle || enrichmentTitle || null;
   const finalTitle = workspacePerson.title || coreJobTitle || enrichmentTitle || null;
+  
+  // 🔧 NAME PRIORITY FIX: Prioritize workspace person's fullName over core person's fullName
+  // Only use core person's name as fallback if workspace person's name is null/undefined/empty
+  // This ensures that explicit updates to workspace person's name are not overwritten by core person's name
+  let finalFullName: string | null;
+  if (workspacePerson.fullNameOverride) {
+    // Explicit override takes highest priority
+    finalFullName = workspacePerson.fullNameOverride;
+  } else if (workspacePerson.fullName !== null && workspacePerson.fullName !== undefined && workspacePerson.fullName.trim() !== '') {
+    // Workspace person's fullName exists and is not empty - use it (even if different from core)
+    // This ensures that user updates are preserved
+    finalFullName = workspacePerson.fullName.trim();
+  } else {
+    // Only fall back to core person's name if workspace person's name is null/undefined/empty
+    finalFullName = actualCorePerson.fullName || null;
+  }
+  
   return {
     ...workspaceData,
-    fullName: workspacePerson.fullNameOverride || workspacePerson.fullName || actualCorePerson.fullName,
+    fullName: finalFullName,
     email: workspacePerson.emailOverride || workspacePerson.email || workspacePerson.workEmail || actualCorePerson.email || actualCorePerson.workEmail,
     jobTitle: finalJobTitle,
     title: finalTitle,

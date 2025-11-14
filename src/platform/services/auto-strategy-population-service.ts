@@ -66,12 +66,19 @@ export class AutoStrategyPopulationService {
 
   async populateStrategyForCompany(company: any): Promise<void> {
     try {
+      // Infer target industry from company data, avoiding Technology/SaaS default
+      const inferredTargetIndustry = company.customFields?.targetIndustry || 
+        (company.industry ? this.inferIndustryCategory(company.industry) : null) ||
+        (company.sector ? this.inferIndustryCategory(company.sector) : null) ||
+        (company.name ? this.inferIndustryFromName(company.name) : null) ||
+        'Unknown';
+
       // Prepare strategy request with company data
       const strategyRequest: CompanyStrategyRequest = {
         companyId: company.id,
         companyName: company.name,
         companyIndustry: company.industry || 'Unknown',
-        targetIndustry: company.customFields?.targetIndustry || 'Technology/SaaS',
+        targetIndustry: inferredTargetIndustry,
         companySize: company.size || 0,
         companyRevenue: company.revenue || 0,
         companyAge: company.foundedAt ? 
@@ -140,6 +147,151 @@ export class AutoStrategyPopulationService {
     if (size > 1000 || revenue > 100000000) return 'challenger';
     if (size > 100) return 'follower';
     return 'niche';
+  }
+
+  /**
+   * Infer industry category from industry string
+   * Does NOT default to Technology/SaaS
+   */
+  private inferIndustryCategory(industry: string): string | null {
+    if (!industry) return null;
+    
+    const industryLower = industry.toLowerCase();
+    
+    // Utility/Energy sector - check FIRST before technology
+    if (industryLower.includes('utility') || 
+        industryLower.includes('energy') || 
+        industryLower.includes('power') || 
+        industryLower.includes('electric') ||
+        industryLower.includes('utilities') ||
+        industryLower.includes('electrical')) {
+      return 'Utilities/Energy';
+    }
+    
+    // Healthcare
+    if (industryLower.includes('healthcare') || 
+        industryLower.includes('health') || 
+        industryLower.includes('hospital') || 
+        industryLower.includes('medical')) {
+      return 'Healthcare';
+    }
+    
+    // Financial Services
+    if (industryLower.includes('bank') || 
+        industryLower.includes('financial') || 
+        industryLower.includes('insurance') || 
+        industryLower.includes('finance')) {
+      return 'Financial Services';
+    }
+    
+    // Technology/SaaS - only if explicitly technology-related
+    if (industryLower.includes('software') || 
+        industryLower.includes('saas') ||
+        industryLower.includes('it services') ||
+        industryLower.includes('information technology')) {
+      // Only return Technology/SaaS if it's clearly tech-related
+      // Don't match generic "technology" as it could be in company names
+      if (industryLower.includes('software') || 
+          industryLower.includes('saas') ||
+          industryLower.includes('it services') ||
+          industryLower.includes('information technology')) {
+        return 'Technology/SaaS';
+      }
+    }
+    
+    // Manufacturing
+    if (industryLower.includes('manufacturing') || 
+        industryLower.includes('manufacturer')) {
+      return 'Manufacturing';
+    }
+    
+    // Retail
+    if (industryLower.includes('retail') || 
+        industryLower.includes('e-commerce') || 
+        industryLower.includes('ecommerce')) {
+      return 'Retail/E-commerce';
+    }
+    
+    // Real Estate
+    if (industryLower.includes('real estate') || 
+        industryLower.includes('title') || 
+        industryLower.includes('property')) {
+      return 'Real Estate';
+    }
+    
+    // Education
+    if (industryLower.includes('education') || 
+        industryLower.includes('school') || 
+        industryLower.includes('university')) {
+      return 'Education';
+    }
+    
+    // Government
+    if (industryLower.includes('government') || 
+        industryLower.includes('public sector')) {
+      return 'Government/Public Sector';
+    }
+    
+    // Professional Services
+    if (industryLower.includes('consulting') || 
+        industryLower.includes('professional services') || 
+        industryLower.includes('legal') ||
+        industryLower.includes('law')) {
+      return 'Professional Services';
+    }
+    
+    // Non-Profit
+    if (industryLower.includes('non-profit') || 
+        industryLower.includes('nonprofit') || 
+        industryLower.includes('non profit')) {
+      return 'Non-Profit';
+    }
+    
+    // If no match, return null (don't default to Technology/SaaS)
+    return null;
+  }
+
+  /**
+   * Infer industry from company name when industry field is missing
+   * Helps identify utilities/energy companies like "Minnesota Power"
+   */
+  private inferIndustryFromName(companyName: string): string | null {
+    if (!companyName) return null;
+    
+    const nameLower = companyName.toLowerCase();
+    
+    // Utility/Energy keywords in company name
+    if (nameLower.includes('power') || 
+        nameLower.includes('energy') || 
+        nameLower.includes('electric') ||
+        nameLower.includes('utility') ||
+        nameLower.includes('utilities') ||
+        nameLower.includes('energy') ||
+        nameLower.includes('gas') ||
+        nameLower.includes('water') ||
+        nameLower.includes('steam')) {
+      return 'Utilities/Energy';
+    }
+    
+    // Healthcare keywords
+    if (nameLower.includes('health') || 
+        nameLower.includes('hospital') || 
+        nameLower.includes('medical') ||
+        nameLower.includes('clinic')) {
+      return 'Healthcare';
+    }
+    
+    // Financial keywords
+    if (nameLower.includes('bank') || 
+        nameLower.includes('financial') || 
+        nameLower.includes('insurance') ||
+        nameLower.includes('credit union')) {
+      return 'Financial Services';
+    }
+    
+    // Don't infer Technology/SaaS from name alone - too risky
+    // Return null if no clear match
+    return null;
   }
 
   async populateStrategiesForNewCompany(companyId: string): Promise<boolean> {

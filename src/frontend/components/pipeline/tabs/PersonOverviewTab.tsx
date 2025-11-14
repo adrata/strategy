@@ -30,6 +30,10 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   // Enrichment status state (silent - no UI)
   const [hasTriggeredEnrichment, setHasTriggeredEnrichment] = useState(false);
   
+  // Company name state for when company relation is null but companyId exists
+  const [fetchedCompanyName, setFetchedCompanyName] = useState<string | null>(null);
+  const [isFetchingCompany, setIsFetchingCompany] = useState(false);
+  
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
@@ -255,14 +259,16 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     linkedinConnectionDate: record?.linkedinConnectionDate || null,
     bio: record?.bio || null,
     
-    // Company info - Database fields first, then CoreSignal fallback
+    // Company info - Database fields first, then CoreSignal fallback, then fetched company name
     company: (() => {
       // Handle both string and object company formats
       const coresignalCompany = coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name;
       const recordCompany = typeof record?.company === 'string' 
         ? record.company 
         : (record?.company?.name || record?.companyName);
-      return coresignalCompany || recordCompany || null;
+      // If companyId exists but company relation is null, use fetched company name
+      const companyFromId = (record?.companyId && !record?.company) ? fetchedCompanyName : null;
+      return coresignalCompany || recordCompany || companyFromId || null;
     })(),
     industry: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || null,
     department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || null,
@@ -328,7 +334,39 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   };
 
     return { coresignalData, coresignalProfile, enrichedData, personData, churnPrediction };
-  }, [record]);
+  }, [record, fetchedCompanyName]);
+
+  // Fetch company name when companyId exists but company relation is null
+  useEffect(() => {
+    const fetchCompanyName = async () => {
+      // Only fetch if companyId exists but company relation is null
+      if (!record?.companyId || record?.company || fetchedCompanyName || isFetchingCompany) {
+        return;
+      }
+
+      setIsFetchingCompany(true);
+      try {
+        // Try to fetch company by ID (even if soft-deleted, the API might return it)
+        const response = await authFetch(`/api/v1/companies/${record.companyId}`);
+        if (response && response.success && response.data) {
+          setFetchedCompanyName(response.data.name);
+        }
+      } catch (error) {
+        // If company is not found (404) or soft-deleted, that's okay
+        // We'll just not have a company name to display
+        console.log('⚠️ [PERSON OVERVIEW] Could not fetch company name:', error);
+      } finally {
+        setIsFetchingCompany(false);
+      }
+    };
+
+    fetchCompanyName();
+  }, [record?.companyId, record?.company, fetchedCompanyName, isFetchingCompany]);
+
+  // Reset fetched company name when record changes
+  useEffect(() => {
+    setFetchedCompanyName(null);
+  }, [record?.id]);
 
   // Debug logging removed for cleaner console
 

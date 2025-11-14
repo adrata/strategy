@@ -365,6 +365,10 @@ export class CompanyStrategyService {
   }
 
   private getIndustryCategory(targetIndustry: string): string {
+    if (!targetIndustry || targetIndustry === 'Unknown') {
+      return 'Unknown';
+    }
+
     const industryMappings: Record<string, string> = {
       'Title Companies': 'Real Estate',
       'Healthcare Providers': 'Healthcare',
@@ -396,26 +400,42 @@ export class CompanyStrategyService {
       return industryMappings[targetIndustry];
     }
 
-    // Try partial match
     const targetLower = targetIndustry.toLowerCase();
+
+    // Check for utility/energy keywords FIRST before other partial matches
+    // This prevents false matches like "Power Technology" being classified as Technology/SaaS
+    if (targetLower.includes('utility') || 
+        targetLower.includes('energy') || 
+        targetLower.includes('power') || 
+        targetLower.includes('electric') ||
+        targetLower.includes('utilities') ||
+        targetLower.includes('electrical')) {
+      return 'Utilities/Energy';
+    }
+
+    // Try partial match for other industries (utilities already handled above)
     for (const [industry, category] of Object.entries(industryMappings)) {
-      if (targetLower.includes(industry.toLowerCase()) ||
-          industry.toLowerCase().includes(targetLower)) {
+      const industryLower = industry.toLowerCase();
+      // Skip utilities/energy and technology/saas in partial matching to avoid false positives
+      if (category === 'Utilities/Energy' || category === 'Technology/SaaS') {
+        continue;
+      }
+      if (targetLower.includes(industryLower) || industryLower.includes(targetLower)) {
         return category;
       }
     }
 
-    // Check for utility/energy keywords
-    if (targetLower.includes('utility') || 
-        targetLower.includes('energy') || 
-        targetLower.includes('power') || 
-        targetLower.includes('electric')) {
-      return 'Utilities/Energy';
+    // Only match Technology/SaaS if explicitly technology-related (not just "tech" in name)
+    if (targetLower.includes('software') || 
+        targetLower.includes('saas') ||
+        targetLower.includes('it services') ||
+        targetLower.includes('information technology')) {
+      return 'Technology/SaaS';
     }
 
     // If no match found, return the original industry instead of defaulting to Technology/SaaS
     // This preserves the actual industry information rather than misclassifying
-    return targetIndustry || 'Unknown';
+    return targetIndustry;
   }
 
   async getCompanyArchetype(profile: CompanyProfile): Promise<CompanyArchetype> {

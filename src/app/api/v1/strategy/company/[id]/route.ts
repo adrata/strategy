@@ -190,9 +190,11 @@ export async function POST(
 
     // Prepare strategy request with comprehensive company data
     // Use company's actual industry to infer targetIndustry if not explicitly set
+    // Check multiple sources and avoid Technology/SaaS default
     const inferredTargetIndustry = company.customFields?.targetIndustry || 
       (company.industry ? inferIndustryCategory(company.industry) : null) ||
       (company.sector ? inferIndustryCategory(company.sector) : null) ||
+      (company.name ? inferIndustryFromName(company.name) : null) ||
       'Unknown';
     
     const strategyRequest: CompanyStrategyRequest = {
@@ -356,17 +358,19 @@ function determineMarketPosition(company: any): 'leader' | 'challenger' | 'follo
 }
 
 // Helper function to infer industry category from company industry
+// Does NOT default to Technology/SaaS - returns null if no match
 function inferIndustryCategory(industry: string): string | null {
   if (!industry) return null;
   
   const industryLower = industry.toLowerCase();
   
-  // Utility/Energy sector
+  // Utility/Energy sector - check FIRST before technology to avoid false matches
   if (industryLower.includes('utility') || 
       industryLower.includes('energy') || 
       industryLower.includes('power') || 
       industryLower.includes('electric') ||
-      industryLower.includes('utilities')) {
+      industryLower.includes('utilities') ||
+      industryLower.includes('electrical')) {
     return 'Utilities/Energy';
   }
   
@@ -386,13 +390,20 @@ function inferIndustryCategory(industry: string): string | null {
     return 'Financial Services';
   }
   
-  // Technology/SaaS
+  // Technology/SaaS - only match explicit technology terms, not generic "tech"
+  // This prevents false matches like "Power Technology" being classified as Technology/SaaS
   if (industryLower.includes('software') || 
-      industryLower.includes('technology') || 
-      industryLower.includes('tech') || 
       industryLower.includes('saas') ||
       industryLower.includes('it services') ||
       industryLower.includes('information technology')) {
+    return 'Technology/SaaS';
+  }
+  // Only match standalone "technology" or "tech" if it's clearly the industry
+  // Not if it's part of a compound term like "energy technology"
+  if ((industryLower === 'technology' || industryLower === 'tech') && 
+      !industryLower.includes('energy') && 
+      !industryLower.includes('power') &&
+      !industryLower.includes('utility')) {
     return 'Technology/SaaS';
   }
   
@@ -444,6 +455,46 @@ function inferIndustryCategory(industry: string): string | null {
     return 'Non-Profit';
   }
   
-  // If no match, return the original industry as-is
-  return industry;
+  // If no match, return null (don't default to Technology/SaaS or return original)
+  return null;
+}
+
+// Helper function to infer industry from company name when industry field is missing
+// Helps identify utilities/energy companies like "Minnesota Power"
+function inferIndustryFromName(companyName: string): string | null {
+  if (!companyName) return null;
+  
+  const nameLower = companyName.toLowerCase();
+  
+  // Utility/Energy keywords in company name - check FIRST
+  if (nameLower.includes('power') || 
+      nameLower.includes('energy') || 
+      nameLower.includes('electric') ||
+      nameLower.includes('utility') ||
+      nameLower.includes('utilities') ||
+      nameLower.includes('gas') ||
+      nameLower.includes('water') ||
+      nameLower.includes('steam')) {
+    return 'Utilities/Energy';
+  }
+  
+  // Healthcare keywords
+  if (nameLower.includes('health') || 
+      nameLower.includes('hospital') || 
+      nameLower.includes('medical') ||
+      nameLower.includes('clinic')) {
+    return 'Healthcare';
+  }
+  
+  // Financial keywords
+  if (nameLower.includes('bank') || 
+      nameLower.includes('financial') || 
+      nameLower.includes('insurance') ||
+      nameLower.includes('credit union')) {
+    return 'Financial Services';
+  }
+  
+  // Don't infer Technology/SaaS from name alone - too risky
+  // Return null if no clear match
+  return null;
 }

@@ -411,15 +411,34 @@ async function addBuyerGroupMember(data: any) {
     );
   }
 
+  // Fetch the buyer group company (the company they're being added to)
+  const buyerGroupCompany = await prisma.companies.findFirst({
+    where: { id: buyer_group_id, deletedAt: null },
+    select: {
+      id: true,
+      name: true,
+      website: true,
+      domain: true
+    }
+  });
+
+  if (!buyerGroupCompany) {
+    return createErrorResponse(
+      "Buyer group company not found",
+      "BUYER_GROUP_COMPANY_NOT_FOUND",
+      404
+    );
+  }
+
   // CRITICAL: Validate email domain is likely from same company before adding to buyer group
   // This prevents cross-company contamination (e.g., underline.cz vs underline.com)
   // But allows legitimate cases where companies use different domains for email vs website
+  // IMPORTANT: Validate against the buyer_group_id company, not the person's current company
   const personEmail = contact.email || contact.workEmail;
-  const company = contact.company;
   
-  if (personEmail && company && (company.website || company.domain)) {
+  if (personEmail && (buyerGroupCompany.website || buyerGroupCompany.domain)) {
     const emailDomain = extractDomain(personEmail.split('@')[1]);
-    const companyDomain = extractDomain(company.website || company.domain);
+    const companyDomain = extractDomain(buyerGroupCompany.website || buyerGroupCompany.domain);
     
     // Check for personal email domains (always reject these)
     const personalEmailDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com'];
@@ -436,10 +455,10 @@ async function addBuyerGroupMember(data: any) {
     
     if (emailDomain && companyDomain && !isLikelySameCompany(emailDomain, companyDomain)) {
       console.log(
-        `❌ [BUYER GROUPS API] Domain mismatch rejected: ${contact.fullName} (${emailDomain}) does not match company domain (${companyDomain})`
+        `❌ [BUYER GROUPS API] Domain mismatch rejected: ${contact.fullName} (${emailDomain}) does not match buyer group company domain (${companyDomain})`
       );
       return createErrorResponse(
-        `Email domain mismatch: ${emailDomain} does not match company domain ${companyDomain}. This person cannot be added to this buyer group.`,
+        `Email domain mismatch: ${emailDomain} does not match buyer group company domain ${companyDomain}. This person cannot be added to this buyer group.`,
         "DOMAIN_MISMATCH",
         400
       );
