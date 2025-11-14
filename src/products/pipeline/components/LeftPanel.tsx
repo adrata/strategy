@@ -12,7 +12,6 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
-import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
 import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
 import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
@@ -246,15 +245,13 @@ function PipelineSections({
                        Object.values(fastCounts).some(count => count !== 0 && count !== '0');
   const hasCachedData = actualCounts && Object.keys(actualCounts).length > 0;
   
-  // 🔄 SYNC: Check if the active section's data is loading (matches middle panel timing)
-  // This ensures left panel shows skeleton loaders when middle panel shows skeletons
-  const activeSectionData = useFastSectionData(activeSection, 30);
-  // 🚀 FIX: Only show loading if data is actually loading AND we have no data (prevents skeleton flash)
-  const activeSectionLoading = (activeSectionData?.loading || false) && (activeSectionData?.data || []).length === 0;
+  // 🚀 FIX: Removed useFastSectionData call - left panel doesn't need section data, only counts
+  // This prevents unnecessary data fetching when navigating between sections
+  // The left panel should remain stable during navigation
   
-  // Show loading if: fastCounts is loading AND no counts exist, OR active section is loading, OR auth is loading
-  // This syncs the left panel loading state with the middle panel's skeleton timing
-  const loading = (fastCountsLoading && !hasAnyCounts && !hasCachedData) || activeSectionLoading || authLoading;
+  // Show loading if: fastCounts is loading AND no counts exist, OR auth is loading
+  // Removed activeSectionLoading dependency to prevent left panel reload on navigation
+  const loading = (fastCountsLoading && !hasAnyCounts && !hasCachedData) || authLoading;
   
   // Use acquisitionData counts that were working before
   const leadsData = {

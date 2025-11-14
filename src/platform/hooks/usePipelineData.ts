@@ -3,7 +3,7 @@
  * Handles data fetching, filtering, sorting, and pagination.
  */
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 
 // -------- Types --------
 interface PipelineRecord {
@@ -266,18 +266,19 @@ export function usePipelineData({
     const endIndex = startIndex + pageSize;
     const result = sortedData.slice(startIndex, endIndex);
     
-    console.log('🔍 [usePipelineData] Pagination calculation:', {
-      inputDataLength: data.length,
-      filteredDataLength: filteredData.length,
-      sortedDataLength: sortedData.length,
-      currentPage,
-      pageSize,
-      startIndex,
-      endIndex,
-      paginatedDataLength: result.length,
-      totalCount,
-      samplePaginatedData: result.slice(0, 2)
-    });
+    // Removed console.log to improve performance - was logging on every render
+    // Uncomment for debugging if needed:
+    // console.log('🔍 [usePipelineData] Pagination calculation:', {
+    //   inputDataLength: data.length,
+    //   filteredDataLength: filteredData.length,
+    //   sortedDataLength: sortedData.length,
+    //   currentPage,
+    //   pageSize,
+    //   startIndex,
+    //   endIndex,
+    //   paginatedDataLength: result.length,
+    //   totalCount
+    // });
     
     return result;
   }, [sortedData, currentPage, pageSize, data.length, filteredData.length, totalCount]);
@@ -287,10 +288,8 @@ export function usePipelineData({
   const totalItems = sortedData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   
-  // Reset pagination to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [
+  // Track previous filter values to prevent unnecessary resets
+  const prevFiltersRef = useRef({
     searchQuery,
     statusFilter,
     priorityFilter,
@@ -299,6 +298,46 @@ export function usePipelineData({
     lastContactedFilter,
     timezoneFilter,
     externalSearchQuery
+  });
+  
+  // Reset pagination to page 1 when filters actually change (not just on every render)
+  useEffect(() => {
+    const prevFilters = prevFiltersRef.current;
+    const filtersChanged = 
+      prevFilters.searchQuery !== searchQuery ||
+      prevFilters.statusFilter !== statusFilter ||
+      prevFilters.priorityFilter !== priorityFilter ||
+      prevFilters.verticalFilter !== verticalFilter ||
+      prevFilters.revenueFilter !== revenueFilter ||
+      prevFilters.lastContactedFilter !== lastContactedFilter ||
+      prevFilters.timezoneFilter !== timezoneFilter ||
+      prevFilters.externalSearchQuery !== externalSearchQuery;
+    
+    if (filtersChanged && currentPage !== 1) {
+      setCurrentPage(1);
+    }
+    
+    // Update ref with current values
+    prevFiltersRef.current = {
+      searchQuery,
+      statusFilter,
+      priorityFilter,
+      verticalFilter,
+      revenueFilter,
+      lastContactedFilter,
+      timezoneFilter,
+      externalSearchQuery
+    };
+  }, [
+    searchQuery,
+    statusFilter,
+    priorityFilter,
+    verticalFilter,
+    revenueFilter,
+    lastContactedFilter,
+    timezoneFilter,
+    externalSearchQuery,
+    currentPage
   ]);
   
   // Actions

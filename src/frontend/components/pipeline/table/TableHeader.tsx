@@ -89,8 +89,9 @@ export function TableHeader({
   onColumnSort, 
   getColumnWidth 
 }: TableHeaderProps) {
-  // Debug: Log headers to see what's being passed
-  console.log('🔍 [TableHeader] Headers received:', headers);
+  // Removed console.log to improve performance - was logging on every render
+  // Uncomment for debugging if needed:
+  // console.log('🔍 [TableHeader] Headers received:', headers);
   
   // Default column width function
   const defaultGetColumnWidth = (index: number): string => {
@@ -123,7 +124,9 @@ export function TableHeader({
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log(`🔧 [TableHeader] Column clicked: ${header}, onColumnSort exists: ${!!onColumnSort}`);
+                // Removed console.log to improve performance
+                // Uncomment for debugging if needed:
+                // console.log(`🔧 [TableHeader] Column clicked: ${header}, onColumnSort exists: ${!!onColumnSort}`);
                 onColumnSort?.(header);
               }}
             >

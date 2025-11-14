@@ -6,6 +6,11 @@ export const dynamic = 'force-dynamic';
 
 // GET /api/v1/lists - Get all lists for current user/workspace/section
 export async function GET(request: NextRequest) {
+  // Define variables outside try block for error logging
+  let workspaceId: string | undefined;
+  let userId: string | undefined;
+  let section: string | null = null;
+  
   try {
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
@@ -22,9 +27,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
-    const section = searchParams.get('section');
-    const workspaceId = queryWorkspaceId || context.workspaceId;
-    const userId = context.userId;
+    section = searchParams.get('section');
+    workspaceId = queryWorkspaceId || context.workspaceId;
+    userId = context.userId;
 
     if (!workspaceId) {
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
@@ -37,11 +42,9 @@ export async function GET(request: NextRequest) {
     // Check if prisma.lists is available (Prisma client must be regenerated)
     if (!prisma.lists) {
       console.error('❌ [V1 LISTS API] prisma.lists is undefined - Prisma client needs regeneration');
-      return createErrorResponse(
-        'Database schema mismatch: The Prisma client was generated with an outdated schema. The lists model is missing. Please regenerate the Prisma client from the streamlined schema.',
-        'SCHEMA_MISMATCH',
-        500
-      );
+      // Return empty array instead of error to prevent blocking page load
+      console.warn('⚠️ [V1 LISTS API] Returning empty lists - Prisma client missing lists model');
+      return createSuccessResponse([], { count: 0, warning: 'Lists model not available in Prisma client' });
     }
 
     // Get all lists for the user in this workspace and section
@@ -60,7 +63,17 @@ export async function GET(request: NextRequest) {
 
     return createSuccessResponse(lists, { count: lists.length });
   } catch (error: any) {
-    console.error('Error fetching lists:', error);
+    // Enhanced error logging with full error details
+    console.error('❌ [V1 LISTS API] Error fetching lists:', {
+      error: error,
+      message: error?.message,
+      code: error?.code,
+      meta: error?.meta,
+      stack: error?.stack,
+      workspaceId,
+      userId,
+      section
+    });
     
     // Handle P2022 errors (column/table doesn't exist)
     if (error?.code === 'P2022') {
@@ -78,16 +91,44 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    return createErrorResponse(
-      'Failed to fetch lists',
-      'FETCH_ERROR',
-      500
-    );
+    // Handle Prisma connection errors
+    if (error?.code === 'P1001' || error?.message?.includes('Can\'t reach database server')) {
+      console.error('❌ [V1 LISTS API] Database connection error:', error);
+      return createErrorResponse(
+        'Database connection failed. Please try again later.',
+        'DATABASE_CONNECTION_ERROR',
+        503
+      );
+    }
+    
+    // Handle other Prisma errors
+    if (error?.code?.startsWith('P')) {
+      console.error('❌ [V1 LISTS API] Prisma error:', {
+        code: error.code,
+        message: error.message,
+        meta: error.meta
+      });
+      return createErrorResponse(
+        `Database error: ${error.message || 'Unknown Prisma error'}`,
+        'DATABASE_ERROR',
+        500
+      );
+    }
+    
+    // Generic error - return empty array instead of error to prevent blocking
+    // The frontend can handle empty lists gracefully
+    console.warn('⚠️ [V1 LISTS API] Returning empty lists due to error:', error?.message || 'Unknown error');
+    return createSuccessResponse([], { count: 0, warning: 'Failed to fetch lists, returning empty array' });
   }
 }
 
 // POST /api/v1/lists - Create new list
 export async function POST(request: NextRequest) {
+  // Define variables outside try block for error logging
+  let workspaceId: string | undefined;
+  let userId: string | undefined;
+  let section: string | null = null;
+  
   try {
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
@@ -111,9 +152,9 @@ export async function POST(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const queryWorkspaceId = searchParams.get('workspaceId');
-    const section = searchParams.get('section');
-    const workspaceId = queryWorkspaceId || context.workspaceId;
-    const userId = context.userId;
+    section = searchParams.get('section');
+    workspaceId = queryWorkspaceId || context.workspaceId;
+    userId = context.userId;
 
     if (!workspaceId) {
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);

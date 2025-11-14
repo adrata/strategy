@@ -298,7 +298,9 @@ export function PipelineTable({
     externalSortDirection: sortDirection // Pass external sort direction
   });
   
-  console.log(`🔧 [PipelineTableRefactored] Section: ${section}, disableSorting: ${section === 'people' || section === 'leads' || section === 'prospects'}`);
+  // Removed console.log to improve performance - was logging on every render
+  // Uncomment for debugging if needed:
+  // console.log(`🔧 [PipelineTableRefactored] Section: ${section}, disableSorting: ${section === 'people' || section === 'leads' || section === 'prospects'}`);
   
   
   // Action handling

@@ -135,12 +135,11 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sortOrder') || 'asc';
     const countsOnly = searchParams.get('counts') === 'true';
     const forceRefresh = searchParams.get('refresh') === 'true';
-    const isPartnerOS = searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
     
     const offset = (page - 1) * limit;
     
     console.log(`📋 [V1 COMPANIES API] Query parameters:`, {
-      page, limit, search, status, priority, industry, sortBy, sortOrder, countsOnly, forceRefresh, offset, isPartnerOS
+      page, limit, search, status, priority, industry, sortBy, sortOrder, countsOnly, forceRefresh, offset
     });
     
     // 🔧 CRITICAL FIX: Override workspace ID from query params if present (for multi-workspace support)
@@ -153,8 +152,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Check cache first (skip if force refresh)
-    // 🚀 FIX: Include isPartnerOS in cache key to prevent stale PartnerOS-filtered results
-    const cacheKey = `companies-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}-${isPartnerOS}`;
+    const cacheKey = `companies-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
     
     console.log(`💾 [V1 COMPANIES API] Cache check:`, {
@@ -185,15 +183,6 @@ export async function GET(request: NextRequest) {
         { mainSellerId: null }
       ]
     };
-
-    // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
-    if (isPartnerOS) {
-      where.relationshipType = {
-        in: ['PARTNER', 'FUTURE_PARTNER']
-      };
-      console.log('🚀 [V1 COMPANIES API] PartnerOS mode enabled - filtering by relationshipType PARTNER/FUTURE_PARTNER');
-    }
-
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     
     console.log(`🗄️ [V1 COMPANIES API] Starting database query...`);
@@ -272,24 +261,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Pipeline status filtering (PROSPECT, OPPORTUNITY, ACTIVE, INACTIVE, LEAD)
-    // Note: status is for pipeline stage, relationshipType is separate for CLIENT/PARTNER filtering
-    // Track if we're using relationshipType so we can fall back if column doesn't exist
-    let usingRelationshipType = false;
+    // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE, OPPORTUNITY)
+    // For CLIENT status, also check additionalStatuses array
     if (status) {
-      // For CLIENT/PARTNER filtering, use relationshipType instead of status
-      if (status === 'CLIENT' || status === 'FUTURE_CLIENT') {
-        where.relationshipType = {
-          in: ['CLIENT', 'FUTURE_CLIENT'] as any
-        };
-        usingRelationshipType = true;
-      } else if (status === 'PARTNER' || status === 'FUTURE_PARTNER') {
-        where.relationshipType = {
-          in: ['PARTNER', 'FUTURE_PARTNER'] as any
-        };
-        usingRelationshipType = true;
+      if (status === 'CLIENT') {
+        // Check both primary status and additionalStatuses for CLIENT
+        where.OR = [
+          { status: 'CLIENT' as any },
+          { additionalStatuses: { has: 'CLIENT' } }
+        ];
+        // If there's already an OR clause from search, we need to combine them
+        // For now, we'll prioritize the status filter
       } else {
-        // For pipeline stages (LEAD, PROSPECT, OPPORTUNITY, etc.), use status
         where.status = status as any; // Type casting to handle Prisma enum validation
       }
     }
@@ -308,28 +291,11 @@ export async function GET(request: NextRequest) {
     
     if (countsOnly) {
       // Fast count query using Prisma ORM
-      let statusCounts;
-      try {
-        statusCounts = await prisma.companies.groupBy({
-          by: ['status'],
-          where,
-          _count: { id: true }
-        });
-      } catch (queryError: any) {
-        // If relationshipType column doesn't exist (migration not run), fall back to query without it
-        if (usingRelationshipType && queryError?.code === 'P2022' && queryError?.meta?.column_name === 'relationshipType') {
-          console.warn('⚠️ [V1 COMPANIES API] relationshipType column not found in counts query, falling back');
-          const fallbackWhere = { ...where };
-          delete fallbackWhere.relationshipType;
-          statusCounts = await prisma.companies.groupBy({
-            by: ['status'],
-            where: fallbackWhere,
-            _count: { id: true }
-          });
-        } else {
-          throw queryError;
-        }
-      }
+      const statusCounts = await prisma.companies.groupBy({
+        by: ['status'],
+        where,
+        _count: { id: true }
+      });
 
       const counts = statusCounts.reduce((acc, stat) => {
         acc[stat.status || 'ACTIVE'] = stat._count.id;
@@ -341,98 +307,58 @@ export async function GET(request: NextRequest) {
       // Optimized query with Prisma ORM for reliability
       console.log(`🗄️ [V1 COMPANIES API] Executing main database query with where clause:`, where);
       
-      let companies, totalCount;
-      try {
-        [companies, totalCount] = await Promise.all([
-          prisma.companies.findMany({
-            where,
-            orderBy: { 
-              [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+      const [companies, totalCount] = await Promise.all([
+        prisma.companies.findMany({
+          where,
+          orderBy: { 
+            [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+          },
+          skip: offset,
+          take: limit,
+          // 🚀 PERFORMANCE: Select only fields needed for list view (90% data reduction: 54MB → 6MB)
+          select: {
+            // Core fields
+            id: true,
+            name: true,
+            workspaceId: true,
+            
+            // Display fields
+            industry: true,
+            status: true,
+            priority: true,
+            globalRank: true,
+            
+            // Action tracking
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            
+            // Additional useful fields
+            email: true,
+            website: true,
+            linkedinUrl: true,
+            hqState: true,
+            size: true,
+            
+            // Assignment
+            mainSellerId: true,
+            mainSeller: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
             },
-            skip: offset,
-            take: limit,
-            include: {
-              coreCompany: true,
-              _count: {
-                select: {
-                  actions: {
-                    where: {
-                      deletedAt: null,
-                      status: 'COMPLETED'
-                    }
-                  }
-                }
-              }
-            }
-          }),
-          prisma.companies.count({ where }),
-        ]);
-      } catch (queryError: any) {
-        // If relationshipType column doesn't exist (migration not run), fall back to status filter
-        if (usingRelationshipType && queryError?.code === 'P2022' && queryError?.meta?.column_name === 'relationshipType') {
-          console.warn('⚠️ [V1 COMPANIES API] relationshipType column not found, falling back to status filter');
-          // Remove relationshipType from where clause and use status instead
-          const fallbackWhere = { ...where };
-          delete fallbackWhere.relationshipType;
-          if (status === 'CLIENT' || status === 'FUTURE_CLIENT' || status === 'PARTNER' || status === 'FUTURE_PARTNER') {
-            // Don't filter by status if it was a relationshipType filter - show all companies
-            // This allows companies to show up even if migration hasn't been run
+            
+            // Metadata
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true
           }
-          
-          [companies, totalCount] = await Promise.all([
-            prisma.companies.findMany({
-              where: fallbackWhere,
-              orderBy: { 
-                [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
-              },
-              skip: offset,
-              take: limit,
-              include: {
-                coreCompany: true,
-                _count: {
-                  select: {
-                    actions: {
-                      where: {
-                        deletedAt: null,
-                        status: 'COMPLETED'
-                      }
-                    }
-                  }
-                }
-              }
-            }),
-            prisma.companies.count({ where: fallbackWhere }),
-          ]);
-        } else if (queryError?.code === 'P2022') {
-          // Handle other P2022 errors (column doesn't exist)
-          const columnName = queryError?.meta?.column_name;
-          console.error('❌ [V1 COMPANIES API] P2022 Error - Column does not exist:', {
-            columnName,
-            tableName: queryError?.meta?.table_name,
-            error: queryError
-          });
-          
-          // If it's the linkedinnavigatorurl column (old typo), provide helpful error
-          if (columnName === 'linkedinnavigatorurl') {
-            console.error('❌ [V1 COMPANIES API] linkedinnavigatorurl column missing - Prisma client needs regeneration');
-            return createErrorResponse(
-              'Database schema mismatch: The Prisma client was generated with an outdated schema. Please regenerate the Prisma client from the streamlined schema.',
-              'SCHEMA_MISMATCH',
-              500
-            );
-          }
-          
-          // Generic P2022 error
-          return createErrorResponse(
-            `Database column '${columnName}' does not exist. This indicates a schema mismatch between the Prisma client and database. Please regenerate the Prisma client.`,
-            'SCHEMA_MISMATCH',
-            500
-          );
-        } else {
-          // Re-throw if it's a different error
-          throw queryError;
-        }
-      }
+        }),
+        prisma.companies.count({ where }),
+      ]);
 
       console.log(`🗄️ [V1 COMPANIES API] Database query completed:`, {
         companiesFound: companies.length,
@@ -440,13 +366,11 @@ export async function GET(request: NextRequest) {
         queryTime: Date.now() - startTime
       });
 
-          // 🚀 MERGE CORE DATA: Merge core company data with workspace data
-      const companiesWithCore = companies.map(company => 
-        mergeCoreCompanyWithWorkspace(company, company.coreCompany || null)
-      );
-
+      // 🚀 PERFORMANCE: Skip core data merge since we're not fetching coreCompany
+      // This saves additional processing time
+      
       // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
-      const enrichedCompanies = await Promise.all(companiesWithCore.map(async (company) => {
+      const enrichedCompanies = await Promise.all(companies.map(async (company) => {
         try {
           const lastAction = await prisma.actions.findFirst({
             where: { 
@@ -1093,30 +1017,6 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         console.error('⚠️ [COMPANIES API] Failed to generate strategy data:', error);
         // Don't fail the request if strategy generation fails
-      }
-    });
-
-    // Generate AI-powered company summary (async, don't await)
-    setImmediate(async () => {
-      try {
-        // Call the generate-summary endpoint
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-        const response = await fetch(`${baseUrl}/api/v1/companies/${company.id}/generate-summary`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': request.headers.get('Authorization') || '',
-          },
-        });
-        
-        if (response.ok) {
-          console.log('✅ [COMPANIES API] Generated AI summary for new company', company.id);
-        } else {
-          console.warn('⚠️ [COMPANIES API] Failed to generate AI summary:', response.status);
-        }
-      } catch (error) {
-        console.error('⚠️ [COMPANIES API] Failed to generate AI summary:', error);
-        // Don't fail the request if summary generation fails
       }
     });
 

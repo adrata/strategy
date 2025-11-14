@@ -251,48 +251,75 @@ export async function apiFetch<T = any>(
       let errorCode = 'UNKNOWN_ERROR';
       let responseBody = null;
       
+      // Clone response before parsing to allow multiple reads
+      const clonedResponse = response.clone();
+      
       try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorData.message || errorMessage;
-        errorCode = errorData.code || errorCode;
-        responseBody = errorData;
+        // Read response as text first to avoid "Unexpected end of JSON input" errors
+        const responseText = await clonedResponse.text();
         
-        // Log the full error response for debugging
-        console.error(`❌ API Error Response:`, {
-          url,
-          status: response.status,
-          errorData,
-          errorMessage,
-          errorCode
-        });
-      } catch (jsonError) {
-        // If we can't parse JSON, try to get text response
-        console.error(`❌ Failed to parse error response as JSON:`, jsonError);
-        try {
-          const errorText = await response.text();
-          console.error(`❌ Error response text:`, errorText);
+        // If response is empty, use default error message
+        if (!responseText || responseText.trim().length === 0) {
+          // Only log warning if no fallback (errors with fallbacks are expected and handled gracefully)
+          if (finalFallback === undefined) {
+            console.warn(`⚠️ Empty error response body for ${url}`);
+          }
           errorMessage = `Server error: ${response.status} ${response.statusText}`;
-        } catch {
-          // Complete failure
-          console.error(`❌ Could not read error response at all`);
+        } else {
+          // Try to parse the text as JSON
+          try {
+            const errorData = JSON.parse(responseText);
+            errorMessage = errorData.error || errorData.message || errorMessage;
+            errorCode = errorData.code || errorCode;
+            responseBody = errorData;
+            
+            // Only log error if no fallback (errors with fallbacks are expected and handled gracefully)
+            if (finalFallback === undefined) {
+              console.error(`❌ API Error Response:`, {
+                url: String(url),
+                status: response.status,
+                statusText: response.statusText,
+                errorMessage: errorMessage,
+                errorCode: errorCode,
+                errorData: errorData
+              });
+            }
+          } catch (parseError) {
+            // Response text exists but isn't valid JSON - use the text itself
+            // Only log warning if no fallback
+            if (finalFallback === undefined) {
+              console.warn(`⚠️ Error response is not valid JSON for ${url}`);
+              console.error(`❌ Error response text:`, responseText.substring(0, 500));
+            }
+            errorMessage = `Server error: ${response.status} ${response.statusText}`;
+            if (responseText.length > 0 && responseText.length < 200) {
+              errorMessage += ` - ${responseText}`;
+            }
+          }
         }
+      } catch (textError) {
+        // Complete failure - couldn't read response at all
+        // Only log error if no fallback
+        if (finalFallback === undefined) {
+          console.error(`❌ Could not read error response:`, textError);
+        }
+        errorMessage = `Server error: ${response.status} ${response.statusText}`;
       }
 
-      // Enhanced error logging with more context
-      console.error(`❌ API call failed: ${url}`, {
-        status: response.status,
-        statusText: response.statusText,
-        errorMessage,
-        errorCode,
-        responseBody,
-        headers: Object.fromEntries(response.headers.entries())
-      });
-      
-      // Return fallback if available
+      // Return fallback if available (before logging errors)
       if (finalFallback !== undefined) {
-        console.log(`🔄 Using fallback response for: ${url}`);
+        // Silently use fallback - errors with fallbacks are expected and handled gracefully
         return finalFallback;
       }
+      
+      // Enhanced error logging with more context (only if no fallback)
+      console.error(`❌ API call failed: ${url}`);
+      console.error('Status:', response.status);
+      console.error('Status Text:', response.statusText);
+      console.error('Error Message:', errorMessage);
+      console.error('Error Code:', errorCode);
+      console.error('Response Body:', responseBody);
+      console.error('Headers:', Object.fromEntries(response.headers.entries()));
       
       throw new Error(errorMessage);
     }

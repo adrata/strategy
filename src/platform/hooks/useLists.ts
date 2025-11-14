@@ -81,20 +81,11 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
       } catch {}
       
       const url = `/api/v1/lists?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
-      const response = await authFetch(url);
+      // apiFetch returns parsed data directly, not a Response object
+      // Provide fallback with correct structure matching API response
+      const result = await authFetch(url, {}, { success: true, data: [] });
       
-      if (!response.ok) {
-        // Log error but don't throw - empty lists is a valid state
-        const status = response.status;
-        const statusText = response.statusText;
-        console.warn(`Failed to fetch lists (${status} ${statusText}). Using empty list.`);
-        setLists([]);
-        return;
-      }
-      
-      const result = await response.json();
-      
-      if (result.success && result.data) {
+      if (result && result.success && Array.isArray(result.data)) {
         setLists(result.data);
         // Cache the result
         try {
@@ -149,27 +140,23 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
 
     try {
       const url = `/api/v1/lists?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
-      const response = await authFetch(url, {
+      // apiFetch returns parsed data directly, not a Response object
+      const result = await authFetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create list');
-      }
-
-      const result = await response.json();
       
-      if (result.success && result.data) {
+      if (result && result.success && result.data) {
         await fetchLists(); // Refresh lists
         return result.data;
       }
       
-      return null;
+      // If result doesn't have success/data, extract error message
+      const errorMessage = result?.error || result?.message || 'Failed to create list';
+      throw new Error(errorMessage);
     } catch (err) {
       console.error('Error creating list:', err);
       throw err;
@@ -192,27 +179,23 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
 
     try {
       const url = `/api/v1/lists/${id}?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
-      const response = await authFetch(url, {
+      // apiFetch returns parsed data directly, not a Response object
+      const result = await authFetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update list');
-      }
-
-      const result = await response.json();
       
-      if (result.success && result.data) {
+      if (result && result.success && result.data) {
         await fetchLists(); // Refresh lists
         return result.data;
       }
       
-      return null;
+      // If result doesn't have success/data, extract error message
+      const errorMessage = result?.error || result?.message || 'Failed to update list';
+      throw new Error(errorMessage);
     } catch (err) {
       console.error('Error updating list:', err);
       throw err;
@@ -226,13 +209,15 @@ export function useLists(section: string, workspaceId?: string): UseListsReturn 
 
     try {
       const url = `/api/v1/lists/${id}?workspaceId=${finalWorkspaceId}&section=${encodeURIComponent(section)}`;
-      const response = await authFetch(url, {
+      // apiFetch returns parsed data directly, not a Response object
+      const result = await authFetch(url, {
         method: 'DELETE'
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete list');
+      // If result indicates an error, throw it
+      if (result && (result.error || (result.success === false))) {
+        const errorMessage = result.error || result.message || 'Failed to delete list';
+        throw new Error(errorMessage);
       }
 
       await fetchLists(); // Refresh lists
