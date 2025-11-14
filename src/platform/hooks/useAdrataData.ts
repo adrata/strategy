@@ -271,9 +271,11 @@ export function usePipelineData(
     } else if (section === 'actions') {
       response = await fetch('/api/v1/actions', { credentials: 'include' });
     } else if (section === 'leads') {
-      response = await fetch('/api/v1/people?status=LEAD', { credentials: 'include' });
+      // Pre-sort leads by globalRank descending to prevent client-side re-ranking glitch
+      response = await fetch('/api/v1/people?status=LEAD&sortBy=globalRank&sortOrder=desc', { credentials: 'include' });
     } else if (section === 'prospects') {
-      response = await fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' });
+      // Pre-sort prospects by lastActionDate ascending (oldest first) to prevent re-ranking glitch
+      response = await fetch('/api/v1/people?status=PROSPECT&sortBy=lastActionDate&sortOrder=asc', { credentials: 'include' });
     } else if (section === 'opportunities') {
       response = await fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' });
     } else if (section === 'speedrun') {

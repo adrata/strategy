@@ -315,6 +315,10 @@ export const PipelineContent = React.memo(function PipelineContent({
     if (section === 'prospects') {
       setSortField('lastActionDate');
       setSortDirection('asc'); // Oldest first
+    } else if (section === 'leads') {
+      // Use globalRank for leads to match API pre-sorting and prevent client-side re-ranking glitch
+      setSortField('globalRank');
+      setSortDirection('desc'); // Highest rank first
     } else {
       setSortField('rank');
       setSortDirection('desc'); // Highest rank first (largest to smallest)
