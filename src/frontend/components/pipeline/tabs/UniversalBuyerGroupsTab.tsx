@@ -418,8 +418,17 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // Check general people cache
         const cachedData = safeGetItem(cacheKey, 2 * 60 * 1000); // 2 minutes TTL
         if (cachedData) {
-          peopleData = cachedData;
-          console.log('📦 [BUYER GROUPS] Using cached people data');
+          // 🚨 FIX: Filter cached people by companyId to prevent using people from wrong companies
+          const filteredCachedData = cachedData.filter((person: any) => 
+            person.companyId === companyId
+          );
+          if (filteredCachedData.length > 0) {
+            peopleData = filteredCachedData;
+            console.log(`📦 [BUYER GROUPS] Using cached people data (filtered to ${filteredCachedData.length} people for company ${companyId})`);
+          } else {
+            console.log('📦 [BUYER GROUPS] Cached people data exists but none match current companyId, will fetch fresh');
+            peopleData = [];
+          }
         }
         
         // Only fetch if no cache or cache is stale
@@ -699,7 +708,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             role: buyerRole,
             buyerGroupStatus: person.buyerGroupStatus,  // ADD THIS - capture from API
             status: person.status,  // Add status field for navigation
-            companyId: person.companyId || companyId,  // Add companyId for navigation
+            companyId: companyId,  // 🚨 FIX: Always use current companyId, not person.companyId (prevents filtering out valid members)
             influence: buyerRole === 'Decision Maker' ? 'high' : buyerRole === 'Champion' ? 'high' : 'medium',
             isPrimary: isPrimary,
             company: companyName,

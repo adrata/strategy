@@ -53,6 +53,7 @@
     "verify:intelligence": "tsx scripts/verify-intelligence-accuracy.ts",
     "check:cache-age": "tsx scripts/check-cached-intelligence-age.ts",
     "final:audit-and-regenerate": "tsx scripts/final-audit-and-regenerate.ts",
+    "generate:all-intelligence": "tsx scripts/generate-intelligence-for-all-top-temp.ts",
     "test:e2e:auth": "playwright test tests/e2e/auth.spec.ts",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
