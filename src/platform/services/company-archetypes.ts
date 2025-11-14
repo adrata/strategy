@@ -25,7 +25,7 @@ export interface CompanyProfile {
   targetIndustry: string;
   size: number;
   revenue: number;
-  age: number;
+  age: number | null;
   growthStage: 'startup' | 'growth' | 'mature' | 'declining';
   marketPosition: 'leader' | 'challenger' | 'follower' | 'niche';
 }
@@ -215,18 +215,31 @@ export function determineCompanyArchetype(profile: CompanyProfile): CompanyArche
   const { size, revenue, age, growthStage, marketPosition } = profile;
   
   // Market Leader: Large, established, leading position
-  if (size > 1000 && revenue > 100000000 && age > 10 && marketPosition === 'leader') {
-    return COMPANY_ARCHETYPES[0]; // market-leader
-  }
-  
-  // Fast-Growing Disruptor: High growth, innovative, challenging
-  if (growthStage === 'growth' && marketPosition === 'challenger' && age < 10) {
-    return COMPANY_ARCHETYPES[1]; // fast-growing-disruptor
+  // Handle missing age data for large companies (assume established)
+  if (size > 1000 && revenue > 100000000 && marketPosition === 'leader') {
+    if (age === null || age === 0 || age > 10) {
+      return COMPANY_ARCHETYPES[0]; // market-leader
+    }
   }
   
   // Enterprise Incumbent: Large, established, legacy systems
-  if (size > 500 && age > 15 && marketPosition === 'leader') {
-    return COMPANY_ARCHETYPES[2]; // enterprise-incumbent
+  // For very large companies (10k+ employees or $1B+ revenue), assume incumbent even without age
+  if (size > 500 && marketPosition === 'leader') {
+    if (age === null || age === 0 || age > 15) {
+      // Very large companies are likely incumbents
+      if (size >= 10000 || revenue >= 1000000000) {
+        return COMPANY_ARCHETYPES[2]; // enterprise-incumbent
+      }
+      if (age && age > 15) {
+        return COMPANY_ARCHETYPES[2]; // enterprise-incumbent
+      }
+    }
+  }
+  
+  // Fast-Growing Disruptor: High growth, innovative, challenging
+  // Only for companies with known age < 10
+  if (growthStage === 'growth' && marketPosition === 'challenger' && age !== null && age > 0 && age < 10) {
+    return COMPANY_ARCHETYPES[1]; // fast-growing-disruptor
   }
   
   // Niche Specialist: Smaller, focused, specialized
@@ -239,7 +252,25 @@ export function determineCompanyArchetype(profile: CompanyProfile): CompanyArche
     return COMPANY_ARCHETYPES[4]; // regional-player
   }
   
-  // Default to Fast-Growing Disruptor for startups
+  // For large companies without age data, default to Enterprise Incumbent
+  if (size >= 1000 && revenue >= 100000000 && (age === null || age === 0)) {
+    return COMPANY_ARCHETYPES[2]; // enterprise-incumbent
+  }
+  
+  // For medium-large companies with challenger position, could be disruptor or incumbent
+  if (size >= 500 && marketPosition === 'challenger' && growthStage === 'growth') {
+    if (age !== null && age > 0 && age < 10) {
+      return COMPANY_ARCHETYPES[1]; // fast-growing-disruptor
+    }
+    return COMPANY_ARCHETYPES[2]; // enterprise-incumbent (default for established challengers)
+  }
+  
+  // Default to Enterprise Incumbent for large established companies, Fast-Growing Disruptor for smaller
+  if (size >= 1000) {
+    return COMPANY_ARCHETYPES[2]; // enterprise-incumbent
+  }
+  
+  // Default to Fast-Growing Disruptor for smaller/startup companies
   return COMPANY_ARCHETYPES[1];
 }
 

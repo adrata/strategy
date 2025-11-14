@@ -280,6 +280,7 @@ export async function GET(
       linkedinConnectionDate: transformedPerson.linkedinConnectionDate ?? null,
       // Company Information
       companyId: transformedPerson.companyId ?? null,
+      company: transformedPerson.company ?? null,
       // Engagement History
       lastAction: transformedPerson.lastAction ?? null,
       nextAction: transformedPerson.nextAction ?? null,

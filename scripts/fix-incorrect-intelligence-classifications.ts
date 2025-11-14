@@ -300,10 +300,10 @@ async function fixIntelligenceClassifications(dryRun: boolean = false) {
           companyName: companyRecord.name,
           companyIndustry: companyRecord.industry || 'Unknown',
           targetIndustry: company.correctTargetIndustry,
-          companySize: companyRecord.size || 0,
+          companySize: parseCompanySize(companyRecord.size || companyRecord.employeeCount),
           companyRevenue: companyRecord.revenue || 0,
           companyAge: companyRecord.foundedAt ? 
-            Math.floor((Date.now() - new Date(companyRecord.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0,
+            Math.floor((Date.now() - new Date(companyRecord.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
           growthStage: determineGrowthStage(companyRecord),
           marketPosition: determineMarketPosition(companyRecord),
           forceRegenerate: true,

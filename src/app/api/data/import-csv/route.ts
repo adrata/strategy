@@ -23,6 +23,7 @@ import {
 } from '@/platform/services/csv-import-service';
 import { validatePhoneNumber } from '@/platform/utils/phone-validator';
 import { findOrCreateCompany } from '@/platform/services/company-linking-service';
+import { isLikelySameCompany, extractDomain } from '@/platform/utils/domain-validation';
 
 // Using enhanced CSV import service for better data processing
 
@@ -92,8 +93,49 @@ async function importLead(data: any, imported: number, updated: number, errors: 
   if (data.company && !data.companyId && data.workspaceId) {
     try {
       const companyResult = await findOrCreateCompany(data.company, data.workspaceId);
-      data.companyId = companyResult.id;
-      console.log(`🔗 [CSV IMPORT] Linked lead to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+      
+      // Validate email domain against company domain to prevent cross-company pollution
+      const leadEmail = data.email || data.workEmail;
+      if (leadEmail && leadEmail.includes('@')) {
+        const leadDomain = extractDomain(leadEmail.split('@')[1]);
+        
+        // Get company details to check domain
+        const companyDetails = await prisma.companies.findUnique({
+          where: { id: companyResult.id },
+          select: { website: true, domain: true }
+        });
+        
+        if (companyDetails && leadDomain) {
+          const companyWebsite = companyDetails.website || companyDetails.domain;
+          if (companyWebsite) {
+            const companyDomain = extractDomain(companyWebsite);
+            
+            if (companyDomain && !isLikelySameCompany(leadDomain, companyDomain)) {
+              // Domain mismatch detected - don't link to prevent cross-company pollution
+              console.warn(`⚠️ [CSV IMPORT] Domain mismatch detected for lead ${data.fullName || data.email}: ${leadDomain} vs ${companyDomain} - Not linking to prevent cross-company contamination`);
+              // Don't set companyId, but keep company name for reference
+              // The lead will be created without companyId
+            } else {
+              // Domains match or company has no domain - safe to link
+              data.companyId = companyResult.id;
+              console.log(`🔗 [CSV IMPORT] Linked lead to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+            }
+          } else {
+            // Company has no domain/website - link anyway but log warning
+            console.warn(`⚠️ [CSV IMPORT] Company ${companyResult.name} has no domain/website - linking lead without domain validation`);
+            data.companyId = companyResult.id;
+            console.log(`🔗 [CSV IMPORT] Linked lead to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+          }
+        } else {
+          // No email domain or company details - link anyway
+          data.companyId = companyResult.id;
+          console.log(`🔗 [CSV IMPORT] Linked lead to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+        }
+      } else {
+        // Lead has no email - link anyway (can't validate domain)
+        data.companyId = companyResult.id;
+        console.log(`🔗 [CSV IMPORT] Linked lead to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+      }
     } catch (error) {
       console.error(`⚠️ [CSV IMPORT] Failed to link company for lead: ${error}`);
     }
@@ -177,8 +219,49 @@ async function importContact(data: any, imported: number, updated: number, error
   if (data.company && !data.companyId && data.workspaceId) {
     try {
       const companyResult = await findOrCreateCompany(data.company, data.workspaceId);
-      data.companyId = companyResult.id;
-      console.log(`🔗 [CSV IMPORT] Linked contact to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+      
+      // Validate email domain against company domain to prevent cross-company pollution
+      const contactEmail = data.email || data.workEmail || data.personalEmail;
+      if (contactEmail && contactEmail.includes('@')) {
+        const contactDomain = extractDomain(contactEmail.split('@')[1]);
+        
+        // Get company details to check domain
+        const companyDetails = await prisma.companies.findUnique({
+          where: { id: companyResult.id },
+          select: { website: true, domain: true }
+        });
+        
+        if (companyDetails && contactDomain) {
+          const companyWebsite = companyDetails.website || companyDetails.domain;
+          if (companyWebsite) {
+            const companyDomain = extractDomain(companyWebsite);
+            
+            if (companyDomain && !isLikelySameCompany(contactDomain, companyDomain)) {
+              // Domain mismatch detected - don't link to prevent cross-company pollution
+              console.warn(`⚠️ [CSV IMPORT] Domain mismatch detected for contact ${data.fullName || data.email}: ${contactDomain} vs ${companyDomain} - Not linking to prevent cross-company contamination`);
+              // Don't set companyId, but keep company name for reference
+              // The contact will be created without companyId
+            } else {
+              // Domains match or company has no domain - safe to link
+              data.companyId = companyResult.id;
+              console.log(`🔗 [CSV IMPORT] Linked contact to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+            }
+          } else {
+            // Company has no domain/website - link anyway but log warning
+            console.warn(`⚠️ [CSV IMPORT] Company ${companyResult.name} has no domain/website - linking contact without domain validation`);
+            data.companyId = companyResult.id;
+            console.log(`🔗 [CSV IMPORT] Linked contact to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+          }
+        } else {
+          // No email domain or company details - link anyway
+          data.companyId = companyResult.id;
+          console.log(`🔗 [CSV IMPORT] Linked contact to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+        }
+      } else {
+        // Contact has no email - link anyway (can't validate domain)
+        data.companyId = companyResult.id;
+        console.log(`🔗 [CSV IMPORT] Linked contact to company: ${companyResult.name} (${companyResult.isNew ? 'created' : 'existing'})`);
+      }
     } catch (error) {
       console.error(`⚠️ [CSV IMPORT] Failed to link company for contact: ${error}`);
     }

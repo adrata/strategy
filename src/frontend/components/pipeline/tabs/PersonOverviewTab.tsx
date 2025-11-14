@@ -266,8 +266,8 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
       const recordCompany = typeof record?.company === 'string' 
         ? record.company 
         : (record?.company?.name || record?.companyName);
-      // If companyId exists but company relation is null, use fetched company name
-      const companyFromId = (record?.companyId && !record?.company) ? fetchedCompanyName : null;
+      // If companyId exists but company relation/object is null or missing name, use fetched company name
+      const companyFromId = (record?.companyId && (!record?.company || (typeof record?.company === 'object' && !record?.company?.name))) ? fetchedCompanyName : null;
       return coresignalCompany || recordCompany || companyFromId || null;
     })(),
     industry: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || null,
@@ -339,21 +339,32 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   // Fetch company name when companyId exists but company relation is null
   useEffect(() => {
     const fetchCompanyName = async () => {
-      // Only fetch if companyId exists but company relation is null
-      if (!record?.companyId || record?.company || fetchedCompanyName || isFetchingCompany) {
+      // If company object exists in record (from API response), use it directly
+      if (record?.company) {
+        // Company object is available, no need to fetch
+        if (typeof record.company === 'object' && record.company.name) {
+          // Company object has name, we're good
+          return;
+        }
+      }
+
+      // Only fetch if companyId exists but company relation/object is null or missing name
+      if (!record?.companyId || fetchedCompanyName || isFetchingCompany) {
         return;
       }
 
       setIsFetchingCompany(true);
       try {
-        // Try to fetch company by ID (even if soft-deleted, the API might return it)
+        // Try to fetch company by ID from people API (which handles soft-deleted companies)
+        // The people API now includes company object in response, but if it's missing,
+        // we can try fetching directly (though this may fail for soft-deleted companies)
         const response = await authFetch(`/api/v1/companies/${record.companyId}`);
-        if (response && response.success && response.data) {
+        if (response && response.success && response.data && response.data.name) {
           setFetchedCompanyName(response.data.name);
         }
       } catch (error) {
         // If company is not found (404) or soft-deleted, that's okay
-        // We'll just not have a company name to display
+        // The API should have included it in the response, but if not, we'll just not have a company name to display
         console.log('⚠️ [PERSON OVERVIEW] Could not fetch company name:', error);
       } finally {
         setIsFetchingCompany(false);

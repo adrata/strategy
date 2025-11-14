@@ -79,10 +79,10 @@ export class AutoStrategyPopulationService {
         companyName: company.name,
         companyIndustry: company.industry || 'Unknown',
         targetIndustry: inferredTargetIndustry,
-        companySize: company.size || 0,
+        companySize: this.parseCompanySize(company.size || company.employeeCount),
         companyRevenue: company.revenue || 0,
         companyAge: company.foundedAt ? 
-          Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0,
+          Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
         growthStage: this.determineGrowthStage(company),
         marketPosition: this.determineMarketPosition(company),
         // Pass through all real company data
@@ -126,26 +126,87 @@ export class AutoStrategyPopulationService {
     }
   }
 
+  /**
+   * Parse company size from string or number
+   */
+  private parseCompanySize(size: any): number {
+    if (typeof size === 'number') return size;
+    if (!size) return 0;
+    
+    const sizeStr = String(size).toLowerCase();
+    const match = sizeStr.match(/(\d{1,3}(?:,\d{3})*)/);
+    if (match) {
+      return parseInt(match[1].replace(/,/g, ''), 10);
+    }
+    const rangeMatch = sizeStr.match(/(\d+)\s*-\s*(\d+)/);
+    if (rangeMatch) {
+      return parseInt(rangeMatch[2], 10);
+    }
+    if (sizeStr.includes('10000+') || sizeStr.includes('enterprise')) return 10000;
+    if (sizeStr.includes('5000+') || sizeStr.includes('large-enterprise')) return 5000;
+    if (sizeStr.includes('1000+') || sizeStr.includes('large')) return 1000;
+    if (sizeStr.includes('500+') || sizeStr.includes('medium-enterprise')) return 500;
+    if (sizeStr.includes('200+') || sizeStr.includes('medium')) return 200;
+    if (sizeStr.includes('50+') || sizeStr.includes('small')) return 50;
+    return 0;
+  }
+
   private determineGrowthStage(company: any): 'startup' | 'growth' | 'mature' | 'declining' {
     const age = company.foundedAt ? 
-      Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0;
-    const size = company.size || 0;
+      Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+    const size = this.parseCompanySize(company.size || company.employeeCount);
     const revenue = company.revenue || 0;
 
+    // For large companies, default to mature if age is unknown
+    if (size >= 1000 && revenue > 100000000) {
+      if (age === null || age === 0) return 'mature';
+      if (age >= 10) return 'mature';
+      return 'growth';
+    }
+
+    // For medium companies
+    if (size >= 500) {
+      if (age === null || age === 0) return 'mature';
+      if (age >= 10) return 'mature';
+      return 'growth';
+    }
+
+    // For smaller companies, use age if available
+    if (age === null || age === 0) {
+      if (size < 50) return 'startup';
+      if (size < 500) return 'growth';
+      return 'mature';
+    }
+
+    // Standard logic with age data
     if (age < 3 && size < 50) return 'startup';
     if (age < 10 && size < 500) return 'growth';
     if (age >= 10 && size >= 500) return 'mature';
-    return 'declining';
+    
+    // Only return declining for old companies with small size (indicating contraction)
+    if (age > 20 && size < 100 && revenue < 1000000) return 'declining';
+    
+    // Default to mature for established companies
+    return 'mature';
   }
 
   private determineMarketPosition(company: any): 'leader' | 'challenger' | 'follower' | 'niche' {
-    const size = company.size || 0;
+    const size = this.parseCompanySize(company.size || company.employeeCount);
     const revenue = company.revenue || 0;
     const globalRank = company.globalRank || 999999;
 
+    // Global leaders based on rank
     if (globalRank <= 1000) return 'leader';
-    if (size > 1000 || revenue > 100000000) return 'challenger';
-    if (size > 100) return 'follower';
+    
+    // Large companies with significant revenue are challengers or leaders
+    if (size >= 10000 || revenue >= 1000000000) return 'leader'; // $1B+ revenue = leader
+    if (size >= 1000 || revenue >= 100000000) return 'challenger'; // $100M+ revenue = challenger
+    
+    // Medium companies
+    if (size >= 500) return 'challenger';
+    if (size >= 100) return 'follower';
+    
+    // Small companies
     return 'niche';
   }
 

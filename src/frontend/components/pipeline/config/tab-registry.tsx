@@ -263,9 +263,11 @@ export function getTabsForRecordType(recordType: string, record?: any): TabConfi
   // SAFETY: Only filter if we have valid record data to prevent blank pages during loading
   if ((recordType === 'people' || recordType === 'leads' || recordType === 'prospects') && record && record.id) {
     const isInBuyerGroup = record.isBuyerGroupMember || record.buyerGroupRole || record.customFields?.buyerGroupRole;
+    const hasCompanyId = record.companyId; // Check for companyId (works even if company relation is null)
     filteredTabs = filteredTabs.filter(tab => {
       if (tab.id === 'buyer-groups' && !isInBuyerGroup) return false;
-      if (tab.id === 'co-workers' && isInBuyerGroup) return false;
+      // Show co-workers tab only if: (1) not in buyer group AND (2) has companyId
+      if (tab.id === 'co-workers' && (isInBuyerGroup || !hasCompanyId)) return false;
       return true;
     });
   }

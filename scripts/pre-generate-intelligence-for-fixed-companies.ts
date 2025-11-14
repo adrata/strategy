@@ -57,26 +57,67 @@ async function preGenerateIntelligence() {
       return;
     }
     
+    // Helper function to parse company size from string or number
+    function parseCompanySize(size: any): number {
+      if (typeof size === 'number') return size;
+      if (!size) return 0;
+      const sizeStr = String(size).toLowerCase();
+      const match = sizeStr.match(/(\d{1,3}(?:,\d{3})*)/);
+      if (match) {
+        return parseInt(match[1].replace(/,/g, ''), 10);
+      }
+      const rangeMatch = sizeStr.match(/(\d+)\s*-\s*(\d+)/);
+      if (rangeMatch) {
+        return parseInt(rangeMatch[2], 10);
+      }
+      if (sizeStr.includes('10000+') || sizeStr.includes('enterprise')) return 10000;
+      if (sizeStr.includes('5000+') || sizeStr.includes('large-enterprise')) return 5000;
+      if (sizeStr.includes('1000+') || sizeStr.includes('large')) return 1000;
+      if (sizeStr.includes('500+') || sizeStr.includes('medium-enterprise')) return 500;
+      if (sizeStr.includes('200+') || sizeStr.includes('medium')) return 200;
+      if (sizeStr.includes('50+') || sizeStr.includes('small')) return 50;
+      return 0;
+    }
+    
     // Helper functions
     function determineGrowthStage(company: any): 'startup' | 'growth' | 'mature' | 'declining' {
       const age = company.foundedAt ? 
-        Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0;
-      const size = company.size || 0;
+        Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+      const size = parseCompanySize(company.size || company.employeeCount);
+      const revenue = company.revenue || 0;
       
+      if (size >= 1000 && revenue > 100000000) {
+        if (age === null || age === 0) return 'mature';
+        if (age >= 10) return 'mature';
+        return 'growth';
+      }
+      if (size >= 500) {
+        if (age === null || age === 0) return 'mature';
+        if (age >= 10) return 'mature';
+        return 'growth';
+      }
+      if (age === null || age === 0) {
+        if (size < 50) return 'startup';
+        if (size < 500) return 'growth';
+        return 'mature';
+      }
       if (age < 3 && size < 50) return 'startup';
       if (age < 10 && size < 500) return 'growth';
       if (age >= 10 && size >= 500) return 'mature';
-      return 'declining';
+      if (age > 20 && size < 100 && revenue < 1000000) return 'declining';
+      return 'mature';
     }
     
     function determineMarketPosition(company: any): 'leader' | 'challenger' | 'follower' | 'niche' {
-      const size = company.size || 0;
+      const size = parseCompanySize(company.size || company.employeeCount);
       const revenue = company.revenue || 0;
       const globalRank = company.globalRank || 999999;
       
       if (globalRank <= 1000) return 'leader';
-      if (size > 1000 || revenue > 100000000) return 'challenger';
-      if (size > 100) return 'follower';
+      if (size >= 10000 || revenue >= 1000000000) return 'leader';
+      if (size >= 1000 || revenue >= 100000000) return 'challenger';
+      if (size >= 500) return 'challenger';
+      if (size >= 100) return 'follower';
       return 'niche';
     }
     
@@ -145,10 +186,10 @@ async function preGenerateIntelligence() {
           companyName: company.name,
           companyIndustry: company.industry || 'Unknown',
           targetIndustry: targetIndustry,
-          companySize: company.size || 0,
+          companySize: parseCompanySize(company.size || company.employeeCount),
           companyRevenue: company.revenue || 0,
           companyAge: company.foundedAt ? 
-            Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0,
+            Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
           growthStage: determineGrowthStage(company),
           marketPosition: determineMarketPosition(company),
           forceRegenerate: true,

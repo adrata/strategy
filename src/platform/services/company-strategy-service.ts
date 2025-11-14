@@ -48,7 +48,7 @@ export interface CompanyStrategyRequest {
   targetIndustry: string;
   companySize: number;
   companyRevenue: number;
-  companyAge: number;
+  companyAge: number | null;
   growthStage: 'startup' | 'growth' | 'mature' | 'declining';
   marketPosition: 'leader' | 'challenger' | 'follower' | 'niche';
   forceRegenerate?: boolean;
