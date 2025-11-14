@@ -110,6 +110,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
     // 🚀 SMART CACHE: Use localStorage cache with TTL checking for instant loading
     // Speedrun now uses cache but with shorter TTL (2 minutes) and background prefetch
+    // Cache version to invalidate when sorting logic changes
+    const CACHE_VERSION = 2; // Increment this when sorting/data structure changes
+    
     if (!shouldForceRefresh) {
       try {
         const storageKey = `adrata-${section}-${workspaceId}`;
@@ -117,30 +120,40 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         if (cached) {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed?.data)) {
-            // Check cache age - speedrun has shorter TTL (2 minutes)
-            const cacheAge = Date.now() - (parsed.ts || 0);
-            const maxAge = section === 'speedrun' ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2min for speedrun, 5min for others
-            
-            if (cacheAge < maxAge) {
-              console.log(`⚡ [FAST SECTION DATA] Loading ${section} from localStorage cache:`, {
-                section,
-                cachedCount: parsed.data.length,
-                cacheTimestamp: parsed.ts,
-                cacheAge: Math.round(cacheAge / 1000) + 's'
-              });
-              setData(parsed.data);
-              setCount(parsed.data.length);
-              setLoading(false);
-              setError(null);
-              // Still mark as loaded in memory cache
-              loadedSectionsRef.current.add(section);
-              return;
-            } else {
-              console.log(`🔄 [FAST SECTION DATA] Cache expired for ${section}, fetching fresh data:`, {
-                cacheAge: Math.round(cacheAge / 1000) + 's',
-                maxAge: Math.round(maxAge / 1000) + 's'
+            // Check cache version - invalidate if version mismatch
+            if (parsed.version !== CACHE_VERSION) {
+              console.log(`🔄 [FAST SECTION DATA] Cache version mismatch for ${section}, invalidating:`, {
+                cachedVersion: parsed.version,
+                currentVersion: CACHE_VERSION
               });
               localStorage.removeItem(storageKey);
+            } else {
+              // Check cache age - speedrun has shorter TTL (2 minutes)
+              const cacheAge = Date.now() - (parsed.ts || 0);
+              const maxAge = section === 'speedrun' ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2min for speedrun, 5min for others
+              
+              if (cacheAge < maxAge) {
+                console.log(`⚡ [FAST SECTION DATA] Loading ${section} from localStorage cache:`, {
+                  section,
+                  cachedCount: parsed.data.length,
+                  cacheTimestamp: parsed.ts,
+                  cacheVersion: parsed.version,
+                  cacheAge: Math.round(cacheAge / 1000) + 's'
+                });
+                setData(parsed.data);
+                setCount(parsed.data.length);
+                setLoading(false);
+                setError(null);
+                // Still mark as loaded in memory cache
+                loadedSectionsRef.current.add(section);
+                return;
+              } else {
+                console.log(`🔄 [FAST SECTION DATA] Cache expired for ${section}, fetching fresh data:`, {
+                  cacheAge: Math.round(cacheAge / 1000) + 's',
+                  maxAge: Math.round(maxAge / 1000) + 's'
+                });
+                localStorage.removeItem(storageKey);
+              }
             }
           }
         }
@@ -180,28 +193,27 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/speedrun?limit=${limit}${refreshParam}${partnerosParam}`;
           break;
         case 'leads':
-          // For leads, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=leads&limit=10000${refreshParam}${partnerosParam}`;
+          // For leads, fetch with pre-sorting to prevent client-side re-ranking glitch
+          url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'prospects':
-          // For prospects, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=prospects&limit=10000${refreshParam}${partnerosParam}`;
+          // For prospects, fetch with pre-sorting by lastActionDate (oldest first)
+          url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'opportunities':
           // For opportunities, always fetch all records to support proper pagination
           url = `/api/v1/people?section=opportunities&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'people':
-          // 🚀 PERFORMANCE: Use reasonable limit for people, but allow fetching all records
+          // 🚀 PERFORMANCE: Pre-sort people by globalRank to prevent client-side re-ranking glitch
           // Client-side pagination will handle larger datasets efficiently
-          // Keep high limit to allow access to all records
-          url = `/api/v1/people?limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
+          url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
           break;
         case 'companies':
-          // For companies, use v1 API with increased limit (now supports up to 10000 records)
+          // For companies, use v1 API with pre-sorting and increased limit
           // Pass workspaceId to ensure correct workspace filtering
           const workspaceParam = workspaceId ? `&workspaceId=${encodeURIComponent(workspaceId)}` : '';
-          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}${partnerosParam}`;
+          url = `/api/v1/companies?sortBy=name&sortOrder=asc&limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}${partnerosParam}`;
           break;
         case 'partners':
           url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
@@ -351,17 +363,20 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         // 🚀 PERFORMANCE: Cache data in localStorage (like leads pattern)
         try {
           const storageKey = `adrata-${section}-${workspaceId}`;
+          const CACHE_VERSION = 2; // Must match the version check above
           const cacheData = {
             data: responseData,
             count: responseCount,
-            ts: Date.now()
+            ts: Date.now(),
+            version: CACHE_VERSION
           };
           localStorage.setItem(storageKey, JSON.stringify(cacheData));
           console.log(`💾 [FAST SECTION DATA] Cached ${section} data to localStorage:`, {
             section,
             storageKey,
             cachedCount: responseData.length,
-            cacheTimestamp: cacheData.ts
+            cacheTimestamp: cacheData.ts,
+            cacheVersion: CACHE_VERSION
           });
         } catch (e) {
           console.warn(`⚠️ [FAST SECTION DATA] Failed to cache ${section} data:`, e);

@@ -814,10 +814,26 @@ export const PipelineContent = React.memo(function PipelineContent({
       return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesTechnology && matchesLastContacted;
     });
 
-    // Apply sorting for all fields including rank
-    if (sortField) {
+    // 🎯 PERFORMANCE FIX: Only apply client-side sorting when explicitly changed by user
+    // Data comes pre-sorted from API, so we should preserve that order unless user changes sort
+    // This prevents visible glitching caused by re-sorting already-sorted data
+    const shouldApplyClientSort = sortField && (
+      // Always sort if user explicitly changed sort (not initial load)
+      searchQuery || 
+      verticalFilter !== 'all' || 
+      statusFilter !== 'all' || 
+      priorityFilter !== 'all' ||
+      revenueFilter !== 'all' ||
+      lastContactedFilter !== 'all' ||
+      timezoneFilter !== 'all' ||
+      companySizeFilter !== 'all' ||
+      locationFilter !== 'all' ||
+      technologyFilter !== 'all'
+    );
+    
+    if (shouldApplyClientSort && sortField) {
       // Regular field sorting with robust field handling
-      console.log(`🔧 [SORT FIX] Applying sort: field=${sortField}, direction=${sortDirection}, section=${section}`);
+      console.log(`🔧 [SORT] Applying client-side sort: field=${sortField}, direction=${sortDirection}, section=${section}`);
       filtered = [...filtered].sort((a: any, b: any) => {
         let aVal = getSortableValue(a, sortField);
         let bVal = getSortableValue(b, sortField);
@@ -849,6 +865,9 @@ export const PipelineContent = React.memo(function PipelineContent({
         if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
         return 0;
       });
+    } else {
+      // Data is already sorted from API - preserve that order
+      console.log(`✅ [SORT] Preserving API sort order for ${section} (no filters active)`);
     }
 
     return filtered;
