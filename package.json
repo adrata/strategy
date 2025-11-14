@@ -48,6 +48,7 @@
     "fix:intelligence-classifications": "tsx scripts/fix-incorrect-intelligence-classifications.ts",
     "fix:intelligence-classifications:dry-run": "tsx scripts/fix-incorrect-intelligence-classifications.ts --dry-run",
     "pre-generate:intelligence": "tsx scripts/pre-generate-intelligence-for-fixed-companies.ts",
+    "audit:intelligence-regeneration": "tsx scripts/audit-companies-needing-regeneration.ts",
     "test:e2e:auth": "playwright test tests/e2e/auth.spec.ts",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
@@ -294,6 +295,9 @@
     "@humanwhocodes/config-array": "^0.14.0",
     "@humanwhocodes/object-schema": "^2.0.4",
     "@xmldom/xmldom": "^0.9.8",
-    "js-yaml": "^4.1.1"
+    "js-yaml": "4.1.1",
+    "@expo/xcpretty": {
+      "js-yaml": "4.1.1"
+    }
   }
 }
