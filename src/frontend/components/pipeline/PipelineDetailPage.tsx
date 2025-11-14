@@ -746,6 +746,25 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     errorMessage: error
   });
 
+  // 🔍 BLANK PAGE FIX: Fallback to find record in data array if not loaded yet
+  useEffect(() => {
+    if (!slug || selectedRecord || directRecordLoading || loading) return;
+    
+    const recordId = extractIdFromSlug(slug);
+    if (!recordId || recordId === 'undefined' || recordId === 'null' || recordId.trim() === '') return;
+    
+    // Try to find the record in the data array
+    const recordInData = data.find((r: any) => r.id === recordId);
+    if (recordInData) {
+      console.log(`✅ [BLANK PAGE FIX] Found record in data array, using it as fallback:`, {
+        recordId,
+        recordName: recordInData.name || recordInData.fullName,
+        dataLength: data.length
+      });
+      setSelectedRecord(recordInData);
+    }
+  }, [slug, selectedRecord, directRecordLoading, loading, data, section]);
+
   useEffect(() => {
     if (!slug) return;
 
@@ -1400,14 +1419,17 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   // Note: pipelineUser, company, workspace are now available from the top-level hook call
 
   // 🔍 BLANK PAGE FIX: If we have a slug but no record and not loading, show helpful message
+  // Note: The useEffect above will try to find the record in data array first
   if (slug && !selectedRecord && !previousRecord && !loading && !directRecordLoading) {
     console.error(`❌ [BLANK PAGE] No record found and not loading:`, {
       slug,
       section,
+      recordId: extractIdFromSlug(slug),
       directRecordError,
       acquisitionDataError: acquisitionData.error,
       hasData: data.length > 0,
-      dataLength: data.length
+      dataLength: data.length,
+      searchedInData: true
     });
     
     return (

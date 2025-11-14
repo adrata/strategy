@@ -18,7 +18,7 @@ export const maxDuration = 60;
 // GET /api/v1/strategy/company/[id] - Load existing company strategy
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate and authorize user
@@ -33,7 +33,7 @@ export async function GET(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const companyId = params.id;
+    const companyId = (await params).id;
     if (!companyId) {
       return createErrorResponse('Company ID is required', 'VALIDATION_ERROR', 400);
     }
@@ -111,8 +111,16 @@ export async function GET(
 // POST /api/v1/strategy/company/[id] - Generate new company strategy
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  // Extract companyId early so it's available in catch block
+  let companyId: string | undefined;
+  try {
+    companyId = (await params).id;
+  } catch (paramError) {
+    return createErrorResponse('Invalid company ID parameter', 'VALIDATION_ERROR', 400);
+  }
+
   try {
     // Authenticate and authorize user
     const authResult = await getSecureApiContext(request, {
@@ -126,7 +134,6 @@ export async function POST(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const companyId = params.id;
     if (!companyId) {
       return createErrorResponse('Company ID is required', 'VALIDATION_ERROR', 400);
     }
@@ -324,7 +331,7 @@ export async function POST(
       error: error,
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      companyId: params.id,
+      companyId: companyId || 'unknown',
       timestamp: new Date().toISOString()
     });
     return createErrorResponse(

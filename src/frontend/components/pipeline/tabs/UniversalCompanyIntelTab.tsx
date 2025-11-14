@@ -55,8 +55,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   const [isGeneratingStrategy, setIsGeneratingStrategy] = useState(false);
   const [strategyError, setStrategyError] = useState<string | null>(null);
   
-  // Track generation attempts to prevent duplicate calls
-  const generationAttempted = useRef(false);
+  // Track retry attempts for manual generation
   const [retryCount, setRetryCount] = useState(0);
   const maxRetries = 3;
   
@@ -77,28 +76,12 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     };
   }, []);
 
-  // Load existing strategy data on component mount
+  // Load existing strategy data on component mount (non-blocking)
   useEffect(() => {
     if (record?.id) {
       loadStrategyData();
     }
   }, [record?.id]);
-
-  // Smart auto-generation logic
-  useEffect(() => {
-    if (record?.id && !strategyData && !isGeneratingStrategy && !generationAttempted.current) {
-      const hasStrategy = record.customFields?.strategyData;
-      if (hasStrategy) {
-        console.log('🔄 [COMPANY STRATEGY] Loading existing strategy data for company:', record.id);
-        setStrategyData(hasStrategy);
-      } else {
-        // No cached data, trigger auto-generation
-        console.log('🚀 [COMPANY STRATEGY] No cached data found, triggering auto-generation for company:', record.id);
-        generationAttempted.current = true;
-        handleGenerateStrategy();
-      }
-    }
-  }, [record?.id, strategyData, isGeneratingStrategy]);
 
   const loadStrategyData = async () => {
     if (!record?.id) return;
@@ -142,7 +125,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         const timeoutError = 'Request timed out after 60 seconds. Strategy generation may be taking longer than expected.';
-        console.error('⏱️ [COMPANY STRATEGY] Load request timed out:', timeoutError);
+        console.warn('⏱️ [COMPANY STRATEGY] Load request timed out:', timeoutError);
         setStrategyError(timeoutError);
       } else {
         console.error('Failed to load strategy data:', error);
@@ -230,7 +213,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       // Handle timeout errors specifically
       if (error instanceof Error && error.name === 'AbortError') {
         const timeoutError = 'Strategy generation timed out after 60 seconds. This may happen if the AI service is experiencing high load. Please try again.';
-        console.error('⏱️ [COMPANY STRATEGY] Strategy generation timed out:', timeoutError);
+        console.warn('⏱️ [COMPANY STRATEGY] Strategy generation timed out:', timeoutError);
         setStrategyError(timeoutError);
         
         // Don't auto-retry on timeout - let user manually retry
@@ -286,12 +269,11 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   }
 
   return (
-    <div>
-      <div className="space-y-6">
-        {/* Intelligence Summary Header */}
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-foreground">Intelligence Summary</h3>
-        </div>
+    <div className="space-y-6">
+      {/* Intelligence Summary Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-semibold text-foreground">Intelligence Summary</h3>
+      </div>
         
         {/* Intelligence Summary Content */}
         {isGeneratingStrategy ? (
@@ -464,7 +446,6 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                   onClick={() => {
                     setRetryCount(0);
                     setStrategyError(null);
-                    generationAttempted.current = false;
                   }}
                   className="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
                 >
@@ -486,22 +467,26 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                 <span className="text-3xl">🧠</span>
               </div>
               <h4 className="text-lg font-semibold text-foreground mb-2">
-                No Intelligence Data
+                No Intelligence Data Available
               </h4>
-              <p className="text-sm text-muted mb-6">
-                Intelligence data will be generated automatically when available.
+              <p className="text-sm text-muted mb-6 max-w-md mx-auto">
+                Generate AI-powered intelligence insights for this company. This process runs in the background and may take 30-60 seconds.
               </p>
               <button 
-                onClick={handleGenerateStrategy}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                onClick={() => handleGenerateStrategy(false)}
+                disabled={isGeneratingStrategy}
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Generate Intelligence
+                {isGeneratingStrategy ? 'Generating Intelligence...' : 'Generate Intelligence'}
               </button>
+              {isGeneratingStrategy && (
+                <p className="text-xs text-muted mt-4">
+                  You can navigate away and return later. The intelligence will be saved when complete.
+                </p>
+              )}
             </div>
           </div>
         )}
-      </div>
-
     </div>
   );
 }
