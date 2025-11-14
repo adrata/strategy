@@ -99,6 +99,7 @@ export async function GET(request: NextRequest) {
         customFields: true,
         buyerGroupRole: true,
         buyerGroupStatus: true,  // ADD THIS - direct field from people table
+        status: true, // Include status field for frontend display
         createdAt: true,
         updatedAt: true,
         lastEnriched: true
@@ -193,6 +194,7 @@ export async function GET(request: NextRequest) {
         linkedinUrl: person.linkedinUrl || '',
         role: buyerRole,
         buyerGroupStatus: buyerGroupStatus,  // ADD THIS
+        status: person.status || null, // Include status (LEAD, PROSPECT, etc.) for frontend display
         influence: getInfluenceLevel(buyerRole),
         isPrimary: false, // Will be set by caller if needed
         company: companyName, // Use actual company name, not companyId
@@ -217,11 +219,19 @@ export async function GET(request: NextRequest) {
       return customFields.buyerGroupStatus === 'in';
     });
     
+    // Status breakdown for diagnostic logging
+    const statusBreakdown = validatedPeople.reduce((acc, p) => {
+      const status = p.status || 'NULL';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
     console.log(`📊 [FAST BUYER GROUPS] Breakdown:`);
     console.log(`   People with buyerGroupRole: ${peopleWithRole.length}`);
     console.log(`   People with isBuyerGroupMember: ${peopleWithMember.length}`);
     console.log(`   People with 'in' status: ${peopleWithInStatus.length}`);
     console.log(`   Total in buyer group: ${buyerGroupMembers.length}`);
+    console.log(`📊 [FAST BUYER GROUPS] Status breakdown:`, statusBreakdown);
     console.log(`🚀 [FAST BUYER GROUPS] Returning ${buyerGroupMembers.length} members to client`);
     console.log(`🚀 [FAST BUYER GROUPS] ========================================`);
 

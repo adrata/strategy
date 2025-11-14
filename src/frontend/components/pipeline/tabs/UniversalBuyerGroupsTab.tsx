@@ -1057,6 +1057,17 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                   </div>
                   
                   <div className="flex items-center space-x-3">
+                    {member.status && (
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        member.status === 'LEAD' ? 'bg-blue-100 text-blue-800 border border-blue-300' :
+                        member.status === 'PROSPECT' ? 'bg-purple-100 text-purple-800 border border-purple-300' :
+                        member.status === 'OPPORTUNITY' ? 'bg-green-100 text-green-800 border border-green-300' :
+                        member.status === 'CLIENT' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
+                        'bg-gray-100 text-gray-800 border border-gray-300'
+                      }`}>
+                        {member.status}
+                      </span>
+                    )}
                     <span className={`px-2 py-1 text-xs rounded-full ${getRiskPillStyles(riskAssessment.level)}`}>
                       {riskAssessment.level}
                     </span>

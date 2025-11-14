@@ -33,18 +33,32 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   const companyId = React.useMemo(() => {
     if (!record) return '';
     
-    if (recordType === 'people') {
-      // For person records, get company from companyId field
-      const id = record.companyId || '';
-      console.log('🔍 [PEOPLE TAB] Extracted companyId for person record:', id);
-      return id;
-    } else {
+    // Check if this is a company-only record
+    const isCompanyOnlyRecord = recordType === 'companies' ||
+                               (recordType === 'speedrun' && record?.recordType === 'company') ||
+                               (recordType === 'leads' && record?.isCompanyLead === true) ||
+                               (recordType === 'prospects' && record?.isCompanyLead === true);
+    
+    if (isCompanyOnlyRecord) {
       // For company records, the record ID is the company ID
       const id = record.id || '';
       console.log('🔍 [PEOPLE TAB] Using record.id as companyId for company record:', id);
       return id;
+    } else {
+      // For person records (people, leads, prospects that are NOT company leads), get company from companyId field
+      const id = record.companyId || 
+                 record?.company?.id || 
+                 (typeof record?.company === 'object' && record?.company?.id) ||
+                 '';
+      console.log('🔍 [PEOPLE TAB] Extracted companyId for person record:', id, {
+        recordType,
+        hasCompanyId: !!record.companyId,
+        hasCompanyObject: !!record?.company,
+        isCompanyLead: record?.isCompanyLead
+      });
+      return id;
     }
-  }, [record?.id, record?.companyId, recordType]);
+  }, [record?.id, record?.companyId, record?.company, record?.isCompanyLead, recordType]);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -78,18 +92,27 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           let companyName = '';
           let companyId = '';
           
-          if (recordType === 'people') {
-            // For person records, get company from companyId or company object
-            companyId = record.companyId;
-            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                         record.companyName || 'Company';
-          } else {
+          // Check if this is a company-only record
+          const isCompanyOnlyRecord = recordType === 'companies' ||
+                                     (recordType === 'speedrun' && record?.recordType === 'company') ||
+                                     (recordType === 'leads' && record?.isCompanyLead === true) ||
+                                     (recordType === 'prospects' && record?.isCompanyLead === true);
+          
+          if (isCompanyOnlyRecord) {
             // For company records, use the record name as company name
             companyName = record.name || 
                          (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
                          record.companyName ||
                          'Company';
             companyId = record.id; // For company records, the record ID is the company ID
+          } else {
+            // For person records (people, leads, prospects that are NOT company leads), get company from companyId or company object
+            companyId = record.companyId || 
+                       record?.company?.id || 
+                       (typeof record?.company === 'object' && record?.company?.id) ||
+                       '';
+            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                         record.companyName || 'Company';
           }
           
           // Generate company slug for opportunity navigation
@@ -174,18 +197,24 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       // Get the company name from the record (companyId is now from the memoized value)
       let companyName = '';
       
-      if (recordType === 'people') {
-        // For person records, get company name from company object
-        // Handle case where company is null but companyId exists (soft-deleted company)
-        companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                     record.companyName || 
-                     (companyId ? 'Company' : 'Company');
-      } else {
+      // Check if this is a company-only record (same pattern as companyId extraction)
+      const isCompanyOnlyRecord = recordType === 'companies' ||
+                                 (recordType === 'speedrun' && record?.recordType === 'company') ||
+                                 (recordType === 'leads' && record?.isCompanyLead === true) ||
+                                 (recordType === 'prospects' && record?.isCompanyLead === true);
+      
+      if (isCompanyOnlyRecord) {
         // For company records, use the record name as company name
         companyName = record.name || 
                      (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
                      record.companyName ||
                      'Company';
+      } else {
+        // For person records (people, leads, prospects that are NOT company leads), get company name from company object
+        // Handle case where company is null but companyId exists (soft-deleted company)
+        companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                     record.companyName || 
+                     (companyId ? 'Company' : 'Company');
       }
       
       // 🚨 CRITICAL FIX: Validate companyId before proceeding
@@ -461,6 +490,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
             influence: role === 'Decision Maker' ? 'high' : role === 'Champion' ? 'high' : 'medium',
             isPrimary: isPrimary,
             company: companyName,
+            status: person.status || null, // Include status (LEAD, PROSPECT, etc.) for display
             isExternalData: person.customFields?.dataSource === 'External' || false,
             externalId: person.customFields?.coresignalId || null,
             rank: person.rank || 999
@@ -642,6 +672,17 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
                   </div>
                   
                   <div className="flex items-center space-x-3">
+                    {person.status && (
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        person.status === 'LEAD' ? 'bg-blue-100 text-blue-800 border border-blue-300' :
+                        person.status === 'PROSPECT' ? 'bg-purple-100 text-purple-800 border border-purple-300' :
+                        person.status === 'OPPORTUNITY' ? 'bg-green-100 text-green-800 border border-green-300' :
+                        person.status === 'CLIENT' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
+                        'bg-gray-100 text-gray-800 border border-gray-300'
+                      }`}>
+                        {person.status}
+                      </span>
+                    )}
                     <span className={`px-2 py-1 text-xs rounded-full ${getRiskPillStyles(riskAssessment.level)}`}>
                       {riskAssessment.level}
                     </span>

@@ -192,7 +192,9 @@ export async function GET(request: NextRequest) {
       });
 
       // 🚀 SECTION FILTERING: Pre-filter by section for better performance
-      if (section) {
+      // ⚠️ IMPORTANT: When companyId is provided, don't filter by section/status
+      // This ensures company detail pages show ALL people (leads, prospects, etc.)
+      if (section && !companyId) {
         switch (section) {
           case 'leads':
             where.status = 'LEAD';
@@ -529,8 +531,16 @@ export async function GET(request: NextRequest) {
         
         // 🔍 DIAGNOSTIC: Log results for companyId queries
         if (companyId) {
+          // Status breakdown for diagnostic logging
+          const statusBreakdown = people.reduce((acc, p) => {
+            const status = p.status || 'NULL';
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+          }, {} as Record<string, number>);
+          
           console.log(`🔍 [V1 PEOPLE API] Query completed for companyId: ${companyId}`);
           console.log(`🔍 [V1 PEOPLE API] Found ${people.length} people (total: ${totalCount})`);
+          console.log(`📊 [V1 PEOPLE API] Status breakdown:`, statusBreakdown);
           if (people.length > 0) {
             console.log(`🔍 [V1 PEOPLE API] First 3 people:`, people.slice(0, 3).map(p => ({
               id: p.id,
