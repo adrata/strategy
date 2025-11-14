@@ -9,7 +9,7 @@ export interface ClaudeStrategyRequest {
   targetIndustry: string;
   companySize: number;
   companyRevenue: number;
-  companyAge: number;
+  companyAge: number | null;
   growthStage: string;
   marketPosition: string;
   archetypeName: string;

@@ -1046,6 +1046,7 @@ export async function DELETE(
     const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
 
     // Check if person exists and belongs to user's workspace
+    // Use a transaction-like approach to ensure data consistency
     const existingPerson = await prisma.people.findUnique({
       where: { 
         id,
@@ -1080,6 +1081,8 @@ export async function DELETE(
       );
     }
 
+    // Perform deletion with proper error handling
+    // CRITICAL: Ensure all async operations complete before returning
     if (mode === 'hard') {
       // Hard delete - permanently remove from database
       await prisma.people.delete({
@@ -1096,6 +1099,8 @@ export async function DELETE(
       });
     }
 
+    // Return response - Next.js will handle connection cleanup automatically
+    // DO NOT manually disconnect Prisma in API routes
     return NextResponse.json({
       success: true,
       data: null,

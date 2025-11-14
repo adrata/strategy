@@ -35,6 +35,10 @@ export interface CompanyStrategyData {
   targetIndustry: string;
   targetIndustryCategory: string;
   
+  // Company Classification (for verification)
+  growthStage?: 'startup' | 'growth' | 'mature' | 'declining';
+  marketPosition?: 'leader' | 'challenger' | 'follower' | 'niche';
+  
   // Metadata
   strategyGeneratedAt: string;
   strategyGeneratedBy: string;
@@ -261,6 +265,10 @@ export class CompanyStrategyService {
           // Target Industry
           targetIndustry: request.targetIndustry,
           targetIndustryCategory: this.getIndustryCategory(request.targetIndustry),
+          
+          // Company Classification (for verification)
+          growthStage: request.growthStage,
+          marketPosition: request.marketPosition,
           
           // Metadata
           strategyGeneratedAt: new Date().toISOString(),

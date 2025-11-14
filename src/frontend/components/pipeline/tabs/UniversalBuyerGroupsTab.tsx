@@ -50,33 +50,53 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const companyId = React.useMemo(() => {
     if (!record) return '';
     
-    if (recordType === 'people') {
-      // For person records, get company from companyId field
-      const id = record.companyId || '';
-      console.log('🔍 [BUYER GROUPS TAB] Extracted companyId for person record:', id);
-      return id;
-    } else {
+    // Check if this is a company-only record
+    const isCompanyOnlyRecord = recordType === 'companies' ||
+                               (recordType === 'speedrun' && record?.recordType === 'company') ||
+                               (recordType === 'leads' && record?.isCompanyLead === true) ||
+                               (recordType === 'prospects' && record?.isCompanyLead === true);
+    
+    if (isCompanyOnlyRecord) {
       // For company records, the record ID is the company ID
       const id = record.id || '';
       console.log('🔍 [BUYER GROUPS TAB] Using record.id as companyId for company record:', id);
       return id;
+    } else {
+      // For person records (people, leads, prospects that are NOT company leads), get company from companyId field
+      const id = record.companyId || 
+                 record?.company?.id || 
+                 (typeof record?.company === 'object' && record?.company?.id) ||
+                 '';
+      console.log('🔍 [BUYER GROUPS TAB] Extracted companyId for person record:', id, {
+        recordType,
+        hasCompanyId: !!record.companyId,
+        hasCompanyObject: !!record?.company,
+        isCompanyLead: record?.isCompanyLead
+      });
+      return id;
     }
-  }, [record?.id, record?.companyId, recordType]);
+  }, [record?.id, record?.companyId, record?.company, record?.isCompanyLead, recordType]);
   
   const companyName = React.useMemo(() => {
     if (!record) return '';
     
-    if (recordType === 'people') {
-      // For person records, get company name from company object
-      return (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-             record.companyName || '';
-    } else {
+    // Check if this is a company-only record
+    const isCompanyOnlyRecord = recordType === 'companies' ||
+                               (recordType === 'speedrun' && record?.recordType === 'company') ||
+                               (recordType === 'leads' && record?.isCompanyLead === true) ||
+                               (recordType === 'prospects' && record?.isCompanyLead === true);
+    
+    if (isCompanyOnlyRecord) {
       // For company records, use the record name as company name
       return record.name || 
              (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
              record.companyName || '';
+    } else {
+      // For person records (people, leads, prospects that are NOT company leads), get company name from company object
+      return (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+             record.companyName || '';
     }
-  }, [record?.id, record?.name, record?.company, record?.companyName, recordType]);
+  }, [record?.id, record?.name, record?.company, record?.companyName, record?.isCompanyLead, recordType]);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -850,33 +870,6 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     }
   };
 
-  // Manual cache clear function for debugging and admin use
-  const handleClearCache = () => {
-    const workspaceId = record?.workspaceId;
-    if (!companyId || !workspaceId) {
-      console.log('⚠️ [BUYER GROUPS] Cannot clear cache - missing companyId or workspaceId');
-      return;
-    }
-
-    // Clear buyer group cache
-    const cacheKeys = [
-      `buyer-groups-${companyId}-${workspaceId}`,
-      `people-${workspaceId}`,
-      `people-company-${companyId}-${workspaceId}`
-    ];
-
-    cacheKeys.forEach(key => {
-      localStorage.removeItem(key);
-      console.log(`🗑️ [BUYER GROUPS] Cleared cache: ${key}`);
-    });
-
-    // Force re-fetch by updating lastFetchTime
-    setLastFetchTime(null);
-    setLoading(true);
-    
-    // Trigger re-fetch
-    window.location.reload();
-  };
 
   const handleMemberClick = async (member: any) => {
     console.log('🔗 [BUYER GROUPS] Navigating to person:', member);
@@ -1025,13 +1018,6 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground">Buyer Group Members</h3>
-            <button
-              onClick={handleClearCache}
-              className="text-xs text-muted hover:text-foreground px-2 py-1 rounded hover:bg-surface-hover transition-colors"
-              title="Clear buyer group cache and reload"
-            >
-              🔄 Clear Cache
-            </button>
           </div>
           <div className="space-y-3">
             {buyerGroups.map((member, index) => {

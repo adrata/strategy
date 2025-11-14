@@ -45,23 +45,56 @@ prisma.$connect()
     console.error('❌ [PRISMA] This will cause authentication failures');
   });
 
-// Graceful shutdown
+// Track if we're already disconnecting to prevent double disconnects
+let isDisconnecting = false;
+
+// Safe disconnect function that prevents UV_HANDLE_CLOSING errors
+async function safeDisconnect() {
+  if (isDisconnecting) {
+    return; // Already disconnecting, skip
+  }
+  
+  isDisconnecting = true;
+  
+  try {
+    if (prisma) {
+      await prisma.$disconnect();
+    }
+  } catch (error) {
+    // Ignore disconnect errors if already disconnected
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (!errorMessage.includes('already been disconnected') && 
+        !errorMessage.includes('UV_HANDLE_CLOSING')) {
+      console.warn('⚠️  [PRISMA] Disconnect warning:', errorMessage);
+    }
+  } finally {
+    isDisconnecting = false;
+  }
+}
+
+// Graceful shutdown - prevent multiple disconnect attempts
 process.on('beforeExit', async () => {
-  console.log('🔄 [PRISMA] Graceful shutdown initiated...');
-  await prisma.$disconnect();
-  console.log('✅ [PRISMA] Database connection closed');
+  if (!isDisconnecting) {
+    console.log('🔄 [PRISMA] Graceful shutdown initiated...');
+    await safeDisconnect();
+    console.log('✅ [PRISMA] Database connection closed');
+  }
 });
 
 process.on('SIGINT', async () => {
-  console.log('🔄 [PRISMA] SIGINT received, disconnecting...');
-  await prisma.$disconnect();
-  process.exit(0);
+  if (!isDisconnecting) {
+    console.log('🔄 [PRISMA] SIGINT received, disconnecting...');
+    await safeDisconnect();
+    process.exit(0);
+  }
 });
 
 process.on('SIGTERM', async () => {
-  console.log('🔄 [PRISMA] SIGTERM received, disconnecting...');
-  await prisma.$disconnect();
-  process.exit(0);
+  if (!isDisconnecting) {
+    console.log('🔄 [PRISMA] SIGTERM received, disconnecting...');
+    await safeDisconnect();
+    process.exit(0);
+  }
 });
 
 export default prisma;

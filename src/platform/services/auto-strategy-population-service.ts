@@ -81,8 +81,8 @@ export class AutoStrategyPopulationService {
         targetIndustry: inferredTargetIndustry,
         companySize: this.parseCompanySize(company.size || company.employeeCount),
         companyRevenue: company.revenue || 0,
-        companyAge: company.foundedAt ? 
-          Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
+        companyAge: company.foundedYear ? 
+          new Date().getFullYear() - company.foundedYear : null,
         growthStage: this.determineGrowthStage(company),
         marketPosition: this.determineMarketPosition(company),
         // Pass through all real company data
@@ -152,8 +152,8 @@ export class AutoStrategyPopulationService {
   }
 
   private determineGrowthStage(company: any): 'startup' | 'growth' | 'mature' | 'declining' {
-    const age = company.foundedAt ? 
-      Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+    const age = company.foundedYear ? 
+      new Date().getFullYear() - company.foundedYear : null;
     const size = this.parseCompanySize(company.size || company.employeeCount);
     const revenue = company.revenue || 0;
 

@@ -204,8 +204,8 @@ export async function POST(
       targetIndustry: inferredTargetIndustry,
       companySize: parseCompanySize(company.size || company.employeeCount),
       companyRevenue: company.revenue || 0,
-      companyAge: company.foundedAt ? 
-        Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
+      companyAge: company.foundedYear ? 
+        new Date().getFullYear() - company.foundedYear : null,
       growthStage: determineGrowthStage(company),
       marketPosition: determineMarketPosition(company),
       forceRegenerate,
@@ -364,8 +364,8 @@ function parseCompanySize(size: any): number {
 
 // Helper function to determine growth stage
 function determineGrowthStage(company: any): 'startup' | 'growth' | 'mature' | 'declining' {
-  const age = company.foundedAt ? 
-    Math.floor((Date.now() - new Date(company.foundedAt).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+  const age = company.foundedYear ? 
+    new Date().getFullYear() - company.foundedYear : null;
   const size = parseCompanySize(company.size || company.employeeCount);
   const revenue = company.revenue || 0;
 
