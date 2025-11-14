@@ -162,30 +162,12 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
         }
       }
       
-      // Trigger intelligence generation if missing intelligence fields
-      if (missingIntelligence && !hasTriggeredEnrichment) {
-        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering intelligence generation for person: ${record.id}`);
-        
-        try {
-          // Dynamic import to avoid circular dependencies
-          const { generatePersonIntelligence } = await import('@/platform/services/person-intelligence-generator');
-          
-          const result = await generatePersonIntelligence({
-            personId: record.id,
-            workspaceId: record.workspaceId,
-            forceRegenerate: false
-          });
-          
-          if (result.success && !result.cached) {
-            console.log(`✅ [PERSON OVERVIEW] Successfully generated intelligence`);
-            // Trigger page refresh to show new intelligence
-            window.location.reload();
-          } else if (result.success && result.cached) {
-            console.log(`ℹ️ [PERSON OVERVIEW] Using cached intelligence`);
-          }
-        } catch (error) {
-          console.error('❌ [PERSON OVERVIEW] Error generating intelligence:', error);
-        }
+      // 🚧 DISABLED: Auto-triggering intelligence generation 
+      // This requires an API endpoint (/api/v1/people/[id]/generate-intelligence) to be created
+      // Previously was directly importing server-side service which caused security issues
+      // TODO: Create API endpoint and re-enable this functionality
+      if (false && missingIntelligence && !hasTriggeredEnrichment) {
+        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering intelligence generation disabled - API endpoint needed`);
       }
     };
 
