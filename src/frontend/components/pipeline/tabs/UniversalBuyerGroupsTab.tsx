@@ -130,18 +130,27 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           let companyName = '';
           let companyId = '';
           
-          if (recordType === 'people') {
-            // For person records, get company from companyId or company object
-            companyId = record.companyId;
-            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                         record.companyName || 'Company';
-          } else {
+          // Check if this is a company-only record
+          const isCompanyOnlyRecord = recordType === 'companies' ||
+                                     (recordType === 'speedrun' && record?.recordType === 'company') ||
+                                     (recordType === 'leads' && record?.isCompanyLead === true) ||
+                                     (recordType === 'prospects' && record?.isCompanyLead === true);
+          
+          if (isCompanyOnlyRecord) {
             // For company records, use the record name as company name
             companyName = record.name || 
                          (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
                          record.companyName ||
                          'Company';
             companyId = record.id; // For company records, the record ID is the company ID
+          } else {
+            // For person records (people, leads, prospects that are NOT company leads), get company from companyId or company object
+            companyId = record.companyId || 
+                       record?.company?.id || 
+                       (typeof record?.company === 'object' && record?.company?.id) ||
+                       '';
+            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                         record.companyName || 'Company';
           }
           
           // Generate company slug for opportunity navigation
@@ -902,18 +911,27 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           let companyName = '';
           let companyId = '';
           
-          if (recordType === 'people') {
-            // For person records, get company from companyId or company object
-            companyId = record.companyId;
-            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                         record.companyName || 'Company';
-          } else {
+          // Check if this is a company-only record
+          const isCompanyOnlyRecord = recordType === 'companies' ||
+                                     (recordType === 'speedrun' && record?.recordType === 'company') ||
+                                     (recordType === 'leads' && record?.isCompanyLead === true) ||
+                                     (recordType === 'prospects' && record?.isCompanyLead === true);
+          
+          if (isCompanyOnlyRecord) {
             // For company records, use the record name as company name
             companyName = record.name || 
                          (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
                          record.companyName ||
                          'Company';
             companyId = record.id; // For company records, the record ID is the company ID
+          } else {
+            // For person records (people, leads, prospects that are NOT company leads), get company from companyId or company object
+            companyId = record.companyId || 
+                       record?.company?.id || 
+                       (typeof record?.company === 'object' && record?.company?.id) ||
+                       '';
+            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                         record.companyName || 'Company';
           }
           
           // Generate company slug for opportunity navigation
