@@ -277,6 +277,30 @@ export async function POST(
 }
 
 /**
+ * Smart industry inference with multiple fallback sources
+ */
+function inferIndustry(company: any): string | null {
+  // Try company.industry first
+  if (company.industry && company.industry.trim() !== '') {
+    return company.industry.trim();
+  }
+  
+  // Try company.sector as fallback
+  if (company.sector && company.sector.trim() !== '') {
+    return company.sector.trim();
+  }
+  
+  // Try customFields.coresignalData.industry if available
+  const customFields = company.customFields as any;
+  if (customFields?.coresignalData?.industry && customFields.coresignalData.industry.trim() !== '') {
+    return customFields.coresignalData.industry.trim();
+  }
+  
+  // No industry data available
+  return null;
+}
+
+/**
  * Generate company intelligence using AI and company data
  */
 async function generateCompanyIntelligence(company: any, forceRegenerate: boolean = false): Promise<CompanyIntelligence> {
@@ -284,7 +308,7 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
     // For now, generate structured intelligence based on company data
     // This can be enhanced with actual AI integration later
     
-    const industry = company.industry || 'Technology';
+    const industry = inferIndustry(company);
     const size = company.size || 'Medium';
     const employeeCount = company.employeeCount || 100;
     
@@ -305,8 +329,8 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
 
     return {
       companyName: company.name,
-      industry: industry,
-      description: company.description || `Leading ${industry.toLowerCase()} company with ${employeeCount} employees`,
+      industry: industry || 'Unknown',
+      description: company.description || (industry ? `Leading ${industry.toLowerCase()} company with ${employeeCount} employees` : `Organization with ${employeeCount} employees`),
       strategicWants,
       criticalNeeds,
       businessUnits,
@@ -340,14 +364,14 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
 /**
  * Generate strategic wants based on company characteristics
  */
-function generateStrategicWants(industry: string, size: string, employeeCount: number): string[] {
+function generateStrategicWants(industry: string | null, size: string, employeeCount: number): string[] {
   const baseWants = [
     'Digital transformation initiatives',
     'Operational efficiency improvements',
     'Cost reduction strategies'
   ];
 
-  const industrySpecific = {
+  const industrySpecific: Record<string, string[]> = {
     'Technology': [
       'Cloud migration and optimization',
       'AI and machine learning adoption',
@@ -384,9 +408,12 @@ function generateStrategicWants(industry: string, size: string, employeeCount: n
     'Quick deployment options'
   ];
 
+  // Use industry-specific wants only if industry is known
+  const industryWants = industry ? (industrySpecific[industry] || []) : [];
+
   return [
     ...baseWants,
-    ...(industrySpecific[industry] || industrySpecific['Technology']),
+    ...industryWants,
     ...sizeSpecific
   ].slice(0, 8); // Limit to 8 items
 }
@@ -394,7 +421,7 @@ function generateStrategicWants(industry: string, size: string, employeeCount: n
 /**
  * Generate critical needs based on company data
  */
-function generateCriticalNeeds(industry: string, size: string, people: any[]): string[] {
+function generateCriticalNeeds(industry: string | null, size: string, people: any[]): string[] {
   const baseNeeds = [
     'Improved data visibility',
     'Streamlined processes',
@@ -422,6 +449,7 @@ function generateCriticalNeeds(industry: string, size: string, people: any[]): s
     needs.push('Strategic planning tools');
   }
 
+  // Only add industry-specific needs if industry is known
   if (industry === 'Technology') {
     needs.push('Developer productivity tools');
     needs.push('Code quality management');
@@ -433,8 +461,8 @@ function generateCriticalNeeds(industry: string, size: string, people: any[]): s
 /**
  * Generate business units based on industry
  */
-function generateBusinessUnits(industry: string): Array<{name: string; functions: string[]; color: string}> {
-  const units = {
+function generateBusinessUnits(industry: string | null): Array<{name: string; functions: string[]; color: string}> {
+  const units: Record<string, Array<{name: string; functions: string[]; color: string}>> = {
     'Technology': [
       { name: 'Engineering', functions: ['Software Development', 'Infrastructure', 'Quality Assurance'], color: 'bg-blue-50 border-blue-200' },
       { name: 'Product Management', functions: ['Product Strategy', 'Roadmap Planning', 'Feature Prioritization'], color: 'bg-purple-50 border-purple-200' },
@@ -465,31 +493,49 @@ function generateBusinessUnits(industry: string): Array<{name: string; functions
     ]
   };
 
-  return units[industry] || units['Technology'];
+  // Generic business units for when industry is unknown
+  const genericUnits = [
+    { name: 'Operations', functions: ['Business Operations', 'Management', 'Administration'], color: 'bg-blue-50 border-blue-200' },
+    { name: 'Sales & Marketing', functions: ['Sales', 'Marketing', 'Customer Relations'], color: 'bg-green-50 border-green-200' },
+    { name: 'Finance', functions: ['Accounting', 'Financial Planning', 'Budgeting'], color: 'bg-purple-50 border-purple-200' },
+    { name: 'Human Resources', functions: ['Recruiting', 'Training', 'Employee Relations'], color: 'bg-orange-50 border-orange-200' },
+    { name: 'Support Services', functions: ['IT Support', 'Facilities', 'Administrative Support'], color: 'bg-gray-50 border-gray-200' }
+  ];
+
+  if (!industry) {
+    return genericUnits;
+  }
+
+  return units[industry] || genericUnits;
 }
 
 /**
  * Generate strategic intelligence
  */
-function generateStrategicIntelligence(company: any, industry: string, size: string): string {
+function generateStrategicIntelligence(company: any, industry: string | null, size: string): string {
   const employeeCount = company.employeeCount || 100;
   const revenue = company.revenue || 0;
   
-  return `${company.name} is a ${size.toLowerCase()} ${industry.toLowerCase()} company with approximately ${employeeCount} employees${revenue > 0 ? ` and estimated revenue of $${revenue.toLocaleString()}` : ''}. The company appears to be focused on ${industry.toLowerCase()} solutions and would benefit from strategic technology partnerships that can drive operational efficiency and growth. Based on the company's size and industry, they likely face challenges around scaling operations, maintaining competitive advantage, and optimizing resource allocation.`;
+  if (industry) {
+    return `${company.name} is a ${size.toLowerCase()} ${industry.toLowerCase()} company with approximately ${employeeCount} employees${revenue > 0 ? ` and estimated revenue of $${revenue.toLocaleString()}` : ''}. The company appears to be focused on ${industry.toLowerCase()} solutions and would benefit from strategic technology partnerships that can drive operational efficiency and growth. Based on the company's size and industry, they likely face challenges around scaling operations, maintaining competitive advantage, and optimizing resource allocation.`;
+  } else {
+    return `${company.name} is a ${size.toLowerCase()}-sized organization with approximately ${employeeCount} employees${revenue > 0 ? ` and estimated revenue of $${revenue.toLocaleString()}` : ''}. The company would benefit from strategic partnerships that can drive operational efficiency and growth. Based on the company's size, they likely face challenges around scaling operations, maintaining competitive advantage, and optimizing resource allocation.`;
+  }
 }
 
 /**
  * Generate Adrata strategy
  */
-function generateAdrataStrategy(company: any, industry: string, strategicWants: string[], criticalNeeds: string[]): string {
-  return `For ${company.name}, Adrata should focus on positioning our solutions as strategic enablers for their ${industry.toLowerCase()} operations. Key approach: 1) Lead with ROI and efficiency gains that address their critical needs around ${criticalNeeds.slice(0, 2).join(' and ')}, 2) Demonstrate how our platform can support their strategic wants including ${strategicWants.slice(0, 2).join(' and ')}, 3) Engage with decision-makers through targeted outreach that emphasizes industry-specific value propositions, 4) Provide proof-of-concept opportunities that showcase immediate impact on their core business processes.`;
+function generateAdrataStrategy(company: any, industry: string | null, strategicWants: string[], criticalNeeds: string[]): string {
+  const industryContext = industry ? ` for their ${industry.toLowerCase()} operations` : '';
+  return `For ${company.name}, Adrata should focus on positioning our solutions as strategic enablers${industryContext}. Key approach: 1) Lead with ROI and efficiency gains that address their critical needs around ${criticalNeeds.slice(0, 2).join(' and ')}, 2) Demonstrate how our platform can support their strategic wants including ${strategicWants.slice(0, 2).join(' and ')}, 3) Engage with decision-makers through targeted outreach that emphasizes value propositions aligned with their business goals, 4) Provide proof-of-concept opportunities that showcase immediate impact on their core business processes.`;
 }
 
 /**
  * Generate comprehensive company summary for descriptionEnriched field
  */
 function generateCompanySummary(company: any, intelligence: any): string {
-  const industry = company.industry || 'Technology';
+  const industry = inferIndustry(company);
   const size = company.size || 'Medium';
   const employeeCount = company.employeeCount || 100;
   const revenue = company.revenue || 0;
@@ -498,7 +544,14 @@ function generateCompanySummary(company: any, intelligence: any): string {
   const website = company.website || company.domain || 'N/A';
   
   // Build comprehensive company summary
-  let summary = `${company.name} is a ${size.toLowerCase()} ${industry.toLowerCase()} company`;
+  // Handle missing industry gracefully - only mention it if available
+  let summary = company.name;
+  
+  if (industry) {
+    summary += ` is a ${size.toLowerCase()} ${industry.toLowerCase()} company`;
+  } else {
+    summary += ` is a ${size.toLowerCase()}-sized organization`;
+  }
   
   // Add employee count
   if (employeeCount) {
@@ -525,8 +578,12 @@ function generateCompanySummary(company: any, intelligence: any): string {
   
   summary += '.';
   
-  // Add industry context
-  summary += `\n\nAs a ${industry.toLowerCase()} company, ${company.name} operates in a competitive market`;
+  // Add industry context only if industry is known
+  if (industry) {
+    summary += `\n\nAs a ${industry.toLowerCase()} company, ${company.name} operates in a competitive market`;
+  } else {
+    summary += `\n\n${company.name} operates in a competitive market`;
+  }
   
   // Add strategic context from intelligence
   if (intelligence && intelligence.strategicWants && intelligence.strategicWants.length > 0) {

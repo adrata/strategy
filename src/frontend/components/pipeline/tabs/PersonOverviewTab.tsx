@@ -539,6 +539,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
+                {typeof record.company === 'object' && record.company?.deletedAt && (
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                    Archived
+                  </span>
+                )}
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Department:</span>

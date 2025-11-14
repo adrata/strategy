@@ -693,9 +693,15 @@ Return only valid JSON.`;
    */
   private generateCompanySummaryFromInsights(insights: CompanyIntelligenceResult): string {
     const companyName = insights.companyName || 'Company';
-    const industry = insights.industry || 'Technology';
+    const industry = insights.industry;
     
-    let summary = `${companyName} is a ${industry.toLowerCase()} company`;
+    // Build summary with industry only if available
+    let summary: string;
+    if (industry && industry !== 'Unknown' && industry.trim() !== '') {
+      summary = `${companyName} is a ${industry.toLowerCase()} company`;
+    } else {
+      summary = `${companyName} is an organization`;
+    }
     
     // Add market position context
     if (insights.marketPosition) {

@@ -51,10 +51,9 @@ export async function GET(
             industry: true,
             status: true,
             priority: true,
+            deletedAt: true, // Include deletedAt to track if company is archived
           },
-          where: {
-            deletedAt: null // Only show non-deleted companies
-          }
+          // Removed where filter to allow soft-deleted companies to be returned
         },
         mainSeller: {
           select: {
@@ -117,10 +116,9 @@ export async function GET(
               industry: true,
               status: true,
               priority: true,
+              deletedAt: true, // Include deletedAt to track if company is archived
             },
-            where: {
-              deletedAt: null
-            }
+            // Removed where filter to allow soft-deleted companies to be returned
           },
           mainSeller: {
             select: {
@@ -334,11 +332,27 @@ export async function PUT(
       );
     }
 
-    // Update full name if names changed
-    if (body.firstName || body.lastName) {
-      const firstName = body.firstName || existingPerson.firstName;
-      const lastName = body.lastName || existingPerson.lastName;
-      body.fullName = `${firstName} ${lastName}`;
+    // 🔧 NAME SYNC FIX: Prioritize explicit fullName over reconstruction
+    // If fullName is explicitly provided, use it as source of truth and split it
+    if (body.fullName !== undefined) {
+      const trimmedFullName = body.fullName.trim();
+      body.fullName = trimmedFullName;
+      
+      // Parse fullName into firstName/lastName to keep them in sync
+      const nameParts = trimmedFullName.split(/\s+/);
+      if (nameParts.length > 0) {
+        body.firstName = nameParts[0];
+        body.lastName = nameParts.slice(1).join(' ');
+      }
+      
+      console.log(`🔄 [PEOPLE API PUT] Using explicit fullName: "${body.fullName}" → firstName: "${body.firstName}", lastName: "${body.lastName}"`);
+    } else if (body.firstName !== undefined || body.lastName !== undefined) {
+      // Only reconstruct fullName if it wasn't explicitly provided
+      const firstName = (body.firstName !== undefined ? body.firstName : existingPerson.firstName) || '';
+      const lastName = (body.lastName !== undefined ? body.lastName : existingPerson.lastName) || '';
+      body.fullName = `${firstName} ${lastName}`.trim();
+      
+      console.log(`🔄 [PEOPLE API PUT] Reconstructed fullName from names: firstName: "${firstName}", lastName: "${lastName}" → fullName: "${body.fullName}"`);
     }
 
     // Update person
@@ -511,11 +525,27 @@ export async function PATCH(
       );
     }
 
-    // Update full name if names changed
-    if (body.firstName || body.lastName) {
-      const firstName = body.firstName || existingPerson.firstName;
-      const lastName = body.lastName || existingPerson.lastName;
-      body.fullName = `${firstName} ${lastName}`;
+    // 🔧 NAME SYNC FIX: Prioritize explicit fullName over reconstruction
+    // If fullName is explicitly provided, use it as source of truth and split it
+    if (body.fullName !== undefined) {
+      const trimmedFullName = body.fullName.trim();
+      body.fullName = trimmedFullName;
+      
+      // Parse fullName into firstName/lastName to keep them in sync
+      const nameParts = trimmedFullName.split(/\s+/);
+      if (nameParts.length > 0) {
+        body.firstName = nameParts[0];
+        body.lastName = nameParts.slice(1).join(' ');
+      }
+      
+      console.log(`🔄 [PEOPLE API PATCH] Using explicit fullName: "${body.fullName}" → firstName: "${body.firstName}", lastName: "${body.lastName}"`);
+    } else if (body.firstName !== undefined || body.lastName !== undefined) {
+      // Only reconstruct fullName if it wasn't explicitly provided
+      const firstName = (body.firstName !== undefined ? body.firstName : existingPerson.firstName) || '';
+      const lastName = (body.lastName !== undefined ? body.lastName : existingPerson.lastName) || '';
+      body.fullName = `${firstName} ${lastName}`.trim();
+      
+      console.log(`🔄 [PEOPLE API PATCH] Reconstructed fullName from names: firstName: "${firstName}", lastName: "${lastName}" → fullName: "${body.fullName}"`);
     }
 
     // Special handling for globalRank updates

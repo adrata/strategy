@@ -311,17 +311,26 @@ async function createBuyerGroup(
  * But rejects clearly different companies (e.g., underline.cz vs underline.com)
  */
 function isLikelySameCompany(emailDomain: string, companyDomain: string): boolean {
-  if (!emailDomain || !companyDomain) return false;
+  if (!emailDomain || !companyDomain) {
+    console.log(`   🔍 [DOMAIN VALIDATION] Missing domain data - emailDomain: ${emailDomain}, companyDomain: ${companyDomain}`);
+    return false;
+  }
   
   // Exact match (including TLD)
-  if (emailDomain === companyDomain) return true;
+  if (emailDomain === companyDomain) {
+    console.log(`   ✅ [DOMAIN VALIDATION] Exact match: ${emailDomain} === ${companyDomain}`);
+    return true;
+  }
   
   // Extract root domains (handle subdomains)
   const emailRoot = emailDomain.split('.').slice(-2).join('.');
   const companyRoot = companyDomain.split('.').slice(-2).join('.');
   
   // Same root domain = same company (e.g., mail.company.com === company.com)
-  if (emailRoot === companyRoot) return true;
+  if (emailRoot === companyRoot) {
+    console.log(`   ✅ [DOMAIN VALIDATION] Root domain match: ${emailRoot} === ${companyRoot}`);
+    return true;
+  }
   
   // Check if email domain contains company name or vice versa
   // This catches cases like:
@@ -329,6 +338,8 @@ function isLikelySameCompany(emailDomain: string, companyDomain: string): boolea
   // - ribboncommunications.com (email) vs rbbn.com (website) - email contains "ribbon"
   const emailBase = emailRoot.split('.')[0];
   const companyBase = companyRoot.split('.')[0];
+  
+  console.log(`   🔍 [DOMAIN VALIDATION] Comparing base names: emailBase="${emailBase}" vs companyBase="${companyBase}"`);
   
   // If one domain is clearly an abbreviation of the other, likely same company
   // e.g., "pgn" could be abbreviation of "portland general"
@@ -339,6 +350,8 @@ function isLikelySameCompany(emailDomain: string, companyDomain: string): boolea
   // This is the critical case we need to catch
   if (emailBase === companyBase && emailRoot !== companyRoot) {
     // Same base name, different TLD = likely different companies
+    console.log(`   ❌ [DOMAIN VALIDATION] REJECTED - Same base name "${emailBase}" but different TLDs: ${emailRoot} vs ${companyRoot}`);
+    console.log(`   ⚠️  [DOMAIN VALIDATION] This indicates different companies with same name in different regions`);
     return false;
   }
   
@@ -347,11 +360,13 @@ function isLikelySameCompany(emailDomain: string, companyDomain: string): boolea
   if (emailDomain.length > companyDomain.length * 1.5) {
     // Email domain is significantly longer - might be full name vs abbreviation
     // Allow this case as it's likely the same company using different domains
+    console.log(`   ✅ [DOMAIN VALIDATION] Email domain significantly longer (${emailDomain.length} vs ${companyDomain.length}) - likely abbreviation case`);
     return true;
   }
   
   // Default: if domains are different, be conservative and reject
   // But this is less strict than before - we'll allow manual override
+  console.log(`   ❌ [DOMAIN VALIDATION] REJECTED - Domains don't match criteria: ${emailDomain} vs ${companyDomain}`);
   return false;
 }
 

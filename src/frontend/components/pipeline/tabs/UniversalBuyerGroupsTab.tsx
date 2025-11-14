@@ -365,7 +365,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // 🚀 PRELOAD: Check for preloaded buyer group data using safeGetItem (respects TTL)
         // 🔍 DEFENSIVE CHECK: Only check preloaded data if companyId and companyName are both present
         if (companyId && companyName && !companyIdChanged && !companyNameChanged) {
-          const preloadedData = safeGetItem(`buyer-groups-${companyId}-${workspaceId}`, 10 * 60 * 1000);
+          const preloadedData = safeGetItem(`buyer-groups-${companyId}-${workspaceId}`, 5 * 60 * 1000); // Reduced from 10 to 5 minutes
           if (preloadedData && Array.isArray(preloadedData) && preloadedData.length > 0) {
             // 🔍 STRICT VALIDATION: Require BOTH companyId AND companyName to match (AND logic)
             const preloadedIsValid = preloadedData.every(member => 
@@ -850,6 +850,34 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     }
   };
 
+  // Manual cache clear function for debugging and admin use
+  const handleClearCache = () => {
+    const workspaceId = record?.workspaceId;
+    if (!companyId || !workspaceId) {
+      console.log('⚠️ [BUYER GROUPS] Cannot clear cache - missing companyId or workspaceId');
+      return;
+    }
+
+    // Clear buyer group cache
+    const cacheKeys = [
+      `buyer-groups-${companyId}-${workspaceId}`,
+      `people-${workspaceId}`,
+      `people-company-${companyId}-${workspaceId}`
+    ];
+
+    cacheKeys.forEach(key => {
+      localStorage.removeItem(key);
+      console.log(`🗑️ [BUYER GROUPS] Cleared cache: ${key}`);
+    });
+
+    // Force re-fetch by updating lastFetchTime
+    setLastFetchTime(null);
+    setLoading(true);
+    
+    // Trigger re-fetch
+    window.location.reload();
+  };
+
   const handleMemberClick = async (member: any) => {
     console.log('🔗 [BUYER GROUPS] Navigating to person:', member);
     
@@ -995,7 +1023,16 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       {/* Buyer Group Members */}
       {!loading && buyerGroups.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Buyer Group Members</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">Buyer Group Members</h3>
+            <button
+              onClick={handleClearCache}
+              className="text-xs text-muted hover:text-foreground px-2 py-1 rounded hover:bg-surface-hover transition-colors"
+              title="Clear buyer group cache and reload"
+            >
+              🔄 Clear Cache
+            </button>
+          </div>
           <div className="space-y-3">
             {buyerGroups.map((member, index) => {
               const riskAssessment = riskAssessments[member.id] || calculatePersonRisk(member);

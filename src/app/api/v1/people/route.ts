@@ -507,7 +507,8 @@ export async function GET(request: NextRequest) {
               select: {
                 id: true,
                 name: true,
-                industry: true
+                industry: true,
+                deletedAt: true, // Include deletedAt to track if company is archived
               }
             },
             mainSeller: {
@@ -626,11 +627,10 @@ export async function GET(request: NextRequest) {
                     industry: true,
                     size: true,
                     globalRank: true,
-                    hqState: true
+                    hqState: true,
+                    deletedAt: true, // Include deletedAt to track if company is archived
                   },
-                  where: {
-                    deletedAt: null // Only show non-deleted companies
-                  }
+                  // Removed where filter to allow soft-deleted companies to be returned
                 },
                 mainSeller: {
                   select: {
