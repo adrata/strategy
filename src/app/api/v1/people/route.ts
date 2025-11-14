@@ -272,9 +272,11 @@ export async function GET(request: NextRequest) {
 
       // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE, LEAD, OPPORTUNITY)
       // Note: status is for pipeline stage, relationshipType is separate for CLIENT/PARTNER filtering
+      // ⚠️ IMPORTANT: When companyId is provided, don't filter by status parameter
+      // This ensures company detail pages show ALL people (leads, prospects, etc.)
       // Track if we're using relationshipType so we can fall back if column doesn't exist
       let usingRelationshipType = false;
-      if (status) {
+      if (status && !companyId) {
         // For CLIENT/PARTNER filtering, use relationshipType instead of status
         if (status === 'CLIENT' || status === 'FUTURE_CLIENT') {
           where.relationshipType = {

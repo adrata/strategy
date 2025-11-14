@@ -14,6 +14,7 @@ import { ApplicationContextService } from './ApplicationContextService';
 import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
 import { systemPromptProtector } from '@/platform/security/system-prompt-protector';
 import { RevenueOSKnowledgeBase } from './revenue-os-knowledge-base';
+import { TOPCompetitorFieldManual } from './top-competitor-field-manual';
 import { UserGoalsService } from './UserGoalsService';
 
 export interface ListViewContext {
@@ -757,6 +758,97 @@ Apply relevant framework based on context.
   }
 
   /**
+   * Build TOP Competitor Field Manual context based on query content
+   * This provides competitive intelligence and positioning strategies for TOP Engineers Plus
+   */
+  private buildTOPCompetitorContext(request: ClaudeChatRequest): string {
+    const message = request.message?.toLowerCase() || '';
+    const workspaceContext = request.workspaceContext;
+    
+    // Check if query relates to competitive positioning, TOP, or competitors
+    const isCompetitiveQuery = 
+      message.includes('top') ||
+      message.includes('top-temp') ||
+      message.includes('competitor') ||
+      message.includes('competitive') ||
+      message.includes('positioning') ||
+      message.includes('burns') ||
+      message.includes('mcdonnell') ||
+      message.includes('black & veatch') ||
+      message.includes('black and veatch') ||
+      message.includes('lockard') ||
+      message.includes('white') ||
+      message.includes('epc') ||
+      message.includes('engineering procurement construction') ||
+      message.includes('utility communications') ||
+      message.includes('how do we win') ||
+      message.includes('how to position') ||
+      message.includes('against') ||
+      message.includes('versus') ||
+      message.includes('vs');
+    
+    // Check workspace context for TOP-related business
+    const workspaceContextString = workspaceContext?.userContext?.toLowerCase() || 
+                                   workspaceContext?.dataContext?.toLowerCase() || 
+                                   workspaceContext?.applicationContext?.toLowerCase() || '';
+    const isTOPWorkspace = 
+      workspaceContextString.includes('top') ||
+      workspaceContextString.includes('top engineers') ||
+      workspaceContextString.includes('epc') ||
+      workspaceContextString.includes('utility communications');
+    
+    // Include TOP competitor manual if query is competitive or workspace is TOP-related
+    if (isCompetitiveQuery || isTOPWorkspace) {
+      // Detect specific competitor mentions
+      let competitorName: string | undefined;
+      if (message.includes('burns') || message.includes('mcdonnell') || message.includes('b&m')) {
+        competitorName = 'Burns & McDonnell';
+      } else if (message.includes('black') || message.includes('veatch') || message.includes('b&v')) {
+        competitorName = 'Black & Veatch';
+      } else if (message.includes('lockard') || message.includes('white') || message.includes('l&w')) {
+        competitorName = 'Lockard & White';
+      }
+      
+      // Get contextual manual based on query
+      const competitorManual = TOPCompetitorFieldManual.getContextualManual({
+        competitorName,
+        situation: isCompetitiveQuery ? 'competitive' : undefined,
+        queryType: message.includes('positioning') ? 'positioning' : undefined
+      });
+      
+      return `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOP'S STRATEGIC COMPETITOR FIELD MANUAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You have access to TOP Engineers Plus's Strategic Competitor Field Manual - a comprehensive guide for outflanking large EPCs and small design firms.
+
+This manual provides:
+- Detailed competitor profiles (Burns & McDonnell, Black & Veatch, Lockard & White)
+- Tactical positioning strategies and talk tracks
+- Discovery questions to expose competitor weaknesses
+- RFP language traps and proof requests
+- Pricing and timeline wedges
+- Sales cheat sheet for quick reference
+
+WHEN TO USE THIS KNOWLEDGE:
+- Questions about competitive positioning or how to win against specific competitors
+- Queries about TOP's differentiation or value proposition
+- Requests for talk tracks, discovery questions, or RFP strategies
+- Questions about Burns & McDonnell, Black & Veatch, or Lockard & White
+- Competitive sales situations or proposal preparation
+
+${competitorManual}
+
+IMPORTANT: Use this knowledge to provide strategic competitive guidance, positioning advice, and tactical sales support when users ask about TOP, competitive situations, or specific EPC competitors.
+`;
+    }
+    
+    // Return empty string if not a competitive context
+    return '';
+  }
+
+  /**
    * Build enhanced system prompt with sales context and data access
    */
   private async buildEnhancedSystemPrompt(request: ClaudeChatRequest, dataContext: any): Promise<string> {
@@ -1057,6 +1149,8 @@ EXPERTISE:
 B2B sales, pipeline optimization, buyer intelligence, revenue growth
 
 ${this.buildRevenueOSFrameworkContext(request, currentRecord)}
+
+${this.buildTOPCompetitorContext(request)}
 
 ${userGoalsContext}
 
