@@ -308,9 +308,11 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           try {
             // 🚀 PERFORMANCE FIX: Fetch only 200 people initially for faster load times
             // Users can paginate if needed
-            const apiUrl = `/api/v1/people?companyId=${companyId}&limit=200&sortBy=updatedAt&sortOrder=desc`;
+            // 🔧 FIX: Add includeAllUsers=true to bypass seller filtering issues
+            const apiUrl = `/api/v1/people?companyId=${companyId}&limit=200&sortBy=updatedAt&sortOrder=desc&includeAllUsers=true`;
             console.log('🔍 [PEOPLE TAB] Making API call:', apiUrl);
             console.log('🔍 [PEOPLE TAB] CompanyId being sent:', companyId);
+            console.log('🔍 [PEOPLE TAB] includeAllUsers flag: true');
             const response = await authFetch(apiUrl);
             console.log('🔍 [PEOPLE TAB] API response:', response);
             

@@ -50,38 +50,43 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [FAST BUYER GROUPS] Company found:`, company);
     console.log(`🚀 [FAST BUYER GROUPS] Searching for people with companyId: ${companyId} (exact match only)`);
+    console.log(`🚀 [FAST BUYER GROUPS] Auth context:`, { workspaceId, userId });
 
     // Single optimized query to get people with buyer group roles for the company
     // STRICT: Only use companyId exact match - no email domain fallback to prevent cross-company leakage
-    const people = await prisma.people.findMany({
-      where: {
-        AND: [
-          {
-            // PRIMARY FILTER: Exact companyId match only (no email domain fallback)
-            companyId: companyId
-          },
-          {
-            workspaceId: workspaceId,
-            deletedAt: null
-          },
-          // Filter for people with buyer group roles OR marked as buyer group members
-          {
-            OR: [
-              // People with buyerGroupRole set (primary filter)
-              { buyerGroupRole: { not: null } },
-              // People with isBuyerGroupMember = true
-              { isBuyerGroupMember: true },
-              // People with buyerGroupStatus: 'in' in customFields
-              {
-                customFields: {
-                  path: ['buyerGroupStatus'],
-                  equals: 'in'
-                }
+    const whereClause = {
+      AND: [
+        {
+          // PRIMARY FILTER: Exact companyId match only (no email domain fallback)
+          companyId: companyId
+        },
+        {
+          workspaceId: workspaceId,
+          deletedAt: null
+        },
+        // Filter for people with buyer group roles OR marked as buyer group members
+        {
+          OR: [
+            // People with buyerGroupRole set (primary filter)
+            { buyerGroupRole: { not: null } },
+            // People with isBuyerGroupMember = true
+            { isBuyerGroupMember: true },
+            // People with buyerGroupStatus: 'in' in customFields
+            {
+              customFields: {
+                path: ['buyerGroupStatus'],
+                equals: 'in'
               }
-            ]
-          }
-        ]
-      },
+            }
+          ]
+        }
+      ]
+    };
+    
+    console.log(`🚀 [FAST BUYER GROUPS] Query WHERE clause:`, JSON.stringify(whereClause, null, 2));
+    
+    const people = await prisma.people.findMany({
+      where: whereClause,
       select: {
         id: true,
         fullName: true,
@@ -120,7 +125,52 @@ export async function GET(request: NextRequest) {
       return true;
     });
 
+    console.log(`🔍 [FAST BUYER GROUPS] Query returned ${people.length} raw results`);
     console.log(`🔍 [FAST BUYER GROUPS] After validation: ${validatedPeople.length} people (was ${people.length})`);
+    
+    if (people.length === 0) {
+      console.log(`❌ [FAST BUYER GROUPS] ZERO RESULTS - Debugging why...`);
+      
+      // Test 1: Check if ANY people exist for this company (no buyer group filter)
+      const allCompanyPeople = await prisma.people.findMany({
+        where: {
+          companyId: companyId,
+          workspaceId: workspaceId,
+          deletedAt: null
+        },
+        select: { id: true, fullName: true, buyerGroupRole: true, isBuyerGroupMember: true }
+      });
+      
+      console.log(`🔍 [FAST BUYER GROUPS] Test 1 - All people for company (no buyer group filter): ${allCompanyPeople.length}`);
+      if (allCompanyPeople.length > 0) {
+        console.log(`🔍 [FAST BUYER GROUPS] Sample people:`, allCompanyPeople.slice(0, 3).map(p => ({
+          name: p.fullName,
+          hasRole: !!p.buyerGroupRole,
+          isMember: p.isBuyerGroupMember
+        })));
+      }
+      
+      // Test 2: Check without workspace filter
+      const peopleWithoutWorkspace = await prisma.people.findMany({
+        where: {
+          companyId: companyId,
+          deletedAt: null,
+          OR: [
+            { buyerGroupRole: { not: null } },
+            { isBuyerGroupMember: true }
+          ]
+        },
+        select: { id: true, fullName: true, workspaceId: true }
+      });
+      
+      console.log(`🔍 [FAST BUYER GROUPS] Test 2 - Without workspace filter: ${peopleWithoutWorkspace.length}`);
+      if (peopleWithoutWorkspace.length > 0) {
+        const workspaceIds = [...new Set(peopleWithoutWorkspace.map(p => p.workspaceId))];
+        console.log(`🔍 [FAST BUYER GROUPS] Found people in workspaces:`, workspaceIds);
+        console.log(`🔍 [FAST BUYER GROUPS] Expected workspace:`, workspaceId);
+        console.log(`🔍 [FAST BUYER GROUPS] Workspace mismatch:`, !workspaceIds.includes(workspaceId));
+      }
+    }
 
     // Transform to buyer group format
     const buyerGroupMembers = validatedPeople.map(person => {
