@@ -25,21 +25,42 @@ export class AutoStrategyPopulationService {
     try {
       console.log(`🔄 [AUTO STRATEGY] Starting strategy population for workspace ${workspaceId}`);
 
-      // Get all companies without strategy data
-      const companies = await prisma.companies.findMany({
+      // Get all companies WITH all related data for rich intelligence
+      // We'll filter for companies without strategy data in memory to avoid Prisma JSON path issues
+      const allCompanies = await prisma.companies.findMany({
         where: {
           workspaceId,
-          deletedAt: null,
-          OR: [
-            { customFields: null },
-            { customFields: { path: ['strategyData'], equals: undefined } }
-          ]
+          deletedAt: null
+        },
+        include: {
+          // Include related people/contacts for comprehensive intelligence
+          people: {
+            where: { deletedAt: null },
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              jobTitle: true,
+              email: true,
+              phone: true,
+              linkedinUrl: true,
+              lastAction: true,
+              nextAction: true
+            },
+            take: 50 // Limit to top 50 people
+          }
         },
         take: 50 // Process in batches
       });
 
+      // Filter companies without strategy data
+      const companies = allCompanies.filter(company => {
+        const customFields = company.customFields as any;
+        return !customFields || !customFields.strategyData;
+      });
+
       result.companiesProcessed = companies.length;
-      console.log(`📊 [AUTO STRATEGY] Found ${companies.length} companies without strategy data`);
+      console.log(`📊 [AUTO STRATEGY] Found ${companies.length} companies without strategy data (out of ${allCompanies.length} total)`);
 
       for (const company of companies) {
         try {
@@ -66,6 +87,8 @@ export class AutoStrategyPopulationService {
 
   async populateStrategyForCompany(company: any): Promise<void> {
     try {
+      console.log(`🔄 [AUTO STRATEGY] Generating rich intelligence for ${company.name} (${company.id})`);
+
       // Infer target industry from company data, avoiding Technology/SaaS default
       const inferredTargetIndustry = company.customFields?.targetIndustry || 
         (company.industry ? this.inferIndustryCategory(company.industry) : null) ||
@@ -73,7 +96,92 @@ export class AutoStrategyPopulationService {
         (company.name ? this.inferIndustryFromName(company.name) : null) ||
         'Unknown';
 
-      // Prepare strategy request with company data
+      // Parse competitors array properly (handle both string and array formats)
+      let competitors: string[] = [];
+      if (Array.isArray(company.competitors)) {
+        competitors = company.competitors;
+      } else if (typeof company.competitors === 'string') {
+        competitors = company.competitors.split(',').map(c => c.trim()).filter(c => c.length > 0);
+      }
+
+      // Extract all enrichment data from customFields
+      const customFields = (company.customFields as any) || {};
+      const coresignalData = customFields.coresignalData || customFields.coresignal || {};
+      const perplexityData = customFields.perplexityData || {};
+      const enrichedData = customFields.enrichedData || {};
+      
+      // Extract CoreSignal growth and change metrics
+      const employeesCountChange = coresignalData.employees_count_change || 
+                                   coresignalData.employeeCountChange ||
+                                   company.employeeCountChange;
+      const activeJobPostingsCount = coresignalData.active_job_postings_count || 
+                                     coresignalData.activeJobPostingsCount ||
+                                     company.activeJobPostings;
+      const jobPostingsChange = coresignalData.active_job_postings_count_change ||
+                                coresignalData.jobPostingsChange ||
+                                company.jobPostingsChange;
+      const executiveArrivals = coresignalData.key_executive_arrivals ||
+                                coresignalData.keyExecutiveArrivals ||
+                                company.executiveArrivals ||
+                                [];
+      const executiveDepartures = coresignalData.key_executive_departures ||
+                                  coresignalData.keyExecutiveDepartures ||
+                                  company.executiveDepartures ||
+                                  [];
+      const fundingRounds = coresignalData.funding_rounds ||
+                           coresignalData.fundingRounds ||
+                           company.fundingRounds ||
+                           [];
+      const acquisitions = coresignalData.acquisition_list_source_1 ||
+                          coresignalData.acquisitions ||
+                          [];
+      const employeeReviewsScore = coresignalData.employee_reviews_score_aggregated_change?.current ||
+                                  coresignalData.employeeReviewsScore?.current ||
+                                  company.employeeReviewsScore?.current;
+      const productReviewsScore = coresignalData.product_reviews_score_change?.current ||
+                                 coresignalData.productReviewsScore?.current ||
+                                 company.productReviewsScore?.current;
+
+      // Extract technology and classification data
+      const naicsCodes = company.naicsCodes || coresignalData.naics_codes || [];
+      const sicCodes = company.sicCodes || coresignalData.sic_codes || [];
+      const technologiesUsed = company.technologiesUsed || coresignalData.technologies_used || [];
+      const techStack = company.techStack || coresignalData.tech_stack || [];
+
+      // Format people data for strategy request
+      const peopleData = (company.people || []).map((person: any) => ({
+        id: person.id,
+        firstName: person.firstName || '',
+        lastName: person.lastName || '',
+        title: person.jobTitle || '',
+        email: person.email || null,
+        phone: person.phone || null,
+        linkedinUrl: person.linkedinUrl || null,
+        lastAction: person.lastAction || null,
+        nextAction: person.nextAction || null
+      }));
+
+      console.log(`📊 [AUTO STRATEGY] Company data summary:`, {
+        name: company.name,
+        industry: company.industry,
+        targetIndustry: inferredTargetIndustry,
+        size: this.parseCompanySize(company.size || company.employeeCount),
+        revenue: company.revenue || 0,
+        peopleCount: peopleData.length,
+        competitorsCount: competitors.length,
+        hasDescription: !!company.description,
+        hasWebsite: !!company.website,
+        globalRank: company.globalRank,
+        hasCoreSignalData: !!coresignalData && Object.keys(coresignalData).length > 0,
+        hasPerplexityData: !!perplexityData && Object.keys(perplexityData).length > 0,
+        technologiesCount: technologiesUsed.length,
+        naicsCodesCount: naicsCodes.length,
+        fundingRoundsCount: fundingRounds.length,
+        executiveChangesCount: (executiveArrivals.length + executiveDepartures.length),
+        activeJobPostings: activeJobPostingsCount
+      });
+
+      // Prepare comprehensive strategy request with ALL available company data
       const strategyRequest: CompanyStrategyRequest = {
         companyId: company.id,
         companyName: company.name,
@@ -85,40 +193,129 @@ export class AutoStrategyPopulationService {
           new Date().getFullYear() - company.foundedYear : null,
         growthStage: this.determineGrowthStage(company),
         marketPosition: this.determineMarketPosition(company),
-        // Pass through all real company data
-        website: company.website,
-        headquarters: company.headquarters,
-        foundedYear: company.foundedYear,
-        isPublic: company.isPublic,
-        sector: company.sector,
-        description: company.description,
-        linkedinFollowers: company.linkedinFollowers,
-        globalRank: company.globalRank,
-        competitors: company.competitors ? company.competitors.split(',').map(c => c.trim()) : [],
-        lastAction: company.lastAction,
-        nextAction: company.nextAction,
-        opportunityStage: company.opportunityStage,
-        opportunityAmount: company.opportunityAmount
+        // Pass through ALL real company data for rich AI analysis
+        website: company.website || undefined,
+        headquarters: company.headquarters || company.hqLocation || company.hqFullAddress || undefined,
+        foundedYear: company.foundedYear || undefined,
+        isPublic: company.isPublic || undefined,
+        sector: company.sector || undefined,
+        description: company.description || undefined,
+        linkedinFollowers: company.linkedinFollowers || undefined,
+        globalRank: company.globalRank || undefined,
+        competitors: competitors.length > 0 ? competitors : undefined,
+        lastAction: company.lastAction || undefined,
+        nextAction: company.nextAction || undefined,
+        opportunityStage: company.opportunityStage || undefined,
+        opportunityAmount: company.opportunityAmount ? Number(company.opportunityAmount) : undefined,
+        // Include enriched data for comprehensive intelligence
+        people: peopleData.length > 0 ? peopleData : undefined,
+        // CoreSignal enrichment data for rich intelligence
+        coresignalData: (coresignalData && Object.keys(coresignalData).length > 0) ? {
+          employeesCount: coresignalData.employees_count || coresignalData.employeesCount || company.employeeCount,
+          employeesCountChange: employeesCountChange ? {
+            current: employeesCountChange.current || employeesCountChange.current || 0,
+            changeMonthly: employeesCountChange.change_monthly || employeesCountChange.changeMonthly || 0,
+            changeMonthlyPercentage: employeesCountChange.change_monthly_percentage || employeesCountChange.changeMonthlyPercentage || 0,
+            changeQuarterly: employeesCountChange.change_quarterly || employeesCountChange.changeQuarterly || 0,
+            changeQuarterlyPercentage: employeesCountChange.change_quarterly_percentage || employeesCountChange.changeQuarterlyPercentage || 0,
+            changeYearly: employeesCountChange.change_yearly || employeesCountChange.changeYearly || 0,
+            changeYearlyPercentage: employeesCountChange.change_yearly_percentage || employeesCountChange.changeYearlyPercentage || 0
+          } : undefined,
+          activeJobPostingsCount: activeJobPostingsCount,
+          activeJobPostingsCountChange: jobPostingsChange ? {
+            current: jobPostingsChange.current || 0,
+            changeMonthly: jobPostingsChange.change_monthly || 0,
+            changeMonthlyPercentage: jobPostingsChange.change_monthly_percentage || 0
+          } : undefined,
+          keyExecutiveArrivals: Array.isArray(executiveArrivals) ? executiveArrivals.map((arr: any) => ({
+            memberFullName: arr.member_full_name || arr.memberFullName || arr.name || '',
+            memberPositionTitle: arr.member_position_title || arr.memberPositionTitle || arr.title || '',
+            arrivalDate: arr.arrival_date || arr.arrivalDate || arr.date || ''
+          })) : undefined,
+          keyExecutiveDepartures: Array.isArray(executiveDepartures) ? executiveDepartures.map((dep: any) => ({
+            memberFullName: dep.member_full_name || dep.memberFullName || dep.name || '',
+            memberPositionTitle: dep.member_position_title || dep.memberPositionTitle || dep.title || '',
+            departureDate: dep.departure_date || dep.departureDate || dep.date || ''
+          })) : undefined,
+          fundingRounds: Array.isArray(fundingRounds) ? fundingRounds.map((fund: any) => ({
+            name: fund.name || fund.round_name || '',
+            announcedDate: fund.announced_date || fund.announcedDate || fund.date || '',
+            amountRaised: fund.amount_raised || fund.amountRaised || 0,
+            amountRaisedCurrency: fund.amount_raised_currency || fund.amountRaisedCurrency || 'USD'
+          })) : undefined,
+          acquisitions: Array.isArray(acquisitions) ? acquisitions.map((acq: any) => ({
+            acquireeName: acq.acquiree_name || acq.acquireeName || acq.name || '',
+            announcedDate: acq.announced_date || acq.announcedDate || acq.date || '',
+            price: acq.price || '',
+            currency: acq.currency || 'USD'
+          })) : undefined,
+          employeeReviewsScore: employeeReviewsScore,
+          productReviewsScore: productReviewsScore,
+          naicsCodes: naicsCodes.length > 0 ? naicsCodes : undefined,
+          sicCodes: sicCodes.length > 0 ? sicCodes : undefined,
+          technologiesUsed: technologiesUsed.length > 0 ? technologiesUsed : undefined,
+          techStack: techStack.length > 0 ? techStack : undefined
+        } : undefined,
+        // Additional enrichment fields
+        naicsCodes: naicsCodes.length > 0 ? naicsCodes : undefined,
+        sicCodes: sicCodes.length > 0 ? sicCodes : undefined,
+        technologiesUsed: technologiesUsed.length > 0 ? technologiesUsed : undefined,
+        techStack: techStack.length > 0 ? techStack : undefined,
+        activeJobPostings: activeJobPostingsCount,
+        employeeCountChange: employeesCountChange ? {
+          monthly: employeesCountChange.change_monthly || employeesCountChange.changeMonthly,
+          quarterly: employeesCountChange.change_quarterly || employeesCountChange.changeQuarterly,
+          yearly: employeesCountChange.change_yearly || employeesCountChange.changeYearly
+        } : undefined,
+        fundingRounds: fundingRounds.length > 0 ? fundingRounds.map((fund: any) => ({
+          name: fund.name || fund.round_name || '',
+          date: fund.announced_date || fund.announcedDate || fund.date || '',
+          amount: fund.amount_raised || fund.amountRaised || 0,
+          currency: fund.amount_raised_currency || fund.amountRaisedCurrency || 'USD'
+        })) : undefined,
+        executiveChanges: (executiveArrivals.length > 0 || executiveDepartures.length > 0) ? {
+          arrivals: Array.isArray(executiveArrivals) ? executiveArrivals.map((arr: any) => ({
+            name: arr.member_full_name || arr.memberFullName || arr.name || '',
+            title: arr.member_position_title || arr.memberPositionTitle || arr.title || '',
+            date: arr.arrival_date || arr.arrivalDate || arr.date || ''
+          })) : undefined,
+          departures: Array.isArray(executiveDepartures) ? executiveDepartures.map((dep: any) => ({
+            name: dep.member_full_name || dep.memberFullName || dep.name || '',
+            title: dep.member_position_title || dep.memberPositionTitle || dep.title || '',
+            date: dep.departure_date || dep.departureDate || dep.date || ''
+          })) : undefined
+        } : undefined
       };
 
-      // Generate strategy
+      console.log(`🤖 [AUTO STRATEGY] Calling Claude AI to generate comprehensive strategy...`);
+
+      // Generate strategy using Claude AI with all rich data
       const strategyResponse = await companyStrategyService.generateCompanyStrategy(strategyRequest);
       
       if (!strategyResponse.success || !strategyResponse.data) {
         throw new Error(strategyResponse.error || 'Failed to generate strategy');
       }
 
+      console.log(`✅ [AUTO STRATEGY] Strategy generated successfully:`, {
+        archetype: strategyResponse.data.archetypeName,
+        targetIndustry: strategyResponse.data.targetIndustry,
+        hasSummary: !!strategyResponse.data.strategySummary,
+        recommendationsCount: strategyResponse.data.strategicRecommendations?.length || 0
+      });
+
       // Update company record with strategy data
       await prisma.companies.update({
         where: { id: company.id },
         data: {
           customFields: {
-            ...company.customFields,
+            ...(company.customFields as any || {}),
             strategyData: strategyResponse.data,
             lastStrategyUpdate: new Date().toISOString()
           }
         }
       });
+
+      console.log(`💾 [AUTO STRATEGY] Strategy data saved to database for ${company.name}`);
 
     } catch (error) {
       console.error(`❌ [AUTO STRATEGY] Error generating strategy for ${company.name}:`, error);

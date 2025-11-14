@@ -248,19 +248,21 @@ async function generateIntelligenceForAll(workspaceId: string) {
         }
       }
       
-      if (needsRegeneration) {
-        toGenerate.push({ company, hasCache, needsRegeneration, reasons });
-      }
+      // Generate for ALL companies to ensure 100% coverage
+      // Even if cached data exists, regenerate to ensure it's using the latest logic
+      toGenerate.push({ company, hasCache, needsRegeneration, reasons });
     }
     
     console.log(`📈 Audit Results:`);
-    console.log(`   ✅ Already accurate: ${allCompanies.length - toGenerate.length}`);
-    console.log(`   🔄 Needs generation: ${toGenerate.length}`);
+    console.log(`   📊 Total companies: ${allCompanies.length}`);
+    console.log(`   🔄 Will generate for: ${toGenerate.length} companies (100% coverage)`);
     console.log(`      - No cache: ${toGenerate.filter(t => !t.hasCache).length}`);
-    console.log(`      - Needs regeneration: ${toGenerate.filter(t => t.hasCache).length}\n`);
+    console.log(`      - Has cache (will regenerate): ${toGenerate.filter(t => t.hasCache).length}\n`);
+    console.log(`   💡 Generating intelligence for ALL companies to ensure 100% coverage with latest logic.\n`);
     
+    // Always generate for all companies to ensure 100% coverage with latest logic
     if (toGenerate.length === 0) {
-      console.log('✅ All companies have accurate intelligence! No generation needed.\n');
+      console.log('⚠️  No companies found to process. This should not happen.\n');
       return;
     }
     

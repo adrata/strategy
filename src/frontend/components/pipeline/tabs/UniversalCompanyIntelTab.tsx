@@ -76,12 +76,38 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     };
   }, []);
 
+  // Track if we've attempted to auto-generate (to prevent multiple attempts)
+  const autoGenerationAttemptedRef = useRef(false);
+
   // Load existing strategy data on component mount (non-blocking)
   useEffect(() => {
     if (record?.id) {
       loadStrategyData();
     }
   }, [record?.id]);
+
+  // Auto-trigger generation in background if no data exists (silent, like other tabs)
+  useEffect(() => {
+    if (record?.id && !strategyData && !isGeneratingStrategy && !strategyError && !autoGenerationAttemptedRef.current) {
+      // Check if data exists in record first
+      if (!record.customFields?.strategyData) {
+        console.log('🔄 [COMPANY STRATEGY] No intelligence data found, triggering background generation...');
+        autoGenerationAttemptedRef.current = true;
+        // Trigger generation silently in background (non-blocking)
+        // Use a small delay to ensure component is fully mounted
+        const timer = setTimeout(() => {
+          handleGenerateStrategy(false).catch(err => {
+            console.warn('⚠️ [COMPANY STRATEGY] Background generation failed:', err);
+            // Reset the ref on error so it can retry if user refreshes
+            autoGenerationAttemptedRef.current = false;
+          });
+        }, 500);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [record?.id, record?.customFields?.strategyData, strategyData, isGeneratingStrategy, strategyError]);
 
   const loadStrategyData = async () => {
     if (!record?.id) return;
@@ -254,16 +280,14 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     );
   }
 
-  // Show loading state if we're generating strategy
-  if (isGeneratingStrategy) {
+  // Show loading state if we're generating strategy (but only if we don't have data yet)
+  if (isGeneratingStrategy && !strategyData) {
     return (
-      <div className="p-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground">Intelligence Summary</h3>
-          </div>
-          <StrategySkeleton />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold text-foreground">Intelligence Summary</h3>
         </div>
+        <StrategySkeleton />
       </div>
     );
   }
@@ -461,30 +485,30 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             </div>
           </div>
         ) : (
-          <div className="bg-white border border-border rounded-lg p-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🧠</span>
+          // Empty state - generation happens automatically in background
+          <div className="space-y-6">
+            {isGeneratingStrategy ? (
+              <>
+                <StrategySkeleton />
+                <div className="text-center text-sm text-muted">
+                  Generating intelligence in the background. You can navigate away and return later.
+                </div>
+              </>
+            ) : (
+              <div className="bg-white border border-border rounded-lg p-8">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🧠</span>
+                  </div>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">
+                    Intelligence Loading
+                  </h4>
+                  <p className="text-sm text-muted max-w-md mx-auto">
+                    Intelligence data is being generated. Please refresh the page in a moment.
+                  </p>
+                </div>
               </div>
-              <h4 className="text-lg font-semibold text-foreground mb-2">
-                No Intelligence Data Available
-              </h4>
-              <p className="text-sm text-muted mb-6 max-w-md mx-auto">
-                Generate AI-powered intelligence insights for this company. This process runs in the background and may take 30-60 seconds.
-              </p>
-              <button 
-                onClick={() => handleGenerateStrategy(false)}
-                disabled={isGeneratingStrategy}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isGeneratingStrategy ? 'Generating Intelligence...' : 'Generate Intelligence'}
-              </button>
-              {isGeneratingStrategy && (
-                <p className="text-xs text-muted mt-4">
-                  You can navigate away and return later. The intelligence will be saved when complete.
-                </p>
-              )}
-            </div>
+            )}
           </div>
         )}
     </div>

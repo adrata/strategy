@@ -57,6 +57,74 @@ export interface ClaudeStrategyRequest {
     overallConfidence: number;
     cohesionScore: number;
   }>;
+  // CoreSignal enrichment data for rich intelligence
+  coresignalData?: {
+    employeesCount?: number;
+    employeesCountChange?: {
+      current: number;
+      changeMonthly: number;
+      changeMonthlyPercentage: number;
+      changeQuarterly: number;
+      changeQuarterlyPercentage: number;
+      changeYearly: number;
+      changeYearlyPercentage: number;
+    };
+    activeJobPostingsCount?: number;
+    activeJobPostingsCountChange?: {
+      current: number;
+      changeMonthly: number;
+      changeMonthlyPercentage: number;
+    };
+    keyExecutiveArrivals?: Array<{
+      memberFullName: string;
+      memberPositionTitle: string;
+      arrivalDate: string;
+    }>;
+    keyExecutiveDepartures?: Array<{
+      memberFullName: string;
+      memberPositionTitle: string;
+      departureDate: string;
+    }>;
+    fundingRounds?: Array<{
+      name: string;
+      announcedDate: string;
+      amountRaised: number;
+      amountRaisedCurrency: string;
+    }>;
+    acquisitions?: Array<{
+      acquireeName: string;
+      announcedDate: string;
+      price: string;
+      currency: string;
+    }>;
+    employeeReviewsScore?: number;
+    productReviewsScore?: number;
+    naicsCodes?: string[];
+    sicCodes?: string[];
+    technologiesUsed?: string[];
+    techStack?: string[];
+  };
+  // Additional enrichment fields
+  naicsCodes?: string[];
+  sicCodes?: string[];
+  technologiesUsed?: string[];
+  techStack?: string[];
+  activeJobPostings?: number;
+  employeeCountChange?: {
+    monthly?: number;
+    quarterly?: number;
+    yearly?: number;
+  };
+  fundingRounds?: Array<{
+    name: string;
+    date: string;
+    amount: number;
+    currency: string;
+  }>;
+  executiveChanges?: {
+    arrivals?: Array<{ name: string; title: string; date: string }>;
+    departures?: Array<{ name: string; title: string; date: string }>;
+  };
 }
 
 export interface ClaudeStrategyResponse {
@@ -126,7 +194,13 @@ export class ClaudeStrategyService {
         archetypeName: request.archetypeName,
         opportunitiesCount: request.opportunities?.length || 0,
         peopleCount: request.people?.length || 0,
-        buyerGroupsCount: request.buyerGroups?.length || 0
+        buyerGroupsCount: request.buyerGroups?.length || 0,
+        hasCoreSignalData: !!request.coresignalData,
+        technologiesCount: request.technologiesUsed?.length || request.coresignalData?.technologiesUsed?.length || 0,
+        naicsCodesCount: request.naicsCodes?.length || request.coresignalData?.naicsCodes?.length || 0,
+        fundingRoundsCount: request.fundingRounds?.length || request.coresignalData?.fundingRounds?.length || 0,
+        executiveChangesCount: (request.executiveChanges?.arrivals?.length || 0) + (request.executiveChanges?.departures?.length || 0) + (request.coresignalData?.keyExecutiveArrivals?.length || 0) + (request.coresignalData?.keyExecutiveDepartures?.length || 0),
+        activeJobPostings: request.activeJobPostings || request.coresignalData?.activeJobPostingsCount
       });
 
       const prompt = this.buildStrategyPrompt(request);
@@ -327,7 +401,11 @@ export class ClaudeStrategyService {
       request.opportunityAmount ? `- Opportunity Value: $${request.opportunityAmount.toLocaleString()}` : '',
       request.lastAction ? `- Last Action: ${request.lastAction}` : '',
       request.nextAction ? `- Next Action: ${request.nextAction}` : '',
-      request.description ? `- Company Description: ${request.description}` : ''
+      request.description ? `- Company Description: ${request.description}` : '',
+      request.naicsCodes && request.naicsCodes.length > 0 ? `- NAICS Codes: ${request.naicsCodes.join(', ')}` : '',
+      request.sicCodes && request.sicCodes.length > 0 ? `- SIC Codes: ${request.sicCodes.join(', ')}` : '',
+      request.technologiesUsed && request.technologiesUsed.length > 0 ? `- Technologies Used: ${request.technologiesUsed.slice(0, 20).join(', ')}${request.technologiesUsed.length > 20 ? ` (and ${request.technologiesUsed.length - 20} more)` : ''}` : '',
+      request.activeJobPostings ? `- Active Job Postings: ${request.activeJobPostings}` : ''
     ].filter(line => line.trim()).join('\n');
 
     // Add opportunities data if available
@@ -354,6 +432,34 @@ export class ClaudeStrategyService {
       )
     ].join('\n') : '';
 
+    // Add CoreSignal enrichment data if available
+    const coresignalSection = request.coresignalData ? [
+      `\nCORESIGNAL INTELLIGENCE DATA:`,
+      request.coresignalData.employeesCountChange ? `- Employee Growth: ${request.coresignalData.employeesCountChange.changeYearlyPercentage > 0 ? '+' : ''}${request.coresignalData.employeesCountChange.changeYearlyPercentage.toFixed(1)}% yearly, ${request.coresignalData.employeesCountChange.changeQuarterlyPercentage > 0 ? '+' : ''}${request.coresignalData.employeesCountChange.changeQuarterlyPercentage.toFixed(1)}% quarterly, ${request.coresignalData.employeesCountChange.changeMonthlyPercentage > 0 ? '+' : ''}${request.coresignalData.employeesCountChange.changeMonthlyPercentage.toFixed(1)}% monthly` : '',
+      request.coresignalData.activeJobPostingsCount ? `- Active Job Postings: ${request.coresignalData.activeJobPostingsCount}${request.coresignalData.activeJobPostingsCountChange ? ` (${request.coresignalData.activeJobPostingsCountChange.changeMonthlyPercentage > 0 ? '+' : ''}${request.coresignalData.activeJobPostingsCountChange.changeMonthlyPercentage.toFixed(1)}% monthly change)` : ''}` : '',
+      request.coresignalData.keyExecutiveArrivals && request.coresignalData.keyExecutiveArrivals.length > 0 ? `- Recent Executive Arrivals: ${request.coresignalData.keyExecutiveArrivals.slice(0, 5).map(arr => `${arr.memberFullName} (${arr.memberPositionTitle}) - ${arr.arrivalDate}`).join('; ')}` : '',
+      request.coresignalData.keyExecutiveDepartures && request.coresignalData.keyExecutiveDepartures.length > 0 ? `- Recent Executive Departures: ${request.coresignalData.keyExecutiveDepartures.slice(0, 5).map(dep => `${dep.memberFullName} (${dep.memberPositionTitle}) - ${dep.departureDate}`).join('; ')}` : '',
+      request.coresignalData.fundingRounds && request.coresignalData.fundingRounds.length > 0 ? `- Recent Funding: ${request.coresignalData.fundingRounds.slice(0, 3).map(fund => `${fund.name} - $${fund.amountRaised.toLocaleString()} ${fund.amountRaisedCurrency} (${fund.announcedDate})`).join('; ')}` : '',
+      request.coresignalData.acquisitions && request.coresignalData.acquisitions.length > 0 ? `- Recent Acquisitions: ${request.coresignalData.acquisitions.slice(0, 3).map(acq => `${acq.acquireeName} - ${acq.price} ${acq.currency} (${acq.announcedDate})`).join('; ')}` : '',
+      request.coresignalData.employeeReviewsScore ? `- Employee Satisfaction Score: ${request.coresignalData.employeeReviewsScore}/5` : '',
+      request.coresignalData.productReviewsScore ? `- Product Reviews Score: ${request.coresignalData.productReviewsScore}/5` : '',
+      request.coresignalData.technologiesUsed && request.coresignalData.technologiesUsed.length > 0 ? `- Technology Stack: ${request.coresignalData.technologiesUsed.slice(0, 15).join(', ')}${request.coresignalData.technologiesUsed.length > 15 ? ` (and ${request.coresignalData.technologiesUsed.length - 15} more)` : ''}` : ''
+    ].filter(line => line.trim()).join('\n') : '';
+
+    // Add executive changes if available (from top-level fields)
+    const executiveChangesSection = request.executiveChanges ? [
+      request.executiveChanges.arrivals && request.executiveChanges.arrivals.length > 0 ? `\nEXECUTIVE ARRIVALS:\n${request.executiveChanges.arrivals.map(arr => `- ${arr.name} (${arr.title}) - ${arr.date}`).join('\n')}` : '',
+      request.executiveChanges.departures && request.executiveChanges.departures.length > 0 ? `\nEXECUTIVE DEPARTURES:\n${request.executiveChanges.departures.map(dep => `- ${dep.name} (${dep.title}) - ${dep.date}`).join('\n')}` : ''
+    ].filter(line => line.trim()).join('\n') : '';
+
+    // Add funding rounds if available (from top-level fields)
+    const fundingSection = request.fundingRounds && request.fundingRounds.length > 0 ? [
+      `\nFUNDING HISTORY:`,
+      ...request.fundingRounds.slice(0, 5).map(fund => 
+        `- ${fund.name}: $${fund.amount.toLocaleString()} ${fund.currency} (${fund.date})`
+      )
+    ].join('\n') : '';
+
     // Build explicit industry instructions
     const industryInstruction = request.companyIndustry && request.companyIndustry !== 'Unknown' 
       ? `CRITICAL: The company's actual industry is "${request.companyIndustry}". Use this EXACT industry classification in your summary. Do NOT assume Technology/SaaS unless the Industry field explicitly states "Technology", "Software", "SaaS", or similar technology-related terms. If the industry is "Utilities", "Energy", "Electric", "Power", or similar, classify them as a utilities/energy company, NOT a technology company.`
@@ -361,7 +467,7 @@ export class ClaudeStrategyService {
 
     return `You are a strategic business advisor with deep expertise in ${request.targetIndustry}. Generate a comprehensive strategy summary for a company with the following profile:
 
-${companyProfile}${opportunitiesSection}${peopleSection}${buyerGroupsSection}
+${companyProfile}${opportunitiesSection}${peopleSection}${buyerGroupsSection}${coresignalSection}${executiveChangesSection}${fundingSection}
 
 COMPANY ARCHETYPE: ${request.archetypeName}
 Archetype Description: ${request.archetypeDescription}
@@ -375,9 +481,9 @@ IMPORTANT DISTINCTION:
 TASK: Generate a strategic analysis using the Situation-Complication-Future State framework, specifically personalized for a company serving ${request.targetIndustry}. Use ALL the real company data above to inform your analysis.
 
 REQUIREMENTS:
-1. SITUATION: Describe their current business position, strengths, and market context. Use their ACTUAL company industry (${request.companyIndustry}) when describing what type of company they are. Personalize for their target industry (${request.targetIndustry}) when describing who they serve. Use their actual company data (size, revenue, age, market position) to paint an accurate picture. Include specific industry terminology, challenges, and opportunities. ${request.opportunities && request.opportunities.length > 0 ? 'Reference their active opportunities and pipeline to understand their current business momentum.' : ''} ${request.people && request.people.length > 0 ? 'Consider their key contacts and relationships in your analysis.' : ''}
+1. SITUATION: Describe their current business position, strengths, and market context. Use their ACTUAL company industry (${request.companyIndustry}) when describing what type of company they are. Personalize for their target industry (${request.targetIndustry}) when describing who they serve. Use their actual company data (size, revenue, age, market position) to paint an accurate picture. Include specific industry terminology, challenges, and opportunities. ${request.opportunities && request.opportunities.length > 0 ? 'Reference their active opportunities and pipeline to understand their current business momentum.' : ''} ${request.people && request.people.length > 0 ? 'Consider their key contacts and relationships in your analysis.' : ''} ${request.coresignalData ? 'Use the CoreSignal intelligence data (employee growth trends, job postings, executive changes, funding history, technology stack) to understand their current growth trajectory and strategic initiatives.' : ''} ${request.technologiesUsed && request.technologiesUsed.length > 0 ? 'Reference their technology stack to understand their digital maturity and technical capabilities.' : ''}
 
-2. PAIN: Identify key challenges, pain points, and strategic obstacles they face. Consider both internal challenges and external market dynamics specific to their actual industry (${request.companyIndustry}) and serving ${request.targetIndustry}. Be specific about industry regulations, competitive pressures, and market trends. Reference their actual company characteristics (size, growth stage, market position) to identify realistic pain points and complications. ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider their buyer group dynamics and decision-making complexity.' : ''} ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitors and competitive landscape.' : ''}
+2. PAIN: Identify key challenges, pain points, and strategic obstacles they face. Consider both internal challenges and external market dynamics specific to their actual industry (${request.companyIndustry}) and serving ${request.targetIndustry}. Be specific about industry regulations, competitive pressures, and market trends. Reference their actual company characteristics (size, growth stage, market position) to identify realistic pain points and complications. ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider their buyer group dynamics and decision-making complexity.' : ''} ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitors and competitive landscape.' : ''} ${request.coresignalData?.employeesCountChange ? 'Consider their employee growth trends - if declining, this may indicate financial stress or market challenges. If growing rapidly, they may face scaling and operational challenges.' : ''} ${request.coresignalData?.keyExecutiveDepartures && request.coresignalData.keyExecutiveDepartures.length > 0 ? 'Recent executive departures may indicate organizational instability or strategic shifts.' : ''} ${request.coresignalData?.activeJobPostingsCount ? 'Active job postings indicate hiring needs and potential growth areas or skill gaps.' : ''}
 
 3. FUTURE STATE: Paint a vision of success if they overcome these pain points. Describe tangible outcomes and competitive advantages specific to their actual industry (${request.companyIndustry}) and the ${request.targetIndustry} market they serve. Include specific metrics, market positions, and strategic outcomes. Make it realistic based on their current company profile. ${request.opportunities && request.opportunities.length > 0 ? 'Consider how their current opportunities could evolve and expand.' : ''}
 

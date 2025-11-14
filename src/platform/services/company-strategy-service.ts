@@ -99,6 +99,74 @@ export interface CompanyStrategyRequest {
     overallConfidence: number;
     cohesionScore: number;
   }>;
+  // CoreSignal enrichment data for rich intelligence
+  coresignalData?: {
+    employeesCount?: number;
+    employeesCountChange?: {
+      current: number;
+      changeMonthly: number;
+      changeMonthlyPercentage: number;
+      changeQuarterly: number;
+      changeQuarterlyPercentage: number;
+      changeYearly: number;
+      changeYearlyPercentage: number;
+    };
+    activeJobPostingsCount?: number;
+    activeJobPostingsCountChange?: {
+      current: number;
+      changeMonthly: number;
+      changeMonthlyPercentage: number;
+    };
+    keyExecutiveArrivals?: Array<{
+      memberFullName: string;
+      memberPositionTitle: string;
+      arrivalDate: string;
+    }>;
+    keyExecutiveDepartures?: Array<{
+      memberFullName: string;
+      memberPositionTitle: string;
+      departureDate: string;
+    }>;
+    fundingRounds?: Array<{
+      name: string;
+      announcedDate: string;
+      amountRaised: number;
+      amountRaisedCurrency: string;
+    }>;
+    acquisitions?: Array<{
+      acquireeName: string;
+      announcedDate: string;
+      price: string;
+      currency: string;
+    }>;
+    employeeReviewsScore?: number;
+    productReviewsScore?: number;
+    naicsCodes?: string[];
+    sicCodes?: string[];
+    technologiesUsed?: string[];
+    techStack?: string[];
+  };
+  // Additional enrichment fields
+  naicsCodes?: string[];
+  sicCodes?: string[];
+  technologiesUsed?: string[];
+  techStack?: string[];
+  activeJobPostings?: number;
+  employeeCountChange?: {
+    monthly?: number;
+    quarterly?: number;
+    yearly?: number;
+  };
+  fundingRounds?: Array<{
+    name: string;
+    date: string;
+    amount: number;
+    currency: string;
+  }>;
+  executiveChanges?: {
+    arrivals?: Array<{ name: string; title: string; date: string }>;
+    departures?: Array<{ name: string; title: string; date: string }>;
+  };
 }
 
 export interface CompanyStrategyResponse {
