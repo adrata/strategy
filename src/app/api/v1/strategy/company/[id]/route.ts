@@ -4,13 +4,16 @@ import { getSecureApiContext, createErrorResponse } from '@/platform/services/se
 import { companyStrategyService, CompanyStrategyRequest } from '@/platform/services/company-strategy-service';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Company Strategy API
  * GET /api/v1/strategy/company/[id] - Load existing company strategy
  * POST /api/v1/strategy/company/[id] - Generate new company strategy
  */
+
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
+
+// Allow 60 seconds for strategy generation (Claude AI can take time)
+export const maxDuration = 60;
 
 // GET /api/v1/strategy/company/[id] - Load existing company strategy
 export async function GET(

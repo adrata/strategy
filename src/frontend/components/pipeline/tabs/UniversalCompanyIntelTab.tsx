@@ -59,6 +59,23 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   const generationAttempted = useRef(false);
   const [retryCount, setRetryCount] = useState(0);
   const maxRetries = 3;
+  
+  // AbortController refs for timeout handling
+  const loadAbortControllerRef = useRef<AbortController | null>(null);
+  const generateAbortControllerRef = useRef<AbortController | null>(null);
+  const TIMEOUT_MS = 60000; // 60 seconds to match API maxDuration
+
+  // Cleanup AbortControllers on unmount
+  useEffect(() => {
+    return () => {
+      if (loadAbortControllerRef.current) {
+        loadAbortControllerRef.current.abort();
+      }
+      if (generateAbortControllerRef.current) {
+        generateAbortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // Load existing strategy data on component mount
   useEffect(() => {
@@ -94,17 +111,44 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
         return;
       }
 
-      // If no cached data, try to load from API (fast check)
-      const response = await fetch(`/api/v1/strategy/company/${record.id}`);
-      const data = await response.json();
-      
-      if (data.success && data.data) {
-        setStrategyData(data.data);
-        console.log('✅ [COMPANY STRATEGY] Loaded existing strategy data from API');
+      // Abort any previous request
+      if (loadAbortControllerRef.current) {
+        loadAbortControllerRef.current.abort();
       }
-      // If no data found, auto-generation will be triggered by the useEffect above
+      
+      // Create new AbortController with timeout
+      const controller = new AbortController();
+      loadAbortControllerRef.current = controller;
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+      try {
+        // If no cached data, try to load from API (fast check)
+        const response = await fetch(`/api/v1/strategy/company/${record.id}`, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          setStrategyData(data.data);
+          console.log('✅ [COMPANY STRATEGY] Loaded existing strategy data from API');
+        }
+        // If no data found, auto-generation will be triggered by the useEffect above
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        throw fetchError;
+      }
     } catch (error) {
-      console.error('Failed to load strategy data:', error);
+      if (error instanceof Error && error.name === 'AbortError') {
+        const timeoutError = 'Request timed out after 60 seconds. Strategy generation may be taking longer than expected.';
+        console.error('⏱️ [COMPANY STRATEGY] Load request timed out:', timeoutError);
+        setStrategyError(timeoutError);
+      } else {
+        console.error('Failed to load strategy data:', error);
+      }
+    } finally {
+      loadAbortControllerRef.current = null;
     }
   };
 
@@ -124,47 +168,76 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     setStrategyError(null);
     
     try {
-      console.log('🚀 [COMPANY STRATEGY] Starting strategy generation for company:', record.id, isRetry ? `(retry ${retryCount + 1}/${maxRetries})` : '');
-      const response = await fetch(`/api/v1/strategy/company/${record.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ forceRegenerate: false })
-      });
+      // Abort any previous request
+      if (generateAbortControllerRef.current) {
+        generateAbortControllerRef.current.abort();
+      }
       
-      console.log('📤 [COMPANY STRATEGY] API response received:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok
-      });
+      // Create new AbortController with timeout
+      const controller = new AbortController();
+      generateAbortControllerRef.current = controller;
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
       
-      const data = await response.json();
-      console.log('📊 [COMPANY STRATEGY] Response data:', {
-        success: data.success,
-        hasData: !!data.data,
-        error: data.error,
-        cached: data.cached
-      });
-      
-      if (data.success && data.data) {
-        console.log('✅ [COMPANY STRATEGY] Strategy generated successfully');
-        setStrategyData(data.data);
-        setRetryCount(0); // Reset retry count on success
-      } else {
-        const errorMessage = data.error || `API returned error: ${response.status} ${response.statusText}`;
-        console.error('❌ [COMPANY STRATEGY] Strategy generation failed:', errorMessage);
-        setStrategyError(errorMessage);
+      try {
+        console.log('🚀 [COMPANY STRATEGY] Starting strategy generation for company:', record.id, isRetry ? `(retry ${retryCount + 1}/${maxRetries})` : '');
+        const response = await fetch(`/api/v1/strategy/company/${record.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ forceRegenerate: false }),
+          signal: controller.signal
+        });
         
-        // Auto-retry for certain types of errors
-        if (!isRetry && (response.status >= 500 || response.status === 429)) {
-          console.log('🔄 [COMPANY STRATEGY] Auto-retrying due to server error...');
-          setTimeout(() => {
-            setRetryCount(prev => prev + 1);
-            handleGenerateStrategy(true);
-          }, 2000);
-          return;
+        clearTimeout(timeoutId);
+        
+        console.log('📤 [COMPANY STRATEGY] API response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok
+        });
+        
+        const data = await response.json();
+        console.log('📊 [COMPANY STRATEGY] Response data:', {
+          success: data.success,
+          hasData: !!data.data,
+          error: data.error,
+          cached: data.cached
+        });
+        
+        if (data.success && data.data) {
+          console.log('✅ [COMPANY STRATEGY] Strategy generated successfully');
+          setStrategyData(data.data);
+          setRetryCount(0); // Reset retry count on success
+        } else {
+          const errorMessage = data.error || `API returned error: ${response.status} ${response.statusText}`;
+          console.error('❌ [COMPANY STRATEGY] Strategy generation failed:', errorMessage);
+          setStrategyError(errorMessage);
+          
+          // Auto-retry for certain types of errors (but not timeouts)
+          if (!isRetry && (response.status >= 500 || response.status === 429)) {
+            console.log('🔄 [COMPANY STRATEGY] Auto-retrying due to server error...');
+            setTimeout(() => {
+              setRetryCount(prev => prev + 1);
+              handleGenerateStrategy(true);
+            }, 2000);
+            return;
+          }
         }
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        throw fetchError;
       }
     } catch (error) {
+      // Handle timeout errors specifically
+      if (error instanceof Error && error.name === 'AbortError') {
+        const timeoutError = 'Strategy generation timed out after 60 seconds. This may happen if the AI service is experiencing high load. Please try again.';
+        console.error('⏱️ [COMPANY STRATEGY] Strategy generation timed out:', timeoutError);
+        setStrategyError(timeoutError);
+        
+        // Don't auto-retry on timeout - let user manually retry
+        setIsGeneratingStrategy(false);
+        return;
+      }
+      
       const errorMessage = error instanceof Error ? error.message : 'Network error occurred';
       console.error('❌ [COMPANY STRATEGY] Strategy generation error:', {
         error: error,
@@ -174,7 +247,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       });
       setStrategyError(errorMessage);
       
-      // Auto-retry for network errors
+      // Auto-retry for network errors (but not timeouts)
       if (!isRetry && retryCount < maxRetries - 1) {
         console.log('🔄 [COMPANY STRATEGY] Auto-retrying due to network error...');
         setTimeout(() => {
@@ -185,6 +258,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       }
     } finally {
       setIsGeneratingStrategy(false);
+      generateAbortControllerRef.current = null;
     }
   };
 
@@ -362,13 +436,15 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                 {strategyError}
               </div>
               <div className="text-xs text-muted mb-4">
-                {strategyError.includes('API key') ? 
+                {strategyError.includes('timed out') || strategyError.includes('timeout') || strategyError.includes('60 seconds') ?
+                  'Strategy generation is taking longer than expected. This may happen if the AI service is experiencing high load. Please try again in a moment.' :
+                  strategyError.includes('API key') ? 
                   'Claude AI API key is not configured. Please check your environment variables.' :
                   strategyError.includes('500') || strategyError.includes('Internal server error') ?
                   'Server error occurred. This may be due to API rate limits or temporary service issues.' :
-                  strategyError.includes('Network error') ?
-                  'Network connection issue. Please check your internet connection.' :
-                  'This could be due to API rate limits, network issues, or insufficient company data.'
+                  strategyError.includes('Network error') || strategyError.includes('fetch') ?
+                  'Network connection issue. Please check your internet connection and try again.' :
+                  'This could be due to API rate limits, network issues, or insufficient company data. Please try again.'
                 }
               </div>
               {retryCount > 0 && (
