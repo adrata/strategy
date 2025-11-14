@@ -308,8 +308,9 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           try {
             // 🚀 PERFORMANCE FIX: Fetch only 200 people initially for faster load times
             // Users can paginate if needed
+            // 🔧 FIX: Use 'createdAt' instead of 'updatedAt' (updatedAt is not in valid sort fields)
             // 🔧 FIX: Add includeAllUsers=true to bypass seller filtering issues
-            const apiUrl = `/api/v1/people?companyId=${companyId}&limit=200&sortBy=updatedAt&sortOrder=desc&includeAllUsers=true`;
+            const apiUrl = `/api/v1/people?companyId=${companyId}&limit=200&sortBy=createdAt&sortOrder=desc&includeAllUsers=true`;
             console.log('🔍 [PEOPLE TAB] Making API call:', apiUrl);
             console.log('🔍 [PEOPLE TAB] CompanyId being sent:', companyId);
             console.log('🔍 [PEOPLE TAB] includeAllUsers flag: true');
@@ -553,63 +554,6 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   return (
     <div className="p-6">
       <div className="space-y-8">
-      
-      {/* 🔍 DEBUG PANEL - Visible diagnostics */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100">
-              🔍 Debug Panel - People Tab
-            </h4>
-            <span className="text-xs text-blue-600 dark:text-blue-300">
-              {new Date().toLocaleTimeString()}
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">Record Type:</span>
-              <span className="ml-2 text-blue-900 dark:text-blue-100">{recordType}</span>
-            </div>
-            <div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">Record ID:</span>
-              <span className="ml-2 text-blue-900 dark:text-blue-100 font-mono text-[10px]">
-                {record?.id?.substring(0, 20) || 'N/A'}...
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">Company ID:</span>
-              <span className="ml-2 text-blue-900 dark:text-blue-100 font-mono text-[10px]">
-                {companyId?.substring(0, 20) || 'N/A'}...
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">Loading:</span>
-              <span className="ml-2 text-blue-900 dark:text-blue-100">
-                {loading ? '⏳ Yes' : '✅ No'}
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">Has Fetched:</span>
-              <span className="ml-2 text-blue-900 dark:text-blue-100">
-                {hasFetchedOnce ? '✅ Yes' : '❌ No'}
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">People Count:</span>
-              <span className="ml-2 text-blue-900 dark:text-blue-100 font-semibold">
-                {people.length}
-              </span>
-            </div>
-            <div className="col-span-2">
-              <span className="font-medium text-blue-700 dark:text-blue-300">Error:</span>
-              <span className="ml-2 text-red-600 dark:text-red-400">
-                {error || 'None'}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-      
       {/* Loading State */}
       {loading && (
         <div className="space-y-4">

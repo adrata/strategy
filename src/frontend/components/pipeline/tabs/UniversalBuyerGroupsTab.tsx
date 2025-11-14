@@ -931,62 +931,6 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     <div className="p-6">
       <div className="space-y-8">
 
-      {/* 🔍 DEBUG PANEL - Visible diagnostics */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-100">
-              🔍 Debug Panel - Buyer Groups Tab
-            </h4>
-            <span className="text-xs text-purple-600 dark:text-purple-300">
-              {new Date().toLocaleTimeString()}
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <span className="font-medium text-purple-700 dark:text-purple-300">Record Type:</span>
-              <span className="ml-2 text-purple-900 dark:text-purple-100">{recordType}</span>
-            </div>
-            <div>
-              <span className="font-medium text-purple-700 dark:text-purple-300">Record ID:</span>
-              <span className="ml-2 text-purple-900 dark:text-purple-100 font-mono text-[10px]">
-                {record?.id?.substring(0, 20) || 'N/A'}...
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-purple-700 dark:text-purple-300">Company ID:</span>
-              <span className="ml-2 text-purple-900 dark:text-purple-100 font-mono text-[10px]">
-                {companyId?.substring(0, 20) || 'N/A'}...
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-purple-700 dark:text-purple-300">Company Name:</span>
-              <span className="ml-2 text-purple-900 dark:text-purple-100">
-                {companyName?.substring(0, 30) || 'N/A'}
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-purple-700 dark:text-purple-300">Loading:</span>
-              <span className="ml-2 text-purple-900 dark:text-purple-100">
-                {loading ? '⏳ Yes' : '✅ No'}
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-purple-700 dark:text-purple-300">Members Count:</span>
-              <span className="ml-2 text-purple-900 dark:text-purple-100 font-semibold">
-                {buyerGroups.length}
-              </span>
-            </div>
-            <div className="col-span-2">
-              <span className="font-medium text-purple-700 dark:text-purple-300">Error:</span>
-              <span className="ml-2 text-red-600 dark:text-red-400">
-                {error || 'None'}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Loading State */}
       {loading && (
         <div className="space-y-4">
