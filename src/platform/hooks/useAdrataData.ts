@@ -263,21 +263,25 @@ export function usePipelineData(
     console.log(`🔍 [usePipelineData] Fetching ${section} data for workspace: ${workspaceId}, user: ${userId}`);
     
     // 🚀 NEW: Use v1 APIs for better performance and consistency
+    // 🎯 PERFORMANCE: All endpoints now include explicit sorting and optimized limits
     let response;
     if (section === 'companies') {
-      response = await fetch('/api/v1/companies', { credentials: 'include' });
+      // Pre-sort companies alphabetically with reduced limit for faster initial load
+      response = await fetch('/api/v1/companies?sortBy=name&sortOrder=asc&limit=50', { credentials: 'include' });
     } else if (section === 'people') {
-      response = await fetch('/api/v1/people', { credentials: 'include' });
+      // Pre-sort people by globalRank descending to prevent client-side re-ranking glitch
+      response = await fetch('/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=50', { credentials: 'include' });
     } else if (section === 'actions') {
       response = await fetch('/api/v1/actions', { credentials: 'include' });
     } else if (section === 'leads') {
       // Pre-sort leads by globalRank descending to prevent client-side re-ranking glitch
-      response = await fetch('/api/v1/people?status=LEAD&sortBy=globalRank&sortOrder=desc', { credentials: 'include' });
+      response = await fetch('/api/v1/people?status=LEAD&sortBy=globalRank&sortOrder=desc&limit=50', { credentials: 'include' });
     } else if (section === 'prospects') {
       // Pre-sort prospects by lastActionDate ascending (oldest first) to prevent re-ranking glitch
-      response = await fetch('/api/v1/people?status=PROSPECT&sortBy=lastActionDate&sortOrder=asc', { credentials: 'include' });
+      response = await fetch('/api/v1/people?status=PROSPECT&sortBy=lastActionDate&sortOrder=asc&limit=50', { credentials: 'include' });
     } else if (section === 'opportunities') {
-      response = await fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' });
+      // Pre-sort opportunities by name with reduced limit for faster initial load
+      response = await fetch('/api/v1/companies?status=OPPORTUNITY&sortBy=name&sortOrder=asc&limit=50', { credentials: 'include' });
     } else if (section === 'speedrun') {
       response = await fetch('/api/v1/people?limit=50&sortBy=rank&sortOrder=asc', { credentials: 'include' });
     } else {
