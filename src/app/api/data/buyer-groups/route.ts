@@ -304,6 +304,66 @@ async function createBuyerGroup(
   );return createSuccessResponse(data, meta);
 }
 
+/**
+ * Check if email domain is likely from the same company as company domain
+ * Allows legitimate cases where companies use different domains for email vs website
+ * (e.g., portlandgeneral.com email vs pgn.com website)
+ * But rejects clearly different companies (e.g., underline.cz vs underline.com)
+ */
+function isLikelySameCompany(emailDomain: string, companyDomain: string): boolean {
+  if (!emailDomain || !companyDomain) return false;
+  
+  // Exact match (including TLD)
+  if (emailDomain === companyDomain) return true;
+  
+  // Extract root domains (handle subdomains)
+  const emailRoot = emailDomain.split('.').slice(-2).join('.');
+  const companyRoot = companyDomain.split('.').slice(-2).join('.');
+  
+  // Same root domain = same company (e.g., mail.company.com === company.com)
+  if (emailRoot === companyRoot) return true;
+  
+  // Check if email domain contains company name or vice versa
+  // This catches cases like:
+  // - portlandgeneral.com (email) vs pgn.com (website) - both contain "portland" or "general"
+  // - ribboncommunications.com (email) vs rbbn.com (website) - email contains "ribbon"
+  const emailBase = emailRoot.split('.')[0];
+  const companyBase = companyRoot.split('.')[0];
+  
+  // If one domain is clearly an abbreviation of the other, likely same company
+  // e.g., "pgn" could be abbreviation of "portland general"
+  // But we need to be careful - "underline" in both underline.com and underline.cz
+  // are the same base name but different companies
+  
+  // Reject if same base name but different TLDs (e.g., underline.com vs underline.cz)
+  // This is the critical case we need to catch
+  if (emailBase === companyBase && emailRoot !== companyRoot) {
+    // Same base name, different TLD = likely different companies
+    return false;
+  }
+  
+  // If email domain is much longer and contains company name, likely same company
+  // e.g., portlandgeneral.com contains "portland" and "general" which relate to "pgn"
+  if (emailDomain.length > companyDomain.length * 1.5) {
+    // Email domain is significantly longer - might be full name vs abbreviation
+    // Allow this case as it's likely the same company using different domains
+    return true;
+  }
+  
+  // Default: if domains are different, be conservative and reject
+  // But this is less strict than before - we'll allow manual override
+  return false;
+}
+
+/**
+ * Extract domain from email or URL
+ */
+function extractDomain(input: string | null | undefined): string | null {
+  if (!input) return null;
+  const url = input.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+  return url.toLowerCase();
+}
+
 async function addBuyerGroupMember(data: any) {
   const { buyer_group_id, lead_id, role, influence_level } = data;
 
@@ -317,6 +377,16 @@ async function addBuyerGroupMember(data: any) {
   // Find the lead/contact
   const contact = await prisma.people.findFirst({
     where: { id: lead_id , deletedAt: null},
+    include: {
+      company: {
+        select: {
+          id: true,
+          name: true,
+          website: true,
+          domain: true
+        }
+      }
+    }
   });
 
   if (!contact) {return createErrorResponse(
@@ -324,6 +394,41 @@ async function addBuyerGroupMember(data: any) {
       "CONTACT_NOT_FOUND",
       404
     );
+  }
+
+  // CRITICAL: Validate email domain is likely from same company before adding to buyer group
+  // This prevents cross-company contamination (e.g., underline.cz vs underline.com)
+  // But allows legitimate cases where companies use different domains for email vs website
+  const personEmail = contact.email || contact.workEmail;
+  const company = contact.company;
+  
+  if (personEmail && company && (company.website || company.domain)) {
+    const emailDomain = extractDomain(personEmail.split('@')[1]);
+    const companyDomain = extractDomain(company.website || company.domain);
+    
+    // Check for personal email domains (always reject these)
+    const personalEmailDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com'];
+    if (emailDomain && personalEmailDomains.includes(emailDomain)) {
+      console.log(
+        `❌ [BUYER GROUPS API] Personal email rejected: ${contact.fullName} (${emailDomain})`
+      );
+      return createErrorResponse(
+        `Personal email domain detected: ${emailDomain}. This person cannot be added to this buyer group.`,
+        "PERSONAL_EMAIL",
+        400
+      );
+    }
+    
+    if (emailDomain && companyDomain && !isLikelySameCompany(emailDomain, companyDomain)) {
+      console.log(
+        `❌ [BUYER GROUPS API] Domain mismatch rejected: ${contact.fullName} (${emailDomain}) does not match company domain (${companyDomain})`
+      );
+      return createErrorResponse(
+        `Email domain mismatch: ${emailDomain} does not match company domain ${companyDomain}. This person cannot be added to this buyer group.`,
+        "DOMAIN_MISMATCH",
+        400
+      );
+    }
   }
 
   // Add contact to the account (buyer group) if not already there

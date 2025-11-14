@@ -297,7 +297,11 @@ export async function GET(request: NextRequest) {
 
       // Company filtering
       if (companyId) {
+        console.log(`🔍 [V1 PEOPLE API] Filtering by companyId: ${companyId}`);
         where.companyId = companyId;
+        
+        // Log query details for debugging
+        console.log(`🔍 [V1 PEOPLE API] Company filter where clause:`, JSON.stringify(where, null, 2));
       }
 
       // Exclude people already linked to a specific company (for AddPersonToCompanyModal)
@@ -324,6 +328,11 @@ export async function GET(request: NextRequest) {
         where.timezone = { contains: timezone, mode: 'insensitive' };
       }
 
+      // Log the final where clause for companyId queries
+      if (companyId) {
+        console.log(`🔍 [V1 PEOPLE API] Final where clause for companyId query:`, JSON.stringify(where, null, 2));
+      }
+      
       // 🚀 PERFORMANCE: If counts only, just return counts by status
       if (countsOnly) {
         // Special handling for leads section to include companies with 0 people
@@ -516,6 +525,20 @@ export async function GET(request: NextRequest) {
         }),
           prisma.people.count({ where }),
         ]);
+        
+        // 🔍 DIAGNOSTIC: Log results for companyId queries
+        if (companyId) {
+          console.log(`🔍 [V1 PEOPLE API] Query completed for companyId: ${companyId}`);
+          console.log(`🔍 [V1 PEOPLE API] Found ${people.length} people (total: ${totalCount})`);
+          if (people.length > 0) {
+            console.log(`🔍 [V1 PEOPLE API] First 3 people:`, people.slice(0, 3).map(p => ({
+              id: p.id,
+              name: p.fullName,
+              status: p.status,
+              companyId: p.companyId
+            })));
+          }
+        }
       } catch (queryError: any) {
         // If relationshipType column doesn't exist (migration not run), fall back to query without it
         if (usingRelationshipType && queryError?.code === 'P2022' && queryError?.meta?.column_name === 'relationshipType') {
@@ -604,6 +627,9 @@ export async function GET(request: NextRequest) {
                     size: true,
                     globalRank: true,
                     hqState: true
+                  },
+                  where: {
+                    deletedAt: null // Only show non-deleted companies
                   }
                 },
                 mainSeller: {

@@ -35,8 +35,10 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Company ID, workspace, and user are required', 'VALIDATION_ERROR', 400);
     }
 
+    console.log(`🚀 [FAST BUYER GROUPS] ========================================`);
     console.log(`🚀 [FAST BUYER GROUPS] Loading buyer group for company: ${companyId}`);
     console.log(`🚀 [FAST BUYER GROUPS] Workspace ID: ${workspaceId}, User ID: ${userId}`);
+    console.log(`🚀 [FAST BUYER GROUPS] Request URL: ${request.url}`);
 
     // Get the company name for response (not for matching - we use companyId exact match)
     const company = await prisma.companies.findUnique({
@@ -170,6 +172,8 @@ export async function GET(request: NextRequest) {
     console.log(`   People with isBuyerGroupMember: ${peopleWithMember.length}`);
     console.log(`   People with 'in' status: ${peopleWithInStatus.length}`);
     console.log(`   Total in buyer group: ${buyerGroupMembers.length}`);
+    console.log(`🚀 [FAST BUYER GROUPS] Returning ${buyerGroupMembers.length} members to client`);
+    console.log(`🚀 [FAST BUYER GROUPS] ========================================`);
 
     return createSuccessResponse(buyerGroupMembers, {
       userId,

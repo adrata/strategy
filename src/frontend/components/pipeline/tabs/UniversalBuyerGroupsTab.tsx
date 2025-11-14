@@ -37,6 +37,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const [riskAssessments, setRiskAssessments] = useState<Record<string, RiskAssessment>>({});
   const [isFetching, setIsFetching] = useState(false); // Prevent multiple simultaneous fetches
   const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   
   // Track previous companyId, companyName, and recordId to detect changes and invalidate cache
@@ -51,10 +52,14 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     
     if (recordType === 'people') {
       // For person records, get company from companyId field
-      return record.companyId || '';
+      const id = record.companyId || '';
+      console.log('🔍 [BUYER GROUPS TAB] Extracted companyId for person record:', id);
+      return id;
     } else {
       // For company records, the record ID is the company ID
-      return record.id || '';
+      const id = record.id || '';
+      console.log('🔍 [BUYER GROUPS TAB] Using record.id as companyId for company record:', id);
+      return id;
     }
   }, [record?.id, record?.companyId, recordType]);
   
@@ -400,9 +405,14 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           
           // 🚀 ULTRA-FAST: Use dedicated fast buyer group API with companyId (exact match, no fuzzy name matching)
           try {
-            console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/data/buyer-groups/fast?companyId=${companyId}`);
-            console.log('🔍 [BUYER GROUPS] authFetch function:', typeof authFetch);
-            const fastResult = await authFetch(`/api/data/buyer-groups/fast?companyId=${companyId}`);
+            const apiUrl = `/api/data/buyer-groups/fast?companyId=${companyId}`;
+            console.log('🔍 [BUYER GROUPS TAB] ========================================');
+            console.log('🔍 [BUYER GROUPS TAB] Making API call to:', apiUrl);
+            console.log('🔍 [BUYER GROUPS TAB] CompanyId being sent:', companyId);
+            console.log('🔍 [BUYER GROUPS TAB] Company name:', companyName);
+            console.log('🔍 [BUYER GROUPS TAB] Record type:', recordType);
+            console.log('🔍 [BUYER GROUPS TAB] Record ID:', record?.id);
+            const fastResult = await authFetch(apiUrl);
             
             // 🚨 Check if fetch was aborted after API call
             if (signal.aborted) {
@@ -410,9 +420,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               return;
             }
             
-            console.log('🔍 [BUYER GROUPS] API response:', fastResult);
-            console.log('🔍 [BUYER GROUPS] API response success:', fastResult?.success);
-            console.log('🔍 [BUYER GROUPS] API response data length:', fastResult?.data?.length);
+            console.log('🔍 [BUYER GROUPS TAB] API response:', fastResult);
+            console.log('🔍 [BUYER GROUPS TAB] API response success:', fastResult?.success);
+            console.log('🔍 [BUYER GROUPS TAB] API response data length:', fastResult?.data?.length);
+            console.log('🔍 [BUYER GROUPS TAB] ========================================');
             if (fastResult && fastResult.success && fastResult.data) {
               const members = fastResult.data;
               console.log('⚡ [BUYER GROUPS] Fast API returned:', members.length, 'members');
@@ -920,6 +931,62 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     <div className="p-6">
       <div className="space-y-8">
 
+      {/* 🔍 DEBUG PANEL - Visible diagnostics */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-100">
+              🔍 Debug Panel - Buyer Groups Tab
+            </h4>
+            <span className="text-xs text-purple-600 dark:text-purple-300">
+              {new Date().toLocaleTimeString()}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <span className="font-medium text-purple-700 dark:text-purple-300">Record Type:</span>
+              <span className="ml-2 text-purple-900 dark:text-purple-100">{recordType}</span>
+            </div>
+            <div>
+              <span className="font-medium text-purple-700 dark:text-purple-300">Record ID:</span>
+              <span className="ml-2 text-purple-900 dark:text-purple-100 font-mono text-[10px]">
+                {record?.id?.substring(0, 20) || 'N/A'}...
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-purple-700 dark:text-purple-300">Company ID:</span>
+              <span className="ml-2 text-purple-900 dark:text-purple-100 font-mono text-[10px]">
+                {companyId?.substring(0, 20) || 'N/A'}...
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-purple-700 dark:text-purple-300">Company Name:</span>
+              <span className="ml-2 text-purple-900 dark:text-purple-100">
+                {companyName?.substring(0, 30) || 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-purple-700 dark:text-purple-300">Loading:</span>
+              <span className="ml-2 text-purple-900 dark:text-purple-100">
+                {loading ? '⏳ Yes' : '✅ No'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-purple-700 dark:text-purple-300">Members Count:</span>
+              <span className="ml-2 text-purple-900 dark:text-purple-100 font-semibold">
+                {buyerGroups.length}
+              </span>
+            </div>
+            <div className="col-span-2">
+              <span className="font-medium text-purple-700 dark:text-purple-300">Error:</span>
+              <span className="ml-2 text-red-600 dark:text-red-400">
+                {error || 'None'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Loading State */}
       {loading && (
         <div className="space-y-4">
@@ -941,16 +1008,43 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         </div>
       )}
 
+      {/* Error State */}
+      {!loading && error && (
+        <div className="text-center py-12">
+          <div className="bg-error/10 border border-error rounded-lg p-6 mx-auto max-w-md">
+            <h3 className="text-lg font-medium text-error mb-2">
+              Error Loading Buyer Group
+            </h3>
+            <p className="text-sm text-muted mb-4">
+              {error}
+            </p>
+            <div className="text-xs text-muted text-left bg-background p-3 rounded">
+              <strong>Debug Info:</strong><br/>
+              Record Type: {recordType}<br/>
+              Record ID: {record?.id || 'N/A'}<br/>
+              Company ID: {companyId || 'N/A'}<br/>
+              Company Name: {companyName || 'N/A'}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Empty State */}
-      {!loading && buyerGroups.length === 0 && (
+      {!loading && !error && buyerGroups.length === 0 && (
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-muted mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">
             No Buyer Group Members Found
           </h3>
-          <p className="text-muted">
-            This person doesn't have any co-workers at their company yet.
+          <p className="text-muted mb-4">
+            No people have been assigned buyer group roles for this company yet.
           </p>
+          <div className="text-xs text-muted bg-background border border-border p-3 rounded inline-block">
+            <strong>Debug Info:</strong><br/>
+            Company ID: {companyId || 'N/A'}<br/>
+            Company Name: {companyName || 'N/A'}<br/>
+            Check browser console for detailed logs
+          </div>
         </div>
       )}
 

@@ -34,7 +34,11 @@ export function PersonDetailOverview({
   
   // Get company name from active experience
   const activeExperience = coresignalData.experience?.find((exp: any) => exp.active_experience === 1) || coresignalData.experience?.[0];
-  const companyName = updatedFields.company ?? (coresignalData.active_experience_company || activeExperience?.company_name || coresignalData.experience?.[0]?.company_name || person.company || '-');
+  // Handle case where company is soft-deleted (companyId exists but company relation is null)
+  let companyName = updatedFields.company ?? (coresignalData.active_experience_company || activeExperience?.company_name || coresignalData.experience?.[0]?.company_name || person.company || '-');
+  if (companyName === '-' && (person as any).companyId) {
+    companyName = '(Company Removed)';
+  }
   
   // Get department from active experience
   const department = updatedFields.department ?? (coresignalData.active_experience_department || activeExperience?.department || coresignalData.experience?.[0]?.department || person.department || '-');

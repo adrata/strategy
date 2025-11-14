@@ -151,7 +151,12 @@ export async function apiFetch<T = any>(
       });
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    // 🔍 ENHANCED DIAGNOSTIC LOGGING
+    const urlString = String(url);
+    const isMinnesotaPowerQuery = urlString.includes('01K9QD382T5FKBSF0AS72RAFAT') || 
+                                   urlString.includes('companyId=01K9QD382T5FKBSF0AS72RAFAT');
+    
+    if (process.env.NODE_ENV === 'development' || isMinnesotaPowerQuery) {
       const authHeaderValue = (headers as any)['Authorization'] || (headers as any)['authorization'];
       console.log('📤 [API-FETCH] Making request:', {
         url: String(url),
@@ -161,8 +166,19 @@ export async function apiFetch<T = any>(
         authHeaderLength: authHeaderValue ? authHeaderValue.length : 0,
         headersKeys: Object.keys(headers as any),
         hasCookies: typeof window !== 'undefined' && document.cookie.length > 0,
-        cookieCount: typeof window !== 'undefined' ? document.cookie.split(';').length : 0
+        cookieCount: typeof window !== 'undefined' ? document.cookie.split(';').length : 0,
+        isMinnesotaPowerQuery
       });
+      
+      // Extra detailed logging for Minnesota Power queries
+      if (isMinnesotaPowerQuery) {
+        console.log('🔍 [MINNESOTA POWER DEBUG] Full request details:', {
+          fullUrl: urlString,
+          allHeaders: headers,
+          body: fetchOptions.body ? 'Present' : 'None',
+          credentials: 'include'
+        });
+      }
     }
 
     const response = await fetch(url, {
@@ -328,6 +344,36 @@ export async function apiFetch<T = any>(
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
       const data = await response.json();
+      
+      // 🔍 ENHANCED DIAGNOSTIC LOGGING for successful responses
+      if (isMinnesotaPowerQuery) {
+        console.log('✅ [MINNESOTA POWER DEBUG] Response received:', {
+          url: urlString,
+          status: response.status,
+          statusText: response.statusText,
+          dataType: typeof data,
+          isArray: Array.isArray(data),
+          dataKeys: data && typeof data === 'object' ? Object.keys(data) : 'not an object',
+          dataLength: Array.isArray(data) ? data.length : 
+                     (data && data.data && Array.isArray(data.data)) ? data.data.length : 'unknown',
+          success: data.success,
+          hasData: !!data.data,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Log actual data for debugging
+        if (data && data.data && Array.isArray(data.data)) {
+          console.log('🔍 [MINNESOTA POWER DEBUG] Response data array:', {
+            length: data.data.length,
+            firstItem: data.data[0] ? {
+              id: data.data[0].id,
+              name: data.data[0].fullName || data.data[0].name,
+              companyId: data.data[0].companyId
+            } : 'no items'
+          });
+        }
+      }
+      
       return data;
     } else {
       // For non-JSON responses, return the response object

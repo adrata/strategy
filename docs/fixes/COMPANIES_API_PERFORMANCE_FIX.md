@@ -56,3 +56,4 @@ If still slow after this fix:
 2. Reduce `limit` from 10000 to 100 (pagination)
 3. Implement virtual scrolling in UI
 
+

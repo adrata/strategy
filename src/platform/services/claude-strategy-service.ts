@@ -87,7 +87,9 @@ export class ClaudeStrategyService {
 
   constructor() {
     // Use the same API key configuration as your other Claude services
-    this.apiKey = process.env.ANTHROPIC_API_KEY || process.env.OPENROUTER_API_KEY || process.env.CLAUDE_API_KEY || '';
+    // CRITICAL: Trim and sanitize API keys to remove any trailing newlines or whitespace
+    const rawApiKey = process.env.ANTHROPIC_API_KEY || process.env.OPENROUTER_API_KEY || process.env.CLAUDE_API_KEY || '';
+    this.apiKey = rawApiKey.trim().replace(/\\n/g, '').replace(/\n/g, '');
     this.baseUrl = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
     this.model = process.env.CLAUDE_MODEL || 'claude-sonnet-4-5';
     
@@ -97,6 +99,7 @@ export class ClaudeStrategyService {
     } else {
       console.log('✅ [CLAUDE SERVICE] API key found. Claude AI intelligence generation enabled.');
       console.log(`🔑 [CLAUDE SERVICE] Using API key: ${this.apiKey.substring(0, 8)}...`);
+      console.log(`🔍 [CLAUDE SERVICE] API key length: ${this.apiKey.length} characters`);
     }
   }
 
@@ -169,7 +172,7 @@ export class ClaudeStrategyService {
         response = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
+            'x-api-key': this.apiKey,
             'Content-Type': 'application/json',
             'anthropic-version': '2023-06-01'
           },

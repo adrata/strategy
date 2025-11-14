@@ -341,3 +341,4 @@ auditContactCoverageAllWorkspaces()
     process.exit(1);
   });
 
+

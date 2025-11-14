@@ -413,13 +413,13 @@ export function mergeCoreCompanyWithWorkspace(
     };
   }
 
-  // Merge: workspace overrides > core data > workspace fallback
+  // Merge: workspace overrides > workspace data > core data (fallback)
   const { coreCompany: __, ...workspaceData } = workspaceCompany;
   return {
     ...workspaceData,
-    name: workspaceCompany.nameOverride || actualCoreCompany.name || workspaceCompany.name,
-    industry: workspaceCompany.industryOverride || actualCoreCompany.industry || workspaceCompany.industry,
-    website: workspaceCompany.websiteOverride || actualCoreCompany.website || workspaceCompany.website,
+    name: workspaceCompany.nameOverride || workspaceCompany.name || actualCoreCompany.name,
+    industry: workspaceCompany.industryOverride || workspaceCompany.industry || actualCoreCompany.industry,
+    website: workspaceCompany.websiteOverride || workspaceCompany.website || actualCoreCompany.website,
     // Include core entity for reference
     coreCompany: {
       id: actualCoreCompany.id,
@@ -477,17 +477,17 @@ export function mergeCorePersonWithWorkspace(
     };
   }
 
-  // Merge: workspace overrides > core data > workspace fallback
+  // Merge: workspace overrides > workspace data > core data (fallback)
   const { corePerson: __, ...workspaceData } = workspacePerson;
   // 🎯 TITLE FALLBACK: Populate title from jobTitle if missing, with core person fallback, then enrichment data
-  const coreJobTitle = workspacePerson.jobTitleOverride || actualCorePerson.jobTitle || workspacePerson.jobTitle || null;
+  const coreJobTitle = workspacePerson.jobTitleOverride || workspacePerson.jobTitle || actualCorePerson.jobTitle || null;
   const enrichmentTitle = extractTitleFromEnrichment(workspacePerson.customFields);
-  const finalJobTitle = coreJobTitle || workspacePerson.jobTitle || enrichmentTitle || null;
+  const finalJobTitle = coreJobTitle || enrichmentTitle || null;
   const finalTitle = workspacePerson.title || coreJobTitle || enrichmentTitle || null;
   return {
     ...workspaceData,
-    fullName: workspacePerson.fullNameOverride || actualCorePerson.fullName || workspacePerson.fullName,
-    email: workspacePerson.emailOverride || actualCorePerson.email || actualCorePerson.workEmail || workspacePerson.email || workspacePerson.workEmail,
+    fullName: workspacePerson.fullNameOverride || workspacePerson.fullName || actualCorePerson.fullName,
+    email: workspacePerson.emailOverride || workspacePerson.email || workspacePerson.workEmail || actualCorePerson.email || actualCorePerson.workEmail,
     jobTitle: finalJobTitle,
     title: finalTitle,
     // Include core entity for reference

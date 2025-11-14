@@ -21,6 +21,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   const [isFetching, setIsFetching] = useState(false);
   const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   
   // Track previous companyId and recordId to detect changes and invalidate cache
@@ -34,10 +35,14 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
     
     if (recordType === 'people') {
       // For person records, get company from companyId field
-      return record.companyId || '';
+      const id = record.companyId || '';
+      console.log('🔍 [PEOPLE TAB] Extracted companyId for person record:', id);
+      return id;
     } else {
       // For company records, the record ID is the company ID
-      return record.id || '';
+      const id = record.id || '';
+      console.log('🔍 [PEOPLE TAB] Using record.id as companyId for company record:', id);
+      return id;
     }
   }, [record?.id, record?.companyId, recordType]);
 
@@ -171,8 +176,10 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       
       if (recordType === 'people') {
         // For person records, get company name from company object
+        // Handle case where company is null but companyId exists (soft-deleted company)
         companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                     record.companyName || 'Company';
+                     record.companyName || 
+                     (companyId ? 'Company' : 'Company');
       } else {
         // For company records, use the record name as company name
         companyName = record.name || 
@@ -184,7 +191,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       // 🚨 CRITICAL FIX: Validate companyId before proceeding
       // 🔧 ENHANCED VALIDATION: Check for invalid values including 'undefined' and 'null' strings
       if (!companyId || companyId.trim() === '' || companyId === 'undefined' || companyId === 'null') {
-        console.warn('⚠️ [PEOPLE] Invalid or missing companyId, cannot fetch people:', {
+        console.warn('⚠️ [PEOPLE TAB] Invalid or missing companyId, cannot fetch people:', {
           recordType,
           recordId: record?.id,
           recordName: record?.name,
@@ -195,11 +202,11 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         
         // If companyId is explicitly 'undefined' or 'null', show error instead of loading
         if (companyId === 'undefined' || companyId === 'null') {
-          console.error('❌ [PEOPLE] Invalid companyId value detected in URL');
+          console.error('❌ [PEOPLE TAB] Invalid companyId value detected');
           setPeople([]);
           setLoading(false);
           setIsFetching(false);
-          setError('Unable to load people: Invalid company identifier in URL');
+          setError(`Unable to load people: Invalid company identifier (got: "${companyId}")`);
           return;
         }
         
@@ -207,6 +214,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         setPeople([]);
         setLoading(true);
         setIsFetching(false);
+        setError(null);
         return;
       }
       
@@ -300,8 +308,11 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           try {
             // 🚀 PERFORMANCE FIX: Fetch only 200 people initially for faster load times
             // Users can paginate if needed
-            const response = await authFetch(`/api/v1/people?companyId=${companyId}&limit=200&sortBy=updatedAt&sortOrder=desc`);
-            console.log('🔍 [PEOPLE] API response:', response);
+            const apiUrl = `/api/v1/people?companyId=${companyId}&limit=200&sortBy=updatedAt&sortOrder=desc`;
+            console.log('🔍 [PEOPLE TAB] Making API call:', apiUrl);
+            console.log('🔍 [PEOPLE TAB] CompanyId being sent:', companyId);
+            const response = await authFetch(apiUrl);
+            console.log('🔍 [PEOPLE TAB] API response:', response);
             
             if (response && response.success && response.data) {
               peopleData = response.data;
@@ -540,6 +551,63 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   return (
     <div className="p-6">
       <div className="space-y-8">
+      
+      {/* 🔍 DEBUG PANEL - Visible diagnostics */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+              🔍 Debug Panel - People Tab
+            </h4>
+            <span className="text-xs text-blue-600 dark:text-blue-300">
+              {new Date().toLocaleTimeString()}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <span className="font-medium text-blue-700 dark:text-blue-300">Record Type:</span>
+              <span className="ml-2 text-blue-900 dark:text-blue-100">{recordType}</span>
+            </div>
+            <div>
+              <span className="font-medium text-blue-700 dark:text-blue-300">Record ID:</span>
+              <span className="ml-2 text-blue-900 dark:text-blue-100 font-mono text-[10px]">
+                {record?.id?.substring(0, 20) || 'N/A'}...
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-blue-700 dark:text-blue-300">Company ID:</span>
+              <span className="ml-2 text-blue-900 dark:text-blue-100 font-mono text-[10px]">
+                {companyId?.substring(0, 20) || 'N/A'}...
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-blue-700 dark:text-blue-300">Loading:</span>
+              <span className="ml-2 text-blue-900 dark:text-blue-100">
+                {loading ? '⏳ Yes' : '✅ No'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-blue-700 dark:text-blue-300">Has Fetched:</span>
+              <span className="ml-2 text-blue-900 dark:text-blue-100">
+                {hasFetchedOnce ? '✅ Yes' : '❌ No'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium text-blue-700 dark:text-blue-300">People Count:</span>
+              <span className="ml-2 text-blue-900 dark:text-blue-100 font-semibold">
+                {people.length}
+              </span>
+            </div>
+            <div className="col-span-2">
+              <span className="font-medium text-blue-700 dark:text-blue-300">Error:</span>
+              <span className="ml-2 text-red-600 dark:text-red-400">
+                {error || 'None'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Loading State */}
       {loading && (
         <div className="space-y-4">
@@ -561,19 +629,44 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         </div>
       )}
 
+      {/* Error State */}
+      {!loading && error && (
+        <div className="text-center py-12">
+          <div className="bg-error/10 border border-error rounded-lg p-6 mx-auto max-w-md">
+            <h3 className="text-lg font-medium text-error mb-2">
+              Error Loading People
+            </h3>
+            <p className="text-sm text-muted mb-4">
+              {error}
+            </p>
+            <div className="text-xs text-muted text-left bg-background p-3 rounded">
+              <strong>Debug Info:</strong><br/>
+              Record Type: {recordType}<br/>
+              Record ID: {record?.id || 'N/A'}<br/>
+              Company ID: {companyId || 'N/A'}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Empty State */}
-      {!loading && people.length === 0 && hasFetchedOnce && (
+      {!loading && !error && people.length === 0 && hasFetchedOnce && (
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-muted mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">
             {['people', 'leads', 'prospects'].includes(recordType) ? 'No Co-Workers Found' : 'No People (Employees) Found'}
           </h3>
-          <p className="text-muted">
+          <p className="text-muted mb-4">
             {['people', 'leads', 'prospects'].includes(recordType) 
               ? 'This person doesn\'t have any co-workers at their company yet.'
               : 'This company does not have any associated employees yet.'
             }
           </p>
+          <div className="text-xs text-muted bg-background border border-border p-3 rounded inline-block">
+            <strong>Debug Info:</strong><br/>
+            Company ID: {companyId || 'N/A'}<br/>
+            Check browser console for detailed logs
+          </div>
         </div>
       )}
 

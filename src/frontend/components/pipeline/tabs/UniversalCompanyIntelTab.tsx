@@ -244,9 +244,9 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                       <span className="text-sm text-muted">
                         {strategyData.archetypeRole}
                       </span>
-                      {strategyData.targetIndustry && (
+                      {strategyData.targetIndustry && strategyData.targetIndustry !== 'Unknown' && (
                         <span className="text-sm text-muted">
-                          • Serving {strategyData.targetIndustry}
+                          • {strategyData.targetIndustry}
                         </span>
                       )}
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${

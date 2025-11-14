@@ -466,14 +466,15 @@ export function UniversalRecordTemplate({
     
     // Filter out co-workers tab if person doesn't have a company associated
     if (['leads', 'prospects', 'people'].includes(recordType)) {
-      const hasCompany = record?.companyId || record?.company;
+      // Check companyId first (more reliable than company object which may be null if company is deleted)
+      const hasCompany = record?.companyId;
       if (!hasCompany) {
         return baseTabs.filter(tab => tab.id !== 'co-workers');
       }
     }
     
     return baseTabs;
-  }, [customTabs, recordType, record?.company, record?.companyName, record?.companyId]);
+  }, [customTabs, recordType, record?.companyId]);
   
   // Function to update URL with tab parameter
   const updateURLTab = (tabId: string) => {

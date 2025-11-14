@@ -233,9 +233,9 @@ export class CompanyStrategyService {
       }
       
       if (!claudeResponse.success || !claudeResponse.data) {
-        console.warn('⚠️ [COMPANY STRATEGY] Claude AI failed, using fallback content');
-        console.warn('⚠️ [COMPANY STRATEGY] This will result in generic intelligence. Check API key configuration.');
-        return this.generateFallbackStrategy(profile, archetype, personalizedContent);
+        console.error('❌ [COMPANY STRATEGY] Claude AI failed - no fallback will be used');
+        console.error('❌ [COMPANY STRATEGY] Error:', claudeResponse.error);
+        throw new Error(`Claude AI strategy generation failed: ${claudeResponse.error || 'Unknown error'}`);
       }
 
       console.log('✅ [COMPANY STRATEGY] Successfully generated AI-powered intelligence with Claude');
@@ -377,6 +377,17 @@ export class CompanyStrategyService {
       'Consulting': 'Professional Services',
       'Education': 'Education',
       'Government': 'Government/Public Sector',
+      'Non-Profit': 'Non-Profit',
+      'Utilities/Energy': 'Utilities/Energy',
+      'Healthcare': 'Healthcare',
+      'Financial Services': 'Financial Services',
+      'Technology/SaaS': 'Technology/SaaS',
+      'Manufacturing': 'Manufacturing',
+      'Retail/E-commerce': 'Retail/E-commerce',
+      'Real Estate': 'Real Estate',
+      'Education': 'Education',
+      'Government/Public Sector': 'Government/Public Sector',
+      'Professional Services': 'Professional Services',
       'Non-Profit': 'Non-Profit'
     };
 
@@ -386,15 +397,25 @@ export class CompanyStrategyService {
     }
 
     // Try partial match
+    const targetLower = targetIndustry.toLowerCase();
     for (const [industry, category] of Object.entries(industryMappings)) {
-      if (targetIndustry.toLowerCase().includes(industry.toLowerCase()) ||
-          industry.toLowerCase().includes(targetIndustry.toLowerCase())) {
+      if (targetLower.includes(industry.toLowerCase()) ||
+          industry.toLowerCase().includes(targetLower)) {
         return category;
       }
     }
 
-    // Default fallback
-    return 'Technology/SaaS';
+    // Check for utility/energy keywords
+    if (targetLower.includes('utility') || 
+        targetLower.includes('energy') || 
+        targetLower.includes('power') || 
+        targetLower.includes('electric')) {
+      return 'Utilities/Energy';
+    }
+
+    // If no match found, return the original industry instead of defaulting to Technology/SaaS
+    // This preserves the actual industry information rather than misclassifying
+    return targetIndustry || 'Unknown';
   }
 
   async getCompanyArchetype(profile: CompanyProfile): Promise<CompanyArchetype> {

@@ -96,7 +96,7 @@ Generate a clear, factual summary that highlights:
 Keep it professional, concise, and actionable. Do not make up information that isn't provided. If minimal information is available, create a brief summary from what you have.`;
 
   const message = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-sonnet-4-20250514',
     max_tokens: 300,
     temperature: 0.7,
     messages: [
@@ -194,7 +194,7 @@ async function main() {
             customFields: {
               ...(company.customFields || {}),
               aiSummaryGeneratedAt: new Date().toISOString(),
-              aiSummaryModel: 'claude-3-5-sonnet-20241022',
+              aiSummaryModel: 'claude-sonnet-4-20250514',
               aiSummarySource: 'batch-script',
             },
           },

@@ -189,11 +189,17 @@ export async function POST(
     });
 
     // Prepare strategy request with comprehensive company data
+    // Use company's actual industry to infer targetIndustry if not explicitly set
+    const inferredTargetIndustry = company.customFields?.targetIndustry || 
+      (company.industry ? inferIndustryCategory(company.industry) : null) ||
+      (company.sector ? inferIndustryCategory(company.sector) : null) ||
+      'Unknown';
+    
     const strategyRequest: CompanyStrategyRequest = {
       companyId,
       companyName: company.name,
       companyIndustry: company.industry || 'Unknown',
-      targetIndustry: company.customFields?.targetIndustry || 'Technology/SaaS',
+      targetIndustry: inferredTargetIndustry,
       companySize: company.size || 0,
       companyRevenue: company.revenue || 0,
       companyAge: company.foundedAt ? 
@@ -347,4 +353,97 @@ function determineMarketPosition(company: any): 'leader' | 'challenger' | 'follo
   if (size > 1000 || revenue > 100000000) return 'challenger';
   if (size > 100) return 'follower';
   return 'niche';
+}
+
+// Helper function to infer industry category from company industry
+function inferIndustryCategory(industry: string): string | null {
+  if (!industry) return null;
+  
+  const industryLower = industry.toLowerCase();
+  
+  // Utility/Energy sector
+  if (industryLower.includes('utility') || 
+      industryLower.includes('energy') || 
+      industryLower.includes('power') || 
+      industryLower.includes('electric') ||
+      industryLower.includes('utilities')) {
+    return 'Utilities/Energy';
+  }
+  
+  // Healthcare
+  if (industryLower.includes('healthcare') || 
+      industryLower.includes('health') || 
+      industryLower.includes('hospital') || 
+      industryLower.includes('medical')) {
+    return 'Healthcare';
+  }
+  
+  // Financial Services
+  if (industryLower.includes('bank') || 
+      industryLower.includes('financial') || 
+      industryLower.includes('insurance') || 
+      industryLower.includes('finance')) {
+    return 'Financial Services';
+  }
+  
+  // Technology/SaaS
+  if (industryLower.includes('software') || 
+      industryLower.includes('technology') || 
+      industryLower.includes('tech') || 
+      industryLower.includes('saas') ||
+      industryLower.includes('it services') ||
+      industryLower.includes('information technology')) {
+    return 'Technology/SaaS';
+  }
+  
+  // Manufacturing
+  if (industryLower.includes('manufacturing') || 
+      industryLower.includes('manufacturer')) {
+    return 'Manufacturing';
+  }
+  
+  // Retail
+  if (industryLower.includes('retail') || 
+      industryLower.includes('e-commerce') || 
+      industryLower.includes('ecommerce')) {
+    return 'Retail/E-commerce';
+  }
+  
+  // Real Estate
+  if (industryLower.includes('real estate') || 
+      industryLower.includes('title') || 
+      industryLower.includes('property')) {
+    return 'Real Estate';
+  }
+  
+  // Education
+  if (industryLower.includes('education') || 
+      industryLower.includes('school') || 
+      industryLower.includes('university')) {
+    return 'Education';
+  }
+  
+  // Government
+  if (industryLower.includes('government') || 
+      industryLower.includes('public sector')) {
+    return 'Government/Public Sector';
+  }
+  
+  // Professional Services
+  if (industryLower.includes('consulting') || 
+      industryLower.includes('professional services') || 
+      industryLower.includes('legal') ||
+      industryLower.includes('law')) {
+    return 'Professional Services';
+  }
+  
+  // Non-Profit
+  if (industryLower.includes('non-profit') || 
+      industryLower.includes('nonprofit') || 
+      industryLower.includes('non profit')) {
+    return 'Non-Profit';
+  }
+  
+  // If no match, return the original industry as-is
+  return industry;
 }

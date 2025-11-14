@@ -381,25 +381,28 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
   };
   
   // Use real company data from merged record with local state fallbacks - no fallback to '-'
+  // CRITICAL: Prioritize fullCompanyData when available, as it contains the most up-to-date company information
   const companyData = {
-    name: getValue(mergedRecord?.name),
-    industry: getValue(mergedRecord?.industry),
-    size: getValue(mergedRecord?.size || mergedRecord?.employeeCount),
-    revenue: mergedRecord?.revenue ? `$${Number(mergedRecord.revenue).toLocaleString()}` : null,
+    name: getValue(fullCompanyData?.name || mergedRecord?.name),
+    industry: getValue(fullCompanyData?.industry || mergedRecord?.industry),
+    size: getValue(fullCompanyData?.size || fullCompanyData?.employeeCount || mergedRecord?.size || mergedRecord?.employeeCount),
+    revenue: (fullCompanyData?.revenue || mergedRecord?.revenue) ? `$${Number(fullCompanyData?.revenue || mergedRecord?.revenue).toLocaleString()}` : null,
     location: (city && state ? `${city}, ${state}` : null) || 
+              (fullCompanyData?.city && fullCompanyData?.state ? `${fullCompanyData.city}, ${fullCompanyData.state}` : null) ||
               (mergedRecord?.city && mergedRecord?.state ? `${mergedRecord.city}, ${mergedRecord.state}` : null) || 
-              getValue(mergedRecord?.address),
-    website: website || getValue(mergedRecord?.website),
-    linkedin: linkedinUrl || getValue(mergedRecord?.customFields?.linkedinUrl || 
-              mergedRecord?.customFields?.linkedin || 
+              getValue(fullCompanyData?.address || mergedRecord?.address),
+    website: website || getValue(fullCompanyData?.website || mergedRecord?.website),
+    linkedin: linkedinUrl || getValue(fullCompanyData?.linkedinUrl || 
               mergedRecord?.linkedinUrl || 
+              mergedRecord?.customFields?.linkedinUrl || 
+              mergedRecord?.customFields?.linkedin || 
               mergedRecord?.linkedin),
-    founded: getValue(mergedRecord?.foundedYear || mergedRecord?.founded),
-    ceo: getValue(mergedRecord?.ceo),
+    founded: getValue(fullCompanyData?.foundedYear || mergedRecord?.foundedYear || mergedRecord?.founded),
+    ceo: getValue(fullCompanyData?.ceo || mergedRecord?.ceo),
     description: (() => {
-      // Prioritize the longer, more detailed description for better seller context
-      const originalDesc = mergedRecord?.description && mergedRecord.description.trim() !== '' ? mergedRecord.description.trim() : '';
-      const enrichedDesc = mergedRecord?.descriptionEnriched && mergedRecord.descriptionEnriched.trim() !== '' ? mergedRecord.descriptionEnriched.trim() : '';
+      // Prioritize fullCompanyData first, then mergedRecord
+      const originalDesc = (fullCompanyData?.description || mergedRecord?.description) && (fullCompanyData?.description || mergedRecord?.description).trim() !== '' ? (fullCompanyData?.description || mergedRecord?.description).trim() : '';
+      const enrichedDesc = (fullCompanyData?.descriptionEnriched || mergedRecord?.descriptionEnriched) && (fullCompanyData?.descriptionEnriched || mergedRecord?.descriptionEnriched).trim() !== '' ? (fullCompanyData?.descriptionEnriched || mergedRecord?.descriptionEnriched).trim() : '';
       
       // Use the longer description for better context, or enriched if original is not available
       if (originalDesc && enrichedDesc) {
@@ -416,16 +419,16 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     marketCap: getValue(mergedRecord?.marketCap),
     employees: getValue(mergedRecord?.employeeCount || mergedRecord?.size),
     headquarters: (() => {
-      // Try enriched CoreSignal data first
-      const hqLocation = mergedRecord?.hqLocation || '';
-      const hqCity = mergedRecord?.hqCity || '';
-      const hqState = mergedRecord?.hqState || '';
-      const hqFullAddress = mergedRecord?.hqFullAddress || '';
+      // Try enriched CoreSignal data first, prioritizing fullCompanyData
+      const hqLocation = fullCompanyData?.hqLocation || mergedRecord?.hqLocation || '';
+      const hqCity = fullCompanyData?.hqCity || mergedRecord?.hqCity || '';
+      const hqState = fullCompanyData?.hqState || mergedRecord?.hqState || '';
+      const hqFullAddress = fullCompanyData?.hqFullAddress || mergedRecord?.hqFullAddress || '';
       
       // Fallback to basic fields
-      const address = mergedRecord?.address || '';
-      const recordCity = city || mergedRecord?.city || '';
-      const recordState = state || mergedRecord?.state || '';
+      const address = fullCompanyData?.address || mergedRecord?.address || '';
+      const recordCity = city || fullCompanyData?.city || mergedRecord?.city || '';
+      const recordState = state || fullCompanyData?.state || mergedRecord?.state || '';
       
       // Use enriched data if available
       if (hqLocation) {
@@ -548,16 +551,20 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         <div className="bg-background p-4 rounded-lg border border-border">
           <InlineEditField
             value={
-              (companyData.descriptionEnriched && companyData.descriptionEnriched.trim()) 
-                ? companyData.descriptionEnriched 
-                : (companyData.description && companyData.description.trim())
-                  ? companyData.description
-                  : ''
+              (fullCompanyData?.descriptionEnriched && fullCompanyData.descriptionEnriched.trim()) 
+                ? fullCompanyData.descriptionEnriched 
+                : (fullCompanyData?.description && fullCompanyData.description.trim())
+                  ? fullCompanyData.description
+                  : (companyData.descriptionEnriched && companyData.descriptionEnriched.trim()) 
+                    ? companyData.descriptionEnriched 
+                    : (companyData.description && companyData.description.trim())
+                      ? companyData.description
+                      : ''
             }
             field="description"
             onSave={onSave}
-            recordId={record.id}
-            recordType={recordType}
+            recordId={companyId || record.id}
+            recordType={companyId ? 'companies' : recordType}
             onSuccess={handleSuccess}
             type="textarea"
             className="text-sm text-foreground leading-relaxed font-medium"
@@ -612,11 +619,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Company Name:</span>
                 <InlineEditField
-                  value={companyData.name}
+                  value={fullCompanyData?.name || companyData.name}
                   field="name"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -624,11 +631,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Legal Name:</span>
                 <InlineEditField
-                  value={record?.legalName || ''}
+                  value={fullCompanyData?.legalName || mergedRecord?.legalName || record?.legalName || ''}
                   field="legalName"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -636,11 +643,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Trading Name:</span>
                 <InlineEditField
-                  value={record?.tradingName || ''}
+                  value={fullCompanyData?.tradingName || mergedRecord?.tradingName || record?.tradingName || ''}
                   field="tradingName"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -648,11 +655,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Local Name:</span>
                 <InlineEditField
-                  value={record?.localName || ''}
+                  value={fullCompanyData?.localName || mergedRecord?.localName || record?.localName || ''}
                   field="localName"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -660,11 +667,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Total Employees:</span>
                 <InlineEditField
-                  value={companyData.size}
-                  field="size"
+                  value={fullCompanyData?.employeeCount || fullCompanyData?.size || companyData.size}
+                  field="employeeCount"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -675,12 +682,13 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted">Founded:</span>
-                <DisplayValue value={record?.foundedYear}>
+                <DisplayValue value={fullCompanyData?.foundedYear || mergedRecord?.foundedYear || record?.foundedYear}>
                   {(() => {
-                    if (record?.foundedYear) {
+                    const foundedYear = fullCompanyData?.foundedYear || mergedRecord?.foundedYear || record?.foundedYear;
+                    if (foundedYear) {
                       const currentYear = new Date().getFullYear();
-                      const yearsInBusiness = currentYear - record.foundedYear;
-                      return `${yearsInBusiness} years ago (${record.foundedYear})`;
+                      const yearsInBusiness = currentYear - foundedYear;
+                      return `${yearsInBusiness} years ago (${foundedYear})`;
                     }
                     return null;
                   })()}
@@ -688,18 +696,21 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted">Company Type:</span>
-                <DisplayValue value={record?.isPublic !== undefined}>
-                  {record?.isPublic ? 'Public Company' : record?.isPublic === false ? 'Private Company' : null}
+                <DisplayValue value={(fullCompanyData?.isPublic ?? mergedRecord?.isPublic ?? record?.isPublic) !== undefined}>
+                  {(() => {
+                    const isPublic = fullCompanyData?.isPublic ?? mergedRecord?.isPublic ?? record?.isPublic;
+                    return isPublic ? 'Public Company' : isPublic === false ? 'Private Company' : null;
+                  })()}
                 </DisplayValue>
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Phone:</span>
                 <InlineEditField
-                  value={record?.phone || ''}
+                  value={fullCompanyData?.phone || mergedRecord?.phone || record?.phone || ''}
                   field="phone"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -714,11 +725,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Email:</span>
                 <InlineEditField
-                  value={record?.email || ''}
+                  value={fullCompanyData?.email || mergedRecord?.email || record?.email || ''}
                   field="email"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="email"
                   className="text-sm font-medium text-foreground"
@@ -727,11 +738,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Fax:</span>
                 <InlineEditField
-                  value={record?.fax || ''}
+                  value={fullCompanyData?.fax || mergedRecord?.fax || record?.fax || ''}
                   field="fax"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -739,12 +750,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Website:</span>
                 <InlineEditField
-                  value={website || companyData.website}
+                  value={website || fullCompanyData?.website || companyData.website}
                   field="website"
                   onSave={onSave}
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
-                  onSuccess={(message) => handleFieldSuccess('website', website || companyData.website, message)}
+                  onSuccess={(message) => handleFieldSuccess('website', website || fullCompanyData?.website || companyData.website, message)}
                   type="text"
                   className="text-sm font-medium"
                 />
@@ -752,41 +763,41 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
-                  value={linkedinUrl || companyData.linkedin || ''}
+                  value={linkedinUrl || fullCompanyData?.linkedinUrl || companyData.linkedin || ''}
                   field="linkedinUrl"
                   onSave={onSave}
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
-                  onSuccess={(message) => handleFieldSuccess('linkedinUrl', linkedinUrl || companyData.linkedin || '', message)}
+                  onSuccess={(message) => handleFieldSuccess('linkedinUrl', linkedinUrl || fullCompanyData?.linkedinUrl || companyData.linkedin || '', message)}
                   className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">LinkedIn Navigator:</span>
                 <InlineEditField
-                  value={linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || ''}
+                  value={linkedinNavigatorUrl || fullCompanyData?.linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || ''}
                   field="linkedinNavigatorUrl"
                   onSave={onSave}
                   recordId={companyId || record.id}
                   recordType={companyId ? 'companies' : recordType}
-                  onSuccess={(message) => handleFieldSuccess('linkedinNavigatorUrl', linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || '', message)}
+                  onSuccess={(message) => handleFieldSuccess('linkedinNavigatorUrl', linkedinNavigatorUrl || fullCompanyData?.linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || '', message)}
                   className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted">Market:</span>
-                <DisplayValue value={record?.industry} />
+                <DisplayValue value={fullCompanyData?.industry || mergedRecord?.industry || record?.industry} />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted">Category:</span>
                 <span className="text-sm font-medium text-foreground">
                   {(() => {
                     // AI-powered market category determination
-                    const industry = record?.industry?.toLowerCase() || '';
-                    const naicsCodes = record?.naicsCodes || [];
-                    const sicCodes = record?.sicCodes || [];
-                    const description = record?.description?.toLowerCase() || '';
-                    const technologies = record?.technologiesUsed || [];
+                    const industry = (fullCompanyData?.industry || mergedRecord?.industry || record?.industry)?.toLowerCase() || '';
+                    const naicsCodes = fullCompanyData?.naicsCodes || mergedRecord?.naicsCodes || record?.naicsCodes || [];
+                    const sicCodes = fullCompanyData?.sicCodes || mergedRecord?.sicCodes || record?.sicCodes || [];
+                    const description = (fullCompanyData?.description || mergedRecord?.description || record?.description)?.toLowerCase() || '';
+                    const technologies = fullCompanyData?.technologiesUsed || mergedRecord?.technologiesUsed || record?.technologiesUsed || [];
                     
                     // Determine market category based on industry and codes
                     if (industry.includes('utility') || naicsCodes.includes('61') || sicCodes.includes('49')) {
@@ -814,11 +825,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 <span className="text-sm font-medium text-foreground">
                   {(() => {
                     // AI-powered market segment determination
-                    const industry = record?.industry?.toLowerCase() || '';
-                    const employeeCount = record?.employeeCount || 0;
-                    const technologies = record?.technologiesUsed || [];
-                    const description = record?.description?.toLowerCase() || '';
-                    const isPublic = record?.isPublic;
+                    const industry = (fullCompanyData?.industry || mergedRecord?.industry || record?.industry)?.toLowerCase() || '';
+                    const employeeCount = fullCompanyData?.employeeCount || mergedRecord?.employeeCount || record?.employeeCount || 0;
+                    const technologies = fullCompanyData?.technologiesUsed || mergedRecord?.technologiesUsed || record?.technologiesUsed || [];
+                    const description = (fullCompanyData?.description || mergedRecord?.description || record?.description)?.toLowerCase() || '';
+                    const isPublic = fullCompanyData?.isPublic ?? mergedRecord?.isPublic ?? record?.isPublic;
                     
                     // Determine market segment based on company characteristics
                     if (industry.includes('utility') || industry.includes('utilities')) {
@@ -876,7 +887,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Street:</span>
                 <InlineEditField
-                  value={mergedRecord?.hqStreet || mergedRecord?.address || ''}
+                  value={fullCompanyData?.hqStreet || fullCompanyData?.address || mergedRecord?.hqStreet || mergedRecord?.address || ''}
                   field="hqStreet"
                   onSave={onSave}
                   recordId={companyId || record.id}
@@ -888,7 +899,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">City:</span>
                 <InlineEditField
-                  value={mergedRecord?.hqCity || city || mergedRecord?.city || ''}
+                  value={fullCompanyData?.hqCity || fullCompanyData?.city || mergedRecord?.hqCity || city || mergedRecord?.city || ''}
                   field="hqCity"
                   onSave={onSave}
                   recordId={companyId || record.id}
@@ -900,7 +911,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">State:</span>
                 <InlineEditField
-                  value={mergedRecord?.hqState || state || mergedRecord?.state || ''}
+                  value={fullCompanyData?.hqState || fullCompanyData?.state || mergedRecord?.hqState || state || mergedRecord?.state || ''}
                   field="hqState"
                   onSave={onSave}
                   recordId={companyId || record.id}
@@ -912,7 +923,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Zipcode:</span>
                 <InlineEditField
-                  value={mergedRecord?.hqZipcode || mergedRecord?.postalCode || ''}
+                  value={fullCompanyData?.hqZipcode || fullCompanyData?.postalCode || mergedRecord?.hqZipcode || mergedRecord?.postalCode || ''}
                   field="hqZipcode"
                   onSave={onSave}
                   recordId={companyId || record.id}
@@ -924,7 +935,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Country:</span>
                 <InlineEditField
-                  value={mergedRecord?.country || ''}
+                  value={fullCompanyData?.country || mergedRecord?.country || ''}
                   field="country"
                   onSave={onSave}
                   recordId={companyId || record.id}
@@ -943,7 +954,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Full Address:</span>
                 <InlineEditField
-                  value={mergedRecord?.hqFullAddress || ''}
+                  value={fullCompanyData?.hqFullAddress || mergedRecord?.hqFullAddress || ''}
                   field="hqFullAddress"
                   onSave={onSave}
                   recordId={companyId || record.id}
@@ -956,7 +967,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Location:</span>
                 <InlineEditField
-                  value={mergedRecord?.hqLocation || ''}
+                  value={fullCompanyData?.hqLocation || mergedRecord?.hqLocation || ''}
                   field="hqLocation"
                   onSave={onSave}
                   recordId={companyId || record.id}
@@ -981,11 +992,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Industry:</span>
                 <InlineEditField
-                  value={record?.industry || ''}
+                  value={fullCompanyData?.industry || mergedRecord?.industry || record?.industry || ''}
                   field="industry"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -993,11 +1004,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Target Industry:</span>
                 <InlineEditField
-                  value={record?.customFields?.targetIndustry || ''}
+                  value={fullCompanyData?.customFields?.targetIndustry || mergedRecord?.customFields?.targetIndustry || record?.customFields?.targetIndustry || ''}
                   field="targetIndustry"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                   placeholder="e.g., Title Companies, Healthcare Providers"
@@ -1006,11 +1017,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Sector:</span>
                 <InlineEditField
-                  value={record?.sector || ''}
+                  value={fullCompanyData?.sector || mergedRecord?.sector || record?.sector || ''}
                   field="sector"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1018,11 +1029,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Revenue:</span>
                 <InlineEditField
-                  value={record?.revenue ? record.revenue.toString() : ''}
+                  value={(fullCompanyData?.revenue || mergedRecord?.revenue || record?.revenue) ? (fullCompanyData?.revenue || mergedRecord?.revenue || record?.revenue).toString() : ''}
                   field="revenue"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
@@ -1031,11 +1042,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Currency:</span>
                 <InlineEditField
-                  value={record?.currency || ''}
+                  value={fullCompanyData?.currency || mergedRecord?.currency || record?.currency || ''}
                   field="currency"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1043,11 +1054,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Founded:</span>
                 <InlineEditField
-                  value={record?.foundedYear ? record.foundedYear.toString() : ''}
+                  value={(fullCompanyData?.foundedYear || mergedRecord?.foundedYear || record?.foundedYear) ? (fullCompanyData?.foundedYear || mergedRecord?.foundedYear || record?.foundedYear).toString() : ''}
                   field="foundedYear"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
@@ -1056,11 +1067,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Employees:</span>
                 <InlineEditField
-                  value={record?.employeeCount ? record.employeeCount.toString() : ''}
+                  value={(fullCompanyData?.employeeCount || mergedRecord?.employeeCount || record?.employeeCount) ? (fullCompanyData?.employeeCount || mergedRecord?.employeeCount || record?.employeeCount).toString() : ''}
                   field="employeeCount"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
@@ -1076,11 +1087,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Domain:</span>
                 <InlineEditField
-                  value={record?.domain || ''}
+                  value={fullCompanyData?.domain || mergedRecord?.domain || record?.domain || ''}
                   field="domain"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1088,11 +1099,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Reg Number:</span>
                 <InlineEditField
-                  value={record?.registrationNumber || ''}
+                  value={fullCompanyData?.registrationNumber || mergedRecord?.registrationNumber || record?.registrationNumber || ''}
                   field="registrationNumber"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1100,11 +1111,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Tax ID:</span>
                 <InlineEditField
-                  value={record?.taxId || ''}
+                  value={fullCompanyData?.taxId || mergedRecord?.taxId || record?.taxId || ''}
                   field="taxId"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1112,11 +1123,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">VAT Number:</span>
                 <InlineEditField
-                  value={record?.vatNumber || ''}
+                  value={fullCompanyData?.vatNumber || mergedRecord?.vatNumber || record?.vatNumber || ''}
                   field="vatNumber"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1124,11 +1135,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Logo URL:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.logoUrl)}
+                  value={formatEmptyValue(fullCompanyData?.logoUrl || mergedRecord?.logoUrl || record?.logoUrl)}
                   field="logoUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1149,11 +1160,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.linkedinUrl)}
+                  value={formatEmptyValue(fullCompanyData?.linkedinUrl || mergedRecord?.linkedinUrl || record?.linkedinUrl)}
                   field="linkedinUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1161,11 +1172,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">LinkedIn Navigator:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.linkedinNavigatorUrl)}
+                  value={formatEmptyValue(fullCompanyData?.linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || record?.linkedinNavigatorUrl)}
                   field="linkedinNavigatorUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1173,11 +1184,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Twitter:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.twitterUrl)}
+                  value={formatEmptyValue(fullCompanyData?.twitterUrl || mergedRecord?.twitterUrl || record?.twitterUrl)}
                   field="twitterUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1185,11 +1196,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Facebook:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.facebookUrl)}
+                  value={formatEmptyValue(fullCompanyData?.facebookUrl || mergedRecord?.facebookUrl || record?.facebookUrl)}
                   field="facebookUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1197,11 +1208,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Instagram:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.instagramUrl)}
+                  value={formatEmptyValue(fullCompanyData?.instagramUrl || mergedRecord?.instagramUrl || record?.instagramUrl)}
                   field="instagramUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1209,11 +1220,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">GitHub:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.githubUrl)}
+                  value={formatEmptyValue(fullCompanyData?.githubUrl || mergedRecord?.githubUrl || record?.githubUrl)}
                   field="githubUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1221,11 +1232,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">YouTube:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.youtubeUrl)}
+                  value={formatEmptyValue(fullCompanyData?.youtubeUrl || mergedRecord?.youtubeUrl || record?.youtubeUrl)}
                   field="youtubeUrl"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-foreground"
                 />
@@ -1240,11 +1251,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
-                  value={record?.linkedinFollowers ? record.linkedinFollowers.toString() : ''}
+                  value={(fullCompanyData?.linkedinFollowers || mergedRecord?.linkedinFollowers || record?.linkedinFollowers) ? (fullCompanyData?.linkedinFollowers || mergedRecord?.linkedinFollowers || record?.linkedinFollowers).toString() : ''}
                   field="linkedinFollowers"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
@@ -1253,11 +1264,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Twitter:</span>
                 <InlineEditField
-                  value={record?.twitterFollowers ? record.twitterFollowers.toString() : ''}
+                  value={(fullCompanyData?.twitterFollowers || mergedRecord?.twitterFollowers || record?.twitterFollowers) ? (fullCompanyData?.twitterFollowers || mergedRecord?.twitterFollowers || record?.twitterFollowers).toString() : ''}
                   field="twitterFollowers"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
@@ -1266,11 +1277,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Job Postings:</span>
                 <InlineEditField
-                  value={record?.activeJobPostings ? record.activeJobPostings.toString() : ''}
+                  value={(fullCompanyData?.activeJobPostings || mergedRecord?.activeJobPostings || record?.activeJobPostings) ? (fullCompanyData?.activeJobPostings || mergedRecord?.activeJobPostings || record?.activeJobPostings).toString() : ''}
                   field="activeJobPostings"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
@@ -1279,11 +1290,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Tech Count:</span>
                 <InlineEditField
-                  value={record?.numTechnologiesUsed ? record.numTechnologiesUsed.toString() : ''}
+                  value={(fullCompanyData?.numTechnologiesUsed || mergedRecord?.numTechnologiesUsed || record?.numTechnologiesUsed) ? (fullCompanyData?.numTechnologiesUsed || mergedRecord?.numTechnologiesUsed || record?.numTechnologiesUsed).toString() : ''}
                   field="numTechnologiesUsed"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
@@ -1292,11 +1303,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-muted w-24">Digital Maturity:</span>
                 <InlineEditField
-                  value={record?.digitalMaturity ? record.digitalMaturity.toString() : ''}
+                  value={(fullCompanyData?.digitalMaturity || mergedRecord?.digitalMaturity || record?.digitalMaturity) ? (fullCompanyData?.digitalMaturity || mergedRecord?.digitalMaturity || record?.digitalMaturity).toString() : ''}
                   field="digitalMaturity"
                   onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   type="number"
                   className="text-sm font-medium text-foreground"
