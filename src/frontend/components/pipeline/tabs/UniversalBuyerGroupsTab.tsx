@@ -928,7 +928,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   
 
   return (
-    <div className="p-6">
+    <div>
       <div className="space-y-8">
 
       {/* Loading State */}

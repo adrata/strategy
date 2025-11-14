@@ -7181,7 +7181,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
   return (
     <div className="h-full flex flex-col">
       {/* Notes Header with static auto-save message */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-background">
+      <div className="flex items-center justify-between py-2 border-b border-border bg-background">
         <h2 className="text-lg font-semibold text-foreground">
           Notes
         </h2>
@@ -7218,7 +7218,7 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
       </div>
 
       {/* Stats Footer */}
-      <div className="px-4 py-2 border-t border-border bg-background">
+      <div className="py-2 border-t border-border bg-background">
         <div className="flex items-center justify-between text-xs text-muted">
           <div className="flex items-center gap-4">
             <span>{getWordCount(notes)} words</span>

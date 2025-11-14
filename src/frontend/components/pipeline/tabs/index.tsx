@@ -51,7 +51,7 @@ export function UniversalOpportunitiesTab({ record, recordType }: { record: any;
   const opportunities = record?.opportunities || [];
   
   return (
-    <div className="p-6">
+    <div>
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-foreground mb-2">Opportunities</h2>
         <p className="text-muted">Sales opportunities associated with this {recordType === 'companies' ? 'company' : recordType.slice(0, -1)}</p>

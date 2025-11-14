@@ -212,7 +212,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   }
 
   return (
-    <div className="p-6">
+    <div>
       <div className="space-y-6">
         {/* Intelligence Summary Header */}
         <div className="flex items-center justify-between">
