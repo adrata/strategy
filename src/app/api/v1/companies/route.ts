@@ -397,7 +397,7 @@ export async function GET(request: NextRequest) {
         companies.map(c => ({ id: c.id, lastAction: c.lastAction, lastActionDate: c.lastActionDate }))
       );
       
-      const enrichedCompanies = companies.map((company) => {
+      const enrichedCompanies = await Promise.all(companies.map(async (company) => {
         try {
           const lastActionResult = lastActionResults.get(company.id);
           const lastActionText = lastActionResult?.lastAction || company.lastAction || null;

@@ -451,7 +451,8 @@ async function handleExternalWebhook(payload: any) {
     }
     
     // For Gmail push notifications
-    if (from === 'google' || from === 'gmail' || providerConfigKey === 'gmail') {
+    // Support both 'gmail' and 'google-mail' providerConfigKey values
+    if (from === 'google' || from === 'gmail' || providerConfigKey === 'gmail' || providerConfigKey === 'google-mail') {
       console.log(`📧 Gmail push notification received, triggering email sync`);
       
       const result = await UnifiedEmailSyncService.syncWorkspaceEmails(

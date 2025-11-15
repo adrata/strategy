@@ -124,7 +124,7 @@ export async function GET(
     const intelligence = await generateCompanyIntelligence(company);
 
     // Generate company summary for descriptionEnriched field
-    const companySummary = generateCompanySummary(company, intelligence);
+    const companySummary = await generateCompanySummary(company, intelligence);
 
     // Cache the intelligence in customFields and update descriptionEnriched
     try {
@@ -242,7 +242,7 @@ export async function POST(
     const intelligence = await generateCompanyIntelligence(company, true);
 
     // Generate company summary for descriptionEnriched field
-    const companySummary = generateCompanySummary(company, intelligence);
+    const companySummary = await generateCompanySummary(company, intelligence);
 
     // Update the intelligence in customFields and descriptionEnriched
     const currentCustomFields = company.customFields as any || {};
@@ -534,7 +534,7 @@ function generateAdrataStrategy(company: any, industry: string | null, strategic
 /**
  * Generate comprehensive company summary for descriptionEnriched field
  */
-function generateCompanySummary(company: any, intelligence: any): string {
+async function generateCompanySummary(company: any, intelligence: any): Promise<string> {
   const industry = inferIndustry(company);
   const size = company.size || 'Medium';
   const employeeCount = company.employeeCount || 100;

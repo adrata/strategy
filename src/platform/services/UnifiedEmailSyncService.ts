@@ -150,11 +150,12 @@ export class UnifiedEmailSyncService {
     console.log(`📧 [HISTORICAL SYNC] Start Date: ${startDate.toISOString()}`);
     console.log(`📧 [HISTORICAL SYNC] ========================================`);
     
-    // Get connection to determine provider
+    // Get connection to determine provider and providerConfigKey
     const connection = await prisma.grand_central_connections.findUnique({
       where: { nangoConnectionId },
       select: {
         provider: true,
+        providerConfigKey: true,
         workspaceId: true,
         userId: true
       }
@@ -177,6 +178,7 @@ export class UnifiedEmailSyncService {
     }
     
     const provider = connection.provider as 'outlook' | 'gmail';
+    const providerConfigKey = connection.providerConfigKey || (provider === 'outlook' ? 'outlook' : 'gmail');
     
     // Call the private sync method with historical date override
     return await this.syncProviderEmailsHistorical(
@@ -184,7 +186,8 @@ export class UnifiedEmailSyncService {
       workspaceId,
       userId,
       nangoConnectionId,
-      startDate
+      startDate,
+      providerConfigKey
     );
   }
   
@@ -815,7 +818,8 @@ export class UnifiedEmailSyncService {
     workspaceId: string,
     userId: string,
     nangoConnectionId: string,
-    startDate: Date
+    startDate: Date,
+    providerConfigKey?: string
   ): Promise<{ success: boolean; count: number; error?: string }> {
     console.log(`📧 [HISTORICAL SYNC] Starting historical sync for ${provider}`);
     console.log(`📧 [HISTORICAL SYNC] Start date: ${startDate.toISOString()}`);
@@ -916,11 +920,14 @@ export class UnifiedEmailSyncService {
             }
           }
           
+          // Use provided providerConfigKey or fallback to default
+          const nangoProviderConfigKey = providerConfigKey || (provider === 'outlook' ? 'outlook' : 'gmail');
+          
           const result = await nango.proxy({
             method: 'GET',
             endpoint,
             connectionId: nangoConnectionId,
-            providerConfigKey: provider === 'outlook' ? 'outlook' : 'gmail'
+            providerConfigKey: nangoProviderConfigKey
           });
           
           const emails = provider === 'outlook' 
@@ -933,11 +940,14 @@ export class UnifiedEmailSyncService {
               const fullEmails = await Promise.all(
                 emails.map(async (msg: any) => {
                   try {
+                    // Use provided providerConfigKey or fallback to 'gmail'
+                    const nangoProviderConfigKey = providerConfigKey || 'gmail';
+                    
                     const msgResult = await nango.proxy({
                       method: 'GET',
                       endpoint: `https://gmail.googleapis.com/gmail/v1/users/me/messages/${msg.id}`,
                       connectionId: nangoConnectionId,
-                      providerConfigKey: 'gmail'
+                      providerConfigKey: nangoProviderConfigKey
                     });
                     return msgResult.data;
                   } catch (error) {
