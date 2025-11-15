@@ -151,5 +151,10 @@ This audit verifies that Gmail email and Google Calendar integrations are fully 
 
 ## Conclusion
 
-Both Gmail email and Google Calendar integrations are **substantially complete** with one minor bug in the external webhook handler that should be fixed. All core functionality is implemented and working.
+Both Gmail email and Google Calendar integrations are **fully complete and up-to-date**. All identified issues have been fixed:
+
+1. ✅ External webhook handler now supports both `'gmail'` and `'google-mail'` providerConfigKey values
+2. ✅ Historical sync now uses the connection's actual `providerConfigKey` instead of hardcoding
+
+All core functionality is implemented and working correctly. The integrations support both `'gmail'` and `'google-mail'` Nango Integration IDs seamlessly.
 
