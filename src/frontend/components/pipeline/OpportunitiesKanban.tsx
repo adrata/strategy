@@ -352,43 +352,31 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                       </div>
                       
                       <div className="mb-3 pr-8">
-                        <h4 className="font-medium text-foreground text-sm leading-tight mb-1 flex items-center gap-1">
-                          {opportunity.name}
+                        {/* Company Name - Primary focus */}
+                        <h4 className="font-semibold text-foreground text-base leading-tight mb-2 flex items-center gap-1">
+                          {opportunity.name || opportunity.account?.name || opportunity.company || 'Unnamed Opportunity'}
                           {opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' && (
                             <span className="text-red-600 text-xs font-medium px-1.5 py-0.5 bg-red-100 rounded" title="Lost to Competition">
                               🏁
                             </span>
                           )}
                         </h4>
-                        <p className="text-xs text-muted font-medium">
-                          {opportunity.account?.name || 'No Account'}
-                        </p>
-                      </div>
-                      
-                      <div className="flex justify-between items-center text-sm mb-2">
-                        <span className="font-semibold text-black">
-                          {formatCurrency(opportunity.revenue || 0)}
-                        </span>
-                        <span className="text-muted text-xs">
-                          {opportunity.industry || 'No Industry'}
-                        </span>
-                      </div>
-
-                      {/* Next Action Pill */}
-                      <div className="mb-2">
-                        {(() => {
-                          const nextAction = getOpportunityNextAction(opportunity);
-                          return (
-                            <div className="flex items-center gap-2">
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${nextAction.timingColor}`}>
-                                {nextAction.timing}
-                              </span>
-                              <span className="text-xs text-muted truncate">
-                                {nextAction.action}
-                              </span>
-                            </div>
-                          );
-                        })()}
+                        
+                        {/* Deal Value - Prominent if available */}
+                        {(opportunity.revenue || opportunity.amount) && (opportunity.revenue > 0 || opportunity.amount > 0) && (
+                          <div className="mb-2">
+                            <span className="font-bold text-lg text-foreground">
+                              {formatCurrency(opportunity.revenue || opportunity.amount || 0)}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Industry - Only show if available and meaningful */}
+                        {opportunity.industry && opportunity.industry !== '-' && (
+                          <p className="text-xs text-muted-foreground">
+                            {opportunity.industry}
+                          </p>
+                        )}
                       </div>
 
                       {(() => {

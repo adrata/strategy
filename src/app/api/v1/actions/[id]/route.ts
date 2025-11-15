@@ -312,28 +312,55 @@ export async function PUT(
     }
 
     // Update company's lastAction fields if action is completed AND is a meaningful action
-    if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
-      try {
-        await prisma.companies.update({
-          where: { id: updatedAction.companyId },
-          data: {
+    // Check both direct companyId AND personId (if person belongs to a company)
+    if (updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
+      let companyIdToUpdate: string | null = null;
+      
+      // Direct company action
+      if (updatedAction.companyId) {
+        companyIdToUpdate = updatedAction.companyId;
+      } 
+      // Person action - check if person belongs to a company
+      else if (updatedAction.personId) {
+        try {
+          const person = await prisma.people.findUnique({
+            where: { id: updatedAction.personId },
+            select: { companyId: true }
+          });
+          if (person?.companyId) {
+            companyIdToUpdate = person.companyId;
+          }
+        } catch (error) {
+          console.error('❌ [ACTIONS PUT] Failed to fetch person companyId:', error);
+        }
+      }
+      
+      // Update company lastAction if we found a company
+      if (companyIdToUpdate) {
+        try {
+          await prisma.companies.update({
+            where: { id: companyIdToUpdate },
+            data: {
+              lastAction: updatedAction.subject,
+              lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
+              actionStatus: updatedAction.status
+            }
+          });
+          console.log('✅ [ACTIONS PUT] Updated company lastAction fields for engagement action:', {
+            companyId: companyIdToUpdate,
+            actionType: updatedAction.type,
             lastAction: updatedAction.subject,
             lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
-            actionStatus: updatedAction.status
-          }
-        });
-        console.log('✅ [ACTIONS PUT] Updated company lastAction fields for engagement action:', {
-          companyId: updatedAction.companyId,
-          actionType: updatedAction.type,
-          lastAction: updatedAction.subject,
-          lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
-        });
-      } catch (error) {
-        console.error('❌ [ACTIONS PUT] Failed to update company lastAction fields:', error);
+            source: updatedAction.companyId ? 'company-level' : 'person-level'
+          });
+        } catch (error) {
+          console.error('❌ [ACTIONS PUT] Failed to update company lastAction fields:', error);
+        }
       }
-    } else if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
+    } else if ((updatedAction.companyId || updatedAction.personId) && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
       console.log('⏭️ [ACTIONS PUT] Skipping lastAction update for system action:', {
         companyId: updatedAction.companyId,
+        personId: updatedAction.personId,
         actionType: updatedAction.type,
         subject: updatedAction.subject
       });
@@ -572,28 +599,55 @@ export async function PATCH(
     }
 
     // Update company's lastAction fields if action is completed AND is a meaningful action
-    if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
-      try {
-        await prisma.companies.update({
-          where: { id: updatedAction.companyId },
-          data: {
+    // Check both direct companyId AND personId (if person belongs to a company)
+    if (updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
+      let companyIdToUpdate: string | null = null;
+      
+      // Direct company action
+      if (updatedAction.companyId) {
+        companyIdToUpdate = updatedAction.companyId;
+      } 
+      // Person action - check if person belongs to a company
+      else if (updatedAction.personId) {
+        try {
+          const person = await prisma.people.findUnique({
+            where: { id: updatedAction.personId },
+            select: { companyId: true }
+          });
+          if (person?.companyId) {
+            companyIdToUpdate = person.companyId;
+          }
+        } catch (error) {
+          console.error('❌ [ACTIONS PATCH] Failed to fetch person companyId:', error);
+        }
+      }
+      
+      // Update company lastAction if we found a company
+      if (companyIdToUpdate) {
+        try {
+          await prisma.companies.update({
+            where: { id: companyIdToUpdate },
+            data: {
+              lastAction: updatedAction.subject,
+              lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
+              actionStatus: updatedAction.status
+            }
+          });
+          console.log('✅ [ACTIONS PATCH] Updated company lastAction fields for engagement action:', {
+            companyId: companyIdToUpdate,
+            actionType: updatedAction.type,
             lastAction: updatedAction.subject,
             lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
-            actionStatus: updatedAction.status
-          }
-        });
-        console.log('✅ [ACTIONS PATCH] Updated company lastAction fields for engagement action:', {
-          companyId: updatedAction.companyId,
-          actionType: updatedAction.type,
-          lastAction: updatedAction.subject,
-          lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
-        });
-      } catch (error) {
-        console.error('❌ [ACTIONS PATCH] Failed to update company lastAction fields:', error);
+            source: updatedAction.companyId ? 'company-level' : 'person-level'
+          });
+        } catch (error) {
+          console.error('❌ [ACTIONS PATCH] Failed to update company lastAction fields:', error);
+        }
       }
-    } else if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
+    } else if ((updatedAction.companyId || updatedAction.personId) && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
       console.log('⏭️ [ACTIONS PATCH] Skipping lastAction update for system action:', {
         companyId: updatedAction.companyId,
+        personId: updatedAction.personId,
         actionType: updatedAction.type,
         subject: updatedAction.subject
       });

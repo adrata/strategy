@@ -5,6 +5,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
+import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
 
 interface AddOpportunityModalProps {
   isOpen: boolean;
@@ -13,31 +14,28 @@ interface AddOpportunityModalProps {
   section?: string;
 }
 
+const OPPORTUNITY_STAGES = [
+  'Build',
+  'Justify',
+  'Negotiate',
+  'Legal/Procurement',
+  'Sign',
+  'Paid'
+];
+
 export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, section = 'opportunities' }: AddOpportunityModalProps) {
   // Get section-specific colors
   const colors = getCategoryColors(section);
   
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    jobTitle: "",
-    company: "",
+    selectedCompany: null as any,
+    opportunityAmount: "",
+    opportunityProbability: "",
+    opportunityStage: "Build",
+    expectedCloseDate: "",
     notes: ""
   });
   const [isLoading, setIsLoading] = useState(false);
-  const firstNameInputRef = useRef<HTMLInputElement>(null);
-
-  // Auto-focus first name input when modal opens
-  useEffect(() => {
-    if (isOpen && firstNameInputRef.current) {
-      // Small delay to ensure modal is fully rendered
-      setTimeout(() => {
-        firstNameInputRef.current?.focus();
-      }, 100);
-    }
-  }, [isOpen]);
 
   // Keyboard shortcut for Ctrl+Enter
   useEffect(() => {
@@ -51,6 +49,7 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
         const isInputField =
           target.tagName === "INPUT" ||
           target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
           target.contentEditable === "true";
 
         // If we're in an input field, prevent default and trigger form submission
@@ -58,7 +57,7 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
           event.preventDefault();
           event.stopPropagation();
           
-          if (formData.firstName.trim() && formData.lastName.trim() && !isLoading) {
+          if (formData.selectedCompany && !isLoading) {
             const form = document.querySelector('form');
             if (form) {
               form.requestSubmit();
@@ -71,33 +70,58 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, formData.firstName, formData.lastName, isLoading]);
+  }, [isOpen, formData.selectedCompany, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Create full name from first and last name
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      if (!formData.selectedCompany) {
+        throw new Error('Please select a company');
+      }
+
+      // Calculate default close date (90 days from now) if not provided
+      const closeDate = formData.expectedCloseDate 
+        ? new Date(formData.expectedCloseDate).toISOString().split('T')[0]
+        : new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       
       const opportunityData = {
-        ...formData,
-        fullName,
-        status: "OPPORTUNITY", // Lock in as OPPORTUNITY
-        source: "Manual Entry"
+        status: "OPPORTUNITY",
+        opportunityAmount: formData.opportunityAmount ? parseFloat(formData.opportunityAmount) : 50000,
+        opportunityProbability: formData.opportunityProbability ? parseFloat(formData.opportunityProbability) : 25,
+        opportunityStage: formData.opportunityStage || "Build",
+        expectedCloseDate: closeDate,
+        notes: formData.notes.trim() || undefined
       };
 
-      console.log('Creating opportunity with data:', opportunityData);
+      console.log('Creating/updating opportunity with data:', opportunityData);
 
-      // Call the v1 API to create the opportunity
-      const result = await authFetch('/api/v1/people', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(opportunityData)
-      }, { success: false, error: 'Failed to create opportunity' }); // fallback
+      let result;
+      
+      // If company already exists (has id), update it; otherwise create new
+      if (formData.selectedCompany.id) {
+        // Update existing company to add opportunity fields
+        result = await authFetch(`/api/v1/companies/${formData.selectedCompany.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(opportunityData)
+        }, { success: false, error: 'Failed to update company to opportunity' });
+      } else {
+        // Create new company as opportunity
+        result = await authFetch('/api/v1/companies', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.selectedCompany.name,
+            ...opportunityData
+          })
+        }, { success: false, error: 'Failed to create opportunity' });
+      }
 
       console.log('Opportunity creation response:', result);
       
@@ -107,12 +131,11 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
         
         // Reset form
         setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          jobTitle: "",
-          company: "",
+          selectedCompany: null,
+          opportunityAmount: "",
+          opportunityProbability: "",
+          opportunityStage: "Build",
+          expectedCloseDate: "",
           notes: ""
         });
         
@@ -155,7 +178,7 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground">Add New Opportunity</h2>
-              <p className="text-sm text-muted">Create a new opportunity contact</p>
+              <p className="text-sm text-muted">Create a new sales opportunity</p>
             </div>
           </div>
           <button
@@ -188,115 +211,102 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
             </span>
           </div>
 
-          {/* Name Fields - Split like person form */}
+          {/* Company Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Company *
+            </label>
+            <CompanySelector
+              value={formData.selectedCompany}
+              onChange={(company) => {
+                console.log('🏢 [AddOpportunityModal] Company selected/changed:', company);
+                setFormData(prev => ({ 
+                  ...prev, 
+                  selectedCompany: company 
+                }));
+              }}
+              placeholder="Search or add company..."
+            />
+          </div>
+
+          {/* Opportunity Amount and Probability */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                First Name *
+                Amount ($)
               </label>
               <input
-                ref={firstNameInputRef}
-                type="text"
-                value={formData.firstName}
-                onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                placeholder="Enter first name"
+                type="number"
+                value={formData.opportunityAmount}
+                onChange={(e) => setFormData(prev => ({ ...prev, opportunityAmount: e.target.value }))}
+                placeholder="50000"
+                min="0"
+                step="1000"
                 className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
                 style={{
                   '--tw-ring-color': `${colors.primary}30`,
                   '--tw-border-color': colors.primary
                 } as React.CSSProperties}
-                required
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name *
+                Probability (%)
               </label>
               <input
-                type="text"
-                value={formData.lastName}
-                onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                placeholder="Enter last name"
+                type="number"
+                value={formData.opportunityProbability}
+                onChange={(e) => setFormData(prev => ({ ...prev, opportunityProbability: e.target.value }))}
+                placeholder="25"
+                min="0"
+                max="100"
+                step="5"
                 className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
                 style={{
                   '--tw-ring-color': `${colors.primary}30`,
                   '--tw-border-color': colors.primary
                 } as React.CSSProperties}
-                required
               />
             </div>
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              placeholder="Enter email address"
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
-              style={{
-                '--tw-ring-color': `${colors.primary}30`,
-                '--tw-border-color': colors.primary
-              } as React.CSSProperties}
-            />
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              placeholder="Enter phone number"
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
-              style={{
-                '--tw-ring-color': `${colors.primary}30`,
-                '--tw-border-color': colors.primary
-              } as React.CSSProperties}
-            />
-          </div>
-
-          {/* Job Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Job Title
-            </label>
-            <input
-              type="text"
-              value={formData.jobTitle}
-              onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
-              placeholder="Enter job title"
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
-              style={{
-                '--tw-ring-color': `${colors.primary}30`,
-                '--tw-border-color': colors.primary
-              } as React.CSSProperties}
-            />
-          </div>
-
-          {/* Company */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Company
-            </label>
-            <input
-              type="text"
-              value={formData.company}
-              onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-              placeholder="Enter company name"
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
-              style={{
-                '--tw-ring-color': `${colors.primary}30`,
-                '--tw-border-color': colors.primary
-              } as React.CSSProperties}
-            />
+          {/* Stage and Close Date */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Stage
+              </label>
+              <select
+                value={formData.opportunityStage}
+                onChange={(e) => setFormData(prev => ({ ...prev, opportunityStage: e.target.value }))}
+                className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors bg-background"
+                style={{
+                  '--tw-ring-color': `${colors.primary}30`,
+                  '--tw-border-color': colors.primary
+                } as React.CSSProperties}
+              >
+                {OPPORTUNITY_STAGES.map((stage) => (
+                  <option key={stage} value={stage}>
+                    {stage}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Expected Close Date
+              </label>
+              <input
+                type="date"
+                value={formData.expectedCloseDate}
+                onChange={(e) => setFormData(prev => ({ ...prev, expectedCloseDate: e.target.value }))}
+                className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
+                style={{
+                  '--tw-ring-color': `${colors.primary}30`,
+                  '--tw-border-color': colors.primary
+                } as React.CSSProperties}
+              />
+            </div>
           </div>
 
           {/* Notes */}
@@ -328,7 +338,7 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
             </button>
             <button
               type="submit"
-              disabled={isLoading || !formData.firstName || !formData.lastName}
+              disabled={isLoading || !formData.selectedCompany}
               className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 backgroundColor: colors.primary,

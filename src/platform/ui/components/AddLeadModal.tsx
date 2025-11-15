@@ -69,7 +69,8 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
     selectedCompany: null as any,
     state: null as USState | null,
     notes: "",
-    status: "LEAD" as "LEAD" | "PROSPECT" | "OPPORTUNITY" | "CLIENT" | "PARTNER" | "SUPERFAN"
+    status: "LEAD" as "LEAD" | "PROSPECT" | "OPPORTUNITY" | "CLIENT" | "PARTNER" | "SUPERFAN",
+    stage: "Generate" as "Generate" | "Initiate"
   });
 
   // Company form data
@@ -207,7 +208,10 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
           state: personFormData.state,
           fullName,
           status: personFormData.status, // Always "LEAD" for lead modal
-          source: "Manual Entry"
+          source: "Manual Entry",
+          customFields: {
+            afmStage: personFormData.stage
+          }
         };
 
         console.log('🚀 [AddLeadModal] Creating person lead with data:', leadData);
@@ -237,7 +241,8 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             selectedCompany: null,
             state: null,
             notes: "",
-            status: "LEAD"
+            status: "LEAD",
+            stage: "Generate"
           });
           setUploadedImages([]);
           
@@ -479,6 +484,21 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   placeholder="linkedin.com/in/example"
                   className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
+              </div>
+
+              {/* Stage */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Stage
+                </label>
+                <select
+                  value={personFormData.stage}
+                  onChange={(e) => setPersonFormData(prev => ({ ...prev, stage: e.target.value as "Generate" | "Initiate" }))}
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors bg-background"
+                >
+                  <option value="Generate">Generate — First stage in Generate Pipeline</option>
+                  <option value="Initiate">Initiate — Convert pain to interest, map org structure</option>
+                </select>
               </div>
 
               {/* State Field - Only for Notary Everyday workspace */}

@@ -110,6 +110,8 @@ model workspaces {
   auth_sessions             auth_sessions[]
   companies                 companies[]
   emails                    email_messages[]
+  calendars                  calendar[]
+  calendarEvents            events[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
   people                    people[]
@@ -172,6 +174,8 @@ model users {
   workspaces                                                            workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
   workspace_users                                                       workspace_users[]
   api_keys                                                              api_keys[]
+  calendars                                                             calendar[]
+  calendarEvents                                                        events[]
 
   // Workshop relations
   workshopDocumentsOwned      workshopDocument[] @relation("WorkshopDocumentOwner")
@@ -474,6 +478,7 @@ model companies {
   workspace               workspaces         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   coreCompany             core_companies?    @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
   emails                  email_messages[]
+  calendarEvents          events[]
   people                  people[]
   workshopDocuments       workshopDocument[]
 
@@ -679,6 +684,7 @@ model people {
   totalExperienceMonths   Int?
   actions                 actions[]
   emails                  email_messages[]
+  calendarEvents          events[]
   company                 companies?          @relation(fields: [companyId], references: [id])
   mainSeller              users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
   workspace               workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -1347,6 +1353,73 @@ model email_messages {
   @@index([personId])
   @@index([workspaceId, receivedAt])
   @@index([from])
+}
+
+/// Calendar and calendar events from integrated providers
+model calendar {
+  id          String   @id @default(ulid())
+  workspaceId String   @db.VarChar(30)
+  userId      String   @db.VarChar(30)
+  name        String
+  description String?
+  platform    String   @db.VarChar(50) // 'microsoft' or 'google'
+  externalId  String   // External calendar ID from provider
+  isPrimary   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  lastSyncAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events      events[]
+
+  @@unique([workspaceId, userId, platform, externalId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([platform])
+}
+
+model events {
+  id             String    @id @default(ulid())
+  workspaceId    String    @db.VarChar(30)
+  userId         String    @db.VarChar(30)
+  calendarId     String    @db.VarChar(30)
+  title          String
+  description    String?
+  location       String?
+  startTime      DateTime
+  endTime        DateTime
+  isAllDay       Boolean   @default(false)
+  isRecurring    Boolean   @default(false)
+  recurrenceRule String?
+  status         String    @default("confirmed") @db.VarChar(20) // 'confirmed', 'tentative', 'cancelled'
+  visibility     String    @default("default") @db.VarChar(20) // 'default', 'public', 'private'
+  platform       String    @db.VarChar(50) // 'microsoft' or 'google'
+  externalId     String    // External event ID from provider
+  meetingUrl     String?
+  attendees      Json?     // Array of attendee objects
+  organizer      Json?     // Organizer object
+  reminders      Json?     // Array of reminder objects
+  attachments    Json?     // Array of attachment objects
+  companyId      String?   @db.VarChar(30)
+  personId       String?   @db.VarChar(30)
+  syncedAt       DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  calendar       calendar  @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  workspace      workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user           users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company        companies? @relation(fields: [companyId], references: [id])
+  person         people?    @relation(fields: [personId], references: [id])
+
+  @@unique([platform, externalId, workspaceId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([calendarId])
+  @@index([companyId])
+  @@index([personId])
+  @@index([workspaceId, startTime])
+  @@index([platform, externalId])
 }
 
 model OasisExternalConnection {

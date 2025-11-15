@@ -134,6 +134,61 @@ export class UnifiedEmailSyncService {
   }
   
   /**
+   * Historical email sync - syncs all emails from a specific start date
+   * Bypasses the normal 30-day limit for one-time historical imports
+   */
+  static async syncHistoricalEmails(
+    workspaceId: string,
+    userId: string,
+    nangoConnectionId: string,
+    startDate: Date
+  ): Promise<{ success: boolean; count: number; error?: string }> {
+    console.log(`📧 [HISTORICAL SYNC] ========================================`);
+    console.log(`📧 [HISTORICAL SYNC] Starting historical email sync`);
+    console.log(`📧 [HISTORICAL SYNC] Workspace: ${workspaceId}`);
+    console.log(`📧 [HISTORICAL SYNC] Connection: ${nangoConnectionId}`);
+    console.log(`📧 [HISTORICAL SYNC] Start Date: ${startDate.toISOString()}`);
+    console.log(`📧 [HISTORICAL SYNC] ========================================`);
+    
+    // Get connection to determine provider
+    const connection = await prisma.grand_central_connections.findUnique({
+      where: { nangoConnectionId },
+      select: {
+        provider: true,
+        workspaceId: true,
+        userId: true
+      }
+    });
+    
+    if (!connection) {
+      return {
+        success: false,
+        count: 0,
+        error: `Connection not found: ${nangoConnectionId}`
+      };
+    }
+    
+    if (connection.workspaceId !== workspaceId) {
+      return {
+        success: false,
+        count: 0,
+        error: 'Workspace mismatch'
+      };
+    }
+    
+    const provider = connection.provider as 'outlook' | 'gmail';
+    
+    // Call the private sync method with historical date override
+    return await this.syncProviderEmailsHistorical(
+      provider,
+      workspaceId,
+      userId,
+      nangoConnectionId,
+      startDate
+    );
+  }
+  
+  /**
    * Sync emails from a specific provider
    */
   private static async syncProviderEmails(
@@ -753,6 +808,203 @@ export class UnifiedEmailSyncService {
   }
   
   /**
+   * Historical sync - same as syncProviderEmails but bypasses 30-day limit
+   */
+  private static async syncProviderEmailsHistorical(
+    provider: 'outlook' | 'gmail',
+    workspaceId: string,
+    userId: string,
+    nangoConnectionId: string,
+    startDate: Date
+  ): Promise<{ success: boolean; count: number; error?: string }> {
+    console.log(`📧 [HISTORICAL SYNC] Starting historical sync for ${provider}`);
+    console.log(`📧 [HISTORICAL SYNC] Start date: ${startDate.toISOString()}`);
+    
+    // Ensure start date is not in the future
+    const now = new Date();
+    const finalStartDate = startDate > now ? now : startDate;
+    
+    // Format date for API
+    const filterDateISO = finalStartDate.toISOString();
+    
+    console.log(`📧 [HISTORICAL SYNC] Using filter date: ${filterDateISO}`);
+    
+    // Initialize Nango client
+    const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
+    if (!secretKey) {
+      return { success: false, count: 0, error: 'NANGO_SECRET_KEY not set' };
+    }
+    
+    const nango = new Nango({
+      secretKey,
+      host: process.env.NANGO_HOST || 'https://api.nango.dev'
+    });
+    
+    // Fetch emails from multiple folders (same as regular sync but with custom date)
+    const foldersToSync = provider === 'outlook' 
+      ? [
+          { folder: 'inbox', filter: `receivedDateTime ge ${filterDateISO}`, orderby: 'receivedDateTime desc' },
+          { folder: 'sentitems', filter: `sentDateTime ge ${filterDateISO}`, orderby: 'sentDateTime desc' }
+        ]
+      : [
+          { folder: 'inbox', q: `after:${Math.floor(finalStartDate.getTime() / 1000)}` },
+          { folder: 'sent', q: `after:${Math.floor(finalStartDate.getTime() / 1000)}` }
+        ];
+    
+    let totalCount = 0;
+    let errorCount = 0;
+    const allEmails: any[] = [];
+    
+    // Process each folder (reuse the same pagination logic from syncProviderEmails)
+    // For brevity, we'll call the existing sync logic but with the custom date
+    // Actually, let's copy the pagination logic but use our custom date
+    
+    // Get existing email count to avoid duplicates
+    // Note: email_messages doesn't have nangoConnectionId, only workspaceId and provider
+    const existingEmailCount = await prisma.email_messages.count({
+      where: {
+        workspaceId,
+        provider
+      }
+    });
+    
+    console.log(`📧 [HISTORICAL SYNC] Existing emails: ${existingEmailCount}`);
+    
+    // Use the same folder sync logic but with our custom date
+    // We'll reuse most of the syncProviderEmails logic
+    // For now, let's create a simplified version that fetches all emails
+    
+    // Process folders
+    for (const folderConfig of foldersToSync) {
+      console.log(`📧 [HISTORICAL SYNC] Syncing ${folderConfig.folder} folder...`);
+      
+      let pageCount = 0;
+      let nextLink: string | null = null;
+      const MAX_PAGES = 1000; // Safety limit
+      
+      do {
+        try {
+          let endpoint: string;
+          
+          if (provider === 'outlook') {
+            if (nextLink) {
+              endpoint = nextLink;
+            } else {
+              const baseUrl = folderConfig.folder === 'inbox' 
+                ? 'https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages'
+                : 'https://graph.microsoft.com/v1.0/me/mailFolders/sentitems/messages';
+              
+              const queryParams = new URLSearchParams({
+                '$filter': folderConfig.filter!,
+                '$orderby': folderConfig.orderby!,
+                '$top': '50',
+                '$select': 'id,subject,from,toRecipients,ccRecipients,bccRecipients,receivedDateTime,sentDateTime,body,bodyPreview,isRead,importance,hasAttachments,conversationId,internetMessageId'
+              });
+              
+              endpoint = `${baseUrl}?${queryParams.toString()}`;
+            }
+          } else {
+            // Gmail
+            if (nextLink) {
+              endpoint = nextLink;
+            } else {
+              const queryParams = new URLSearchParams({
+                q: folderConfig.q!,
+                maxResults: '50'
+              });
+              endpoint = `https://gmail.googleapis.com/gmail/v1/users/me/messages?${queryParams.toString()}`;
+            }
+          }
+          
+          const result = await nango.proxy({
+            method: 'GET',
+            endpoint,
+            connectionId: nangoConnectionId,
+            providerConfigKey: provider === 'outlook' ? 'outlook' : 'gmail'
+          });
+          
+          const emails = provider === 'outlook' 
+            ? (result.data.value || [])
+            : (result.data.messages || []);
+          
+          if (emails.length > 0) {
+            // For Gmail, fetch full message details
+            if (provider === 'gmail') {
+              const fullEmails = await Promise.all(
+                emails.map(async (msg: any) => {
+                  try {
+                    const msgResult = await nango.proxy({
+                      method: 'GET',
+                      endpoint: `https://gmail.googleapis.com/gmail/v1/users/me/messages/${msg.id}`,
+                      connectionId: nangoConnectionId,
+                      providerConfigKey: 'gmail'
+                    });
+                    return msgResult.data;
+                  } catch (error) {
+                    return null;
+                  }
+                })
+              );
+              allEmails.push(...fullEmails.filter(Boolean));
+            } else {
+              allEmails.push(...emails);
+            }
+          }
+          
+          nextLink = provider === 'outlook' 
+            ? result.data['@odata.nextLink'] || null
+            : result.data.nextPageToken 
+              ? `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${folderConfig.q}&maxResults=50&pageToken=${result.data.nextPageToken}`
+              : null;
+          
+          pageCount++;
+          
+          if (pageCount % 10 === 0) {
+            console.log(`📧 [HISTORICAL SYNC] Processed ${pageCount} pages, ${allEmails.length} emails so far...`);
+          }
+          
+        } catch (error: any) {
+          console.error(`❌ [HISTORICAL SYNC] Error:`, error.message);
+          errorCount++;
+          nextLink = null;
+        }
+      } while (nextLink && pageCount < MAX_PAGES);
+    }
+    
+    // Store all emails
+    console.log(`📧 [HISTORICAL SYNC] Storing ${allEmails.length} emails...`);
+    
+    for (const email of allEmails) {
+      try {
+        await this.storeEmailMessage(email, provider, workspaceId);
+        totalCount++;
+      } catch (error: any) {
+        errorCount++;
+        if (errorCount <= 5) {
+          console.error(`❌ [HISTORICAL SYNC] Error storing:`, error.message);
+        }
+      }
+    }
+    
+    // Update last sync time
+    await this.updateLastSyncTime(workspaceId, provider, nangoConnectionId, totalCount > 0);
+    
+    console.log(`✅ [HISTORICAL SYNC] Complete: ${totalCount} emails stored, ${errorCount} errors`);
+    
+    // Auto-link emails to people and companies
+    console.log(`📧 [HISTORICAL SYNC] Auto-linking emails to entities...`);
+    const linkResult = await this.linkEmailsToEntities(workspaceId);
+    console.log(`✅ [HISTORICAL SYNC] Auto-linking completed: ${linkResult.linked} emails linked`);
+    
+    // Create action records for timeline
+    console.log(`📧 [HISTORICAL SYNC] Creating action records for emails...`);
+    const actionResult = await this.createEmailActions(workspaceId);
+    console.log(`✅ [HISTORICAL SYNC] Action creation completed: ${actionResult.created} actions created`);
+    
+    return { success: true, count: totalCount };
+  }
+  
+  /**
    * Store email message in database
    */
   private static async storeEmailMessage(
@@ -773,7 +1025,7 @@ export class UnifiedEmailSyncService {
     
     // Ensure 'to' is an array and not empty (at least one recipient)
     if (!Array.isArray(emailData.to) || emailData.to.length === 0) {
-      // If no 'to' recipients, try to extract from email data or use a placeholder
+      // If no 'to' recipients, try to extract from email data
       if (provider === 'outlook' && email.toRecipients) {
         emailData.to = email.toRecipients.map((r: any) => r.emailAddress?.address).filter(Boolean);
       } else if (provider === 'gmail' && email.payload?.headers) {
@@ -783,10 +1035,10 @@ export class UnifiedEmailSyncService {
         }
       }
       
-      // If still empty, use a placeholder to avoid database constraint violation
+      // If still empty, skip saving this email (likely a draft)
       if (!Array.isArray(emailData.to) || emailData.to.length === 0) {
-        console.warn(`⚠️ [EMAIL SYNC] Email ${emailData.messageId} has no 'to' recipients, using placeholder`);
-        emailData.to = ['unknown@example.com'];
+        console.log(`⏭️ [EMAIL SYNC] Skipping email ${emailData.messageId} - no 'to' recipients (likely a draft)`);
+        return; // Skip saving drafts
       }
     }
     
@@ -952,103 +1204,221 @@ export class UnifiedEmailSyncService {
    * Auto-link emails to people and companies
    * Enhanced to link company emails even when person isn't found
    */
+  /**
+   * Extract domain from email address
+   */
+  private static extractDomain(email: string | null | undefined): string | null {
+    if (!email || typeof email !== 'string') return null;
+    const match = email.toLowerCase().trim().match(/@([^@]+)$/);
+    return match ? match[1] : null;
+  }
+
+  /**
+   * Normalize domain for matching (remove www, http/https, etc.)
+   */
+  private static normalizeDomain(domain: string | null | undefined): string | null {
+    if (!domain) return null;
+    return domain
+      .toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .replace(/\/$/, '')
+      .trim();
+  }
+
+  /**
+   * Extract base domain (e.g., "example.com" from "mail.example.com")
+   */
+  private static extractBaseDomain(domain: string | null | undefined): string | null {
+    if (!domain) return null;
+    const normalized = this.normalizeDomain(domain);
+    if (!normalized) return null;
+    const parts = normalized.split('.');
+    if (parts.length >= 2) {
+      // Return last two parts (e.g., "example.com")
+      return parts.slice(-2).join('.');
+    }
+    return normalized;
+  }
+
   private static async linkEmailsToEntities(workspaceId: string) {
-    const unlinkedEmails = await prisma.email_messages.findMany({
-      where: {
-        workspaceId,
-        OR: [
-          { personId: null },
-          { companyId: null }
-        ]
-      },
-      take: 1000 // Process in batches
-    });
-    
+    // Process in batches - get all unlinked emails
+    let skip = 0;
+    const batchSize = 1000;
     let linkedToPerson = 0;
     let linkedToCompany = 0;
-    
-    for (const email of unlinkedEmails) {
-      // Extract email addresses
-      const emailAddresses = [
-        email.from,
-        ...email.to,
-        ...email.cc
-      ].filter(Boolean).map(e => e.toLowerCase().trim());
-      
-      let personId = email.personId;
-      let companyId = email.companyId;
-      
-      // Find matching person
-      if (!personId) {
-        const person = await prisma.people.findFirst({
-          where: {
-            workspaceId,
-            OR: [
-              { email: { in: emailAddresses } },
-              { workEmail: { in: emailAddresses } },
-              { personalEmail: { in: emailAddresses } }
-            ]
-          },
-          include: {
-            company: {
-              select: {
-                id: true
-              }
-            }
-          }
-        });
-        
-        if (person) {
-          personId = person.id;
-          if (!companyId && person.companyId) {
-            companyId = person.companyId;
-          }
-        }
+    let hasMore = true;
+
+    while (hasMore) {
+      const unlinkedEmails = await prisma.email_messages.findMany({
+        where: {
+          workspaceId,
+          OR: [
+            { personId: null },
+            { companyId: null }
+          ]
+        },
+        take: batchSize,
+        skip: skip
+      });
+
+      if (unlinkedEmails.length === 0) {
+        hasMore = false;
+        break;
       }
-      
-      // If no person found, try to link to company by email domain
-      if (!companyId && emailAddresses.length > 0) {
-        // Extract domains from email addresses
-        const domains = emailAddresses
-          .map(e => {
-            const match = e.match(/@([^@]+)$/);
-            return match ? match[1] : null;
-          })
-          .filter(Boolean);
+
+      console.log(`📧 [EMAIL LINKING] Processing batch: ${unlinkedEmails.length} emails (skip: ${skip})`);
+
+      for (const email of unlinkedEmails) {
+        // Extract email addresses
+        const emailAddresses = [
+          email.from,
+          ...(email.to || []),
+          ...(email.cc || []),
+          ...(email.bcc || [])
+        ].filter(Boolean).map(e => e.toLowerCase().trim());
         
-        if (domains.length > 0) {
-          const company = await prisma.companies.findFirst({
+        let personId = email.personId;
+        let companyId = email.companyId;
+        
+        // Find matching person
+        if (!personId && emailAddresses.length > 0) {
+          const person = await prisma.people.findFirst({
             where: {
               workspaceId,
+              deletedAt: null,
               OR: [
-                { domain: { in: domains } },
-                { website: { contains: domains[0] } },
-                { email: { in: emailAddresses } }
+                { email: { in: emailAddresses } },
+                { workEmail: { in: emailAddresses } },
+                { personalEmail: { in: emailAddresses } }
               ]
+            },
+            include: {
+              company: {
+                select: {
+                  id: true
+                }
+              }
             }
           });
           
-          if (company) {
-            companyId = company.id;
+          if (person) {
+            personId = person.id;
+            if (!companyId && person.companyId) {
+              companyId = person.companyId;
+            }
+          }
+        }
+        
+        // If no person found, try to link to company by email domain
+        if (!companyId && emailAddresses.length > 0) {
+          // Extract domains from email addresses
+          const domains = emailAddresses
+            .map(e => this.extractDomain(e))
+            .filter(Boolean) as string[];
+          
+          if (domains.length > 0) {
+            // Normalize domains
+            const normalizedDomains = domains
+              .map(d => this.normalizeDomain(d))
+              .filter(Boolean) as string[];
+
+            const baseDomains = normalizedDomains
+              .map(d => this.extractBaseDomain(d))
+              .filter(Boolean) as string[];
+
+            // Get all unique domains to search
+            const allDomains = [...new Set([...normalizedDomains, ...baseDomains])];
+
+            // First, try exact domain match
+            let company = await prisma.companies.findFirst({
+              where: {
+                workspaceId,
+                deletedAt: null,
+                OR: [
+                  { domain: { in: allDomains } },
+                  { email: { in: emailAddresses } }
+                ]
+              }
+            });
+
+            // If no exact match, try website contains domain
+            if (!company && allDomains.length > 0) {
+              const companies = await prisma.companies.findMany({
+                where: {
+                  workspaceId,
+                  deletedAt: null,
+                  website: { not: null }
+                },
+                select: {
+                  id: true,
+                  name: true,
+                  domain: true,
+                  website: true
+                }
+              });
+
+              for (const domain of allDomains) {
+                const matchingCompany = companies.find(c => {
+                  if (!c.website) return false;
+                  const normalizedWebsite = this.normalizeDomain(c.website);
+                  return normalizedWebsite === domain || 
+                         (normalizedWebsite && domain && (
+                           normalizedWebsite.includes(domain) ||
+                           domain.includes(normalizedWebsite)
+                         ));
+                });
+
+                if (matchingCompany) {
+                  company = matchingCompany;
+                  break;
+                }
+              }
+            }
+            
+            if (company) {
+              companyId = company.id;
+            }
+          }
+        }
+        
+        // Update email if we found links
+        if (personId !== email.personId || companyId !== email.companyId) {
+          await prisma.email_messages.update({
+            where: { id: email.id },
+            data: {
+              personId: personId || null,
+              companyId: companyId || null
+            }
+          });
+          
+          if (personId) linkedToPerson++;
+          if (companyId) linkedToCompany++;
+
+          // Classify engagement after linking
+          if (personId || companyId) {
+            const { EngagementClassificationService } = await import('./engagement-classification-service');
+            await EngagementClassificationService.classifyFromEmail({
+              id: email.id,
+              subject: email.subject,
+              body: email.body,
+              threadId: email.threadId,
+              inReplyTo: email.inReplyTo || null,
+              from: email.from,
+              to: email.to || null,
+              personId: personId || null,
+              companyId: companyId || null,
+              workspaceId
+            });
           }
         }
       }
-      
-      // Update email if we found links
-      if (personId !== email.personId || companyId !== email.companyId) {
-        await prisma.email_messages.update({
-          where: { id: email.id },
-          data: {
-            personId: personId || null,
-            companyId: companyId || null
-          }
-        });
-        
-        if (personId) linkedToPerson++;
-        if (companyId) linkedToCompany++;
-      }
+
+      skip += batchSize;
+      hasMore = unlinkedEmails.length === batchSize;
     }
     
+    console.log(`✅ [EMAIL LINKING] Linked ${linkedToPerson} emails to people, ${linkedToCompany} emails to companies`);
     return { linked: linkedToPerson, linkedToCompany };
   }
 
@@ -1118,6 +1488,21 @@ export class UnifiedEmailSyncService {
           }
         });
         linked++;
+
+        // Classify engagement after linking
+        const { EngagementClassificationService } = await import('./engagement-classification-service');
+        await EngagementClassificationService.classifyFromEmail({
+          id: email.id,
+          subject: email.subject,
+          body: email.body,
+          threadId: email.threadId,
+          inReplyTo: email.inReplyTo || null,
+          from: email.from,
+          to: email.to || null,
+          personId: personId,
+          companyId: person.companyId,
+          workspaceId
+        });
       } catch (error) {
         console.error(`❌ [EMAIL LINKING] Failed to link email ${email.id}:`, error);
       }

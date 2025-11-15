@@ -180,6 +180,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       case 'phone_call':
         return <PhoneIcon className="w-4 h-4" />;
       case 'meeting':
+      case 'MEETING':
+      case 'Meeting':
       case 'appointment':
         return <CalendarIcon className="w-4 h-4" />;
       case 'note':
@@ -200,6 +202,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       case 'phone_call':
         return 'bg-success-bg text-success-text border-success-border';
       case 'meeting':
+      case 'MEETING':
+      case 'Meeting':
       case 'appointment':
         return 'bg-panel-background text-foreground border-border';
       case 'note':
@@ -257,6 +261,40 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           activityEvents = parsed.activities || [];
           noteEvents = parsed.notes || [];
           console.log('⚡ [ACTIONS] Using cached actions data (cache age:', Date.now() - parsed.timestamp, 'ms)');
+          
+          // Add "First Action" (record creation) if record has createdAt and it's not already in cache
+          if (record?.createdAt) {
+            const createdAt = new Date(record.createdAt);
+            const hasCreationAction = activityEvents.some(event => {
+              const eventDate = event.date instanceof Date ? event.date : new Date(event.date);
+              const eventDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+              const creationDay = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+              return eventDay.getTime() === creationDay.getTime() || event.id === `first-action-${record.id}`;
+            });
+            
+            if (!hasCreationAction) {
+              // Try to get the creator user - use mainSellerId if available, otherwise fall back to System
+              const creatorUserId = record.mainSellerId || record.createdBy || null;
+              const creatorUserName = creatorUserId ? getUserName(creatorUserId) : 'System';
+              
+              const firstActionEvent: ActionEvent = {
+                id: `first-action-${record.id}`,
+                type: 'created',
+                date: createdAt,
+                title: 'Record Created',
+                description: 'Record was created in the system',
+                user: creatorUserName,
+                metadata: {
+                  type: 'Record Created',
+                  status: 'COMPLETED',
+                  isFirstAction: true,
+                  createdBy: creatorUserId
+                }
+              };
+              
+              activityEvents.push(firstActionEvent);
+            }
+          }
           
           // Set cached data immediately and return - NO LOADING STATE
           const combined = [...activityEvents, ...noteEvents];
@@ -446,6 +484,48 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         filteredEvents: activityEvents.length,
         filteredTypes: activityEvents.map(e => e.metadata?.type)
       });
+      
+      // Add "First Action" (record creation) if record has createdAt
+      // This shows when the record was first created/imported into the system
+      if (record?.createdAt) {
+        const createdAt = new Date(record.createdAt);
+        // Check if we already have an action on the creation date (to avoid duplicates)
+        const hasCreationAction = activityEvents.some(event => {
+          const eventDate = event.date instanceof Date ? event.date : new Date(event.date);
+          const eventDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+          const creationDay = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+          return eventDay.getTime() === creationDay.getTime();
+        });
+        
+        if (!hasCreationAction) {
+          // Try to get the creator user - use mainSellerId if available, otherwise fall back to System
+          const creatorUserId = record.mainSellerId || record.createdBy || null;
+          const creatorUserName = creatorUserId ? getUserName(creatorUserId) : 'System';
+          
+          const firstActionEvent: ActionEvent = {
+            id: `first-action-${record.id}`,
+            type: 'created',
+            date: createdAt,
+            title: 'Record Created',
+            description: 'Record was created in the system',
+            user: creatorUserName,
+            metadata: {
+              type: 'Record Created',
+              status: 'COMPLETED',
+              isFirstAction: true,
+              createdBy: creatorUserId
+            }
+          };
+          
+          activityEvents.push(firstActionEvent);
+          console.log('📅 [ACTIONS] Added first action event:', {
+            date: createdAt,
+            recordId: record.id,
+            createdBy: creatorUserId,
+            creatorName: creatorUserName
+          });
+        }
+      }
       
       // Cache the data
       localStorage.setItem(cacheKey, JSON.stringify({
@@ -759,7 +839,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                     {/* Action indicator */}
                     <div className="flex flex-col items-center pt-1">
                       <div className="w-8 h-8 rounded bg-background border-2 border-border flex items-center justify-center">
-                        {getEventIcon(event.type)}
+                        {getEventIcon(event.metadata?.type || event.type || 'activity')}
                       </div>
                       {index < groupedActions[timePeriod].length - 1 && (
                         <div className="w-px h-12 bg-loading-bg mt-2" />

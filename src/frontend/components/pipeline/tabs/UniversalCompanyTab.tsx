@@ -47,8 +47,16 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
   // Detect if we have partial company data that needs to be fetched
   const hasPartialCompanyData = useMemo(() => {
-    if (!companyId || recordType === 'companies') {
-      return false; // No company ID or already a company record
+    if (!companyId) {
+      return false; // No company ID
+    }
+    
+    // For regular company records, check if we're missing critical fields like descriptionEnriched
+    // Even though recordType is 'companies', the initial record might not have all fields loaded
+    if (recordType === 'companies') {
+      // Check if we have descriptionEnriched - if not, fetch full company data
+      const hasDescriptionEnriched = record?.descriptionEnriched && record.descriptionEnriched.trim() !== '';
+      return !hasDescriptionEnriched;
     }
     
     // For person/lead records, check if company object has detailed fields
@@ -60,8 +68,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     const hasDetailedFields = companyData?.website || companyData?.linkedinUrl || 
                               companyData?.revenue || companyData?.employeeCount ||
                               companyData?.hqFullAddress || companyData?.foundedYear ||
-                              companyData?.description || companyData?.legalName ||
-                              companyData?.phone || companyData?.email;
+                              companyData?.description || companyData?.descriptionEnriched ||
+                              companyData?.legalName || companyData?.phone || companyData?.email;
     
     // If we don't have detailed fields, we need to fetch full company data
     return !hasDetailedFields;

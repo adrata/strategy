@@ -38,6 +38,7 @@ import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation"
 import { PipelineHydrationFix } from './PipelineHydrationFix';
 import { List } from '@/platform/hooks/useLists';
 import { useLists } from '@/platform/hooks/useLists';
+import { prefetchAllSections } from '@/platform/services/section-prefetch';
 
 interface PipelineContentProps {
   section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun' | 'metrics' | 'dashboard';
@@ -163,7 +164,7 @@ export const PipelineContent = React.memo(function PipelineContent({
           columns = ['rank', 'name', 'company', 'state', 'stage', 'actions', 'lastAction', 'nextAction'];
           break;
         case 'companies':
-          columns = ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
+          columns = ['rank', 'company', 'state', 'actions', 'lastAction', 'nextAction'];
           break;
         case 'leads':
           columns = ['company', 'name', 'state', 'title', 'email', 'actions', 'lastAction', 'nextAction'];
@@ -386,13 +387,22 @@ export const PipelineContent = React.memo(function PipelineContent({
   
   // Use single data source from useRevenueOS for dashboard only
   const { data: acquisitionData } = useRevenueOS();
-  
+
   // Use dynamic workspace context instead of hardcoded mappings
   const { workspaceId: contextWorkspaceId, userId: contextUserId } = useWorkspaceContext();
   
   // Use context workspace ID with fallback to acquisition data
   const workspaceId = contextWorkspaceId || acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
   const userId = contextUserId || currentUserId;
+  
+  // 🚀 PROGRESSIVE LOADING: Prefetch other sections when user lands on a page
+  useEffect(() => {
+    if (workspaceId && userId && section) {
+      // Prefetch all other sections in background when user lands on any page
+      // This ensures instant loading when they navigate to other sections
+      prefetchAllSections(workspaceId, userId, section, 'page-load');
+    }
+  }, [workspaceId, userId, section]);
   
   // Debug logging for companies section
   if (section === 'companies') {
@@ -1459,6 +1469,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                 visibleColumns={visibleColumns}
                 pageSize={50} // Speedrun shows all 50 items on one page
                 isLoading={isLoading}
+                searchQuery={searchQuery}
                 totalCount={searchQuery ? filteredData.length : sectionData.count} // Pass total count for correct pagination
               />
               ) : section === 'prospects' ? (
@@ -1474,6 +1485,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={sectionData.loading}
+                  searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : sectionData.count}
                 />
               ) : section === 'leads' ? (
@@ -1489,6 +1501,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={sectionData.loading}
+                  searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : sectionData.count}
                 />
               ) : section === 'people' ? (
@@ -1504,6 +1517,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={sectionData.loading}
+                  searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : sectionData.count}
                 />
               ) : section === 'companies' ? (
@@ -1550,6 +1564,7 @@ export const PipelineContent = React.memo(function PipelineContent({
               visibleColumns={visibleColumns}
               pageSize={100} // Default page size for other sections
               isLoading={isLoading}
+              searchQuery={searchQuery}
               totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
             />
           )}

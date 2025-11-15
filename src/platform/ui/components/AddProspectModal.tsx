@@ -48,7 +48,8 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
     selectedCompany: null as any,
     state: null as USState | null,
     notes: "",
-    status: "PROSPECT" as "LEAD" | "PROSPECT" | "OPPORTUNITY" | "CLIENT" | "PARTNER" | "SUPERFAN"
+    status: "PROSPECT" as "LEAD" | "PROSPECT" | "OPPORTUNITY" | "CLIENT" | "PARTNER" | "SUPERFAN",
+    stage: "Educate" as "Educate" | "Build"
   });
 
   // Company form data
@@ -150,7 +151,10 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
           state: personFormData.state,
           fullName,
           status: "PROSPECT", // Lock in as PROSPECT
-          source: "Manual Entry"
+          source: "Manual Entry",
+          customFields: {
+            afmStage: personFormData.stage
+          }
         };
 
         console.log('Creating person prospect with data:', prospectData);
@@ -179,7 +183,8 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
             selectedCompany: null,
             state: null,
             notes: "",
-            status: "PROSPECT"
+            status: "PROSPECT",
+            stage: "Educate"
           });
           
           // Dispatch refresh events
@@ -456,6 +461,21 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   placeholder="linkedin.com/in/example"
                   className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
+              </div>
+
+              {/* Stage */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Stage
+                </label>
+                <select
+                  value={personFormData.stage}
+                  onChange={(e) => setPersonFormData(prev => ({ ...prev, stage: e.target.value as "Educate" | "Build" }))}
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors bg-background"
+                >
+                  <option value="Educate">Educate — Research priorities, establish credibility</option>
+                  <option value="Build">Build — Validate pain, make champion the hero</option>
+                </select>
               </div>
 
               {/* Company */}

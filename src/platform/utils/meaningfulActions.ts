@@ -44,6 +44,7 @@ export const MEANINGFUL_ACTION_TYPES = new Set([
   
   // Meeting Actions
   'Meeting',
+  'MEETING',
   'meeting_scheduled',
   'meeting_completed',
   'demo_meeting',
@@ -161,6 +162,7 @@ export function getMeaningfulActionDescription(actionType: string): string {
     
     // Meeting Actions
     'Meeting': 'Meeting',
+    'MEETING': 'Meeting',
     'meeting_scheduled': 'Meeting Scheduled',
     'meeting_completed': 'Meeting Completed',
     'demo_meeting': 'Demo Meeting',

@@ -1253,7 +1253,7 @@ export function UniversalRecordTemplate({
           },
           body: JSON.stringify(updatePayload),
         });
-      } else if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+      } else if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects') {
         // All people-related records use v1 people API
         console.log('📡 [UNIVERSAL] Making PATCH request to people API with payload:', updatePayload);
         result = await authFetch(`/api/v1/people/${localRecord.id}`, {
@@ -1263,8 +1263,8 @@ export function UniversalRecordTemplate({
           },
           body: JSON.stringify(updatePayload),
         });
-      } else if (recordType === 'companies') {
-        // Use v1 companies API
+      } else if (recordType === 'companies' || recordType === 'opportunities') {
+        // Opportunities are companies
         console.log('📡 [UNIVERSAL] Making PATCH request to companies API with payload:', updatePayload);
         result = await authFetch(`/api/v1/companies/${localRecord.id}`, {
           method: 'PATCH',
@@ -1647,7 +1647,7 @@ export function UniversalRecordTemplate({
             'Content-Type': 'application/json',
           },
         });
-      } else if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+      } else if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects') {
         // All people-related records use v1 people API
         result = await authFetch(`/api/v1/people/${recordId}`, {
           method: 'DELETE',
@@ -1655,8 +1655,8 @@ export function UniversalRecordTemplate({
             'Content-Type': 'application/json',
           },
         });
-      } else if (recordType === 'companies') {
-        // Use v1 companies API
+      } else if (recordType === 'companies' || recordType === 'opportunities') {
+        // Opportunities are companies
         result = await authFetch(`/api/v1/companies/${recordId}`, {
           method: 'DELETE',
           headers: {
@@ -3973,7 +3973,7 @@ export function UniversalRecordTemplate({
       let result: any;
       
       try {
-        if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+        if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects') {
           // All people-related records use v1 people API
           console.log('🔍 [DEBUG] Using v1 people API for record type:', recordType);
           console.log('🔍 [DEBUG] API endpoint:', `/api/v1/people/${record.id}`);
@@ -3988,8 +3988,8 @@ export function UniversalRecordTemplate({
           });
           
           console.log('✅ [DEBUG] API response:', result);
-        } else if (recordType === 'companies') {
-          // Use v1 companies API
+        } else if (recordType === 'companies' || recordType === 'opportunities') {
+          // Opportunities are companies
           console.log('🔍 [DEBUG] Using v1 companies API');
           console.log('🔍 [DEBUG] Payload being sent:', JSON.stringify(updatePayload, null, 2));
           

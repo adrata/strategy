@@ -1,127 +1,119 @@
 #!/usr/bin/env node
 
-const https = require('https');
+/**
+ * Test CoreSignal Search for specific emails
+ * Shows the exact query and response for debugging
+ */
 
-const CORESIGNAL_API_KEY = process.env.CORESIGNAL_API_KEY;
-const CORESIGNAL_BASE_URL = 'https://api.coresignal.com/cdapi/v2';
+require('dotenv').config();
 
-async function makeCoreSignalRequest(url, method = 'GET', data = null) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      method: method,
-      headers: {
-        'apikey': CORESIGNAL_API_KEY,
-        'Content-Type': 'application/json'
-      }
-    };
+const CORESIGNAL_API_KEY = process.env.CORESIGNAL_API_KEY?.trim().replace(/\\n/g, '');
 
-    const req = https.request(url, options, (res) => {
-      let responseData = '';
-      
-      res.on('data', (chunk) => {
-        responseData += chunk;
-      });
-      
-      res.on('end', () => {
-        try {
-          const parsedData = JSON.parse(responseData);
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            resolve(parsedData);
-          } else {
-            reject(new Error(`CoreSignal API Error ${res.statusCode}: ${parsedData.message || responseData}`));
-          }
-        } catch (error) {
-          reject(new Error(`CoreSignal JSON Parse Error: ${error.message}`));
-        }
-      });
-    });
+const testEmails = [
+  'aadkins@bartlettec.coop',
+  'aanderson@cityoftacoma.org',
+  'aroot@rootbrothers.com'
+];
 
-    req.on('error', (error) => {
-      reject(error);
-    });
-
-    if (data) {
-      req.write(JSON.stringify(data));
-    }
-    
-    req.end();
-  });
-}
-
-async function testSearches() {
-  console.log('🔍 TESTING CORESIGNAL SEARCHES FOR LOCKARD & WHITE');
-  console.log('==================================================\n');
-
-  const searchTerms = [
-    'Lockard & White',
-    'Lockard White',
-    'Lockard',
-    'landw.com',
-    'landw'
-  ];
-
-  for (const term of searchTerms) {
-    console.log(`🔍 Searching for: "${term}"`);
-    
-    const searchQuery = {
-      query: {
-        query_string: {
-          query: term,
-          default_field: "company_name",
-          default_operator: "and"
-        }
-      }
-    };
-
-    const url = `${CORESIGNAL_BASE_URL}/company_multi_source/search/es_dsl`;
-    
-    try {
-      const response = await makeCoreSignalRequest(url, 'POST', searchQuery);
-      
-      if (Array.isArray(response) && response.length > 0) {
-        console.log(`   ✅ Found ${response.length} results`);
-        response.slice(0, 3).forEach((result, index) => {
-          console.log(`      ${index + 1}. ${result}`);
-        });
-        if (response.length > 3) {
-          console.log(`      ... and ${response.length - 3} more`);
-        }
-      } else {
-        console.log('   ❌ No results found');
-      }
-    } catch (error) {
-      console.log(`   ❌ Error: ${error.message}`);
-    }
-    
-    console.log('');
-  }
-
-  // Try a broader search
-  console.log('🔍 Trying broader search...');
-  const broadSearchQuery = {
+async function testSearch(email) {
+  console.log(`\n🔍 Testing: ${email}`);
+  console.log('='.repeat(70));
+  
+  const searchQuery = {
     query: {
-      query_string: {
-        query: 'Lockard OR White OR landw',
-        default_field: "company_name",
-        default_operator: "or"
+      bool: {
+        should: [
+          {
+            term: {
+              "primary_professional_email.exact": email
+            }
+          },
+          {
+            nested: {
+              path: "professional_emails_collection",
+              query: {
+                term: {
+                  "professional_emails_collection.professional_email.exact": email
+                }
+              }
+            }
+          }
+        ]
       }
     }
   };
 
+  console.log('\n📤 Search Query:');
+  console.log(JSON.stringify(searchQuery, null, 2));
+
   try {
-    const response = await makeCoreSignalRequest(`${CORESIGNAL_BASE_URL}/company_multi_source/search/es_dsl`, 'POST', broadSearchQuery);
-    
-    if (Array.isArray(response) && response.length > 0) {
-      console.log(`✅ Found ${response.length} results with broader search`);
-      response.slice(0, 5).forEach((result, index) => {
-        console.log(`   ${index + 1}. ${result}`);
-      });
-    } else {
-      console.log('❌ No results found with broader search');
+    const response = await fetch('https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl?items_per_page=5', {
+      method: 'POST',
+      headers: {
+        'apikey': CORESIGNAL_API_KEY,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(searchQuery)
+    });
+
+    console.log(`\n📥 Response Status: ${response.status} ${response.statusText}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.log(`\n❌ Error Response:`);
+      console.log(errorText);
+      return;
     }
+
+    const data = await response.json();
+    
+    console.log(`\n📊 Response Data:`);
+    console.log(JSON.stringify(data, null, 2));
+
+    if (Array.isArray(data) && data.length > 0) {
+      console.log(`\n✅ Found ${data.length} result(s)`);
+      if (typeof data[0] === 'number') {
+        console.log(`   Employee ID: ${data[0]}`);
+      } else {
+        console.log(`   Employee ID: ${data[0].id || data[0]}`);
+        console.log(`   Full Name: ${data[0].full_name || 'N/A'}`);
+        console.log(`   Primary Email: ${data[0].primary_professional_email || 'N/A'}`);
+      }
+    } else if (data.hits?.hits?.length > 0) {
+      console.log(`\n✅ Found ${data.hits.hits.length} result(s) in hits format`);
+      const firstHit = data.hits.hits[0];
+      console.log(`   Employee ID: ${firstHit._source?.id || firstHit.id || firstHit._id}`);
+      console.log(`   Full Name: ${firstHit._source?.full_name || 'N/A'}`);
+    } else {
+      console.log(`\n⚠️  No results found`);
+    }
+
   } catch (error) {
-    console.log(`❌ Error with broader search: ${error.message}`);
+    console.error(`\n❌ Error: ${error.message}`);
   }
 }
 
-testSearches().catch(console.error);
+async function main() {
+  console.log('🧪 TESTING CORESIGNAL SEARCH');
+  console.log('='.repeat(70));
+  console.log(`🔑 API Key: ${CORESIGNAL_API_KEY ? 'Configured' : 'Missing'}`);
+  
+  if (!CORESIGNAL_API_KEY) {
+    console.error('❌ CORESIGNAL_API_KEY not found');
+    process.exit(1);
+  }
+
+  for (const email of testEmails) {
+    await testSearch(email);
+    // Small delay between requests
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
+  console.log('\n' + '='.repeat(70));
+  console.log('✅ Testing complete');
+}
+
+if (require.main === module) {
+  main().catch(console.error);
+}

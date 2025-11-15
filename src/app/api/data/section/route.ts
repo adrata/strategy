@@ -1038,30 +1038,18 @@ export async function GET(request: NextRequest) {
           return true;
         });
         
-        // 🚀 COMPANIES AGGREGATION: Aggregate last/next actions from actions table
+        // 🚀 COMPANIES AGGREGATION: Use shared utility to compute accurate lastAction
+        // Checks both company-level actions AND actions from associated people
+        const { computeCompanyLastActionsBatch } = await import('@/platform/utils/company-last-action');
+        const lastActionResults = await computeCompanyLastActionsBatch(
+          deduplicatedCompanies.map(c => ({ id: c.id, lastAction: c.lastAction, lastActionDate: c.lastActionDate }))
+        );
+        
         sectionData = await Promise.all(deduplicatedCompanies.map(async (company, index) => {
-          // Find most recent meaningful action for this company from actions table
-          const recentAction = await prisma.actions.findFirst({
-            where: {
-              workspaceId,
-              companyId: company.id,
-              deletedAt: null,
-              status: 'COMPLETED'
-            },
-            orderBy: { completedAt: 'desc' },
-            select: {
-              type: true,
-              subject: true,
-              completedAt: true,
-              createdAt: true
-            }
-          });
-
-          // Filter for meaningful actions
-          let meaningfulAction = null;
-          if (recentAction && isMeaningfulAction(recentAction.type)) {
-            meaningfulAction = recentAction;
-          }
+          const lastActionResult = lastActionResults.get(company.id);
+          const lastAction = lastActionResult?.lastAction || company.lastAction || null;
+          const lastActionDate = lastActionResult?.lastActionDate || company.lastActionDate || null;
+          const lastActionTime = lastActionResult?.lastActionTime || 'Never';
 
           // Find next upcoming action for this company
           const upcomingAction = await prisma.actions.findFirst({
@@ -1076,36 +1064,6 @@ export async function GET(request: NextRequest) {
               scheduledAt: true
             }
           });
-
-          // Calculate lastActionTime for companies table display using meaningful actions (copy from speedrun)
-          let lastActionTime = 'Never';
-          let lastAction = company.lastAction;
-          let lastActionDate = company.lastActionDate;
-          
-          // Use meaningful action if available
-          if (meaningfulAction) {
-            lastAction = meaningfulAction.subject || meaningfulAction.type;
-            lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
-          }
-          
-          // Only show real last actions if they exist and are meaningful
-          if (lastActionDate && lastAction && lastAction !== 'No action taken') {
-            // Real last action exists
-            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
-            if (daysSince === 0) lastActionTime = 'Today';
-            else if (daysSince === 1) lastActionTime = 'Yesterday';
-            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
-          } else if (company.createdAt) {
-            // No real last action, show when data was added
-            const daysSince = Math.floor((new Date().getTime() - new Date(company.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-            if (daysSince === 0) lastActionTime = 'Today';
-            else if (daysSince === 1) lastActionTime = 'Yesterday';
-            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
-          }
 
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';

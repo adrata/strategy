@@ -1,585 +1,473 @@
 /**
  * Engagement Classification Service
  * 
- * Classifies leads and prospects into engagement categories:
- * - ENGAGED: Active responses, high interaction, recent activity
- * - COLD: No recent responses, low engagement, minimal interaction
- * - NON_RESPONSIVE: Multiple attempts with no response
- * - NURTURING: Moderate engagement, periodic responses
- * - HOT: Very high engagement, ready to buy signals
+ * Automatically classifies people and companies based on engagement:
+ * - PROSPECT: People/companies who have replied to emails (engaged)
+ * - OPPORTUNITY: Situations where real business was discussed
  */
 
-export interface EngagementClassification {
-  category: 'HOT' | 'ENGAGED' | 'NURTURING' | 'COLD' | 'NON_RESPONSIVE';
-  score: number; // 0-100
-  confidence: number; // 0-1
-  reason: string;
-  lastActivityDate?: Date;
-  daysSinceLastActivity: number;
-  responseRate: number; // 0-1
-  signals: EngagementSignal[];
-}
+import { PrismaClient } from '@prisma/client';
 
-export interface EngagementSignal {
-  type: 'email_open' | 'email_click' | 'email_reply' | 'call_answered' | 'meeting_attended' | 'website_visit' | 'document_download' | 'demo_request' | 'pricing_inquiry' | 'referral_given';
-  weight: number; // 1-10
-  timestamp: Date;
-  description: string;
-}
-
-export interface ContactData {
-  id: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  company?: string;
-  status?: string;
-  priority?: string;
-  source?: string;
-  activities?: ActivityData[];
-  emailTracking?: EmailTrackingData[];
-  createdAt: Date;
-  lastContactDate?: Date;
-  estimatedValue?: number;
-  notes?: string;
-  engagementLevel?: string; // existing field
-}
-
-export interface ActivityData {
-  id: string;
-  type: 'email' | 'call' | 'meeting' | 'note' | 'task';
-  status: 'completed' | 'scheduled' | 'cancelled';
-  createdAt: Date;
-  description?: string;
-  outcome?: 'positive' | 'negative' | 'neutral';
-}
-
-export interface EmailTrackingData {
-  id: string;
-  sentAt: Date;
-  opened?: boolean;
-  openedAt?: Date;
-  clicked?: boolean;
-  clickedAt?: Date;
-  replied?: boolean;
-  repliedAt?: Date;
-  bounced?: boolean;
-}
+const prisma = new PrismaClient();
 
 export class EngagementClassificationService {
-  private static instance: EngagementClassificationService;
-
-  public static getInstance(): EngagementClassificationService {
-    if (!this.instance) {
-      this['instance'] = new EngagementClassificationService();
+  /**
+   * Check if an email is a reply
+   */
+  private static isEmailReply(email: {
+    subject?: string | null;
+    threadId?: string | null;
+    inReplyTo?: string | null;
+  }): boolean {
+    // Check if subject starts with "Re:" or "RE:" or "Fwd:" (common reply indicators)
+    const subject = (email.subject || '').trim();
+    if (subject.match(/^(Re|RE|Fwd|FWD|Fw|FW):\s*/i)) {
+      return true;
     }
-    return this.instance;
+
+    // Check if email is part of a thread (has threadId and inReplyTo)
+    if (email.threadId && email.inReplyTo) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
-   * Classify a contact's engagement level
+   * Check if content suggests business discussion (for opportunity detection)
    */
-  public classifyEngagement(contact: ContactData): EngagementClassification {
-    const signals = this.extractEngagementSignals(contact);
-    const responseRate = this.calculateResponseRate(contact);
-    const daysSinceLastActivity = this.calculateDaysSinceLastActivity(contact);
-    const activityScore = this.calculateActivityScore(contact);
-    const recentEngagementScore = this.calculateRecentEngagementScore(signals);
+  private static suggestsBusinessDiscussion(
+    subject: string | null | undefined,
+    body: string | null | undefined,
+    title?: string | null | undefined
+  ): boolean {
+    const text = `${subject || ''} ${body || ''} ${title || ''}`.toLowerCase();
+
+    // Business discussion keywords
+    const businessKeywords = [
+      'proposal', 'quote', 'pricing', 'contract', 'agreement', 'deal',
+      'project', 'scope', 'sow', 'statement of work', 'rfp', 'rfq',
+      'budget', 'investment', 'purchase', 'buy', 'buying', 'procurement',
+      'implementation', 'deployment', 'integration', 'onboarding',
+      'timeline', 'deadline', 'deliverable', 'milestone',
+      'demo', 'demonstration', 'trial', 'pilot', 'proof of concept',
+      'meeting', 'call', 'discussion', 'consultation',
+      'requirements', 'needs', 'solution', 'service', 'product',
+      'opportunity', 'partnership', 'collaboration'
+    ];
+
+    // Check for multiple business keywords (more reliable than single keyword)
+    const keywordMatches = businessKeywords.filter(keyword => text.includes(keyword)).length;
     
-    // Calculate overall engagement score (0-100)
-    const score = this.calculateOverallScore({
-      activityScore,
-      recentEngagementScore,
-      responseRate,
-      daysSinceLastActivity,
-      signalStrength: this.calculateSignalStrength(signals),
-      priorityBoost: this.getPriorityBoost(contact),
-      valueBoost: this.getValueBoost(contact)
-    });
-
-    // Determine category based on score and specific criteria
-    const category = this.determineCategory(score, signals, daysSinceLastActivity, responseRate);
-    const confidence = this.calculateConfidence(signals, contact);
-    const reason = this.generateReason(category, score, signals, daysSinceLastActivity, responseRate);
-
-    return {
-      category,
-      score,
-      confidence,
-      reason,
-      lastActivityDate: this.getLastActivityDate(contact),
-      daysSinceLastActivity,
-      responseRate,
-      signals
-    };
+    // If 2+ business keywords found, likely business discussion
+    return keywordMatches >= 2;
   }
 
   /**
-   * Extract engagement signals from contact data
+   * Check if email is FROM a person (they initiated contact)
+   * This includes both replies AND first-contact emails
    */
-  private extractEngagementSignals(contact: ContactData): EngagementSignal[] {
-    const signals: EngagementSignal[] = [];
+  private static isEmailFromPerson(email: {
+    from: string;
+    personId?: string | null;
+    to?: string[] | null;
+  }): boolean {
+    // Email must be linked to a person (FROM field matched to a person in our system)
+    return !!email.personId;
+  }
 
-    // Process activities
-    if (contact.activities) {
-      for (const activity of contact.activities) {
-        if (activity['type'] === 'email' && activity['outcome'] === 'positive') {
-          signals.push({
-            type: 'email_reply',
-            weight: 8,
-            timestamp: activity.createdAt,
-            description: 'Replied to email'
-          });
-        } else if (activity['type'] === 'call' && activity['status'] === 'completed') {
-          signals.push({
-            type: 'call_answered',
-            weight: 9,
-            timestamp: activity.createdAt,
-            description: 'Answered phone call'
-          });
-        } else if (activity['type'] === 'meeting' && activity['status'] === 'completed') {
-          signals.push({
-            type: 'meeting_attended',
-            weight: 10,
-            timestamp: activity.createdAt,
-            description: 'Attended scheduled meeting'
-          });
-        }
-      }
+  /**
+   * Cascade company prospect status to all people at the company
+   * When one person becomes a prospect, all other people at their company should also become prospects
+   * 
+   * @param directEngagerId - The person who directly engaged (replied/contacted)
+   * @param companyId - The company ID
+   * @param workspaceId - The workspace ID
+   * @returns Object with counts of people and company updated
+   */
+  static async cascadeCompanyProspectStatus(
+    directEngagerId: string,
+    companyId: string | null,
+    workspaceId: string
+  ): Promise<{ peopleUpdated: number; companyUpdated: boolean }> {
+    if (!companyId) {
+      return { peopleUpdated: 0, companyUpdated: false };
     }
 
-    // Process email tracking
-    if (contact.emailTracking) {
-      for (const tracking of contact.emailTracking) {
-        if (tracking.replied) {
-          signals.push({
-            type: 'email_reply',
-            weight: 8,
-            timestamp: tracking.repliedAt!,
-            description: 'Replied to email'
-          });
-        } else if (tracking.clicked) {
-          signals.push({
-            type: 'email_click',
-            weight: 6,
-            timestamp: tracking.clickedAt!,
-            description: 'Clicked email link'
-          });
-        } else if (tracking.opened) {
-          signals.push({
-            type: 'email_open',
-            weight: 3,
-            timestamp: tracking.openedAt!,
-            description: 'Opened email'
-          });
-        }
-      }
-    }
+    let peopleUpdated = 0;
+    let companyUpdated = false;
 
-    // Check for high-value signals in notes or status
-    if (contact.notes) {
-      const notes = contact.notes.toLowerCase();
-      if (notes.includes('demo') || notes.includes('demonstration')) {
-        signals.push({
-          type: 'demo_request',
-          weight: 9,
-          timestamp: new Date(),
-          description: 'Requested demo'
+    try {
+      // Get the direct engager's name for statusReason
+      const directEngager = await prisma.people.findUnique({
+        where: { id: directEngagerId },
+        select: { fullName: true, firstName: true, lastName: true }
+      });
+
+      const engagerName = directEngager?.fullName || 
+                         `${directEngager?.firstName || ''} ${directEngager?.lastName || ''}`.trim() || 
+                         'a colleague';
+
+      // Update company status to PROSPECT if not already higher
+      const company = await prisma.companies.findUnique({
+        where: { id: companyId },
+        select: { id: true, status: true }
+      });
+
+      if (company && company.status !== 'PROSPECT' && company.status !== 'OPPORTUNITY' && 
+          company.status !== 'CLIENT' && company.status !== 'SUPERFAN') {
+        await prisma.companies.update({
+          where: { id: companyId },
+          data: {
+            status: 'PROSPECT'
+          }
         });
+        companyUpdated = true;
+        console.log(`✅ [CASCADE] Updated company ${companyId} to PROSPECT`);
       }
-      if (notes.includes('pricing') || notes.includes('quote') || notes.includes('proposal')) {
-        signals.push({
-          type: 'pricing_inquiry',
-          weight: 8,
-          timestamp: new Date(),
-          description: 'Inquired about pricing'
+
+      // Find all other people at the same company
+      const companyPeople = await prisma.people.findMany({
+        where: {
+          workspaceId,
+          companyId,
+          id: { not: directEngagerId }, // Exclude the direct engager
+          deletedAt: null
+        },
+        select: {
+          id: true,
+          status: true,
+          fullName: true
+        }
+      });
+
+      // Update each person to PROSPECT if they're LEAD or lower
+      for (const person of companyPeople) {
+        // Only update if status is LEAD or lower (not already PROSPECT/OPPORTUNITY/CLIENT)
+        if (person.status === 'LEAD' || !person.status || 
+            (person.status !== 'PROSPECT' && person.status !== 'OPPORTUNITY' && 
+             person.status !== 'CLIENT' && person.status !== 'SUPERFAN' && person.status !== 'PARTNER')) {
+          await prisma.people.update({
+            where: { id: person.id },
+            data: {
+              status: 'PROSPECT',
+              statusUpdateDate: new Date(),
+              statusReason: `Company became prospect via ${engagerName}`
+            }
+          });
+          peopleUpdated++;
+          console.log(`✅ [CASCADE] Updated person ${person.id} (${person.fullName}) to PROSPECT - company cascade`);
+        }
+      }
+
+      if (peopleUpdated > 0) {
+        console.log(`✅ [CASCADE] Updated ${peopleUpdated} people at company ${companyId} to PROSPECT`);
+      }
+
+    } catch (error) {
+      console.error(`❌ [CASCADE] Error cascading prospect status for company ${companyId}:`, error);
+    }
+
+    return { peopleUpdated, companyUpdated };
+  }
+
+  /**
+   * Classify person/company based on email engagement
+   * Handles both:
+   * 1. Replies (they replied to us) - indicates engagement
+   * 2. First contact (they emailed us first) - also indicates engagement
+   */
+  static async classifyFromEmail(
+    email: {
+      id: string;
+      subject?: string | null;
+      body?: string | null;
+      threadId?: string | null;
+      inReplyTo?: string | null;
+      from: string;
+      to?: string[] | null;
+      personId?: string | null;
+      companyId?: string | null;
+      workspaceId: string;
+    }
+  ): Promise<{ personUpdated: boolean; companyUpdated: boolean }> {
+    let personUpdated = false;
+    let companyUpdated = false;
+
+    try {
+      // Only classify if email is FROM a person in our system (they contacted us)
+      if (!email.personId) {
+        return { personUpdated: false, companyUpdated: false };
+      }
+
+      // Check if this is a reply OR first contact
+      const isReply = this.isEmailReply(email);
+      const isFirstContact = !isReply && this.isEmailFromPerson(email);
+
+      // Both replies and first contacts indicate engagement
+      if (!isReply && !isFirstContact) {
+        return { personUpdated: false, companyUpdated: false };
+      }
+
+      const contactType = isReply ? 'reply' : 'first contact';
+      console.log(`🎯 [ENGAGEMENT] Email ${email.id} is a ${contactType} FROM person ${email.personId} - classifying as PROSPECT`);
+
+      // Update person status to PROSPECT if they replied
+      if (email.personId) {
+        const person = await prisma.people.findUnique({
+          where: { id: email.personId },
+          select: { id: true, status: true }
         });
+
+        if (person && person.status !== 'PROSPECT' && person.status !== 'OPPORTUNITY' && person.status !== 'CLIENT') {
+          await prisma.people.update({
+            where: { id: email.personId },
+            data: {
+              status: 'PROSPECT',
+              statusUpdateDate: new Date(),
+              statusReason: isReply ? 'Replied to email' : 'Initiated contact via email'
+            }
+          });
+          personUpdated = true;
+          console.log(`✅ [ENGAGEMENT] Updated person ${email.personId} to PROSPECT`);
+
+          // Cascade: Update company and all other people at company to PROSPECT
+          if (email.companyId) {
+            const cascadeResult = await this.cascadeCompanyProspectStatus(
+              email.personId,
+              email.companyId,
+              email.workspaceId
+            );
+            if (cascadeResult.peopleUpdated > 0 || cascadeResult.companyUpdated) {
+              companyUpdated = cascadeResult.companyUpdated;
+            }
+          }
+        }
       }
-      if (notes.includes('referral') || notes.includes('referred')) {
-        signals.push({
-          type: 'referral_given',
-          weight: 7,
-          timestamp: new Date(),
-          description: 'Provided referral'
+
+      // Company status is now updated via cascade method above
+
+      // Check for business discussion keywords (for opportunity detection)
+      const suggestsBusiness = this.suggestsBusinessDiscussion(email.subject, email.body);
+
+      if (suggestsBusiness) {
+        console.log(`💼 [ENGAGEMENT] Email ${email.id} suggests business discussion - classifying as OPPORTUNITY`);
+
+        // Update person to OPPORTUNITY if business discussion detected
+        if (email.personId) {
+          const person = await prisma.people.findUnique({
+            where: { id: email.personId },
+            select: { id: true, status: true }
+          });
+
+          if (person && person.status !== 'OPPORTUNITY' && person.status !== 'CLIENT') {
+            await prisma.people.update({
+              where: { id: email.personId },
+              data: {
+                status: 'OPPORTUNITY',
+                statusUpdateDate: new Date(),
+                statusReason: 'Business discussion detected in email'
+              }
+            });
+            personUpdated = true;
+            console.log(`✅ [ENGAGEMENT] Updated person ${email.personId} to OPPORTUNITY`);
+          }
+        }
+
+        // Update company to OPPORTUNITY
+        if (email.companyId) {
+          const company = await prisma.companies.findUnique({
+            where: { id: email.companyId },
+            select: { id: true, status: true }
+          });
+
+          if (company && company.status !== 'OPPORTUNITY' && company.status !== 'CLIENT' && company.status !== 'SUPERFAN') {
+            await prisma.companies.update({
+              where: { id: email.companyId },
+              data: {
+                status: 'OPPORTUNITY'
+              }
+            });
+            companyUpdated = true;
+            console.log(`✅ [ENGAGEMENT] Updated company ${email.companyId} to OPPORTUNITY`);
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error(`❌ [ENGAGEMENT] Error classifying from email ${email.id}:`, error);
+    }
+
+    return { personUpdated, companyUpdated };
+  }
+
+  /**
+   * Classify person/company based on meeting
+   */
+  static async classifyFromMeeting(
+    meeting: {
+      id: string;
+      title: string;
+      description?: string | null;
+      personId?: string | null;
+      companyId?: string | null;
+      workspaceId: string;
+    }
+  ): Promise<{ personUpdated: boolean; companyUpdated: boolean }> {
+    let personUpdated = false;
+    let companyUpdated = false;
+
+    try {
+      // Check if meeting suggests business discussion
+      const suggestsBusiness = this.suggestsBusinessDiscussion(meeting.title, meeting.description, meeting.title);
+
+      if (!suggestsBusiness) {
+        return { personUpdated: false, companyUpdated: false };
+      }
+
+      console.log(`💼 [ENGAGEMENT] Meeting ${meeting.id} suggests business discussion - classifying as OPPORTUNITY`);
+
+      // Update person to OPPORTUNITY
+      if (meeting.personId) {
+        const person = await prisma.people.findUnique({
+          where: { id: meeting.personId },
+          select: { id: true, status: true }
         });
+
+        if (person) {
+          const currentStatus = person.status;
+          
+          // Skip if already OPPORTUNITY or CLIENT
+          if (currentStatus === 'OPPORTUNITY' || currentStatus === 'CLIENT') {
+            return { personUpdated: false, companyUpdated: false };
+          }
+
+          // First ensure they're at least PROSPECT (if they're LEAD or lower)
+          const needsProspectUpgrade = currentStatus === 'LEAD' || 
+                                       currentStatus === null || 
+                                       currentStatus === 'PARTNER' ||
+                                       currentStatus === 'SUPERFAN' ||
+                                       (currentStatus !== 'PROSPECT' && currentStatus !== 'OPPORTUNITY' && currentStatus !== 'CLIENT');
+          
+          if (needsProspectUpgrade) {
+            await prisma.people.update({
+              where: { id: meeting.personId },
+              data: {
+                status: 'PROSPECT',
+                statusUpdateDate: new Date(),
+                statusReason: 'Attended meeting'
+              }
+            });
+            personUpdated = true;
+
+            // Cascade: Update company and all other people at company to PROSPECT
+            if (meeting.companyId) {
+              await this.cascadeCompanyProspectStatus(
+                meeting.personId,
+                meeting.companyId,
+                meeting.workspaceId
+              );
+            }
+          }
+
+          // Then upgrade to OPPORTUNITY (if not already)
+          const updatedPerson = await prisma.people.findUnique({
+            where: { id: meeting.personId },
+            select: { status: true }
+          });
+
+          if (updatedPerson && updatedPerson.status !== 'OPPORTUNITY' && updatedPerson.status !== 'CLIENT') {
+            await prisma.people.update({
+              where: { id: meeting.personId },
+              data: {
+                status: 'OPPORTUNITY',
+                statusUpdateDate: new Date(),
+                statusReason: 'Business discussion detected in meeting'
+              }
+            });
+            personUpdated = true;
+            console.log(`✅ [ENGAGEMENT] Updated person ${meeting.personId} to OPPORTUNITY`);
+          }
+        }
       }
-    }
 
-    return signals.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-  }
-
-  /**
-   * Calculate response rate based on activities
-   */
-  private calculateResponseRate(contact: ContactData): number {
-    if (!contact.activities || contact['activities']['length'] === 0) {
-      return 0;
-    }
-
-    const outboundAttempts = contact.activities.filter(a => 
-      (a['type'] === 'email' || a['type'] === 'call') && a['status'] === 'completed'
-    ).length;
-
-    const responses = contact.activities.filter(a => 
-      a['outcome'] === 'positive'
-    ).length;
-
-    if (outboundAttempts === 0) return 0;
-    return responses / outboundAttempts;
-  }
-
-  /**
-   * Calculate days since last activity
-   */
-  private calculateDaysSinceLastActivity(contact: ContactData): number {
-    const lastActivityDate = this.getLastActivityDate(contact);
-    if (!lastActivityDate) {
-      return Math.floor((Date.now() - contact.createdAt.getTime()) / (1000 * 60 * 60 * 24));
-    }
-    return Math.floor((Date.now() - lastActivityDate.getTime()) / (1000 * 60 * 60 * 24));
-  }
-
-  /**
-   * Get the most recent activity date
-   */
-  private getLastActivityDate(contact: ContactData): Date | undefined {
-    let lastDate: Date | undefined;
-
-    if (contact.lastContactDate) {
-      lastDate = new Date(contact.lastContactDate);
-    }
-
-    if (contact['activities'] && contact.activities.length > 0) {
-      const activityDate = new Date(Math.max(...contact.activities.map(a => a.createdAt.getTime())));
-      if (!lastDate || activityDate > lastDate) {
-        lastDate = activityDate;
-      }
-    }
-
-    if (contact['emailTracking'] && contact.emailTracking.length > 0) {
-      const emailDate = new Date(Math.max(...contact.emailTracking.map(e => e.sentAt.getTime())));
-      if (!lastDate || emailDate > lastDate) {
-        lastDate = emailDate;
-      }
-    }
-
-    return lastDate;
-  }
-
-  /**
-   * Calculate activity score based on frequency and recency
-   */
-  private calculateActivityScore(contact: ContactData): number {
-    if (!contact.activities || contact['activities']['length'] === 0) {
-      return 0;
-    }
-
-    const now = Date.now();
-    const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
-    const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
-
-    let score = 0;
-
-    // Recent activity boost
-    const recentActivities = contact.activities.filter(a => a.createdAt.getTime() > sevenDaysAgo);
-    score += recentActivities.length * 10;
-
-    // Monthly activity consistency
-    const monthlyActivities = contact.activities.filter(a => a.createdAt.getTime() > thirtyDaysAgo);
-    score += monthlyActivities.length * 5;
-
-    // Positive outcome boost
-    const positiveActivities = contact.activities.filter(a => a['outcome'] === 'positive');
-    score += positiveActivities.length * 15;
-
-    return Math.min(score, 100);
-  }
-
-  /**
-   * Calculate recent engagement score from signals
-   */
-  private calculateRecentEngagementScore(signals: EngagementSignal[]): number {
-    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-    const recentSignals = signals.filter(s => s.timestamp.getTime() > sevenDaysAgo);
-
-    if (recentSignals['length'] === 0) return 0;
-
-    return Math.min(
-      recentSignals.reduce((sum, signal) => sum + signal.weight, 0),
-      50
-    );
-  }
-
-  /**
-   * Calculate signal strength
-   */
-  private calculateSignalStrength(signals: EngagementSignal[]): number {
-    if (signals['length'] === 0) return 0;
-
-    const highValueSignals = signals.filter(s => s.weight >= 7);
-    const mediumValueSignals = signals.filter(s => s.weight >= 4 && s.weight < 7);
-    
-    return Math.min(
-      (highValueSignals.length * 15) + (mediumValueSignals.length * 8) + (signals.length * 2),
-      50
-    );
-  }
-
-  /**
-   * Get priority boost
-   */
-  private getPriorityBoost(contact: ContactData): number {
-    if (contact['priority'] === 'high') return 15;
-    if (contact['priority'] === 'medium') return 5;
-    return 0;
-  }
-
-  /**
-   * Get value boost based on estimated value
-   */
-  private getValueBoost(contact: ContactData): number {
-    if (!contact.estimatedValue) return 0;
-    
-    if (contact.estimatedValue > 100000) return 15;
-    if (contact.estimatedValue > 50000) return 10;
-    if (contact.estimatedValue > 20000) return 5;
-    return 0;
-  }
-
-  /**
-   * Calculate overall engagement score
-   */
-  private calculateOverallScore(params: {
-    activityScore: number;
-    recentEngagementScore: number;
-    responseRate: number;
-    daysSinceLastActivity: number;
-    signalStrength: number;
-    priorityBoost: number;
-    valueBoost: number;
-  }): number {
-    let score = 0;
-
-    // Activity and engagement
-    score += params['activityScore'] * 0.3;
-    score += params['recentEngagementScore'] * 0.25;
-    score += params['signalStrength'] * 0.2;
-
-    // Response rate boost
-    score += params['responseRate'] * 20;
-
-    // Recency penalty
-    if (params['daysSinceLastActivity'] > 30) {
-      score -= Math.min(params['daysSinceLastActivity'] - 30, 30);
-    }
-
-    // Boosts
-    score += params['priorityBoost'];
-    score += params['valueBoost'];
-
-    return Math.max(0, Math.min(100, score));
-  }
-
-  /**
-   * Determine engagement category
-   */
-  private determineCategory(
-    score: number,
-    signals: EngagementSignal[],
-    daysSinceLastActivity: number,
-    responseRate: number
-  ): EngagementClassification['category'] {
-    
-    // HOT: Very high engagement, ready to buy signals
-    if (score >= 80 || 
-        signals.some(s => s['type'] === 'demo_request' || s['type'] === 'pricing_inquiry') ||
-        (responseRate > 0.7 && daysSinceLastActivity < 7)) {
-      return 'HOT';
-    }
-
-    // ENGAGED: Active responses, good interaction
-    if (score >= 60 || 
-        (responseRate > 0.4 && daysSinceLastActivity < 14) ||
-        signals.some(s => s['type'] === 'email_reply' || s['type'] === 'call_answered')) {
-      return 'ENGAGED';
-    }
-
-    // NURTURING: Moderate engagement, periodic responses
-    if (score >= 40 || 
-        (responseRate > 0.2 && daysSinceLastActivity < 30) ||
-        signals.some(s => s['type'] === 'email_open' || s['type'] === 'email_click')) {
-      return 'NURTURING';
-    }
-
-    // NON_RESPONSIVE: Multiple attempts with no response
-    if (daysSinceLastActivity > 30 && responseRate === 0 && signals['length'] === 0) {
-      return 'NON_RESPONSIVE';
-    }
-
-    // COLD: Low engagement, minimal interaction
-    return 'COLD';
-  }
-
-  /**
-   * Calculate confidence in the classification
-   */
-  private calculateConfidence(signals: EngagementSignal[], contact: ContactData): number {
-    let confidence = 0.5; // Base confidence
-
-    // More data = higher confidence
-    if (contact['activities'] && contact.activities.length > 5) confidence += 0.2;
-    if (signals.length > 3) confidence += 0.15;
-    if (contact['emailTracking'] && contact.emailTracking.length > 2) confidence += 0.1;
-
-    // Recent data = higher confidence
-    const daysSinceLastActivity = this.calculateDaysSinceLastActivity(contact);
-    if (daysSinceLastActivity < 7) confidence += 0.1;
-    else if (daysSinceLastActivity < 30) confidence += 0.05;
-
-    return Math.min(1, confidence);
-  }
-
-  /**
-   * Generate human-readable reason for classification
-   */
-  private generateReason(
-    category: EngagementClassification['category'],
-    score: number,
-    signals: EngagementSignal[],
-    daysSinceLastActivity: number,
-    responseRate: number
-  ): string {
-    const responsePercent = Math.round(responseRate * 100);
-
-    switch (category) {
-      case 'HOT':
-        if (signals.some(s => s['type'] === 'demo_request')) {
-          return 'Requested demo - high buying intent';
-        }
-        if (signals.some(s => s['type'] === 'pricing_inquiry')) {
-          return 'Inquired about pricing - ready to purchase';
-        }
-        return `Very high engagement (${score}/100) with ${responsePercent}% response rate`;
-
-      case 'ENGAGED':
-        if (responseRate > 0.5) {
-          return `Actively responding (${responsePercent}% response rate) with recent interaction`;
-        }
-        return `Strong engagement (${score}/100) with recent activity`;
-
-      case 'NURTURING':
-        return `Moderate engagement (${score}/100) - suitable for nurturing campaigns`;
-
-      case 'NON_RESPONSIVE':
-        return `No response to multiple attempts over ${daysSinceLastActivity} days`;
-
-      case 'COLD':
-        if (daysSinceLastActivity > 60) {
-          return `No recent activity (${daysSinceLastActivity} days) - needs re-engagement`;
-        }
-        return `Low engagement (${score}/100) with ${responsePercent}% response rate`;
-
-      default:
-        return `Engagement score: ${score}/100`;
-    }
-  }
-
-  /**
-   * Batch classify multiple contacts
-   */
-  public batchClassifyEngagement(contacts: ContactData[]): Map<string, EngagementClassification> {
-    const results = new Map<string, EngagementClassification>();
-
-    for (const contact of contacts) {
-      try {
-        const classification = this.classifyEngagement(contact);
-        results.set(contact.id, classification);
-      } catch (error) {
-        console.error(`Error classifying engagement for contact ${contact.id}:`, error);
-        // Provide default classification on error
-        results.set(contact.id, {
-          category: 'COLD',
-          score: 0,
-          confidence: 0.1,
-          reason: 'Classification error',
-          daysSinceLastActivity: 999,
-          responseRate: 0,
-          signals: []
+      // Update company to OPPORTUNITY
+      if (meeting.companyId) {
+        const company = await prisma.companies.findUnique({
+          where: { id: meeting.companyId },
+          select: { id: true, status: true }
         });
+
+        if (company && company.status !== 'OPPORTUNITY' && company.status !== 'CLIENT' && company.status !== 'SUPERFAN') {
+          await prisma.companies.update({
+            where: { id: meeting.companyId },
+            data: {
+              status: 'OPPORTUNITY'
+            }
+          });
+          companyUpdated = true;
+          console.log(`✅ [ENGAGEMENT] Updated company ${meeting.companyId} to OPPORTUNITY`);
+        }
       }
+
+    } catch (error) {
+      console.error(`❌ [ENGAGEMENT] Error classifying from meeting ${meeting.id}:`, error);
     }
 
-    return results;
+    return { personUpdated, companyUpdated };
   }
 
   /**
-   * Filter contacts by engagement category
+   * Backfill classification for existing emails
    */
-  public filterByEngagement(
-    contacts: ContactData[],
-    targetCategories: EngagementClassification['category'][]
-  ): ContactData[] {
-    const classifications = this.batchClassifyEngagement(contacts);
-    
-    return contacts.filter(contact => {
-      const classification = classifications.get(contact.id);
-      return classification && targetCategories.includes(classification.category);
-    });
-  }
+  static async backfillFromEmails(workspaceId: string): Promise<{ processed: number; updated: number }> {
+    console.log(`🔄 [ENGAGEMENT] Starting backfill classification for workspace ${workspaceId}`);
 
-  /**
-   * Get engagement statistics for a set of contacts
-   */
-  public getEngagementStats(contacts: ContactData[]): {
-    total: number;
-    hot: number;
-    engaged: number;
-    nurturing: number;
-    cold: number;
-    nonResponsive: number;
-    averageScore: number;
-  } {
-    const classifications = this.batchClassifyEngagement(contacts);
-    
-    const stats = {
-      total: contacts.length,
-      hot: 0,
-      engaged: 0,
-      nurturing: 0,
-      cold: 0,
-      nonResponsive: 0,
-      averageScore: 0
-    };
+    let processed = 0;
+    let updated = 0;
+    let skip = 0;
+    const batchSize = 100;
 
-    let totalScore = 0;
+    while (true) {
+      const emails = await prisma.email_messages.findMany({
+        where: {
+          workspaceId,
+          OR: [
+            { personId: { not: null } },
+            { companyId: { not: null } }
+          ]
+        },
+        select: {
+          id: true,
+          subject: true,
+          body: true,
+          threadId: true,
+          from: true,
+          personId: true,
+          companyId: true,
+          workspaceId: true
+        },
+        take: batchSize,
+        skip
+      });
 
-    for (const classification of classifications.values()) {
-      totalScore += classification.score;
-      
-      switch (classification.category) {
-        case 'HOT':
-          stats.hot++;
-          break;
-        case 'ENGAGED':
-          stats.engaged++;
-          break;
-        case 'NURTURING':
-          stats.nurturing++;
-          break;
-        case 'COLD':
-          stats.cold++;
-          break;
-        case 'NON_RESPONSIVE':
-          stats.nonResponsive++;
-          break;
+      if (emails.length === 0) {
+        break;
       }
+
+      for (const email of emails) {
+        processed++;
+        const result = await this.classifyFromEmail(email);
+        if (result.personUpdated || result.companyUpdated) {
+          updated++;
+        }
+      }
+
+      skip += batchSize;
+      console.log(`🔄 [ENGAGEMENT] Processed ${processed} emails, updated ${updated} records`);
     }
 
-    stats['averageScore'] = contacts.length > 0 ? totalScore / contacts.length : 0;
-
-    return stats;
+    console.log(`✅ [ENGAGEMENT] Backfill complete: ${processed} emails processed, ${updated} records updated`);
+    return { processed, updated };
   }
 }
-
-// Export singleton instance
-export const engagementClassifier = EngagementClassificationService.getInstance();

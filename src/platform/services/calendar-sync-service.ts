@@ -48,6 +48,75 @@ export class CalendarSyncService {
   }
 
   /**
+   * Sync historical calendar events from a start date
+   */
+  async syncHistoricalCalendarEvents(
+    userId: string,
+    workspaceId: string,
+    startDate: Date,
+    platform: 'microsoft' | 'google' = 'microsoft'
+  ): Promise<CalendarSyncResult> {
+    console.log(`📅 [HISTORICAL CALENDAR SYNC] ========================================`);
+    console.log(`📅 [HISTORICAL CALENDAR SYNC] Starting historical calendar sync`);
+    console.log(`📅 [HISTORICAL CALENDAR SYNC] User: ${userId}`);
+    console.log(`📅 [HISTORICAL CALENDAR SYNC] Workspace: ${workspaceId}`);
+    console.log(`📅 [HISTORICAL CALENDAR SYNC] Start Date: ${startDate.toISOString()}`);
+    console.log(`📅 [HISTORICAL CALENDAR SYNC] Platform: ${platform}`);
+    console.log(`📅 [HISTORICAL CALENDAR SYNC] ========================================`);
+
+    const result: CalendarSyncResult = {
+      success: true,
+      eventsProcessed: 0,
+      eventsCreated: 0,
+      eventsUpdated: 0,
+      eventsDeleted: 0,
+      errors: []
+    };
+
+    try {
+      // Get or create primary calendar
+      const calendar = await this.getOrCreatePrimaryCalendar(userId, workspaceId, platform);
+      
+      // Fetch historical events using Nango
+      const now = new Date();
+      const platformEvents = await this.fetchHistoricalEventsFromNango(
+        userId,
+        workspaceId,
+        platform,
+        startDate,
+        now
+      );
+      
+      result['eventsProcessed'] = platformEvents.length;
+
+      // Process each event
+      for (const platformEvent of platformEvents) {
+        try {
+          await this.processCalendarEvent(platformEvent, calendar.id, userId, workspaceId, result);
+        } catch (error) {
+          console.error(`❌ [HISTORICAL CALENDAR SYNC] Error processing event ${platformEvent.id}:`, error);
+          result.errors.push(`Event ${platformEvent.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
+      }
+
+      // Update calendar sync timestamp
+      await prisma.calendar.update({
+        where: { id: calendar.id },
+        data: { lastSyncAt: new Date() }
+      });
+
+      console.log(`✅ [HISTORICAL CALENDAR SYNC] Completed: ${result.eventsCreated} created, ${result.eventsUpdated} updated`);
+      
+    } catch (error) {
+      console.error('❌ [HISTORICAL CALENDAR SYNC] Sync failed:', error);
+      result['success'] = false;
+      result.errors.push(error instanceof Error ? error.message : 'Unknown error');
+    }
+
+    return result;
+  }
+
+  /**
    * Sync calendar events for a specific user and workspace
    */
   async syncCalendarEvents(
@@ -56,18 +125,6 @@ export class CalendarSyncService {
     platform: 'microsoft' | 'google' = 'microsoft'
   ): Promise<CalendarSyncResult> {
     console.log(`📅 [CALENDAR SYNC] Starting sync for user ${userId} on platform ${platform}`);
-
-    // TEMPORARILY DISABLED: Outlook calendar sync to focus on email sync
-    if (platform === 'microsoft') {
-      console.log(`⏭️ [CALENDAR SYNC] Outlook calendar sync temporarily disabled to focus on email sync`);
-      return {
-        success: true,
-        eventsCreated: 0,
-        eventsUpdated: 0,
-        eventsDeleted: 0,
-        errors: []
-      };
-    }
 
     const result: CalendarSyncResult = {
       success: true,
@@ -217,49 +274,197 @@ export class CalendarSyncService {
         host: process.env.NANGO_HOST || 'https://api.nango.dev'
       });
 
-      // Calculate date range (today to 30 days from now)
+      // Calculate date range (today to 1 year from now for future meetings)
       const now = new Date();
-      const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-
-      // Determine endpoint with query params based on platform
-      let endpoint: string;
-
-      if (platform === 'microsoft') {
-        // Microsoft Graph API endpoint with query parameters
-        const filter = encodeURIComponent(`start/dateTime ge '${now.toISOString()}' and start/dateTime le '${endDate.toISOString()}'`);
-        endpoint = `/v1.0/me/events?$filter=${filter}&$orderby=start/dateTime&$top=100`;
-      } else {
-        // Google Calendar API endpoint with query parameters
-        const params = new URLSearchParams({
-          timeMin: now.toISOString(),
-          timeMax: endDate.toISOString(),
-          singleEvents: 'true',
-          orderBy: 'startTime',
-          maxResults: '100'
-        });
-        endpoint = `/calendar/v3/calendars/primary/events?${params.toString()}`;
-      }
-
-      // Use Nango's proxy method to fetch calendar events (GET request)
-      const response = await nango.proxy({
-        endpoint,
-        providerConfigKey: connection.providerConfigKey || nangoProvider,
-        connectionId: connection.nangoConnectionId,
-        method: 'GET',
-        retries: 3
-      });
-
-      // Transform Nango response to CalendarEvent format
-      // Nango proxy returns { data: {...} }, so we need to extract the data
-      const events = this.transformNangoEventsToCalendarEvents(response.data || response, platform);
+      const endDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000); // 1 year ahead
       
-      console.log(`✅ [CALENDAR SYNC] Transformed ${events.length} events from Nango`);
-      return events;
-
+      // Use historical fetch method which supports pagination
+      return this.fetchHistoricalEventsFromNango(userId, workspaceId, platform, now, endDate);
     } catch (error) {
       console.error(`❌ [CALENDAR SYNC] Error fetching events from Nango:`, error);
       return [];
     }
+  }
+
+  /**
+   * Fetch historical events from Nango with pagination
+   */
+  private async fetchHistoricalEventsFromNango(
+    userId: string,
+    workspaceId: string,
+    platform: 'microsoft' | 'google',
+    startDate: Date,
+    endDate: Date
+  ): Promise<CalendarEvent[]> {
+    try {
+      const nangoProvider = platform === 'microsoft' ? 'outlook' : 'google-calendar';
+      
+      // Find active Nango connection
+      const connection = await prisma.grand_central_connections.findFirst({
+        where: {
+          workspaceId,
+          userId,
+          OR: platform === 'microsoft' 
+            ? [{ provider: 'outlook' }, { providerConfigKey: 'outlook' }]
+            : [
+                { provider: 'google-calendar' },
+                { providerConfigKey: 'google-calendar' },
+                { provider: 'gmail', providerConfigKey: 'gmail' }
+              ],
+          status: 'active'
+        }
+      });
+
+      if (!connection || !connection.nangoConnectionId) {
+        console.log(`📅 [HISTORICAL CALENDAR SYNC] No active Nango connection found for ${nangoProvider}`);
+        return [];
+      }
+
+      // Import Nango SDK
+      const { Nango } = await import('@nangohq/node');
+      const secretKey = process.env.NANGO_SECRET_KEY || process.env.NANGO_SECRET_KEY_DEV;
+      if (!secretKey) {
+        console.warn(`⚠️ [HISTORICAL CALENDAR SYNC] NANGO_SECRET_KEY not configured`);
+        return [];
+      }
+
+      const nango = new Nango({
+        secretKey,
+        host: process.env.NANGO_HOST || 'https://api.nango.dev'
+      });
+
+      const allEvents: CalendarEvent[] = [];
+      let hasMore = true;
+      let skipToken: string | null = null;
+      let pageToken: string | null = null;
+      let page = 0;
+
+      while (hasMore) {
+        page++;
+        console.log(`📅 [HISTORICAL CALENDAR SYNC] Fetching page ${page}...`);
+
+        let endpoint: string;
+        
+        if (platform === 'microsoft') {
+          // Microsoft Graph API with pagination
+          let filter = encodeURIComponent(`start/dateTime ge '${startDate.toISOString()}' and start/dateTime le '${endDate.toISOString()}'`);
+          endpoint = `/v1.0/me/events?$filter=${filter}&$orderby=start/dateTime&$top=100`;
+          if (skipToken) {
+            endpoint += `&$skiptoken=${encodeURIComponent(skipToken)}`;
+          }
+        } else {
+          // Google Calendar API with pagination
+          const params = new URLSearchParams({
+            timeMin: startDate.toISOString(),
+            timeMax: endDate.toISOString(),
+            singleEvents: 'true',
+            orderBy: 'startTime',
+            maxResults: '100'
+          });
+          if (pageToken) {
+            params.set('pageToken', pageToken);
+          }
+          endpoint = `/calendar/v3/calendars/primary/events?${params.toString()}`;
+        }
+
+        const response = await nango.proxy({
+          endpoint,
+          providerConfigKey: connection.providerConfigKey || nangoProvider,
+          connectionId: connection.nangoConnectionId,
+          method: 'GET',
+          retries: 3
+        });
+
+        const data = response.data || response;
+        const events = this.transformNangoEventsToCalendarEvents(data, platform);
+        allEvents.push(...events);
+
+        // Check for pagination tokens
+        if (platform === 'microsoft') {
+          const nextLink = data['@odata.nextLink'];
+          skipToken = nextLink ? this.extractSkipToken(nextLink) : null;
+          hasMore = !!skipToken && events.length === 100;
+        } else {
+          pageToken = data.nextPageToken || null;
+          hasMore = !!pageToken && events.length === 100;
+        }
+
+        console.log(`📅 [HISTORICAL CALENDAR SYNC] Page ${page}: ${events.length} events (total: ${allEvents.length})`);
+
+        // Safety limit
+        if (page > 1000) {
+          console.warn(`⚠️ [HISTORICAL CALENDAR SYNC] Reached safety limit of 1000 pages`);
+          break;
+        }
+      }
+
+      console.log(`✅ [HISTORICAL CALENDAR SYNC] Fetched ${allEvents.length} total events`);
+      return allEvents;
+
+    } catch (error) {
+      console.error(`❌ [HISTORICAL CALENDAR SYNC] Error fetching events:`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Extract skip token from Microsoft Graph nextLink
+   */
+  private extractSkipToken(nextLink: string): string | null {
+    try {
+      const url = new URL(nextLink);
+      return url.searchParams.get('$skiptoken');
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Fetch events with custom date range (for regular sync)
+   */
+  private async fetchEventsWithDateRange(
+    nango: any,
+    connection: any,
+    platform: 'microsoft' | 'google',
+    startDate: Date,
+    endDate: Date
+  ): Promise<CalendarEvent[]> {
+    const nangoProvider = platform === 'microsoft' ? 'outlook' : 'google-calendar';
+    
+    // Determine endpoint with query params based on platform
+    let endpoint: string;
+
+    if (platform === 'microsoft') {
+      // Microsoft Graph API endpoint with query parameters
+      const filter = encodeURIComponent(`start/dateTime ge '${startDate.toISOString()}' and start/dateTime le '${endDate.toISOString()}'`);
+      endpoint = `/v1.0/me/events?$filter=${filter}&$orderby=start/dateTime&$top=100`;
+    } else {
+      // Google Calendar API endpoint with query parameters
+      const params = new URLSearchParams({
+        timeMin: startDate.toISOString(),
+        timeMax: endDate.toISOString(),
+        singleEvents: 'true',
+        orderBy: 'startTime',
+        maxResults: '100'
+      });
+      endpoint = `/calendar/v3/calendars/primary/events?${params.toString()}`;
+    }
+
+    // Use Nango's proxy method to fetch calendar events (GET request)
+    const response = await nango.proxy({
+      endpoint,
+      providerConfigKey: connection.providerConfigKey || nangoProvider,
+      connectionId: connection.nangoConnectionId,
+      method: 'GET',
+      retries: 3
+    });
+
+    // Transform Nango response to CalendarEvent format
+    // Nango proxy returns { data: {...} }, so we need to extract the data
+    const events = this.transformNangoEventsToCalendarEvents(response.data || response, platform);
+    
+    console.log(`✅ [CALENDAR SYNC] Transformed ${events.length} events from Nango`);
+    return events;
   }
 
   /**
@@ -558,6 +763,17 @@ export class CalendarSyncService {
           syncedAt: new Date()
         }
       });
+      
+      // Link event to entities if not already linked
+      if (!existingEvent.personId && !existingEvent.companyId) {
+        const linkedEntities = await this.linkEventToEntities(existingEvent.id, platformEvent, workspaceId, userId);
+        
+        // Create action record if linked
+        if (linkedEntities.personId || linkedEntities.companyId) {
+          await this.createMeetingAction(existingEvent, linkedEntities, workspaceId, userId);
+        }
+      }
+      
       result.eventsUpdated++;
     } else {
       // Create new event
@@ -588,19 +804,26 @@ export class CalendarSyncService {
       });
 
       // Link event to entities based on attendees and content
-      await this.linkEventToEntities(newEvent.id, platformEvent, workspaceId);
+      const linkedEntities = await this.linkEventToEntities(newEvent.id, platformEvent, workspaceId, userId);
+      
+      // Create action record for the meeting
+      if (linkedEntities.personId || linkedEntities.companyId) {
+        await this.createMeetingAction(newEvent, linkedEntities, workspaceId, userId);
+      }
+      
       result.eventsCreated++;
     }
   }
 
   /**
-   * Link calendar event to people, companies, leads, opportunities, prospects, persons, and companies
+   * Link calendar event to people and companies (using direct fields on events table)
    */
   private async linkEventToEntities(
     eventId: string,
     platformEvent: CalendarEvent,
-    workspaceId: string
-  ) {
+    workspaceId: string,
+    userId: string
+  ): Promise<{ personId: string | null; companyId: string | null }> {
     console.log(`🔗 [CALENDAR SYNC] Linking event ${eventId} to entities`);
 
     // Extract email addresses from attendees and organizer
@@ -618,59 +841,12 @@ export class CalendarSyncService {
       emailAddresses.add(platformEvent.organizer.email.toLowerCase());
     }
 
-    // Link to people
+    let personId: string | null = null;
+    let companyId: string | null = null;
+
+    // Link to people by email addresses
     if (emailAddresses.size > 0) {
-      const contacts = await prisma.people.findMany({
-        where: {
-          workspaceId,
-          OR: [
-            { email: { in: Array.from(emailAddresses) } },
-            { workEmail: { in: Array.from(emailAddresses) } },
-            { personalEmail: { in: Array.from(emailAddresses) } },
-            { secondaryEmail: { in: Array.from(emailAddresses) } }
-          ]
-        }
-      });
-
-      for (const contact of contacts) {
-        await prisma.eventToContact.create({
-          data: {
-            A: eventId,
-            B: contact.id
-          }
-        });
-      }
-    }
-
-    // Link to accounts (by company name in title/description)
-    const companyKeywords = this.extractCompanyKeywords(platformEvent.title, platformEvent.description);
-    if (companyKeywords.length > 0) {
-      const accounts = await prisma.accounts.findMany({
-        where: {
-          workspaceId,
-          OR: companyKeywords.map(keyword => ({
-            OR: [
-              { name: { contains: keyword, mode: 'insensitive' } },
-              { legalName: { contains: keyword, mode: 'insensitive' } },
-              { tradingName: { contains: keyword, mode: 'insensitive' } }
-            ]
-          }))
-        }
-      });
-
-      for (const account of accounts) {
-        await prisma.eventToAccount.create({
-          data: {
-            A: eventId,
-            B: account.id
-          }
-        });
-      }
-    }
-
-    // Link to leads (by email addresses)
-    if (emailAddresses.size > 0) {
-      const leads = await prisma.leads.findMany({
+      const person = await prisma.people.findFirst({
         where: {
           workspaceId,
           OR: [
@@ -678,102 +854,124 @@ export class CalendarSyncService {
             { workEmail: { in: Array.from(emailAddresses) } },
             { personalEmail: { in: Array.from(emailAddresses) } }
           ]
+        },
+        select: {
+          id: true,
+          companyId: true
         }
       });
 
-      for (const lead of leads) {
-        await prisma.eventToLead.create({
-          data: {
-            A: eventId,
-            B: lead.id
-          }
-        });
+      if (person) {
+        personId = person.id;
+        companyId = person.companyId || null;
+        console.log(`🔗 [CALENDAR SYNC] Linked event to person: ${personId}`);
       }
     }
 
-    // Link to opportunities (by company keywords)
-    if (companyKeywords.length > 0) {
-      const opportunities = await prisma.opportunities.findMany({
+    // If no person found, try to link to company by keywords in title/description
+    if (!companyId) {
+      const companyKeywords = this.extractCompanyKeywords(platformEvent.title, platformEvent.description);
+      if (companyKeywords.length > 0) {
+        const company = await prisma.companies.findFirst({
+          where: {
+            workspaceId,
+            OR: companyKeywords.map(keyword => ({
+              name: { contains: keyword, mode: 'insensitive' }
+            }))
+          },
+          select: {
+            id: true
+          }
+        });
+
+        if (company) {
+          companyId = company.id;
+          console.log(`🔗 [CALENDAR SYNC] Linked event to company: ${companyId}`);
+        }
+      }
+    }
+
+    // Update the event with linked entities
+    if (personId || companyId) {
+      await prisma.events.update({
+        where: { id: eventId },
+        data: {
+          personId: personId || undefined,
+          companyId: companyId || undefined
+        }
+      });
+
+      // Classify engagement based on meeting
+      const { EngagementClassificationService } = await import('./engagement-classification-service');
+      await EngagementClassificationService.classifyFromMeeting({
+        id: eventId,
+        title: platformEvent.title,
+        description: platformEvent.description,
+        personId: personId || null,
+        companyId: companyId || null,
+        workspaceId
+      });
+    }
+
+    console.log(`✅ [CALENDAR SYNC] Linked event ${eventId} to entities (person: ${personId || 'none'}, company: ${companyId || 'none'})`);
+    
+    return { personId, companyId };
+  }
+
+  /**
+   * Create action record for a meeting
+   */
+  private async createMeetingAction(
+    event: { id: string; title: string; description?: string | null; startTime: Date; endTime: Date; location?: string | null },
+    linkedEntities: { personId: string | null; companyId: string | null },
+    workspaceId: string,
+    userId: string
+  ): Promise<void> {
+    try {
+      // Check if action already exists for this event
+      const existingAction = await prisma.actions.findFirst({
         where: {
           workspaceId,
-          OR: companyKeywords.map(keyword => ({
-            name: { contains: keyword, mode: 'insensitive' }
-          }))
+          personId: linkedEntities.personId || undefined,
+          companyId: linkedEntities.companyId || undefined,
+          type: 'MEETING',
+          subject: event.title,
+          completedAt: event.startTime
         }
       });
 
-      for (const opportunity of opportunities) {
-        await prisma.eventToOpportunity.create({
-          data: {
-            A: eventId,
-            B: opportunity.id
-          }
-        });
+      if (existingAction) {
+        console.log(`📅 [CALENDAR SYNC] Action already exists for meeting: ${event.title}`);
+        return;
       }
-    }
 
-    // Link to prospects (by email addresses)
-    if (emailAddresses.size > 0) {
-      const prospects = await prisma.prospects.findMany({
-        where: {
+      // Determine if meeting is completed (past) or scheduled (future)
+      const now = new Date();
+      const isCompleted = event.startTime < now;
+      const status = isCompleted ? 'COMPLETED' : 'PENDING';
+
+      // Create action record
+      await prisma.actions.create({
+        data: {
           workspaceId,
-          OR: [
-            { email: { in: Array.from(emailAddresses) } },
-            { workEmail: { in: Array.from(emailAddresses) } },
-            { personalEmail: { in: Array.from(emailAddresses) } }
-          ]
+          userId,
+          companyId: linkedEntities.companyId || undefined,
+          personId: linkedEntities.personId || undefined,
+          type: 'MEETING',
+          subject: event.title,
+          description: event.description ? event.description.substring(0, 500) : undefined,
+          status,
+          completedAt: isCompleted ? event.startTime : undefined,
+          scheduledAt: !isCompleted ? event.startTime : undefined,
+          createdAt: event.startTime,
+          updatedAt: new Date()
         }
       });
 
-      for (const prospect of prospects) {
-        await prisma.eventToProspect.create({
-          data: {
-            A: eventId,
-            B: prospect.id
-          }
-        });
-      }
+      console.log(`✅ [CALENDAR SYNC] Created ${status} action for meeting: ${event.title}`);
+    } catch (error) {
+      console.error(`❌ [CALENDAR SYNC] Failed to create action for meeting ${event.id}:`, error);
     }
-
-    // Link to persons (by email addresses)
-    if (emailAddresses.size > 0) {
-      const persons = await prisma.people.findMany({
-        where: {
-          email: { in: Array.from(emailAddresses) }
-        }
-      });
-
-      for (const person of persons) {
-        await prisma.eventToPerson.create({
-          data: {
-            A: eventId,
-            B: person.id
-          }
-        });
-      }
-    }
-
-    // Link to companies (by company keywords)
-    if (companyKeywords.length > 0) {
-      const companies = await prisma.companies.findMany({
-        where: {
-          OR: companyKeywords.map(keyword => ({
-            name: { contains: keyword, mode: 'insensitive' }
-          }))
-        }
-      });
-
-      for (const company of companies) {
-        await prisma.eventToCompany.create({
-          data: {
-            A: eventId,
-            B: company.id
-          }
-        });
-      }
-    }
-
-    console.log(`✅ [CALENDAR SYNC] Linked event ${eventId} to entities`);
   }
 
   /**

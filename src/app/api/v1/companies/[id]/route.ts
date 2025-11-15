@@ -133,6 +133,14 @@ export async function GET(
     // Merge core company data with workspace data
     const mergedCompany = mergeCoreCompanyWithWorkspace(company, company.coreCompany || null);
 
+    // Compute accurate lastAction using shared utility (checks both company and person actions)
+    const { computeCompanyLastAction } = await import('@/platform/utils/company-last-action');
+    const lastActionResult = await computeCompanyLastAction(
+      company.id,
+      mergedCompany.lastAction,
+      mergedCompany.lastActionDate
+    );
+
     // IMPORTANT: Explicitly include all editable fields to ensure they're always in response (even if null)
     // This ensures fields are present on initial load and prevents disappearing
     const responseData = {
@@ -167,8 +175,10 @@ export async function GET(
       employeeCount: mergedCompany.employeeCount ?? null,
       revenue: mergedCompany.revenue ?? null,
       foundedYear: mergedCompany.foundedYear ?? null,
-      // Engagement
-      lastAction: mergedCompany.lastAction ?? null,
+      // Engagement - Use computed lastAction from shared utility
+      lastAction: lastActionResult.lastAction ?? null,
+      lastActionDate: lastActionResult.lastActionDate ?? null,
+      lastActionTime: lastActionResult.lastActionTime ?? null,
       nextAction: mergedCompany.nextAction ?? null,
       // Notes
       notes: mergedCompany.notes ?? null

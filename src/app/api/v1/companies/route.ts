@@ -4,6 +4,8 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAnd
 import { findOrCreateCoreCompany, mergeCoreCompanyWithWorkspace } from '@/platform/services/core-entity-service';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 import { addBusinessDays } from '@/platform/utils/actionUtils';
+import { OpportunityNameGenerationService } from '@/platform/services/OpportunityNameGenerationService';
+import { DealValueEstimationService } from '@/platform/services/DealValueEstimationService';
 
 /**
  * Clean and normalize website URL
@@ -334,10 +336,17 @@ export async function GET(request: NextRequest) {
             nextAction: true,
             nextActionDate: true,
             
+            // Opportunity fields (for opportunities)
+            opportunityAmount: true,
+            opportunityStage: true,
+            opportunityProbability: true,
+            expectedCloseDate: true,
+            
             // Additional useful fields
             email: true,
             website: true,
             linkedinUrl: true,
+            state: true, // Include state field for table compatibility
             hqState: true,
             size: true,
             
@@ -348,6 +357,18 @@ export async function GET(request: NextRequest) {
                 id: true,
                 name: true,
                 email: true
+              }
+            },
+            
+            // Action count for header display
+            _count: {
+              select: {
+                actions: {
+                  where: {
+                    deletedAt: null,
+                    status: 'COMPLETED'
+                  }
+                }
               }
             },
             
@@ -369,49 +390,19 @@ export async function GET(request: NextRequest) {
       // 🚀 PERFORMANCE: Skip core data merge since we're not fetching coreCompany
       // This saves additional processing time
       
-      // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
-      const enrichedCompanies = await Promise.all(companies.map(async (company) => {
+      // 🚀 COMPUTE LAST ACTION: Use shared utility to compute accurate lastAction
+      // Checks both company-level actions AND actions from associated people
+      const { computeCompanyLastActionsBatch } = await import('@/platform/utils/company-last-action');
+      const lastActionResults = await computeCompanyLastActionsBatch(
+        companies.map(c => ({ id: c.id, lastAction: c.lastAction, lastActionDate: c.lastActionDate }))
+      );
+      
+      const enrichedCompanies = companies.map((company) => {
         try {
-          const lastAction = await prisma.actions.findFirst({
-            where: { 
-              companyId: company.id, 
-              deletedAt: null,
-              status: 'COMPLETED'
-            },
-            orderBy: { completedAt: 'desc' },
-            select: { 
-              subject: true, 
-              completedAt: true, 
-              type: true,
-              createdAt: true
-            }
-          });
-          
-          // Import isMeaningfulAction function
-          const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
-          
-          // Calculate lastActionTime for companies table display using meaningful actions (copy from speedrun)
-          let lastActionTime = 'Never';
-          let lastActionText = company.lastAction;
-          let lastActionDate = company.lastActionDate;
-          
-          // Check if we have a meaningful action from the database
-          if (lastAction && isMeaningfulAction(lastAction.type)) {
-            lastActionText = lastAction.subject || lastAction.type;
-            lastActionDate = lastAction.completedAt || lastAction.createdAt;
-          }
-          
-          // Only show real last actions if they exist and are meaningful
-          if (lastActionDate && lastActionText && lastActionText !== 'No action taken' && lastActionText !== 'Record created' && lastActionText !== 'Company record created') {
-            // Real last action exists
-            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
-            if (daysSince === 0) lastActionTime = 'Today';
-            else if (daysSince === 1) lastActionTime = 'Yesterday';
-            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
-          }
-          // If no meaningful action exists, lastActionTime remains 'Never'
+          const lastActionResult = lastActionResults.get(company.id);
+          const lastActionText = lastActionResult?.lastAction || company.lastAction || null;
+          const lastActionDate = lastActionResult?.lastActionDate || company.lastActionDate || null;
+          const lastActionTime = lastActionResult?.lastActionTime || 'Never';
 
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';
@@ -446,46 +437,137 @@ export async function GET(request: NextRequest) {
           
           // Auto-populate nextAction text if missing
           if (!nextAction) {
-            // First check if company has people attached
-            const topPerson = await prisma.people.findFirst({
-              where: {
-                companyId: company.id,
-                workspaceId: finalWorkspaceId,
-                deletedAt: null
-              },
-              select: {
-                id: true,
-                fullName: true,
-                nextAction: true,
-                globalRank: true
-              },
-              orderBy: { globalRank: 'asc' }
-            });
-
-            if (topPerson?.nextAction) {
-              // Use the person's next action
-              nextAction = `Engage ${topPerson.fullName} - ${topPerson.nextAction}`;
-            } else if (topPerson) {
-              // Person exists but no next action - generate a basic one
-              nextAction = `Engage ${topPerson.fullName} - Send introduction email`;
-            } else {
-              // No people at company - use company-level logic
+            // Special handling for OPPORTUNITY status companies
+            if (company.status === 'OPPORTUNITY') {
+              const opportunityStage = company.opportunityStage || 'QUALIFICATION';
+              
+              // Opportunity-specific next actions based on stage and engagement
               if (lastActionText && lastActionText !== 'No action taken') {
-                if (lastActionText.toLowerCase().includes('email')) {
-                  nextAction = 'Schedule a call to discuss next steps';
-                } else if (lastActionText.toLowerCase().includes('call')) {
-                  nextAction = 'Send follow-up email with meeting notes';
-                } else if (lastActionText.toLowerCase().includes('linkedin')) {
-                  nextAction = 'Send personalized connection message';
-                } else if (lastActionText.toLowerCase().includes('created')) {
-                  nextAction = 'Send initial outreach email';
+                const lastActionLower = lastActionText.toLowerCase();
+                
+                // Stage-based actions
+                if (opportunityStage === 'QUALIFICATION' || opportunityStage === 'qualification') {
+                  if (lastActionLower.includes('email') || lastActionLower.includes('outreach')) {
+                    nextAction = 'Schedule discovery call to validate pain and qualify opportunity';
+                  } else if (lastActionLower.includes('call') || lastActionLower.includes('meeting')) {
+                    nextAction = 'Send qualification summary and next steps';
+                  } else {
+                    nextAction = 'Schedule discovery call to understand needs and timeline';
+                  }
+                } else if (opportunityStage === 'DISCOVERY' || opportunityStage === 'discovery') {
+                  if (lastActionLower.includes('discovery') || lastActionLower.includes('call')) {
+                    nextAction = 'Send discovery summary and stakeholder mapping request';
+                  } else if (lastActionLower.includes('proposal') || lastActionLower.includes('quote')) {
+                    nextAction = 'Follow up on proposal and address questions';
+                  } else {
+                    nextAction = 'Schedule stakeholder alignment call';
+                  }
+                } else if (opportunityStage === 'PROPOSAL' || opportunityStage === 'proposal') {
+                  if (lastActionLower.includes('proposal') || lastActionLower.includes('quote')) {
+                    nextAction = 'Follow up on proposal and address objections';
+                  } else if (lastActionLower.includes('roi') || lastActionLower.includes('business case')) {
+                    nextAction = 'Schedule executive alignment call';
+                  } else {
+                    nextAction = 'Send business case and ROI proposal';
+                  }
+                } else if (opportunityStage === 'NEGOTIATION' || opportunityStage === 'negotiation') {
+                  if (lastActionLower.includes('negotiation') || lastActionLower.includes('contract')) {
+                    nextAction = 'Navigate procurement and legal approvals';
+                  } else if (lastActionLower.includes('proposal')) {
+                    nextAction = 'Schedule negotiation call to finalize terms';
+                  } else {
+                    nextAction = 'Follow up on negotiation and close timeline';
+                  }
                 } else {
-                  nextAction = 'Follow up on previous contact';
+                  // Default opportunity action
+                  nextAction = 'Schedule stakeholder alignment call';
                 }
               } else {
-                nextAction = 'Research company and identify key contacts';
+                // No last action - start with discovery
+                nextAction = 'Schedule discovery call to validate pain and qualify opportunity';
+              }
+            } else {
+              // Non-opportunity companies - use existing logic
+              // First check if company has people attached
+              const topPerson = await prisma.people.findFirst({
+                where: {
+                  companyId: company.id,
+                  workspaceId: finalWorkspaceId,
+                  deletedAt: null
+                },
+                select: {
+                  id: true,
+                  fullName: true,
+                  nextAction: true,
+                  globalRank: true
+                },
+                orderBy: { globalRank: 'asc' }
+              });
+
+              if (topPerson?.nextAction) {
+                // Use the person's next action
+                nextAction = `Engage ${topPerson.fullName} - ${topPerson.nextAction}`;
+              } else if (topPerson) {
+                // Person exists but no next action - generate a basic one
+                nextAction = `Engage ${topPerson.fullName} - Send introduction email`;
+              } else {
+                // No people at company - use company-level logic
+                if (lastActionText && lastActionText !== 'No action taken') {
+                  if (lastActionText.toLowerCase().includes('email')) {
+                    nextAction = 'Schedule a call to discuss next steps';
+                  } else if (lastActionText.toLowerCase().includes('call')) {
+                    nextAction = 'Send follow-up email with meeting notes';
+                  } else if (lastActionText.toLowerCase().includes('linkedin')) {
+                    nextAction = 'Send personalized connection message';
+                  } else if (lastActionText.toLowerCase().includes('created')) {
+                    nextAction = 'Send initial outreach email';
+                  } else {
+                    nextAction = 'Follow up on previous contact';
+                  }
+                } else {
+                  nextAction = 'Research company and identify key contacts';
+                }
               }
             }
+          }
+          
+          // Save computed nextAction and nextActionDate to database if they were auto-generated
+          // Do this asynchronously so it doesn't block the response
+          if (nextAction && (!company.nextAction || nextAction !== company.nextAction)) {
+            // Fire and forget - don't await, don't block response
+            Promise.resolve().then(async () => {
+              try {
+                await prisma.companies.update({
+                  where: { id: company.id },
+                  data: {
+                    nextAction: nextAction,
+                    ...(nextActionDate && { nextActionDate: nextActionDate })
+                  }
+                });
+                console.log(`✅ [COMPANIES API] Saved computed nextAction for company ${company.id}: ${nextAction}`);
+              } catch (error) {
+                console.error(`⚠️ [COMPANIES API] Failed to save nextAction for company ${company.id}:`, error);
+                // Don't fail the request if saving fails
+              }
+            }).catch(err => {
+              console.error(`⚠️ [COMPANIES API] Error in nextAction save promise:`, err);
+            });
+          } else if (nextActionDate && (!company.nextActionDate || nextActionDate.getTime() !== company.nextActionDate.getTime())) {
+            // Only update nextActionDate if it changed
+            Promise.resolve().then(async () => {
+              try {
+                await prisma.companies.update({
+                  where: { id: company.id },
+                  data: { nextActionDate: nextActionDate }
+                });
+                console.log(`✅ [COMPANIES API] Saved computed nextActionDate for company ${company.id}`);
+              } catch (error) {
+                console.error(`⚠️ [COMPANIES API] Failed to save nextActionDate for company ${company.id}:`, error);
+                // Don't fail the request if saving fails
+              }
+            }).catch(err => {
+              console.error(`⚠️ [COMPANIES API] Error in nextActionDate save promise:`, err);
+            });
           }
           
           // Calculate nextActionTiming
@@ -506,19 +588,28 @@ export async function GET(request: NextRequest) {
           
           return {
             ...company,
+            // Ensure state field is available (map hqState to state for table compatibility)
+            state: company.hqState || company.state || null,
+            hqState: company.hqState || null,
             // Use computed lastAction if available, otherwise fall back to stored fields
-            lastAction: lastActionText || company.lastAction,
-            lastActionDate: lastActionDate || company.lastActionDate,
+            lastAction: lastActionText || company.lastAction || null,
+            lastActionDate: lastActionDate || company.lastActionDate || null,
             lastActionTime: lastActionTime, // NEW: Timing text
-            nextAction: nextAction || company.nextAction,
-            nextActionDate: nextActionDate || company.nextActionDate,
+            nextAction: nextAction || company.nextAction || null,
+            nextActionDate: nextActionDate || company.nextActionDate || null,
             nextActionTiming: nextActionTiming, // NEW: Timing text
-            lastActionType: lastAction?.type || null
+            lastActionType: lastActionResult?.lastActionType || null
           };
         } catch (error) {
           console.error(`❌ [COMPANIES API] Error computing lastAction for company ${company.id}:`, error);
-          // Return original company data if computation fails
-          return company;
+          // Return original company data if computation fails, but ensure state field exists
+          return {
+            ...company,
+            state: company.hqState || company.state || null,
+            hqState: company.hqState || null,
+            lastAction: company.lastAction || null,
+            lastActionDate: company.lastActionDate || null
+          };
         }
       }));
 
@@ -840,9 +931,61 @@ export async function POST(request: NextRequest) {
       // Continue without core linking - company creation should still succeed
     }
 
+    // For opportunities, generate title and estimate deal value if not provided
+    let opportunityTitle: string | null = null;
+    let estimatedDealValue: number | null = null;
+    
+    if (body.status === 'OPPORTUNITY' || body.status === 'opportunity') {
+      try {
+        // Generate opportunity title using Claude
+        opportunityTitle = await OpportunityNameGenerationService.generateOpportunityTitle(
+          normalizedCompanyName,
+          {
+            industry: body.industry,
+            employeeCount: body.employeeCount,
+            revenue: body.revenue,
+            description: body.description,
+            descriptionEnriched: body.descriptionEnriched,
+            lastAction: body.lastAction,
+            businessChallenges: body.businessChallenges || [],
+            businessPriorities: body.businessPriorities || []
+          },
+          context.workspaceId
+        );
+        console.log(`📝 [V1 COMPANIES API] Generated opportunity title: ${opportunityTitle}`);
+      } catch (error) {
+        console.error('⚠️ [V1 COMPANIES API] Error generating opportunity title:', error);
+        // Continue without title - will use company name
+      }
+
+      // Estimate deal value if not provided
+      if (!body.opportunityAmount || body.opportunityAmount === 0) {
+        try {
+          estimatedDealValue = await DealValueEstimationService.estimateDealValue(
+            {
+              companyName: normalizedCompanyName,
+              industry: body.industry,
+              employeeCount: body.employeeCount,
+              revenue: body.revenue,
+              description: body.description,
+              descriptionEnriched: body.descriptionEnriched,
+              businessChallenges: body.businessChallenges || [],
+              businessPriorities: body.businessPriorities || [],
+              lastAction: body.lastAction
+            },
+            context.workspaceId
+          );
+          console.log(`💰 [V1 COMPANIES API] Estimated deal value: $${estimatedDealValue.toLocaleString()}`);
+        } catch (error) {
+          console.error('⚠️ [V1 COMPANIES API] Error estimating deal value:', error);
+          // Continue without estimation - will use provided value or default
+        }
+      }
+    }
+
     // Create company data object outside transaction scope for error handler access
     const companyData: any = {
-      name: normalizedCompanyName,
+      name: opportunityTitle || normalizedCompanyName, // Use generated title if available, otherwise company name
       workspaceId: context.workspaceId,
       state: body.state || null,
       status: body.status || 'ACTIVE', // Use provided status or default to ACTIVE
@@ -854,7 +997,25 @@ export async function POST(request: NextRequest) {
       ...(body.website && body.website.trim() && { website: body.website }),
       ...(body.email && body.email.trim() && { email: body.email.trim() }),
       ...(body.notes && body.notes.trim() && { notes: body.notes.trim() }),
-      ...(body.linkedin && body.linkedin.trim() && { linkedinUrl: body.linkedin.trim() })
+      ...(body.linkedin && body.linkedin.trim() && { linkedinUrl: body.linkedin.trim() }),
+      // Opportunity fields
+      ...(body.opportunityAmount !== undefined && body.opportunityAmount !== null && body.opportunityAmount !== 0 
+        ? { opportunityAmount: parseFloat(body.opportunityAmount) }
+        : estimatedDealValue !== null 
+        ? { opportunityAmount: estimatedDealValue }
+        : {}),
+      ...(body.opportunityProbability !== undefined && body.opportunityProbability !== null && { opportunityProbability: parseFloat(body.opportunityProbability) }),
+      ...(body.opportunityStage && { opportunityStage: body.opportunityStage }),
+      ...(body.expectedCloseDate && { expectedCloseDate: new Date(body.expectedCloseDate) }),
+      ...(body.customFields && { customFields: body.customFields }),
+      // Store original company name in customFields if we're using generated title
+      ...(opportunityTitle && opportunityTitle !== normalizedCompanyName && {
+        customFields: {
+          ...(body.customFields || {}),
+          originalCompanyName: normalizedCompanyName,
+          opportunityTitle: opportunityTitle
+        }
+      })
     };
 
     // Always set mainSellerId to current user

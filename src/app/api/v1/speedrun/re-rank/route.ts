@@ -313,15 +313,20 @@ export async function POST(request: NextRequest) {
         const scoreDiff = (b.calculatedScore || 0) - (a.calculatedScore || 0);
         if (Math.abs(scoreDiff) > 0.1) return scoreDiff;
         
-        // Secondary: Status priority
+        // Secondary: Status priority (heavily weighted - PROSPECT/OPPORTUNITY should rank higher)
         const statusPriority: Record<string, number> = { 
-          'OPPORTUNITY': 5, 
-          'CUSTOMER': 4, 
-          'PROSPECT': 3, 
-          'LEAD': 2 
+          'OPPORTUNITY': 10,  // Highest priority - real business discussion
+          'PROSPECT': 8,      // High priority - they've engaged (replied or contacted us)
+          'CLIENT': 7,
+          'SUPERFAN': 6,
+          'PARTNER': 5,
+          'LEAD': 2,          // Lower priority - no engagement yet
+          'ACTIVE': 3,
+          'INACTIVE': 1
         };
         const statusDiff = (statusPriority[b.status] || 1) - (statusPriority[a.status] || 1);
-        if (statusDiff !== 0) return statusDiff;
+        // Status difference should have significant impact (multiply by 100 to ensure it overrides small score differences)
+        if (Math.abs(statusDiff) > 0) return statusDiff * 100;
         
         // Tertiary: Title/role priority
         const titleScore = (title: string | null) => {

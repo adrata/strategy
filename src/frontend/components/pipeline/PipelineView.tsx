@@ -1914,6 +1914,7 @@ export const PipelineView = React.memo(function PipelineView({
                 visibleColumns={visibleColumns}
                 pageSize={50} // Speedrun shows all 50 items on one page
                 isLoading={isLoading}
+                searchQuery={searchQuery}
                 totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
               />
               ) : section === 'prospects' ? (
@@ -1929,6 +1930,7 @@ export const PipelineView = React.memo(function PipelineView({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
               ) : section === 'leads' ? (
@@ -1944,6 +1946,7 @@ export const PipelineView = React.memo(function PipelineView({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
               ) : section === 'people' ? (
@@ -1959,6 +1962,7 @@ export const PipelineView = React.memo(function PipelineView({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
               ) : section === 'companies' ? (
@@ -2005,6 +2009,7 @@ export const PipelineView = React.memo(function PipelineView({
               visibleColumns={visibleColumns}
               pageSize={100} // Default page size for other sections
               isLoading={isLoading}
+              searchQuery={searchQuery}
               totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
             />
           )}

@@ -573,11 +573,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       let record: any;
       
       // Use appropriate v1 API based on section
-      if (section === 'companies') {
+      if (section === 'companies' || section === 'opportunities') {
+        // Opportunities are companies
         response = await fetch(`/api/v1/companies/${recordId}`, {
           credentials: 'include'
         });
-      } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'speedrun') {
+      } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun') {
         // First try the people API
         response = await fetch(`/api/v1/people/${recordId}`, {
           credentials: 'include'

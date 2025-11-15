@@ -614,11 +614,22 @@ function generateCompanySummary(company: any, intelligence: any): string {
     summary += '.';
   }
   
-  // Add recent activity context
-  if (company.lastAction) {
-    summary += `\n\nRecent activity: ${company.lastAction}`;
-    if (company.lastActionDate) {
-      const actionDate = new Date(company.lastActionDate).toLocaleDateString();
+  // Add recent activity context - use computed lastAction for accuracy
+  // Checks both company-level and person-level actions
+  const { computeCompanyLastAction } = await import('@/platform/utils/company-last-action');
+  const lastActionResult = await computeCompanyLastAction(
+    company.id,
+    company.lastAction,
+    company.lastActionDate
+  );
+  
+  if (lastActionResult.lastAction && 
+      lastActionResult.lastAction !== 'No action taken' && 
+      lastActionResult.lastAction !== 'Record created' && 
+      lastActionResult.lastAction !== 'Company record created') {
+    summary += `\n\nRecent activity: ${lastActionResult.lastAction}`;
+    if (lastActionResult.lastActionDate) {
+      const actionDate = new Date(lastActionResult.lastActionDate).toLocaleDateString();
       summary += ` (${actionDate})`;
     }
     summary += '.';

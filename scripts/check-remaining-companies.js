@@ -1,61 +1,59 @@
-const { PrismaClient } = require('@prisma/client');
+/**
+ * 🔍 CHECK: Remaining Companies Status
+ */
 
+require('dotenv').config();
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function checkRemainingCompanies() {
-  try {
-    console.log('🔍 CHECKING REMAINING COMPANIES TO ENRICH');
-    console.log('=========================================');
+const TOP_ENGINEERING_PLUS_WORKSPACE_ID = '01K75ZD7DWHG1XF16HAF2YVKCK';
 
-    const workspaceId = '01K5D01YCQJ9TJ7CT4DZDE79T1';
-
-    // Get companies that still need enrichment
-    const remainingCompanies = await prisma.companies.findMany({
-      where: {
-        workspaceId: workspaceId,
-        OR: [
-          { customFields: null },
-          { customFields: {} }
-        ]
-      },
-      select: {
-        id: true,
-        name: true,
-        website: true,
-        customFields: true
-      },
-      take: 10
+(async () => {
+  const companies = ['Actelant', 'GAC Enterprises, LLC', 'Central Electric Power Cooperative', 'XIT RURAL TELEPHONE'];
+  
+  for (const companyName of companies) {
+    const company = await prisma.companies.findFirst({
+      where: { workspaceId: TOP_ENGINEERING_PLUS_WORKSPACE_ID, name: companyName },
+      select: { id: true, name: true }
     });
-
-    console.log(`📊 Companies still needing enrichment: ${remainingCompanies.length}`);
     
-    if (remainingCompanies.length > 0) {
-      console.log('\n📋 Sample remaining companies:');
-      remainingCompanies.forEach((company, i) => {
-        console.log(`${i+1}. ${company.name} (${company.website || 'No website'})`);
-      });
-    } else {
-      console.log('\n🎉 All companies appear to be enriched!');
+    if (!company) {
+      console.log(`\n${companyName}: Not found`);
+      continue;
     }
-
-    // Also check companies with CoreSignal data
-    const coresignalCompanies = await prisma.companies.count({
-      where: {
-        workspaceId: workspaceId,
-        customFields: {
-          path: ['coresignalData'],
-          not: null
-        }
-      }
+    
+    const person = await prisma.people.findFirst({
+      where: { workspaceId: TOP_ENGINEERING_PLUS_WORKSPACE_ID, companyId: company.id, deletedAt: null },
+      select: { id: true, fullName: true }
     });
-
-    console.log(`\n📊 CoreSignal data count: ${coresignalCompanies}`);
-
-  } catch (error) {
-    console.error('❌ Error:', error.message);
-  } finally {
-    await prisma.$disconnect();
+    
+    if (!person) {
+      console.log(`\n${companyName}: No people found`);
+      continue;
+    }
+    
+    const allActions = await prisma.actions.findMany({
+      where: { workspaceId: TOP_ENGINEERING_PLUS_WORKSPACE_ID, personId: person.id, deletedAt: null },
+      select: { id: true, type: true, status: true, companyId: true }
+    });
+    
+    const completedActions = allActions.filter(a => a.status === 'COMPLETED');
+    const actionsWithCompany = completedActions.filter(a => a.companyId === company.id);
+    const actionsWithoutCompany = completedActions.filter(a => !a.companyId || a.companyId !== company.id);
+    
+    console.log(`\n${companyName} (${person.fullName}):`);
+    console.log(`  Total actions: ${allActions.length}`);
+    console.log(`  COMPLETED actions: ${completedActions.length}`);
+    console.log(`  With correct companyId: ${actionsWithCompany.length}`);
+    console.log(`  Without/wrong companyId: ${actionsWithoutCompany.length}`);
+    
+    if (actionsWithoutCompany.length > 0) {
+      console.log(`  Actions to fix:`);
+      actionsWithoutCompany.forEach(a => {
+        console.log(`    - ${a.type} (${a.status}) - companyId: ${a.companyId || 'null'}`);
+      });
+    }
   }
-}
-
-checkRemainingCompanies();
+  
+  await prisma.$disconnect();
+})();

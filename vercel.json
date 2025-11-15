@@ -9,6 +9,10 @@
       "schedule": "*/5 * * * *"
     },
     {
+      "path": "/api/cron/calendar-sync",
+      "schedule": "*/5 * * * *"
+    },
+    {
       "path": "/api/cron/check-reminders",
       "schedule": "* * * * *"
     },
@@ -39,6 +43,9 @@
       "maxDuration": 60
     },
     "src/app/api/cron/email-sync/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/cron/calendar-sync/route.ts": {
       "maxDuration": 300
     },
     "src/app/api/cron/check-reminders/route.ts": {

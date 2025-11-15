@@ -494,28 +494,55 @@ export async function POST(request: NextRequest) {
     }
 
     // Update company's lastAction fields if action is completed AND is a real engagement action
-    if (action.companyId && action.status === 'COMPLETED' && isEngagementAction(action.type)) {
-      try {
-        await prisma.companies.update({
-          where: { id: action.companyId },
-          data: {
+    // Check both direct companyId AND personId (if person belongs to a company)
+    if (action.status === 'COMPLETED' && isEngagementAction(action.type)) {
+      let companyIdToUpdate: string | null = null;
+      
+      // Direct company action
+      if (action.companyId) {
+        companyIdToUpdate = action.companyId;
+      } 
+      // Person action - check if person belongs to a company
+      else if (action.personId) {
+        try {
+          const person = await prisma.people.findUnique({
+            where: { id: action.personId },
+            select: { companyId: true }
+          });
+          if (person?.companyId) {
+            companyIdToUpdate = person.companyId;
+          }
+        } catch (error) {
+          console.error('❌ [ACTIONS API] Failed to fetch person companyId:', error);
+        }
+      }
+      
+      // Update company lastAction if we found a company
+      if (companyIdToUpdate) {
+        try {
+          await prisma.companies.update({
+            where: { id: companyIdToUpdate },
+            data: {
+              lastAction: action.subject,
+              lastActionDate: action.completedAt || action.createdAt,
+              actionStatus: action.status
+            }
+          });
+          console.log('✅ [ACTIONS API] Updated company lastAction fields for engagement action:', {
+            companyId: companyIdToUpdate,
+            actionType: action.type,
             lastAction: action.subject,
             lastActionDate: action.completedAt || action.createdAt,
-            actionStatus: action.status
-          }
-        });
-        console.log('✅ [ACTIONS API] Updated company lastAction fields for engagement action:', {
-          companyId: action.companyId,
-          actionType: action.type,
-          lastAction: action.subject,
-          lastActionDate: action.completedAt || action.createdAt
-        });
-      } catch (error) {
-        console.error('❌ [ACTIONS API] Failed to update company lastAction fields:', error);
+            source: action.companyId ? 'company-level' : 'person-level'
+          });
+        } catch (error) {
+          console.error('❌ [ACTIONS API] Failed to update company lastAction fields:', error);
+        }
       }
-    } else if (action.companyId && action.status === 'COMPLETED' && !isEngagementAction(action.type)) {
+    } else if ((action.companyId || action.personId) && action.status === 'COMPLETED' && !isEngagementAction(action.type)) {
       console.log('⏭️ [ACTIONS API] Skipping lastAction update for system action:', {
         companyId: action.companyId,
+        personId: action.personId,
         actionType: action.type,
         subject: action.subject
       });

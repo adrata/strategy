@@ -94,9 +94,12 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       return !hasEnrichedFields;
     }
     
-    // For regular company records, don't fetch (they should already have full data)
+    // For regular company records, check if we're missing critical fields like descriptionEnriched
+    // Even though recordType is 'companies', the initial record might not have all fields loaded
     if (recordType === 'companies') {
-      return false;
+      // Check if we have descriptionEnriched - if not, fetch full company data
+      const hasDescriptionEnriched = record?.descriptionEnriched && record.descriptionEnriched.trim() !== '';
+      return !hasDescriptionEnriched;
     }
     
     // For person records (leads, prospects, etc.) viewing their company, always fetch full company data

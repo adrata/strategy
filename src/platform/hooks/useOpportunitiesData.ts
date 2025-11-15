@@ -47,6 +47,7 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
       }
       setError(null);
 
+      // Opportunities are COMPANIES with status=OPPORTUNITY
       const response = await fetch('/api/v1/companies?status=OPPORTUNITY&limit=10000', { credentials: 'include' });
       
       if (!response.ok) {
@@ -59,19 +60,21 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
       // Transform company data to Opportunity format
       const transformedOpportunities: Opportunity[] = (data || []).map((company: any) => ({
         id: company.id,
-        name: company.name || '-',
+        name: company.name || 'Unnamed Opportunity',
         company: company.name || '-',
+        account: { name: company.name },
         status: company.status || 'OPPORTUNITY',
         lastAction: company.lastAction || '-',
         nextAction: company.nextAction || '-',
-        amount: company.amount || company.dealValue || 0,
-        stage: company.stage || company.dealStage || '-',
+        amount: company.opportunityAmount || company.amount || company.dealValue || 0,
+        revenue: company.opportunityAmount || company.amount || company.dealValue || 0,
+        stage: company.opportunityStage || company.stage || company.dealStage || 'QUALIFICATION',
         companyId: company.id,
         industry: company.industry || '-',
         size: company.size || company.employeeCount || '-',
         lastActionDate: company.lastActionDate,
         nextActionDate: company.nextActionDate,
-        assignedUserId: company.assignedUserId,
+        assignedUserId: company.mainSellerId,
         workspaceId: company.workspaceId,
         createdAt: company.createdAt,
         updatedAt: company.updatedAt,

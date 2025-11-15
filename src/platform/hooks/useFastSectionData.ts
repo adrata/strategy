@@ -18,6 +18,8 @@ interface UseFastSectionDataReturn {
   loading: boolean;
   error: string | null;
   count: number;
+  isLoadingMore: boolean;
+  hasLoadedInitial: boolean;
   refresh: () => Promise<void>;
   clearCache: () => void;
 }
@@ -26,6 +28,15 @@ interface UseFastSectionDataReturn {
  * 🚀 FAST SECTION DATA HOOK
  * Provides instant section data for middle panel with smart caching
  */
+// Progressive loading constants
+const INITIAL_PAGE_SIZE = 100; // First page for instant loading
+const PROGRESSIVE_LOAD_DELAY = 500; // Delay before loading remaining pages
+
+// 🔧 CACHE TTL CONSTANTS: Centralized TTL values for consistent cache behavior
+const CACHE_TTL_SPEEDRUN = 2 * 60 * 1000; // 2 minutes for speedrun (shorter TTL for freshness)
+const CACHE_TTL_DEFAULT = 5 * 60 * 1000; // 5 minutes for other sections
+const CACHE_VERSION = 2; // Increment this when sorting/data structure changes
+
 export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
   const DEBUG_PIPELINE = process.env.NODE_ENV === 'development' && false; // Enable manually when needed
   if (DEBUG_PIPELINE) console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
@@ -41,11 +52,16 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
   // 🔧 CRITICAL FIX: Use ref instead of state for loadedSections to prevent infinite loops
   // loadedSections is only used for tracking, not for rendering, so it doesn't need to be state
   const loadedSectionsRef = useRef<Set<string>>(new Set());
+  // 🔧 RACE CONDITION FIX: Track if progressive loading useEffect already hydrated from cache
+  // This prevents fetchSectionData from also checking cache and causing duplicate fetches
+  const hasHydratedRef = useRef<boolean>(false);
 
-  const fetchSectionData = useCallback(async (forceRefresh: boolean = false) => {
+  const fetchSectionData = useCallback(async (forceRefresh: boolean = false, initialOnly: boolean = false) => {
     if (DEBUG_PIPELINE) console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
       workspaceId: !!workspaceId,
       userId: !!userId,
@@ -110,10 +126,10 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
     // 🚀 SMART CACHE: Use localStorage cache with TTL checking for instant loading
     // Speedrun now uses cache but with shorter TTL (2 minutes) and background prefetch
-    // Cache version to invalidate when sorting logic changes
-    const CACHE_VERSION = 2; // Increment this when sorting/data structure changes
+    // 🔧 RACE CONDITION FIX: Skip cache check if progressive loading useEffect already hydrated
+    // This prevents duplicate cache checks and duplicate fetches
     
-    if (!shouldForceRefresh) {
+    if (!shouldForceRefresh && !hasHydratedRef.current) {
       try {
         const storageKey = `adrata-${section}-${workspaceId}`;
         const cached = localStorage.getItem(storageKey);
@@ -128,9 +144,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
               });
               localStorage.removeItem(storageKey);
             } else {
-              // Check cache age - speedrun has shorter TTL (2 minutes)
+              // Check cache age - use centralized TTL constants
               const cacheAge = Date.now() - (parsed.ts || 0);
-              const maxAge = section === 'speedrun' ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2min for speedrun, 5min for others
+              const maxAge = section === 'speedrun' ? CACHE_TTL_SPEEDRUN : CACHE_TTL_DEFAULT;
               
               if (cacheAge < maxAge) {
                 console.log(`⚡ [FAST SECTION DATA] Loading ${section} from localStorage cache:`, {
@@ -160,6 +176,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       } catch (e) {
         console.warn(`⚠️ [FAST SECTION DATA] Failed to load ${section} from cache:`, e);
       }
+    } else if (hasHydratedRef.current && !shouldForceRefresh) {
+      console.log(`⏭️ [FAST SECTION DATA] Skipping cache check - already hydrated by progressive loading useEffect`);
     }
 
     // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh)
@@ -193,21 +211,24 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/speedrun?limit=${limit}${refreshParam}${partnerosParam}`;
           break;
         case 'leads':
-          // For leads, fetch with pre-sorting to prevent client-side re-ranking glitch
-          url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=10000${refreshParam}${partnerosParam}`;
+          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
+          const leadsLimit = initialOnly ? INITIAL_PAGE_SIZE : 10000;
+          url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=${leadsLimit}${refreshParam}${partnerosParam}`;
           break;
         case 'prospects':
-          // For prospects, fetch with pre-sorting by lastActionDate (oldest first)
-          url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=10000${refreshParam}${partnerosParam}`;
+          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
+          const prospectsLimit = initialOnly ? INITIAL_PAGE_SIZE : 10000;
+          url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=${prospectsLimit}${refreshParam}${partnerosParam}`;
           break;
         case 'opportunities':
-          // For opportunities, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=opportunities&limit=10000${refreshParam}${partnerosParam}`;
+          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
+          const opportunitiesLimit = initialOnly ? INITIAL_PAGE_SIZE : 10000;
+          url = `/api/v1/people?section=opportunities&limit=${opportunitiesLimit}${refreshParam}${partnerosParam}`;
           break;
         case 'people':
-          // 🚀 PERFORMANCE: Pre-sort people by globalRank to prevent client-side re-ranking glitch
-          // Client-side pagination will handle larger datasets efficiently
-          url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
+          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
+          const peopleLimit = initialOnly ? INITIAL_PAGE_SIZE : Math.max(limit, 10000);
+          url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${peopleLimit}${refreshParam}${partnerosParam}`;
           break;
         case 'companies':
           // For companies, use v1 API with pre-sorting and increased limit
@@ -356,16 +377,25 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           throw new Error('Invalid API response format - data is not an array');
         }
         
-        setData(responseData);
-        setCount(responseCount);
+        // If this is initial load, only show first 100 records
+        if (initialOnly && responseData.length > INITIAL_PAGE_SIZE) {
+          const initialData = responseData.slice(0, INITIAL_PAGE_SIZE);
+          setData(initialData);
+          setCount(responseCount); // Keep full count for pagination
+        } else {
+          // Full load - show all data
+          setData(responseData);
+          setCount(responseCount);
+        }
         loadedSectionsRef.current.add(section);
         
         // 🚀 PERFORMANCE: Cache data in localStorage (like leads pattern)
+        // Always cache full responseData, not just the displayed slice
         try {
           const storageKey = `adrata-${section}-${workspaceId}`;
-          const CACHE_VERSION = 2; // Must match the version check above
+          // Use centralized CACHE_VERSION constant
           const cacheData = {
-            data: responseData,
+            data: responseData, // Cache full dataset, not just initial slice
             count: responseCount,
             ts: Date.now(),
             version: CACHE_VERSION
@@ -452,12 +482,90 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
   }, [section, limit, workspaceId, userId, authLoading]);
 
-  // 🚀 PERFORMANCE: Only load section data when section changes and not already loaded
+  // 🚀 PROGRESSIVE LOADING: Fetch first 100 records immediately, then load remaining in background
   useEffect(() => {
-    if (workspaceId && userId && !authLoading && !loadedSectionsRef.current.has(section)) {
-      fetchSectionData();
+    if (!workspaceId || authLoading) return;
+    
+    // Instant hydration from cache
+    let hasCachedData = false;
+    try {
+      const storageKey = `adrata-${section}-${workspaceId}`;
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        // Use centralized TTL constants
+        const CACHE_TTL = section === 'speedrun' ? CACHE_TTL_SPEEDRUN : CACHE_TTL_DEFAULT;
+        
+        // Check cache validity: version match, has data, and not expired
+        if (parsed?.version === CACHE_VERSION && 
+            Array.isArray(parsed?.data) && 
+            parsed.data.length > 0 && 
+            (Date.now() - (parsed?.ts || 0)) < CACHE_TTL) {
+          console.log(`💾 [FAST SECTION DATA] Hydrating ${section} from localStorage cache:`, {
+            section,
+            cachedCount: parsed.data.length,
+            cacheAge: Date.now() - parsed.ts
+          });
+          
+          // Show first 100 records immediately if we have more
+          const initialData = parsed.data.slice(0, INITIAL_PAGE_SIZE);
+          setData(initialData);
+          setCount(parsed.count || parsed.data.length);
+          setLoading(false);
+          hasCachedData = true;
+          setHasLoadedInitial(true);
+          hasHydratedRef.current = true; // Mark as hydrated to prevent fetchSectionData from checking cache
+          
+          // If we have more data than initial page, load remaining in background
+          if (parsed.data.length > INITIAL_PAGE_SIZE && parsed.data.length < (parsed.count || parsed.data.length)) {
+            console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
+            setIsLoadingMore(true);
+            // Load remaining data after a short delay
+            setTimeout(() => {
+              fetchSectionData(false, false).then(() => {
+                setIsLoadingMore(false);
+              });
+            }, PROGRESSIVE_LOAD_DELAY);
+          } else if (parsed.data.length >= (parsed.count || parsed.data.length)) {
+            // We already have all data, just show it all
+            setData(parsed.data);
+          }
+        } else {
+          console.log(`🗑️ [FAST SECTION DATA] Cache invalid for ${section}, will fetch fresh:`, {
+            versionMatch: parsed?.version === CACHE_VERSION,
+            hasData: Array.isArray(parsed?.data) && parsed.data.length > 0,
+            notExpired: (Date.now() - (parsed?.ts || 0)) < CACHE_TTL
+          });
+        }
+      }
+    } catch (e) {
+      console.warn(`⚠️ [FAST SECTION DATA] Failed to hydrate ${section} from cache:`, e);
+    }
+    
+    // If no cached data, fetch first 100 records immediately
+    if (workspaceId && userId && !authLoading && !loadedSectionsRef.current.has(section) && !hasCachedData) {
+      // Mark as hydrated to prevent fetchSectionData from checking cache
+      hasHydratedRef.current = true;
+      // First fetch: Get initial 100 records for instant display
+      console.log(`🚀 [FAST SECTION DATA] Fetching initial ${INITIAL_PAGE_SIZE} ${section} records...`);
+      fetchSectionData(false, true).then(() => {
+        setHasLoadedInitial(true);
+        // Then load remaining records in background
+        setTimeout(() => {
+          console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
+          setIsLoadingMore(true);
+          fetchSectionData(false, false).then(() => {
+            setIsLoadingMore(false);
+          });
+        }, PROGRESSIVE_LOAD_DELAY);
+      });
     }
   }, [section, workspaceId, userId, authLoading, fetchSectionData]);
+  
+  // 🔧 RACE CONDITION FIX: Reset hydration flag when section changes
+  useEffect(() => {
+    hasHydratedRef.current = false;
+  }, [section]);
 
   // 🚀 PERFORMANCE FIX: Event-based force refresh monitoring (no interval polling)
   // This solves the issue where saved changes don't persist when navigating back to a record
@@ -501,6 +609,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
   // 🔧 CRITICAL FIX: Clear stale localStorage cache on mount
   // This ensures we don't show old empty data from cache for any section
+  // Note: Uses same TTL as hydration (5 minutes) to prevent clearing valid cache
   useEffect(() => {
     if (workspaceId) {
       const storageKey = `adrata-${section}-${workspaceId}`;
@@ -508,10 +617,21 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          // Clear cache if it's empty or stale (older than 1 minute)
+          // Use centralized TTL constants
+          const CACHE_TTL = section === 'speedrun' ? CACHE_TTL_SPEEDRUN : CACHE_TTL_DEFAULT;
           const cacheAge = Date.now() - (parsed?.ts || 0);
-          if (!parsed?.data || parsed.data.length === 0 || cacheAge > 60000) {
-            console.log(`🗑️ [FAST SECTION DATA] Clearing stale ${section} cache:`, { cacheAge, isEmpty: !parsed?.data || parsed.data.length === 0 });
+          
+          // Clear cache if it's empty, wrong version, or stale (older than 5 minutes)
+          if (!parsed?.data || 
+              parsed.data.length === 0 || 
+              parsed?.version !== CACHE_VERSION ||
+              cacheAge > CACHE_TTL) {
+            console.log(`🗑️ [FAST SECTION DATA] Clearing stale ${section} cache:`, { 
+              cacheAge, 
+              isEmpty: !parsed?.data || parsed.data.length === 0,
+              wrongVersion: parsed?.version !== CACHE_VERSION,
+              expired: cacheAge > CACHE_TTL
+            });
             localStorage.removeItem(storageKey);
           }
         } catch (e) {
@@ -599,6 +719,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     loading,
     error,
     count,
+    isLoadingMore,
+    hasLoadedInitial,
     refresh,
     clearCache: () => {
       console.log(`🧹 [FAST SECTION DATA] Clearing cache for section: ${section}`);
