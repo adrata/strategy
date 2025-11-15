@@ -354,7 +354,10 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                       <div className="mb-3 pr-8">
                         {/* Company Name - Primary focus */}
                         <h4 className="font-semibold text-foreground text-base leading-tight mb-2 flex items-center gap-1">
-                          {opportunity.name || opportunity.account?.name || opportunity.company || 'Unnamed Opportunity'}
+                          {opportunity.name || 
+                           opportunity.account?.name || 
+                           (typeof opportunity.company === 'string' ? opportunity.company : opportunity.company?.name) || 
+                           'Unnamed Opportunity'}
                           {opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' && (
                             <span className="text-red-600 text-xs font-medium px-1.5 py-0.5 bg-red-100 rounded" title="Lost to Competition">
                               🏁

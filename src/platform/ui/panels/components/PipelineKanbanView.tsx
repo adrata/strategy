@@ -99,9 +99,9 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                       <div className="space-y-2">
                         {/* Item Name */}
                         <h4 className="text-sm font-semibold text-foreground">
-                          {activeSection === 'opportunities' ? item.name || item.companyName || item.company || 'Unknown Opportunity' :
-                           activeSection === 'clients' ? item.company || item.name || 'Customer' :
-                           activeSection === 'partners' ? item.name || item.partnerName || item.company || 'Unknown Partner' :
+                          {activeSection === 'opportunities' ? item.name || item.companyName || (typeof item.company === 'string' ? item.company : item.company?.name) || 'Unknown Opportunity' :
+                           activeSection === 'clients' ? (typeof item.company === 'string' ? item.company : item.company?.name) || item.name || 'Customer' :
+                           activeSection === 'partners' ? item.name || item.partnerName || (typeof item.company === 'string' ? item.company : item.company?.name) || 'Unknown Partner' :
                            'Unknown'}
                         </h4>
                         
@@ -111,13 +111,13 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                         </p>
                         
                         {/* Company Name */}
-                        {((activeSection === 'opportunities' && (item.account?.name || item.accountName || item.company)) ||
-                          (activeSection === 'clients' && item.company) ||
-                          (activeSection === 'partners' && item.company)) && (
+                        {((activeSection === 'opportunities' && (item.account?.name || item.accountName || (typeof item.company === 'string' ? item.company : item.company?.name))) ||
+                          (activeSection === 'clients' && (typeof item.company === 'string' ? item.company : item.company?.name)) ||
+                          (activeSection === 'partners' && (typeof item.company === 'string' ? item.company : item.company?.name))) && (
                           <p className="text-xs text-muted">
-                            {activeSection === 'opportunities' ? (item.account?.name || item.accountName || item.company) :
-                             activeSection === 'clients' ? item.company :
-                             activeSection === 'partners' ? item.company : ''}
+                            {activeSection === 'opportunities' ? (item.account?.name || item.accountName || (typeof item.company === 'string' ? item.company : item.company?.name)) :
+                             activeSection === 'clients' ? (typeof item.company === 'string' ? item.company : item.company?.name) :
+                             activeSection === 'partners' ? (typeof item.company === 'string' ? item.company : item.company?.name) : ''}
                           </p>
                         )}
                         
