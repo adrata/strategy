@@ -343,8 +343,7 @@ export async function GET(request: NextRequest) {
                 const actionDateOnly = new Date(actionDate.getFullYear(), actionDate.getMonth(), actionDate.getDate());
                 
                 if (actionDateOnly >= yesterday) {
-                  const hasNonMeaningfulLastAction = !lastActionDate || 
-                    !lastAction || 
+                  const hasNonMeaningfulLastAction = !lastAction || 
                     lastAction === 'No action taken' ||
                     lastAction === 'Record created' ||
                     lastAction === 'Company record created' ||
@@ -484,12 +483,14 @@ export async function GET(request: NextRequest) {
           return rankA - rankB; // Ascending: 1-50 (rank 1 = highest priority)
         });
         
-        console.log(`🔍 [COUNTS API] After sorting - first 5 records:`, allSpeedrunRecords.slice(0, 5).map((r: any) => ({ id: r.id, rank: r.globalRank, type: r.type })));
+        console.log(`🔍 [COUNTS API] After sorting - first 10 records:`, allSpeedrunRecords.slice(0, 10).map((r: any) => ({ id: r.id, rank: r.globalRank, type: r.type })));
+        console.log(`🔍 [COUNTS API] All records after sorting (total: ${allSpeedrunRecords.length}):`, allSpeedrunRecords.map((r: any) => ({ id: r.id, rank: r.globalRank, type: r.type })));
         
         // Limit to top 50 total (matching speedrun API behavior)
         const top50Records = allSpeedrunRecords.slice(0, 50);
         
         console.log(`🔍 [COUNTS API] After limiting to 50 - total: ${top50Records.length}`);
+        console.log(`🔍 [COUNTS API] Top 50 record IDs:`, top50Records.map((r: any) => r.id));
         
         speedrunCombinedCount = {
           total: top50Records.length,
