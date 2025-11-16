@@ -547,14 +547,25 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     // 🎯 SECOND: Try to find record in already-loaded data (no API call needed)
     // Note: Skip this if force-refresh flags were detected (shouldSkipAllCaches = true)
     if (!shouldSkipAllCaches) {
+      // Check acquisition data first
       const allData = acquisitionData?.acquireData || acquisitionData || {};
       const sectionData = allData[section] || [];
       
-      const existingRecord = sectionData.find((record: any) => record['id'] === recordId);
+      let existingRecord = sectionData.find((record: any) => record['id'] === recordId);
+      
+      // 🔧 FIX: For opportunities, also check currentSectionData (from useFastSectionData)
+      // since opportunities might be loaded via companies API
+      if (!existingRecord && section === 'opportunities' && data.length > 0) {
+        existingRecord = data.find((record: any) => record.id === recordId);
+        if (existingRecord) {
+          console.log(`⚡ [SMART LOAD] Found opportunity in section data - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
+        }
+      }
+      
       if (existingRecord) {
-        console.log(`⚡ [SMART LOAD] Found record in acquisition data - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
+        console.log(`⚡ [SMART LOAD] Found record in acquisition/section data - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
         setSelectedRecord(existingRecord);
-        console.log(`✅ [SMART LOAD] Record set from acquisition data: ${existingRecord.name || existingRecord.id}`);
+        console.log(`✅ [SMART LOAD] Record set from acquisition/section data: ${existingRecord.name || existingRecord.id}`);
         return;
       }
     } else {
@@ -601,9 +612,23 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       // Use appropriate v1 API based on section
       if (section === 'opportunities') {
         // Opportunities are now in their own table
+        // 🔧 FIX: Fallback to companies API if opportunities table doesn't exist (local dev)
         response = await fetch(`/api/v1/opportunities/${recordId}`, {
           credentials: 'include'
         });
+        
+        // If opportunities API fails (500 - table doesn't exist), try companies API
+        if (!response.ok && response.status === 500) {
+          // Clone response to read error text without consuming the body
+          const responseClone = response.clone();
+          const errorText = await responseClone.text().catch(() => '');
+          if (errorText.includes('does not exist') || errorText.includes('table') || errorText.includes('opportunities')) {
+            console.log(`⚠️ [DIRECT LOAD] Opportunities table doesn't exist, falling back to companies API for record: ${recordId}`);
+            response = await fetch(`/api/v1/companies/${recordId}`, {
+              credentials: 'include'
+            });
+          }
+        }
       } else if (section === 'companies') {
         response = await fetch(`/api/v1/companies/${recordId}`, {
           credentials: 'include'
