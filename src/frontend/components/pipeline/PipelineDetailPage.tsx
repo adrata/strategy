@@ -61,6 +61,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   
   // 🎯 AI CONTEXT FIX: Sync record context whenever selectedRecord changes
   useEffect(() => {
+    console.log('🔍 [AI CONTEXT] selectedRecord changed:', {
+      hasSelectedRecord: !!selectedRecord,
+      recordId: selectedRecord?.id,
+      recordName: selectedRecord?.name || selectedRecord?.fullName,
+      section,
+      slug
+    });
+    
     if (selectedRecord) {
       // Determine record type based on section
       let recordType = section;

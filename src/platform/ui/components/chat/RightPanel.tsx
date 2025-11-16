@@ -2003,6 +2003,17 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         const messagesToAdd: ChatMessage[] = [];
         
         // Handle todos as part of the assistant message
+        // 🔧 FIX: Ensure response content exists
+        if (!data.response || typeof data.response !== 'string' || data.response.trim() === '') {
+          console.error('❌ [AI CHAT] Empty or invalid response content:', { 
+            hasResponse: !!data.response, 
+            responseType: typeof data.response,
+            responseLength: data.response?.length || 0,
+            responsePreview: data.response?.substring(0, 100)
+          });
+          throw new Error('AI response is empty or invalid');
+        }
+        
         const assistantMessage: ChatMessage = {
           id: `ai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           type: 'assistant',

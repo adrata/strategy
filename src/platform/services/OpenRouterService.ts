@@ -785,7 +785,7 @@ This is the exact current date, time, and year in the user's timezone. Always us
     
     let basePrompt = `${dateTimeString}
 
-You are Adrata's AI assistant, specialized in sales intelligence and pipeline optimization. `;
+You are Adrata, a sales intelligence AI assistant. Provide succinct, professional guidance focused on revenue outcomes.`;
     
     // Add comprehensive workspace context if available
     if (workspaceContext) {
@@ -812,7 +812,7 @@ You are Adrata's AI assistant, specialized in sales intelligence and pipeline op
         basePrompt += `\n\nRECORD CONTEXT:\n${workspaceContext.recordContext}`;
         
         // 🔧 FIX: Emphasize that record context is available and should be used
-        basePrompt += `\n\nCRITICAL INSTRUCTION: The RECORD CONTEXT above contains comprehensive information about the person/company the user is currently viewing. You MUST use this context when answering questions. Do NOT say "I don't have enough context" - use the information provided in the RECORD CONTEXT section above.`;
+        basePrompt += `\n\nUse the RECORD CONTEXT above. Do not request additional context.`;
       } else {
         // 🔧 FIX: Log warning if record context is missing when we have a currentRecord
         if (currentRecord) {

@@ -497,13 +497,24 @@ export class ClaudeAIService {
       const workspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(workspaceId);
       
       // Get key metrics and data for context
-      const [peopleCount, companiesCount, prospectsCount, leadsCount, opportunitiesCount] = await Promise.all([
+      // Note: prospects table may not exist in all schemas, handle gracefully
+      const [peopleCount, companiesCount, leadsCount, opportunitiesCount] = await Promise.all([
         prisma.people.count({ where: { workspaceId, deletedAt: null } }),
         prisma.companies.count({ where: { workspaceId, deletedAt: null } }),
-        prisma.prospects.count({ where: { workspaceId, deletedAt: null } }),
         prisma.people.count({ where: { workspaceId, status: 'LEAD', deletedAt: null } }),
         prisma.opportunities.count({ where: { workspaceId, deletedAt: null } })
       ]);
+      
+      // Try to get prospects count if the table exists, otherwise default to 0
+      let prospectsCount = 0;
+      try {
+        if (prisma.prospects && typeof prisma.prospects.count === 'function') {
+          prospectsCount = await prisma.prospects.count({ where: { workspaceId, deletedAt: null } });
+        }
+      } catch (error) {
+        // Prospects table doesn't exist, use 0
+        console.log('ℹ️ [CLAUDE AI] Prospects table not available, using 0');
+      }
 
       // Get recent activities for context
       const recentActions = await prisma.actions.findMany({

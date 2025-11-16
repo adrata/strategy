@@ -22,9 +22,14 @@ import { securityMonitor } from '@/platform/security/security-monitor';
 import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } from '@/platform/ai/tools/role-finder-tool';
 
 export async function POST(request: NextRequest) {
+  const requestStartTime = Date.now();
+  console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
+  
   try {
     // 1. AUTHENTICATION CHECK - Critical security requirement
+    console.log('🔐 [AI CHAT] Starting authentication check...');
     const authUser = await getUnifiedAuthUser(request);
+    console.log('✅ [AI CHAT] Authentication check complete:', { hasAuthUser: !!authUser, userId: authUser?.id });
     if (!authUser) {
       // Log authentication failure
       securityMonitor.logAuthenticationFailure(
@@ -274,9 +279,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine if we should use OpenRouter based on gradual rollout
-    const shouldUseOpenRouter = useOpenRouter && 
-                               process.env.OPENROUTER_API_KEY && 
-                               gradualRolloutService.shouldUseOpenRouter(userId, workspaceId);
+    // 🔧 FIX: Prefer OpenRouter when available (bypass gradual rollout if OpenRouter key exists)
+    const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
+    const gradualRolloutDecision = gradualRolloutService.shouldUseOpenRouter(userId, workspaceId);
+    // Use OpenRouter if: user requested it AND we have the key AND (gradual rollout allows it OR we're forcing it for low Anthropic credits)
+    const shouldUseOpenRouter = useOpenRouter && hasOpenRouterKey && (gradualRolloutDecision || true); // Temporarily bypass gradual rollout
+    
+    console.log('🔀 [AI CHAT] Routing decision:', {
+      useOpenRouter,
+      hasOpenRouterKey,
+      gradualRolloutDecision,
+      shouldUseOpenRouter,
+      finalDecision: 'Using OpenRouter' // Will use OpenRouter if key exists
+    });
 
     // Route to OpenRouter or fallback to Claude
     if (shouldUseOpenRouter) {
@@ -442,6 +457,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Direct Claude fallback
       console.log('🤖 [AI CHAT] Using Claude directly (OpenRouter disabled or not selected)');
+      console.log('⚠️ [AI CHAT] WARNING: Anthropic API credits may be low. Consider using OpenRouter instead.');
       
       const claudeResponse = await claudeAIService.generateChatResponse({
         message: sanitizedMessage,

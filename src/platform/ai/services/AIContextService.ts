@@ -112,13 +112,20 @@ export class AIContextService {
       const { PrismaClient } = await import('@prisma/client');
       const prisma = new PrismaClient();
       
-      const userPreferences = await prisma.user_ai_preferences.findFirst({
-        where: {
-          userId,
-          workspaceId
-        }
+      // Check if user_ai_preferences table exists before querying
+      let userPreferences = null;
+      if (prisma.user_ai_preferences && typeof prisma.user_ai_preferences.findFirst === 'function') {
+        userPreferences = await prisma.user_ai_preferences.findFirst({
+          where: {
+            userId,
+            workspaceId
+          }
       });
 
+      } else {
+        console.log('ℹ️ [AIContextService] user_ai_preferences table not available');
+      }
+      
       if (userPreferences && userPreferences.isActive) {
         userContext += `\n\nUSER PERSONALITY PREFERENCES:
 - Personality: ${userPreferences.personalityName}
