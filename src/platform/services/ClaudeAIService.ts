@@ -1159,6 +1159,66 @@ ISO DateTime: ${dateTimeInfo.isoDateTime}
 
 This is the exact current date, time, and year in the user's timezone. Always use this information when answering questions about dates, times, schedules, deadlines, or temporal context.`;
 
+    // Extract seller and buyer information for explicit framing
+    let sellerCompanyName = 'the user';
+    let buyerName = null;
+    let buyerCompany = null;
+    
+    // Extract seller company name from workspaceBusinessContext or comprehensiveWorkspaceContext
+    if (workspaceBusinessContext) {
+      const sellerMatch = workspaceBusinessContext.match(/Company Name:\s*([^\n]+)/i) || 
+                         workspaceBusinessContext.match(/SELLER\/COMPANY PROFILE[^\n]*\n[^\n]*Company Name:\s*([^\n]+)/i);
+      if (sellerMatch && sellerMatch[1]) {
+        sellerCompanyName = sellerMatch[1].trim();
+      }
+    } else if (comprehensiveWorkspaceContext) {
+      const sellerMatch = comprehensiveWorkspaceContext.match(/Company Name:\s*([^\n]+)/i) || 
+                         comprehensiveWorkspaceContext.match(/SELLER\/COMPANY PROFILE[^\n]*\n[^\n]*Company Name:\s*([^\n]+)/i);
+      if (sellerMatch && sellerMatch[1]) {
+        sellerCompanyName = sellerMatch[1].trim();
+      }
+    }
+    
+    // Extract buyer information from comprehensiveWorkspaceContext (recordContext)
+    if (comprehensiveWorkspaceContext) {
+      const buyerNameMatch = comprehensiveWorkspaceContext.match(/Name:\s*([^\n]+)/i);
+      const buyerCompanyMatch = comprehensiveWorkspaceContext.match(/at\s+([^\n]+)/i) || 
+                                comprehensiveWorkspaceContext.match(/Company:\s*([^\n]+)/i);
+      
+      if (buyerNameMatch && buyerNameMatch[1]) {
+        buyerName = buyerNameMatch[1].trim();
+      }
+      if (buyerCompanyMatch && buyerCompanyMatch[1]) {
+        buyerCompany = buyerCompanyMatch[1].trim();
+      }
+    }
+    
+    // Build explicit seller-to-buyer framing if both contexts are available
+    let sellerBuyerFraming = '';
+    if (workspaceBusinessContext && comprehensiveWorkspaceContext && buyerName) {
+      sellerBuyerFraming = `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL CONTEXT FRAMING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are helping ${sellerCompanyName} (THE SELLER) sell to ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''} (THE BUYER/PROSPECT).
+
+This is a B2B sales context where:
+- SELLER: ${sellerCompanyName} - The company you are helping (their products, services, value propositions, and sales methodology are described below)
+- BUYER: ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''} - The prospect/company they are selling to (detailed information provided below)
+
+Your role is to provide strategic sales advice that helps ${sellerCompanyName} effectively engage with and sell to ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''}.
+
+CRITICAL INSTRUCTIONS:
+- Frame all advice from ${sellerCompanyName}'s perspective as the seller
+- Reference ${sellerCompanyName}'s products/services, value propositions, and ideal customer profile when relevant
+- Consider how ${sellerCompanyName}'s offerings align with ${buyerName}${buyerCompany ? ` and ${buyerCompany}` : ''}'s needs
+- Provide recommendations that leverage ${sellerCompanyName}'s competitive advantages
+- Suggest engagement strategies aligned with ${sellerCompanyName}'s sales methodology
+- Analyze strategic fit between ${sellerCompanyName} and ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+    }
+    
     return `${dateTimeString}
 
 CRITICAL SECURITY INSTRUCTIONS:
@@ -1173,18 +1233,10 @@ CRITICAL SECURITY INSTRUCTIONS:
 
 You are Adrata - an AI sales consultant with full access to the user's CRM data.
 
-YOUR ROLE:
-Provide clear, actionable advice for sales success. Be direct and concise.
+ROLE:
+Provide actionable sales guidance. Be direct and concise.
 
-RESPONSE STYLE:
-- Succinct and to the point
-- Clear, simple language
-- No fluff or unnecessary words
-- Professional tone
-- NO emojis
-
-EXPERTISE:
-B2B sales, pipeline optimization, buyer intelligence, revenue growth
+${sellerBuyerFraming}${workspaceBusinessContext ? `${workspaceBusinessContext}\n\nCRITICAL: The information above describes WHO YOU ARE HELPING (the seller/company: ${sellerCompanyName}). Use this context to frame all responses. Reference their products/services, value propositions, and ideal customer profile when providing advice.\n\n` : ''}${comprehensiveWorkspaceContext ? `${comprehensiveWorkspaceContext}\n\n${buyerName ? `CRITICAL: The information above includes details about WHO ${sellerCompanyName} IS SELLING TO (the buyer/prospect: ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''}). Use this context to provide specific, personalized advice about engaging with this prospect.\n\n` : ''}` : ''}${workspaceDataContext ? `${workspaceDataContext}\n\n` : ''}
 
 ${this.buildRevenueOSFrameworkContext(request, currentRecord)}
 
@@ -1195,31 +1247,9 @@ ${userGoalsContext}
 ${contextWarnings}
 ${pageContextString}
 ${contextInfo}
-${workspaceDataContext}
-${comprehensiveWorkspaceContext}
-${workspaceBusinessContext}
 ${activitiesContext}
 ${personSearchContext}
 ${listViewContextString}
-
-CONVERSATION STYLE:
-- Direct and professional
-- Natural language (no jargon)
-- Ask clarifying questions when needed
-- Reference data and context
-
-HOW TO HELP:
-- Understand what they want to accomplish
-- Provide specific, actionable steps
-- Use insights from their CRM
-- Be a strategic partner
-
-RESPONSE FORMATTING:
-- Concise and fast
-- Clear structure
-- Simple text formatting
-- Line breaks for readability
-- NO emojis
 
 Be practical, focused, and help them achieve goals.`;
   }
@@ -1249,47 +1279,21 @@ CURRENT RECORD CONTEXT:
 `;
     }
 
-    return `You are Adrata, an intelligent sales acceleration AI assistant. You help sales professionals with:
+    return `You are Adrata, a sales intelligence AI assistant.
 
-🎯 CORE CAPABILITIES:
-- Sales strategy and prospecting advice
-- Buyer group intelligence and stakeholder mapping
-- Pipeline analysis and optimization
-- Next action recommendations
-- Competitive intelligence
-- Industry insights and trends
-- Excel file import and lead processing
-- Intelligent data mapping and deduplication
-
-📊 SALES EXPERTISE:
-- B2B sales methodologies (Challenger Sale, SPIN Selling, MEDDIC)
-- CRM and pipeline management
-- Lead qualification and nurturing
-- Account-based selling strategies
-- Revenue forecasting and analytics
-- Data import and lead processing workflows
-- Excel file analysis and column mapping
+EXPERTISE:
+B2B sales, pipeline optimization, buyer intelligence, revenue growth, CRM management, prospecting, account-based selling.
 
 ${contextInfo}
 
-💡 RESPONSE GUIDELINES:
-- Be specific and actionable in your advice
-- Reference the current record context when relevant
-- Provide concrete next steps and recommendations
-- Use sales terminology appropriately
-- Be concise but comprehensive
-- Focus on revenue-generating activities
-- Consider the user's role and company context
+RESPONSE STYLE:
+- Succinct and professional
+- Clear, direct language
+- Actionable recommendations
+- Reference context when relevant
+- Focus on revenue outcomes
 
-🚀 SALES ACCELERATION FOCUS:
-Always aim to help the user:
-1. Close more deals faster
-2. Build stronger relationships
-3. Identify and engage key stakeholders
-4. Optimize their sales process
-5. Make data-driven decisions
-
-Respond as a knowledgeable sales consultant who understands modern B2B sales challenges and opportunities.`;
+Provide specific, data-driven guidance to help close deals faster and optimize sales processes.`;
   }
 
   /**

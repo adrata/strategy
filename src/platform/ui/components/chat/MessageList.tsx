@@ -99,6 +99,7 @@ interface MessageListProps {
   onUpdateChatSessions: (updater: (prev: any) => any) => void;
   activeSubApp: string;
   onRecordSearch?: (recordName: string) => void;
+  scrollToBottom?: () => void; // Optional scroll callback for typewriter updates
 }
 
 // Helper function to render markdown with proper styling
@@ -153,7 +154,8 @@ export function MessageList({
   chatEndRef, 
   onUpdateChatSessions, 
   activeSubApp,
-  onRecordSearch
+  onRecordSearch,
+  scrollToBottom
 }: MessageListProps) {
   
   // Handle record search functionality
@@ -176,6 +178,11 @@ export function MessageList({
       const updatedMessages = currentMessages.map((msg: ChatMessage) => 
         msg['id'] === messageId ? { ...msg, isTypewriter: false } : msg
       );
+      
+      // Scroll to bottom when typewriter completes (so user can read the end)
+      if (scrollToBottom) {
+        setTimeout(() => scrollToBottom(), 100);
+      }
       
       // Only update if there's actually a change
       const hasChange = currentMessages.some((msg, index) => 
@@ -255,6 +262,7 @@ export function MessageList({
                 text={message.content}
                 speed={19}
                 onComplete={() => handleTypewriterComplete(message.id)}
+                onUpdate={scrollToBottom}
               />
             ) : (
               <div className="whitespace-pre-line">

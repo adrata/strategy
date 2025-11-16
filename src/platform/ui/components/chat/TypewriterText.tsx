@@ -6,6 +6,7 @@ interface TypewriterTextProps {
   text: string;
   speed?: number;
   onComplete?: () => void;
+  onUpdate?: () => void; // Called periodically as text updates
   className?: string;
 }
 
@@ -13,29 +14,43 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
   text,
   speed = 27,
   onComplete,
+  onUpdate,
   className = ""
 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const hasCalledComplete = useRef(false);
   const onCompleteRef = useRef(onComplete);
+  const onUpdateRef = useRef(onUpdate);
+  const updateCounterRef = useRef(0);
 
-  // Update ref when onComplete changes (but don't trigger re-render)
+  // Update refs when callbacks change (but don't trigger re-render)
   useEffect(() => {
     onCompleteRef.current = onComplete;
-  }, [onComplete]);
+    onUpdateRef.current = onUpdate;
+  }, [onComplete, onUpdate]);
 
   useEffect(() => {
     if (currentIndex < text.length) {
       const timer = setTimeout(() => {
         setDisplayedText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
+        
+        // Call onUpdate periodically (every 5 characters to avoid too many scroll calls)
+        updateCounterRef.current += 1;
+        if (onUpdateRef.current && updateCounterRef.current % 5 === 0) {
+          onUpdateRef.current();
+        }
       }, speed);
 
       return () => clearTimeout(timer);
     } else if (onCompleteRef.current && currentIndex === text.length && !hasCalledComplete.current) {
       hasCalledComplete.current = true;
       onCompleteRef.current();
+      // Final scroll when complete
+      if (onUpdateRef.current) {
+        onUpdateRef.current();
+      }
     }
   }, [currentIndex, text, speed]);
 
@@ -44,6 +59,7 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
     setDisplayedText('');
     setCurrentIndex(0);
     hasCalledComplete.current = false; // Reset the completion flag
+    updateCounterRef.current = 0; // Reset update counter
   }, [text]);
 
   return (

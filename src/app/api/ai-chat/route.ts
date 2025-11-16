@@ -65,17 +65,14 @@ export async function POST(request: NextRequest) {
       selectedAIModel // Selected AI model from frontend
     } = body;
 
-    console.log('🤖 [AI CHAT] Processing request:', {
-      message: message?.substring(0, 100) + '...',
-      appType,
-      workspaceId,
-      userId,
-      hasCurrentRecord: !!currentRecord,
-      recordType,
-      hasListViewContext: !!listViewContext,
-      listViewRecordCount: listViewContext?.visibleRecords?.length || 0,
-      useOpenRouter
-    });
+    // Reduced logging for performance (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🤖 [AI CHAT] Processing request:', {
+        message: message?.substring(0, 50) + '...',
+        hasCurrentRecord: !!currentRecord,
+        useOpenRouter
+      });
+    }
 
     // 🔍 ENHANCED RECORD CONTEXT LOGGING: Show detailed record information received
     if (currentRecord) {
@@ -236,16 +233,8 @@ export async function POST(request: NextRequest) {
     let response: any;
     let costRecordId: string | null = null;
 
-    // Build comprehensive workspace context
-    console.log('🧠 [AI CHAT] Building comprehensive workspace context...');
-    console.log('🔍 [AI CHAT] Input to buildContext:', {
-      hasCurrentRecord: !!currentRecord,
-      recordType,
-      recordId: currentRecord?.id,
-      recordName: currentRecord?.name || currentRecord?.fullName,
-      recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0
-    });
-    
+    // Build comprehensive workspace context (optimized for speed)
+    const contextStartTime = Date.now();
     const workspaceContext = await AIContextService.buildContext({
       userId: authUser.id,
       workspaceId: authUser.workspaceId || workspaceId,
@@ -256,20 +245,31 @@ export async function POST(request: NextRequest) {
       conversationHistory: conversationHistory || [],
       documentContext: null // Could be enhanced later
     });
-
-    console.log('🧠 [AI CHAT] Workspace context built:', {
-      hasUserContext: !!workspaceContext.userContext,
-      hasApplicationContext: !!workspaceContext.applicationContext,
-      hasDataContext: !!workspaceContext.dataContext,
-      hasRecordContext: !!workspaceContext.recordContext,
-      recordContextLength: workspaceContext.recordContext?.length || 0,
-      recordContextPreview: workspaceContext.recordContext?.substring(0, 200) || 'EMPTY',
-      hasSystemContext: !!workspaceContext.systemContext
-    });
     
-    // 🔍 CRITICAL CHECK: Verify record context is not empty
-    if (currentRecord && (!workspaceContext.recordContext || workspaceContext.recordContext.length < 50)) {
-      console.error('❌ [AI CHAT] CRITICAL: Record context is empty or too short despite having currentRecord!', {
+    // 🔍 VALIDATE CONTEXT: Ensure both seller and buyer contexts are present
+    const hasSellerContext = !!(workspaceContext.dataContext && workspaceContext.dataContext.length > 50);
+    const hasBuyerContext = !!(workspaceContext.recordContext && workspaceContext.recordContext.length > 50);
+    
+    // Only log in development to reduce overhead
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🧠 [AI CHAT] Workspace context built:', {
+        contextBuildTime: `${Date.now() - contextStartTime}ms`,
+        hasSellerContext,
+        hasBuyerContext,
+        sellerContextLength: workspaceContext.dataContext?.length || 0,
+        hasRecordContext: !!workspaceContext.recordContext,
+        recordContextLength: workspaceContext.recordContext?.length || 0
+      });
+    }
+    
+    // 🔍 CRITICAL CHECK: Verify seller context is present (required for personalized advice)
+    if (!hasSellerContext) {
+      console.warn('⚠️ [AI CHAT] WARNING: Seller/company context is missing or too short. AI may not know what the user sells, their value propositions, or ideal customer profile.');
+    }
+    
+    // 🔍 CRITICAL CHECK: Verify buyer context is present when viewing a record
+    if (currentRecord && !hasBuyerContext) {
+      console.error('❌ [AI CHAT] CRITICAL: Buyer/prospect context is empty or too short despite having currentRecord!', {
         recordId: currentRecord.id,
         recordName: currentRecord.name || currentRecord.fullName,
         recordType,
@@ -285,13 +285,10 @@ export async function POST(request: NextRequest) {
     // Use OpenRouter if: user requested it AND we have the key AND (gradual rollout allows it OR we're forcing it for low Anthropic credits)
     const shouldUseOpenRouter = useOpenRouter && hasOpenRouterKey && (gradualRolloutDecision || true); // Temporarily bypass gradual rollout
     
-    console.log('🔀 [AI CHAT] Routing decision:', {
-      useOpenRouter,
-      hasOpenRouterKey,
-      gradualRolloutDecision,
-      shouldUseOpenRouter,
-      finalDecision: 'Using OpenRouter' // Will use OpenRouter if key exists
-    });
+    // Only log routing decision in development
+    if (process.env.NODE_ENV === 'development' && shouldUseOpenRouter) {
+      console.log('🔀 [AI CHAT] Using OpenRouter');
+    }
 
     // Route to OpenRouter or fallback to Claude
     if (shouldUseOpenRouter) {

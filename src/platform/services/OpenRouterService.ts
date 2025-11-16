@@ -787,8 +787,67 @@ This is the exact current date, time, and year in the user's timezone. Always us
 
 You are Adrata, a sales intelligence AI assistant. Provide succinct, professional guidance focused on revenue outcomes.`;
     
-    // Add comprehensive workspace context if available
+    // Extract seller and buyer information for explicit framing
+    let sellerCompanyName = 'the user';
+    let buyerName = null;
+    let buyerCompany = null;
+    
+    // Extract seller company name from dataContext
+    if (workspaceContext?.dataContext) {
+      const sellerMatch = workspaceContext.dataContext.match(/Company Name:\s*([^\n]+)/i) || 
+                         workspaceContext.dataContext.match(/SELLER\/COMPANY PROFILE[^\n]*\n[^\n]*Company Name:\s*([^\n]+)/i);
+      if (sellerMatch && sellerMatch[1]) {
+        sellerCompanyName = sellerMatch[1].trim();
+      }
+    }
+    
+    // Extract buyer information from recordContext
+    if (workspaceContext?.recordContext) {
+      const buyerNameMatch = workspaceContext.recordContext.match(/Name:\s*([^\n]+)/i);
+      const buyerCompanyMatch = workspaceContext.recordContext.match(/at\s+([^\n]+)/i) || 
+                                workspaceContext.recordContext.match(/Company:\s*([^\n]+)/i);
+      
+      if (buyerNameMatch && buyerNameMatch[1]) {
+        buyerName = buyerNameMatch[1].trim();
+      }
+      if (buyerCompanyMatch && buyerCompanyMatch[1]) {
+        buyerCompany = buyerCompanyMatch[1].trim();
+      }
+    }
+    
+    // Add explicit seller-to-buyer framing if both contexts are available
+    if (workspaceContext?.dataContext && workspaceContext?.recordContext && buyerName) {
+      basePrompt += `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL CONTEXT FRAMING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are helping ${sellerCompanyName} (THE SELLER) sell to ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''} (THE BUYER/PROSPECT).
+
+This is a B2B sales context where:
+- SELLER: ${sellerCompanyName} - The company you are helping (their products, services, value propositions, and sales methodology are described below)
+- BUYER: ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''} - The prospect/company they are selling to (detailed information provided below)
+
+Your role is to provide strategic sales advice that helps ${sellerCompanyName} effectively engage with and sell to ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''}.
+
+CRITICAL INSTRUCTIONS:
+- Frame all advice from ${sellerCompanyName}'s perspective as the seller
+- Reference ${sellerCompanyName}'s products/services, value propositions, and ideal customer profile when relevant
+- Consider how ${sellerCompanyName}'s offerings align with ${buyerName}${buyerCompany ? ` and ${buyerCompany}` : ''}'s needs
+- Provide recommendations that leverage ${sellerCompanyName}'s competitive advantages
+- Suggest engagement strategies aligned with ${sellerCompanyName}'s sales methodology
+- Analyze strategic fit between ${sellerCompanyName} and ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+    }
+    
+    // Add comprehensive workspace context if available - SELLER CONTEXT FIRST (most important)
     if (workspaceContext) {
+      // CRITICAL: Seller/Company context goes FIRST so AI knows who they're helping
+      if (workspaceContext.dataContext) {
+        basePrompt += `\n\n${workspaceContext.dataContext}`;
+        basePrompt += `\n\nCRITICAL: The information above describes WHO YOU ARE HELPING (the seller/company: ${sellerCompanyName}). Use this context to frame all responses. Reference their products/services, value propositions, and ideal customer profile when providing advice.`;
+      }
+      
       basePrompt += `\n\nWORKSPACE CONTEXT:`;
       
       if (workspaceContext.userContext) {
@@ -799,20 +858,20 @@ You are Adrata, a sales intelligence AI assistant. Provide succinct, professiona
         basePrompt += `\n\nAPPLICATION CONTEXT:\n${workspaceContext.applicationContext}`;
       }
       
-      if (workspaceContext.dataContext) {
-        basePrompt += `\n\nDATA CONTEXT:\n${workspaceContext.dataContext}`;
-      }
-      
       if (workspaceContext.recordContext) {
         console.log('✅ [OpenRouterService] Adding RECORD CONTEXT to prompt:', {
           recordContextLength: workspaceContext.recordContext.length,
           recordContextPreview: workspaceContext.recordContext.substring(0, 500)
         });
         
-        basePrompt += `\n\nRECORD CONTEXT:\n${workspaceContext.recordContext}`;
+        basePrompt += `\n\n${buyerName ? `=== CURRENT BUYER/PROSPECT (WHO THEY ARE SELLING TO) ===` : `=== CURRENT RECORD (WHO THEY ARE) ===`}
+${workspaceContext.recordContext}`;
         
-        // 🔧 FIX: Emphasize that record context is available and should be used
-        basePrompt += `\n\nUse the RECORD CONTEXT above. Do not request additional context.`;
+        if (buyerName) {
+          basePrompt += `\n\nCRITICAL: The information above describes WHO ${sellerCompanyName} IS SELLING TO (the buyer/prospect: ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''}). Use this context to provide specific, personalized advice about engaging with this prospect.`;
+        } else {
+          basePrompt += `\n\nUse the RECORD CONTEXT above. Do not request additional context.`;
+        }
       } else {
         // 🔧 FIX: Log warning if record context is missing when we have a currentRecord
         if (currentRecord) {
@@ -883,25 +942,13 @@ You are Adrata, a sales intelligence AI assistant. Provide succinct, professiona
       }
     }
     
-    // Add context-specific instructions
-    if (currentRecord) {
-      basePrompt += `\n\nCurrent context: You're working with a ${recordType || 'record'} (${currentRecord.name || currentRecord.fullName || 'unnamed'}). `;
-    }
-    
-    if (appType) {
-      basePrompt += `\n\nYou're in the ${appType} application. `;
-    }
-
-    // Add complexity-specific instructions
-    if (complexity.category === 'research') {
-      basePrompt += `\n\nThis appears to be a research query. Provide comprehensive, up-to-date information with sources when possible.`;
-    } else if (complexity.category === 'complex') {
-      basePrompt += `\n\nThis is a complex query requiring strategic analysis. Provide detailed, actionable insights.`;
-    } else if (complexity.category === 'simple') {
-      basePrompt += `\n\nThis is a simple query. Provide a concise, direct answer.`;
-    }
-
-    basePrompt += `\n\nAlways be helpful, accurate, and focused on sales intelligence and business outcomes.`;
+    // Response guidelines
+    basePrompt += `\n\nRESPONSE GUIDELINES:
+- Be succinct and professional
+- Use clear, direct language
+- Provide actionable recommendations
+- Reference context when relevant
+- Focus on business outcomes`;
 
     // SECURITY: Protect the system prompt with injection resistance
     const protectedPrompt = systemPromptProtector.createSecureTemplate(

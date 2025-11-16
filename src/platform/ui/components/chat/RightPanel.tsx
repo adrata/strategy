@@ -1174,16 +1174,111 @@ export function RightPanel() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Scroll to bottom helper
-  const scrollToBottom = () => {
-    if (chatEndRef.current) {
-      setTimeout(() => {
+  // Track user scroll intent to prevent auto-scroll override
+  const userScrolledUpRef = useRef(false);
+  const lastScrollTopRef = useRef(0);
+  const scrollContainerRef = useRef<HTMLElement | null>(null);
+
+  // Detect manual scrolling - if user scrolls up, disable auto-scroll
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+    
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const container = scrollContainerRef.current;
+        const currentScrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const clientHeight = container.clientHeight;
+        const scrollBottom = scrollHeight - currentScrollTop - clientHeight;
+        
+        // Clear any pending timeout
+        clearTimeout(scrollTimeout);
+        
+        // Debounce scroll detection to avoid false positives from smooth scrolling
+        scrollTimeout = setTimeout(() => {
+          // If user scrolled up (scrollTop decreased by more than 10px), mark as manual scroll
+          if (currentScrollTop < lastScrollTopRef.current - 10) {
+            userScrolledUpRef.current = true;
+          }
+          
+          // If user scrolls back to bottom (within 50px), re-enable auto-scroll
+          if (scrollBottom < 50) {
+            userScrolledUpRef.current = false;
+          }
+          
+          lastScrollTopRef.current = currentScrollTop;
+        }, 150); // 150ms debounce
+      }
+    };
+
+    // Find scroll container and attach listener
+    const findScrollContainer = () => {
+      // Try to find container immediately
+      if (chatEndRef.current) {
+        const container = chatEndRef.current.closest('.overflow-y-auto') as HTMLElement;
+        if (container) {
+          scrollContainerRef.current = container;
+          container.addEventListener('scroll', handleScroll, { passive: true });
+          lastScrollTopRef.current = container.scrollTop;
+          return () => {
+            container.removeEventListener('scroll', handleScroll);
+            clearTimeout(scrollTimeout);
+          };
+        }
+      }
+      
+      // If not found, try again after a short delay (container might not be mounted yet)
+      const retryTimeout = setTimeout(() => {
+        if (chatEndRef.current && !scrollContainerRef.current) {
+          const container = chatEndRef.current.closest('.overflow-y-auto') as HTMLElement;
+          if (container) {
+            scrollContainerRef.current = container;
+            container.addEventListener('scroll', handleScroll, { passive: true });
+            lastScrollTopRef.current = container.scrollTop;
+          }
+        }
+      }, 100);
+      
+      return () => {
+        clearTimeout(retryTimeout);
+        clearTimeout(scrollTimeout);
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.removeEventListener('scroll', handleScroll);
+        }
+      };
+    };
+
+    return findScrollContainer();
+  }, [chatEndRef]);
+
+  // Scroll to bottom helper - respects user scroll intent
+  const scrollToBottom = (force = false) => {
+    if (chatEndRef.current && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const scrollBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+      
+      // Only auto-scroll if:
+      // 1. Forced (e.g., new message sent)
+      // 2. User hasn't manually scrolled up AND is near bottom (within 100px)
+      if (force || (!userScrolledUpRef.current && scrollBottom < 100)) {
+        // Use requestAnimationFrame for smoother scrolling
+        requestAnimationFrame(() => {
+          chatEndRef.current?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end',
+            inline: 'nearest'
+          });
+        });
+      }
+    } else if (chatEndRef.current) {
+      // Fallback if container not found yet
+      requestAnimationFrame(() => {
         chatEndRef.current?.scrollIntoView({ 
           behavior: 'smooth', 
           block: 'end',
           inline: 'nearest'
         });
-      }, 0);
+      });
     }
   };
 
@@ -1708,8 +1803,11 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
 
   const processMessageWithQueue = async (input: string) => {
     if (isProcessing) return;
-    
+
     setIsProcessing(true);
+    
+    // Reset scroll state when sending a new message (user wants to see the response)
+    userScrolledUpRef.current = false;
     
     // currentRecord and recordType are now always current because RecordContextProvider is in tree
     console.log('🔍 [RightPanel] Sending message with record context:', {
@@ -1936,7 +2034,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           appType: effectiveAppType,
           workspaceId,
           userId,
-          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-5), // Reduced history for speed
+          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-3), // Reduced to 3 messages for faster response
           currentRecord,
           recordType,
           listViewContext,
@@ -2612,6 +2710,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                   onUpdateChatSessions={chat.setChatSessions}
                   activeSubApp={activeSubApp}
                   onRecordSearch={handleRecordSearch}
+                  scrollToBottom={scrollToBottom}
                 />
               </div>
             )}

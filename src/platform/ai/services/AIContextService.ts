@@ -226,11 +226,43 @@ CRUD OPERATIONS CAPABILITY:
       // Import the enhanced workspace context service
       const { EnhancedWorkspaceContextService } = await import('./EnhancedWorkspaceContextService');
       
-      // Build comprehensive workspace context
+      // Build comprehensive workspace context (CRITICAL: Seller/Company profile)
       const workspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(workspaceId);
       
       if (workspaceContext) {
         dataContext = EnhancedWorkspaceContextService.buildAIContextString(workspaceContext);
+        
+        // Log seller context for verification
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [AIContextService] Seller/Company context included:', {
+            companyName: workspaceContext.workspace.name,
+            hasProducts: !!(workspaceContext.workspace.productPortfolio?.length || workspaceContext.workspace.serviceOfferings?.length),
+            hasValueProps: !!workspaceContext.workspace.valuePropositions?.length,
+            hasIdealCustomer: !!workspaceContext.workspace.idealCustomerProfile,
+            contextLength: dataContext.length
+          });
+        }
+      } else {
+        // Fallback: Build minimal seller context from workspace name
+        try {
+          const { PrismaClient } = await import('@prisma/client');
+          const prisma = new PrismaClient();
+          const workspace = await prisma.workspaces.findUnique({
+            where: { id: workspaceId },
+            select: { name: true, industry: true, description: true }
+          });
+          
+          if (workspace) {
+            dataContext = `=== SELLER/COMPANY PROFILE (WHO YOU ARE HELPING) ===
+Company Name: ${workspace.name}
+Industry: ${workspace.industry || 'Professional Services'}
+Description: ${workspace.description || `${workspace.name} is a professional services company`}
+
+CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspective as the seller.`;
+          }
+        } catch (error) {
+          console.warn('⚠️ [AIContextService] Failed to build fallback seller context:', error);
+        }
       }
       
       if (appType === 'Speedrun') {
@@ -262,7 +294,8 @@ CRUD OPERATIONS CAPABILITY:
           const qualifiedLeads = pipelineData.leads?.filter((l: any) => l['status'] === 'qualified')?.length || 0;
           const activeOpportunities = pipelineData.opportunities?.filter((o: any) => o.stage !== 'closed-lost' && o.stage !== 'closed-won')?.length || 0;
           
-          dataContext = `REAL PIPELINE DATA CONTEXT:
+          // Append to existing seller context (don't replace it)
+          dataContext += `\n\nREAL PIPELINE DATA CONTEXT:
 - Total Leads: ${leadsCount}
 - Qualified Leads: ${qualifiedLeads}
 - Total Opportunities: ${opportunitiesCount}
@@ -285,9 +318,51 @@ CRUD OPERATIONS CAPABILITY:
         }
       }
 
-      return dataContext;
+      // Ensure seller context is always present (even if minimal)
+      if (!dataContext || dataContext.trim().length < 50) {
+        // Last resort fallback
+        try {
+          const { PrismaClient } = await import('@prisma/client');
+          const prisma = new PrismaClient();
+          const workspace = await prisma.workspaces.findUnique({
+            where: { id: workspaceId },
+            select: { name: true }
+          });
+          
+          if (workspace) {
+            dataContext = `=== SELLER/COMPANY PROFILE (WHO YOU ARE HELPING) ===
+Company Name: ${workspace.name}
+
+CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspective as the seller.`;
+          }
+        } catch (fallbackError) {
+          console.warn('⚠️ [AIContextService] Failed to build last-resort seller context:', fallbackError);
+        }
+      }
+      
+      return dataContext || 'DATA CONTEXT: General sales guidance available';
     } catch (error) {
       console.warn(`⚠️ Failed to fetch ${appType} data for context:`, error);
+      
+      // Even on error, try to provide seller context
+      try {
+        const { PrismaClient } = await import('@prisma/client');
+        const prisma = new PrismaClient();
+        const workspace = await prisma.workspaces.findUnique({
+          where: { id: workspaceId },
+          select: { name: true }
+        });
+        
+        if (workspace) {
+          return `=== SELLER/COMPANY PROFILE (WHO YOU ARE HELPING) ===
+Company Name: ${workspace.name}
+
+CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspective as the seller.`;
+        }
+      } catch (fallbackError) {
+        // Ignore fallback errors
+      }
+      
       return `DATA CONTEXT: Unable to fetch real-time data, using general guidance`;
     }
   }

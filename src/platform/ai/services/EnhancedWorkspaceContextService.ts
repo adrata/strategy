@@ -138,6 +138,22 @@ export class EnhancedWorkspaceContextService {
       // Get geographic distribution
       const geographicDistribution = this.analyzeGeographicDistribution(peopleData);
 
+      // Parse JSON arrays if they're stored as strings (handle both formats)
+      const parseArrayField = (field: any): string[] => {
+        if (!field) return [];
+        if (Array.isArray(field)) return field;
+        if (typeof field === 'string') {
+          try {
+            const parsed = JSON.parse(field);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            // If not JSON, treat as single value
+            return [field];
+          }
+        }
+        return [];
+      };
+
       return {
         workspace: {
           id: workspace.id,
@@ -145,13 +161,13 @@ export class EnhancedWorkspaceContextService {
           description: workspace.description,
           industry: workspace.industry || company?.industry,
           businessModel: workspace.businessModel,
-          serviceOfferings: workspace.serviceOfferings || [],
-          productPortfolio: workspace.productPortfolio || [],
-          valuePropositions: workspace.valuePropositions || [],
-          targetIndustries: workspace.targetIndustries || [],
-          targetCompanySize: workspace.targetCompanySize || [],
+          serviceOfferings: parseArrayField(workspace.serviceOfferings),
+          productPortfolio: parseArrayField(workspace.productPortfolio),
+          valuePropositions: parseArrayField(workspace.valuePropositions),
+          targetIndustries: parseArrayField(workspace.targetIndustries),
+          targetCompanySize: parseArrayField(workspace.targetCompanySize),
           idealCustomerProfile: workspace.idealCustomerProfile,
-          competitiveAdvantages: workspace.competitiveAdvantages || [],
+          competitiveAdvantages: parseArrayField(workspace.competitiveAdvantages),
           salesMethodology: workspace.salesMethodology,
         },
         company: {
@@ -230,15 +246,44 @@ export class EnhancedWorkspaceContextService {
   static buildAIContextString(context: WorkspaceContext): string {
     const { workspace, company, data } = context;
 
-    return `=== YOUR BUSINESS (WHO YOU ARE) ===
-Company: ${workspace.name}
-Industry: ${workspace.industry || company.industry}
+    // Build comprehensive seller/company profile
+    const productsServices = workspace.productPortfolio?.join(', ') || workspace.serviceOfferings?.join(', ') || 'Professional Services';
+    const valueProps = workspace.valuePropositions?.join(', ') || 'Quality service delivery';
+    const targetIndustries = workspace.targetIndustries?.join(', ') || 'Various industries';
+    const targetSizes = workspace.targetCompanySize?.join(', ') || 'All sizes';
+    const competitiveAdvantages = workspace.competitiveAdvantages?.join(', ') || 'Professional expertise and service quality';
+    const salesMethodology = workspace.salesMethodology || 'Consultative approach focused on client needs';
+    const idealCustomer = workspace.idealCustomerProfile || 'Businesses and organizations needing professional services';
+
+    // Build comprehensive seller profile - ensure all critical info is included
+    const companyName = workspace.name || 'The Company';
+    const companyIndustry = workspace.industry || company.industry || 'Professional Services';
+    const companyDescription = company.description || workspace.description || `${companyName} is a ${companyIndustry} company`;
+    
+    return `=== SELLER/COMPANY PROFILE (WHO YOU ARE HELPING) ===
+Company Name: ${companyName}
+Industry: ${companyIndustry}
 Business Model: ${workspace.businessModel || 'Professional Services'}
-What You Sell: ${workspace.productPortfolio?.join(', ') || workspace.serviceOfferings?.join(', ') || 'Professional Services'}
-Your Value Props: ${workspace.valuePropositions?.join(', ') || 'Quality service delivery'}
-Your Ideal Customers: ${workspace.idealCustomerProfile || 'Businesses and organizations needing professional services'}
-Your Competitive Edge: ${workspace.competitiveAdvantages?.join(', ') || 'Professional expertise and service quality'}
-Your Sales Approach: ${workspace.salesMethodology || 'Consultative approach focused on client needs'}
+Company Description: ${companyDescription}
+
+WHAT THEY SELL:
+${productsServices}
+
+VALUE PROPOSITIONS:
+${valueProps}
+
+IDEAL CUSTOMER PROFILE:
+${idealCustomer}
+
+TARGET MARKET:
+- Industries: ${targetIndustries}
+- Company Sizes: ${targetSizes}
+
+COMPETITIVE ADVANTAGES:
+${competitiveAdvantages}
+
+SALES METHODOLOGY:
+${salesMethodology}
 
 === COMPANY PROFILE - ${company.name} ===
 Description: ${company.description || 'Professional services company'}
@@ -263,13 +308,16 @@ Funnel Distribution: ${data.funnelDistribution.prospects} Prospects, ${data.funn
 Top Companies: ${data.topCompanies.join(', ')}
 Geographic Coverage: ${data.geographicDistribution.join(', ')}
 
-=== AI INSTRUCTIONS ===
-- You are ${workspace.name}, speaking from their perspective
-- Provide advice specific to YOUR products/services: ${workspace.productPortfolio?.join(', ') || workspace.serviceOfferings?.join(', ')}
-- Reference YOUR value propositions: ${workspace.valuePropositions?.join(', ')}
-- Consider if records match YOUR ideal customer profile: ${workspace.idealCustomerProfile}
-- Leverage YOUR competitive advantages: ${workspace.competitiveAdvantages?.join(', ')}
-- Use YOUR sales methodology: ${workspace.salesMethodology}
-- Focus on YOUR target industries: ${workspace.targetIndustries?.join(', ')}`;
+=== CRITICAL AI INSTRUCTIONS ===
+- You are helping ${workspace.name} sell their products/services: ${productsServices}
+- Frame all advice from ${workspace.name}'s perspective as the seller
+- Reference their value propositions (${valueProps}) when crafting messages
+- Assess if prospects match their ideal customer profile: ${idealCustomer}
+- Leverage their competitive advantages: ${competitiveAdvantages}
+- Use their sales methodology: ${salesMethodology}
+- Focus on their target industries: ${targetIndustries}
+- When recommending outreach, tailor it to what ${workspace.name} is selling
+- When analyzing prospects, consider fit with ${workspace.name}'s target market
+- Always keep in mind: ${workspace.name} sells ${productsServices} to ${idealCustomer}`;
   }
 }
