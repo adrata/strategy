@@ -60,13 +60,15 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
   
   // 🎯 AI CONTEXT FIX: Sync record context whenever selectedRecord changes
+  // 🔧 CRITICAL: This must run immediately when selectedRecord is set to ensure AI has context
   useEffect(() => {
     console.log('🔍 [AI CONTEXT] selectedRecord changed:', {
       hasSelectedRecord: !!selectedRecord,
       recordId: selectedRecord?.id,
       recordName: selectedRecord?.name || selectedRecord?.fullName,
       section,
-      slug
+      slug,
+      timestamp: new Date().toISOString()
     });
     
     if (selectedRecord) {
@@ -148,13 +150,25 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         recordType,
         section,
         hasCompany: !!normalizedRecord.company,
+        companyName: normalizedRecord.companyName || (typeof normalizedRecord.company === 'string' ? normalizedRecord.company : normalizedRecord.company?.name),
         hasTitle: !!normalizedRecord.title,
         hasEmail: !!normalizedRecord.email,
-        fieldCount: Object.keys(normalizedRecord).length
+        fieldCount: Object.keys(normalizedRecord).length,
+        timestamp: new Date().toISOString()
       });
       
+      // 🔧 CRITICAL: Set record context immediately - this is synchronous
       setCurrentRecord(normalizedRecord, recordType);
+      
+      // 🔧 VERIFICATION: Log that context was set
+      console.log('✅ [AI CONTEXT] Record context set successfully:', {
+        recordId: normalizedRecord.id,
+        recordName: normalizedRecord.name || normalizedRecord.fullName,
+        recordType,
+        timestamp: new Date().toISOString()
+      });
     } else {
+      console.log('🧹 [AI CONTEXT] Clearing record context (selectedRecord is null)');
       clearCurrentRecord();
     }
   }, [selectedRecord, section, setCurrentRecord, clearCurrentRecord]);

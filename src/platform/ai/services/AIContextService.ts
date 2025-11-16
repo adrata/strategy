@@ -113,17 +113,13 @@ export class AIContextService {
         select: {
           firstName: true,
           lastName: true,
-          fullName: true,
-          email: true,
-          name: true
+          email: true
         }
       });
       
       if (user) {
         // Use firstName for signature (e.g., "Best regards, Victoria")
         userName = user.firstName || 
-                   user.fullName || 
-                   user.name || 
                    (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.lastName || 'the user');
         userEmail = user.email || '';
       }

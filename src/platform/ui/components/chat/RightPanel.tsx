@@ -186,12 +186,17 @@ export function RightPanel() {
     
     // Log when record context changes
     if (currentRecord) {
-      console.log('✅ [RightPanel] Record context updated:', {
+      console.log('✅ [RightPanel] Record context updated in ref:', {
         recordId: currentRecord.id,
         recordName: currentRecord.name || currentRecord.fullName,
         recordType,
-        recordCompany: typeof currentRecord.company === 'string' ? currentRecord.company : (currentRecord.company?.name || currentRecord.companyName)
+        recordCompany: typeof currentRecord.company === 'string' ? currentRecord.company : (currentRecord.company?.name || currentRecord.companyName),
+        fieldCount: Object.keys(currentRecord).length,
+        hasId: !!currentRecord.id,
+        hasName: !!(currentRecord.name || currentRecord.fullName)
       });
+    } else {
+      console.warn('⚠️ [RightPanel] Record context is NULL - AI will not have record context!');
     }
   }, [currentRecord, recordType, listViewContext]);
 
