@@ -881,7 +881,16 @@ The RECORD CONTEXT above contains ALL the information you need about the current
 - Engagement history and next actions
 - Complete record data
 
-YOU MUST USE THIS CONTEXT. Do NOT say "I don't have enough context" or "I need more information." The context above is complete and sufficient. Provide specific, personalized advice based on this exact record data.`;
+FORBIDDEN RESPONSES - DO NOT USE THESE PHRASES:
+- "I don't have enough context"
+- "I need more information"
+- "I don't have visibility into"
+- "I don't have access to"
+- "I can't see"
+- "I'm not able to see"
+- Any variation suggesting you lack context
+
+YOU MUST USE THIS CONTEXT. The context above is complete and sufficient. Provide specific, personalized advice based on this exact record data. Reference specific details (name, company, role, pain points, motivations, etc.) in your response.`;
         }
       } else {
         // 🔧 FIX: Log warning if record context is missing when we have a currentRecord

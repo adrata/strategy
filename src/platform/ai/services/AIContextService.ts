@@ -101,11 +101,44 @@ export class AIContextService {
    * Build user-specific context including personality preferences
    */
   private static async buildUserContext(userId: string, workspaceId: string): Promise<string> {
+    // Fetch user's name from database
+    let userName = 'the user';
+    let userEmail = '';
+    try {
+      const { PrismaClient } = await import('@prisma/client');
+      const prisma = new PrismaClient();
+      
+      const user = await prisma.users.findUnique({
+        where: { id: userId },
+        select: {
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          name: true
+        }
+      });
+      
+      if (user) {
+        // Use firstName for signature (e.g., "Best regards, Victoria")
+        userName = user.firstName || 
+                   user.fullName || 
+                   user.name || 
+                   (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.lastName || 'the user');
+        userEmail = user.email || '';
+      }
+    } catch (error) {
+      console.warn('⚠️ [AIContextService] Failed to fetch user name:', error);
+    }
+    
     let userContext = `CURRENT USER CONTEXT:
 - User ID: ${userId}
+- User Name: ${userName}${userEmail ? ` (${userEmail})` : ''}
 - Workspace: ${workspaceId}
 - This is a PRODUCTION environment with REAL data
-- User expects context-aware responses about their current view`;
+- User expects context-aware responses about their current view
+
+CRITICAL: When signing messages or referring to the user, use their actual first name (${userName}) in the signature. For example, use "Best regards, ${userName}" instead of "Best regards, [Your Name]". Do not use placeholders like "[Your Name]" or "the user" when signing messages.`;
 
     // Get user personality preferences
     try {
@@ -385,7 +418,20 @@ CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspec
       recordCompany: currentRecord?.company || currentRecord?.companyName,
       recordTitle: currentRecord?.title || currentRecord?.jobTitle,
       recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0,
-      recordKeys: currentRecord ? Object.keys(currentRecord).slice(0, 20) : []
+      recordKeys: currentRecord ? Object.keys(currentRecord).slice(0, 20) : [],
+      // 🔍 REAL DATA VERIFICATION: Log key fields to confirm we have real record data
+      hasRealData: currentRecord ? {
+        hasId: !!currentRecord.id,
+        hasName: !!(currentRecord.name || currentRecord.fullName),
+        hasCompany: !!(currentRecord.company || currentRecord.companyName),
+        hasTitle: !!(currentRecord.title || currentRecord.jobTitle),
+        hasEmail: !!currentRecord.email,
+        hasPhone: !!currentRecord.phone,
+        hasDescription: !!currentRecord.description,
+        hasIndustry: !!currentRecord.industry,
+        hasWebsite: !!currentRecord.website,
+        hasIntelligence: !!(currentRecord.monacoEnrichment || currentRecord.personIntelligence || currentRecord.leadIntelligence)
+      } : null
     });
 
     if (!currentRecord || !recordType) {
@@ -647,7 +693,16 @@ The user is viewing ${recordName} at ${recordCompany} RIGHT NOW. You have ALL th
 - Engagement history and next actions
 - Complete record data (all fields shown above)
 
-DO NOT say "I don't have enough context" or "I need more information." You have complete context. Provide specific, personalized, actionable advice based on this exact record. Reference specific details from the context above (their name, company, role, pain points, etc.) in your response.
+FORBIDDEN RESPONSES - DO NOT USE THESE PHRASES:
+- "I don't have enough context"
+- "I need more information"
+- "I don't have visibility into"
+- "I don't have access to"
+- "I can't see"
+- "I'm not able to see"
+- Any variation suggesting you lack context
+
+YOU HAVE COMPLETE CONTEXT. The record data above contains ALL available information. Use it to provide specific, personalized, actionable advice. Reference specific details from the context above (their name, company, role, pain points, motivations, etc.) in your response.
 
 EXACTLY WHAT THE USER IS SEEING:
 - Record Type: ${recordType || 'Unknown'}

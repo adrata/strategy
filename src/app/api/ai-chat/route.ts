@@ -247,6 +247,30 @@ export async function POST(request: NextRequest) {
     });
     
     // 🔍 VALIDATE CONTEXT: Ensure both seller and buyer contexts are present
+    // 🔍 REAL DATA VERIFICATION: Log detailed record data to confirm we're using real intelligence
+    if (currentRecord) {
+      console.log('✅ [AI CHAT] REAL RECORD DATA VERIFICATION:', {
+        recordId: currentRecord.id,
+        recordName: currentRecord.name || currentRecord.fullName,
+        recordCompany: currentRecord.company || currentRecord.companyName,
+        recordTitle: currentRecord.title || currentRecord.jobTitle,
+        hasEmail: !!currentRecord.email,
+        hasPhone: !!currentRecord.phone,
+        hasDescription: !!currentRecord.description,
+        descriptionLength: currentRecord.description?.length || 0,
+        hasIndustry: !!currentRecord.industry,
+        hasWebsite: !!currentRecord.website,
+        hasIntelligence: !!(currentRecord.monacoEnrichment || currentRecord.personIntelligence || currentRecord.leadIntelligence),
+        hasPersonIntelligence: !!currentRecord.personIntelligence,
+        hasLeadIntelligence: !!currentRecord.leadIntelligence,
+        hasMonacoEnrichment: !!currentRecord.monacoEnrichment,
+        totalFields: Object.keys(currentRecord).length,
+        // Sample of actual data fields
+        sampleFields: Object.keys(currentRecord).slice(0, 30)
+      });
+    } else {
+      console.warn('⚠️ [AI CHAT] NO RECORD DATA - AI will respond with general guidance only');
+    }
     const hasSellerContext = !!(workspaceContext.dataContext && workspaceContext.dataContext.length > 50);
     const hasBuyerContext = !!(workspaceContext.recordContext && workspaceContext.recordContext.length > 50);
     
