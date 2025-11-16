@@ -50,12 +50,25 @@ function determineBestCompanyData(company: any): {
   
   // STEP 1: Determine correct company domain from contact email addresses (MOST RELIABLE)
   let inferredDomain: string | null = null;
+  
+  // Common personal email domains to exclude
+  const personalEmailDomains = [
+    'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
+    'icloud.com', 'mail.com', 'protonmail.com', 'yandex.com', 'zoho.com',
+    'gmx.com', 'live.com', 'msn.com', 'me.com', 'mac.com'
+  ];
+  
   if (people.length > 0) {
     const contactDomains = people
       .map((person: any) => {
         const emailAddr = person.workEmail || person.email;
         if (!emailAddr) return null;
-        return emailAddr.split('@')[1]?.toLowerCase();
+        const domain = emailAddr.split('@')[1]?.toLowerCase();
+        // Filter out personal email domains
+        if (domain && personalEmailDomains.includes(domain)) {
+          return null;
+        }
+        return domain;
       })
       .filter(Boolean) as string[];
     
@@ -68,8 +81,11 @@ function determineBestCompanyData(company: any): {
       const mostCommonDomain = Object.entries(domainCounts)
         .sort((a, b) => b[1] - a[1])[0]?.[0];
       
-      const domainPercentage = (domainCounts[mostCommonDomain] / contactDomains.length) * 100;
-      if (domainPercentage >= 50) {
+      // Use contact domain if we have strong consensus (at least 50% of contacts)
+      // AND we have at least 2 contacts with this domain (to avoid single contact errors)
+      const domainCount = domainCounts[mostCommonDomain];
+      const domainPercentage = (domainCount / contactDomains.length) * 100;
+      if (domainPercentage >= 50 && domainCount >= 2) {
         inferredDomain = mostCommonDomain;
       }
     }
@@ -225,11 +241,26 @@ async function syncBestDataToDatabase(workspaceId?: string, limit?: number, dryR
 
   try {
     console.log('📊 Fetching companies...\n');
+    
+    // Exclude demo workspaces
+    const demoWorkspaceIds = [
+      '01K74N79PCW5W8D9X6EK7KJANM', // demo
+      '01K7464TNANHQXPCZT1FYX205V', // adrata (demo)
+    ];
+    
+    const whereClause: any = {
+      deletedAt: null,
+      workspaceId: {
+        notIn: demoWorkspaceIds
+      }
+    };
+    
+    if (workspaceId) {
+      whereClause.workspaceId = workspaceId;
+    }
+    
     const companies = await prisma.companies.findMany({
-      where: {
-        deletedAt: null,
-        ...(workspaceId ? { workspaceId } : {})
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,
@@ -279,46 +310,116 @@ async function syncBestDataToDatabase(workspaceId?: string, limit?: number, dryR
 
     console.log('🔄 Syncing best data to database...\n');
     let processed = 0;
+    let debugCount = 0;
 
     for (const company of companies) {
       try {
         const bestData = determineBestCompanyData(company);
         const updates: any = {};
         let hasUpdates = false;
+        
+        // Debug: Show first few companies
+        if (debugCount < 3) {
+          console.log(`\n   🔍 Debug ${company.name}:`);
+          console.log(`      Current: industry=${company.industry || 'null'}, domain=${company.domain || 'null'}, website=${company.website || 'null'}`);
+          console.log(`      Best: industry=${bestData.industry || 'null'}, domain=${bestData.domain || 'null'}, website=${bestData.website || 'null'}`);
+          console.log(`      Source: ${bestData.dataSource}`);
+          debugCount++;
+        }
 
-        // Update industry if better data available
+        // Update industry if better data available (from CoreSignal or Core Company)
+        // Always update if missing, or if source is better (CoreSignal/CoreCompany)
         if (bestData.industry && bestData.industry !== company.industry && !company.industryOverride) {
-          updates.industry = bestData.industry;
-          stats.fieldsUpdated.industry++;
-          hasUpdates = true;
+          const isBetterSource = bestData.dataSource === 'coresignal' || bestData.dataSource === 'core_company';
+          // Update if missing OR if source is better (even if current exists)
+          if (!company.industry || isBetterSource) {
+            updates.industry = bestData.industry;
+            stats.fieldsUpdated.industry++;
+            hasUpdates = true;
+            if (debugCount < 3) {
+              console.log(`      → Updating industry: "${company.industry}" → "${bestData.industry}" (source: ${bestData.dataSource})`);
+            }
+          }
         }
 
         // Update employee count if better data available
+        // Always update if missing, unrealistic, or source is better
         if (bestData.employeeCount !== null && bestData.employeeCount !== company.employeeCount) {
-          updates.employeeCount = bestData.employeeCount;
-          stats.fieldsUpdated.employeeCount++;
-          hasUpdates = true;
+          const isBetterSource = bestData.dataSource === 'coresignal' || bestData.dataSource === 'core_company';
+          const currentIsUnrealistic = company.employeeCount !== null && company.employeeCount < 10;
+          
+          if (!company.employeeCount || currentIsUnrealistic || isBetterSource) {
+            updates.employeeCount = bestData.employeeCount;
+            stats.fieldsUpdated.employeeCount++;
+            hasUpdates = true;
+            if (debugCount < 3) {
+              console.log(`      → Updating employeeCount: ${company.employeeCount} → ${bestData.employeeCount} (source: ${bestData.dataSource})`);
+            }
+          }
         }
 
-        // Update website if better data available
-        if (bestData.website && bestData.website !== company.website && !company.websiteOverride) {
-          updates.website = bestData.website;
-          stats.fieldsUpdated.website++;
-          hasUpdates = true;
+        // Update website if better data available (especially from contact domains)
+        // Normalize URLs for comparison
+        const normalizeUrl = (url: string | null) => {
+          if (!url) return null;
+          return url.replace(/^https?:\/\//, '').replace(/^www\./, '').toLowerCase();
+        };
+        
+        const currentWebsiteNormalized = normalizeUrl(company.website);
+        const bestWebsiteNormalized = normalizeUrl(bestData.website);
+        
+        if (bestData.website && bestWebsiteNormalized !== currentWebsiteNormalized && !company.websiteOverride) {
+          const isContactDomainSource = bestData.dataSource === 'contact_domains';
+          
+          if (!company.website || isContactDomainSource) {
+            updates.website = bestData.website;
+            stats.fieldsUpdated.website++;
+            hasUpdates = true;
+          }
         }
 
-        // Update domain if better data available
+        // Update domain if better data available (especially from contact domains)
         if (bestData.domain && bestData.domain !== company.domain) {
-          updates.domain = bestData.domain;
-          stats.fieldsUpdated.domain++;
-          hasUpdates = true;
+          const isContactDomainSource = bestData.dataSource === 'contact_domains';
+          
+          if (!company.domain || isContactDomainSource) {
+            updates.domain = bestData.domain;
+            stats.fieldsUpdated.domain++;
+            hasUpdates = true;
+          }
         }
 
-        // Update description if better data available (but not if we have descriptionEnriched)
-        if (bestData.description && !company.descriptionEnriched && bestData.description !== company.description) {
-          updates.description = bestData.description;
-          stats.fieldsUpdated.description++;
-          hasUpdates = true;
+        // Validate and clear descriptionEnriched if it contains bad data
+        if (company.descriptionEnriched && company.descriptionEnriched.trim() !== '') {
+          const descLower = company.descriptionEnriched.toLowerCase();
+          const industryLower = bestData.industry?.toLowerCase() || '';
+          
+          // Check for Israeli/resort content mismatches
+          const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
+          const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
+          const hasResortContent = descLower.includes('resort') || descLower.includes('luxury');
+          const isUtilitiesOrTransport = industryLower.includes('utilities') || industryLower.includes('transportation') || industryLower.includes('electric');
+          
+          if ((hasIsraeliContent || hasResortContent) && isUtilitiesOrTransport && !industryLower.includes('hospitality') && !industryLower.includes('tourism')) {
+            // Clear bad descriptionEnriched
+            updates.descriptionEnriched = null;
+            stats.fieldsUpdated.descriptionEnriched = (stats.fieldsUpdated.descriptionEnriched || 0) + 1;
+            hasUpdates = true;
+            if (debugCount < 3) {
+              console.log(`      → Clearing bad descriptionEnriched (contains Israeli/resort content)`);
+            }
+          }
+        }
+
+        // Update description if better data available (but only if descriptionEnriched was cleared or doesn't exist)
+        if (bestData.description && (!company.descriptionEnriched || updates.descriptionEnriched === null) && bestData.description !== company.description) {
+          const isBetterSource = bestData.dataSource === 'coresignal' || bestData.dataSource === 'core_company';
+          
+          if (!company.description || isBetterSource) {
+            updates.description = bestData.description;
+            stats.fieldsUpdated.description++;
+            hasUpdates = true;
+          }
         }
 
         if (hasUpdates) {
@@ -346,6 +447,7 @@ async function syncBestDataToDatabase(workspaceId?: string, limit?: number, dryR
             if (updates.website) console.log(`      Website: ${company.website} → ${updates.website} (${bestData.dataSource})`);
             if (updates.domain) console.log(`      Domain: ${company.domain} → ${updates.domain} (${bestData.dataSource})`);
             if (updates.description) console.log(`      Description: Updated (${bestData.dataSource})`);
+            if (updates.descriptionEnriched === null) console.log(`      Description Enriched: Cleared (bad data)`);
           }
         }
       } catch (error) {
@@ -361,6 +463,9 @@ async function syncBestDataToDatabase(workspaceId?: string, limit?: number, dryR
     console.log(`      Website: ${stats.fieldsUpdated.website}`);
     console.log(`      Domain: ${stats.fieldsUpdated.domain}`);
     console.log(`      Description: ${stats.fieldsUpdated.description}`);
+    if (stats.fieldsUpdated.descriptionEnriched) {
+      console.log(`      Description Enriched: ${stats.fieldsUpdated.descriptionEnriched} cleared`);
+    }
     console.log(`   Errors: ${stats.errors}\n`);
 
   } catch (error) {

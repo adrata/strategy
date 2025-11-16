@@ -91,37 +91,27 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // 🆕 PERFORMANCE FIX: Simplified workspace ID resolution without JWT verification
-  const getCurrentWorkspaceId = useCallback(() => {
-    // 1. Use acquisitionData as primary source (most reliable)
-    if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
-      if (DEBUG_PIPELINE) console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
-      return acquisitionData.auth.authUser.activeWorkspaceId;
-    }
-    
-    // 2. Fallback to user activeWorkspaceId
-    if (user?.activeWorkspaceId) {
-      if (DEBUG_PIPELINE) console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from user: ${user.activeWorkspaceId}`);
-      return user.activeWorkspaceId;
-    }
-    
-    // 3. Last resort: first workspace
-    if (user?.workspaces?.[0]?.id) {
-      if (DEBUG_PIPELINE) console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
-      return user.workspaces[0].id;
-    }
-    
-    return null;
-  }, [acquisitionData?.auth?.authUser?.activeWorkspaceId, user?.activeWorkspaceId, user?.workspaces]);
+  // 🔧 FIX: Use primitive values in dependencies to prevent infinite loops when user object reference changes
+  // Extract primitive values to avoid dependency on object references that change on every render
+  const acquisitionWorkspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId;
+  const userActiveWorkspaceId = user?.activeWorkspaceId;
+  const firstWorkspaceId = user?.workspaces?.[0]?.id;
+  const userId = user?.id;
+  
+  // Compute workspace ID with priority: acquisitionData > user.activeWorkspaceId > first workspace
+  const computedWorkspaceId = acquisitionWorkspaceId || userActiveWorkspaceId || firstWorkspaceId || null;
 
   // 🆕 PERFORMANCE FIX: Update workspace ID when it changes (synchronous)
+  // 🔧 FIX: Use primitive values directly to prevent infinite loops when user object reference changes
+  
   useEffect(() => {
-    const newWorkspaceId = getCurrentWorkspaceId();
-    if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
-      if (DEBUG_PIPELINE) console.log(`🔄 [PIPELINE DETAIL] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
-      setCurrentWorkspaceId(newWorkspaceId);
-      setCurrentUserId(user?.id || null);
+    // Only update if the workspace ID actually changed (not just callback recreation)
+    if (computedWorkspaceId && computedWorkspaceId !== currentWorkspaceId) {
+      if (DEBUG_PIPELINE) console.log(`🔄 [PIPELINE DETAIL] Workspace ID changed: ${currentWorkspaceId} -> ${computedWorkspaceId}`);
+      setCurrentWorkspaceId(computedWorkspaceId);
+      setCurrentUserId(userId || null);
     }
-  }, [getCurrentWorkspaceId, currentWorkspaceId, user?.id]);
+  }, [computedWorkspaceId, currentWorkspaceId, userId]);
 
   const workspaceId = currentWorkspaceId;
   // Use dynamic workspace context instead of hardcoded mappings
@@ -129,7 +119,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   
   // Use context workspace ID with fallback
   const finalWorkspaceId = contextWorkspaceId || workspaceId;
-  const userId = contextUserId || user?.id;
+  const finalUserId = contextUserId || userId;
   
   // 🚀 PERFORMANCE FIX: Load only necessary section data for navigation
   // Only load data for the current section to prevent excessive hook calls
@@ -853,8 +843,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       speedrunDataLength: speedrunData?.length || 0,
       speedrunLoading,
       section,
-      workspaceId,
-      userId,
+      workspaceId: finalWorkspaceId,
+      userId: finalUserId,
       firstRecord: speedrunData?.[0] ? { id: speedrunData[0].id, name: speedrunData[0].name } : 'no records'
     });
   }

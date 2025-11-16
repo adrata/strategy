@@ -60,11 +60,17 @@ describe('Buyer Groups Tab Integration Tests', () => {
   const { authFetch: mockAuthFetch } = require('@/platform/api-fetch');
   const { safeGetItem: mockSafeGetItem, safeSetItem: mockSafeSetItem } = require('@/platform/utils/storage/safeLocalStorage');
 
+  // Mock global fetch for company name fetching
+  const mockFetch = jest.fn();
+  global.fetch = mockFetch as jest.MockedFunction<typeof fetch>;
+
   beforeEach(() => {
     jest.clearAllMocks();
     localStorageMock.clear();
     mockSafeGetItem.mockReturnValue(null);
     mockSafeSetItem.mockImplementation(() => {});
+    // Reset fetch mock
+    mockFetch.mockReset();
   });
 
   describe('API Integration', () => {
@@ -412,6 +418,114 @@ describe('Buyer Groups Tab Integration Tests', () => {
         expect(mockAuthFetch).toHaveBeenCalledWith('/api/data/buyer-groups/fast?companyId=company-1');
         expect(screen.getByText('John Doe')).toBeInTheDocument();
       });
+    });
+
+    it('should wait for companyId and fetch when it becomes available', async () => {
+      // Simulate initial load without companyId (common on first load)
+      const prospectWithoutCompany = {
+        id: 'prospect-1',
+        fullName: 'Jane Smith',
+        // companyId is missing initially
+        company: null,
+        workspaceId: TEST_USER.workspaceId
+      };
+
+      // Record with companyId (after API update)
+      const prospectWithCompany = {
+        id: 'prospect-1',
+        fullName: 'Jane Smith',
+        companyId: 'company-2',
+        company: {
+          id: 'company-2',
+          name: 'Acme Corp'
+        },
+        workspaceId: TEST_USER.workspaceId
+      };
+
+      const mockBuyerGroup = [
+        createTestBuyerGroupMember({ 
+          id: 'person-2', 
+          name: 'Bob Johnson', 
+          company: 'Acme Corp',
+          companyId: 'company-2'
+        })
+      ];
+
+      mockAuthFetch.mockResolvedValue({
+        success: true,
+        data: mockBuyerGroup,
+      });
+
+      // Render initially without companyId
+      const { rerender } = render(
+        <UniversalBuyerGroupsTab 
+          {...defaultProps} 
+          record={prospectWithoutCompany} 
+          recordType="prospects" 
+        />
+      );
+
+      // Should show loading state, no API call yet
+      await waitFor(() => {
+        expect(mockAuthFetch).not.toHaveBeenCalled();
+      });
+
+      // Update record with companyId (simulating API response with company data)
+      rerender(
+        <UniversalBuyerGroupsTab 
+          {...defaultProps} 
+          record={prospectWithCompany} 
+          recordType="prospects" 
+        />
+      );
+
+      // Now should fetch buyer groups with companyId
+      await waitFor(() => {
+        expect(mockAuthFetch).toHaveBeenCalledWith('/api/data/buyer-groups/fast?companyId=company-2');
+        expect(screen.getByText('Bob Johnson')).toBeInTheDocument();
+      });
+    });
+
+    it('should handle companyId without company relation object', async () => {
+      // Simulate record with companyId field but null company relation (common scenario)
+      // Provide companyName directly to avoid async fetch complexity in test
+      const prospectWithCompanyIdOnly = {
+        id: 'prospect-2',
+        fullName: 'Alice Brown',
+        companyId: 'company-3',
+        companyName: 'Tech Inc', // Provide companyName directly to avoid fetch
+        // company relation is null but companyId exists
+        company: null,
+        workspaceId: TEST_USER.workspaceId
+      };
+
+      const mockBuyerGroup = [
+        createTestBuyerGroupMember({ 
+          id: 'person-3', 
+          name: 'Charlie Wilson', 
+          company: 'Tech Inc',
+          companyId: 'company-3'
+        })
+      ];
+
+      mockAuthFetch.mockResolvedValue({
+        success: true,
+        data: mockBuyerGroup,
+      });
+
+      render(
+        <UniversalBuyerGroupsTab 
+          {...defaultProps} 
+          record={prospectWithCompanyIdOnly} 
+          recordType="prospects" 
+        />
+      );
+
+      // Should use companyId even though company relation is null
+      await waitFor(() => {
+        expect(mockAuthFetch).toHaveBeenCalledWith('/api/data/buyer-groups/fast?companyId=company-3');
+        expect(screen.getByText('Charlie Wilson')).toBeInTheDocument();
+      }, { timeout: 3000 });
     });
   });
 

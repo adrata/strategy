@@ -393,6 +393,14 @@ function determineBestCompanyData(company: any): {
   
   // STEP 1: Determine correct company domain from contact email addresses (MOST RELIABLE)
   let inferredDomain: string | null = null;
+  
+  // Common personal email domains to exclude
+  const personalEmailDomains = [
+    'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
+    'icloud.com', 'mail.com', 'protonmail.com', 'yandex.com', 'zoho.com',
+    'gmx.com', 'live.com', 'msn.com', 'me.com', 'mac.com'
+  ];
+  
   if (people.length > 0) {
     // Collect all email addresses (both email and workEmail)
     const contactDomains = people
@@ -400,7 +408,12 @@ function determineBestCompanyData(company: any): {
         // Prefer workEmail over email
         const emailAddr = person.workEmail || person.email;
         if (!emailAddr) return null;
-        return emailAddr.split('@')[1]?.toLowerCase();
+        const domain = emailAddr.split('@')[1]?.toLowerCase();
+        // Filter out personal email domains
+        if (domain && personalEmailDomains.includes(domain)) {
+          return null;
+        }
+        return domain;
       })
       .filter(Boolean) as string[];
     
@@ -415,8 +428,10 @@ function determineBestCompanyData(company: any): {
         .sort((a, b) => b[1] - a[1])[0]?.[0];
       
       // Use contact domain if we have strong consensus (at least 50% of contacts)
-      const domainPercentage = (domainCounts[mostCommonDomain] / contactDomains.length) * 100;
-      if (domainPercentage >= 50) {
+      // AND we have at least 2 contacts with this domain (to avoid single contact errors)
+      const domainCount = domainCounts[mostCommonDomain];
+      const domainPercentage = (domainCount / contactDomains.length) * 100;
+      if (domainPercentage >= 50 && domainCount >= 2) {
         inferredDomain = mostCommonDomain;
       }
     }
@@ -506,17 +521,59 @@ function determineBestCompanyData(company: any): {
   // STEP 5: Determine description (Priority: descriptionEnriched > CoreSignal > Core Company > Company record, filter out mismatches)
   let description: string | null = null;
   
-  // Priority 1: Enriched description field (already processed)
+  // Priority 1: Enriched description field (validate before using)
   if (company.descriptionEnriched && company.descriptionEnriched.trim() !== '') {
-    description = company.descriptionEnriched.trim();
+    const descLower = company.descriptionEnriched.toLowerCase();
+    const industryLower = industry?.toLowerCase() || '';
+    
+    // Filter out obvious mismatches (e.g., Israeli resort description with Utilities industry)
+    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
+    const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
+    
+    // Also check for other mismatches: transportation/utilities industry with resort content
+    const hasResortContent = descLower.includes('resort') || descLower.includes('luxury');
+    const isUtilitiesOrTransport = industryLower.includes('utilities') || industryLower.includes('transportation') || industryLower.includes('electric');
+    
+    if ((hasIsraeliContent || hasResortContent) && isUtilitiesOrTransport && !industryLower.includes('hospitality') && !industryLower.includes('tourism')) {
+      // Description doesn't match industry - skip it and use next source
+      console.log(`⚠️ [INTELLIGENCE] Skipping descriptionEnriched due to industry mismatch for ${company.name}`);
+    } else {
+      description = company.descriptionEnriched.trim();
+    }
   }
-  // Priority 2: CoreSignal enriched description
+  // Priority 2: CoreSignal enriched description (validate before using)
   else if (coresignalData.description_enriched && coresignalData.description_enriched.trim() !== '') {
-    description = coresignalData.description_enriched.trim();
+    const descLower = coresignalData.description_enriched.toLowerCase();
+    const industryLower = industry?.toLowerCase() || '';
+    
+    // Filter out obvious mismatches
+    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
+    const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
+    const hasResortContent = descLower.includes('resort') || descLower.includes('luxury');
+    const isUtilitiesOrTransport = industryLower.includes('utilities') || industryLower.includes('transportation') || industryLower.includes('electric');
+    
+    if ((hasIsraeliContent || hasResortContent) && isUtilitiesOrTransport && !industryLower.includes('hospitality') && !industryLower.includes('tourism')) {
+      console.log(`⚠️ [INTELLIGENCE] Skipping CoreSignal description_enriched due to industry mismatch for ${company.name}`);
+    } else {
+      description = coresignalData.description_enriched.trim();
+    }
   }
-  // Priority 3: CoreSignal description
+  // Priority 3: CoreSignal description (validate before using)
   else if (coresignalData.description && coresignalData.description.trim() !== '') {
-    description = coresignalData.description.trim();
+    const descLower = coresignalData.description.toLowerCase();
+    const industryLower = industry?.toLowerCase() || '';
+    
+    // Filter out obvious mismatches
+    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
+    const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
+    const hasResortContent = descLower.includes('resort') || descLower.includes('luxury');
+    const isUtilitiesOrTransport = industryLower.includes('utilities') || industryLower.includes('transportation') || industryLower.includes('electric');
+    
+    if ((hasIsraeliContent || hasResortContent) && isUtilitiesOrTransport && !industryLower.includes('hospitality') && !industryLower.includes('tourism')) {
+      console.log(`⚠️ [INTELLIGENCE] Skipping CoreSignal description due to industry mismatch for ${company.name}`);
+    } else {
+      description = coresignalData.description.trim();
+    }
   }
   // Priority 4: Core company description
   else if (coreCompany?.description && coreCompany.description.trim() !== '') {
@@ -584,8 +641,8 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
     // Generate business units based on industry
     const businessUnits = generateBusinessUnits(industry);
     
-    // Generate strategic intelligence
-    const strategicIntelligence = generateStrategicIntelligence(company, industry, size);
+    // Generate strategic intelligence (use best available employee count)
+    const strategicIntelligence = generateStrategicIntelligence(company, industry, size, employeeCount);
     
     // Generate Adrata strategy
     const adrataStrategy = generateAdrataStrategy(company, industry, strategicWants, criticalNeeds);
@@ -791,8 +848,7 @@ function generateBusinessUnits(industry: string | null): Array<{name: string; fu
 /**
  * Generate strategic intelligence
  */
-function generateStrategicIntelligence(company: any, industry: string | null, size: string): string {
-  const employeeCount = company.employeeCount || 100;
+function generateStrategicIntelligence(company: any, industry: string | null, size: string, employeeCount: number = 100): string {
   const revenue = company.revenue || 0;
   
   if (industry) {

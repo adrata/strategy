@@ -7,6 +7,7 @@ import { getPhoneDisplayValue } from '@/platform/utils/phone-validator';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 import { authFetch } from '@/platform/api-fetch';
 import { ChurnRiskBadge } from '@/frontend/components/pipeline/ChurnRiskBadge';
+import { getRoleLabel, getRoleColorClasses } from '@/platform/constants/buyer-group-roles';
 
 interface PersonOverviewTabProps {
   recordType: string;
@@ -686,7 +687,9 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               {personData.buyerGroupRole && (
                 <div className="flex justify-between">
                   <span className="text-sm text-muted">Buyer Group Role:</span>
-                  <span className="text-sm font-medium text-foreground capitalize">{personData.buyerGroupRole}</span>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRoleColorClasses(personData.buyerGroupRole)}`}>
+                    {getRoleLabel(personData.buyerGroupRole)}
+                  </span>
                 </div>
               )}
               <div className="flex justify-between">

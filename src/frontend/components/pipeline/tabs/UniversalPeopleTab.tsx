@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { safeSetItem, safeGetItem } from '@/platform/utils/storage/safeLocalStorage';
 import { calculateRiskAssessment, getRiskPillStyles, CareerData, RiskAssessment } from '@/platform/utils/riskAssessment';
 import { generateSlug } from '@/platform/utils/url-utils';
+import { getRoleLabel, getRoleColorClasses } from '@/platform/constants/buyer-group-roles';
 
 interface UniversalPeopleTabProps {
   record: any;
@@ -478,7 +479,15 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
                            (person.firstName === record.firstName && person.lastName === record.lastName);
           
           const jobTitle = person.title || person.jobTitle || '';
-          const role = person.buyerGroupRole || getPersonRole(jobTitle);
+          // Normalize buyer group role from database (lowercase) to display label (capitalized)
+          const rawRole = person.buyerGroupRole || getPersonRole(jobTitle);
+          const role = getRoleLabel(rawRole);
+          
+          // Calculate influence based on normalized role
+          const normalizedRoleForInfluence = role.toLowerCase();
+          const influence = normalizedRoleForInfluence === 'decision maker' || normalizedRoleForInfluence === 'champion' 
+            ? 'high' 
+            : 'medium';
           
           return {
             id: person.id,
@@ -487,7 +496,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
             email: person.email || person.workEmail || '',
             phone: person.phone || person.mobilePhone || '',
             role: role,
-            influence: role === 'Decision Maker' ? 'high' : role === 'Champion' ? 'high' : 'medium',
+            influence: influence,
             isPrimary: isPrimary,
             company: companyName,
             status: person.status || null, // Include status (LEAD, PROSPECT, etc.) for display
@@ -686,13 +695,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
                     <span className={`px-2 py-1 text-xs rounded-full ${getRiskPillStyles(riskAssessment.level)}`}>
                       {riskAssessment.level}
                     </span>
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      person.role === 'Decision Maker' ? 'bg-error/10 text-error border border-error' :
-                      person.role === 'Champion' ? 'bg-success/10 text-success border border-success' :
-                      person.role === 'Blocker' ? 'bg-warning/10 text-warning border border-warning' :
-                      person.role === 'Stakeholder' ? 'bg-primary/10 text-primary border border-primary' :
-                      'bg-hover text-foreground border border-border'
-                    }`}>
+                    <span className={`px-2 py-1 text-xs rounded-full ${getRoleColorClasses(person.role)}`}>
                       {person.role}
                     </span>
                     <span className={`px-2 py-1 text-xs rounded-full ${

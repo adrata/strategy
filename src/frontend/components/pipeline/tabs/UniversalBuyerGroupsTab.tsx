@@ -66,14 +66,19 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       return id;
     } else {
       // For person records (people, leads, prospects that are NOT company leads), get company from companyId field
+      // 🔧 FIX: Prioritize record.companyId (direct field) over company relation to handle cases where
+      // company relation is null but companyId field exists (common on initial load)
       const id = record.companyId || 
-                 record?.company?.id || 
-                 (typeof record?.company === 'object' && record?.company?.id) ||
+                 (record?.company && typeof record.company === 'object' && record.company !== null ? record.company.id : null) ||
+                 (typeof record?.company === 'string' ? record.company : null) ||
                  '';
       console.log('🔍 [BUYER GROUPS TAB] Extracted companyId for person record:', id, {
         recordType,
         hasCompanyId: !!record.companyId,
+        companyIdValue: record.companyId,
         hasCompanyObject: !!record?.company,
+        companyObjectType: typeof record?.company,
+        companyObjectId: record?.company && typeof record.company === 'object' ? record.company.id : null,
         isCompanyLead: record?.isCompanyLead
       });
       return id;
@@ -240,17 +245,28 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     }
     
     // 🚨 CRITICAL FIX: Check if companyId is available - if not, show loading and wait
+    // 🔧 FIX: This check ensures we wait for companyId to become available when record prop updates
+    // The effect will re-run when companyId changes from empty to a value (due to dependency on line 943)
     if (!companyId || companyId.trim() === '') {
       console.log('⚠️ [BUYER GROUPS] No valid companyId found, waiting for company data to load:', {
         recordType,
         recordId: record?.id,
-        recordName: record?.name,
-        hasCompanyId: !!companyId
+        recordName: record?.name || record?.fullName,
+        hasCompanyId: !!record?.companyId,
+        companyIdValue: record?.companyId,
+        hasCompanyRelation: !!record?.company,
+        companyRelationType: typeof record?.company,
+        companyRelationId: record?.company && typeof record.company === 'object' ? record.company.id : null
       });
       // Show loading while waiting for companyId to become available
+      // When companyId becomes available, this effect will re-run and proceed with fetch
       setBuyerGroups([]);
       setLoading(true); // 🚨 CRITICAL FIX: Show loading while waiting for companyId
       setIsFetching(false);
+      // 🔧 FIX: Clear previous refs to ensure fresh fetch when companyId becomes available
+      previousRecordIdRef.current = record?.id || null;
+      previousCompanyIdRef.current = null;
+      previousCompanyNameRef.current = null;
       return;
     }
     

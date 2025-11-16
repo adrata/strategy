@@ -18,9 +18,13 @@ export interface ListViewContext {
     priorityFilter?: string;
     sortField?: string;
     sortDirection?: string;
+    page?: number; // Current page number for pagination
+    pageSize?: number; // Records per page
   };
   totalCount: number;
   lastUpdated: Date;
+  currentPage?: number; // Explicit current page (if different from appliedFilters.page)
+  totalPages?: number; // Total number of pages
 }
 
 export interface AIContextConfig {
@@ -70,8 +74,8 @@ export class AIContextService {
     // Build data context (fetch real data)
     const dataContext = await this.buildDataContext(appType, workspaceId, userId);
     
-    // Build record context
-    const recordContext = this.buildRecordContext(currentRecord, recordType);
+    // Build record context (now async to fetch company intelligence)
+    const recordContext = await this.buildRecordContext(currentRecord, recordType, workspaceId);
     
     // Build list view context
     const listViewContextString = this.buildListViewContext(listViewContext);
@@ -283,8 +287,13 @@ CRUD OPERATIONS CAPABILITY:
 
   /**
    * Build record-specific context with structured extraction and strategic fit analysis
+   * Now async to fetch company intelligence for person records
    */
-  private static buildRecordContext(currentRecord: any, recordType: string | null): string {
+  private static async buildRecordContext(
+    currentRecord: any, 
+    recordType: string | null,
+    workspaceId: string
+  ): Promise<string> {
     // 🔍 ENHANCED LOGGING: Track what record context is being built
     console.log('🎯 [AIContextService] Building record context:', {
       hasCurrentRecord: !!currentRecord,
@@ -352,19 +361,89 @@ Strategic Fit Analysis:
 
 CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses should be specific to this company and its business context.`;
     } else {
-      // Enhanced person record context
-      const seniority = currentRecord.seniority || this.inferSeniority(recordTitle);
-      const department = currentRecord.department || this.inferDepartment(recordTitle);
-      const decisionPower = currentRecord.decisionPower || this.inferDecisionPower(recordTitle, seniority);
-      const buyerGroupRole = currentRecord.buyerGroupRole || this.inferBuyerGroupRole(recordTitle, department);
+      // Enhanced person/lead record context
+      // 🔍 GET PERSON/LEAD INTELLIGENCE FROM DATABASE: Read stored intelligence from database
+      let personIntelligence = null;
+      let leadIntelligence = null;
+      
+      // Determine record type and fetch appropriate intelligence
+      const isPersonType = recordType === 'people' || recordType === 'person' || recordType === 'speedrun-prospect' || recordType?.includes('person');
+      const isLeadType = recordType === 'leads' || recordType === 'lead' || recordType?.includes('lead');
+      const isProspectType = recordType === 'prospects' || recordType === 'prospect' || recordType?.includes('prospect');
+      const isOpportunityType = recordType === 'opportunities' || recordType === 'opportunity' || recordType?.includes('opportunity');
+      
+      if (currentRecord.id && isPersonType) {
+        console.log('🔍 [AIContextService] Reading person intelligence from database for:', currentRecord.id);
+        try {
+          personIntelligence = await this.getPersonIntelligenceFromDatabase(currentRecord.id, workspaceId);
+          if (personIntelligence) {
+            console.log('✅ [AIContextService] Successfully retrieved person intelligence from database');
+          }
+        } catch (error) {
+          console.warn('⚠️ [AIContextService] Failed to read person intelligence from database:', error);
+        }
+      } else if (currentRecord.id && (isLeadType || isProspectType)) {
+        // Prospects are often stored as leads, so use lead intelligence
+        console.log('🔍 [AIContextService] Reading lead/prospect intelligence from database for:', currentRecord.id);
+        try {
+          leadIntelligence = await this.getLeadIntelligenceFromDatabase(currentRecord.id, workspaceId);
+          if (leadIntelligence) {
+            console.log('✅ [AIContextService] Successfully retrieved lead/prospect intelligence from database');
+          }
+        } catch (error) {
+          console.warn('⚠️ [AIContextService] Failed to read lead/prospect intelligence from database:', error);
+        }
+      } else if (currentRecord.id && isOpportunityType) {
+        console.log('🔍 [AIContextService] Reading opportunity intelligence from database for:', currentRecord.id);
+        try {
+          leadIntelligence = await this.getOpportunityIntelligenceFromDatabase(currentRecord.id, workspaceId);
+          if (leadIntelligence) {
+            console.log('✅ [AIContextService] Successfully retrieved opportunity intelligence from database');
+          }
+        } catch (error) {
+          console.warn('⚠️ [AIContextService] Failed to read opportunity intelligence from database:', error);
+        }
+      }
+      
+      // Use stored intelligence if available, otherwise infer from record data
+      const seniority = personIntelligence?.seniority || currentRecord.seniority || this.inferSeniority(recordTitle);
+      const department = personIntelligence?.department || currentRecord.department || this.inferDepartment(recordTitle);
+      const decisionPower = personIntelligence?.decisionPower || currentRecord.decisionPower || this.inferDecisionPower(recordTitle, seniority);
+      const buyerGroupRole = personIntelligence?.buyerGroupRole || leadIntelligence?.buyerGroupRole || currentRecord.buyerGroupRole || this.inferBuyerGroupRole(recordTitle, department);
       
       // Extract Monaco enrichment data for comprehensive context
       const monacoData = currentRecord.monacoEnrichment || {};
       const buyerGroupAnalysis = monacoData.buyerGroupAnalysis || {};
-      const painPoints = monacoData.painPoints || buyerGroupAnalysis.painPoints || [];
-      const motivations = monacoData.motivations || buyerGroupAnalysis.motivations || [];
-      const decisionFactors = monacoData.decisionFactors || buyerGroupAnalysis.decisionFactors || [];
-      const companyIntelligence = monacoData.companyIntelligence || {};
+      
+      // Use stored intelligence pain points/motivations if available, otherwise use Monaco data
+      const painPoints = personIntelligence?.painPoints || leadIntelligence?.painPoints || monacoData.painPoints || buyerGroupAnalysis.painPoints || [];
+      const motivations = personIntelligence?.motivations || leadIntelligence?.motivations || monacoData.motivations || buyerGroupAnalysis.motivations || [];
+      const decisionFactors = personIntelligence?.decisionFactors || leadIntelligence?.decisionFactors || monacoData.decisionFactors || buyerGroupAnalysis.decisionFactors || [];
+      let companyIntelligence = monacoData.companyIntelligence || {};
+      
+      // 🔍 GET COMPANY INTELLIGENCE FROM DATABASE: Read stored intelligence from database
+      if ((!companyIntelligence.industry && !companyIntelligence.description) && recordCompany && recordCompany !== 'Unknown Company') {
+        console.log('🔍 [AIContextService] Reading company intelligence from database for:', recordCompany);
+        try {
+          const storedIntelligence = await this.getCompanyIntelligenceFromDatabase(recordCompany, workspaceId);
+          if (storedIntelligence) {
+            companyIntelligence = storedIntelligence;
+            console.log('✅ [AIContextService] Successfully retrieved company intelligence from database:', {
+              hasIndustry: !!companyIntelligence.industry,
+              hasDescription: !!companyIntelligence.description,
+              hasEmployeeCount: !!companyIntelligence.employeeCount,
+              hasStrategicIntelligence: !!companyIntelligence.strategicIntelligence
+            });
+          } else {
+            console.log('⚠️ [AIContextService] No stored intelligence found for company:', recordCompany);
+            // Note: Intelligence should be generated and stored via the intelligence API endpoint
+            // We don't generate it on-the-fly here to keep the database fresh
+          }
+        } catch (error) {
+          console.warn('⚠️ [AIContextService] Failed to read company intelligence from database:', error);
+          // Continue with existing context - don't fail the request
+        }
+      }
       
       // Build comprehensive context string
       context = `=== CURRENT RECORD (WHO THEY ARE) ===
@@ -394,6 +473,10 @@ Company Context:
 - Location: ${currentRecord.city || ''} ${currentRecord.state || ''} ${currentRecord.country || ''}
 ${currentRecord.company?.website || companyIntelligence.website ? `- Website: ${currentRecord.company?.website || companyIntelligence.website}` : ''}
 ${currentRecord.company?.description || companyIntelligence.description ? `- Description: ${currentRecord.company?.description || companyIntelligence.description}` : ''}
+${companyIntelligence.strategicIntelligence ? `- Strategic Intelligence: ${companyIntelligence.strategicIntelligence}` : ''}
+${companyIntelligence.strategicWants && companyIntelligence.strategicWants.length > 0 ? `- Strategic Wants: ${companyIntelligence.strategicWants.join(', ')}` : ''}
+${companyIntelligence.criticalNeeds && companyIntelligence.criticalNeeds.length > 0 ? `- Critical Needs: ${companyIntelligence.criticalNeeds.join(', ')}` : ''}
+${companyIntelligence.adrataStrategy ? `- Adrata Strategy: ${companyIntelligence.adrataStrategy}` : ''}
 
 Role Analysis:
 - This person is a ${seniority} ${recordTitle} in ${department}
@@ -413,7 +496,37 @@ ${decisionFactors.length > 0 ? `Decision Factors:\n${decisionFactors.map((d: str
 ${buyerGroupAnalysis.role ? `Buyer Group Role: ${buyerGroupAnalysis.role}` : ''}
 ${buyerGroupAnalysis.influenceLevel ? `Influence Level: ${buyerGroupAnalysis.influenceLevel}` : ''}
 
-CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Your responses should be specific to this person and company. Use all available context including bio, interests, pain points, and company details to craft personalized recommendations.`;
+${personIntelligence ? `PERSON INTELLIGENCE (from database):
+- Influence Level: ${personIntelligence.influenceLevel || 'Not specified'}
+- Engagement Level: ${personIntelligence.engagementLevel || 'Not specified'}
+- Intelligence Confidence: ${personIntelligence.confidence ? `${personIntelligence.confidence}%` : 'Not specified'}
+${personIntelligence.reasoning ? `- Intelligence Reasoning: ${personIntelligence.reasoning}` : ''}
+${personIntelligence.intelligenceGeneratedAt ? `- Generated: ${new Date(personIntelligence.intelligenceGeneratedAt).toLocaleDateString()}` : ''}` : ''}
+
+${leadIntelligence ? `${isProspectType ? 'PROSPECT' : isOpportunityType ? 'OPPORTUNITY' : 'LEAD'} INTELLIGENCE (from database):
+- Influence Level: ${leadIntelligence.influenceLevel || 'Not specified'}
+- Engagement Strategy: ${leadIntelligence.engagementStrategy || 'Not specified'}
+- Seniority: ${leadIntelligence.seniority || 'Not specified'}
+- Buyer Group Member: ${leadIntelligence.isBuyerGroupMember ? 'Yes' : 'No'}
+${isOpportunityType && currentRecord.stage ? `- Opportunity Stage: ${currentRecord.stage}` : ''}
+${isOpportunityType && currentRecord.value ? `- Opportunity Value: $${currentRecord.value.toLocaleString()}` : ''}
+${isOpportunityType && currentRecord.closeDate ? `- Close Date: ${new Date(currentRecord.closeDate).toLocaleDateString()}` : ''}` : ''}
+
+CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Your responses should be specific to this person and company. Use all available context including bio, interests, pain points, company details, and stored intelligence to craft personalized recommendations.
+
+EXACTLY WHAT THE USER IS SEEING:
+- Record Type: ${recordType || 'Unknown'}
+- Record Name: ${recordName}
+- Company: ${recordCompany}
+- Title: ${recordTitle || 'Not specified'}
+- Status: ${currentRecord.status || 'Not specified'}
+- Priority: ${currentRecord.priority || 'Not specified'}
+${currentRecord.email ? `- Email: ${currentRecord.email}` : ''}
+${currentRecord.phone ? `- Phone: ${currentRecord.phone}` : ''}
+${isOpportunityType ? `- Stage: ${currentRecord.stage || 'Not specified'}` : ''}
+${isOpportunityType ? `- Value: ${currentRecord.value ? `$${currentRecord.value.toLocaleString()}` : 'Not specified'}` : ''}
+${isOpportunityType ? `- Close Date: ${currentRecord.closeDate ? new Date(currentRecord.closeDate).toLocaleDateString() : 'Not specified'}` : ''}
+- This is the exact record the user has open and is viewing right now.`;
     }
 
     // Add enrichment context if available (now with detailed extraction)
@@ -532,21 +645,30 @@ CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Yo
 
   /**
    * Build list view context for when user is viewing a list of records
+   * Enhanced to handle pagination and current page information
    */
   private static buildListViewContext(listViewContext: ListViewContext | undefined): string {
     if (!listViewContext) {
       return `LIST VIEW CONTEXT: No list view context available`;
     }
 
-    const { visibleRecords, activeSection, appliedFilters, totalCount, lastUpdated } = listViewContext;
+    const { visibleRecords, activeSection, appliedFilters, totalCount, lastUpdated, currentPage: explicitCurrentPage, totalPages: explicitTotalPages } = listViewContext;
     
-    // Limit to top 10 records for context to avoid overwhelming the AI
-    const topRecords = visibleRecords.slice(0, 10);
+    // Calculate pagination info if available
+    const currentPage = explicitCurrentPage || appliedFilters.page || 1;
+    const pageSize = appliedFilters.pageSize || visibleRecords.length || 50;
+    const totalPages = explicitTotalPages || Math.ceil(totalCount / pageSize);
+    const startRecord = (currentPage - 1) * pageSize + 1;
+    const endRecord = Math.min(startRecord + visibleRecords.length - 1, totalCount);
+    
+    // Limit to top 15 records for context (increased from 10 for better context)
+    const topRecords = visibleRecords.slice(0, 15);
     
     let context = `LIST VIEW CONTEXT:
 - Active Section: ${activeSection}
 - Total Records: ${totalCount}
-- Visible Records: ${visibleRecords.length}
+- Visible Records: ${visibleRecords.length} (showing records ${startRecord}-${endRecord} of ${totalCount})
+${totalPages > 1 ? `- Current Page: ${currentPage} of ${totalPages}` : ''}
 - Last Updated: ${lastUpdated.toLocaleString()}
 
 APPLIED FILTERS:
@@ -555,8 +677,9 @@ APPLIED FILTERS:
 - Status: ${appliedFilters.statusFilter || 'All'}
 - Priority: ${appliedFilters.priorityFilter || 'All'}
 - Sort: ${appliedFilters.sortField || 'Default'} (${appliedFilters.sortDirection || 'asc'})
+${(appliedFilters as any).page ? `- Page: ${(appliedFilters as any).page}` : ''}
 
-TOP VISIBLE RECORDS:`;
+CURRENT PAGE VISIBLE RECORDS:`;
 
     topRecords.forEach((record, index) => {
       const name = record.fullName || record.name || record.firstName || 'Unknown';
@@ -564,18 +687,27 @@ TOP VISIBLE RECORDS:`;
       const title = record.title || record.jobTitle || 'Unknown Title';
       const status = record.status || 'Unknown';
       const priority = record.priority || 'Unknown';
+      const recordId = record.id || 'Unknown ID';
       
       context += `\n${index + 1}. ${name} at ${company}
    - Title: ${title}
    - Status: ${status}
-   - Priority: ${priority}`;
+   - Priority: ${priority}
+   - ID: ${recordId}`;
     });
 
-    if (visibleRecords.length > 10) {
-      context += `\n... and ${visibleRecords.length - 10} more records`;
+    if (visibleRecords.length > 15) {
+      context += `\n... and ${visibleRecords.length - 15} more records on this page`;
+    }
+    
+    if (totalPages > 1) {
+      context += `\n\nPAGINATION INFO:
+- This is page ${currentPage} of ${totalPages} total pages
+- There are ${totalCount - visibleRecords.length} more records on other pages
+- User can navigate to other pages to see more records`;
     }
 
-    context += `\n\nIMPORTANT: The user is currently viewing a list of ${activeSection}. You can reference these specific records by name when providing advice.`;
+    context += `\n\nIMPORTANT: The user is currently viewing a list of ${activeSection}${totalPages > 1 ? ` (page ${currentPage} of ${totalPages})` : ''}. You can reference these specific records by name when providing advice. The list shows ${visibleRecords.length} records out of ${totalCount} total.`;
 
     return context;
   }
@@ -773,6 +905,367 @@ IMPORTANT RULES:
       console.warn('Failed to fetch Pipeline data:', error);
     }
     return null;
+  }
+
+  /**
+   * Get company intelligence from database (stored in customFields)
+   * Reads stored intelligence instead of fetching on-the-fly
+   */
+  private static async getCompanyIntelligenceFromDatabase(
+    companyNameOrId: string,
+    workspaceId: string
+  ): Promise<any> {
+    if (!companyNameOrId || companyNameOrId === 'Unknown Company') {
+      return null;
+    }
+
+    try {
+      const { PrismaClient } = await import('@prisma/client');
+      const prisma = new PrismaClient();
+
+      // Try to find company by ID first (if it's a UUID)
+      let company = null;
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(companyNameOrId);
+      
+      if (isUUID) {
+        company = await prisma.companies.findFirst({
+          where: {
+            id: companyNameOrId,
+            workspaceId,
+            deletedAt: null
+          },
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            employeeCount: true,
+            size: true,
+            description: true,
+            descriptionEnriched: true,
+            website: true,
+            domain: true,
+            customFields: true
+          }
+        });
+      }
+
+      // If not found by ID, try by name
+      if (!company) {
+        company = await prisma.companies.findFirst({
+          where: {
+            name: {
+              equals: companyNameOrId,
+              mode: 'insensitive'
+            },
+            workspaceId,
+            deletedAt: null
+          },
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            employeeCount: true,
+            size: true,
+            description: true,
+            descriptionEnriched: true,
+            website: true,
+            domain: true,
+            customFields: true
+          }
+        });
+      }
+
+      if (!company) {
+        console.log('⚠️ [AIContextService] Company not found:', companyNameOrId);
+        return null;
+      }
+
+      console.log('✅ [AIContextService] Found company:', company.name, 'ID:', company.id);
+
+      // Extract stored intelligence from customFields
+      const customFields = company.customFields as any || {};
+      const storedIntelligence = customFields.intelligence;
+      const INTELLIGENCE_VERSION = 'v2.0';
+
+      // Check if we have valid stored intelligence
+      if (storedIntelligence && customFields.intelligenceVersion === INTELLIGENCE_VERSION) {
+        console.log('✅ [AIContextService] Using stored intelligence from database');
+        
+        // Return structured company intelligence from database
+        return {
+          industry: storedIntelligence.industry || company.industry || null,
+          description: storedIntelligence.description || company.descriptionEnriched || company.description || null,
+          employeeCount: storedIntelligence.employeeCount || company.employeeCount || company.size || null,
+          size: company.size || null,
+          website: storedIntelligence.website || company.website || company.domain || null,
+          strategicWants: storedIntelligence.strategicWants || [],
+          criticalNeeds: storedIntelligence.criticalNeeds || [],
+          strategicIntelligence: storedIntelligence.strategicIntelligence || null,
+          adrataStrategy: storedIntelligence.adrataStrategy || null,
+          businessUnits: storedIntelligence.businessUnits || []
+        };
+      } else {
+        console.log('⚠️ [AIContextService] No valid stored intelligence found. Intelligence should be generated via /api/v1/companies/[id]/intelligence endpoint');
+        
+        // Return basic company data as fallback (but don't generate intelligence on-the-fly)
+        return {
+          industry: company.industry || null,
+          description: company.descriptionEnriched || company.description || null,
+          employeeCount: company.employeeCount || company.size || null,
+          size: company.size || null,
+          website: company.website || company.domain || null,
+          strategicWants: [],
+          criticalNeeds: [],
+          strategicIntelligence: null,
+          adrataStrategy: null,
+          businessUnits: []
+        };
+      }
+
+    } catch (error) {
+      console.error('❌ [AIContextService] Error reading company intelligence from database:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get person intelligence from database (stored in customFields)
+   * Reads stored intelligence instead of generating on-the-fly
+   */
+  private static async getPersonIntelligenceFromDatabase(
+    personId: string,
+    workspaceId: string
+  ): Promise<any> {
+    if (!personId) {
+      return null;
+    }
+
+    try {
+      const { PrismaClient } = await import('@prisma/client');
+      const prisma = new PrismaClient();
+
+      const person = await prisma.people.findFirst({
+        where: {
+          id: personId,
+          workspaceId,
+          deletedAt: null
+        },
+        select: {
+          id: true,
+          fullName: true,
+          firstName: true,
+          lastName: true,
+          jobTitle: true,
+          company: true,
+          buyerGroupRole: true,
+          seniority: true,
+          department: true,
+          customFields: true
+        }
+      });
+
+      if (!person) {
+        console.log('⚠️ [AIContextService] Person not found:', personId);
+        return null;
+      }
+
+      console.log('✅ [AIContextService] Found person:', person.fullName || `${person.firstName} ${person.lastName}`, 'ID:', person.id);
+
+      // Extract stored intelligence from customFields
+      const customFields = person.customFields as any || {};
+      
+      // Check for stored person intelligence
+      if (customFields.intelligenceGeneratedAt || customFields.influenceLevel || customFields.decisionPower) {
+        console.log('✅ [AIContextService] Using stored person intelligence from database');
+        
+        return {
+          influenceLevel: customFields.influenceLevel || null,
+          decisionPower: customFields.decisionPower || null,
+          engagementLevel: customFields.engagementLevel || null,
+          buyerGroupRole: person.buyerGroupRole || customFields.buyerGroupRole || null,
+          seniority: person.seniority || customFields.seniority || null,
+          department: person.department || customFields.department || null,
+          confidence: customFields.intelligenceConfidence || null,
+          reasoning: customFields.intelligenceReasoning || null,
+          intelligenceGeneratedAt: customFields.intelligenceGeneratedAt || null,
+          painPoints: customFields.painPoints || customFields.painIntelligence || [],
+          motivations: customFields.motivations || [],
+          decisionFactors: customFields.decisionFactors || []
+        };
+      } else {
+        console.log('⚠️ [AIContextService] No stored person intelligence found. Intelligence should be generated via person intelligence API');
+        return null;
+      }
+
+    } catch (error) {
+      console.error('❌ [AIContextService] Error reading person intelligence from database:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get opportunity intelligence from database (stored in customFields)
+   * Reads stored intelligence instead of generating on-the-fly
+   */
+  private static async getOpportunityIntelligenceFromDatabase(
+    opportunityId: string,
+    workspaceId: string
+  ): Promise<any> {
+    if (!opportunityId) {
+      return null;
+    }
+
+    try {
+      const { PrismaClient } = await import('@prisma/client');
+      const prisma = new PrismaClient();
+
+      const opportunity = await prisma.opportunities.findFirst({
+        where: {
+          id: opportunityId,
+          workspaceId,
+          deletedAt: null
+        },
+        select: {
+          id: true,
+          name: true,
+          stage: true,
+          value: true,
+          closeDate: true,
+          probability: true,
+          customFields: true
+        }
+      });
+
+      if (!opportunity) {
+        console.log('⚠️ [AIContextService] Opportunity not found:', opportunityId);
+        return null;
+      }
+
+      console.log('✅ [AIContextService] Found opportunity:', opportunity.name, 'ID:', opportunity.id);
+
+      // Extract stored intelligence from customFields
+      const customFields = opportunity.customFields as any || {};
+      
+      // Check for stored opportunity intelligence
+      if (customFields.influenceLevel || customFields.engagementStrategy || customFields.intelligence) {
+        console.log('✅ [AIContextService] Using stored opportunity intelligence from database');
+        
+        return {
+          influenceLevel: customFields.influenceLevel || null,
+          engagementStrategy: customFields.engagementStrategy || null,
+          seniority: customFields.seniority || null,
+          buyerGroupRole: customFields.buyerGroupRole || null,
+          isBuyerGroupMember: customFields.isBuyerGroupMember || false,
+          department: customFields.department || null,
+          painPoints: customFields.painPoints || customFields.painIntelligence || [],
+          motivations: customFields.motivations || [],
+          decisionFactors: customFields.decisionFactors || [],
+          aiIntelligence: customFields.aiIntelligence || null,
+          intelligence: customFields.intelligence || null,
+          stage: opportunity.stage || null,
+          value: opportunity.value || null,
+          closeDate: opportunity.closeDate || null,
+          probability: opportunity.probability || null
+        };
+      } else {
+        console.log('⚠️ [AIContextService] No stored opportunity intelligence found. Intelligence should be generated via opportunity intelligence API');
+        
+        // Return basic opportunity data as fallback
+        return {
+          stage: opportunity.stage || null,
+          value: opportunity.value || null,
+          closeDate: opportunity.closeDate || null,
+          probability: opportunity.probability || null,
+          influenceLevel: null,
+          engagementStrategy: null,
+          seniority: null,
+          buyerGroupRole: null,
+          isBuyerGroupMember: false,
+          department: null,
+          painPoints: [],
+          motivations: [],
+          decisionFactors: [],
+          aiIntelligence: null,
+          intelligence: null
+        };
+      }
+
+    } catch (error) {
+      console.error('❌ [AIContextService] Error reading opportunity intelligence from database:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get lead intelligence from database (stored in customFields)
+   * Reads stored intelligence instead of generating on-the-fly
+   */
+  private static async getLeadIntelligenceFromDatabase(
+    leadId: string,
+    workspaceId: string
+  ): Promise<any> {
+    if (!leadId) {
+      return null;
+    }
+
+    try {
+      const { PrismaClient } = await import('@prisma/client');
+      const prisma = new PrismaClient();
+
+      const lead = await prisma.leads.findFirst({
+        where: {
+          id: leadId,
+          workspaceId,
+          deletedAt: null
+        },
+        select: {
+          id: true,
+          fullName: true,
+          firstName: true,
+          lastName: true,
+          jobTitle: true,
+          company: true,
+          buyerGroupRole: true,
+          customFields: true
+        }
+      });
+
+      if (!lead) {
+        console.log('⚠️ [AIContextService] Lead not found:', leadId);
+        return null;
+      }
+
+      console.log('✅ [AIContextService] Found lead:', lead.fullName || `${lead.firstName} ${lead.lastName}`, 'ID:', lead.id);
+
+      // Extract stored intelligence from customFields
+      const customFields = lead.customFields as any || {};
+      
+      // Check for stored lead intelligence
+      if (customFields.influenceLevel || customFields.engagementStrategy || customFields.seniority) {
+        console.log('✅ [AIContextService] Using stored lead intelligence from database');
+        
+        return {
+          influenceLevel: customFields.influenceLevel || null,
+          engagementStrategy: customFields.engagementStrategy || null,
+          seniority: customFields.seniority || null,
+          buyerGroupRole: lead.buyerGroupRole || customFields.buyerGroupRole || null,
+          isBuyerGroupMember: customFields.isBuyerGroupMember || false,
+          department: customFields.department || null,
+          painPoints: customFields.painPoints || customFields.painIntelligence || [],
+          motivations: customFields.motivations || [],
+          decisionFactors: customFields.decisionFactors || [],
+          aiIntelligence: customFields.aiIntelligence || null,
+          intelligence: customFields.intelligence || null
+        };
+      } else {
+        console.log('⚠️ [AIContextService] No stored lead intelligence found. Intelligence should be generated via lead intelligence API');
+        return null;
+      }
+
+    } catch (error) {
+      console.error('❌ [AIContextService] Error reading lead intelligence from database:', error);
+      return null;
+    }
   }
 
   /**
