@@ -709,6 +709,17 @@ This is the exact current date, time, and year in the user's timezone. Always us
   private async buildSystemPrompt(request: OpenRouterRequest, complexity: any): Promise<string> {
     const { appType, currentRecord, recordType, pageContext, workspaceContext } = request;
     
+    // 🔍 CRITICAL LOGGING: Log what we have when building the prompt
+    console.log('🔍 [OpenRouterService] buildSystemPrompt called with:', {
+      hasCurrentRecord: !!currentRecord,
+      recordType,
+      recordId: currentRecord?.id,
+      hasWorkspaceContext: !!workspaceContext,
+      hasRecordContext: !!workspaceContext?.recordContext,
+      recordContextLength: workspaceContext?.recordContext?.length || 0,
+      recordContextPreview: workspaceContext?.recordContext?.substring(0, 300) || 'EMPTY'
+    });
+    
     // Start with explicit date/time at the top (using user's timezone)
     const dateTimeString = await this.getCurrentDateTimeString(request.userId);
     
@@ -733,6 +744,11 @@ You are Adrata's AI assistant, specialized in sales intelligence and pipeline op
       }
       
       if (workspaceContext.recordContext) {
+        console.log('✅ [OpenRouterService] Adding RECORD CONTEXT to prompt:', {
+          recordContextLength: workspaceContext.recordContext.length,
+          recordContextPreview: workspaceContext.recordContext.substring(0, 500)
+        });
+        
         basePrompt += `\n\nRECORD CONTEXT:\n${workspaceContext.recordContext}`;
         
         // 🔧 FIX: Emphasize that record context is available and should be used
@@ -740,11 +756,15 @@ You are Adrata's AI assistant, specialized in sales intelligence and pipeline op
       } else {
         // 🔧 FIX: Log warning if record context is missing when we have a currentRecord
         if (currentRecord) {
-          console.warn('⚠️ [OpenRouterService] Record context is empty but currentRecord exists:', {
+          console.error('❌ [OpenRouterService] CRITICAL: Record context is empty but currentRecord exists:', {
             recordId: currentRecord.id,
             recordName: currentRecord.name || currentRecord.fullName,
-            recordType
+            recordType,
+            hasWorkspaceContext: !!workspaceContext,
+            workspaceContextKeys: workspaceContext ? Object.keys(workspaceContext) : []
           });
+        } else {
+          console.log('ℹ️ [OpenRouterService] No record context and no currentRecord - this is expected for general queries');
         }
       }
       

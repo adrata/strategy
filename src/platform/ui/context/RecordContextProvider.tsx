@@ -55,7 +55,7 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
         id: currentRecord?.id, 
         updates: Object.keys(updates) 
       });
-      setCurrentRecordState(prev => ({
+      setCurrentRecordState((prev: any) => ({
         ...prev,
         ...updates,
         updatedAt: new Date().toISOString()

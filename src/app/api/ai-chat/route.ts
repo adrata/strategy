@@ -233,6 +233,14 @@ export async function POST(request: NextRequest) {
 
     // Build comprehensive workspace context
     console.log('🧠 [AI CHAT] Building comprehensive workspace context...');
+    console.log('🔍 [AI CHAT] Input to buildContext:', {
+      hasCurrentRecord: !!currentRecord,
+      recordType,
+      recordId: currentRecord?.id,
+      recordName: currentRecord?.name || currentRecord?.fullName,
+      recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0
+    });
+    
     const workspaceContext = await AIContextService.buildContext({
       userId: authUser.id,
       workspaceId: authUser.workspaceId || workspaceId,
@@ -249,8 +257,21 @@ export async function POST(request: NextRequest) {
       hasApplicationContext: !!workspaceContext.applicationContext,
       hasDataContext: !!workspaceContext.dataContext,
       hasRecordContext: !!workspaceContext.recordContext,
+      recordContextLength: workspaceContext.recordContext?.length || 0,
+      recordContextPreview: workspaceContext.recordContext?.substring(0, 200) || 'EMPTY',
       hasSystemContext: !!workspaceContext.systemContext
     });
+    
+    // 🔍 CRITICAL CHECK: Verify record context is not empty
+    if (currentRecord && (!workspaceContext.recordContext || workspaceContext.recordContext.length < 50)) {
+      console.error('❌ [AI CHAT] CRITICAL: Record context is empty or too short despite having currentRecord!', {
+        recordId: currentRecord.id,
+        recordName: currentRecord.name || currentRecord.fullName,
+        recordType,
+        recordContextLength: workspaceContext.recordContext?.length || 0,
+        recordContextPreview: workspaceContext.recordContext?.substring(0, 200) || 'EMPTY'
+      });
+    }
 
     // Determine if we should use OpenRouter based on gradual rollout
     const shouldUseOpenRouter = useOpenRouter && 

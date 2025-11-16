@@ -1711,6 +1711,14 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     
     setIsProcessing(true);
     
+    // currentRecord and recordType are now always current because RecordContextProvider is in tree
+    console.log('🔍 [RightPanel] Sending message with record context:', {
+      hasCurrentRecord: !!currentRecord,
+      recordId: currentRecord?.id,
+      recordName: currentRecord?.name || currentRecord?.fullName,
+      recordType
+    });
+    
     try {
       // Add user message
       const userMessage: ChatMessage = {
@@ -1903,6 +1911,18 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         });
       }
       
+      // Log what we're sending to the API for debugging
+      console.log('📤 [AI RIGHT PANEL] Sending AI chat request:', {
+        hasCurrentRecord: !!currentRecord,
+        recordType,
+        recordId: currentRecord?.id,
+        recordName: currentRecord?.name || currentRecord?.fullName,
+        recordCompany: typeof currentRecord?.company === 'string' ? currentRecord.company : (currentRecord?.company?.name || currentRecord?.companyName),
+        recordTitle: currentRecord?.title || currentRecord?.jobTitle,
+        recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0,
+        message: input.substring(0, 100) + '...'
+      });
+
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: { 
