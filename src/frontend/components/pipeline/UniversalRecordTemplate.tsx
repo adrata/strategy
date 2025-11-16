@@ -2438,7 +2438,10 @@ export function UniversalRecordTemplate({
       
       // 🚀 ENHANCED DATA CONSISTENCY CHECK: Verify the save was successful
       const actualSavedValue = result.data?.[apiField] ?? result.data?.[field];
-      const isValueConsistent = actualSavedValue === value || actualSavedValue === undefined;
+      // Fix: Handle null values correctly - null === null should pass, and undefined should pass when value is null
+      const isValueConsistent = actualSavedValue === value || 
+                                (actualSavedValue === undefined && value === null) ||
+                                (actualSavedValue === null && value === null);
       
       if (!isValueConsistent) {
         console.warn(`⚠️ [UNIVERSAL] Data consistency check FAILED for field ${field}:`, {
@@ -2475,11 +2478,24 @@ export function UniversalRecordTemplate({
       
       setLocalRecord((prev: any) => {
         // Use the actual value from API response if available, otherwise use the input value
-        let actualValue = result.data && result.data[apiField] !== undefined ? result.data[apiField] : value;
+        // CRITICAL FIX: When value is null (deleted), always use null, even if API response is undefined
+        let actualValue: any;
+        if (value === null) {
+          // User deleted the field - always use null, regardless of API response
+          actualValue = null;
+          console.log(`🔄 [NULL VALUE HANDLING] Field ${field} was deleted (null), using null in local state`);
+        } else if (result.data && result.data[apiField] !== undefined) {
+          // API returned a value (including null) - use it
+          actualValue = result.data[apiField];
+        } else {
+          // API didn't return the field - use the value we sent
+          actualValue = value;
+        }
         
-        // IMPORTANT: For linkedinNavigatorUrl, always preserve the saved value if API response is null/undefined
-        if (field === 'linkedinNavigatorUrl' && (actualValue === null || actualValue === undefined)) {
-          actualValue = value; // Use the value we just saved
+        // IMPORTANT: For linkedinNavigatorUrl, preserve the saved value if API response is null/undefined
+        // BUT: If user deleted it (value is null), always use null
+        if (field === 'linkedinNavigatorUrl' && value !== null && (actualValue === null || actualValue === undefined)) {
+          actualValue = value; // Use the value we just saved (but only if it wasn't deleted)
           console.log(`🔄 [LINKEDIN NAVIGATOR LOCAL STATE] Preserving saved value in local state:`, value);
         }
         
@@ -2576,18 +2592,47 @@ export function UniversalRecordTemplate({
           mappedResponseData[field] = result.data[apiField];
         }
         
-        // Use the actual value from API response for consistency
-        const actualValue = result.data[apiField] !== undefined ? result.data[apiField] : value;
+        // CRITICAL FIX: When value is null (deleted), always use null, even if API response is undefined
+        let actualValue: any;
+        if (value === null) {
+          // User deleted the field - always use null, regardless of API response
+          actualValue = null;
+          console.log(`🔄 [NULL VALUE HANDLING] Field ${field} was deleted (null), using null in onRecordUpdate`);
+        } else if (result.data[apiField] !== undefined) {
+          // API returned a value (including null) - use it
+          actualValue = result.data[apiField];
+        } else {
+          // API didn't return the field - use the value we sent
+          actualValue = value;
+        }
         mappedResponseData[field] = actualValue;
         
         // IMPORTANT: Preserve fields that might not be in the API response
         // For linkedinNavigatorUrl and other nullable fields, ensure they're always included
         const preservedFields: Record<string, any> = {};
+        
+        // CRITICAL FIX: When user deletes a field (value is null), always preserve null
+        // This ensures deleted fields are properly cleared in the merged record
+        if (value === null) {
+          preservedFields[field] = null;
+          if (apiField !== field) {
+            preservedFields[apiField] = null;
+          }
+          console.log(`🔄 [FIELD DELETION PRESERVE] Field ${field} was deleted - preserving null:`, {
+            field,
+            apiField,
+            preservedValue: null
+          });
+        }
+        
         if (field === 'linkedinNavigatorUrl') {
-          // Always preserve linkedinNavigatorUrl value - use saved value if response doesn't have it
-          const navigatorValue = result.data[apiField] !== undefined && result.data[apiField] !== null 
-            ? result.data[apiField] 
-            : value; // Use the value we just saved if API response is missing/null
+          // CRITICAL FIX: If user deleted it (value is null), always use null
+          // Otherwise, preserve the saved value if API response is missing/null
+          const navigatorValue = value === null 
+            ? null  // User deleted it - always use null
+            : (result.data[apiField] !== undefined && result.data[apiField] !== null 
+                ? result.data[apiField] 
+                : value); // Use the value we just saved if API response is missing/null
           preservedFields[field] = navigatorValue;
           preservedFields[apiField] = navigatorValue;
           console.log(`🔄 [LINKEDIN NAVIGATOR PRESERVE] Ensuring linkedinNavigatorUrl is preserved:`, {
@@ -2650,22 +2695,30 @@ export function UniversalRecordTemplate({
         // CRITICAL: Ensure all existing record fields are preserved
         // The API response might only include the updated field, so we need to preserve all other fields
         // Start with all existing record fields, then apply API response updates, then preserved fields
-        // IMPORTANT: Don't overwrite existing non-null values with null from API response
-        // CRITICAL: Preserve existing values if API response has null/undefined for those fields
+        // CRITICAL FIX: When user explicitly deleted a field (value is null), we MUST update it to null
+        // IMPORTANT: Don't overwrite existing non-null values with null from API response UNLESS we explicitly set it to null
         const fullyMergedRecord = {
           ...record, // Start with ALL existing fields (preserves everything)
           ...Object.keys(mappedResponseData).reduce((acc, key) => {
             const apiValue = mappedResponseData[key];
             const currentValue = record[key];
             
+            // CRITICAL FIX: If this is the field we just updated and value is null (deleted), always use null
+            if (key === field && value === null) {
+              acc[key] = null;
+              console.log(`🔄 [MERGE] Field ${key} was deleted - setting to null:`, { current: currentValue, api: apiValue });
+            }
             // Only update if API has a non-null value AND it's different from current value
-            // This prevents overwriting existing values with null
-            if (apiValue !== null && apiValue !== undefined && apiValue !== currentValue) {
+            // This prevents overwriting existing values with null from unrelated API responses
+            else if (apiValue !== null && apiValue !== undefined && apiValue !== currentValue) {
               acc[key] = apiValue;
               console.log(`🔄 [MERGE] Updating ${key} from API response:`, { current: currentValue, api: apiValue });
             } else if (apiValue === null || apiValue === undefined) {
               // API value is null/undefined - preserve current value (don't include in acc)
-              if (currentValue !== null && currentValue !== undefined) {
+              // UNLESS this is the field we just updated and we set it to null
+              if (key === field && value === null) {
+                // Already handled above
+              } else if (currentValue !== null && currentValue !== undefined) {
                 console.log(`🔄 [MERGE] Preserving ${key} from record (API returned null/undefined):`, currentValue);
               }
             } else {
@@ -2743,9 +2796,17 @@ export function UniversalRecordTemplate({
       }
       
       // Also dispatch a custom event to notify other components of the update
-      const eventRecord = onRecordUpdate && result.data ? { ...record, ...result.data } : {
+      // CRITICAL FIX: When value is null (deleted), always include it in eventRecord
+      const eventRecord = onRecordUpdate && result.data ? { 
+        ...record, 
+        ...result.data,
+        // CRITICAL FIX: If field was deleted (value is null), ensure it's set to null
+        ...(value === null ? { [field]: null, ...(apiField !== field ? { [apiField]: null } : {}) } : {})
+      } : {
         ...record,
-        [field]: value
+        [field]: value,
+        // Also update API field name if different
+        ...(apiField !== field ? { [apiField]: value } : {})
       };
       
       window.dispatchEvent(new CustomEvent('record-updated', {
@@ -2894,7 +2955,18 @@ export function UniversalRecordTemplate({
       }
       
       // 🚀 CACHE INVALIDATION & REVALIDATION: Prepare updated record data
-      const updatedRecord = onRecordUpdate && result.data ? { ...record, ...result.data } : { ...record, [field]: value };
+      // CRITICAL FIX: When value is null (deleted), always include it in updatedRecord
+      const updatedRecord = onRecordUpdate && result.data ? { 
+        ...record, 
+        ...result.data,
+        // CRITICAL FIX: If field was deleted (value is null), ensure it's set to null
+        ...(value === null ? { [field]: null, ...(apiField !== field ? { [apiField]: null } : {}) } : {})
+      } : { 
+        ...record, 
+        [field]: value,
+        // Also update API field name if different
+        ...(apiField !== field ? { [apiField]: value } : {})
+      };
       
       // Debug: Log the updated record
       console.log(`🔍 [CACHE UPDATE] Updated record prepared:`, {

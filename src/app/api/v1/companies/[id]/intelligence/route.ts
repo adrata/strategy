@@ -48,7 +48,7 @@ export async function GET(
     const { id } = await params;
     console.log(`📊 [INTELLIGENCE API] Fetching intelligence for company ID: ${id}`);
 
-    // Get company from database
+    // Get company from database with all available data sources
     const company = await prisma.companies.findUnique({
       where: { 
         id,
@@ -59,13 +59,36 @@ export async function GET(
         id: true,
         name: true,
         description: true,
+        descriptionEnriched: true, // Enriched description field
         industry: true,
+        industryOverride: true, // Manual override
+        sector: true, // Separate from industry
         size: true,
         employeeCount: true,
         revenue: true,
+        website: true,
+        websiteOverride: true, // Manual override
+        domain: true, // Separate domain field
         customFields: true,
-        competitors: true, // Include competitors field
+        competitors: true,
         workspaceId: true,
+        coreCompanyId: true, // Link to core company
+        // Core company relation (global canonical data - most reliable)
+        coreCompany: {
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            sector: true,
+            employeeCount: true,
+            description: true,
+            website: true,
+            domain: true,
+            dataQualityScore: true,
+            dataSources: true,
+            lastVerified: true,
+          }
+        },
         // Relations
         people: {
           where: { deletedAt: null },
@@ -76,9 +99,10 @@ export async function GET(
             fullName: true,
             jobTitle: true,
             email: true,
+            workEmail: true, // Work email might be more reliable
             status: true,
           },
-          take: 10,
+          take: 50, // Get more people for better domain consensus
         },
         actions: {
           where: { deletedAt: null },
@@ -109,14 +133,20 @@ export async function GET(
 
     // Check for cached intelligence first
     const cachedIntelligence = company.customFields as any;
-    if (cachedIntelligence?.intelligence) {
-      console.log(`✅ [INTELLIGENCE API] Using cached intelligence data for company: ${company.name}`);
+    const INTELLIGENCE_VERSION = 'v2.0'; // Version for new data source prioritization logic
+    
+    // Only use cached intelligence if it's the current version
+    if (cachedIntelligence?.intelligence && cachedIntelligence?.intelligenceVersion === INTELLIGENCE_VERSION) {
+      console.log(`✅ [INTELLIGENCE API] Using cached intelligence data (v${INTELLIGENCE_VERSION}) for company: ${company.name}`);
       return NextResponse.json({
         success: true,
         intelligence: cachedIntelligence.intelligence,
         cached: true,
         timestamp: new Date().toISOString()
       });
+    } else if (cachedIntelligence?.intelligence) {
+      // Old version cached - regenerate with new logic
+      console.log(`🔄 [INTELLIGENCE API] Cached intelligence is outdated (v${cachedIntelligence?.intelligenceVersion || 'unknown'}), regenerating with new logic for company: ${company.name}`);
     }
 
     console.log(`🔄 [INTELLIGENCE API] Generating new intelligence for company: ${company.name}`);
@@ -133,13 +163,15 @@ export async function GET(
         data: {
           customFields: {
             ...cachedIntelligence,
-            intelligence: intelligence
+            intelligence: intelligence,
+            intelligenceVersion: INTELLIGENCE_VERSION, // Store version for cache validation
+            intelligenceGeneratedAt: new Date().toISOString()
           },
           descriptionEnriched: companySummary,
           updatedAt: new Date(),
         },
       });
-      console.log(`✅ [INTELLIGENCE API] Cached intelligence and company summary for company: ${company.name}`);
+      console.log(`✅ [INTELLIGENCE API] Cached intelligence (v${INTELLIGENCE_VERSION}) and company summary for company: ${company.name}`);
     } catch (cacheError) {
       console.error('⚠️ [INTELLIGENCE API] Failed to cache intelligence:', cacheError);
       // Continue without failing the request
@@ -182,7 +214,7 @@ export async function POST(
     const body = await request.json();
     const forceRegenerate = body.forceRegenerate || false;
 
-    // Get company from database
+    // Get company from database with all available data sources
     const company = await prisma.companies.findUnique({
       where: { 
         id,
@@ -193,13 +225,36 @@ export async function POST(
         id: true,
         name: true,
         description: true,
+        descriptionEnriched: true, // Enriched description field
         industry: true,
+        industryOverride: true, // Manual override
+        sector: true, // Separate from industry
         size: true,
         employeeCount: true,
         revenue: true,
+        website: true,
+        websiteOverride: true, // Manual override
+        domain: true, // Separate domain field
         customFields: true,
-        competitors: true, // Include competitors field
+        competitors: true,
         workspaceId: true,
+        coreCompanyId: true, // Link to core company
+        // Core company relation (global canonical data - most reliable)
+        coreCompany: {
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            sector: true,
+            employeeCount: true,
+            description: true,
+            website: true,
+            domain: true,
+            dataQualityScore: true,
+            dataSources: true,
+            lastVerified: true,
+          }
+        },
         // Relations
         people: {
           where: { deletedAt: null },
@@ -210,9 +265,10 @@ export async function POST(
             fullName: true,
             jobTitle: true,
             email: true,
+            workEmail: true, // Work email might be more reliable
             status: true,
           },
-          take: 10,
+          take: 50, // Get more people for better domain consensus
         },
         actions: {
           where: { deletedAt: null },
@@ -246,12 +302,15 @@ export async function POST(
 
     // Update the intelligence in customFields and descriptionEnriched
     const currentCustomFields = company.customFields as any || {};
+    const INTELLIGENCE_VERSION = 'v2.0'; // Version for new data source prioritization logic
     await prisma.companies.update({
       where: { id },
       data: {
         customFields: {
           ...currentCustomFields,
-          intelligence: intelligence
+          intelligence: intelligence,
+          intelligenceVersion: INTELLIGENCE_VERSION, // Store version for cache validation
+          intelligenceGeneratedAt: new Date().toISOString()
         },
         descriptionEnriched: companySummary,
         updatedAt: new Date(),
@@ -280,20 +339,35 @@ export async function POST(
  * Smart industry inference with multiple fallback sources
  */
 function inferIndustry(company: any): string | null {
-  // Try company.industry first
+  // Priority 1: Manual override (highest priority - user explicitly set this)
+  if (company.industryOverride && company.industryOverride.trim() !== '') {
+    return company.industryOverride.trim();
+  }
+  
+  // Priority 2: Core company data (global canonical - very reliable)
+  if (company.coreCompany?.industry && company.coreCompany.industry.trim() !== '') {
+    return company.coreCompany.industry.trim();
+  }
+  
+  // Priority 3: Company record industry field
   if (company.industry && company.industry.trim() !== '') {
     return company.industry.trim();
   }
   
-  // Try company.sector as fallback
+  // Priority 4: CoreSignal data from customFields
+  const customFields = company.customFields as any;
+  if (customFields?.coresignalData?.industry && customFields.coresignalData.industry.trim() !== '') {
+    return customFields.coresignalData.industry.trim();
+  }
+  
+  // Priority 5: Sector as fallback
   if (company.sector && company.sector.trim() !== '') {
     return company.sector.trim();
   }
   
-  // Try customFields.coresignalData.industry if available
-  const customFields = company.customFields as any;
-  if (customFields?.coresignalData?.industry && customFields.coresignalData.industry.trim() !== '') {
-    return customFields.coresignalData.industry.trim();
+  // Priority 6: Core company sector
+  if (company.coreCompany?.sector && company.coreCompany.sector.trim() !== '') {
+    return company.coreCompany.sector.trim();
   }
   
   // No industry data available
@@ -315,14 +389,18 @@ function determineBestCompanyData(company: any): {
   const people = company.people || [];
   const customFields = company.customFields as any || {};
   const coresignalData = customFields.coresignalData || {};
+  const coreCompany = company.coreCompany;
   
   // STEP 1: Determine correct company domain from contact email addresses (MOST RELIABLE)
   let inferredDomain: string | null = null;
   if (people.length > 0) {
+    // Collect all email addresses (both email and workEmail)
     const contactDomains = people
       .map((person: any) => {
-        if (!person.email) return null;
-        return person.email.split('@')[1]?.toLowerCase();
+        // Prefer workEmail over email
+        const emailAddr = person.workEmail || person.email;
+        if (!emailAddr) return null;
+        return emailAddr.split('@')[1]?.toLowerCase();
       })
       .filter(Boolean) as string[];
     
@@ -344,19 +422,42 @@ function determineBestCompanyData(company: any): {
     }
   }
   
-  // STEP 2: Extract domain from company website/domain field
+  // STEP 2: Extract domain from company website/domain field (Priority: Override > Core Company > Company record)
   let companyDomain: string | null = null;
-  const website = company.website || company.domain || '';
-  if (website) {
+  let companyWebsite: string | null = null;
+  
+  // Priority 1: Website override
+  if (company.websiteOverride) {
+    companyWebsite = company.websiteOverride;
+  }
+  // Priority 2: Core company website (global canonical)
+  else if (coreCompany?.website) {
+    companyWebsite = coreCompany.website;
+  }
+  // Priority 3: Company record website
+  else if (company.website) {
+    companyWebsite = company.website;
+  }
+  // Priority 4: Company record domain field
+  else if (company.domain) {
+    companyWebsite = company.domain;
+  }
+  // Priority 5: Core company domain
+  else if (coreCompany?.domain) {
+    companyWebsite = coreCompany.domain;
+  }
+  
+  // Extract domain from website
+  if (companyWebsite) {
     try {
-      let normalizedUrl = website.trim();
+      let normalizedUrl = companyWebsite.trim();
       if (!normalizedUrl.match(/^https?:\/\//i)) {
         normalizedUrl = `https://${normalizedUrl}`;
       }
       const url = new URL(normalizedUrl);
       companyDomain = url.hostname.replace(/^www\./, '').toLowerCase();
     } catch (error) {
-      const domainMatch = website.match(/(?:https?:\/\/)?(?:www\.)?([a-z0-9.-]+\.[a-z]{2,})/i);
+      const domainMatch = companyWebsite.match(/(?:https?:\/\/)?(?:www\.)?([a-z0-9.-]+\.[a-z]{2,})/i);
       if (domainMatch) {
         companyDomain = domainMatch[1].toLowerCase();
       }
@@ -367,21 +468,24 @@ function determineBestCompanyData(company: any): {
   const finalDomain = inferredDomain || companyDomain;
   const finalWebsite = inferredDomain && inferredDomain !== companyDomain 
     ? `https://${inferredDomain}` 
-    : (company.website || (companyDomain ? `https://${companyDomain}` : null));
+    : (companyWebsite || (companyDomain ? `https://${companyDomain}` : null));
   
-  // STEP 3: Determine industry (Priority: CoreSignal > Company record)
-  let industry: string | null = null;
-  if (coresignalData.industry && coresignalData.industry.trim() !== '') {
-    industry = coresignalData.industry.trim();
-  } else {
-    industry = inferIndustry(company);
-  }
+  // STEP 3: Determine industry (using inferIndustry which checks all sources)
+  const industry = inferIndustry(company);
   
-  // STEP 4: Determine employee count (Priority: CoreSignal > Company record, validate reasonableness)
+  // STEP 4: Determine employee count (Priority: Core Company > CoreSignal > Company record, validate reasonableness)
   let employeeCount: number | null = null;
-  if (coresignalData.employees_count && coresignalData.employees_count > 0) {
+  
+  // Priority 1: Core company (global canonical - most reliable)
+  if (coreCompany?.employeeCount && coreCompany.employeeCount > 0) {
+    employeeCount = coreCompany.employeeCount;
+  }
+  // Priority 2: CoreSignal data
+  else if (coresignalData.employees_count && coresignalData.employees_count > 0) {
     employeeCount = coresignalData.employees_count;
-  } else if (company.employeeCount && company.employeeCount > 0) {
+  }
+  // Priority 3: Company record
+  else if (company.employeeCount && company.employeeCount > 0) {
     employeeCount = company.employeeCount;
   }
   
@@ -394,20 +498,32 @@ function determineBestCompanyData(company: any): {
       employeeCount = null;
     }
     // Very small employee count with major company name suggests data issue
-    if (employeeCount < 10 && company.name && company.name.length > 10) {
+    if (employeeCount !== null && employeeCount < 10 && company.name && company.name.length > 10) {
       employeeCount = null;
     }
   }
   
-  // STEP 5: Determine description (Priority: CoreSignal > Company record, filter out mismatches)
+  // STEP 5: Determine description (Priority: descriptionEnriched > CoreSignal > Core Company > Company record, filter out mismatches)
   let description: string | null = null;
   
-  // Check CoreSignal description first
-  if (coresignalData.description_enriched && coresignalData.description_enriched.trim() !== '') {
+  // Priority 1: Enriched description field (already processed)
+  if (company.descriptionEnriched && company.descriptionEnriched.trim() !== '') {
+    description = company.descriptionEnriched.trim();
+  }
+  // Priority 2: CoreSignal enriched description
+  else if (coresignalData.description_enriched && coresignalData.description_enriched.trim() !== '') {
     description = coresignalData.description_enriched.trim();
-  } else if (coresignalData.description && coresignalData.description.trim() !== '') {
+  }
+  // Priority 3: CoreSignal description
+  else if (coresignalData.description && coresignalData.description.trim() !== '') {
     description = coresignalData.description.trim();
-  } else if (company.description && company.description.trim() !== '') {
+  }
+  // Priority 4: Core company description
+  else if (coreCompany?.description && coreCompany.description.trim() !== '') {
+    description = coreCompany.description.trim();
+  }
+  // Priority 5: Company record description (validate before using)
+  else if (company.description && company.description.trim() !== '') {
     // Validate description matches industry before using
     const descLower = company.description.toLowerCase();
     const industryLower = industry?.toLowerCase() || '';
@@ -426,11 +542,13 @@ function determineBestCompanyData(company: any): {
   
   // Determine data source for logging
   let dataSource = 'company_record';
-  if (coresignalData.industry || coresignalData.employees_count || coresignalData.description_enriched) {
+  if (coreCompany && (coreCompany.industry || coreCompany.employeeCount || coreCompany.description)) {
+    dataSource = 'core_company';
+  } else if (coresignalData.industry || coresignalData.employees_count || coresignalData.description_enriched) {
     dataSource = 'coresignal';
   }
   if (inferredDomain && inferredDomain !== companyDomain) {
-    dataSource = inferredDomain === companyDomain ? dataSource : 'contact_domains';
+    dataSource = 'contact_domains';
   }
   
   return {
@@ -455,7 +573,7 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
     // Use the best available data
     const industry = bestData.industry;
     const size = company.size || 'Medium';
-    const employeeCount = bestData.employeeCount || 100;
+    const employeeCount = bestData.employeeCount ?? 100; // Use nullish coalescing, default to 100
     
     // Generate strategic wants based on industry and size
     const strategicWants = generateStrategicWants(industry, size, employeeCount);

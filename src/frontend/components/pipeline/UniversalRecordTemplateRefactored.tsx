@@ -121,18 +121,23 @@ export function UniversalRecordTemplateRefactored({
   }, [activeTab]);
 
   // Handle inline field save
-  const handleInlineFieldSave = async (field: string, value: string) => {
+  // CRITICAL FIX: Handle null values correctly when fields are deleted
+  const handleInlineFieldSave = async (field: string, value: string | null) => {
     if (!record?.id) return;
     
     try {
-      await handleEditSave(field, value, record.id, recordType);
+      // CRITICAL FIX: Convert null to empty string for API if needed, but preserve null intent
+      const apiValue = value === null ? null : value;
+      await handleEditSave(field, apiValue || '', record.id, recordType);
       
       // Update the record in context
+      // CRITICAL FIX: Always use the actual value (including null) to ensure deleted fields are cleared
       if (onRecordUpdate) {
         onRecordUpdate({
           ...record,
-          [field]: value
+          [field]: apiValue // Use null if deleted, otherwise use the value
         });
+        console.log(`🔄 [UniversalRecordTemplateRefactored] Updated ${field} to:`, apiValue);
       }
     } catch (error) {
       console.error('Error saving field:', error);

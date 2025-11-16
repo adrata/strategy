@@ -504,16 +504,41 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       console.log(`✅ [COMPANY OVERVIEW] Successfully updated ${field} for company:`, targetCompanyId, result.data);
       
       // CRITICAL: Update local state with API response data to ensure UI reflects changes immediately
+      // CRITICAL FIX: When value is null (deleted), always set the field to null in local state
       if (result.data) {
         // Update fullCompanyData state if it exists, otherwise set it
         if (fullCompanyData) {
-          setFullCompanyData((prev: any) => ({
-            ...prev,
-            ...result.data
-          }));
+          setFullCompanyData((prev: any) => {
+            const updated = {
+              ...prev,
+              ...result.data
+            };
+            // CRITICAL FIX: If field was deleted (value is null), ensure it's set to null
+            // API response might not include the field, so we need to explicitly set it
+            if (value === null) {
+              updated[field] = null;
+              console.log(`🔄 [COMPANY OVERVIEW] Field ${field} was deleted - setting to null in local state`);
+            }
+            return updated;
+          });
         } else {
           // If we don't have fullCompanyData yet, set it with the response
-          setFullCompanyData(result.data);
+          const initialData = { ...result.data };
+          // CRITICAL FIX: If field was deleted (value is null), ensure it's set to null
+          if (value === null) {
+            initialData[field] = null;
+            console.log(`🔄 [COMPANY OVERVIEW] Field ${field} was deleted - setting to null in initial data`);
+          }
+          setFullCompanyData(initialData);
+        }
+      } else if (value === null) {
+        // CRITICAL FIX: Even if API response doesn't have data, if we deleted the field, update local state
+        if (fullCompanyData) {
+          setFullCompanyData((prev: any) => ({
+            ...prev,
+            [field]: null
+          }));
+          console.log(`🔄 [COMPANY OVERVIEW] Field ${field} was deleted - setting to null in local state (no API data)`);
         }
       }
       

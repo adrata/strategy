@@ -1190,14 +1190,25 @@ export function SpeedrunSprintView() {
           
           // CRITICAL: Merge updatedRecord with existing selectedRecord to preserve all fields
           // The updatedRecord might only contain the field that was updated, so we need to preserve other fields
+          // CRITICAL FIX: Handle null values correctly when fields are deleted
           setSelectedRecord((prevRecord: any) => {
             if (!prevRecord) return updatedRecord;
             
             // Merge: preserve all existing fields, update with new values from updatedRecord
+            // CRITICAL FIX: When updatedRecord contains null values, they should override existing values
+            // (null means the field was deleted, so we want to clear it)
             const mergedRecord = {
               ...prevRecord, // Start with all existing fields
-              ...updatedRecord // Apply updates (this will include the updated field)
+              ...updatedRecord // Apply updates (this will include the updated field, including null for deletions)
             };
+            
+            // CRITICAL FIX: Explicitly handle null values - if updatedRecord has null for a field,
+            // ensure it's set to null in mergedRecord (spread might not handle this correctly)
+            Object.keys(updatedRecord).forEach(key => {
+              if (updatedRecord[key] === null) {
+                mergedRecord[key] = null;
+              }
+            });
             
             console.log('🔄 [SPEEDRUN SPRINT] Merged record update:', {
               prevRecordFields: Object.keys(prevRecord),

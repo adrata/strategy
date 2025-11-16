@@ -251,20 +251,33 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
   };
 
   // Enhanced success handler that updates local state for specific fields
-  const handleFieldSuccess = (field: string, value: string, message: string) => {
+  // CRITICAL FIX: Handle null values correctly when fields are deleted
+  const handleFieldSuccess = (field: string, value: string | null, message: string) => {
     console.log(`🔍 [UniversalCompanyTab] handleFieldSuccess called:`, { field, value, message });
+    
+    // CRITICAL FIX: When value is null (deleted), always set to null in local state
+    const stateValue = value === null ? null : value;
     
     // Update local state for specific fields
     if (field === 'website') {
-      setWebsite(value);
+      setWebsite(stateValue);
     } else if (field === 'linkedinUrl') {
-      setLinkedinUrl(value);
+      setLinkedinUrl(stateValue);
     } else if (field === 'linkedinNavigatorUrl') {
-      setLinkedinNavigatorUrl(value);
+      setLinkedinNavigatorUrl(stateValue);
     } else if (field === 'city') {
-      setCity(value);
+      setCity(stateValue);
     } else if (field === 'state') {
-      setState(value);
+      setState(stateValue);
+    }
+    
+    // CRITICAL FIX: Also update fullCompanyData if it exists to ensure consistency
+    if (fullCompanyData) {
+      setFullCompanyData((prev: any) => ({
+        ...prev,
+        [field]: stateValue
+      }));
+      console.log(`🔄 [UniversalCompanyTab] Updated fullCompanyData.${field} to:`, stateValue);
     }
     
     handleSuccess(message);
