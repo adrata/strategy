@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { authFetch } from '@/platform/api-fetch';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
@@ -849,11 +849,38 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   });
 
   // 🔍 BLANK PAGE FIX: Fallback to find record in data array if not loaded yet
+  // 🔧 FIX: Use refs to track last checked record ID and current data to prevent re-running when data refreshes
+  const lastFallbackCheckRef = useRef<string | null>(null);
+  const dataRef = useRef<any[]>([]);
+  
+  // 🔧 FIX: Keep dataRef in sync with current data without triggering useEffect
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+  
+  // 🔧 FIX: Reset ref when slug changes so we can check new records
+  useEffect(() => {
+    if (slug) {
+      const recordId = extractIdFromSlug(slug);
+      if (recordId && recordId !== 'undefined' && recordId !== 'null' && recordId.trim() !== '') {
+        // Reset ref when navigating to a different record
+        if (lastFallbackCheckRef.current !== recordId) {
+          lastFallbackCheckRef.current = null;
+        }
+      }
+    }
+  }, [slug]);
+  
   useEffect(() => {
     if (!slug || selectedRecord || directRecordLoading || loading) return;
     
     const recordId = extractIdFromSlug(slug);
     if (!recordId || recordId === 'undefined' || recordId === 'null' || recordId.trim() === '') return;
+    
+    // 🔧 FIX: Skip if we already checked this record ID (prevents re-running when data refreshes)
+    if (lastFallbackCheckRef.current === recordId) {
+      return;
+    }
     
     // 🔧 FIX: Prevent fallback from running if record was just updated (within 5 seconds)
     // This prevents flickering when data refreshes after an update
@@ -863,25 +890,30 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         const timeSinceUpdate = Date.now() - parseInt(updateTimestamp, 10);
         if (timeSinceUpdate < 5000) {
           console.log(`✅ [BLANK PAGE FIX] Record ${recordId} was just updated ${timeSinceUpdate}ms ago, skipping fallback to prevent flicker`);
+          lastFallbackCheckRef.current = recordId;
           return;
         }
       }
     }
     
-    // Try to find the record in the data array
-    const recordInData = data.find((r: any) => r.id === recordId);
+    // Try to find the record in the data array (use ref to get current data without dependency)
+    const recordInData = dataRef.current.find((r: any) => r.id === recordId);
     if (recordInData) {
       // 🔧 FIX: Only update if the record is actually different to prevent unnecessary re-renders
       if (!selectedRecord || selectedRecord.id !== recordInData.id) {
         console.log(`✅ [BLANK PAGE FIX] Found record in data array, using it as fallback:`, {
           recordId,
           recordName: recordInData.name || recordInData.fullName,
-          dataLength: data.length
+          dataLength: dataRef.current.length
         });
         setSelectedRecord(recordInData);
+        lastFallbackCheckRef.current = recordId;
       }
+    } else {
+      // Mark as checked even if not found to prevent repeated searches
+      lastFallbackCheckRef.current = recordId;
     }
-  }, [slug, selectedRecord, directRecordLoading, loading, data, section]);
+  }, [slug, selectedRecord, directRecordLoading, loading, section]); // 🔧 FIX: Removed data from dependencies to prevent flickering when leads data refreshes
 
   useEffect(() => {
     if (!slug) return;
