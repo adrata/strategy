@@ -63,10 +63,9 @@ async function prefetchSectionData(options: PrefetchOptions): Promise<void> {
   try {
     // Build URL based on section
     let url = '';
-    // 🔧 OPTIMIZATION: Always fetch 10,000 records for instant navigation
-    // This ensures all pages work immediately when user navigates to prefetched sections
-    // The slight delay in prefetch is acceptable since it's background work
-    const limit = 10000; // Always fetch full dataset for complete pagination support
+    // 🚀 SPEED OPTIMIZATION: Use smaller limit for initial auth prefetch, full limit for normal prefetch
+    // This makes initial login faster while still providing instant navigation
+    const limit = initialOnly ? 30 : 10000; // Fetch first page only for auth prefetch, full dataset for normal prefetch
     
     // Add OS type parameter if provided
     const osTypeParam = options.osType ? `&osType=${options.osType}` : '';
@@ -287,32 +286,55 @@ export async function prefetchAfterAuth(
   
   try {
     // Pre-fetch critical data in parallel for maximum speed
-    await Promise.all([
-      // 1. Pre-fetch counts (for left panel)
+    // Use Promise.allSettled to ensure both complete even if one fails
+    await Promise.allSettled([
+      // 1. Pre-fetch counts (for left panel) - highest priority
       fetch('/api/data/counts', {
         credentials: 'include',
         headers: {
           'X-Background-Prefetch': 'true',
-        }
+        },
+        // Optimize for speed
+        cache: 'no-store', // Always get fresh data
+        priority: 'high' as RequestPriority, // Browser hint for priority
       }).then(async (response) => {
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
-            // Cache counts in localStorage
-            const cacheKey = `adrata-counts-${workspaceId}`;
+            // Transform counts data to match useFastCounts format
+            const counts = result.data;
+            const transformedCounts = {
+              leads: counts.leads || 0,
+              prospects: counts.prospects || 0,
+              opportunities: counts.opportunities || 0,
+              companies: counts.companies || 0,
+              people: counts.people || 0,
+              clients: counts.clients || 0,
+              partners: counts.partners || 0,
+              sellers: counts.sellers || 0,
+              speedrun: counts.speedrun || 0,
+              speedrunReady: counts.speedrunReady || 0,
+              speedrunRemaining: counts.speedrunRemaining || 0,
+              metrics: counts.metrics || 0,
+              chronicle: counts.chronicle || 0
+            };
+            
+            // Cache counts in localStorage - use same key format as useFastCounts hook
+            const cacheKey = `adrata-fast-counts-${workspaceId}`;
             localStorage.setItem(cacheKey, JSON.stringify({
-              data: result.data,
+              counts: transformedCounts, // Store transformed format to match useFastCounts
+              workspaceId: workspaceId, // Include workspaceId for validation
               ts: Date.now(),
               version: 1
             }));
-            console.log(`✅ [AUTH PREFETCH] Cached counts data`);
+            console.log(`✅ [AUTH PREFETCH] Cached counts data (transformed format)`);
           }
         }
       }).catch((error) => {
         console.warn(`⚠️ [AUTH PREFETCH] Failed to pre-fetch counts:`, error);
       }),
       
-      // 2. Pre-fetch current section data (for main panel)
+      // 2. Pre-fetch current section data (for main panel) - lower priority
       // Pass OS type if detected for proper filtering
       prefetchSectionDataWithOSType({
         workspaceId,
@@ -321,7 +343,7 @@ export async function prefetchAfterAuth(
         osType: detectedOSType,
         trigger: 'auth-prefetch',
         force: true,
-        initialOnly: false
+        initialOnly: true // Only fetch first page for speed - rest loads progressively
       }).catch((error) => {
         console.warn(`⚠️ [AUTH PREFETCH] Failed to pre-fetch ${currentSection}:`, error);
       })

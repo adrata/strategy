@@ -284,27 +284,25 @@ export default function SignInPage() {
           activeWorkspaceId: result.session?.user?.activeWorkspaceId
         });
 
-        // 🚀 PERFORMANCE: Start pre-fetching critical data immediately after auth (before redirect)
-        // This ensures data is ready when the page loads, making it feel instant
+        // 🚀 PERFORMANCE: Start pre-fetching critical data immediately after auth
+        // Redirect immediately - pre-fetch happens in parallel for instant page load
         const workspaceId = result.session?.user?.activeWorkspaceId;
         const userId = result.session?.user?.id;
         
         if (workspaceId && userId) {
-          // Start pre-fetching in background (non-blocking)
+          // Start pre-fetching in background (non-blocking) - don't wait for it
           prefetchAfterAuth(workspaceId, userId, redirectUrl).catch((error) => {
             console.warn("⚠️ [SIGN-IN PAGE] Pre-fetch error (non-blocking):", error);
           });
         }
-
-        // Environment-aware: Ensure we're redirecting to the correct domain
-        // No need to redirect if we're already on a valid domain (production, staging, localhost, or Vercel preview)
-        // The redirectUrl is already relative, so it will work on any valid domain
-
-        // Small delay to ensure session is saved, then redirect
-        setTimeout(() => {
+        
+        // Redirect immediately - cache will be ready by the time page loads
+        // Pre-fetch runs in parallel, and hooks check cache synchronously on mount
+        // Use requestAnimationFrame for fastest possible redirect
+        requestAnimationFrame(() => {
           console.log("🔄 [SIGN-IN PAGE] Redirecting to:", redirectUrl);
           router.push(redirectUrl);
-        }, 100);
+        });
         // Don't reset loading state on success - let the redirect happen while showing "Starting..."
       } else {
         console.error("❌ [SIGN-IN PAGE] Authentication failed:", result.error);

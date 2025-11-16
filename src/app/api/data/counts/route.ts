@@ -118,37 +118,44 @@ export async function GET(request: NextRequest) {
     let speedrunCompaniesCount: number = 0;
     let speedrunPeopleNoActionsCount: number = 0;
     let speedrunCompaniesNoActionsCount: number = 0;
+    let speedrunCombinedCount = { total: 0, people: 0, companies: 0 };
+    
+    // Declare speedrun record variables before Promise.all destructuring
+    let speedrunPeopleRecords: any[] | number = [];
+    let speedrunCompaniesRecords: any[] | number = [];
+    
+    // 🚀 PARTNEROS FILTERING: Build base where clauses with relationshipType filter when in PartnerOS mode
+    // Move outside try block so they're accessible throughout the function
+    let peopleBaseWhere: any = {
+      workspaceId,
+      deletedAt: null,
+      OR: [
+        { mainSellerId: userId },
+        { mainSellerId: null }
+      ]
+    };
+    
+    let companiesBaseWhere: any = {
+      workspaceId,
+      deletedAt: null,
+      OR: [
+        { mainSellerId: userId },
+        { mainSellerId: null }
+      ]
+    };
+    
+    if (isPartnerOS) {
+      peopleBaseWhere.relationshipType = {
+        in: ['PARTNER', 'FUTURE_PARTNER']
+      };
+      companiesBaseWhere.relationshipType = {
+        in: ['PARTNER', 'FUTURE_PARTNER']
+      };
+    }
     
     try {
-      // 🚀 PARTNEROS FILTERING: Build base where clauses with relationshipType filter when in PartnerOS mode
-      const peopleBaseWhere: any = {
-        workspaceId,
-        deletedAt: null,
-        OR: [
-          { mainSellerId: userId },
-          { mainSellerId: null }
-        ]
-      };
       
-      const companiesBaseWhere: any = {
-        workspaceId,
-        deletedAt: null,
-        OR: [
-          { mainSellerId: userId },
-          { mainSellerId: null }
-        ]
-      };
-      
-      if (isPartnerOS) {
-        peopleBaseWhere.relationshipType = {
-          in: ['PARTNER', 'FUTURE_PARTNER']
-        };
-        companiesBaseWhere.relationshipType = {
-          in: ['PARTNER', 'FUTURE_PARTNER']
-        };
-      }
-      
-      [peopleCounts, companiesCounts, speedrunPeopleCount, speedrunCompaniesCount, speedrunPeopleNoActionsCount, speedrunCompaniesNoActionsCount] = await Promise.all([
+      [peopleCounts, companiesCounts, speedrunPeopleRecords, speedrunCompaniesRecords, speedrunPeopleNoActionsCount, speedrunCompaniesNoActionsCount] = await Promise.all([
         // Get people counts by status - Include records where user is main seller OR mainSellerId is null (consistent with list API)
         prisma.people.groupBy({
           by: ['status'],
@@ -167,9 +174,8 @@ export async function GET(request: NextRequest) {
           console.error('❌ [COUNTS API] Error fetching companies counts:', error);
           return [];
         }),
-        // Get speedrun people count - count people with ranks 1-50 (per-user)
-        // 🏆 FIX: Match speedrun API filtering - exclude records contacted today or yesterday only
-        // First get the IDs, then filter by checking actions table (same logic as speedrun API)
+        // Get speedrun count - combine people and companies, then limit to top 50 total (matching speedrun API)
+        // 🏆 FIX: Match speedrun API exactly - combine all records, sort by globalRank, limit to top 50
         (async () => {
           try {
             // Calculate date thresholds (exclude contacts from today/yesterday only)
@@ -201,7 +207,12 @@ export async function GET(request: NextRequest) {
             
             const speedrunPeople = await prisma.people.findMany({
               where: speedrunPeopleWhere,
-              select: { id: true, lastAction: true, lastActionDate: true }
+              select: { id: true, lastAction: true, lastActionDate: true, globalRank: true },
+              orderBy: [
+                { globalRank: 'asc' }, // Sort by rank ascending (1-50) to match speedrun API
+                { createdAt: 'desc' } // Fallback to creation date
+              ],
+              take: 200 // Fetch more initially to account for filtering (matching speedrun API)
             });
             
             if (speedrunPeople.length === 0) return 0;
@@ -252,13 +263,13 @@ export async function GET(request: NextRequest) {
               return true;
             });
             
-            return filteredPeople.length;
+            return filteredPeople;
           } catch (error) {
-            console.error('❌ [COUNTS API] Error fetching speedrun people count:', error);
-            return 0;
+            console.error('❌ [COUNTS API] Error fetching speedrun people:', error);
+            return [];
           }
         })(),
-        // Get speedrun companies count - count companies with ranks 1-50 and 0 people
+        // Get speedrun companies - fetch companies with ranks 1-50 and 0 people
         // 🏆 FIX: Match speedrun API filtering - exclude records contacted today or yesterday only
         (async () => {
           try {
@@ -291,7 +302,12 @@ export async function GET(request: NextRequest) {
             
             const speedrunCompanies = await prisma.companies.findMany({
               where: speedrunCompaniesWhere,
-              select: { id: true, lastAction: true, lastActionDate: true }
+              select: { id: true, lastAction: true, lastActionDate: true, globalRank: true },
+              orderBy: [
+                { globalRank: 'asc' }, // Sort by rank ascending (1-50) to match speedrun API
+                { createdAt: 'desc' } // Fallback to creation date
+              ],
+              take: 200 // Fetch more initially to account for filtering (matching speedrun API)
             });
             
             if (speedrunCompanies.length === 0) return 0;
@@ -343,10 +359,10 @@ export async function GET(request: NextRequest) {
               return true;
             });
             
-            return filteredCompanies.length;
+            return filteredCompanies;
           } catch (error) {
-            console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
-            return 0;
+            console.error('❌ [COUNTS API] Error fetching speedrun companies:', error);
+            return [];
           }
         })(),
         // Get speedrun people with no meaningful actions TODAY count
@@ -441,15 +457,59 @@ export async function GET(request: NextRequest) {
         // Note: sellers table doesn't exist in current schema
         // If needed in future, add: prisma.sellers.count({ ... })
       ]);
+      
+      // 🏆 FIX: Combine people and companies, sort by globalRank, limit to top 50 total (matching speedrun API)
+      // This ensures the count matches exactly what the speedrun API returns
+      try {
+        // Handle case where early return was 0 (convert to empty array for combining)
+        const peopleArray = Array.isArray(speedrunPeopleRecords) ? speedrunPeopleRecords : (speedrunPeopleRecords === 0 ? [] : []);
+        const companiesArray = Array.isArray(speedrunCompaniesRecords) ? speedrunCompaniesRecords : (speedrunCompaniesRecords === 0 ? [] : []);
+        
+        console.log(`🔍 [COUNTS API] Before combining - people: ${peopleArray.length}, companies: ${companiesArray.length}, peopleType: ${typeof speedrunPeopleRecords}, companiesType: ${typeof speedrunCompaniesRecords}`);
+        console.log(`🔍 [COUNTS API] People records sample:`, peopleArray.slice(0, 3).map((p: any) => ({ id: p.id, rank: p.globalRank })));
+        console.log(`🔍 [COUNTS API] Companies records sample:`, companiesArray.slice(0, 3).map((c: any) => ({ id: c.id, rank: c.globalRank })));
+        
+        // Combine all speedrun records (people + companies)
+        const allSpeedrunRecords = [
+          ...peopleArray.map((p: any) => ({ ...p, type: 'person' })),
+          ...companiesArray.map((c: any) => ({ ...c, type: 'company' }))
+        ];
+        
+        console.log(`🔍 [COUNTS API] After combining - total records: ${allSpeedrunRecords.length}`);
+        
+        // Sort by globalRank ascending (1-50) to match speedrun API sorting
+        allSpeedrunRecords.sort((a: any, b: any) => {
+          const rankA = a.globalRank || 999;
+          const rankB = b.globalRank || 999;
+          return rankA - rankB; // Ascending: 1-50 (rank 1 = highest priority)
+        });
+        
+        console.log(`🔍 [COUNTS API] After sorting - first 5 records:`, allSpeedrunRecords.slice(0, 5).map((r: any) => ({ id: r.id, rank: r.globalRank, type: r.type })));
+        
+        // Limit to top 50 total (matching speedrun API behavior)
+        const top50Records = allSpeedrunRecords.slice(0, 50);
+        
+        console.log(`🔍 [COUNTS API] After limiting to 50 - total: ${top50Records.length}`);
+        
+        speedrunCombinedCount = {
+          total: top50Records.length,
+          people: top50Records.filter((r: any) => r.type === 'person').length,
+          companies: top50Records.filter((r: any) => r.type === 'company').length
+        };
+        
+        console.log(`🔍 [COUNTS API] Final combined speedrun count:`, speedrunCombinedCount);
+      } catch (error) {
+        console.error('❌ [COUNTS API] Error combining speedrun records:', error);
+        speedrunCombinedCount = { total: 0, people: 0, companies: 0 };
+      }
     } catch (error) {
       console.error('❌ [COUNTS API] Error in Promise.all:', error);
       // Provide default values if Promise.all fails
       peopleCounts = [];
       companiesCounts = [];
-      speedrunPeopleCount = 0;
-      speedrunCompaniesCount = 0;
       speedrunPeopleNoActionsCount = 0;
       speedrunCompaniesNoActionsCount = 0;
+      speedrunCombinedCount = { total: 0, people: 0, companies: 0 };
     }
 
     // Convert groupBy results to count objects with proper null handling
@@ -571,8 +631,11 @@ export async function GET(request: NextRequest) {
     const partnersCount = 0;
     // Note: sellers table doesn't exist yet - set to 0 for now
     const sellersCount = 0;
-    // Use actual speedrun count based on qualifying records (people + companies with 0 people)
-    const actualSpeedrunCount = speedrunPeopleCount + speedrunCompaniesCount;
+    // 🏆 FIX: Use combined count (people + companies combined, sorted, limited to top 50)
+    // This matches exactly what the speedrun API returns
+    const actualSpeedrunCount = speedrunCombinedCount.total;
+    const speedrunPeopleCountFinal = speedrunCombinedCount.people;
+    const speedrunCompaniesCountFinal = speedrunCombinedCount.companies;
     const speedrunReadyCount = speedrunPeopleNoActionsCount + speedrunCompaniesNoActionsCount;
     
     // 🚀 REMAINING COUNT: Calculate records with no meaningful actions EVER (not just today)
