@@ -10,8 +10,8 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 
 // Test configuration
-const TEST_EMAIL = process.env.TEST_EMAIL || 'ross@adrata.com';
-const TEST_PASSWORD = process.env.TEST_PASSWORD || 'Themill08!';
+const TEST_EMAIL = process.env.TEST_EMAIL || 'vleland';
+const TEST_PASSWORD = process.env.TEST_PASSWORD || 'TOPgtm01!';
 const TEST_WORKSPACE = process.env.TEST_WORKSPACE || 'test-workspace';
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
