@@ -56,6 +56,7 @@ interface PipelineLeftPanelStandaloneProps {
   setIsCustomersVisible?: (visible: boolean) => void;
   isPartnersVisible?: boolean;
   setIsPartnersVisible?: (visible: boolean) => void;
+  osType?: 'acquisition' | 'retention' | 'expansion' | 'revenue';
 }
 
 function PipelineSections({ 
@@ -1008,6 +1009,7 @@ export function PipelineLeftPanelStandalone({
   setIsProspectsVisible,
   isLeadsVisible = true,
   setIsLeadsVisible,
+  osType = 'revenue',
   isCustomersVisible = false, // Hidden by default
   setIsCustomersVisible,
   isPartnersVisible = false, // Hidden by default (will be overridden for non-pinpoint workspaces)

@@ -37,7 +37,7 @@ const CACHE_TTL_SPEEDRUN = 2 * 60 * 1000; // 2 minutes for speedrun (shorter TTL
 const CACHE_TTL_DEFAULT = 5 * 60 * 1000; // 5 minutes for other sections
 const CACHE_VERSION = 3; // Increment this when sorting/data structure changes - v3: pagination count fix
 
-export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
+export function useFastSectionData(section: string, limit: number = 30, osType?: 'acquisition' | 'retention' | 'expansion' | 'revenue'): UseFastSectionDataReturn {
   const DEBUG_PIPELINE = process.env.NODE_ENV === 'development' && false; // Enable manually when needed
   if (DEBUG_PIPELINE) console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
   
@@ -208,40 +208,47 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       // Check if we're in PartnerOS mode
       const isPartnerOS = typeof window !== 'undefined' && sessionStorage.getItem('activeSubApp') === 'partneros';
       const partnerosParam = isPartnerOS ? '&partneros=true' : '';
+      
+      // Add OS type parameter for filtering
+      const osTypeParam = osType && osType !== 'revenue' ? `&osType=${osType}` : '';
 
       switch (section) {
         case 'speedrun':
-          url = `/api/v1/speedrun?limit=${limit}${refreshParam}${partnerosParam}`;
+          url = `/api/v1/speedrun?limit=${limit}${refreshParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'leads':
           // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
           // Progressive loading caused blank pages when navigating to later pages
-          url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=10000${refreshParam}${partnerosParam}`;
+          url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=10000${refreshParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'prospects':
           // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
           // Progressive loading caused blank pages when navigating to later pages
-          url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=10000${refreshParam}${partnerosParam}`;
+          url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=10000${refreshParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'opportunities':
           // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
           // Progressive loading caused blank pages when navigating to later pages
           // Opportunities are companies with status=OPPORTUNITY
-          url = `/api/v1/companies?status=OPPORTUNITY&limit=10000${refreshParam}${partnerosParam}`;
+          url = `/api/v1/companies?status=OPPORTUNITY&limit=10000${refreshParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'people':
           // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
           // Progressive loading caused blank pages when navigating to later pages
-          url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
+          url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'companies':
           // For companies, use v1 API with pre-sorting and increased limit
           // Pass workspaceId to ensure correct workspace filtering
           const workspaceParam = workspaceId ? `&workspaceId=${encodeURIComponent(workspaceId)}` : '';
-          url = `/api/v1/companies?sortBy=name&sortOrder=asc&limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}${partnerosParam}`;
+          url = `/api/v1/companies?sortBy=name&sortOrder=asc&limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'partners':
-          url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
+          url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}${osTypeParam}`;
+          break;
+        case 'clients':
+          const clientsWorkspaceParam = workspaceId ? `&workspaceId=${encodeURIComponent(workspaceId)}` : '';
+          url = `/api/v1/companies?status=CLIENT&limit=${Math.max(limit, 10000)}${refreshParam}${clientsWorkspaceParam}${partnerosParam}${osTypeParam}`;
           break;
         default:
           // Fallback to old section API for unsupported sections

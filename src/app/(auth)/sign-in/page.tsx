@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useUnifiedAuth } from "@/platform/auth";
 import { Alert, AlertDescription } from "@/platform/shared/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { prefetchAfterAuth } from "@/platform/services/section-prefetch";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -14,6 +15,9 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isValidatingUsername, setIsValidatingUsername] = useState(false);
+  const [usernameExists, setUsernameExists] = useState<boolean | null>(null);
+  const [usernameValidationError, setUsernameValidationError] = useState<string | null>(null);
 
   const router = useRouter();
   const { signIn: authSignIn } = useUnifiedAuth();
@@ -80,6 +84,105 @@ export default function SignInPage() {
       console.log("📧 [SIGN-IN PAGE] Populated remembered email");
     }
   }, [mounted]);
+
+  // 🚀 PERFORMANCE: Debounced username validation
+  useEffect(() => {
+    if (!mounted || !email || email.trim().length === 0) {
+      setUsernameExists(null);
+      setUsernameValidationError(null);
+      return;
+    }
+
+    // Debounce validation - wait 300ms after user stops typing
+    const timeoutId = setTimeout(async () => {
+      setIsValidatingUsername(true);
+      setUsernameValidationError(null);
+      
+      try {
+        const response = await fetch('/api/auth/validate-username', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: email.trim() }),
+        });
+
+        if (response.status === 429) {
+          // Rate limited - don't show error, just skip validation
+          setUsernameExists(null);
+          setIsValidatingUsername(false);
+          return;
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+          setUsernameExists(result.exists);
+          if (!result.exists) {
+            setUsernameValidationError("Username or email not found");
+          } else {
+            setUsernameValidationError(null);
+          }
+        } else {
+          setUsernameExists(null);
+          setUsernameValidationError(null);
+        }
+      } catch (error) {
+        // Non-blocking error - don't show validation error on network issues
+        setUsernameExists(null);
+        setUsernameValidationError(null);
+      } finally {
+        setIsValidatingUsername(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [email, mounted]);
+
+  // Handle username blur - validate immediately
+  const handleEmailBlur = async () => {
+    if (!email || email.trim().length === 0) {
+      setUsernameExists(null);
+      setUsernameValidationError(null);
+      return;
+    }
+
+    setIsValidatingUsername(true);
+    setUsernameValidationError(null);
+    
+    try {
+      const response = await fetch('/api/auth/validate-username', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (response.status === 429) {
+        setUsernameExists(null);
+        setIsValidatingUsername(false);
+        return;
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setUsernameExists(result.exists);
+        if (!result.exists) {
+          setUsernameValidationError("Username or email not found");
+        } else {
+          setUsernameValidationError(null);
+        }
+      }
+    } catch (error) {
+      // Non-blocking error
+      setUsernameExists(null);
+      setUsernameValidationError(null);
+    } finally {
+      setIsValidatingUsername(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,6 +274,18 @@ export default function SignInPage() {
           activeWorkspaceId: result.session?.user?.activeWorkspaceId
         });
 
+        // 🚀 PERFORMANCE: Start pre-fetching critical data immediately after auth (before redirect)
+        // This ensures data is ready when the page loads, making it feel instant
+        const workspaceId = result.session?.user?.activeWorkspaceId;
+        const userId = result.session?.user?.id;
+        
+        if (workspaceId && userId) {
+          // Start pre-fetching in background (non-blocking)
+          prefetchAfterAuth(workspaceId, userId, redirectUrl).catch((error) => {
+            console.warn("⚠️ [SIGN-IN PAGE] Pre-fetch error (non-blocking):", error);
+          });
+        }
+
         // Environment-aware: Ensure we're redirecting to the correct domain
         // No need to redirect if we're already on a valid domain (production, staging, localhost, or Vercel preview)
         // The redirectUrl is already relative, so it will work on any valid domain
@@ -217,19 +332,36 @@ export default function SignInPage() {
             <label className="block font-medium mb-1" htmlFor="username">
               Username or Email
             </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-border rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-border"
-              placeholder="Enter your username or email"
-              required
-              disabled={isLoading}
-              autoFocus
-              suppressHydrationWarning
-            />
+            <div className="relative">
+              <input
+                id="username"
+                name="username"
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={handleEmailBlur}
+                className={`w-full border rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors ${
+                  usernameValidationError 
+                    ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20' 
+                    : usernameExists === true
+                    ? 'border-green-500 focus-visible:border-green-500 focus-visible:ring-green-500/20'
+                    : 'border-border focus-visible:border-blue-500 focus-visible:ring-blue-500/20'
+                }`}
+                placeholder="Enter your username or email"
+                required
+                disabled={isLoading}
+                autoFocus
+                suppressHydrationWarning
+              />
+              {isValidatingUsername && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <div className="h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+            {usernameValidationError && (
+              <p className="text-sm text-red-500 mt-1">{usernameValidationError}</p>
+            )}
           </div>
 
           <div>
@@ -277,8 +409,8 @@ export default function SignInPage() {
 
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-black disabled:opacity-100"
+            disabled={isLoading || (usernameExists === false && !isValidatingUsername)}
+            className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-60"
             suppressHydrationWarning
           >
             {isLoading ? "Starting..." : "Start"}

@@ -110,6 +110,7 @@ model workspaces {
   auth_sessions             auth_sessions[]
   companies                 companies[]
   company_lists             company_lists[]
+  company_os_access         company_os_access[]
   lists                     lists[]
   emails                    email_messages[]
   grand_central_connections grand_central_connections[]
@@ -520,6 +521,25 @@ model companies {
   @@index([employeeCountChange], type: Gin)
   @@index([workspaceId, dataQualityScore])
   @@index([dataSources], type: Gin)
+  company_os_access company_os_access?
+}
+
+/// Company OS access configuration - tracks which OS modules are enabled per company
+model company_os_access {
+  id                  String    @id @default(ulid()) @db.VarChar(30)
+  companyId           String    @unique @db.VarChar(30)
+  workspaceId         String    @db.VarChar(30)
+  acquisitionOsEnabled Boolean  @default(true)
+  retentionOsEnabled  Boolean   @default(true)
+  expansionOsEnabled  Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  company             companies @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  workspace           workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([companyId])
+  @@index([workspaceId, companyId])
 }
 
 /// Core People - Global canonical person data (no workspaceId)
@@ -1898,6 +1918,9 @@ enum Permission {
   METRICS_ACCESS
   CHRONICLE_ACCESS
   DESKTOP_DOWNLOAD_ACCESS
+  ACQUISITION_OS_ACCESS
+  RETENTION_OS_ACCESS
+  EXPANSION_OS_ACCESS
 }
 
 enum ActionStatus {

@@ -131,6 +131,7 @@ export async function GET(request: NextRequest) {
     const cursor = searchParams.get('cursor') || ''; // 🚀 NEW: Cursor-based pagination
     const forceRefresh = searchParams.get('refresh') === 'true';
     const isPartnerOS = searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
+    const osType = searchParams.get('osType') as 'acquisition' | 'retention' | 'expansion' | null;
     
     const offset = (page - 1) * limit;
     
@@ -293,6 +294,29 @@ export async function GET(request: NextRequest) {
         } else {
           // For pipeline stages (LEAD, PROSPECT, OPPORTUNITY, etc.), use status
           where.status = status;
+        }
+      }
+
+      // OS-based filtering: Apply OS-specific status/relationship filters
+      if (osType && !companyId) {
+        if (osType === 'acquisition') {
+          // Acquisition OS: Show non-clients (LEAD, PROSPECT, OPPORTUNITY)
+          if (!status || (status !== 'CLIENT' && status !== 'FUTURE_CLIENT')) {
+            // Only apply if status filter hasn't been set to CLIENT
+            if (!usingRelationshipType) {
+              where.status = {
+                in: ['LEAD', 'PROSPECT', 'OPPORTUNITY'] as any
+              };
+            }
+          }
+        } else if (osType === 'retention' || osType === 'expansion') {
+          // Retention/Expansion OS: Show clients only
+          if (!usingRelationshipType && (!status || (status !== 'CLIENT' && status !== 'FUTURE_CLIENT'))) {
+            where.relationshipType = {
+              in: ['CLIENT', 'FUTURE_CLIENT']
+            };
+            usingRelationshipType = true;
+          }
         }
       }
 

@@ -565,6 +565,28 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     setDirectRecordError(null);
     
     try {
+      // 🚀 PERFORMANCE: Check pre-fetched cache first for instant loading
+      const cacheKey = `adrata-record-${section}-${recordId}`;
+      const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
+      
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          const RECORD_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+          const cacheAge = Date.now() - (parsed.ts || 0);
+          
+          if (parsed.data && parsed.ts && cacheAge < RECORD_CACHE_TTL) {
+            console.log(`⚡ [CACHE HIT] Loaded ${section} record ${recordId} from pre-fetched cache (${Math.round(cacheAge)}ms old)`);
+            setSelectedRecord(parsed.data);
+            setDirectRecordLoading(false);
+            return;
+          }
+        } catch (e) {
+          // Invalid cache, proceed with API call
+          console.warn(`⚠️ [CACHE] Invalid cache format, fetching from API:`, e);
+        }
+      }
+      
       console.log(`🔍 [DIRECT LOAD] Record not in cache, loading ${section} record directly: ${recordId}`);
       
       // ⚡ PERFORMANCE MONITORING: Track API call timing
@@ -668,11 +690,29 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         // For v1 APIs, the data is directly in result.data
         if (section === 'companies' || section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'speedrun') {
           record = result.data;
+          
+          // 🚀 PERFORMANCE: Cache the fetched record for future instant loading
+          if (typeof window !== 'undefined' && record) {
+            localStorage.setItem(cacheKey, JSON.stringify({
+              data: record,
+              ts: Date.now(),
+              version: 1
+            }));
+          }
         } else {
           // Fallback for unified API response format
           const sectionData = result['data'][section] || [];
           console.log(`🔍 [DIRECT LOAD] Looking for record ${recordId} in ${sectionData.length} ${section} records`);
           record = sectionData.find((r: any) => r['id'] === recordId);
+          
+          // Cache if found
+          if (typeof window !== 'undefined' && record) {
+            localStorage.setItem(cacheKey, JSON.stringify({
+              data: record,
+              ts: Date.now(),
+              version: 1
+            }));
+          }
         }
         
         if (record) {

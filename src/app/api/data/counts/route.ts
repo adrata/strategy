@@ -178,17 +178,29 @@ export async function GET(request: NextRequest) {
             const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
             
             // Step 1: Get all people with ranks 1-50, filtering out those contacted today/yesterday
+            // 🏆 FIX: Match speedrun API exactly - only include records where mainSellerId = userId (exclude null)
+            const speedrunPeopleWhere: any = {
+              workspaceId,
+              deletedAt: null,
+              mainSellerId: userId, // Only records assigned to this user (exclude null, matching speedrun API)
+              companyId: { not: null },
+              globalRank: { not: null, gte: 1, lte: 50 },
+              // Exclude records contacted today or yesterday (include older contacts or never contacted)
+              OR: [
+                { lastActionDate: null }, // No action date = include them
+                { lastActionDate: { lt: yesterday } } // Action before yesterday = include them
+              ]
+            };
+            
+            // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode (matching speedrun API)
+            if (isPartnerOS) {
+              speedrunPeopleWhere.relationshipType = {
+                in: ['PARTNER', 'FUTURE_PARTNER']
+              };
+            }
+            
             const speedrunPeople = await prisma.people.findMany({
-              where: {
-                ...peopleBaseWhere,
-                companyId: { not: null },
-                globalRank: { not: null, gte: 1, lte: 50 },
-                // Exclude records contacted today or yesterday (include older contacts or never contacted)
-                OR: [
-                  { lastActionDate: null }, // No action date = include them
-                  { lastActionDate: { lt: yesterday } } // Action before yesterday = include them
-                ]
-              },
+              where: speedrunPeopleWhere,
               select: { id: true, lastAction: true, lastActionDate: true }
             });
             
@@ -256,17 +268,29 @@ export async function GET(request: NextRequest) {
             const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
             
             // Step 1: Get all companies with ranks 1-50 and 0 people, filtering out those contacted today/yesterday
+            // 🏆 FIX: Match speedrun API exactly - only include records where mainSellerId = userId (exclude null)
+            const speedrunCompaniesWhere: any = {
+              workspaceId,
+              deletedAt: null,
+              mainSellerId: userId, // Only records assigned to this user (exclude null, matching speedrun API)
+              globalRank: { not: null, gte: 1, lte: 50 },
+              people: { none: {} },
+              // Exclude records contacted today or yesterday (include older contacts or never contacted)
+              OR: [
+                { lastActionDate: null }, // No action date = include them
+                { lastActionDate: { lt: yesterday } } // Action before yesterday = include them
+              ]
+            };
+            
+            // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode (matching speedrun API)
+            if (isPartnerOS) {
+              speedrunCompaniesWhere.relationshipType = {
+                in: ['PARTNER', 'FUTURE_PARTNER']
+              };
+            }
+            
             const speedrunCompanies = await prisma.companies.findMany({
-              where: {
-                ...companiesBaseWhere,
-                globalRank: { not: null, gte: 1, lte: 50 },
-                people: { none: {} },
-                // Exclude records contacted today or yesterday (include older contacts or never contacted)
-                OR: [
-                  { lastActionDate: null }, // No action date = include them
-                  { lastActionDate: { lt: yesterday } } // Action before yesterday = include them
-                ]
-              },
+              where: speedrunCompaniesWhere,
               select: { id: true, lastAction: true, lastActionDate: true }
             });
             

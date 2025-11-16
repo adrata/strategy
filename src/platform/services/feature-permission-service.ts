@@ -1,9 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { getActiveRoleDetails } from './role-switching-service';
+import { hasCompanyOSAccess, getCompanyOSAccess } from './company-os-access-service';
 
 const prisma = new PrismaClient();
 
-export type FeatureName = 'OASIS' | 'STACKS' | 'WORKSHOP' | 'REVENUEOS' | 'METRICS' | 'CHRONICLE' | 'DESKTOP_DOWNLOAD';
+export type FeatureName = 'OASIS' | 'STACKS' | 'WORKSHOP' | 'REVENUEOS' | 'METRICS' | 'CHRONICLE' | 'DESKTOP_DOWNLOAD' | 'ACQUISITION_OS' | 'RETENTION_OS' | 'EXPANSION_OS';
+
+export type OSType = 'acquisition' | 'retention' | 'expansion';
 
 interface FeatureAccessResult {
   hasAccess: boolean;
@@ -247,6 +250,70 @@ export async function hasMultipleFeatureAccess(
   );
 
   return results;
+}
+
+/**
+ * Check if user has access to a specific OS in a workspace
+ * Checks both workspace-level feature flags and company-level access
+ */
+export async function hasOSAccess(
+  userId: string,
+  workspaceId: string,
+  osType: OSType
+): Promise<FeatureAccessResult> {
+  const cacheKey = getCacheKey('os_access', userId, workspaceId, osType);
+  const cached = getCached<FeatureAccessResult>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  try {
+    // Map OS type to feature name
+    const featureMap: Record<OSType, FeatureName> = {
+      acquisition: 'ACQUISITION_OS',
+      retention: 'RETENTION_OS',
+      expansion: 'EXPANSION_OS'
+    };
+
+    const feature = featureMap[osType];
+
+    // First check workspace-level feature access
+    const featureAccess = await hasFeatureAccess(userId, workspaceId, feature);
+    
+    if (!featureAccess.hasAccess) {
+      const result = { hasAccess: false, reason: `OS feature not enabled: ${feature}` };
+      setCached(cacheKey, result);
+      return result;
+    }
+
+    // For now, if workspace has the feature enabled, user has access
+    // Company-level access can be checked separately when viewing specific companies
+    const result = { hasAccess: true };
+    setCached(cacheKey, result);
+    return result;
+  } catch (error) {
+    console.error('Error checking OS access:', error);
+    const result = { hasAccess: false, reason: 'Error checking OS access' };
+    setCached(cacheKey, result);
+    return result;
+  }
+}
+
+/**
+ * Check if a company has access to a specific OS
+ * This is used for company-level filtering
+ */
+export async function hasCompanyOSAccessForCompany(
+  companyId: string,
+  workspaceId: string,
+  osType: OSType
+): Promise<boolean> {
+  try {
+    return await hasCompanyOSAccess(companyId, workspaceId, osType);
+  } catch (error) {
+    console.error('Error checking company OS access:', error);
+    return true; // Default to enabled on error
+  }
 }
 
 /**

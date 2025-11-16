@@ -232,75 +232,60 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // 🚀 PERFORMANCE: Get workspace memberships first, then batch fetch workspace details
-    // Querying workspace memberships for user
-    console.log("🔐 [AUTH API] Querying workspace memberships for user:", user.id);
+    // 🚀 PERFORMANCE: Parallelize password validation and workspace queries
+    // Both operations can run simultaneously since they don't depend on each other
+    console.log("🔐 [AUTH API] Starting parallel queries for password validation and workspace data");
     
-    let workspaceMemberships;
-    try {
-      workspaceMemberships = await prisma.workspace_users.findMany({
-        where: { 
-          userId: user.id,
-        },
-        select: {
-          id: true,
-          role: true,
-          workspaceId: true,
+    const [isValidPassword, workspaceMembershipsWithDetails] = await Promise.all([
+      // Password validation - use bcrypt for all users
+      (async () => {
+        if (!user.password) {
+          console.warn("⚠️ [AUTH API] User has no password set:", user.email || user.username || user.name);
+          return false;
         }
-      });
-      console.log("🔐 [AUTH API] Workspace memberships found:", workspaceMemberships.length);
-    } catch (workspaceError) {
-      console.error("❌ [AUTH API] Workspace query failed:", workspaceError);
-      throw workspaceError;
-    }
-
-    // 🚀 PERFORMANCE: Batch fetch workspace details in a single query
-    const workspaceIds = workspaceMemberships.map(m => m.workspaceId);
-    console.log("🔐 [AUTH API] Fetching workspace details for IDs:", workspaceIds);
-    
-    let workspaceDetails;
-    try {
-      workspaceDetails = await prisma.workspaces.findMany({
-        where: {
-          id: { in: workspaceIds }
-        },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
+        // Use bcrypt to compare the provided password with the stored hash
+        const result = await bcrypt.compare(password, user.password);
+        console.log("🔐 [AUTH API] Password validation result:", result);
+        return result;
+      })(),
+      
+      // 🚀 PERFORMANCE: Combined workspace query with join for single database round-trip
+      (async () => {
+        try {
+          // Get workspace memberships with workspace details in a single query using include
+          const memberships = await prisma.workspace_users.findMany({
+            where: { 
+              userId: user.id,
+            },
+            select: {
+              id: true,
+              role: true,
+              workspaceId: true,
+              workspace: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                }
+              }
+            }
+          });
+          console.log("🔐 [AUTH API] Workspace memberships with details found:", memberships.length);
+          return memberships;
+        } catch (workspaceError) {
+          console.error("❌ [AUTH API] Workspace query failed:", workspaceError);
+          throw workspaceError;
         }
-      });
-      console.log("🔐 [AUTH API] Workspace details found:", workspaceDetails.length);
-    } catch (workspaceDetailsError) {
-      console.error("❌ [AUTH API] Workspace details query failed:", workspaceDetailsError);
-      throw workspaceDetailsError;
-    }
+      })()
+    ]);
 
-    // 🚀 PERFORMANCE: Create a lookup map for O(1) workspace access
-    const workspaceMap = new Map(workspaceDetails.map(w => [w.id, w]));
-
-    // 🚀 PERFORMANCE: Combine the data efficiently
-    const workspaces = workspaceMemberships.map(membership => ({
+    // Format workspaces data
+    const workspaces = workspaceMembershipsWithDetails.map(membership => ({
       id: membership.id,
       role: membership.role,
       workspaceId: membership.workspaceId,
-      workspace: workspaceMap.get(membership.workspaceId) || null
+      workspace: membership.workspace || null
     }));
-
-    // User check was already done above, remove duplicate check
-
-    // Password validation - use bcrypt for all users
-    let isValidPassword = false;
-    
-    if (user.password) {
-      // Use bcrypt to compare the provided password with the stored hash
-      isValidPassword = await bcrypt.compare(password, user.password);
-      console.log("🔐 [AUTH API] Password validation result:", isValidPassword);
-    } else {
-      // No password set - this shouldn't happen in production
-      console.warn("⚠️ [AUTH API] User has no password set:", user.email || user.username || user.name);
-      isValidPassword = false;
-    }
 
     if (!isValidPassword) {
       console.log("❌ [AUTH API] Invalid password for:", email);

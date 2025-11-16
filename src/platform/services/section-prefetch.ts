@@ -153,6 +153,14 @@ async function prefetchSectionData(options: PrefetchOptions): Promise<void> {
         responseTime: Date.now() - lastPrefetch
       });
       
+      // 🚀 PERFORMANCE: Pre-fetch individual record details for first 10 records
+      // This ensures instant loading when user clicks on a record
+      if (result.data.length > 0) {
+        prefetchRecordDetails(section, result.data.slice(0, 10), workspaceId).catch((error) => {
+          console.warn(`⚠️ [SECTION PREFETCH] Failed to pre-fetch record details (non-blocking):`, error);
+        });
+      }
+      
       // Dispatch event to notify components that fresh data is available
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('section-prefetch-complete', {
@@ -194,6 +202,85 @@ function debouncedPrefetch(options: PrefetchOptions): void {
   }, DEBOUNCE_DELAY);
   
   prefetchTimeouts.set(prefetchKey, timeout);
+}
+
+/**
+ * Prefetch critical data immediately after authentication (before redirect)
+ * This starts loading counts and current section data in parallel for instant page load
+ */
+export async function prefetchAfterAuth(
+  workspaceId: string,
+  userId: string,
+  redirectPath: string
+): Promise<void> {
+  if (typeof window === 'undefined') return;
+  
+  console.log(`🚀 [AUTH PREFETCH] Starting immediate pre-fetch after authentication:`, {
+    workspaceId,
+    userId,
+    redirectPath
+  });
+  
+  // Detect current section from redirect path
+  const pathParts = redirectPath.split('/').filter(Boolean);
+  const sectionFromPath = pathParts[pathParts.length - 1] || 'speedrun';
+  
+  const urlToSectionMap: Record<string, string> = {
+    'speedrun': 'speedrun',
+    'leads': 'leads',
+    'prospects': 'prospects',
+    'opportunities': 'opportunities',
+    'people': 'people',
+    'companies': 'companies',
+    'dashboard': 'speedrun', // Dashboard defaults to speedrun
+  };
+  
+  const currentSection = urlToSectionMap[sectionFromPath] || 'speedrun';
+  
+  try {
+    // Pre-fetch critical data in parallel for maximum speed
+    await Promise.all([
+      // 1. Pre-fetch counts (for left panel)
+      fetch('/api/data/counts', {
+        credentials: 'include',
+        headers: {
+          'X-Background-Prefetch': 'true',
+        }
+      }).then(async (response) => {
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            // Cache counts in localStorage
+            const cacheKey = `adrata-counts-${workspaceId}`;
+            localStorage.setItem(cacheKey, JSON.stringify({
+              data: result.data,
+              ts: Date.now(),
+              version: 1
+            }));
+            console.log(`✅ [AUTH PREFETCH] Cached counts data`);
+          }
+        }
+      }).catch((error) => {
+        console.warn(`⚠️ [AUTH PREFETCH] Failed to pre-fetch counts:`, error);
+      }),
+      
+      // 2. Pre-fetch current section data (for main panel)
+      prefetchSectionData({
+        workspaceId,
+        userId,
+        section: currentSection,
+        trigger: 'auth-prefetch',
+        force: true,
+        initialOnly: false
+      }).catch((error) => {
+        console.warn(`⚠️ [AUTH PREFETCH] Failed to pre-fetch ${currentSection}:`, error);
+      })
+    ]);
+    
+    console.log(`✅ [AUTH PREFETCH] Critical data pre-fetched successfully`);
+  } catch (error) {
+    console.warn(`⚠️ [AUTH PREFETCH] Error during pre-fetch (non-blocking):`, error);
+  }
 }
 
 /**
@@ -278,6 +365,82 @@ export function prefetchSection(workspaceId: string, userId: string, section: st
     force,
     initialOnly: false
   });
+}
+
+/**
+ * Pre-fetch individual record details for instant loading when user clicks
+ * Pre-fetches first 10 records' full details and caches them
+ */
+async function prefetchRecordDetails(
+  section: string,
+  records: any[],
+  workspaceId: string
+): Promise<void> {
+  if (typeof window === 'undefined' || !records || records.length === 0) return;
+  
+  console.log(`🚀 [RECORD PREFETCH] Pre-fetching details for ${records.length} ${section} records`);
+  
+  const RECORD_CACHE_TTL = 5 * 60 * 1000; // 5 minutes TTL
+  
+  // Pre-fetch all records in parallel
+  const prefetchPromises = records.map(async (record) => {
+    const recordId = record.id;
+    if (!recordId) return;
+    
+    try {
+      // Determine API endpoint based on section
+      let apiUrl = '';
+      if (section === 'companies' || section === 'opportunities') {
+        apiUrl = `/api/v1/companies/${recordId}`;
+      } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun') {
+        apiUrl = `/api/v1/people/${recordId}`;
+      } else {
+        return; // Unknown section type
+      }
+      
+      // Check if already cached and still valid
+      const cacheKey = `adrata-record-${section}-${recordId}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          const cacheAge = Date.now() - (parsed.ts || 0);
+          if (parsed.ts && cacheAge < RECORD_CACHE_TTL) {
+            // Cache is still valid, skip
+            return;
+          }
+        } catch (e) {
+          // Invalid cache, proceed with fetch
+        }
+      }
+      
+      // Fetch record details
+      const response = await fetch(apiUrl, {
+        credentials: 'include',
+        headers: {
+          'X-Background-Prefetch': 'true',
+        }
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          // Cache record details
+          localStorage.setItem(cacheKey, JSON.stringify({
+            data: result.data,
+            ts: Date.now(),
+            version: 1
+          }));
+        }
+      }
+    } catch (error) {
+      // Non-blocking error - just log it
+      console.warn(`⚠️ [RECORD PREFETCH] Failed to pre-fetch ${section} record ${recordId}:`, error);
+    }
+  });
+  
+  await Promise.all(prefetchPromises);
+  console.log(`✅ [RECORD PREFETCH] Pre-fetched ${records.length} ${section} record details`);
 }
 
 /**

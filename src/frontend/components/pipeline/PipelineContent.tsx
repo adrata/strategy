@@ -26,6 +26,7 @@ import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
+import { useOS } from '@/platform/context/OSContext';
 import { Pagination } from './table/Pagination';
 import { AddModal } from '@/platform/ui/components/AddModal';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
@@ -46,6 +47,7 @@ interface PipelineContentProps {
   companyId?: string;
   title?: string;
   subtitle?: string;
+  osType?: 'acquisition' | 'retention' | 'expansion' | 'revenue';
 }
 
 // PERFORMANCE: Memoize component to prevent unnecessary re-renders
@@ -54,8 +56,12 @@ export const PipelineContent = React.memo(function PipelineContent({
   sellerId, 
   companyId, 
   title, 
-  subtitle 
+  subtitle,
+  osType: osTypeProp
 }: PipelineContentProps) {
+  // Get OS type from context if not provided as prop (backward compatibility)
+  const osContext = useOS();
+  const osType = osTypeProp || osContext.osType;
   const [showHeader, setShowHeader] = useState(true);
   // console.log('🔍 [PipelineContent] Component rendered for section:', section, 'sellerId:', sellerId, 'companyId:', companyId);
   
@@ -450,7 +456,7 @@ export const PipelineContent = React.memo(function PipelineContent({
   // People section uses 500 records per page with server-side pagination
   // Speedrun should only load 50 records (Top 50 concept)
   const limit = section === 'people' ? 500 : section === 'speedrun' ? 50 : 1000;
-  const fastSectionData = useFastSectionData(section, limit);
+  const fastSectionData = useFastSectionData(section, limit, osType);
   
   // Debug logging for companies section
   if (section === 'companies') {

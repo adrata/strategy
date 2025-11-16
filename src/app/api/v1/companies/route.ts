@@ -138,6 +138,7 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sortOrder') || 'asc';
     const countsOnly = searchParams.get('counts') === 'true';
     const forceRefresh = searchParams.get('refresh') === 'true';
+    const osType = searchParams.get('osType') as 'acquisition' | 'retention' | 'expansion' | null;
     
     const offset = (page - 1) * limit;
     
@@ -289,6 +290,43 @@ export async function GET(request: NextRequest) {
     // Industry filtering
     if (industry) {
       where.industry = { contains: industry, mode: 'insensitive' };
+    }
+
+    // OS-based filtering: Apply OS-specific status filters
+    if (osType) {
+      if (osType === 'acquisition') {
+        // Acquisition OS: Show non-clients (LEAD, PROSPECT, OPPORTUNITY)
+        // Only apply if status filter hasn't been set explicitly
+        if (!status) {
+          where.status = {
+            in: ['LEAD', 'PROSPECT', 'OPPORTUNITY'] as any
+          };
+        } else if (status !== 'CLIENT') {
+          // If status is already set to a non-client status, keep it
+          // This allows explicit status filtering within acquisition OS
+        } else {
+          // If status is CLIENT but we're in acquisition OS, override to show non-clients
+          where.status = {
+            in: ['LEAD', 'PROSPECT', 'OPPORTUNITY'] as any
+          };
+        }
+      } else if (osType === 'retention') {
+        // Retention OS: Show clients only
+        if (!status || status !== 'CLIENT') {
+          where.OR = [
+            { status: 'CLIENT' as any },
+            { additionalStatuses: { has: 'CLIENT' } }
+          ];
+        }
+      } else if (osType === 'expansion') {
+        // Expansion OS: Show clients (for expansion opportunities)
+        if (!status || status !== 'CLIENT') {
+          where.OR = [
+            { status: 'CLIENT' as any },
+            { additionalStatuses: { has: 'CLIENT' } }
+          ];
+        }
+      }
     }
 
     let result;
