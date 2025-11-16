@@ -348,6 +348,9 @@ export async function GET(request: NextRequest) {
             // Use descriptionEnriched as opportunity summary (can be Claude-generated)
             // We'll add a script to generate these summaries
             
+            // Custom fields (for storing opportunity ranks and other metadata)
+            customFields: true,
+            
             // Additional useful fields
             email: true,
             website: true,

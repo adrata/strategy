@@ -88,6 +88,7 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
         expectedCloseDate: company.expectedCloseDate,
         lastActionDate: company.lastActionDate,
         nextActionDate: company.nextActionDate,
+        customFields: company.customFields || {},
       }));
 
       setOpportunities(transformedOpportunities);
