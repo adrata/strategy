@@ -835,12 +835,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   }
   
   // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
+  // 🔧 FIX: Include currentSectionLoading to prevent blank page when section data is still loading
   // For speedrun records, don't show loading if we have the record from speedrun data
-  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord);
+  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || currentSectionLoading || (section === 'speedrun' && speedrunLoading && !selectedRecord);
   const error = acquisitionData.error || directRecordError;
   
   console.log(`🔍 [LOADING STATE] Loading states:`, {
     acquisitionDataLoading: acquisitionData.isLoading,
+    currentSectionLoading,
     directRecordLoading,
     isTransitioning,
     totalLoading: loading,
