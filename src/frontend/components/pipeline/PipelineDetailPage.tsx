@@ -872,6 +872,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
+    // 🔧 FIX: Prevent infinite loop - don't reload if we already have the correct record
+    if (selectedRecord?.id === recordId && !directRecordLoading) {
+      console.log(`✅ [RECORD LOADING] Record already loaded: ${recordId}, skipping reload`);
+      return;
+    }
+    
     console.log(`🔍 [RECORD LOADING] Slug: ${slug}, Extracted ID: ${recordId}`, {
       hasSelectedRecord: !!selectedRecord,
       selectedRecordId: selectedRecord?.id,
@@ -891,7 +897,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     console.log(`🔄 [RECORD LOADING] Loading record: ${recordId} (always fresh)`);
     loadDirectRecord(recordId);
     return; // Exit early - loadDirectRecord handles everything
-  }, [slug, section, data.length, selectedRecord?.id, loadDirectRecord, setDirectRecordError]); // 🚀 FIX: Added loadDirectRecord to dependencies
+  }, [slug, section, loadDirectRecord, setDirectRecordError]); // 🔧 FIX: Removed data.length and selectedRecord?.id to prevent infinite loops
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {
