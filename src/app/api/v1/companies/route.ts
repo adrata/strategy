@@ -139,11 +139,12 @@ export async function GET(request: NextRequest) {
     const countsOnly = searchParams.get('counts') === 'true';
     const forceRefresh = searchParams.get('refresh') === 'true';
     const osType = searchParams.get('osType') as 'acquisition' | 'retention' | 'expansion' | null;
+    const isPartnerOS = searchParams.get('partneros') === 'true'; // 🚀 NEW: PartnerOS mode detection
     
     const offset = (page - 1) * limit;
     
     console.log(`📋 [V1 COMPANIES API] Query parameters:`, {
-      page, limit, search, status, priority, industry, sortBy, sortOrder, countsOnly, forceRefresh, offset
+      page, limit, search, status, priority, industry, sortBy, sortOrder, countsOnly, forceRefresh, offset, isPartnerOS
     });
     
     // 🔧 CRITICAL FIX: Override workspace ID from query params if present (for multi-workspace support)
@@ -157,7 +158,8 @@ export async function GET(request: NextRequest) {
     
     // Check cache first (skip if force refresh)
     // 🔧 PAGINATION FIX: Include cache version to bust old caches with incorrect counts
-    const cacheKey = `companies-v${COMPANIES_CACHE_VERSION}-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}`;
+    // 🚀 PARTNEROS FIX: Include isPartnerOS in cache key to prevent cache collisions
+    const cacheKey = `companies-v${COMPANIES_CACHE_VERSION}-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${isPartnerOS}-${page}`;
     const cached = responseCache.get(cacheKey);
     
     console.log(`💾 [V1 COMPANIES API] Cache check:`, {
@@ -188,6 +190,15 @@ export async function GET(request: NextRequest) {
         { mainSellerId: null }
       ]
     };
+
+    // 🚀 PARTNEROS FILTERING: Filter by relationshipType when in PartnerOS mode
+    if (isPartnerOS) {
+      where.relationshipType = {
+        in: ['PARTNER', 'FUTURE_PARTNER']
+      };
+      console.log('🚀 [V1 COMPANIES API] PartnerOS mode enabled - filtering by relationshipType PARTNER/FUTURE_PARTNER');
+    }
+
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     
     console.log(`🗄️ [V1 COMPANIES API] Starting database query...`);
@@ -293,7 +304,9 @@ export async function GET(request: NextRequest) {
     }
 
     // OS-based filtering: Apply OS-specific status filters
-    if (osType) {
+    // Note: OS filtering and PartnerOS filtering can work together - OS filters by status, PartnerOS filters by relationshipType
+    if (osType && !isPartnerOS) {
+      // Only apply OS filtering if not in PartnerOS mode (PartnerOS has its own filtering logic)
       if (osType === 'acquisition') {
         // Acquisition OS: Show non-clients (LEAD, PROSPECT, OPPORTUNITY)
         // Only apply if status filter hasn't been set explicitly
