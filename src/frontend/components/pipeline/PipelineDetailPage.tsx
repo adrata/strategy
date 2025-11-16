@@ -19,7 +19,7 @@ import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModa
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
-import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvider';
+import { RecordContextProvider, useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 
 
@@ -55,6 +55,33 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   
   // 🚀 UNIFIED LOADING: Track page transitions for smooth UX
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // 🎯 AI CONTEXT FIX: Get record context setter to update AI panel
+  const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
+  
+  // 🎯 AI CONTEXT FIX: Sync record context whenever selectedRecord changes
+  useEffect(() => {
+    if (selectedRecord) {
+      // Determine record type based on section
+      let recordType = section;
+      if (section === 'speedrun') {
+        recordType = 'speedrun-prospect';
+      } else if (section === 'people') {
+        recordType = 'person';
+      }
+      
+      console.log('🎯 [AI CONTEXT] Syncing record context:', {
+        recordId: selectedRecord.id,
+        recordName: selectedRecord.name || selectedRecord.fullName,
+        recordType,
+        section
+      });
+      
+      setCurrentRecord(selectedRecord, recordType);
+    } else {
+      clearCurrentRecord();
+    }
+  }, [selectedRecord, section, setCurrentRecord, clearCurrentRecord]);
   
   // Listen for section transitions to show unified loading state
   useEffect(() => {

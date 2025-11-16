@@ -372,23 +372,42 @@ CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses
       const isProspectType = recordType === 'prospects' || recordType === 'prospect' || recordType?.includes('prospect');
       const isOpportunityType = recordType === 'opportunities' || recordType === 'opportunity' || recordType?.includes('opportunity');
       
+      console.log('🔍 [AIContextService] Record type analysis:', {
+        recordType,
+        isPersonType,
+        isLeadType,
+        isProspectType,
+        isOpportunityType,
+        hasRecordId: !!currentRecord.id,
+        recordId: currentRecord.id
+      });
+      
       if (currentRecord.id && isPersonType) {
-        console.log('🔍 [AIContextService] Reading person intelligence from database for:', currentRecord.id);
+        console.log('🔍 [AIContextService] Reading person intelligence from database for:', currentRecord.id, 'recordType:', recordType);
         try {
           personIntelligence = await this.getPersonIntelligenceFromDatabase(currentRecord.id, workspaceId);
           if (personIntelligence) {
-            console.log('✅ [AIContextService] Successfully retrieved person intelligence from database');
+            console.log('✅ [AIContextService] Successfully retrieved person intelligence from database:', {
+              hasInfluenceLevel: !!personIntelligence.influenceLevel,
+              hasDecisionPower: !!personIntelligence.decisionPower,
+              hasPainPoints: !!personIntelligence.painPoints?.length,
+              hasMotivations: !!personIntelligence.motivations?.length
+            });
+          } else {
+            console.log('⚠️ [AIContextService] No person intelligence found in database for:', currentRecord.id);
           }
         } catch (error) {
           console.warn('⚠️ [AIContextService] Failed to read person intelligence from database:', error);
         }
       } else if (currentRecord.id && (isLeadType || isProspectType)) {
         // Prospects are often stored as leads, so use lead intelligence
-        console.log('🔍 [AIContextService] Reading lead/prospect intelligence from database for:', currentRecord.id);
+        console.log('🔍 [AIContextService] Reading lead/prospect intelligence from database for:', currentRecord.id, 'recordType:', recordType);
         try {
           leadIntelligence = await this.getLeadIntelligenceFromDatabase(currentRecord.id, workspaceId);
           if (leadIntelligence) {
             console.log('✅ [AIContextService] Successfully retrieved lead/prospect intelligence from database');
+          } else {
+            console.log('⚠️ [AIContextService] No lead/prospect intelligence found in database for:', currentRecord.id);
           }
         } catch (error) {
           console.warn('⚠️ [AIContextService] Failed to read lead/prospect intelligence from database:', error);
@@ -399,10 +418,14 @@ CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses
           leadIntelligence = await this.getOpportunityIntelligenceFromDatabase(currentRecord.id, workspaceId);
           if (leadIntelligence) {
             console.log('✅ [AIContextService] Successfully retrieved opportunity intelligence from database');
+          } else {
+            console.log('⚠️ [AIContextService] No opportunity intelligence found in database for:', currentRecord.id);
           }
         } catch (error) {
           console.warn('⚠️ [AIContextService] Failed to read opportunity intelligence from database:', error);
         }
+      } else {
+        console.log('⚠️ [AIContextService] No intelligence lookup - recordType:', recordType, 'hasRecordId:', !!currentRecord.id);
       }
       
       // Use stored intelligence if available, otherwise infer from record data
