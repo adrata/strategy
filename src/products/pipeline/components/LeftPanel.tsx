@@ -1357,7 +1357,7 @@ export function PipelineLeftPanelStandalone({
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-muted">Workstream</span>
+              <span className="text-xs font-medium text-muted">Pipeline</span>
               <span className="text-xs font-semibold text-foreground">
                 {shouldShowLoading ? (
                   <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>

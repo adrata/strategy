@@ -51,6 +51,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const [lastLoadAttempt, setLastLoadAttempt] = useState<string | null>(null);
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   const [navigationTargetIndex, setNavigationTargetIndex] = useState<number | null>(null);
+  const [lastRecordUpdate, setLastRecordUpdate] = useState<string | null>(null); // Track when record was last updated to prevent refresh loop
   
   // 🚀 UNIFIED LOADING: Track page transitions for smooth UX
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -736,15 +737,26 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             console.log(`💾 [CACHE] Cached ${section} record for future instant loading with version ${currentVersion}`);
           }
           
-          setSelectedRecord(record);
-          console.log(`✅ [DIRECT LOAD] Updated selectedRecord state with fresh API data:`, {
-            id: record.id,
-            name: record.name,
-            tradingName: record.tradingName,
-            description: record.description,
-            updatedAt: record.updatedAt,
-            allFields: Object.keys(record).length
-          });
+          // 🔧 FIX: Only update selectedRecord if it's different to prevent unnecessary re-renders
+          // This prevents flickering when the record data is the same
+          // Check if record was just updated - if so, skip updating to prevent flicker
+          const wasJustUpdated = typeof window !== 'undefined' && 
+            sessionStorage.getItem(`record-updated-${record.id}`) &&
+            (Date.now() - parseInt(sessionStorage.getItem(`record-updated-${record.id}`) || '0', 10)) < 3000;
+          
+          if (!wasJustUpdated && (!selectedRecord || selectedRecord.id !== record.id)) {
+            setSelectedRecord(record);
+            console.log(`✅ [DIRECT LOAD] Updated selectedRecord state with fresh API data:`, {
+              id: record.id,
+              name: record.name,
+              tradingName: record.tradingName,
+              description: record.description,
+              updatedAt: record.updatedAt,
+              allFields: Object.keys(record).length
+            });
+          } else if (wasJustUpdated) {
+            console.log(`⏭️ [DIRECT LOAD] Skipping selectedRecord update - record was just updated, preventing flicker`);
+          }
         } else {
           console.log(`⚠️ [DIRECT LOAD] Record not found in API response, but continuing with cached data if available`);
           // Don't throw error - let the app continue with cached data
@@ -843,15 +855,31 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     const recordId = extractIdFromSlug(slug);
     if (!recordId || recordId === 'undefined' || recordId === 'null' || recordId.trim() === '') return;
     
+    // 🔧 FIX: Prevent fallback from running if record was just updated (within 5 seconds)
+    // This prevents flickering when data refreshes after an update
+    if (typeof window !== 'undefined') {
+      const updateTimestamp = sessionStorage.getItem(`record-updated-${recordId}`);
+      if (updateTimestamp) {
+        const timeSinceUpdate = Date.now() - parseInt(updateTimestamp, 10);
+        if (timeSinceUpdate < 5000) {
+          console.log(`✅ [BLANK PAGE FIX] Record ${recordId} was just updated ${timeSinceUpdate}ms ago, skipping fallback to prevent flicker`);
+          return;
+        }
+      }
+    }
+    
     // Try to find the record in the data array
     const recordInData = data.find((r: any) => r.id === recordId);
     if (recordInData) {
-      console.log(`✅ [BLANK PAGE FIX] Found record in data array, using it as fallback:`, {
-        recordId,
-        recordName: recordInData.name || recordInData.fullName,
-        dataLength: data.length
-      });
-      setSelectedRecord(recordInData);
+      // 🔧 FIX: Only update if the record is actually different to prevent unnecessary re-renders
+      if (!selectedRecord || selectedRecord.id !== recordInData.id) {
+        console.log(`✅ [BLANK PAGE FIX] Found record in data array, using it as fallback:`, {
+          recordId,
+          recordName: recordInData.name || recordInData.fullName,
+          dataLength: data.length
+        });
+        setSelectedRecord(recordInData);
+      }
     }
   }, [slug, selectedRecord, directRecordLoading, loading, data, section]);
 
@@ -876,6 +904,22 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     if (selectedRecord?.id === recordId && !directRecordLoading) {
       console.log(`✅ [RECORD LOADING] Record already loaded: ${recordId}, skipping reload`);
       return;
+    }
+    
+    // 🔧 FIX: Prevent reload if record was just updated (within 5 seconds)
+    // This prevents the refresh loop when "check recent updates" triggers a reload
+    // and prevents flickering when left panel data gets corrected
+    if (typeof window !== 'undefined') {
+      const updateTimestamp = sessionStorage.getItem(`record-updated-${recordId}`);
+      if (updateTimestamp) {
+        const timeSinceUpdate = Date.now() - parseInt(updateTimestamp, 10);
+        if (timeSinceUpdate < 5000) {
+          console.log(`✅ [RECORD LOADING] Record ${recordId} was just updated ${timeSinceUpdate}ms ago, skipping reload to prevent flicker`);
+          return;
+        }
+        // Clear old timestamp
+        sessionStorage.removeItem(`record-updated-${recordId}`);
+      }
     }
     
     console.log(`🔍 [RECORD LOADING] Slug: ${slug}, Extracted ID: ${recordId}`, {
@@ -1223,7 +1267,10 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           
           // 🔧 FIX: Track update timestamp for all updates to prevent refetch from overwriting
           if (updatedRecord?.id && typeof window !== 'undefined') {
-            sessionStorage.setItem(`record-updated-${updatedRecord.id}`, Date.now().toString());
+            const updateTimestamp = Date.now().toString();
+            sessionStorage.setItem(`record-updated-${updatedRecord.id}`, updateTimestamp);
+            setLastRecordUpdate(updatedRecord.id); // Track which record was just updated
+            console.log(`🔄 [PIPELINE] Record ${updatedRecord.id} update tracked, will prevent reload for 3 seconds`);
           }
           
           // Check if status changed and determine new section
@@ -1291,13 +1338,28 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               }
             }));
           } else {
+            // 🔧 FIX: Debounce data refreshes to prevent flickering
+            // Only refresh if we haven't refreshed recently (within last 2 seconds)
+            const lastRefreshKey = `last-refresh-${section}`;
+            const lastRefreshTime = typeof window !== 'undefined' ? 
+              parseInt(sessionStorage.getItem(lastRefreshKey) || '0', 10) : 0;
+            const timeSinceLastRefresh = Date.now() - lastRefreshTime;
+            
             // Trigger refresh of data hooks to ensure parent components get updated data
             // Since records can move between sections (e.g., lead → prospect), refresh multiple hooks
             try {
               const refreshPromises = [];
               
-              // Always refresh the current section
-              refreshPromises.push(currentSectionHook.refresh());
+              // Only refresh if enough time has passed (debounce)
+              if (timeSinceLastRefresh > 2000) {
+                // Always refresh the current section
+                refreshPromises.push(currentSectionHook.refresh());
+                if (typeof window !== 'undefined') {
+                  sessionStorage.setItem(lastRefreshKey, Date.now().toString());
+                }
+              } else {
+                console.log(`🔄 [PIPELINE] Skipping data refresh - last refresh was ${timeSinceLastRefresh}ms ago (debounced)`);
+              }
               
               // If status changed, refresh counts for both old and new sections
               if (statusChanged) {
@@ -1353,18 +1415,11 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
                   }));
                 }
                 
-                // Refresh the record from API to ensure we have the latest data
-                // This is important because the status change might affect other fields
-                // Use longer delay to ensure database transaction has fully completed
-                // Note: Update timestamp is already tracked at the top of onRecordUpdate
-                console.log('🔄 [PIPELINE] Refreshing record from API after status change');
-                setTimeout(async () => {
-                  try {
-                    await loadDirectRecord(updatedRecord.id);
-                  } catch (error) {
-                    console.error('⚠️ [PIPELINE] Error refreshing record after status change:', error);
-                  }
-                }, 1000); // Increased delay to ensure API has fully processed the update and database transaction is complete
+                // 🔧 FIX: Don't automatically reload after status change - the updated record is already set
+                // Only reload if we need fresh data from the server (e.g., for calculated fields)
+                // The update timestamp prevents the useEffect from triggering a reload
+                console.log('🔄 [PIPELINE] Status changed - record updated, skipping automatic reload to prevent flicker');
+                // Note: If fresh data is needed, it will be loaded on next navigation or manual refresh
               }
               
               // Note: With the performance optimization, we only load the current section's data
