@@ -382,7 +382,10 @@ CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspec
       recordType,
       recordId: currentRecord?.id,
       recordName: currentRecord?.fullName || currentRecord?.name,
-      recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0
+      recordCompany: currentRecord?.company || currentRecord?.companyName,
+      recordTitle: currentRecord?.title || currentRecord?.jobTitle,
+      recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0,
+      recordKeys: currentRecord ? Object.keys(currentRecord).slice(0, 20) : []
     });
 
     if (!currentRecord || !recordType) {
@@ -633,7 +636,18 @@ ${isOpportunityType && currentRecord.stage ? `- Opportunity Stage: ${currentReco
 ${isOpportunityType && currentRecord.value ? `- Opportunity Value: $${currentRecord.value.toLocaleString()}` : ''}
 ${isOpportunityType && currentRecord.closeDate ? `- Close Date: ${new Date(currentRecord.closeDate).toLocaleDateString()}` : ''}` : ''}
 
-CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Your responses should be specific to this person and company. Use all available context including bio, interests, pain points, company details, and stored intelligence to craft personalized recommendations.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL: YOU HAVE COMPLETE CONTEXT - USE IT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The user is viewing ${recordName} at ${recordCompany} RIGHT NOW. You have ALL the information you need above:
+- Complete person details (name, title, company, contact info)
+- Company intelligence (industry, size, location, description)
+- Person intelligence (influence level, engagement strategy, pain points, motivations)
+- Engagement history and next actions
+- Complete record data (all fields shown above)
+
+DO NOT say "I don't have enough context" or "I need more information." You have complete context. Provide specific, personalized, actionable advice based on this exact record. Reference specific details from the context above (their name, company, role, pain points, etc.) in your response.
 
 EXACTLY WHAT THE USER IS SEEING:
 - Record Type: ${recordType || 'Unknown'}

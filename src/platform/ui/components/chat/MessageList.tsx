@@ -260,7 +260,7 @@ export function MessageList({
             message.isTypewriter ? (
               <TypewriterText 
                 text={message.content}
-                speed={19}
+                speed={35} // Optimized: 35ms per character for optimal readability (30-50ms range)
                 onComplete={() => handleTypewriterComplete(message.id)}
                 onUpdate={scrollToBottom}
               />

@@ -870,7 +870,18 @@ ${workspaceContext.recordContext}`;
         if (buyerName) {
           basePrompt += `\n\nCRITICAL: The information above describes WHO ${sellerCompanyName} IS SELLING TO (the buyer/prospect: ${buyerName}${buyerCompany ? ` at ${buyerCompany}` : ''}). Use this context to provide specific, personalized advice about engaging with this prospect.`;
         } else {
-          basePrompt += `\n\nUse the RECORD CONTEXT above. Do not request additional context.`;
+          basePrompt += `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL INSTRUCTION - RECORD CONTEXT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The RECORD CONTEXT above contains ALL the information you need about the current prospect/person the user is viewing. This includes:
+- Their name, title, company, and role
+- Company details (industry, size, location)
+- Intelligence data (pain points, motivations, decision factors)
+- Engagement history and next actions
+- Complete record data
+
+YOU MUST USE THIS CONTEXT. Do NOT say "I don't have enough context" or "I need more information." The context above is complete and sufficient. Provide specific, personalized advice based on this exact record data.`;
         }
       } else {
         // 🔧 FIX: Log warning if record context is missing when we have a currentRecord

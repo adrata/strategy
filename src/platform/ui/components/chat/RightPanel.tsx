@@ -173,6 +173,28 @@ export function RightPanel() {
   const { currentRecord, recordType, listViewContext } = useRecordContext();
   const { user } = useUnifiedAuth();
 
+  // 🔧 FIX: Use refs to capture latest record context at message send time
+  const currentRecordRef = useRef(currentRecord);
+  const recordTypeRef = useRef(recordType);
+  const listViewContextRef = useRef(listViewContext);
+  
+  // Update refs whenever context changes
+  useEffect(() => {
+    currentRecordRef.current = currentRecord;
+    recordTypeRef.current = recordType;
+    listViewContextRef.current = listViewContext;
+    
+    // Log when record context changes
+    if (currentRecord) {
+      console.log('✅ [RightPanel] Record context updated:', {
+        recordId: currentRecord.id,
+        recordName: currentRecord.name || currentRecord.fullName,
+        recordType,
+        recordCompany: typeof currentRecord.company === 'string' ? currentRecord.company : (currentRecord.company?.name || currentRecord.companyName)
+      });
+    }
+  }, [currentRecord, recordType, listViewContext]);
+
   // Get workspace and user info
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
   const userId = user?.id;
@@ -1809,12 +1831,22 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     // Reset scroll state when sending a new message (user wants to see the response)
     userScrolledUpRef.current = false;
     
-    // currentRecord and recordType are now always current because RecordContextProvider is in tree
+    // 🔧 FIX: Use refs to get the latest record context at send time (avoid stale closures)
+    const latestRecord = currentRecordRef.current;
+    const latestRecordType = recordTypeRef.current;
+    const latestListViewContext = listViewContextRef.current;
+    
     console.log('🔍 [RightPanel] Sending message with record context:', {
-      hasCurrentRecord: !!currentRecord,
-      recordId: currentRecord?.id,
-      recordName: currentRecord?.name || currentRecord?.fullName,
-      recordType
+      hasCurrentRecord: !!latestRecord,
+      recordId: latestRecord?.id,
+      recordName: latestRecord?.name || latestRecord?.fullName,
+      recordType: latestRecordType,
+      recordCompany: typeof latestRecord?.company === 'string' ? latestRecord.company : (latestRecord?.company?.name || latestRecord?.companyName),
+      recordTitle: latestRecord?.title || latestRecord?.jobTitle,
+      recordFieldCount: latestRecord ? Object.keys(latestRecord).length : 0,
+      // Also log the hook values for comparison
+      hookHasCurrentRecord: !!currentRecord,
+      hookRecordId: currentRecord?.id
     });
     
     try {
@@ -2011,14 +2043,16 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       
       // Log what we're sending to the API for debugging
       console.log('📤 [AI RIGHT PANEL] Sending AI chat request:', {
-        hasCurrentRecord: !!currentRecord,
-        recordType,
-        recordId: currentRecord?.id,
-        recordName: currentRecord?.name || currentRecord?.fullName,
-        recordCompany: typeof currentRecord?.company === 'string' ? currentRecord.company : (currentRecord?.company?.name || currentRecord?.companyName),
-        recordTitle: currentRecord?.title || currentRecord?.jobTitle,
-        recordFieldCount: currentRecord ? Object.keys(currentRecord).length : 0,
-        message: input.substring(0, 100) + '...'
+        hasCurrentRecord: !!latestRecord,
+        recordType: latestRecordType,
+        recordId: latestRecord?.id,
+        recordName: latestRecord?.name || latestRecord?.fullName,
+        recordCompany: typeof latestRecord?.company === 'string' ? latestRecord.company : (latestRecord?.company?.name || latestRecord?.companyName),
+        recordTitle: latestRecord?.title || latestRecord?.jobTitle,
+        recordFieldCount: latestRecord ? Object.keys(latestRecord).length : 0,
+        message: input.substring(0, 100) + '...',
+        // Debug: Show if there's a mismatch between hook and ref
+        hookVsRefMatch: latestRecord?.id === currentRecord?.id
       });
 
       const response = await fetch('/api/ai-chat', {
@@ -2035,9 +2069,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           workspaceId,
           userId,
           conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-3), // Reduced to 3 messages for faster response
-          currentRecord,
-          recordType,
-          listViewContext,
+          currentRecord: latestRecord, // Use ref to ensure latest value
+          recordType: latestRecordType, // Use ref to ensure latest value
+          listViewContext: latestListViewContext, // Use ref to ensure latest value
           enableVoiceResponse: false,
           selectedVoiceId: 'default',
           useOpenRouter: true, // Enable OpenRouter intelligent routing
