@@ -82,6 +82,12 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
         updatedAt: company.updatedAt,
         description: company.descriptionEnriched || company.description || '',
         summary: company.descriptionEnriched || company.description || '',
+        opportunityAmount: company.opportunityAmount || company.amount || company.dealValue || company.revenue || 0,
+        opportunityStage: company.opportunityStage || company.stage,
+        opportunityProbability: company.opportunityProbability,
+        expectedCloseDate: company.expectedCloseDate,
+        lastActionDate: company.lastActionDate,
+        nextActionDate: company.nextActionDate,
       }));
 
       setOpportunities(transformedOpportunities);

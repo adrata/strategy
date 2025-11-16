@@ -12,6 +12,7 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
+import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
 import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
 import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
@@ -1023,6 +1024,9 @@ export function PipelineLeftPanelStandalone({
   // 🚀 PERFORMANCE: Use fast counts hook for instant navigation counts
   const { counts: fastCounts, loading: fastCountsLoading, forceRefresh: forceRefreshCounts } = useFastCounts();
   
+  // 🔧 FIX: Use fast section data for opportunities to get real deal values
+  const { data: opportunitiesData, count: opportunitiesCount, loading: opportunitiesLoading } = useFastSectionData('opportunities', 10000);
+  
   // Feature access control
   const hasStacks = useStacksAccess();
 
@@ -1080,17 +1084,17 @@ export function PipelineLeftPanelStandalone({
   const shouldShowLoading = useMemo(() => {
     // Show loading if:
     // 1. Minimum time hasn't elapsed, OR
-    // 2. Data is actively loading, OR
-    // 3. Data structure exists but opportunities array is not yet available
-    if (!minLoadingTimeElapsed || acquisitionData?.isLoading || !isDataLoaded) {
+    // 2. Opportunities data is actively loading, OR
+    // 3. Opportunities data hasn't loaded yet (but not if it's an empty array - that's valid)
+    if (!minLoadingTimeElapsed || opportunitiesLoading) {
       return true;
     }
-    // Even if acquireData exists, show loading if opportunities array isn't ready yet
-    if (isDataLoaded && !hasOpportunitiesData) {
+    // If loading is done but we don't have data yet (not even an empty array), show loading
+    if (!opportunitiesLoading && opportunitiesData === undefined) {
       return true;
     }
     return false;
-  }, [minLoadingTimeElapsed, acquisitionData?.isLoading, isDataLoaded, hasOpportunitiesData]);
+  }, [minLoadingTimeElapsed, opportunitiesLoading, opportunitiesData]);
 
   // Workspace branding state
   const [workspaceBranding, setWorkspaceBranding] = useState({
@@ -1330,17 +1334,17 @@ export function PipelineLeftPanelStandalone({
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
                                     (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
                   
-                  // Calculate revenue from closed won opportunities
-                  const opportunities = acquisitionData?.acquireData?.opportunities || [];
+                  // 🔧 FIX: Use real opportunities data from v1 API
+                  const opportunities = opportunitiesData || [];
                   if (opportunities.length > 0) {
                     const closedWonOpportunities = opportunities.filter((opp: any) => {
-                      const stage = opp.stage?.toLowerCase() || '';
-                      return stage.includes('won') || stage.includes('closed won');
+                      const stage = opp.opportunityStage?.toLowerCase() || opp.stage?.toLowerCase() || '';
+                      return stage.includes('won') || stage.includes('closed-won') || stage === 'closed won';
                     });
                     
                     const totalRevenue = closedWonOpportunities.reduce((sum: number, opp: any) => {
-                      const valueField = opp.value || opp.amount || opp.estimatedValue || opp.dealValue || '0';
-                      const value = parseFloat(valueField.toString().replace(/[^0-9.-]+/g, '') || '0');
+                      // Use opportunityAmount field which is the standardized deal value field
+                      const value = Number(opp.opportunityAmount || opp.amount || opp.revenue || opp.dealValue || 0);
                       return sum + value;
                     }, 0);
                     
@@ -1360,20 +1364,22 @@ export function PipelineLeftPanelStandalone({
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
                                     (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
                   
-                  // Calculate total pipeline value from all open opportunities
-                  const opportunities = acquisitionData?.acquireData?.opportunities || [];
+                  // 🔧 FIX: Use real opportunities data from v1 API
+                  const opportunities = opportunitiesData || [];
                   if (opportunities.length > 0) {
                     const openOpportunities = opportunities.filter((opp: any) => {
-                      const stage = opp.stage?.toLowerCase() || '';
+                      const stage = opp.opportunityStage?.toLowerCase() || opp.stage?.toLowerCase() || '';
                       const status = opp.status?.toLowerCase() || '';
+                      // Filter out closed/won/lost opportunities
                       return !stage.includes('closed') && !status.includes('closed') && 
                              !stage.includes('won') && !stage.includes('lost') &&
-                             stage !== 'closed' && status !== 'closed';
+                             stage !== 'closed' && status !== 'closed' &&
+                             stage !== 'closed-won' && stage !== 'closed-lost';
                     });
                     
                     const totalValue = openOpportunities.reduce((sum: number, opp: any) => {
-                      const valueField = opp.value || opp.amount || opp.estimatedValue || opp.dealValue || '0';
-                      const value = parseFloat(valueField.toString().replace(/[^0-9.-]+/g, '') || '0');
+                      // Use opportunityAmount field which is the standardized deal value field
+                      const value = Number(opp.opportunityAmount || opp.amount || opp.revenue || opp.dealValue || 0);
                       return sum + value;
                     }, 0);
                     
@@ -1393,22 +1399,24 @@ export function PipelineLeftPanelStandalone({
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
                                     (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
                   
-                  // Calculate coverage as pipeline / quarterly target
-                  const opportunities = acquisitionData?.acquireData?.opportunities || [];
+                  // 🔧 FIX: Use real opportunities data from v1 API
+                  const opportunities = opportunitiesData || [];
                   const quarterlyTarget = 1000000; // $1M quarterly target (can be made configurable)
                   
                   if (opportunities.length > 0) {
                     const openOpportunities = opportunities.filter((opp: any) => {
-                      const stage = opp.stage?.toLowerCase() || '';
+                      const stage = opp.opportunityStage?.toLowerCase() || opp.stage?.toLowerCase() || '';
                       const status = opp.status?.toLowerCase() || '';
+                      // Filter out closed/won/lost opportunities
                       return !stage.includes('closed') && !status.includes('closed') && 
                              !stage.includes('won') && !stage.includes('lost') &&
-                             stage !== 'closed' && status !== 'closed';
+                             stage !== 'closed' && status !== 'closed' &&
+                             stage !== 'closed-won' && stage !== 'closed-lost';
                     });
                     
                     const totalValue = openOpportunities.reduce((sum: number, opp: any) => {
-                      const valueField = opp.value || opp.amount || opp.estimatedValue || opp.dealValue || '0';
-                      const value = parseFloat(valueField.toString().replace(/[^0-9.-]+/g, '') || '0');
+                      // Use opportunityAmount field which is the standardized deal value field
+                      const value = Number(opp.opportunityAmount || opp.amount || opp.revenue || opp.dealValue || 0);
                       return sum + value;
                     }, 0);
                     

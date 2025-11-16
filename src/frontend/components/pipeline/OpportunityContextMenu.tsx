@@ -5,7 +5,8 @@ import {
   ChevronUpIcon,
   ChevronDownIcon,
   ArrowUpIcon,
-  ArrowDownIcon
+  ArrowDownIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline';
 
 interface OpportunityContextMenuProps {
@@ -16,6 +17,7 @@ interface OpportunityContextMenuProps {
   onMoveUp: () => void;
   onMoveDown: () => void;
   onMoveToBottom: () => void;
+  onDelete?: () => void;
 }
 
 export function OpportunityContextMenu({
@@ -25,7 +27,8 @@ export function OpportunityContextMenu({
   onMoveToTop,
   onMoveUp,
   onMoveDown,
-  onMoveToBottom
+  onMoveToBottom,
+  onDelete
 }: OpportunityContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [adjustedPosition, setAdjustedPosition] = React.useState(position);
@@ -116,7 +119,13 @@ export function OpportunityContextMenu({
       icon: ArrowDownIcon,
       onClick: onMoveToBottom,
       className: 'text-foreground hover:bg-hover'
-    }
+    },
+    ...(onDelete ? [{
+      label: 'Delete',
+      icon: TrashIcon,
+      onClick: onDelete,
+      className: 'text-error hover:bg-error/10'
+    }] : [])
   ];
 
   return (

@@ -58,14 +58,17 @@ export async function computeCompanyLastAction(
     const personIds = companyPeople.map(p => p.id);
     
     // Find last action from either company-level OR person-level actions
-    const lastAction = await prisma.actions.findFirst({
+    // Prioritize EMAIL and MEETING types for accuracy (most reliable contact tracking)
+    // First, try to find EMAIL or MEETING actions (most accurate)
+    const emailOrMeetingAction = await prisma.actions.findFirst({
       where: { 
         OR: [
           { companyId: companyId },
           ...(personIds.length > 0 ? [{ personId: { in: personIds } }] : [])
         ],
         deletedAt: null,
-        status: 'COMPLETED'
+        status: 'COMPLETED',
+        type: { in: ['EMAIL', 'MEETING'] }
       },
       orderBy: { completedAt: 'desc' },
       select: { 
@@ -78,15 +81,41 @@ export async function computeCompanyLastAction(
       }
     });
     
+    // If no EMAIL/MEETING found, get any meaningful action
+    let finalLastAction = emailOrMeetingAction;
+    if (!emailOrMeetingAction) {
+      const anyAction = await prisma.actions.findFirst({
+        where: { 
+          OR: [
+            { companyId: companyId },
+            ...(personIds.length > 0 ? [{ personId: { in: personIds } }] : [])
+          ],
+          deletedAt: null,
+          status: 'COMPLETED'
+        },
+        orderBy: { completedAt: 'desc' },
+        select: { 
+          subject: true, 
+          completedAt: true, 
+          type: true,
+          createdAt: true,
+          personId: true,
+          companyId: true
+        }
+      });
+      finalLastAction = anyAction;
+    }
+    
     // Calculate lastActionTime for display
     let lastActionTime = 'Never';
     let lastActionText = fallbackLastAction || null;
     let lastActionDate = fallbackLastActionDate || null;
     
     // Check if we have a meaningful action from the database
-    if (lastAction && isMeaningfulAction(lastAction.type)) {
-      lastActionText = lastAction.subject || lastAction.type;
-      lastActionDate = lastAction.completedAt || lastAction.createdAt;
+    // Use finalLastAction which prioritizes EMAIL/MEETING
+    if (finalLastAction && isMeaningfulAction(finalLastAction.type)) {
+      lastActionText = finalLastAction.subject || finalLastAction.type;
+      lastActionDate = finalLastAction.completedAt || finalLastAction.createdAt;
     }
     
     // Only show real last actions if they exist and are meaningful
@@ -107,7 +136,7 @@ export async function computeCompanyLastAction(
       lastAction: lastActionText,
       lastActionDate: lastActionDate,
       lastActionTime: lastActionTime,
-      lastActionType: lastAction?.type || null
+      lastActionType: finalLastAction?.type || null
     };
   } catch (error) {
     console.error(`❌ [COMPANY LAST ACTION] Error computing lastAction for company ${companyId}:`, error);
@@ -206,10 +235,14 @@ export async function computeCompanyLastActionsBatch(
     }
     
     // Compute lastAction for each company
+    // Prioritize EMAIL and MEETING types for accuracy
     for (const company of companies) {
       const companyActions = actionsByCompany.get(company.id) || [];
       const meaningfulActions = companyActions.filter(a => isMeaningfulAction(a.type));
-      const lastAction = meaningfulActions[0] || null; // Already sorted by completedAt desc
+      
+      // First try to find EMAIL or MEETING actions (most accurate)
+      const emailOrMeeting = meaningfulActions.find(a => a.type === 'EMAIL' || a.type === 'MEETING');
+      const lastAction = emailOrMeeting || meaningfulActions[0] || null;
       
       let lastActionTime = 'Never';
       let lastActionText = company.lastAction || null;

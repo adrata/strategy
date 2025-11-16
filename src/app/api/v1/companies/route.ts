@@ -345,6 +345,8 @@ export async function GET(request: NextRequest) {
             opportunityStage: true,
             opportunityProbability: true,
             expectedCloseDate: true,
+            // Use descriptionEnriched as opportunity summary (can be Claude-generated)
+            // We'll add a script to generate these summaries
             
             // Additional useful fields
             email: true,
@@ -364,13 +366,23 @@ export async function GET(request: NextRequest) {
               }
             },
             
-            // Action count for header display
+            // Action count and people count for header display
             _count: {
               select: {
                 actions: {
                   where: {
                     deletedAt: null,
                     status: 'COMPLETED'
+                  }
+                },
+                people: {
+                  where: {
+                    deletedAt: null,
+                    OR: [
+                      { buyerGroupRole: { not: null } },
+                      { isBuyerGroupMember: true },
+                      { buyerGroupStatus: 'in' }
+                    ]
                   }
                 }
               }

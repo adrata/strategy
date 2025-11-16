@@ -1190,6 +1190,55 @@ export function PipelineHeader({
             value: totalActions > 0 ? totalActions.toString() : '—',
             color: 'text-foreground'
           });
+        } else if (section === 'opportunities') {
+          // For opportunities section, show Actions Opportunities Companies People
+          // Calculate total actions count from metrics.data if available
+          let totalActions = 0;
+          if ('data' in metrics && Array.isArray(metrics.data) && metrics.data.length > 0) {
+            totalActions = metrics.data.reduce((sum: number, record: any) => {
+              const actionsCount = record._count?.actions || record.actionsCount || record.actions?.length || 0;
+              return sum + actionsCount;
+            }, 0);
+          }
+          
+          // Each opportunity IS a company (stored in companies table), so company count = opportunity count
+          const companyCount = totalCount;
+          
+          // Calculate unique people in buyer groups for opportunities
+          // Each opportunity is a company, so we count people with buyerGroupRole or isBuyerGroupMember
+          // The API now includes _count.people which filters for buyer group members
+          let totalBuyerGroupPeople = 0;
+          if ('data' in metrics && Array.isArray(metrics.data)) {
+            metrics.data.forEach((opp: any) => {
+              // Use _count.people which now filters for buyer group members only
+              const buyerGroupPeopleCount = opp._count?.people || 0;
+              totalBuyerGroupPeople += buyerGroupPeopleCount;
+            });
+          }
+          
+          metricItems.push({
+            label: 'Actions',
+            value: totalActions > 0 ? totalActions.toString() : '—',
+            color: 'text-foreground'
+          });
+          
+          metricItems.push({
+            label: 'Opportunities',
+            value: totalCount > 0 ? totalCount.toString() : '—',
+            color: 'text-foreground'
+          });
+          
+          metricItems.push({
+            label: companyCount === 1 ? 'Company' : 'Companies',
+            value: companyCount > 0 ? companyCount.toString() : '—',
+            color: 'text-foreground'
+          });
+          
+          metricItems.push({
+            label: totalBuyerGroupPeople === 1 ? 'Person' : 'People',
+            value: totalBuyerGroupPeople > 0 ? totalBuyerGroupPeople.toString() : '—',
+            color: 'text-foreground'
+          });
         } else {
           metricItems.push({
             label: 'Total',

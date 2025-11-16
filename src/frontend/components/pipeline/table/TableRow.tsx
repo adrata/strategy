@@ -477,6 +477,11 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
+                        // Check if record has actual actions in database (for prospects/leads)
+                        const hasActionsInDB = record._count?.actions > 0 || 
+                                             record.actionsCount > 0 || 
+                                             (Array.isArray(record.actions) && record.actions.length > 0);
+                        
                         // If timing is "Never" or no actionText, check if record was just created
                         let displayText = '-';
                         // Check for empty or placeholder action values
@@ -487,7 +492,20 @@ export function TableRow({
                           actionText === 'Record created' ||
                           (typeof actionText === 'string' && actionText.trim() === '');
                         
-                        if (timing.text === 'Never' || isEmptyAction) {
+                        // If record has actions in DB but no actionText, try to get from actions array
+                        if (hasActionsInDB && isEmptyAction) {
+                          // Try to get the most recent action from actions array
+                          if (Array.isArray(record.actions) && record.actions.length > 0) {
+                            const mostRecentAction = record.actions
+                              .sort((a: any, b: any) => new Date(b.createdAt || b.created_at || 0).getTime() - new Date(a.createdAt || a.created_at || 0).getTime())[0];
+                            if (mostRecentAction?.type || mostRecentAction?.description) {
+                              displayText = mostRecentAction.type || mostRecentAction.description || 'Action logged';
+                            }
+                          } else {
+                            // Has actions count but no action text - show generic message
+                            displayText = `${record._count?.actions || record.actionsCount || 0} action${(record._count?.actions || record.actionsCount || 0) !== 1 ? 's' : ''}`;
+                          }
+                        } else if (timing.text === 'Never' || isEmptyAction) {
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
@@ -760,6 +778,11 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
+                        // Check if record has actual actions in database (for prospects/leads)
+                        const hasActionsInDB = record._count?.actions > 0 || 
+                                             record.actionsCount > 0 || 
+                                             (Array.isArray(record.actions) && record.actions.length > 0);
+                        
                         // If timing is "Never" or no actionText, check if record was just created
                         let displayText = '-';
                         // Check for empty or placeholder action values
@@ -770,7 +793,20 @@ export function TableRow({
                           actionText === 'Record created' ||
                           (typeof actionText === 'string' && actionText.trim() === '');
                         
-                        if (timing.text === 'Never' || isEmptyAction) {
+                        // If record has actions in DB but no actionText, try to get from actions array
+                        if (hasActionsInDB && isEmptyAction) {
+                          // Try to get the most recent action from actions array
+                          if (Array.isArray(record.actions) && record.actions.length > 0) {
+                            const mostRecentAction = record.actions
+                              .sort((a: any, b: any) => new Date(b.createdAt || b.created_at || 0).getTime() - new Date(a.createdAt || a.created_at || 0).getTime())[0];
+                            if (mostRecentAction?.type || mostRecentAction?.description) {
+                              displayText = mostRecentAction.type || mostRecentAction.description || 'Action logged';
+                            }
+                          } else {
+                            // Has actions count but no action text - show generic message
+                            displayText = `${record._count?.actions || record.actionsCount || 0} action${(record._count?.actions || record.actionsCount || 0) !== 1 ? 's' : ''}`;
+                          }
+                        } else if (timing.text === 'Never' || isEmptyAction) {
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
@@ -969,6 +1005,11 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
+                        // Check if record has actual actions in database (for prospects/leads)
+                        const hasActionsInDB = record._count?.actions > 0 || 
+                                             record.actionsCount > 0 || 
+                                             (Array.isArray(record.actions) && record.actions.length > 0);
+                        
                         // If timing is "Never" or no actionText, check if record was just created
                         let displayText = '-';
                         // Check for empty or placeholder action values
@@ -979,7 +1020,20 @@ export function TableRow({
                           actionText === 'Record created' ||
                           (typeof actionText === 'string' && actionText.trim() === '');
                         
-                        if (timing.text === 'Never' || isEmptyAction) {
+                        // If record has actions in DB but no actionText, try to get from actions array
+                        if (hasActionsInDB && isEmptyAction) {
+                          // Try to get the most recent action from actions array
+                          if (Array.isArray(record.actions) && record.actions.length > 0) {
+                            const mostRecentAction = record.actions
+                              .sort((a: any, b: any) => new Date(b.createdAt || b.created_at || 0).getTime() - new Date(a.createdAt || a.created_at || 0).getTime())[0];
+                            if (mostRecentAction?.type || mostRecentAction?.description) {
+                              displayText = mostRecentAction.type || mostRecentAction.description || 'Action logged';
+                            }
+                          } else {
+                            // Has actions count but no action text - show generic message
+                            displayText = `${record._count?.actions || record.actionsCount || 0} action${(record._count?.actions || record.actionsCount || 0) !== 1 ? 's' : ''}`;
+                          }
+                        } else if (timing.text === 'Never' || isEmptyAction) {
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
@@ -1143,6 +1197,11 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
+                        // Check if record has actual actions in database (for prospects/leads)
+                        const hasActionsInDB = record._count?.actions > 0 || 
+                                             record.actionsCount > 0 || 
+                                             (Array.isArray(record.actions) && record.actions.length > 0);
+                        
                         // If timing is "Never" or no actionText, check if record was just created
                         let displayText = '-';
                         // Check for empty or placeholder action values
@@ -1153,7 +1212,20 @@ export function TableRow({
                           actionText === 'Record created' ||
                           (typeof actionText === 'string' && actionText.trim() === '');
                         
-                        if (timing.text === 'Never' || isEmptyAction) {
+                        // If record has actions in DB but no actionText, try to get from actions array
+                        if (hasActionsInDB && isEmptyAction) {
+                          // Try to get the most recent action from actions array
+                          if (Array.isArray(record.actions) && record.actions.length > 0) {
+                            const mostRecentAction = record.actions
+                              .sort((a: any, b: any) => new Date(b.createdAt || b.created_at || 0).getTime() - new Date(a.createdAt || a.created_at || 0).getTime())[0];
+                            if (mostRecentAction?.type || mostRecentAction?.description) {
+                              displayText = mostRecentAction.type || mostRecentAction.description || 'Action logged';
+                            }
+                          } else {
+                            // Has actions count but no action text - show generic message
+                            displayText = `${record._count?.actions || record.actionsCount || 0} action${(record._count?.actions || record.actionsCount || 0) !== 1 ? 's' : ''}`;
+                          }
+                        } else if (timing.text === 'Never' || isEmptyAction) {
                           // Check if record has a createdAt date (meaning it exists but has no actions)
                           const recordCreatedAt = record['createdAt'] || record['created_at'];
                           if (recordCreatedAt) {
