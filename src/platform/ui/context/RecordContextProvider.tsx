@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 interface ListViewContext {
   visibleRecords: any[];
@@ -39,7 +39,7 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
   const [recordType, setRecordType] = useState<string | null>(null);
   const [listViewContext, setListViewContextState] = useState<ListViewContext | null>(null);
 
-  const setCurrentRecord = (record: any, type: string) => {
+  const setCurrentRecord = useCallback((record: any, type: string) => {
     console.log('🎯 [RecordContext] Setting current record:', { 
       id: record?.id, 
       name: record?.name || record?.fullName, 
@@ -47,29 +47,30 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
     });
     setCurrentRecordState(record);
     setRecordType(type);
-  };
+  }, []);
 
-  const updateCurrentRecord = (updates: Partial<any>) => {
-    if (currentRecord) {
+  const updateCurrentRecord = useCallback((updates: Partial<any>) => {
+    setCurrentRecordState((prev: any) => {
+      if (!prev) return prev;
       console.log('🔄 [RecordContext] Updating current record:', { 
-        id: currentRecord?.id, 
+        id: prev?.id, 
         updates: Object.keys(updates) 
       });
-      setCurrentRecordState((prev: any) => ({
+      return {
         ...prev,
         ...updates,
         updatedAt: new Date().toISOString()
-      }));
-    }
-  };
+      };
+    });
+  }, []);
 
-  const clearCurrentRecord = () => {
+  const clearCurrentRecord = useCallback(() => {
     console.log('🧹 [RecordContext] Clearing current record');
     setCurrentRecordState(null);
     setRecordType(null);
-  };
+  }, []);
 
-  const setListViewContext = (context: ListViewContext) => {
+  const setListViewContext = useCallback((context: ListViewContext) => {
     console.log('📋 [RecordContext] Setting list view context:', {
       section: context.activeSection,
       recordCount: context.visibleRecords?.length || 0,
@@ -77,12 +78,12 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
       filters: context.appliedFilters
     });
     setListViewContextState(context);
-  };
+  }, []);
 
-  const clearListViewContext = () => {
+  const clearListViewContext = useCallback(() => {
     console.log('🧹 [RecordContext] Clearing list view context');
     setListViewContextState(null);
-  };
+  }, []);
 
   return (
     <RecordContext.Provider value={{

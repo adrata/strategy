@@ -369,7 +369,23 @@ export async function POST(request: NextRequest) {
         });
 
       } catch (openRouterError) {
-        console.warn('⚠️ [AI CHAT] OpenRouter failed, falling back to Claude:', openRouterError);
+        const errorDetails = openRouterError instanceof Error ? {
+          message: openRouterError.message,
+          stack: openRouterError.stack,
+          name: openRouterError.name
+        } : { error: openRouterError };
+        console.error('❌ [AI CHAT] OpenRouter failed, falling back to Claude:', {
+          error: errorDetails,
+          userId,
+          workspaceId,
+          hasCurrentRecord: !!currentRecord,
+          recordId: currentRecord?.id,
+          recordName: currentRecord?.name || currentRecord?.fullName,
+          recordType,
+          messagePreview: sanitizedMessage.substring(0, 100),
+          hasWorkspaceContext: !!workspaceContext,
+          recordContextLength: workspaceContext?.recordContext?.length || 0
+        });
         
         // Record OpenRouter failure
         gradualRolloutService.recordRequest({

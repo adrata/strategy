@@ -5,7 +5,6 @@ import { PipelineDetailPage } from "@/frontend/components/pipeline/PipelineDetai
 import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
-import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
 // import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 
@@ -17,14 +16,12 @@ export default function SpeedrunDetailPage() {
     <RevenueOSProvider>
       <PipelineProvider>
         <SpeedrunDataProvider>
-          <RecordContextProvider>
-            <ProfilePopupProvider>
-              <PipelineDetailPage
-                section="speedrun"
-                slug={slug}
-              />
-            </ProfilePopupProvider>
-          </RecordContextProvider>
+          <ProfilePopupProvider>
+            <PipelineDetailPage
+              section="speedrun"
+              slug={slug}
+            />
+          </ProfilePopupProvider>
         </SpeedrunDataProvider>
       </PipelineProvider>
     </RevenueOSProvider>

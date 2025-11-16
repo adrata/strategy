@@ -167,7 +167,8 @@ export function UniversalRecordTemplate({
 }: UniversalRecordTemplateProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
+  // Record context is managed in PipelineDetailPage.tsx, not here
+  // Only using updateCurrentRecord for AI chat updates
   
   // Initialize active tab from URL parameter or default to first tab
   const urlTab = searchParams.get('tab');
@@ -553,15 +554,8 @@ export function UniversalRecordTemplate({
     }
   }, [tabs, searchParams]); // Remove activeTab to prevent circular updates
 
-  // Set current record context when component mounts or record changes
-  useEffect(() => {
-    if (record && recordType) {
-      setCurrentRecord(record, recordType);
-    }
-    return () => {
-      clearCurrentRecord();
-    };
-  }, [record, recordType, setCurrentRecord, clearCurrentRecord]);
+  // Note: Record context is set in PipelineDetailPage.tsx to avoid conflicts
+  // This component no longer sets/clears record context
 
   // Close dropdown when clicking outside
 

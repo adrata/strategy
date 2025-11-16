@@ -92,6 +92,11 @@ export class ClaudeAIService {
       return;
     }
     
+    console.log('✅ [CLAUDE AI] Service initialized with API key');
+    console.log('🔑 [CLAUDE AI] API key prefix:', apiKey.substring(0, 20) + '...');
+    console.log('🔑 [CLAUDE AI] API key length:', apiKey.length);
+    console.log('🤖 [CLAUDE AI] Using model:', this.model);
+    
     this.anthropic = new Anthropic({
       apiKey: apiKey,
     });
@@ -105,7 +110,15 @@ export class ClaudeAIService {
     
     // Check if service is properly initialized
     if (!this.anthropic) {
-      console.warn('⚠️ Claude service not available - returning fallback response');
+      const hasApiKey = !!process.env.ANTHROPIC_API_KEY;
+      console.error('❌ [CLAUDE AI] Service not initialized:', {
+        hasApiKey,
+        hasCurrentRecord: !!request.currentRecord,
+        recordId: request.currentRecord?.id,
+        recordName: request.currentRecord?.name || request.currentRecord?.fullName,
+        hasRecordContext: !!request.workspaceContext?.recordContext,
+        recordContextLength: request.workspaceContext?.recordContext?.length || 0
+      });
       return {
         response: this.generateFallbackResponse(request),
         confidence: 0.3,
@@ -286,7 +299,21 @@ export class ClaudeAIService {
       return claudeResponse;
 
     } catch (error) {
-      console.error('❌ Claude AI Service Error:', error);
+      const errorDetails = error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : { error };
+      console.error('❌ [CLAUDE AI] Service Error:', {
+        error: errorDetails,
+        hasCurrentRecord: !!request.currentRecord,
+        recordId: request.currentRecord?.id,
+        recordName: request.currentRecord?.name || request.currentRecord?.fullName,
+        hasRecordContext: !!request.workspaceContext?.recordContext,
+        recordContextLength: request.workspaceContext?.recordContext?.length || 0,
+        model: this.model,
+        hasAnthropicClient: !!this.anthropic
+      });
       
       // Return a fallback response
       return {
@@ -1387,12 +1414,31 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
    */
   private generateFallbackResponse(request: ClaudeChatRequest): string {
     const currentRecord = request.currentRecord;
+    const recordContext = request.workspaceContext?.recordContext;
+    
+    // Try to extract record info from recordContext if currentRecord is not available
+    let recordName: string | null = null;
+    let company: string | null = null;
     
     if (currentRecord) {
-      const recordName = currentRecord.fullName || currentRecord.name || 'this contact';
-      const company = currentRecord.company?.name || currentRecord.company || 'their company';
-      
+      recordName = currentRecord.fullName || currentRecord.name || null;
+      company = typeof currentRecord.company === 'string' 
+        ? currentRecord.company 
+        : currentRecord.company?.name || null;
+    } else if (recordContext) {
+      // Try to extract from record context string
+      const nameMatch = recordContext.match(/Name:\s*([^\n]+)/i);
+      const companyMatch = recordContext.match(/at\s+([^\n]+)/i) || recordContext.match(/Company:\s*([^\n]+)/i);
+      if (nameMatch) recordName = nameMatch[1].trim();
+      if (companyMatch) company = companyMatch[1].trim();
+    }
+    
+    if (recordName && company) {
       return `Hi! I'm having a small technical hiccup right now, but I'm still here to help you with ${recordName} at ${company}. 
+
+I can assist you with sales strategy, buyer research, pipeline optimization, and competitive intelligence. What would you like to focus on with this contact?`;
+    } else if (recordName) {
+      return `Hi! I'm having a small technical hiccup right now, but I'm still here to help you with ${recordName}. 
 
 I can assist you with sales strategy, buyer research, pipeline optimization, and competitive intelligence. What would you like to focus on with this contact?`;
     }

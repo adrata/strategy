@@ -239,7 +239,11 @@ export class OpenRouterService {
     this.appName = process.env.OPENROUTER_APP_NAME || 'Adrata AI Assistant';
     
     if (!this.apiKey) {
-      console.warn('⚠️ OpenRouter service not available - missing OPENROUTER_API_KEY');
+      console.error('❌ [OPENROUTER] Service not available - missing OPENROUTER_API_KEY environment variable');
+    } else {
+      console.log('✅ [OPENROUTER] Service initialized with API key');
+      console.log('🔑 [OPENROUTER] API key prefix:', this.apiKey.substring(0, 20) + '...');
+      console.log('🔑 [OPENROUTER] API key length:', this.apiKey.length);
     }
   }
 
@@ -250,6 +254,13 @@ export class OpenRouterService {
     const startTime = Date.now();
     
     if (!this.apiKey) {
+      console.error('❌ [OPENROUTER] Cannot generate response - missing API key:', {
+        hasCurrentRecord: !!request.currentRecord,
+        recordId: request.currentRecord?.id,
+        recordName: request.currentRecord?.name || request.currentRecord?.fullName,
+        hasRecordContext: !!request.workspaceContext?.recordContext,
+        recordContextLength: request.workspaceContext?.recordContext?.length || 0
+      });
       return this.generateFallbackResponse(request, startTime);
     }
 
@@ -362,7 +373,20 @@ export class OpenRouterService {
           
         } catch (error) {
           lastError = error as Error;
-          console.warn(`⚠️ [OPENROUTER] Model ${modelId} failed:`, error);
+          const errorDetails = error instanceof Error ? {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+          } : { error };
+          console.warn(`⚠️ [OPENROUTER] Model ${modelId} failed:`, {
+            modelId,
+            error: errorDetails,
+            requestId: sanitizedRequest.requestId,
+            userId: sanitizedRequest.userId,
+            workspaceId: sanitizedRequest.workspaceId,
+            hasRecordContext: !!sanitizedRequest.currentRecord,
+            recordType: sanitizedRequest.recordType
+          });
           continue;
         }
       }
@@ -371,7 +395,23 @@ export class OpenRouterService {
       throw lastError || new Error('All models failed');
 
     } catch (error) {
-      console.error('❌ [OPENROUTER] All models failed:', error);
+      const errorDetails = error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : { error };
+      console.error('❌ [OPENROUTER] All models failed:', {
+        error: errorDetails,
+        requestId: request.requestId,
+        userId: request.userId,
+        workspaceId: request.workspaceId,
+        hasRecordContext: !!request.currentRecord,
+        recordType: request.recordType,
+        recordId: request.currentRecord?.id,
+        recordName: request.currentRecord?.name || request.currentRecord?.fullName,
+        messagePreview: request.message.substring(0, 100),
+        processingTime: Date.now() - startTime
+      });
       return this.generateFallbackResponse(request, startTime);
     }
   }
@@ -615,6 +655,26 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
 
     if (!response.ok) {
       const errorText = await response.text();
+      let errorDetails: any;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      console.error('❌ [OPENROUTER] API call failed:', {
+        modelId,
+        status: response.status,
+        statusText: response.statusText,
+        errorDetails,
+        requestId: request.requestId,
+        userId: request.userId,
+        workspaceId: request.workspaceId,
+        hasRecordContext: !!request.currentRecord,
+        recordType: request.recordType,
+        apiKeyPrefix: this.apiKey.substring(0, 20) + '...',
+        apiKeyLength: this.apiKey.length,
+        url: `${this.baseUrl}/chat/completions`
+      });
       throw new Error(`OpenRouter API error: ${response.status} ${errorText}`);
     }
 
@@ -921,9 +981,36 @@ You are Adrata's AI assistant, specialized in sales intelligence and pipeline op
    */
   private generateFallbackResponse(request: OpenRouterRequest, startTime: number): OpenRouterResponse {
     const processingTime = Date.now() - startTime;
+    const currentRecord = request.currentRecord;
+    const recordContext = request.workspaceContext?.recordContext;
+    
+    // Try to extract record info for personalized fallback
+    let recordName: string | null = null;
+    let company: string | null = null;
+    
+    if (currentRecord) {
+      recordName = currentRecord.fullName || currentRecord.name || null;
+      company = typeof currentRecord.company === 'string' 
+        ? currentRecord.company 
+        : currentRecord.company?.name || null;
+    } else if (recordContext) {
+      const nameMatch = recordContext.match(/Name:\s*([^\n]+)/i);
+      const companyMatch = recordContext.match(/at\s+([^\n]+)/i) || recordContext.match(/Company:\s*([^\n]+)/i);
+      if (nameMatch) recordName = nameMatch[1].trim();
+      if (companyMatch) company = companyMatch[1].trim();
+    }
+    
+    let response: string;
+    if (recordName && company) {
+      response = `I'm currently experiencing some technical difficulties with my AI models, but I can still help you with ${recordName} at ${company}. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions.`;
+    } else if (recordName) {
+      response = `I'm currently experiencing some technical difficulties with my AI models, but I can still help you with ${recordName}. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions.`;
+    } else {
+      response = "I'm currently experiencing some technical difficulties with my AI models. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions.";
+    }
     
     return {
-      response: "I'm currently experiencing some technical difficulties with my AI models. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions.",
+      response,
       model: 'fallback',
       provider: 'Adrata',
       tokensUsed: 0,

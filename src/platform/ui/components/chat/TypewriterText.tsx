@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface TypewriterTextProps {
   text: string;
@@ -17,7 +17,13 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const hasCalledComplete = React.useRef(false);
+  const hasCalledComplete = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+
+  // Update ref when onComplete changes (but don't trigger re-render)
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     if (currentIndex < text.length) {
@@ -27,11 +33,11 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
       }, speed);
 
       return () => clearTimeout(timer);
-    } else if (onComplete && currentIndex === text.length && !hasCalledComplete.current) {
+    } else if (onCompleteRef.current && currentIndex === text.length && !hasCalledComplete.current) {
       hasCalledComplete.current = true;
-      onComplete();
+      onCompleteRef.current();
     }
-  }, [currentIndex, text, speed, onComplete]);
+  }, [currentIndex, text, speed]);
 
   // Reset when text changes
   useEffect(() => {
