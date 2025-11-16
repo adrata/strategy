@@ -86,42 +86,48 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
         ? new Date(formData.expectedCloseDate).toISOString().split('T')[0]
         : new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       
-      const opportunityData = {
-        status: "OPPORTUNITY",
-        opportunityAmount: formData.opportunityAmount ? parseFloat(formData.opportunityAmount) : 50000,
-        opportunityProbability: formData.opportunityProbability ? parseFloat(formData.opportunityProbability) : 25,
-        opportunityStage: formData.opportunityStage || "Build",
-        expectedCloseDate: closeDate,
-        notes: formData.notes.trim() || undefined
-      };
-
-      console.log('Creating/updating opportunity with data:', opportunityData);
-
-      let result;
+      // Ensure company exists first
+      let companyId = formData.selectedCompany.id;
       
-      // If company already exists (has id), update it; otherwise create new
-      if (formData.selectedCompany.id) {
-        // Update existing company to add opportunity fields
-        result = await authFetch(`/api/v1/companies/${formData.selectedCompany.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(opportunityData)
-        }, { success: false, error: 'Failed to update company to opportunity' });
-      } else {
-        // Create new company as opportunity
-        result = await authFetch('/api/v1/companies', {
+      if (!companyId) {
+        // Create new company first
+        const companyResult = await authFetch('/api/v1/companies', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: formData.selectedCompany.name,
-            ...opportunityData
+            name: formData.selectedCompany.name
           })
-        }, { success: false, error: 'Failed to create opportunity' });
+        }, { success: false, error: 'Failed to create company' });
+        
+        if (!companyResult.success || !companyResult.data?.id) {
+          throw new Error('Failed to create company');
+        }
+        
+        companyId = companyResult.data.id;
       }
+
+      // Create opportunity record
+      const opportunityData = {
+        companyId,
+        name: formData.selectedCompany.name || 'Unnamed Opportunity',
+        description: formData.notes.trim() || undefined,
+        amount: formData.opportunityAmount ? parseFloat(formData.opportunityAmount) : 50000,
+        stage: formData.opportunityStage || "Build",
+        probability: formData.opportunityProbability ? parseFloat(formData.opportunityProbability) / 100 : 0.25,
+        expectedCloseDate: closeDate
+      };
+
+      console.log('Creating opportunity with data:', opportunityData);
+
+      const result = await authFetch('/api/v1/opportunities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(opportunityData)
+      }, { success: false, error: 'Failed to create opportunity' });
 
       console.log('Opportunity creation response:', result);
       

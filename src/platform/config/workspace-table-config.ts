@@ -65,10 +65,20 @@ export function getWorkspaceTableConfig(workspaceId: string, workspaceName?: str
  */
 export function getSectionColumns(workspaceId: string, section: string, workspaceName?: string) {
   const config = getWorkspaceTableConfig(workspaceId, workspaceName);
-  return config.sections[section] || DEFAULT_CONFIG.sections[section] || {
+  const defaultConfig = config.sections[section] || DEFAULT_CONFIG.sections[section] || {
     columns: ['Rank', 'Name', 'Details', 'Stage', 'Last Action', 'Next Action'],
     columnOrder: ['rank', 'name', 'details', 'stage', 'lastAction', 'nextAction']
   };
+  
+  // Add Orders column for Notary Everyday companies section
+  if (section === 'companies' && (workspaceName === 'Notary Everyday' || workspaceName?.toLowerCase().includes('notary'))) {
+    return {
+      columns: [...defaultConfig.columns, 'Orders'],
+      columnOrder: [...defaultConfig.columnOrder, 'orders']
+    };
+  }
+  
+  return defaultConfig;
 }
 
 /**

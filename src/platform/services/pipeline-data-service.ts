@@ -32,8 +32,23 @@ export class PipelineDataService {
       const opportunity = await prisma.opportunities.findUnique({
         where: { id },
         include: {
-          accounts: true,
-          leads: true,
+          company: {
+            select: {
+              id: true,
+              name: true,
+              lastAction: true,
+              lastActionDate: true,
+              nextAction: true,
+              nextActionDate: true
+            }
+          },
+          owner: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
@@ -47,17 +62,17 @@ export class PipelineDataService {
         value: opportunity.amount?.toString() || '0',
         stage: opportunity.stage,
         status: 'active',
-        company: opportunity.accounts?.name || '-',
-        probability: opportunity.probability || 0,
+        company: opportunity.company?.name || '-',
+        probability: (opportunity.probability || 0) * 100, // Convert to percentage
         closeDate: opportunity.expectedCloseDate?.toISOString() || '',
-        source: opportunity.source || '-',
-        contact: opportunity.leads?.fullName || '-',
-        lastAction: opportunity.lastActivityDate?.toISOString() || '',
-        nextAction: opportunity.nextSteps || '',
-        lastActionDate: opportunity.lastActivityDate?.toISOString() || '',
-        nextActionDate: opportunity.nextActivityDate?.toISOString() || '',
-        notes: opportunity.notes || '',
-        tags: opportunity.tags || [],
+        source: '-', // Not in opportunities table, can be added later if needed
+        contact: '-', // Not in opportunities table, can be added later if needed
+        lastAction: opportunity.company?.lastAction || '-',
+        nextAction: opportunity.company?.nextAction || '-',
+        lastActionDate: opportunity.company?.lastActionDate?.toISOString() || '',
+        nextActionDate: opportunity.company?.nextActionDate?.toISOString() || '',
+        notes: opportunity.description || '',
+        tags: [], // Not in opportunities table, can be added later if needed
         createdAt: opportunity.createdAt.toISOString(),
         updatedAt: opportunity.updatedAt.toISOString(),
       };
@@ -70,10 +85,28 @@ export class PipelineDataService {
   static async getOpportunities(workspaceId: string): Promise<OpportunityWithDetails[]> {
     try {
       const opportunities = await prisma.opportunities.findMany({
-        where: { workspaceId },
+        where: { 
+          workspaceId,
+          deletedAt: null
+        },
         include: {
-          accounts: true,
-          leads: true,
+          company: {
+            select: {
+              id: true,
+              name: true,
+              lastAction: true,
+              lastActionDate: true,
+              nextAction: true,
+              nextActionDate: true
+            }
+          },
+          owner: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         },
         orderBy: { updatedAt: 'desc' }
       });
@@ -84,17 +117,17 @@ export class PipelineDataService {
         value: opp.amount?.toString() || '0',
         stage: opp.stage,
         status: 'active',
-        company: opp.accounts?.name || '-',
-        probability: opp.probability || 0,
+        company: opp.company?.name || '-',
+        probability: (opp.probability || 0) * 100, // Convert to percentage
         closeDate: opp.expectedCloseDate?.toISOString() || '',
-        source: opp.source || '-',
-        contact: opp.leads?.fullName || '-',
-        lastAction: opp.lastActivityDate?.toISOString() || '',
-        nextAction: opp.nextSteps || '',
-        lastActionDate: opp.lastActivityDate?.toISOString() || '',
-        nextActionDate: opp.nextActivityDate?.toISOString() || '',
-        notes: opp.notes || '',
-        tags: opp.tags || [],
+        source: '-', // Not in opportunities table, can be added later if needed
+        contact: '-', // Not in opportunities table, can be added later if needed
+        lastAction: opp.company?.lastAction || '-',
+        nextAction: opp.company?.nextAction || '-',
+        lastActionDate: opp.company?.lastActionDate?.toISOString() || '',
+        nextActionDate: opp.company?.nextActionDate?.toISOString() || '',
+        notes: opp.description || '',
+        tags: [], // Not in opportunities table, can be added later if needed
         createdAt: opp.createdAt.toISOString(),
         updatedAt: opp.updatedAt.toISOString(),
       }));

@@ -39,6 +39,7 @@ import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField"
 import { SuccessMessage } from "@/platform/ui/components/SuccessMessage";
 import { useInlineEdit } from "@/platform/hooks/useInlineEdit";
 import { AddPersonToCompanyModal } from "@/frontend/components/pipeline/AddPersonToCompanyModal";
+import { useUnifiedAuth } from "@/platform/auth";
 
 export interface Company {
   id: string;
@@ -78,6 +79,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
   onDeleteCompany,
 }) => {
   const { ui } = useRevenueOS();
+  const { user: authUser } = useUnifiedAuth();
   const { navigateToPipelineItem } = useWorkspaceNavigation();
   const [activeTab, setActiveTab] = useState("Overview");
   const [companyData, setCompanyData] = useState<CompanyWithDetails | null>(null);
@@ -86,6 +88,11 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
   const [showAddPersonModal, setShowAddPersonModal] = useState(false);
   const [timelineData, setTimelineData] = useState<any[]>([]);
   const [notesData, setNotesData] = useState<any[]>([]);
+  
+  // Check if this is Notary Everyday workspace
+  const isNotaryEveryday = authUser?.workspaces?.some(
+    (ws: any) => ws.name === 'Notary Everyday' || ws.slug === 'notary-everyday' || ws.slug === 'ne'
+  ) && authUser?.activeWorkspaceId && authUser.workspaces.find((ws: any) => ws.id === authUser.activeWorkspaceId)?.name === 'Notary Everyday';
   
   // Use universal inline edit hook
   const {
@@ -186,8 +193,23 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
   const handleFieldEdit = async (field: string, value: string) => {
     const success = await handleEditSave('account', account.id, field, value);
     if (success) {
-      // Update local state
-      setAccountData((prev: AccountWithDetails | null) => prev ? { ...prev, [field]: value } : null);
+      // Update local state - handle customFields specially
+      if (field.startsWith('customFields.')) {
+        const customFieldKey = field.replace('customFields.', '');
+        setAccountData((prev: AccountWithDetails | null) => {
+          if (!prev) return null;
+          const customFields = (prev as any).customFields || {};
+          return {
+            ...prev,
+            customFields: {
+              ...customFields,
+              [customFieldKey]: value
+            }
+          } as AccountWithDetails;
+        });
+      } else {
+        setAccountData((prev: AccountWithDetails | null) => prev ? { ...prev, [field]: value } : null);
+      }
     }
   };
 
@@ -488,6 +510,22 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                             : "$0"}
                       </div>
                     </div>
+                    {isNotaryEveryday && (
+                      <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                        <div className="font-semibold text-muted mb-1">
+                          Orders
+                        </div>
+                        <div className="text-lg font-bold text-purple-600">
+                          <InlineEditField
+                            value={((accountData as any)?.customFields?.orders || (account as any)?.customFields?.orders || '-').toString()}
+                            field="customFields.orders"
+                            onSave={handleFieldEdit}
+                            placeholder="Enter number of orders"
+                            type="number"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

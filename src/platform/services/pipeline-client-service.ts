@@ -193,7 +193,9 @@ export class PipelineClientService {
    */
   static async getOpportunityById(opportunityId: string): Promise<OpportunityWithDetails | null> {
     try {
-      const response = await fetch(`/api/opportunities/${opportunityId}`);
+      const response = await fetch(`/api/v1/opportunities/${opportunityId}`, {
+        credentials: 'include'
+      });
       
       if (!response.ok) {
         console.error('Failed to fetch opportunity:', response.statusText);
@@ -202,12 +204,33 @@ export class PipelineClientService {
       
       const result = await response.json();
       
-      if (!result.success) {
+      if (!result.success || !result.data) {
         console.error('API returned error:', result.error);
         return null;
       }
 
-      return result.opportunity;
+      // Transform API response to OpportunityWithDetails format
+      const opp = result.data;
+      return {
+        id: opp.id,
+        name: opp.name,
+        value: opp.opportunityAmount?.toString() || opp.amount?.toString() || '0',
+        stage: opp.opportunityStage || opp.stage || 'Discovery',
+        status: opp.status || 'active',
+        company: opp.company || opp.account?.name || '-',
+        probability: (opp.opportunityProbability || opp.probability || 0) * 100, // Convert to percentage
+        closeDate: opp.expectedCloseDate || '',
+        source: '-',
+        contact: '-',
+        lastAction: opp.lastAction || '-',
+        nextAction: opp.nextAction || '-',
+        lastActionDate: opp.lastActionDate || '',
+        nextActionDate: opp.nextActionDate || '',
+        notes: opp.description || '',
+        tags: [],
+        createdAt: opp.createdAt || '',
+        updatedAt: opp.updatedAt || ''
+      };
     } catch (error) {
       console.error('Error fetching opportunity by ID:', error);
       return null;

@@ -7,6 +7,7 @@
  */
 
 import { prisma } from '@/platform/database/prisma-client';
+import { OpportunityStatusService } from './OpportunityStatusService';
 
 export interface DeletionConfig {
   // Soft delete retention periods (in days)
@@ -57,7 +58,7 @@ export class DeletionService {
   /**
    * 🗑️ SOFT DELETE - Mark record as deleted
    */
-  async softDelete(entityType: 'companies' | 'people' | 'actions', id: string, userId: string): Promise<DeletionResult> {
+  async softDelete(entityType: 'companies' | 'people' | 'actions' | 'opportunities', id: string, userId: string): Promise<DeletionResult> {
     try {
       const deletedAt = new Date();
       
@@ -113,6 +114,27 @@ export class DeletionService {
             data: { deletedAt },
           });
           break;
+          
+        case 'opportunities':
+          updateResult = await prisma.opportunities.updateMany({
+            where: { 
+              id,
+              workspaceId: user.activeWorkspaceId,
+              deletedAt: null // Only delete non-deleted records
+            },
+            data: { deletedAt },
+          });
+          
+          // Revert company and people to PROSPECT if no other opportunities exist
+          if (updateResult.count > 0) {
+            try {
+              await OpportunityStatusService.revertCompanyAndPeopleToProspect(id, user.activeWorkspaceId);
+            } catch (error) {
+              console.error(`❌ [DELETION] Failed to revert company/people status:`, error);
+              // Don't fail the deletion if status revert fails
+            }
+          }
+          break;
       }
 
       if (updateResult.count === 0) {
@@ -151,7 +173,7 @@ export class DeletionService {
   /**
    * 🔄 RESTORE - Undo soft delete
    */
-  async restore(entityType: 'companies' | 'people' | 'actions', id: string, userId: string): Promise<boolean> {
+  async restore(entityType: 'companies' | 'people' | 'actions' | 'opportunities', id: string, userId: string): Promise<boolean> {
     try {
       // First, get the user's workspace to ensure proper filtering
       const user = await prisma.users.findUnique({
@@ -203,6 +225,18 @@ export class DeletionService {
           });
           recordExists = !!action;
           break;
+          
+        case 'opportunities':
+          const opportunity = await prisma.opportunities.findFirst({
+            where: { 
+              id,
+              workspaceId: user.activeWorkspaceId,
+              deletedAt: { not: null } // Only restore soft-deleted records
+            },
+            select: { id: true }
+          });
+          recordExists = !!opportunity;
+          break;
       }
 
       if (!recordExists) {
@@ -232,6 +266,27 @@ export class DeletionService {
             data: { deletedAt: null },
           });
           break;
+          
+        case 'opportunities':
+          await prisma.opportunities.update({
+            where: { id },
+            data: { deletedAt: null },
+          });
+          
+          // Restore company and people to OPPORTUNITY status
+          try {
+            const opp = await prisma.opportunities.findUnique({
+              where: { id },
+              select: { companyId: true, workspaceId: true }
+            });
+            if (opp) {
+              await OpportunityStatusService.setCompanyAndPeopleToOpportunity(opp.companyId, opp.workspaceId);
+            }
+          } catch (error) {
+            console.error(`❌ [DELETION] Failed to restore company/people status:`, error);
+            // Don't fail the restore if status update fails
+          }
+          break;
       }
 
       // Log the restoration (non-blocking - restoration succeeds even if logging fails)
@@ -248,7 +303,7 @@ export class DeletionService {
   /**
    * 💥 HARD DELETE - Permanently remove record
    */
-  async hardDelete(entityType: 'companies' | 'people' | 'actions', id: string, userId: string): Promise<boolean> {
+  async hardDelete(entityType: 'companies' | 'people' | 'actions' | 'opportunities', id: string, userId: string): Promise<boolean> {
     try {
       // First, get the user's workspace to ensure proper filtering
       const user = await prisma.users.findUnique({
@@ -297,6 +352,17 @@ export class DeletionService {
           });
           recordExists = !!action;
           break;
+          
+        case 'opportunities':
+          const opportunity = await prisma.opportunities.findFirst({
+            where: { 
+              id,
+              workspaceId: user.activeWorkspaceId
+            },
+            select: { id: true }
+          });
+          recordExists = !!opportunity;
+          break;
       }
 
       if (!recordExists) {
@@ -320,6 +386,12 @@ export class DeletionService {
           
         case 'actions':
           await prisma.actions.delete({
+            where: { id },
+          });
+          break;
+          
+        case 'opportunities':
+          await prisma.opportunities.delete({
             where: { id },
           });
           break;
@@ -413,7 +485,7 @@ export class DeletionService {
 
   // Private helper methods
   private async cleanupEntity(
-    entityType: 'companies' | 'people' | 'actions',
+    entityType: 'companies' | 'people' | 'actions' | 'opportunities',
     retentionDays: number,
     batchSize: number
   ): Promise<number> {
@@ -444,7 +516,7 @@ export class DeletionService {
   }
 
   private async getOldSoftDeletedRecords(
-    entityType: 'companies' | 'people' | 'actions',
+    entityType: 'companies' | 'people' | 'actions' | 'opportunities',
     cutoffDate: Date,
     limit: number
   ): Promise<{ id: string }[]> {
@@ -476,13 +548,22 @@ export class DeletionService {
           take: limit,
         });
         
+      case 'opportunities':
+        return await prisma.opportunities.findMany({
+          where: {
+            deletedAt: { not: null, lt: cutoffDate },
+          },
+          select: { id: true },
+          take: limit,
+        });
+        
       default:
         return [];
     }
   }
 
   private async hardDeleteBatch(
-    entityType: 'companies' | 'people' | 'actions',
+    entityType: 'companies' | 'people' | 'actions' | 'opportunities',
     ids: string[]
   ): Promise<void> {
     switch (entityType) {
@@ -503,10 +584,16 @@ export class DeletionService {
           where: { id: { in: ids } },
         });
         break;
+        
+      case 'opportunities':
+        await prisma.opportunities.deleteMany({
+          where: { id: { in: ids } },
+        });
+        break;
     }
   }
 
-  private async getRetentionCompliance(entityType: 'companies' | 'people' | 'actions'): Promise<number> {
+  private async getRetentionCompliance(entityType: 'companies' | 'people' | 'actions' | 'opportunities'): Promise<number> {
     const retentionDays = this.config.retentionPeriods[entityType];
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
@@ -528,6 +615,13 @@ export class DeletionService {
         
       case 'actions':
         return await prisma.actions.count({
+          where: {
+            deletedAt: { not: null, lt: cutoffDate },
+          },
+        });
+        
+      case 'opportunities':
+        return await prisma.opportunities.count({
           where: {
             deletedAt: { not: null, lt: cutoffDate },
           },

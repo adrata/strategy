@@ -598,8 +598,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       let record: any;
       
       // Use appropriate v1 API based on section
-      if (section === 'companies' || section === 'opportunities') {
-        // Opportunities are companies
+      if (section === 'opportunities') {
+        // Opportunities are now in their own table
+        response = await fetch(`/api/v1/opportunities/${recordId}`, {
+          credentials: 'include'
+        });
+      } else if (section === 'companies') {
         response = await fetch(`/api/v1/companies/${recordId}`, {
           credentials: 'include'
         });

@@ -49,8 +49,8 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
       }
       setError(null);
 
-      // Opportunities are COMPANIES with status=OPPORTUNITY
-      const response = await fetch('/api/v1/companies?status=OPPORTUNITY&limit=10000', { credentials: 'include' });
+      // Opportunities are now in the opportunities table
+      const response = await fetch('/api/v1/opportunities?limit=10000', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch opportunities: ${response.statusText}`);
@@ -59,36 +59,34 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
       const json = await response.json();
       const data = Array.isArray(json) ? json : (json?.data || []);
       
-      // Transform company data to Opportunity format
-      const transformedOpportunities: Opportunity[] = (data || []).map((company: any) => ({
-        id: company.id,
-        name: company.name || 'Unnamed Opportunity',
-        company: company.name || '-',
-        account: { name: company.name },
-        status: company.status || 'OPPORTUNITY',
-        lastAction: company.lastAction || '-',
-        nextAction: company.nextAction || '-',
-        amount: company.opportunityAmount || company.amount || company.dealValue || company.revenue || 0,
-        revenue: company.opportunityAmount || company.amount || company.dealValue || company.revenue || 0,
-        stage: company.opportunityStage || company.stage || company.dealStage || (company.status === 'OPPORTUNITY' ? 'QUALIFICATION' : null),
-        companyId: company.id,
-        industry: company.industry && company.industry !== '-' ? company.industry : undefined,
-        size: company.size || company.employeeCount || '-',
-        lastActionDate: company.lastActionDate,
-        nextActionDate: company.nextActionDate,
-        assignedUserId: company.mainSellerId,
-        workspaceId: company.workspaceId,
-        createdAt: company.createdAt,
-        updatedAt: company.updatedAt,
-        description: company.descriptionEnriched || company.description || '',
-        summary: company.descriptionEnriched || company.description || '',
-        opportunityAmount: company.opportunityAmount || company.amount || company.dealValue || company.revenue || 0,
-        opportunityStage: company.opportunityStage || company.stage,
-        opportunityProbability: company.opportunityProbability,
-        expectedCloseDate: company.expectedCloseDate,
-        lastActionDate: company.lastActionDate,
-        nextActionDate: company.nextActionDate,
-        customFields: company.customFields || {},
+      // Data is already in Opportunity format from the API
+      const transformedOpportunities: Opportunity[] = (data || []).map((opp: any) => ({
+        id: opp.id,
+        name: opp.name || 'Unnamed Opportunity',
+        company: opp.company || '-',
+        account: opp.account || { name: opp.company },
+        status: opp.status || 'OPPORTUNITY',
+        lastAction: opp.lastAction || '-',
+        nextAction: opp.nextAction || '-',
+        amount: opp.opportunityAmount || opp.amount || 0,
+        revenue: opp.opportunityAmount || opp.amount || 0,
+        stage: opp.opportunityStage || opp.stage || 'Discovery',
+        companyId: opp.companyId,
+        industry: opp.industry && opp.industry !== '-' ? opp.industry : undefined,
+        size: opp.size || '-',
+        lastActionDate: opp.lastActionDate,
+        nextActionDate: opp.nextActionDate,
+        assignedUserId: opp.assignedUserId,
+        workspaceId: opp.workspaceId,
+        createdAt: opp.createdAt,
+        updatedAt: opp.updatedAt,
+        description: opp.description || '',
+        summary: opp.summary || opp.description || '',
+        opportunityAmount: opp.opportunityAmount || opp.amount || 0,
+        opportunityStage: opp.opportunityStage || opp.stage,
+        opportunityProbability: opp.opportunityProbability,
+        expectedCloseDate: opp.expectedCloseDate,
+        customFields: opp.customFields || {},
       }));
 
       setOpportunities(transformedOpportunities);

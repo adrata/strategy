@@ -1244,6 +1244,19 @@ export function TableRow({
                     </div>
                   </td>
                 );
+              case 'orders':
+                // Only show Orders column for Notary Everyday workspace
+                if (workspaceName === 'Notary Everyday' || workspaceName?.toLowerCase().includes('notary')) {
+                  const orders = (record.customFields as any)?.orders || '-';
+                  return (
+                    <td key="orders" className={textClasses}>
+                      <div className="truncate max-w-32">
+                        {orders !== '-' ? orders.toLocaleString() : orders}
+                      </div>
+                    </td>
+                  );
+                }
+                return null;
               default:
                 return null;
             }

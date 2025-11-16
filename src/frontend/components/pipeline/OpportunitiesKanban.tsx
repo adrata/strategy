@@ -688,7 +688,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
         },
         body: JSON.stringify({
           action: 'soft_delete',
-          entityType: 'companies', // Opportunities are stored in companies table
+          entityType: 'opportunities', // Opportunities are now in opportunities table
           entityId: opportunity.id
         }),
       });

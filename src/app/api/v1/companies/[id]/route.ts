@@ -576,6 +576,20 @@ export async function PATCH(
       }, { status: 400 });
     }
 
+    // Handle customFields merging - merge with existing customFields instead of replacing
+    if ('customFields' in updateData && updateData.customFields) {
+      const existingCustomFields = (existingCompany.customFields as any) || {};
+      updateData.customFields = {
+        ...existingCustomFields,
+        ...updateData.customFields
+      };
+      console.log('🔄 [CUSTOM FIELDS] Merged customFields:', {
+        existing: existingCustomFields,
+        new: updateData.customFields,
+        merged: updateData.customFields
+      });
+    }
+
     // Update company (partial update)
     const updatedCompany = await prisma.companies.update({
       where: { id },

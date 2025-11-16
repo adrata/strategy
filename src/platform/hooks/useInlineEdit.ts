@@ -32,7 +32,49 @@ export const useInlineEdit = (options: UseInlineEditOptions = {}) => {
       console.log(`🔧 [INLINE EDIT] Updating ${recordType} ${recordId} field ${field} to:`, value);
       
       // Use v1 APIs for updates
-      const apiType = recordType === 'account' ? 'companies' : recordType === 'contact' ? 'people' : 'people';
+      const apiType = recordType === 'account' ? 'companies' 
+        : recordType === 'opportunity' ? 'opportunities'
+        : recordType === 'contact' ? 'people' 
+        : 'people';
+      
+      // Handle customFields - if field starts with "customFields.", update nested field
+      let updatePayload: any;
+      if (field.startsWith('customFields.')) {
+        const customFieldKey = field.replace('customFields.', '');
+        updatePayload = {
+          customFields: {
+            [customFieldKey]: value
+          }
+        };
+      } else {
+        // Map opportunity field names to database field names
+        if (recordType === 'opportunity') {
+          const fieldMapping: { [key: string]: string } = {
+            'opportunityAmount': 'amount',
+            'opportunityStage': 'stage',
+            'opportunityProbability': 'probability',
+            'expectedCloseDate': 'expectedCloseDate'
+          };
+          
+          const dbField = fieldMapping[field] || field;
+          let dbValue: any = value;
+          
+          // Convert opportunityProbability from percentage to decimal (0-1)
+          if (field === 'opportunityProbability') {
+            dbValue = parseFloat(value) / 100;
+          }
+          
+          // Convert amount to number
+          if (field === 'opportunityAmount') {
+            dbValue = parseFloat(value) || 0;
+          }
+          
+          updatePayload = { [dbField]: dbValue };
+        } else {
+          updatePayload = { [field]: value };
+        }
+      }
+      
       const result = await authFetch(
         `/api/v1/${apiType}/${recordId}`,
         {
@@ -40,7 +82,7 @@ export const useInlineEdit = (options: UseInlineEditOptions = {}) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ [field]: value }),
+          body: JSON.stringify(updatePayload),
         },
         { success: false, error: 'Update failed' } // fallback
       );
