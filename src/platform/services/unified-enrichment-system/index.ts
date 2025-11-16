@@ -375,6 +375,7 @@ export class UnifiedEnrichmentSystem {
    * 📞 CONTACT ENRICHMENT
    * 
    * High-accuracy contact information enrichment
+   * Optimized to call CoreSignal once and reuse data for all contact methods
    */
   private async enrichContactInformation(request: EnrichmentRequest): Promise<any> {
     console.log(`📞 [CONTACT] Processing contact enrichment`);
@@ -384,12 +385,21 @@ export class UnifiedEnrichmentSystem {
       throw new Error('Person not found');
     }
     
-    // PARALLEL CONTACT ENRICHMENT
-    const [emailEnrichment, phoneEnrichment, socialEnrichment] = await Promise.all([
-      this.enrichEmailInformation(person),
-      this.enrichPhoneInformation(person),
-      this.enrichSocialProfiles(person)
-    ]);
+    // Check if we need to enrich any contact methods
+    const needsEmail = !person.email && !person.workEmail;
+    const needsPhone = !person.phone && !person.workPhone;
+    const needsLinkedIn = !person.linkedinUrl;
+    
+    // Only call CoreSignal if we need to enrich at least one contact method
+    let coresignalData = null;
+    if (needsEmail || needsPhone || needsLinkedIn) {
+      coresignalData = await this.enrichContactFromCoreSignal(person);
+    }
+    
+    // Build enrichment results using CoreSignal data if available
+    const emailEnrichment = this.buildEmailEnrichment(person, coresignalData);
+    const phoneEnrichment = this.buildPhoneEnrichment(person, coresignalData);
+    const socialEnrichment = this.buildSocialEnrichment(person, coresignalData);
     
     // PERPLEXITY VALIDATION if enabled
     let validation = null;
@@ -1158,43 +1168,306 @@ export class UnifiedEnrichmentSystem {
     return null;
   }
   
-  private async enrichEmailInformation(person: any): Promise<any> {
+  /**
+   * 🔍 ENRICH CONTACT INFORMATION FROM CORESIGNAL
+   * 
+   * Fetches comprehensive contact data from CoreSignal API
+   */
+  private async enrichContactFromCoreSignal(person: any): Promise<any> {
+    const coresignalApiKey = this.config.providers.coreSignal.apiKey;
+    if (!coresignalApiKey) {
+      console.warn('⚠️ [ENRICHMENT] CoreSignal API key not configured');
+      return null;
+    }
+
+    try {
+      // Search for person in CoreSignal by LinkedIn URL or email
+      const searchUrl = 'https://api.coresignal.com/cdapi/v1/professional_network/member/search/filter';
+      const searchPayload: any = {};
+      
+      if (person.linkedinUrl) {
+        searchPayload.linkedin_url = person.linkedinUrl;
+      } else if (person.email) {
+        searchPayload.primary_professional_email = person.email;
+      } else {
+        // If no LinkedIn or email, try searching by name and company
+        if (person.fullName && person.company?.name) {
+          searchPayload.full_name = person.fullName;
+          searchPayload.company_name = person.company.name;
+        } else {
+          console.log(`⚠️ [ENRICHMENT] No search criteria available for ${person.fullName}`);
+          return null;
+        }
+      }
+
+      console.log(`🔍 [ENRICHMENT] Searching CoreSignal for ${person.fullName}...`);
+      
+      const searchResponse = await fetch(searchUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${coresignalApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(searchPayload)
+      });
+
+      if (!searchResponse.ok) {
+        const errorText = await searchResponse.text();
+        console.error(`❌ [ENRICHMENT] CoreSignal search failed:`, {
+          status: searchResponse.status,
+          error: errorText
+        });
+        return null;
+      }
+
+      const searchResults = await searchResponse.json();
+      
+      if (!searchResults || searchResults.length === 0) {
+        console.log(`❌ [ENRICHMENT] Person not found in CoreSignal`);
+        return null;
+      }
+
+      // Get the first (best) match
+      const coresignalPerson = searchResults[0];
+      const coresignalId = coresignalPerson.id;
+
+      console.log(`✅ [ENRICHMENT] Found CoreSignal match: ${coresignalPerson.full_name} (ID: ${coresignalId})`);
+
+      // Fetch detailed person data
+      const detailsUrl = `https://api.coresignal.com/cdapi/v1/professional_network/member/collect/${coresignalId}`;
+      
+      const detailsResponse = await fetch(detailsUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${coresignalApiKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!detailsResponse.ok) {
+        console.error(`❌ [ENRICHMENT] Failed to fetch person details: ${detailsResponse.status}`);
+        return null;
+      }
+
+      const coresignalData = await detailsResponse.json();
+      console.log(`📊 [ENRICHMENT] Retrieved CoreSignal data for ${person.fullName}`);
+
+      return {
+        email: coresignalData.primary_professional_email || null,
+        phone: coresignalData.phone || null,
+        linkedinUrl: coresignalData.linkedin_url || null,
+        coresignalId: coresignalId,
+        coresignalData: coresignalData,
+        source: 'coresignal',
+        confidence: 90
+      };
+    } catch (error) {
+      console.error(`❌ [ENRICHMENT] Error enriching from CoreSignal:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * 📧 BUILD EMAIL ENRICHMENT RESULT
+   * 
+   * Builds email enrichment result from person data and optional CoreSignal data
+   */
+  private buildEmailEnrichment(person: any, coresignalData: any): any {
+    // If person already has email, return it
+    if (person.email || person.workEmail) {
+      return {
+        email: person.email || person.workEmail,
+        verified: true,
+        confidence: 90,
+        source: 'database'
+      };
+    }
+
+    // Try to use CoreSignal data if available
+    if (coresignalData?.email) {
+      return {
+        email: coresignalData.email,
+        verified: true,
+        confidence: coresignalData.confidence || 85,
+        source: coresignalData.source || 'coresignal'
+      };
+    }
+
+    // Return null if no email found
     return {
-      email: person.email || person.workEmail,
-      verified: true,
-      confidence: 90,
-      source: 'database'
+      email: null,
+      verified: false,
+      confidence: 0,
+      source: 'none'
     };
   }
   
-  private async enrichPhoneInformation(person: any): Promise<any> {
+  /**
+   * 📞 BUILD PHONE ENRICHMENT RESULT
+   * 
+   * Builds phone enrichment result from person data and optional CoreSignal data
+   */
+  private buildPhoneEnrichment(person: any, coresignalData: any): any {
+    // If person already has phone, return it
+    if (person.phone || person.workPhone) {
+      return {
+        phone: person.phone || person.workPhone,
+        verified: true,
+        confidence: 85,
+        source: 'database'
+      };
+    }
+
+    // Try to use CoreSignal data if available
+    if (coresignalData?.phone) {
+      return {
+        phone: coresignalData.phone,
+        verified: true,
+        confidence: coresignalData.confidence || 80,
+        source: coresignalData.source || 'coresignal'
+      };
+    }
+
+    // Return null if no phone found
     return {
-      phone: person.phone || person.workPhone,
-      verified: true,
-      confidence: 85,
-      source: 'database'
+      phone: null,
+      verified: false,
+      confidence: 0,
+      source: 'none'
     };
   }
   
-  private async enrichSocialProfiles(person: any): Promise<any> {
+  /**
+   * 🔗 BUILD SOCIAL ENRICHMENT RESULT
+   * 
+   * Builds social profile enrichment result from person data and optional CoreSignal data
+   */
+  private buildSocialEnrichment(person: any, coresignalData: any): any {
+    // If person already has LinkedIn, return it
+    if (person.linkedinUrl) {
+      return {
+        linkedinUrl: person.linkedinUrl,
+        twitterHandle: person.twitterHandle,
+        verified: true,
+        confidence: 80,
+        source: 'database'
+      };
+    }
+
+    // Try to use CoreSignal data if available
+    if (coresignalData?.linkedinUrl) {
+      return {
+        linkedinUrl: coresignalData.linkedinUrl,
+        twitterHandle: person.twitterHandle,
+        verified: true,
+        confidence: coresignalData.confidence || 85,
+        source: coresignalData.source || 'coresignal'
+      };
+    }
+
+    // Return null if no LinkedIn found
     return {
-      linkedinUrl: person.linkedinUrl,
+      linkedinUrl: null,
       twitterHandle: person.twitterHandle,
-      verified: true,
-      confidence: 80
+      verified: false,
+      confidence: 0,
+      source: 'none'
     };
   }
   
+  /**
+   * 💾 UPDATE PERSON WITH ENRICHED CONTACT DATA
+   * 
+   * Saves all contact methods (email, phone, LinkedIn) to database
+   * Uses smart update logic: only updates if new data is better/missing
+   */
   private async updatePersonWithEnrichedContact(person: any, enrichment: any): Promise<any> {
+    const updateData: any = {
+      lastEnriched: new Date(),
+      updatedAt: new Date()
+    };
+
+    // Helper to check if field should be updated
+    const shouldUpdate = (existingValue: any, newValue: any) => {
+      // Always update if existing value is null/undefined/empty
+      if (!existingValue || existingValue === '' || existingValue === '-') {
+        return !!newValue;
+      }
+      // Don't overwrite existing non-empty data unless new data is from a better source
+      return false;
+    };
+
+    // Update email - use enriched email if available and better
+    const enrichedEmail = enrichment.email?.email;
+    if (enrichedEmail && shouldUpdate(person.email, enrichedEmail)) {
+      updateData.email = enrichedEmail;
+      if (!person.workEmail || person.workEmail === person.email) {
+        updateData.workEmail = enrichedEmail;
+      }
+    }
+
+    // Update phone - use enriched phone if available and better
+    const enrichedPhone = enrichment.phone?.phone;
+    if (enrichedPhone && shouldUpdate(person.phone, enrichedPhone)) {
+      updateData.phone = enrichedPhone;
+    }
+
+    // Update LinkedIn URL - use enriched LinkedIn if available and better
+    const enrichedLinkedIn = enrichment.social?.linkedinUrl;
+    if (enrichedLinkedIn && shouldUpdate(person.linkedinUrl, enrichedLinkedIn)) {
+      updateData.linkedinUrl = enrichedLinkedIn;
+    }
+
+    // Store enrichment metadata in customFields
+    const existingCustomFields = (person.customFields as any) || {};
+    const enrichmentMetadata: any = {
+      lastContactEnrichment: new Date().toISOString(),
+      enrichmentSources: []
+    };
+
+    if (enrichment.email?.source && enrichment.email?.source !== 'database') {
+      enrichmentMetadata.enrichmentSources.push(`email:${enrichment.email.source}`);
+    }
+    if (enrichment.phone?.source && enrichment.phone?.source !== 'database') {
+      enrichmentMetadata.enrichmentSources.push(`phone:${enrichment.phone.source}`);
+    }
+    if (enrichment.social?.source && enrichment.social?.source !== 'database') {
+      enrichmentMetadata.enrichmentSources.push(`linkedin:${enrichment.social.source}`);
+    }
+
+    if (enrichmentMetadata.enrichmentSources.length > 0) {
+      updateData.customFields = {
+        ...existingCustomFields,
+        contactEnrichment: enrichmentMetadata
+      };
+    }
+
+    // Only update if there are actual changes
+    const hasChanges = Object.keys(updateData).some(key => 
+      key !== 'lastEnriched' && key !== 'updatedAt' && key !== 'customFields'
+    ) || (updateData.customFields && Object.keys(updateData.customFields).length > 0);
+
+    if (!hasChanges) {
+      console.log(`ℹ️ [ENRICHMENT] No contact updates needed for ${person.fullName}`);
+      // Still update lastEnriched timestamp
+      return await this.prisma.people.update({
+        where: { id: person.id },
+        data: {
+          lastEnriched: new Date(),
+          updatedAt: new Date()
+        }
+      });
+    }
+
+    console.log(`💾 [ENRICHMENT] Updating contact info for ${person.fullName}:`, {
+      email: updateData.email ? 'updated' : 'unchanged',
+      phone: updateData.phone ? 'updated' : 'unchanged',
+      linkedin: updateData.linkedinUrl ? 'updated' : 'unchanged'
+    });
+
     return await this.prisma.people.update({
       where: { id: person.id },
-      data: {
-        email: enrichment.email?.email || person.email,
-        phone: enrichment.phone?.phone || person.phone,
-        linkedinUrl: enrichment.social?.linkedinUrl || person.linkedinUrl,
-        lastEnriched: new Date(),
-        updatedAt: new Date()
-      }
+      data: updateData
     });
   }
   

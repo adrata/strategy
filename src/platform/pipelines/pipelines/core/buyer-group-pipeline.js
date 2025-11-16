@@ -799,6 +799,50 @@ class BuyerGroupPipeline {
     }
 
     /**
+     * Infer buyer group role from job title
+     */
+    inferRoleFromTitle(jobTitle) {
+        if (!jobTitle) return 'stakeholder';
+        
+        const title = jobTitle.toLowerCase();
+        
+        // Decision makers
+        if (title.includes('ceo') || title.includes('president') || title.includes('founder') || title.includes('owner')) {
+            return 'decision';
+        }
+        if (title.includes('vp') || title.includes('vice president') || title.includes('director') || title.includes('head of')) {
+            return 'decision';
+        }
+        if (title.includes('cfo') || title.includes('cto') || title.includes('cmo') || title.includes('coo')) {
+            return 'decision';
+        }
+        
+        // Champions
+        if (title.includes('engineer') || title.includes('developer') || title.includes('architect')) {
+            return 'champion';
+        }
+        if (title.includes('consultant') || title.includes('advisor') || title.includes('expert')) {
+            return 'champion';
+        }
+        
+        // Blockers
+        if (title.includes('legal') || title.includes('compliance') || title.includes('security')) {
+            return 'blocker';
+        }
+        if (title.includes('procurement') || title.includes('purchasing')) {
+            return 'blocker';
+        }
+        
+        // Introducers
+        if (title.includes('sales') || title.includes('marketing') || title.includes('business development')) {
+            return 'introducer';
+        }
+        
+        // Default to stakeholder
+        return 'stakeholder';
+    }
+
+    /**
      * SAVE BUYER GROUP TO DATABASE (STREAMLINED)
      * 
      * Simple approach: Update existing people records with buyer group roles
@@ -813,68 +857,95 @@ class BuyerGroupPipeline {
 
             let memberCount = 0;
             
-            // Update people records with buyer group roles
-            for (const [role, members] of Object.entries(result.buyerGroup.roles || {})) {
-                // Calculate influence level from role
-                const influenceLevel = this.calculateInfluenceLevelFromRole(role);
-                
-                for (const member of members) {
-                    if (member && member.name && member.email) {
-                        try {
-                            // Find existing person by email and workspace
-                            const existingPerson = await this.prisma.people.findFirst({
-                                where: {
-                                    workspaceId: workspaceId,
-                                    OR: [
-                                        { email: member.email },
-                                        { workEmail: member.email },
-                                        { personalEmail: member.email }
-                                    ]
-                                }
-                            });
-
-                            if (existingPerson) {
-                                // Update existing person with buyer group role
-                                await this.prisma.people.update({
-                                    where: { id: existingPerson.id },
-                                    data: {
-                                        buyerGroupRole: role,
-                                        isBuyerGroupMember: true, // Always set to true when assigning a role
-                                        influenceLevel: influenceLevel, // Set influence level based on role
-                                        influenceScore: member.influenceScore || member.confidence || 0,
-                                        updatedAt: new Date()
-                                    }
-                                });
-                                memberCount++;
-                                console.log(`   ✅ Updated ${member.name} with ${role} role`);
-                            } else {
-                                // Create new person record if not found
-                                await this.prisma.people.create({
-                                    data: {
-                                        workspaceId: workspaceId,
-                                        firstName: member.name.split(' ')[0] || '',
-                                        lastName: member.name.split(' ').slice(1).join(' ') || '',
-                                        fullName: member.name,
-                                        jobTitle: member.title || '',
-                                        email: member.email,
-                                        phone: member.phone || null,
-                                        linkedinUrl: member.linkedin || null,
-                                        buyerGroupRole: role,
-                                        isBuyerGroupMember: true, // Always set to true when creating with a role
-                                        influenceLevel: influenceLevel, // Set influence level based on role
-                                        influenceScore: member.influenceScore || member.confidence || 0,
-                                        status: 'PROSPECT',
-                                        createdAt: new Date(),
-                                        updatedAt: new Date()
-                                    }
-                                });
-                                memberCount++;
-                                console.log(`   ✅ Created ${member.name} with ${role} role`);
-                            }
-                        } catch (error) {
-                            console.log(`   ⚠️ Failed to save ${member.name}: ${error.message}`);
+            // Handle both data structures:
+            // 1. Grouped by role: { roles: { 'decision': [members], 'champion': [members] } }
+            // 2. Flat array: { members: [{ role: 'decision', ... }, { role: 'champion', ... }] }
+            const membersToProcess = [];
+            
+            if (result.buyerGroup.roles && Object.keys(result.buyerGroup.roles).length > 0) {
+                // Process grouped structure
+                for (const [role, members] of Object.entries(result.buyerGroup.roles)) {
+                    for (const member of members) {
+                        if (member && member.name) {
+                            membersToProcess.push({ ...member, role: role });
                         }
                     }
+                }
+            } else if (result.buyerGroup.members && Array.isArray(result.buyerGroup.members)) {
+                // Process flat array structure - use each member's own role property
+                for (const member of result.buyerGroup.members) {
+                    if (member && member.name) {
+                        // Use member's own role, or infer from job title if missing
+                        const role = member.role || member.buyerGroupRole || this.inferRoleFromTitle(member.title);
+                        membersToProcess.push({ ...member, role: role });
+                    }
+                }
+            }
+            
+            // Process all members with their individual roles
+            for (const member of membersToProcess) {
+                if (!member.email) {
+                    console.log(`   ⚠️ Skipping ${member.name} - no email`);
+                    continue;
+                }
+                
+                try {
+                    // Use the member's specific role (not a grouped role)
+                    const memberRole = member.role || 'stakeholder';
+                    const influenceLevel = this.calculateInfluenceLevelFromRole(memberRole);
+                    
+                    // Find existing person by email and workspace
+                    const existingPerson = await this.prisma.people.findFirst({
+                        where: {
+                            workspaceId: workspaceId,
+                            OR: [
+                                { email: member.email },
+                                { workEmail: member.email },
+                                { personalEmail: member.email }
+                            ]
+                        }
+                    });
+
+                    if (existingPerson) {
+                        // Update existing person with buyer group role
+                        await this.prisma.people.update({
+                            where: { id: existingPerson.id },
+                            data: {
+                                buyerGroupRole: memberRole,
+                                isBuyerGroupMember: true, // Always set to true when assigning a role
+                                influenceLevel: influenceLevel, // Set influence level based on role
+                                influenceScore: member.influenceScore || member.confidence || 0,
+                                updatedAt: new Date()
+                            }
+                        });
+                        memberCount++;
+                        console.log(`   ✅ Updated ${member.name} with ${memberRole} role`);
+                    } else {
+                        // Create new person record if not found
+                        await this.prisma.people.create({
+                            data: {
+                                workspaceId: workspaceId,
+                                firstName: member.name.split(' ')[0] || '',
+                                lastName: member.name.split(' ').slice(1).join(' ') || '',
+                                fullName: member.name,
+                                jobTitle: member.title || '',
+                                email: member.email,
+                                phone: member.phone || null,
+                                linkedinUrl: member.linkedin || null,
+                                buyerGroupRole: memberRole,
+                                isBuyerGroupMember: true, // Always set to true when creating with a role
+                                influenceLevel: influenceLevel, // Set influence level based on role
+                                influenceScore: member.influenceScore || member.confidence || 0,
+                                status: 'PROSPECT',
+                                createdAt: new Date(),
+                                updatedAt: new Date()
+                            }
+                        });
+                        memberCount++;
+                        console.log(`   ✅ Created ${member.name} with ${memberRole} role`);
+                    }
+                } catch (error) {
+                    console.log(`   ⚠️ Failed to save ${member.name}: ${error.message}`);
                 }
             }
 

@@ -237,16 +237,18 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
     setSelectedPersonState(person);
     
     if (person) {
-      // Set current record context for AI chat system
+      // Set current record context for AI chat system with comprehensive data
       setCurrentRecord({
         id: person.id,
         name: person.name,
         fullName: person.name,
         company: person.company,
         title: person.title,
+        jobTitle: person.title, // Also include as jobTitle for compatibility
         email: person.email,
         phone: person.phone,
         linkedin: person.linkedin,
+        linkedinUrl: person.linkedin || person.linkedinNavigatorUrl, // Include both field names for compatibility
         bio: person.bio,
         interests: person.interests,
         recentActivity: person.recentActivity,

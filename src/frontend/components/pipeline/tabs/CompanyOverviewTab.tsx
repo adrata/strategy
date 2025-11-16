@@ -42,7 +42,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   const companyId = useMemo(() => {
     // If recordType is companies, use record.id directly
     if (recordType === 'companies') {
-      return record?.id;
+      const id = record?.id;
+      if (id) {
+        console.log(`🏢 [COMPANY OVERVIEW] Company ID from companies record:`, id);
+      }
+      return id;
     }
     
     // Check if this is a company-only record (including opportunities which are companies)
@@ -53,7 +57,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                                (recordType === 'prospects' && record?.isCompanyLead === true);
     
     if (isCompanyOnlyRecord) {
-      return record?.id; // The record itself is the company
+      const id = record?.id; // The record itself is the company
+      if (id) {
+        console.log(`🏢 [COMPANY OVERVIEW] Company ID from company-only record:`, id);
+      }
+      return id;
     }
     
     // If it's a person record, get companyId
@@ -66,11 +74,23 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     console.log(`🏢 [COMPANY OVERVIEW] Company ID determination:`, {
       recordType,
       companyId: id,
+      recordId: record?.id,
       recordCompanyId: record?.companyId,
       recordCompany: record?.company,
       companyIsObject: typeof record?.company === 'object',
-      companyObjectId: typeof record?.company === 'object' ? record?.company?.id : null
+      companyObjectId: typeof record?.company === 'object' ? record?.company?.id : null,
+      companyName: typeof record?.company === 'object' ? record?.company?.name : null
     });
+    
+    // Validate company ID format if we have one
+    if (id && (id.length < 20 || id.length > 26)) {
+      console.warn(`⚠️ [COMPANY OVERVIEW] Invalid company ID format detected:`, {
+        id,
+        length: id.length,
+        recordType,
+        recordId: record?.id
+      });
+    }
     
     return id;
   }, [record, recordType]);
@@ -163,7 +183,20 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         setFullCompanyData(result.data);
         console.log(`✅ [COMPANY OVERVIEW] Successfully fetched full company data:`, result.data.name);
       } else {
-        const errorMessage = (result && (result.error || result.message)) || 'Failed to fetch company data';
+        // Extract error message with better handling
+        let errorMessage = 'Failed to fetch company data';
+        if (result) {
+          if (result.error) {
+            errorMessage = typeof result.error === 'string' ? result.error : 'Company not found';
+          } else if (result.message) {
+            errorMessage = typeof result.message === 'string' ? result.message : 'Company not found';
+          }
+        }
+        
+        // Handle "unknown" error messages
+        if (errorMessage === 'unknown' || errorMessage.toLowerCase().includes('unknown')) {
+          errorMessage = 'Company not found. The company ID may be incorrect or the company may have been deleted.';
+        }
         
         // Fallback: Check if we have company data from the record relation
         if (record?.company && typeof record.company === 'object' && record.company.id === companyId) {
@@ -177,13 +210,28 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     } catch (error) {
       console.error('❌ [COMPANY OVERVIEW] Error fetching company data:', error);
       
+      // Extract meaningful error message
+      let errorMessage = 'Failed to fetch company data';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        // Handle "unknown" error messages specifically - this happens when the error object has message="unknown"
+        if (errorMessage === 'unknown' || errorMessage.toLowerCase().includes('unknown')) {
+          errorMessage = 'Company not found or access denied. The company ID may be incorrect or the company may have been deleted.';
+        }
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        const msg = String(error.message);
+        errorMessage = msg === 'unknown' ? 'Company not found or access denied' : msg;
+      }
+      
       // Fallback: Check if we have company data from the record relation
       if (record?.company && typeof record.company === 'object' && record.company.id === companyId) {
         console.log(`⚠️ [COMPANY OVERVIEW] API call failed, but using company data from record relation`);
         setFullCompanyData(record.company);
         setCompanyError(null); // Clear error since we have fallback data
       } else {
-        setCompanyError(error instanceof Error ? error.message : 'Failed to fetch company data');
+        setCompanyError(errorMessage);
       }
     } finally {
       setIsLoadingCompany(false);

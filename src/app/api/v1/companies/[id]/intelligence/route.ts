@@ -301,16 +301,161 @@ function inferIndustry(company: any): string | null {
 }
 
 /**
+ * Intelligently determine the best available company data from multiple sources
+ * Priority: Contact email domains > CoreSignal data > Company record fields
+ */
+function determineBestCompanyData(company: any): {
+  industry: string | null;
+  employeeCount: number | null;
+  description: string | null;
+  website: string | null;
+  domain: string | null;
+  dataSource: string;
+} {
+  const people = company.people || [];
+  const customFields = company.customFields as any || {};
+  const coresignalData = customFields.coresignalData || {};
+  
+  // STEP 1: Determine correct company domain from contact email addresses (MOST RELIABLE)
+  let inferredDomain: string | null = null;
+  if (people.length > 0) {
+    const contactDomains = people
+      .map((person: any) => {
+        if (!person.email) return null;
+        return person.email.split('@')[1]?.toLowerCase();
+      })
+      .filter(Boolean) as string[];
+    
+    if (contactDomains.length > 0) {
+      // Find the most common contact domain (this is the actual company domain)
+      const domainCounts = contactDomains.reduce((acc: Record<string, number>, domain: string) => {
+        acc[domain] = (acc[domain] || 0) + 1;
+        return acc;
+      }, {});
+      
+      const mostCommonDomain = Object.entries(domainCounts)
+        .sort((a, b) => b[1] - a[1])[0]?.[0];
+      
+      // Use contact domain if we have strong consensus (at least 50% of contacts)
+      const domainPercentage = (domainCounts[mostCommonDomain] / contactDomains.length) * 100;
+      if (domainPercentage >= 50) {
+        inferredDomain = mostCommonDomain;
+      }
+    }
+  }
+  
+  // STEP 2: Extract domain from company website/domain field
+  let companyDomain: string | null = null;
+  const website = company.website || company.domain || '';
+  if (website) {
+    try {
+      let normalizedUrl = website.trim();
+      if (!normalizedUrl.match(/^https?:\/\//i)) {
+        normalizedUrl = `https://${normalizedUrl}`;
+      }
+      const url = new URL(normalizedUrl);
+      companyDomain = url.hostname.replace(/^www\./, '').toLowerCase();
+    } catch (error) {
+      const domainMatch = website.match(/(?:https?:\/\/)?(?:www\.)?([a-z0-9.-]+\.[a-z]{2,})/i);
+      if (domainMatch) {
+        companyDomain = domainMatch[1].toLowerCase();
+      }
+    }
+  }
+  
+  // Use inferred domain from contacts if it differs from company record (contacts are more reliable)
+  const finalDomain = inferredDomain || companyDomain;
+  const finalWebsite = inferredDomain && inferredDomain !== companyDomain 
+    ? `https://${inferredDomain}` 
+    : (company.website || (companyDomain ? `https://${companyDomain}` : null));
+  
+  // STEP 3: Determine industry (Priority: CoreSignal > Company record)
+  let industry: string | null = null;
+  if (coresignalData.industry && coresignalData.industry.trim() !== '') {
+    industry = coresignalData.industry.trim();
+  } else {
+    industry = inferIndustry(company);
+  }
+  
+  // STEP 4: Determine employee count (Priority: CoreSignal > Company record, validate reasonableness)
+  let employeeCount: number | null = null;
+  if (coresignalData.employees_count && coresignalData.employees_count > 0) {
+    employeeCount = coresignalData.employees_count;
+  } else if (company.employeeCount && company.employeeCount > 0) {
+    employeeCount = company.employeeCount;
+  }
+  
+  // Validate employee count reasonableness based on industry
+  if (employeeCount && industry) {
+    const industryLower = industry.toLowerCase();
+    // Major utilities/energy companies should have substantial employee counts
+    if ((industryLower.includes('utilities') || industryLower.includes('energy') || industryLower.includes('electric')) && employeeCount < 100) {
+      // Employee count seems too low - might be incorrect data, use null to avoid misleading info
+      employeeCount = null;
+    }
+    // Very small employee count with major company name suggests data issue
+    if (employeeCount < 10 && company.name && company.name.length > 10) {
+      employeeCount = null;
+    }
+  }
+  
+  // STEP 5: Determine description (Priority: CoreSignal > Company record, filter out mismatches)
+  let description: string | null = null;
+  
+  // Check CoreSignal description first
+  if (coresignalData.description_enriched && coresignalData.description_enriched.trim() !== '') {
+    description = coresignalData.description_enriched.trim();
+  } else if (coresignalData.description && coresignalData.description.trim() !== '') {
+    description = coresignalData.description.trim();
+  } else if (company.description && company.description.trim() !== '') {
+    // Validate description matches industry before using
+    const descLower = company.description.toLowerCase();
+    const industryLower = industry?.toLowerCase() || '';
+    
+    // Filter out obvious mismatches (e.g., Israeli resort description with Transportation industry)
+    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
+    const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
+    
+    if (hasIsraeliContent && !industryLower.includes('hospitality') && !industryLower.includes('tourism') && !industryLower.includes('resort')) {
+      // Description doesn't match industry - don't use it
+      description = null;
+    } else {
+      description = company.description.trim();
+    }
+  }
+  
+  // Determine data source for logging
+  let dataSource = 'company_record';
+  if (coresignalData.industry || coresignalData.employees_count || coresignalData.description_enriched) {
+    dataSource = 'coresignal';
+  }
+  if (inferredDomain && inferredDomain !== companyDomain) {
+    dataSource = inferredDomain === companyDomain ? dataSource : 'contact_domains';
+  }
+  
+  return {
+    industry,
+    employeeCount,
+    description,
+    website: finalWebsite,
+    domain: finalDomain,
+    dataSource
+  };
+}
+
+/**
  * Generate company intelligence using AI and company data
+ * Intelligently uses the best available data sources without showing warnings
  */
 async function generateCompanyIntelligence(company: any, forceRegenerate: boolean = false): Promise<CompanyIntelligence> {
   try {
-    // For now, generate structured intelligence based on company data
-    // This can be enhanced with actual AI integration later
+    // Determine best available data from all sources
+    const bestData = determineBestCompanyData(company);
     
-    const industry = inferIndustry(company);
+    // Use the best available data
+    const industry = bestData.industry;
     const size = company.size || 'Medium';
-    const employeeCount = company.employeeCount || 100;
+    const employeeCount = bestData.employeeCount || 100;
     
     // Generate strategic wants based on industry and size
     const strategicWants = generateStrategicWants(industry, size, employeeCount);
@@ -326,11 +471,27 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
     
     // Generate Adrata strategy
     const adrataStrategy = generateAdrataStrategy(company, industry, strategicWants, criticalNeeds);
+    
+    // Build description using best available data
+    let description = bestData.description;
+    
+    if (!description) {
+      // Generate default description if none exists
+      if (industry && employeeCount) {
+        description = `Leading ${industry.toLowerCase()} company with ${employeeCount.toLocaleString()} employees`;
+      } else if (industry) {
+        description = `Leading ${industry.toLowerCase()} company`;
+      } else if (employeeCount) {
+        description = `Organization with ${employeeCount.toLocaleString()} employees`;
+      } else {
+        description = `Company operating in competitive markets`;
+      }
+    }
 
     return {
       companyName: company.name,
       industry: industry || 'Unknown',
-      description: company.description || (industry ? `Leading ${industry.toLowerCase()} company with ${employeeCount} employees` : `Organization with ${employeeCount} employees`),
+      description: description,
       strategicWants,
       criticalNeeds,
       businessUnits,
@@ -533,15 +694,19 @@ function generateAdrataStrategy(company: any, industry: string | null, strategic
 
 /**
  * Generate comprehensive company summary for descriptionEnriched field
+ * Uses best available data sources intelligently
  */
 async function generateCompanySummary(company: any, intelligence: any): Promise<string> {
-  const industry = inferIndustry(company);
+  // Use the same intelligent data determination logic
+  const bestData = determineBestCompanyData(company);
+  
+  const industry = bestData.industry;
   const size = company.size || 'Medium';
-  const employeeCount = company.employeeCount || 100;
+  const employeeCount = bestData.employeeCount || 100;
   const revenue = company.revenue || 0;
   const location = company.city && company.state ? `${company.city}, ${company.state}` : company.country || 'Unknown';
   const foundedYear = company.foundedYear || 'Unknown';
-  const website = company.website || company.domain || 'N/A';
+  const website = bestData.website || company.website || company.domain || 'N/A';
   
   // Build comprehensive company summary
   // Handle missing industry gracefully - only mention it if available

@@ -94,24 +94,50 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
       try {
         console.log(`🏢 [UniversalCompanyTab] Fetching full company data for companyId: ${companyId}`);
-        const response = await authFetch(`/api/v1/companies/${companyId}`);
         
-        if (!response.ok) {
-          const status = response?.status || 'unknown';
-          throw new Error(`Failed to fetch company data: ${status}`);
-        }
-
-        const result = await response.json();
+        // authFetch returns parsed JSON, not a Response object
+        const result = await authFetch(`/api/v1/companies/${companyId}`);
         
-        if (result.success && result.data) {
+        if (result?.success && result?.data) {
           console.log(`✅ [UniversalCompanyTab] Fetched company data:`, result.data);
           setFullCompanyData(result.data);
         } else {
-          throw new Error(result.error || 'Failed to fetch company data');
+          // Extract error message with better handling
+          let errorMessage = 'Failed to fetch company data';
+          if (result) {
+            if (result.error) {
+              errorMessage = typeof result.error === 'string' ? result.error : 'Company not found';
+            } else if (result.message) {
+              errorMessage = typeof result.message === 'string' ? result.message : 'Company not found';
+            }
+          }
+          
+          // Handle "unknown" error messages
+          if (errorMessage === 'unknown' || errorMessage.toLowerCase().includes('unknown')) {
+            errorMessage = 'Company not found. The company ID may be incorrect or the company may have been deleted.';
+          }
+          
+          throw new Error(errorMessage);
         }
       } catch (error) {
         console.error('❌ [UniversalCompanyTab] Error fetching company data:', error);
-        setCompanyError(error instanceof Error ? error.message : 'Failed to fetch company data');
+        
+        // Extract meaningful error message
+        let errorMessage = 'Failed to fetch company data';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+          // Handle "unknown" error messages specifically
+          if (errorMessage === 'unknown' || errorMessage.toLowerCase().includes('unknown')) {
+            errorMessage = 'Company not found or access denied. The company ID may be incorrect or the company may have been deleted.';
+          }
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        } else if (error && typeof error === 'object' && 'message' in error) {
+          const msg = String(error.message);
+          errorMessage = msg === 'unknown' ? 'Company not found or access denied' : msg;
+        }
+        
+        setCompanyError(errorMessage);
       } finally {
         setIsLoadingCompany(false);
       }

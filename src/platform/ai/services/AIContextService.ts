@@ -358,6 +358,15 @@ CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses
       const decisionPower = currentRecord.decisionPower || this.inferDecisionPower(recordTitle, seniority);
       const buyerGroupRole = currentRecord.buyerGroupRole || this.inferBuyerGroupRole(recordTitle, department);
       
+      // Extract Monaco enrichment data for comprehensive context
+      const monacoData = currentRecord.monacoEnrichment || {};
+      const buyerGroupAnalysis = monacoData.buyerGroupAnalysis || {};
+      const painPoints = monacoData.painPoints || buyerGroupAnalysis.painPoints || [];
+      const motivations = monacoData.motivations || buyerGroupAnalysis.motivations || [];
+      const decisionFactors = monacoData.decisionFactors || buyerGroupAnalysis.decisionFactors || [];
+      const companyIntelligence = monacoData.companyIntelligence || {};
+      
+      // Build comprehensive context string
       context = `=== CURRENT RECORD (WHO THEY ARE) ===
 Name: ${recordName} at ${recordCompany}
 Title: ${recordTitle}
@@ -367,13 +376,24 @@ Decision Authority: ${decisionPower}
 Buying Committee Role: ${buyerGroupRole}
 Email: ${currentRecord.email || currentRecord.workEmail || 'Not available'}
 Phone: ${currentRecord.phone || currentRecord.workPhone || 'Not available'}
-LinkedIn: ${currentRecord.linkedinUrl || 'Not available'}
+LinkedIn: ${currentRecord.linkedinUrl || currentRecord.linkedin || 'Not available'}
+
+${currentRecord.bio ? `Bio/Background: ${currentRecord.bio}` : ''}
+${currentRecord.interests && Array.isArray(currentRecord.interests) && currentRecord.interests.length > 0 ? `Interests: ${currentRecord.interests.join(', ')}` : ''}
+${currentRecord.recentActivity ? `Recent Activity: ${currentRecord.recentActivity}` : ''}
+${currentRecord.relationship ? `Relationship Status: ${currentRecord.relationship}` : ''}
+${currentRecord.lastContact ? `Last Contact: ${currentRecord.lastContact}` : ''}
+${currentRecord.nextAction ? `Next Action: ${currentRecord.nextAction}` : ''}
+${currentRecord.priority ? `Priority: ${currentRecord.priority}` : ''}
+${currentRecord.status ? `Status: ${currentRecord.status}` : ''}
 
 Company Context:
 - Company: ${recordCompany}
-- Industry: ${currentRecord.company?.industry || 'Unknown'}
-- Size: ${currentRecord.company?.employeeCount || 'Unknown'} employees
+- Industry: ${currentRecord.company?.industry || companyIntelligence.industry || 'Unknown'}
+- Size: ${currentRecord.company?.employeeCount || currentRecord.company?.size || companyIntelligence.employeeCount || companyIntelligence.size || 'Unknown'} employees
 - Location: ${currentRecord.city || ''} ${currentRecord.state || ''} ${currentRecord.country || ''}
+${currentRecord.company?.website || companyIntelligence.website ? `- Website: ${currentRecord.company?.website || companyIntelligence.website}` : ''}
+${currentRecord.company?.description || companyIntelligence.description ? `- Description: ${currentRecord.company?.description || companyIntelligence.description}` : ''}
 
 Role Analysis:
 - This person is a ${seniority} ${recordTitle} in ${department}
@@ -382,18 +402,32 @@ Role Analysis:
 - ${this.getEngagementAdvice(decisionPower, buyerGroupRole)}
 
 Strategic Fit Analysis:
-- Person works at ${recordCompany} (${currentRecord.company?.industry || 'unknown industry'})
+- Person works at ${recordCompany} (${currentRecord.company?.industry || companyIntelligence.industry || 'unknown industry'})
 - Role suggests ${this.getRoleInsights(recordTitle, department)}
 - Decision authority indicates ${this.getDecisionInsights(decisionPower)}
 - Buying role suggests ${this.getBuyingInsights(buyerGroupRole)}
 
-CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Your responses should be specific to this person and company.`;
+${painPoints.length > 0 ? `Identified Pain Points:\n${painPoints.map((p: string) => `- ${p}`).join('\n')}` : ''}
+${motivations.length > 0 ? `Key Motivations:\n${motivations.map((m: string) => `- ${m}`).join('\n')}` : ''}
+${decisionFactors.length > 0 ? `Decision Factors:\n${decisionFactors.map((d: string) => `- ${d}`).join('\n')}` : ''}
+${buyerGroupAnalysis.role ? `Buyer Group Role: ${buyerGroupAnalysis.role}` : ''}
+${buyerGroupAnalysis.influenceLevel ? `Influence Level: ${buyerGroupAnalysis.influenceLevel}` : ''}
+
+CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Your responses should be specific to this person and company. Use all available context including bio, interests, pain points, and company details to craft personalized recommendations.`;
     }
 
-    // Add enrichment context if available
+    // Add enrichment context if available (now with detailed extraction)
     if (currentRecord.monacoEnrichment) {
+      const monacoData = currentRecord.monacoEnrichment;
+      const buyerGroupAnalysis = monacoData.buyerGroupAnalysis || {};
+      
       context += `\n\nMONACO ENRICHMENT DATA AVAILABLE:
 - This record has been enriched with Monaco intelligence
+- Buyer Group Analysis: ${buyerGroupAnalysis.role || 'Available'}
+- Influence Level: ${buyerGroupAnalysis.influenceLevel || 'Available'}
+- Pain Points: ${monacoData.painPoints?.length || buyerGroupAnalysis.painPoints?.length || 0} identified
+- Motivations: ${monacoData.motivations?.length || buyerGroupAnalysis.motivations?.length || 0} identified
+- Decision Factors: ${monacoData.decisionFactors?.length || buyerGroupAnalysis.decisionFactors?.length || 0} identified
 - Use this data to provide highly personalized recommendations
 - Reference specific pain points, motivations, and decision factors
 - Leverage buyer group analysis and opportunity intelligence`;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/platform/database/prisma-client';
-
+import { getRoleLabel } from '@/platform/constants/buyer-group-roles';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // Required for dynamic API functionality
@@ -180,7 +180,11 @@ export async function GET(request: NextRequest) {
       // Use stored role or infer from job title
       const customFields = person.customFields as any;
       const storedRole = customFields?.buyerGroupRole || person.buyerGroupRole;
-      const buyerRole = storedRole || getBuyerGroupRole(jobTitle);
+      const inferredRole = getBuyerGroupRole(jobTitle);
+      const rawRole = storedRole || inferredRole;
+      
+      // Normalize role to display label format (handles both DB values like 'decision' and display labels like 'Decision Maker')
+      const buyerRole = getRoleLabel(rawRole);
       
       // Extract buyer group status from direct field or customFields
       const buyerGroupStatus = person.buyerGroupStatus || customFields?.buyerGroupStatus || 'unknown';
@@ -192,7 +196,7 @@ export async function GET(request: NextRequest) {
         email: person.email || '',
         phone: person.phone || '',
         linkedinUrl: person.linkedinUrl || '',
-        role: buyerRole,
+        role: buyerRole, // Now always in display label format (e.g., 'Decision Maker', 'Champion', 'Stakeholder')
         buyerGroupStatus: buyerGroupStatus,  // ADD THIS
         status: person.status || null, // Include status (LEAD, PROSPECT, etc.) for frontend display
         influence: getInfluenceLevel(buyerRole),
@@ -305,13 +309,29 @@ function getBuyerGroupRole(jobTitle: string): string {
 
 // Helper function to determine influence level
 // FIXED: Champion should have HIGH influence (same as Decision Maker)
+// Handles both display labels ('Decision Maker') and DB values ('decision')
 function getInfluenceLevel(role: string): string {
-  switch (role) {
-    case 'Decision Maker': return 'high';
-    case 'Champion': return 'high'; // FIXED: was 'medium', should be 'high'
-    case 'Blocker': return 'medium';
-    case 'Stakeholder': return 'medium'; // FIXED: was 'low', should be 'medium'
-    case 'Introducer': return 'low';
-    default: return 'medium';
+  if (!role) return 'medium';
+  
+  const normalizedRole = role.toLowerCase().trim();
+  
+  // Handle display labels
+  if (normalizedRole === 'decision maker' || normalizedRole === 'decision') {
+    return 'high';
   }
+  if (normalizedRole === 'champion') {
+    return 'high'; // FIXED: was 'medium', should be 'high'
+  }
+  if (normalizedRole === 'blocker') {
+    return 'medium';
+  }
+  if (normalizedRole === 'stakeholder') {
+    return 'medium'; // FIXED: was 'low', should be 'medium'
+  }
+  if (normalizedRole === 'introducer') {
+    return 'low';
+  }
+  
+  // Default fallback
+  return 'medium';
 }
