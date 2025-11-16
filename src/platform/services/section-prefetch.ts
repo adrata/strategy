@@ -55,7 +55,10 @@ async function prefetchSectionData(options: PrefetchOptions): Promise<void> {
   try {
     // Build URL based on section
     let url = '';
-    const limit = initialOnly ? INITIAL_PAGE_SIZE : 10000; // Fetch first 100 for initial, or all for background
+    // 🔧 OPTIMIZATION: Always fetch 10,000 records for instant navigation
+    // This ensures all pages work immediately when user navigates to prefetched sections
+    // The slight delay in prefetch is acceptable since it's background work
+    const limit = 10000; // Always fetch full dataset for complete pagination support
     
     switch (section) {
       case 'leads':
@@ -101,12 +104,15 @@ async function prefetchSectionData(options: PrefetchOptions): Promise<void> {
       // Only overwrite if prefetch data is fresher or no existing cache
       const storageKey = `adrata-${section}-${workspaceId}`;
       // Use same CACHE_VERSION as useFastSectionData for consistency
-      const CACHE_VERSION = 2;
+      const CACHE_VERSION = 3; // Match useFastSectionData CACHE_VERSION
       // Use same TTL logic as useFastSectionData
       const CACHE_TTL = section === 'speedrun' ? 2 * 60 * 1000 : 5 * 60 * 1000;
+      // 🔧 PAGINATION FIX: Use same count extraction logic as useFastSectionData
+      // Prioritize meta.totalCount for accurate pagination
+      const count = result.meta?.totalCount || result.meta?.pagination?.totalCount || result.meta?.count || result.data.length;
       const cacheData = {
         data: result.data,
-        count: result.meta?.count || result.data.length,
+        count: count, // Use accurate total count from API
         ts: Date.now(),
         version: CACHE_VERSION
       };
@@ -236,62 +242,22 @@ export function prefetchAllSections(workspaceId: string, userId: string, current
   ];
   
   // Prefetch all sections except the current one, in priority order
+  // 🔧 OPTIMIZATION: Load full 10,000 records immediately for instant navigation
+  // This ensures all pages work when user navigates to prefetched sections
   priorityOrder.forEach(({ section, delay }) => {
     // Skip current section - it's already loading with priority
     if (section !== detectedCurrentSection && section !== currentSection) {
-      // Fetch first page with priority-based delay for instant loading
+      // Fetch full dataset with priority-based delay for instant navigation
+      // No need for two-stage loading - just load everything upfront
       setTimeout(() => {
         debouncedPrefetch({
           workspaceId,
           userId,
           section,
-          trigger: `${trigger}-initial-${section}`,
-          initialOnly: true // Only fetch first 100 records
+          trigger: `${trigger}-prefetch-${section}`,
+          initialOnly: false // Fetch full 10,000 records for complete pagination
         });
       }, delay);
-      
-      // Then fetch remaining pages in background after additional delay
-      // Use requestIdleCallback for low-priority sections (companies, people)
-      const backgroundDelay = delay + 2000; // Wait 2s after initial prefetch
-      
-      if (section === 'companies' || section === 'people') {
-        // Use requestIdleCallback for low-priority sections to avoid blocking
-        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-          requestIdleCallback(() => {
-            setTimeout(() => {
-              prefetchSectionData({
-                workspaceId,
-                userId,
-                section,
-                trigger: `${trigger}-background-${section}`,
-                initialOnly: false // Fetch all remaining records
-              });
-            }, backgroundDelay - delay);
-          }, { timeout: 5000 });
-        } else {
-          // Fallback to setTimeout if requestIdleCallback not available
-          setTimeout(() => {
-            prefetchSectionData({
-              workspaceId,
-              userId,
-              section,
-              trigger: `${trigger}-background-${section}`,
-              initialOnly: false
-            });
-          }, backgroundDelay);
-        }
-      } else {
-        // High-priority sections use regular setTimeout
-        setTimeout(() => {
-          prefetchSectionData({
-            workspaceId,
-            userId,
-            section,
-            trigger: `${trigger}-background-${section}`,
-            initialOnly: false // Fetch all remaining records
-          });
-        }, backgroundDelay);
-      }
     } else {
       console.log(`⏭️ [PREFETCH] Skipping prefetch for current section: ${section}`);
     }

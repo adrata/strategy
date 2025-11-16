@@ -232,17 +232,30 @@ export const PipelineContent = React.memo(function PipelineContent({
     setSelectedListId(list.id);
 
     // Apply filters from list
+    // 🔧 FIX: Reset all filters first, then apply list filters (prevents filter persistence)
     if (list.filters) {
       const filters = list.filters as any;
-      if (filters.statusFilter) setStatusFilter(filters.statusFilter);
-      if (filters.priorityFilter) setPriorityFilter(filters.priorityFilter);
-      if (filters.verticalFilter) setVerticalFilter(filters.verticalFilter);
-      if (filters.revenueFilter) setRevenueFilter(filters.revenueFilter);
-      if (filters.lastContactedFilter) setLastContactedFilter(filters.lastContactedFilter);
-      if (filters.timezoneFilter) setTimezoneFilter(filters.timezoneFilter);
-      if (filters.companySizeFilter) setCompanySizeFilter(filters.companySizeFilter);
-      if (filters.locationFilter) setLocationFilter(filters.locationFilter);
-      if (filters.technologyFilter) setTechnologyFilter(filters.technologyFilter);
+      // Reset all filters first, then apply only the ones specified in the list
+      setStatusFilter(filters.statusFilter || 'all');
+      setPriorityFilter(filters.priorityFilter || 'all');
+      setVerticalFilter(filters.verticalFilter || 'all');
+      setRevenueFilter(filters.revenueFilter || 'all');
+      setLastContactedFilter(filters.lastContactedFilter || 'all');
+      setTimezoneFilter(filters.timezoneFilter || 'all');
+      setCompanySizeFilter(filters.companySizeFilter || 'all');
+      setLocationFilter(filters.locationFilter || 'all');
+      setTechnologyFilter(filters.technologyFilter || 'all');
+    } else {
+      // If list has no filters, reset all to 'all'
+      setStatusFilter('all');
+      setPriorityFilter('all');
+      setVerticalFilter('all');
+      setRevenueFilter('all');
+      setLastContactedFilter('all');
+      setTimezoneFilter('all');
+      setCompanySizeFilter('all');
+      setLocationFilter('all');
+      setTechnologyFilter('all');
     }
 
     // Apply sort
@@ -307,11 +320,23 @@ export const PipelineContent = React.memo(function PipelineContent({
   const currentUserId = user?.id || null;
   
   // Update visible columns, sort, and selected list when section changes
+  // 🔧 FIX: Reset all filters when section changes to prevent glitchy behavior
+  // Previously, selectedListId was reset but filters remained active, causing mismatch
   useEffect(() => {
     setVisibleColumns(getDefaultVisibleColumns(section));
     setSelectedListId(getDefaultListId(section));
     // Clear search when changing sections
     setSearchQuery('');
+    // 🔧 FIX: Reset all filters when section changes (prevents filter mismatch)
+    setStatusFilter('all');
+    setPriorityFilter('all');
+    setVerticalFilter('all');
+    setRevenueFilter('all');
+    setLastContactedFilter('all');
+    setTimezoneFilter('all');
+    setCompanySizeFilter('all');
+    setLocationFilter('all');
+    setTechnologyFilter('all');
     // Reset sort to default for new section
     if (section === 'prospects') {
       setSortField('lastActionDate');

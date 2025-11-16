@@ -9,6 +9,7 @@ import { getStatusColor, getPriorityColor, getStageColor, getStateColor } from '
 import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAction, getSmartLastActionDescription, formatLastActionTime } from '@/platform/utils/actionUtils';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
 import { formatDate } from '@/platform/utils/dateUtils';
+import { getStateValue } from '@/platform/utils/state-utils';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { ProfileAvatar, ProfileAvatarGroup } from '@/platform/ui/components/ProfileAvatar';
 import { ContextMenu } from './ContextMenu';
@@ -385,7 +386,7 @@ export function TableRow({
                 return (
                   <TableCell
                     key="state"
-                    value={record.hqState || record.state || record.company?.hqState || record.company?.state || '-'}
+                    value={getStateValue(record, 'abbreviation')}
                     field="state"
                     recordId={record.id}
                     recordType={section}
@@ -674,7 +675,7 @@ export function TableRow({
                 return (
                   <td key="state" className={textClasses}>
                     <span className={`rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap ${getStateColor(record['state'] || record['hqState'])}`}>
-                      {record['state'] || record['hqState'] || '-'}
+                      {getStateValue(record, 'abbreviation')}
                     </span>
                   </td>
                 );

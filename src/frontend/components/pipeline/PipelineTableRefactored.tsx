@@ -9,6 +9,7 @@ import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-t
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
 import { getRealtimeActionTiming, getStageColor, getStateColor } from '@/platform/utils/statusUtils';
+import { getStateValue } from '@/platform/utils/state-utils';
 import { TableHeader } from './table/TableHeader';
 import { TableRow } from './table/TableRow';
 import { Pagination } from './table/Pagination';
@@ -676,7 +677,8 @@ export function PipelineTable({
                         }
                         break;
                       case 'state':
-                        const state = record['hqState'] || record['state'] || record['location'] || '-';
+                        // Use standardized state utility for consistent display (abbreviations)
+                        const state = getStateValue(record, 'abbreviation');
                         if (state !== '-' && section === 'speedrun') {
                           // Speedrun: Show state with purple pills
                           cellContent = <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border bg-purple-100 text-purple-800 border-purple-300">{state}</span>;
