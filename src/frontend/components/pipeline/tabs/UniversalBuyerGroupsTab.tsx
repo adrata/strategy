@@ -50,8 +50,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const companyId = React.useMemo(() => {
     if (!record) return '';
     
-    // Check if this is a company-only record
+    // Check if this is a company-only record (including opportunities which are companies)
     const isCompanyOnlyRecord = recordType === 'companies' ||
+                               recordType === 'opportunities' ||
                                (recordType === 'speedrun' && record?.recordType === 'company') ||
                                (recordType === 'leads' && record?.isCompanyLead === true) ||
                                (recordType === 'prospects' && record?.isCompanyLead === true);
@@ -80,8 +81,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const companyName = React.useMemo(() => {
     if (!record) return '';
     
-    // Check if this is a company-only record
+    // Check if this is a company-only record (including opportunities which are companies)
     const isCompanyOnlyRecord = recordType === 'companies' ||
+                               recordType === 'opportunities' ||
                                (recordType === 'speedrun' && record?.recordType === 'company') ||
                                (recordType === 'leads' && record?.isCompanyLead === true) ||
                                (recordType === 'prospects' && record?.isCompanyLead === true);

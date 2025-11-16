@@ -600,8 +600,9 @@ export const PipelineContent = React.memo(function PipelineContent({
       case 'lastContact':
       case 'lastContactDate':
       case 'lastAction':
+      case 'lastActionDate':
         // Handle different date field variations
-        const dateValue = record.lastContact || record.lastContactDate || record.lastAction || record.updatedAt;
+        const dateValue = record.lastActionDate || record.lastContact || record.lastContactDate || record.lastAction || record.updatedAt;
         if (dateValue) {
           return new Date(dateValue);
         }
@@ -826,20 +827,9 @@ export const PipelineContent = React.memo(function PipelineContent({
 
     // 🎯 PERFORMANCE FIX: Only apply client-side sorting when explicitly changed by user
     // Data comes pre-sorted from API, so we should preserve that order unless user changes sort
-    // This prevents visible glitching caused by re-sorting already-sorted data
-    const shouldApplyClientSort = sortField && (
-      // Always sort if user explicitly changed sort (not initial load)
-      searchQuery || 
-      verticalFilter !== 'all' || 
-      statusFilter !== 'all' || 
-      priorityFilter !== 'all' ||
-      revenueFilter !== 'all' ||
-      lastContactedFilter !== 'all' ||
-      timezoneFilter !== 'all' ||
-      companySizeFilter !== 'all' ||
-      locationFilter !== 'all' ||
-      technologyFilter !== 'all'
-    );
+    // Always apply client-side sort when sortField is explicitly set (user clicked a column)
+    // This ensures sorting works for all sections, even without filters
+    const shouldApplyClientSort = !!sortField;
     
     if (shouldApplyClientSort && sortField) {
       // Regular field sorting with robust field handling
@@ -1154,8 +1144,11 @@ export const PipelineContent = React.memo(function PipelineContent({
         'Phone': 'phone',
         'phone': 'phone',
         'Last Action': 'lastActionDate',
+        'LAST ACTION': 'lastActionDate',
         'lastAction': 'lastActionDate',
+        'lastActionDate': 'lastActionDate',
         'Next Action': 'nextAction',
+        'NEXT ACTION': 'nextAction',
         'nextAction': 'nextAction',
         'Amount': 'amount',
         'amount': 'amount',
@@ -1164,7 +1157,9 @@ export const PipelineContent = React.memo(function PipelineContent({
         'Value': 'value',
         'value': 'value',
         'State': 'state',
-        'state': 'state'
+        'state': 'state',
+        'Actions': 'actions',
+        'actions': 'actions'
       };
 
       // Section-specific field mappings
@@ -1174,7 +1169,9 @@ export const PipelineContent = React.memo(function PipelineContent({
           'Rank': 'globalRank', // Speedrun uses 'globalRank' for rank field
           'rank': 'globalRank',
           'Last Action': 'lastActionDate',
+          'LAST ACTION': 'lastActionDate',
           'lastAction': 'lastActionDate',
+          'lastActionDate': 'lastActionDate',
           'Advice': 'nextAction',
           'advice': 'nextAction',
         };
@@ -1187,6 +1184,7 @@ export const PipelineContent = React.memo(function PipelineContent({
           'stage': 'stage',
           'Last Action': 'lastActionDate',
           'lastAction': 'lastActionDate',
+          'lastActionDate': 'lastActionDate',
           'Value': 'value',
           'value': 'value',
         };
@@ -1201,6 +1199,7 @@ export const PipelineContent = React.memo(function PipelineContent({
           'state': 'hqState',
         };
       } else {
+        // For prospects, leads, people - use base map
         return {
           ...baseMap,
         };

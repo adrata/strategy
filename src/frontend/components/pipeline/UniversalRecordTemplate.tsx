@@ -675,6 +675,15 @@ export function UniversalRecordTemplate({
 
   // Get record display name with fallbacks
   const getDisplayName = () => {
+    // For opportunities, always use company name (opportunities are company records)
+    if (recordType === 'opportunities') {
+      const companyName = localRecord?.name || 
+                         localRecord?.companyName ||
+                         (typeof localRecord?.company === 'string' ? localRecord.company : localRecord?.company?.name) ||
+                         'Unknown Opportunity';
+      return sanitizeName(companyName) || companyName;
+    }
+    
     // Get the raw name first
     const rawName = localRecord?.name || 
                     localRecord?.fullName || 
@@ -802,7 +811,15 @@ export function UniversalRecordTemplate({
         return title || 'Unknown Title';
       case 'opportunities':
       case 'deals':
-        return `${record?.stage || 'Unknown Stage'} • ${record?.amount || record?.value ? `$${(record.amount || record.value).toLocaleString()}` : 'No Amount'}`;
+        // For opportunities, show opportunity stage and amount (opportunities are company records)
+        // Default to QUALIFICATION if status is OPPORTUNITY but no stage is set
+        const opportunityStage = record?.opportunityStage || 
+                                record?.stage || 
+                                (record?.status === 'OPPORTUNITY' ? 'QUALIFICATION' : null) ||
+                                'QUALIFICATION';
+        const opportunityAmount = record?.opportunityAmount || record?.amount || record?.revenue || record?.value;
+        const amountDisplay = opportunityAmount ? `$${Number(opportunityAmount).toLocaleString()}` : 'No Amount';
+        return `${opportunityStage} • ${amountDisplay}`;
       case 'companies':
         // Use real company data with graceful fallback
         const coresignalData = record?.customFields?.coresignalData;

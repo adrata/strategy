@@ -141,12 +141,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const companiesData = section === 'companies' ? currentSectionData : [];
   const leadsData = section === 'leads' ? currentSectionData : [];
   const prospectsData = section === 'prospects' ? currentSectionData : [];
+  const opportunitiesData = section === 'opportunities' ? currentSectionData : [];
   
   const speedrunLoading = section === 'speedrun' ? currentSectionLoading : false;
   const peopleLoading = section === 'people' ? currentSectionLoading : false;
   const companiesLoading = section === 'companies' ? currentSectionLoading : false;
   const leadsLoading = section === 'leads' ? currentSectionLoading : false;
   const prospectsLoading = section === 'prospects' ? currentSectionLoading : false;
+  const opportunitiesLoading = section === 'opportunities' ? currentSectionLoading : false;
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
@@ -271,6 +273,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       case 'companies': data = companiesData || []; break;
       case 'leads': data = leadsData || []; break;
       case 'prospects': data = prospectsData || []; break;
+      case 'opportunities': data = opportunitiesData || []; break;
       case 'speedrun': data = speedrunData || []; break;
       default: data = getSectionData(section); break;
     }
@@ -603,6 +606,48 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       
       if (!response.ok) {
         if (response.status === 404) {
+          // 🚀 GRACEFUL 404 HANDLING: Try to find record in data array before throwing error
+          console.log(`⚠️ [DIRECT LOAD] 404 error, checking if record exists in data array:`, {
+            recordId,
+            section,
+            dataLength: data.length,
+            dataIds: data.slice(0, 5).map((r: any) => r.id)
+          });
+          
+          // Try to find the record in the current data array
+          const recordInData = data.find((r: any) => r.id === recordId);
+          if (recordInData) {
+            console.log(`✅ [DIRECT LOAD] Found record in data array, using cached data:`, {
+              id: recordInData.id,
+              name: recordInData.name || recordInData.fullName
+            });
+            setSelectedRecord(recordInData);
+            return; // Use cached data instead of throwing error
+          }
+          
+          // If not found in data array, check if we're navigating and should skip to next available record
+          console.log(`❌ [DIRECT LOAD] Record not found in API or data array:`, {
+            recordId,
+            section,
+            navigationTargetIndex
+          });
+          
+          // If we're navigating and the record doesn't exist, try to find the next valid record
+          if (navigationTargetIndex !== null && data.length > 0) {
+            const targetIndex = Math.min(navigationTargetIndex, data.length - 1);
+            const fallbackRecord = data[targetIndex];
+            if (fallbackRecord && fallbackRecord.id !== recordId) {
+              console.log(`🔄 [DIRECT LOAD] Navigating to fallback record at index ${targetIndex}:`, {
+                fallbackId: fallbackRecord.id,
+                fallbackName: fallbackRecord.name || fallbackRecord.fullName
+              });
+              const recordName = fallbackRecord.fullName || fallbackRecord.name || fallbackRecord.firstName || 'record';
+              navigateToPipelineItem(section, fallbackRecord.id, recordName);
+              return;
+            }
+          }
+          
+          // Last resort: throw error
           throw new Error(`Record not found. It may have been deleted or moved to a different workspace.`);
         }
         const errorText = await response.text().catch(() => 'Unknown error');
@@ -806,6 +851,10 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {
+    // Clear selected record when navigating to a different section or same section (to go back to list)
+    if (selectedRecord) {
+      setSelectedRecord(null);
+    }
     navigateToPipeline(newSection);
   };
 
@@ -887,18 +936,41 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
     console.log(`🔍 [NAVIGATION] Current index in data:`, currentIndex);
     
+    if (currentIndex < 0) {
+      console.log(`⚠️ [NAVIGATION] Current record not found in data array, cannot navigate`);
+      return;
+    }
+    
     if (currentIndex > 0) {
-      const previousRecord = data[currentIndex - 1];
+      // Find the previous valid record (skip any that might be invalid)
+      let prevIndex = currentIndex - 1;
+      let previousRecord = data[prevIndex];
+      
+      // Skip records that don't have valid IDs
+      while (previousRecord && (!previousRecord.id || previousRecord.id === 'undefined' || previousRecord.id === 'null')) {
+        prevIndex--;
+        if (prevIndex < 0) {
+          console.log(`❌ [NAVIGATION] No valid previous record found`);
+          return;
+        }
+        previousRecord = data[prevIndex];
+      }
+      
+      if (!previousRecord || !previousRecord.id) {
+        console.log(`❌ [NAVIGATION] Invalid previous record at index ${prevIndex}`);
+        return;
+      }
       
       console.log(`✅ [NAVIGATION] Going to previous record:`, {
         from: selectedRecord.id,
         to: previousRecord.id,
         fromIndex: currentIndex,
-        toIndex: currentIndex - 1
+        toIndex: prevIndex,
+        recordName: previousRecord.name || previousRecord.fullName
       });
       
       // 🎯 FIX: Set navigation target index BEFORE navigation to prevent count flash
-      setNavigationTargetIndex(currentIndex - 1);
+      setNavigationTargetIndex(prevIndex);
       
       // Navigate to the previous record using URL (like the back arrow does)
       const recordName = previousRecord.fullName || previousRecord.name || previousRecord.firstName || 'record';
@@ -927,18 +999,41 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
     console.log(`🔍 [NAVIGATION] Current index in data:`, currentIndex);
     
+    if (currentIndex < 0) {
+      console.log(`⚠️ [NAVIGATION] Current record not found in data array, cannot navigate`);
+      return;
+    }
+    
     if (currentIndex < data.length - 1) {
-      const nextRecord = data[currentIndex + 1];
+      // Find the next valid record (skip any that might be invalid)
+      let nextIndex = currentIndex + 1;
+      let nextRecord = data[nextIndex];
+      
+      // Skip records that don't have valid IDs
+      while (nextRecord && (!nextRecord.id || nextRecord.id === 'undefined' || nextRecord.id === 'null')) {
+        nextIndex++;
+        if (nextIndex >= data.length) {
+          console.log(`❌ [NAVIGATION] No valid next record found`);
+          return;
+        }
+        nextRecord = data[nextIndex];
+      }
+      
+      if (!nextRecord || !nextRecord.id) {
+        console.log(`❌ [NAVIGATION] Invalid next record at index ${nextIndex}`);
+        return;
+      }
       
       console.log(`✅ [NAVIGATION] Going to next record:`, {
         from: selectedRecord.id,
         to: nextRecord.id,
         fromIndex: currentIndex,
-        toIndex: currentIndex + 1
+        toIndex: nextIndex,
+        recordName: nextRecord.name || nextRecord.fullName
       });
       
       // 🎯 FIX: Set navigation target index BEFORE navigation to prevent count flash
-      setNavigationTargetIndex(currentIndex + 1);
+      setNavigationTargetIndex(nextIndex);
       
       // Navigate to the next record using URL (like the back arrow does)
       const recordName = nextRecord.fullName || nextRecord.name || nextRecord.firstName || 'record';

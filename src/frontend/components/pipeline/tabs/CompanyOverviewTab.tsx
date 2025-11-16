@@ -45,8 +45,10 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       return record?.id;
     }
     
-    // Check if this is a company-only record in speedrun/leads/prospects
-    const isCompanyOnlyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+    // Check if this is a company-only record (including opportunities which are companies)
+    const isCompanyOnlyRecord = recordType === 'companies' ||
+                               recordType === 'opportunities' ||
+                               (recordType === 'speedrun' && record?.recordType === 'company') ||
                                (recordType === 'leads' && record?.isCompanyLead === true) ||
                                (recordType === 'prospects' && record?.isCompanyLead === true);
     
@@ -79,8 +81,10 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       return false; // No company ID
     }
     
-    // Check if this is a company-only record in speedrun/leads/prospects
-    const isCompanyOnlyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+    // Check if this is a company-only record (including opportunities which are companies)
+    const isCompanyOnlyRecord = recordType === 'companies' ||
+                               recordType === 'opportunities' ||
+                               (recordType === 'speedrun' && record?.recordType === 'company') ||
                                (recordType === 'leads' && record?.isCompanyLead === true) ||
                                (recordType === 'prospects' && record?.isCompanyLead === true);
     

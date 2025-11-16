@@ -132,13 +132,21 @@ export async function POST(request: NextRequest) {
     // This ensures each user gets their own ranked list 1-N for both companies and people
     
     // First, get companies assigned to this user
+    // 🎯 ENHANCED: Include opportunity fields for value-based ranking
     const allCompanies = await prisma.companies.findMany({
       where: {
         workspaceId,
         deletedAt: null,
         mainSellerId: userId // Only rank companies assigned to this specific user
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        industry: true,
+        size: true,
+        opportunityAmount: true,
+        opportunityStage: true,
+        opportunityProbability: true,
         _count: {
           select: { people: true }
         }
@@ -154,6 +162,7 @@ export async function POST(request: NextRequest) {
     
     // Then, get people assigned to this user
     // Exclude people who were contacted today or yesterday
+    // 🎯 ENHANCED: Include all fields needed for comprehensive ranking
     const allPeople = await prisma.people.findMany({
       where: {
         workspaceId,
@@ -165,8 +174,46 @@ export async function POST(request: NextRequest) {
           { lastActionDate: { lt: yesterday } }, // Action before yesterday = include them
         ]
       },
-      include: {
-        company: true,
+      select: {
+        id: true,
+        fullName: true,
+        firstName: true,
+        lastName: true,
+        name: true,
+        status: true,
+        priority: true,
+        buyerGroupRole: true,
+        influenceScore: true,
+        engagementScore: true,
+        jobTitle: true,
+        lastAction: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        nextActionPriority: true,
+        nextActionType: true,
+        actionStatus: true,
+        notes: true,
+        companyId: true,
+        email: true,
+        phone: true,
+        mobilePhone: true,
+        linkedin: true,
+        linkedinUrl: true,
+        profilePictureUrl: true,
+        relationshipType: true,
+        bio: true,
+        company: {
+          select: {
+            id: true,
+            name: true,
+            size: true,
+            industry: true,
+            opportunityAmount: true,
+            opportunityStage: true,
+            opportunityProbability: true
+          }
+        },
         actions: {
           where: {
             workspaceId,
@@ -209,8 +256,36 @@ export async function POST(request: NextRequest) {
       allCompanies.some(company => company.id === person.companyId)
     );
     
-    // Step 3: Sort companies by priority (same logic as before)
+    // Step 3: Sort companies by priority (enhanced with opportunity data)
     const sortedCompanies = companiesWithoutPeople.sort((a, b) => {
+      // 🎯 ENHANCED: Primary sort by opportunity value (highest first)
+      const aOpportunityAmount = a.opportunityAmount ? parseFloat(a.opportunityAmount.toString()) : 0;
+      const bOpportunityAmount = b.opportunityAmount ? parseFloat(b.opportunityAmount.toString()) : 0;
+      if (Math.abs(aOpportunityAmount - bOpportunityAmount) > 1000) {
+        return bOpportunityAmount - aOpportunityAmount;
+      }
+      
+      // 🎯 ENHANCED: Secondary sort by opportunity stage (late-stage first)
+      const stagePriority: Record<string, number> = {
+        'negotiation': 5,
+        'proposal': 5,
+        'decision': 5,
+        'closed': 4,
+        'qualified': 3,
+        'demo': 3,
+        'evaluation': 3,
+        'discovery': 2,
+        'initial': 1
+      };
+      const aStage = (a.opportunityStage || '').toLowerCase();
+      const bStage = (b.opportunityStage || '').toLowerCase();
+      const aStagePriority = Object.entries(stagePriority).find(([key]) => aStage.includes(key))?.[1] || 0;
+      const bStagePriority = Object.entries(stagePriority).find(([key]) => bStage.includes(key))?.[1] || 0;
+      if (aStagePriority !== bStagePriority) {
+        return bStagePriority - aStagePriority;
+      }
+      
+      // Tertiary: Industry score
       const industryScore = (company: any) => {
         const industry = (company.industry || '').toLowerCase();
         if (industry.includes('title') || industry.includes('real estate') || industry.includes('escrow')) return 3;
@@ -221,6 +296,7 @@ export async function POST(request: NextRequest) {
       const industryDiff = industryScore(b) - industryScore(a);
       if (industryDiff !== 0) return industryDiff;
       
+      // Quaternary: Size score
       const sizeScore = (company: any) => {
         const size = (company.size || '').toLowerCase();
         if (size.includes('large') || size.includes('enterprise')) return 3;
@@ -231,6 +307,7 @@ export async function POST(request: NextRequest) {
       const sizeDiff = sizeScore(b) - sizeScore(a);
       if (sizeDiff !== 0) return sizeDiff;
       
+      // Quinary: People count
       return (b._count.people || 0) - (a._count.people || 0);
     });
     
@@ -274,11 +351,77 @@ export async function POST(request: NextRequest) {
           lastActionDate: person.lastActionDate?.toISOString()
         });
         
+        // 🎯 ENHANCED: Calculate opportunity value from company
+        const opportunityAmount = person.company?.opportunityAmount 
+          ? parseFloat(person.company.opportunityAmount.toString()) 
+          : 0;
+        
+        // 🎯 ENHANCED: Calculate deal value boost
+        let opportunityValueBoost = 0;
+        if (opportunityAmount > 50000) {
+          opportunityValueBoost = 50; // High-value (>$50K)
+        } else if (opportunityAmount > 25000) {
+          opportunityValueBoost = 25; // Medium-value ($25K-$50K)
+        } else if (opportunityAmount > 0) {
+          opportunityValueBoost = 10; // Low-value (<$25K)
+        }
+        
+        // 🎯 ENHANCED: Calculate deal stage priority boost
+        const opportunityStage = (person.company?.opportunityStage || '').toLowerCase();
+        let dealStageBoost = 0;
+        if (opportunityStage.includes('negotiation') || 
+            opportunityStage.includes('proposal') || 
+            opportunityStage.includes('decision') ||
+            opportunityStage.includes('closed')) {
+          dealStageBoost = 30; // Late-stage
+        } else if (opportunityStage.includes('qualified') || 
+                   opportunityStage.includes('demo') ||
+                   opportunityStage.includes('evaluation')) {
+          dealStageBoost = 15; // Mid-stage
+        } else if (opportunityStage.includes('discovery') ||
+                   opportunityStage.includes('initial')) {
+          dealStageBoost = 5; // Early-stage
+        }
+        
+        // 🎯 ENHANCED: Calculate next action urgency boost
+        let nextActionUrgencyBoost = 0;
+        if (person.nextActionDate) {
+          const nextActionDate = new Date(person.nextActionDate);
+          const currentDate = new Date();
+          const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+          const daysUntilNextAction = Math.floor((nextActionDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysUntilNextAction < 0) {
+            nextActionUrgencyBoost = 20; // Overdue
+          } else if (daysUntilNextAction === 0) {
+            nextActionUrgencyBoost = 10; // Today
+          } else if (daysUntilNextAction <= 7) {
+            nextActionUrgencyBoost = 5; // This week
+          }
+        }
+        
+        // 🎯 ENHANCED: Calculate priority field boost
+        let priorityBoost = 0;
+        const priority = (person.priority || '').toUpperCase();
+        if (priority === 'HIGH') {
+          priorityBoost = 15;
+        } else if (priority === 'MEDIUM') {
+          priorityBoost = 5;
+        }
+        
+        // 🎯 ENHANCED: Check if lastAction is meaningful (not "Record created" etc.)
+        const lastAction = (person.lastAction || '').toLowerCase();
+        const isMeaningfulAction = lastAction && 
+          !lastAction.includes('record created') &&
+          !lastAction.includes('company record created') &&
+          !lastAction.includes('record added') &&
+          !lastAction.includes('no action taken');
+        
         // Create RankedContact-like object for scoring
         const contactForScoring: any = {
           ...person,
           daysSinceLastContact: daysSinceContact,
-          estimatedDealValue: extractDealValue({ value: '', dealValue: '', revenue: '' }), // Will be calculated from company if available
+          estimatedDealValue: opportunityAmount || extractDealValue({ value: '', dealValue: '', revenue: '' }),
           companySize: determineCompanySize({ 
             size: person.company?.size || '', 
             industry: person.company?.industry || '',
@@ -298,18 +441,30 @@ export async function POST(request: NextRequest) {
         // Calculate comprehensive individual score
         const individualScore = calculateIndividualScore(contactForScoring, userSettings);
         
+        // 🎯 ENHANCED: Add all boost factors to the score
+        const enhancedScore = individualScore + 
+          opportunityValueBoost + 
+          dealStageBoost + 
+          nextActionUrgencyBoost + 
+          priorityBoost;
+        
         return {
           ...person,
-          calculatedScore: individualScore,
+          calculatedScore: enhancedScore,
           daysSinceLastContact: daysSinceContact,
           emailEngagementScore: emailEngagement.emailScore,
-          readyToBuyScore: emailEngagement.readyToBuyScore
+          readyToBuyScore: emailEngagement.readyToBuyScore,
+          opportunityValueBoost,
+          dealStageBoost,
+          nextActionUrgencyBoost,
+          priorityBoost,
+          isMeaningfulAction
         };
       });
       
-      // Sort by calculated score (highest first), then by status, then by title
+      // 🎯 ENHANCED: Sort by enhanced score (highest first), then by status, then by title
       scoredPeople.sort((a, b) => {
-        // Primary: Comprehensive score (higher = better)
+        // Primary: Enhanced comprehensive score (includes opportunity value, deal stage, urgency, priority)
         const scoreDiff = (b.calculatedScore || 0) - (a.calculatedScore || 0);
         if (Math.abs(scoreDiff) > 0.1) return scoreDiff;
         
@@ -345,6 +500,23 @@ export async function POST(request: NextRequest) {
         const daysDiff = (a.daysSinceLastContact || 999) - (b.daysSinceLastContact || 999);
         return daysDiff;
       });
+      
+      // 🎯 ENHANCED: Log scoring factors for top 5 people in each company (for debugging)
+      if (scoredPeople.length > 0 && companyId) {
+        const top5 = scoredPeople.slice(0, 5);
+        console.log(`📊 [RE-RANK] Top 5 scoring factors for company ${companyId}:`, 
+          top5.map(p => ({
+            name: p.fullName,
+            status: p.status,
+            baseScore: (p.calculatedScore || 0) - (p.opportunityValueBoost || 0) - (p.dealStageBoost || 0) - (p.nextActionUrgencyBoost || 0) - (p.priorityBoost || 0),
+            opportunityValueBoost: p.opportunityValueBoost,
+            dealStageBoost: p.dealStageBoost,
+            nextActionUrgencyBoost: p.nextActionUrgencyBoost,
+            priorityBoost: p.priorityBoost,
+            totalScore: p.calculatedScore
+          }))
+        );
+      }
       
       // Replace companyPeople array with scored and sorted version
       companyPeople.length = 0;
@@ -458,30 +630,21 @@ export async function POST(request: NextRequest) {
       data: {
         newBatch: newBatch.map(contact => ({
           id: contact.id,
-          name: contact.name,
+          name: contact.name || contact.fullName,
           company: contact.company,
           title: contact.jobTitle,
           email: contact.email,
           phone: contact.phone,
           mobilePhone: contact.mobilePhone,
-          linkedin: contact.linkedin,
-          photo: contact.photo,
+          linkedin: contact.linkedin || contact.linkedinUrl,
+          photo: contact.profilePictureUrl,
           priority: contact.priority,
           status: contact.status,
-          lastContact: contact.lastContact,
+          lastContact: contact.lastActionDate,
           nextAction: contact.nextAction,
-          relationship: contact.relationship,
+          relationship: contact.relationshipType,
           bio: contact.bio,
-          interests: contact.interests,
-          recentActivity: contact.recentActivity,
-          commission: contact.commission,
           globalRank: contact.globalRank,
-          rank: contact.rank,
-          rankingScore: contact.rankingScore,
-          // State-based ranking fields
-          stateRank: contact.stateRank,
-          companyRankInState: contact.companyRankInState,
-          personRankInCompany: contact.personRankInCompany,
           rankingMode: rankingMode
         })),
         batchNumber: Math.floor(completedCount / 50) + 1,

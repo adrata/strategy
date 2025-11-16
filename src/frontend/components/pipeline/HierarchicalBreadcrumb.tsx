@@ -139,9 +139,10 @@ export function HierarchicalBreadcrumb({
     }
   };
 
-  // Only show hierarchical breadcrumb for leads and prospects (not for companies or people)
-  if (recordType === 'companies' || recordType === 'people') {
-    // Simple breadcrumb for companies and people
+  // Opportunities are companies, so treat them the same way
+  if (recordType === 'companies' || recordType === 'people' || recordType === 'opportunities') {
+    // Simple breadcrumb for companies, people, and opportunities
+    const sectionLabel = recordType === 'people' ? 'People' : recordType === 'opportunities' ? 'Opportunities' : recordType;
     return (
       <div className="flex items-center gap-2">
         <button 
@@ -151,10 +152,12 @@ export function HierarchicalBreadcrumb({
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
-          All {recordType === 'people' ? 'People' : recordType}
+          All {sectionLabel}
         </button>
         <span className="text-sm text-muted">/</span>
-        <span className="text-sm font-medium text-foreground">{getDisplayName()}</span>
+        <span className="text-sm font-medium text-foreground">
+          {recordType === 'opportunities' ? (record?.name || getCompanyName() || 'Unknown Opportunity') : getDisplayName()}
+        </span>
       </div>
     );
   }

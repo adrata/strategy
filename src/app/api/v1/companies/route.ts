@@ -35,6 +35,7 @@ function cleanWebsiteUrl(url: string): string {
 // Response cache for fast performance
 const responseCache = new Map<string, { data: any, timestamp: number }>();
 const CACHE_TTL = 30000; // 30 seconds
+const COMPANIES_CACHE_VERSION = 3; // Increment to bust cache when pagination logic changes
 
 /**
  * Validate database schema for companies table
@@ -154,7 +155,8 @@ export async function GET(request: NextRequest) {
     }
     
     // Check cache first (skip if force refresh)
-    const cacheKey = `companies-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}`;
+    // 🔧 PAGINATION FIX: Include cache version to bust old caches with incorrect counts
+    const cacheKey = `companies-v${COMPANIES_CACHE_VERSION}-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
     
     console.log(`💾 [V1 COMPANIES API] Cache check:`, {
@@ -329,6 +331,8 @@ export async function GET(request: NextRequest) {
             status: true,
             priority: true,
             globalRank: true,
+            description: true,
+            descriptionEnriched: true,
             
             // Action tracking
             lastAction: true,
@@ -586,6 +590,46 @@ export async function GET(request: NextRequest) {
             else nextActionTiming = 'Future';
           }
           
+          // 🚀 ESTIMATE DEAL VALUE: If opportunity has no deal value, estimate it synchronously for immediate display
+          let finalOpportunityAmount = company.opportunityAmount;
+          if (company.status === 'OPPORTUNITY' && (!company.opportunityAmount || company.opportunityAmount === 0)) {
+            try {
+              const estimatedValue = await DealValueEstimationService.estimateDealValue(
+                {
+                  companyName: company.name || '',
+                  industry: company.industry,
+                  employeeCount: company.size || null,
+                  revenue: company.revenue,
+                  description: company.description,
+                  descriptionEnriched: company.descriptionEnriched,
+                  lastAction: lastActionText || company.lastAction
+                },
+                finalWorkspaceId
+              );
+              finalOpportunityAmount = estimatedValue;
+              
+              console.log(`💰 [COMPANIES API] Estimated deal value $${estimatedValue.toLocaleString()} for opportunity ${company.id} (${company.name})`);
+              
+              // Save estimated value asynchronously (don't block response)
+              Promise.resolve().then(async () => {
+                try {
+                  await prisma.companies.update({
+                    where: { id: company.id },
+                    data: { opportunityAmount: estimatedValue }
+                  });
+                  console.log(`✅ [COMPANIES API] Saved estimated deal value $${estimatedValue.toLocaleString()} for opportunity ${company.id}`);
+                } catch (error) {
+                  console.error(`⚠️ [COMPANIES API] Failed to save estimated deal value for company ${company.id}:`, error);
+                }
+              }).catch(err => {
+                console.error(`⚠️ [COMPANIES API] Error in deal value save promise:`, err);
+              });
+            } catch (error) {
+              console.error(`⚠️ [COMPANIES API] Error estimating deal value for company ${company.id}:`, error);
+              // Continue without estimation
+            }
+          }
+          
           return {
             ...company,
             // Ensure state field is available (map hqState to state for table compatibility)
@@ -598,7 +642,9 @@ export async function GET(request: NextRequest) {
             nextAction: nextAction || company.nextAction || null,
             nextActionDate: nextActionDate || company.nextActionDate || null,
             nextActionTiming: nextActionTiming, // NEW: Timing text
-            lastActionType: lastActionResult?.lastActionType || null
+            lastActionType: lastActionResult?.lastActionType || null,
+            // Use estimated deal value if original was null/0
+            opportunityAmount: finalOpportunityAmount || company.opportunityAmount || null
           };
         } catch (error) {
           console.error(`❌ [COMPANIES API] Error computing lastAction for company ${company.id}:`, error);

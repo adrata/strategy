@@ -19,6 +19,8 @@ export interface Opportunity {
   workspaceId?: string;
   createdAt?: string;
   updatedAt?: string;
+  description?: string;
+  summary?: string;
 }
 
 interface UseOpportunitiesDataReturn {
@@ -66,11 +68,11 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
         status: company.status || 'OPPORTUNITY',
         lastAction: company.lastAction || '-',
         nextAction: company.nextAction || '-',
-        amount: company.opportunityAmount || company.amount || company.dealValue || 0,
-        revenue: company.opportunityAmount || company.amount || company.dealValue || 0,
-        stage: company.opportunityStage || company.stage || company.dealStage || 'QUALIFICATION',
+        amount: company.opportunityAmount || company.amount || company.dealValue || company.revenue || 0,
+        revenue: company.opportunityAmount || company.amount || company.dealValue || company.revenue || 0,
+        stage: company.opportunityStage || company.stage || company.dealStage || (company.status === 'OPPORTUNITY' ? 'QUALIFICATION' : null),
         companyId: company.id,
-        industry: company.industry || '-',
+        industry: company.industry && company.industry !== '-' ? company.industry : undefined,
         size: company.size || company.employeeCount || '-',
         lastActionDate: company.lastActionDate,
         nextActionDate: company.nextActionDate,
@@ -78,6 +80,8 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
         workspaceId: company.workspaceId,
         createdAt: company.createdAt,
         updatedAt: company.updatedAt,
+        description: company.descriptionEnriched || company.description || '',
+        summary: company.descriptionEnriched || company.description || '',
       }));
 
       setOpportunities(transformedOpportunities);

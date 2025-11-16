@@ -1072,14 +1072,25 @@ export function PipelineLeftPanelStandalone({
     return acquisitionData && !acquisitionData.isLoading && acquisitionData.acquireData;
   }, [acquisitionData?.isLoading, !!acquisitionData?.acquireData]);
   
+  // Check if opportunities data is actually available (not just acquireData exists)
+  const hasOpportunitiesData = useMemo(() => {
+    return Array.isArray(acquisitionData?.acquireData?.opportunities);
+  }, [acquisitionData?.acquireData?.opportunities]);
+  
   const shouldShowLoading = useMemo(() => {
-    // Only show loading if minimum time hasn't elapsed OR if data is actively loading
-    // Don't reload if we already have data and it's not actively loading
-    if (isDataLoaded && !acquisitionData?.isLoading) {
-      return false; // We have data, don't show loading
+    // Show loading if:
+    // 1. Minimum time hasn't elapsed, OR
+    // 2. Data is actively loading, OR
+    // 3. Data structure exists but opportunities array is not yet available
+    if (!minLoadingTimeElapsed || acquisitionData?.isLoading || !isDataLoaded) {
+      return true;
     }
-    return !minLoadingTimeElapsed || acquisitionData?.isLoading || !isDataLoaded;
-  }, [minLoadingTimeElapsed, acquisitionData?.isLoading, isDataLoaded]);
+    // Even if acquireData exists, show loading if opportunities array isn't ready yet
+    if (isDataLoaded && !hasOpportunitiesData) {
+      return true;
+    }
+    return false;
+  }, [minLoadingTimeElapsed, acquisitionData?.isLoading, isDataLoaded, hasOpportunitiesData]);
 
   // Workspace branding state
   const [workspaceBranding, setWorkspaceBranding] = useState({

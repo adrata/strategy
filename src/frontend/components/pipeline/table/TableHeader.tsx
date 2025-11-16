@@ -17,6 +17,7 @@ interface TableHeaderProps {
 
 // -------- Constants --------
 const FIELD_MAP: Record<string, string> = {
+  // Display names -> field names
   'Rank': 'rank',
   'Company': 'company',
   'Person': 'name',
@@ -31,6 +32,27 @@ const FIELD_MAP: Record<string, string> = {
   'Industry': 'industry',
   'Email': 'email',
   'Phone': 'phone',
+  'State': 'state',
+  'Actions': 'actions',
+  'LAST ACTION': 'lastAction',
+  'NEXT ACTION': 'nextAction',
+  // Field names -> field names (for lowercase headers)
+  'rank': 'rank',
+  'company': 'company',
+  'name': 'name',
+  'title': 'title',
+  'status': 'status',
+  'lastAction': 'lastAction',
+  'nextAction': 'nextAction',
+  'lastActionDate': 'lastActionDate',
+  'amount': 'amount',
+  'stage': 'stage',
+  'priority': 'priority',
+  'industry': 'industry',
+  'email': 'email',
+  'phone': 'phone',
+  'state': 'state',
+  'actions': 'actions',
 };
 
 // Display name mapping for field names to proper display names
@@ -41,19 +63,26 @@ const DISPLAY_NAME_MAP: Record<string, string> = {
   'title': 'Title',
   'status': 'Status',
   'actions': 'Actions',
-  'lastAction': 'LAST ACTION',
-  'nextAction': 'NEXT ACTION',
+  'lastAction': 'Last Action',
+  'nextAction': 'Next Action',
+  'lastActionDate': 'Last Action',
   'amount': 'Amount',
   'stage': 'Stage',
   'priority': 'Priority',
   'industry': 'Industry',
   'email': 'Email',
   'phone': 'Phone',
+  'state': 'State',
 };
 
 // -------- Helper Functions --------
 function getFieldName(header: string): string {
-  return FIELD_MAP[header] || header.toLowerCase();
+  // First try exact match (handles both display names and field names)
+  if (FIELD_MAP[header]) {
+    return FIELD_MAP[header];
+  }
+  // Fallback: return lowercase version
+  return header.toLowerCase();
 }
 
 function getDisplayName(fieldName: string): string {
@@ -61,7 +90,14 @@ function getDisplayName(fieldName: string): string {
 }
 
 function getSortIcon(sortField: string | null, field: string, sortDirection?: 'asc' | 'desc' | null) {
-  if (sortField !== field) {
+  // Compare sortField with field - handle section-specific mappings
+  // For speedrun/companies: 'rank' header maps to 'globalRank' field
+  // For other sections: 'rank' header maps to 'rank' field
+  const isCurrentSort = sortField === field || 
+                        (sortField === 'globalRank' && field === 'rank') ||
+                        (sortField === 'rank' && field === 'rank');
+  
+  if (!isCurrentSort) {
     // Show neutral sort icon on hover for unsorted columns
     return (
       <div className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -107,7 +143,10 @@ export function TableHeader({
         {headers.map((header, index) => {
           const field = getFieldName(header);
           const displayName = getDisplayName(header); // Use display name for rendering
-          const isCurrentSort = sortField === field;
+          // Compare sortField with field - handle section-specific mappings
+          const isCurrentSort = sortField === field || 
+                                (sortField === 'globalRank' && field === 'rank') ||
+                                (sortField === 'rank' && field === 'rank');
           const sortIcon = getSortIcon(sortField || '', field, sortDirection);
           
           return (
@@ -124,9 +163,8 @@ export function TableHeader({
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                // Removed console.log to improve performance
-                // Uncomment for debugging if needed:
-                // console.log(`🔧 [TableHeader] Column clicked: ${header}, onColumnSort exists: ${!!onColumnSort}`);
+                e.preventDefault();
+                console.log(`🔧 [TableHeader] Column clicked: ${header} (field: ${field}), onColumnSort exists: ${!!onColumnSort}`);
                 onColumnSort?.(header);
               }}
             >

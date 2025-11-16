@@ -442,14 +442,16 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         console.log(`🤖 [UNIVERSAL OVERVIEW] Auto-triggering intelligence generation for person: ${record.id}`);
         
         try {
-          // Dynamic import to avoid circular dependencies
-          const { generatePersonIntelligence } = await import('@/platform/services/person-intelligence-generator');
-          
-          const result = await generatePersonIntelligence({
-            personId: record.id,
-            workspaceId: record.workspaceId,
-            forceRegenerate: false
+          // Use API route instead of direct service import to prevent browser exposure of API keys
+          const response = await fetch(`/api/v1/people/${record.id}/generate-intelligence`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include'
           });
+          
+          const result = await response.json();
           
           if (result.success && !result.cached) {
             console.log(`✅ [UNIVERSAL OVERVIEW] Successfully generated intelligence`);
@@ -457,6 +459,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
             window.location.reload();
           } else if (result.success && result.cached) {
             console.log(`ℹ️ [UNIVERSAL OVERVIEW] Using cached intelligence`);
+          } else {
+            console.warn(`⚠️ [UNIVERSAL OVERVIEW] Intelligence generation failed:`, result.error);
           }
         } catch (error) {
           console.error('❌ [UNIVERSAL OVERVIEW] Error generating intelligence:', error);
@@ -1385,6 +1389,78 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               </div>
             </div>
 
+          {/* Deal Intelligence - Only show for opportunities */}
+          {recordType === 'opportunities' && (
+            <div className="bg-background p-4 rounded-lg border border-border">
+              <h4 className="font-medium text-foreground mb-3">Deal Intelligence</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-sm text-muted w-32">Deal Value:</span>
+                    <InlineEditField
+                      value={record?.opportunityAmount ? record.opportunityAmount.toString() : ''}
+                      field="opportunityAmount"
+                      variant="number"
+                      onSave={onSave}
+                      recordId={record.id}
+                      recordType={recordType}
+                      onSuccess={handleSuccess}
+                      className="text-sm font-medium text-foreground"
+                      placeholder="Enter deal value"
+                    />
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm text-muted w-32">Stage:</span>
+                    <InlineEditField
+                      value={record?.opportunityStage || 'QUALIFICATION'}
+                      field="opportunityStage"
+                      variant="select"
+                      options={['QUALIFICATION', 'DISCOVERY', 'PROPOSAL', 'NEGOTIATION']}
+                      onSave={onSave}
+                      recordId={record.id}
+                      recordType={recordType}
+                      onSuccess={handleSuccess}
+                      className="text-sm font-medium text-foreground"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-sm text-muted w-32">Probability:</span>
+                    <InlineEditField
+                      value={record?.opportunityProbability ? (record.opportunityProbability * 100).toString() : ''}
+                      field="opportunityProbability"
+                      variant="number"
+                      onSave={async (field, value, recordId, recordType) => {
+                        // Convert percentage to decimal (0-1)
+                        const decimalValue = parseFloat(value) / 100;
+                        await onSave?.(field, decimalValue.toString(), recordId, recordType);
+                      }}
+                      recordId={record.id}
+                      recordType={recordType}
+                      onSuccess={handleSuccess}
+                      className="text-sm font-medium text-foreground"
+                      placeholder="Enter probability %"
+                    />
+                    <span className="text-sm text-muted ml-2">%</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm text-muted w-32">Expected Close:</span>
+                    <InlineEditField
+                      value={record?.expectedCloseDate || null}
+                      field="expectedCloseDate"
+                      variant="date"
+                      onSave={onSave}
+                      recordId={record.id}
+                      recordType={recordType}
+                      onSuccess={handleSuccess}
+                      className="text-sm font-medium text-foreground"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
       {/* Last Actions */}
       <div className="space-y-6">

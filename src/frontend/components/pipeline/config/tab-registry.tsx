@@ -174,13 +174,10 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   opportunities: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
     { id: 'company', label: 'Company', component: CompanyOverviewTab },
-    { id: 'deal-intel', label: 'Deal Intel', component: UniversalDealIntelTab },
-    { id: 'stakeholders', label: 'Stakeholders', component: UniversalStakeholdersTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
-    { id: 'competitive', label: 'Competitive', component: UniversalCompetitiveTab },
     { id: 'close-plan', label: 'Close Plan', component: UniversalClosePlanTab },
-    { id: 'notes', label: 'Notes', component: NotesTab },
-    { id: 'timeline', label: 'Timeline', component: UniversalActionsTab }
+    { id: 'actions', label: 'Actions', component: UniversalActionsTab },
+    { id: 'notes', label: 'Notes', component: NotesTab }
   ],
   
   companies: [

@@ -198,7 +198,28 @@ function debouncedPrefetch(options: PrefetchOptions): void {
 export function prefetchAllSections(workspaceId: string, userId: string, currentSection: string, trigger: string = 'navigation'): void {
   if (typeof window === 'undefined') return;
   
-  console.log(`🚀 [SECTION PREFETCH] Prefetching all sections (current: ${currentSection}):`, {
+  // Detect current section from URL if not provided
+  let detectedCurrentSection = currentSection;
+  if (typeof window !== 'undefined') {
+    const pathname = window.location.pathname;
+    const sectionFromUrl = pathname.split('/').filter(Boolean).pop() || '';
+    
+    const urlToSectionMap: Record<string, string> = {
+      'speedrun': 'speedrun',
+      'leads': 'leads',
+      'prospects': 'prospects',
+      'opportunities': 'opportunities',
+      'people': 'people',
+      'companies': 'companies'
+    };
+    
+    if (urlToSectionMap[sectionFromUrl]) {
+      detectedCurrentSection = urlToSectionMap[sectionFromUrl];
+      console.log(`🎯 [PREFETCH] Detected current section from URL: ${detectedCurrentSection}`);
+    }
+  }
+  
+  console.log(`🚀 [SECTION PREFETCH] Prefetching all sections (current: ${detectedCurrentSection}):`, {
     workspaceId,
     userId,
     trigger
@@ -216,7 +237,8 @@ export function prefetchAllSections(workspaceId: string, userId: string, current
   
   // Prefetch all sections except the current one, in priority order
   priorityOrder.forEach(({ section, delay }) => {
-    if (section !== currentSection) {
+    // Skip current section - it's already loading with priority
+    if (section !== detectedCurrentSection && section !== currentSection) {
       // Fetch first page with priority-based delay for instant loading
       setTimeout(() => {
         debouncedPrefetch({
@@ -270,6 +292,8 @@ export function prefetchAllSections(workspaceId: string, userId: string, current
           });
         }, backgroundDelay);
       }
+    } else {
+      console.log(`⏭️ [PREFETCH] Skipping prefetch for current section: ${section}`);
     }
   });
 }

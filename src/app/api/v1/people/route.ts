@@ -11,6 +11,7 @@ import { extractTitleWithFallback } from '@/platform/utils/extract-title-from-en
 // 🚀 PERFORMANCE: Enhanced caching with Redis
 const PEOPLE_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for leads/prospects
 const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes for speedrun
+const PEOPLE_CACHE_VERSION = 3; // Increment to bust cache when pagination logic changes
 
 // Connection pooling optimization
 let connectionCheck: Promise<boolean> | null = null;
@@ -135,7 +136,8 @@ export async function GET(request: NextRequest) {
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
     // 🔧 FIX: Include companyId in cache key to prevent cross-company data leakage
-    const cacheKey = `people-${context.workspaceId}-${context.userId}-${companyId || 'all'}-${section}-${status}-${excludeCompanyId}-${includeAllUsers}-${isPartnerOS}-${limit}-${page}`;
+    // 🔧 PAGINATION FIX: Include cache version to bust old caches with incorrect counts
+    const cacheKey = `people-v${PEOPLE_CACHE_VERSION}-${context.workspaceId}-${context.userId}-${companyId || 'all'}-${section}-${status}-${excludeCompanyId}-${includeAllUsers}-${isPartnerOS}-${limit}-${page}`;
     
     // Define the fetch function for cache
     const fetchPeopleData = async () => {

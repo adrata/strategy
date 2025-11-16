@@ -15,9 +15,17 @@ import Anthropic from '@anthropic-ai/sdk';
 
 const prisma = new PrismaClient();
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || '',
-});
+// Initialize Anthropic client only server-side to prevent browser exposure
+function getAnthropicClient() {
+  // Only initialize if we're in a server environment
+  if (typeof window !== 'undefined') {
+    throw new Error('Anthropic client cannot be initialized in browser environment. Use API route instead.');
+  }
+  
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY || '',
+  });
+}
 
 export interface PersonIntelligence {
   buyerGroupRole: string | null;
@@ -258,6 +266,7 @@ Guidelines:
 
 Return ONLY valid JSON, no additional text.`;
 
+    const anthropic = getAnthropicClient();
     const message = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 500,

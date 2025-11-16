@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+import { OpportunityRankBadge } from './OpportunityRankBadge';
+import { OpportunityContextMenu } from './OpportunityContextMenu';
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 
 // Import the ranking function from PipelineTable
@@ -146,6 +148,8 @@ interface Opportunity {
   nextAction?: string;
   industry?: string;
   size?: string;
+  description?: string;
+  summary?: string;
 }
 
 interface OpportunitiesKanbanProps {
@@ -165,11 +169,19 @@ const DEAL_STAGES = [
 
 export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanbanProps) {
   const [draggedItem, setDraggedItem] = useState<Opportunity | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; opportunity: Opportunity } | null>(null);
+  const [localData, setLocalData] = useState<Opportunity[]>(data);
 
+  // Update local data when prop data changes
+  React.useEffect(() => {
+    setLocalData(data);
+  }, [data]);
 
   // Group opportunities by stage and sort by progress within each stage
   const groupedData = DEAL_STAGES.reduce((acc, stage) => {
-    const stageOpps = data.filter(opp => {
+    const stageOpps = localData.filter(opp => {
       const oppStage = opp.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
       return oppStage === stage.key || 
              (stage['key'] === 'discovery' && ['needs-analysis', 'value-proposition'].includes(oppStage)) ||
@@ -202,19 +214,12 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
     setDraggedItem(opportunity);
     e['dataTransfer']['effectAllowed'] = 'move';
     e.dataTransfer.setData('text/plain', opportunity.id);
-    
-    // Add visual feedback
-    if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget['style']['opacity'] = '0.5';
-    }
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
-    // Reset visual feedback
-    if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget['style']['opacity'] = '1';
-    }
     setDraggedItem(null);
+    setDragOverColumn(null);
+    setDragOverIndex(null);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -299,6 +304,111 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  // Context menu handlers
+  const handleContextMenu = (e: React.MouseEvent, opportunity: Opportunity) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      opportunity
+    });
+  };
+
+  const reorderOpportunityInStage = (opportunity: Opportunity, newIndex: number) => {
+    const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+    
+    // Get all opportunities in the same stage
+    const stageOpps = localData.filter(opp => {
+      const oppStage = opp.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+      return oppStage === stage;
+    });
+    
+    // Get other opportunities (not in this stage)
+    const otherOpps = localData.filter(opp => {
+      const oppStage = opp.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+      return oppStage !== stage;
+    });
+    
+    // Remove opportunity from its current position
+    const stageOppsWithoutTarget = stageOpps.filter(opp => opp.id !== opportunity.id);
+    
+    // Insert at new position
+    const newStageOpps = [
+      ...stageOppsWithoutTarget.slice(0, newIndex),
+      opportunity,
+      ...stageOppsWithoutTarget.slice(newIndex)
+    ];
+    
+    // Rebuild localData with reordered stage opportunities
+    setLocalData([...otherOpps, ...newStageOpps]);
+  };
+
+  const handleMoveToTop = () => {
+    if (!contextMenu) return;
+    const opportunity = contextMenu.opportunity;
+    const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+    const stageOpps = groupedData[stage] || [];
+    const currentIndex = stageOpps.findIndex(opp => opp.id === opportunity.id);
+    
+    if (currentIndex <= 0) {
+      setContextMenu(null);
+      return;
+    }
+
+    reorderOpportunityInStage(opportunity, 0);
+    setContextMenu(null);
+  };
+
+  const handleMoveUp = () => {
+    if (!contextMenu) return;
+    const opportunity = contextMenu.opportunity;
+    const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+    const stageOpps = groupedData[stage] || [];
+    const currentIndex = stageOpps.findIndex(opp => opp.id === opportunity.id);
+    
+    if (currentIndex <= 0) {
+      setContextMenu(null);
+      return;
+    }
+
+    reorderOpportunityInStage(opportunity, currentIndex - 1);
+    setContextMenu(null);
+  };
+
+  const handleMoveDown = () => {
+    if (!contextMenu) return;
+    const opportunity = contextMenu.opportunity;
+    const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+    const stageOpps = groupedData[stage] || [];
+    const currentIndex = stageOpps.findIndex(opp => opp.id === opportunity.id);
+    
+    if (currentIndex >= stageOpps.length - 1) {
+      setContextMenu(null);
+      return;
+    }
+
+    reorderOpportunityInStage(opportunity, currentIndex + 1);
+    setContextMenu(null);
+  };
+
+  const handleMoveToBottom = () => {
+    if (!contextMenu) return;
+    const opportunity = contextMenu.opportunity;
+    const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+    const stageOpps = groupedData[stage] || [];
+    const currentIndex = stageOpps.findIndex(opp => opp.id === opportunity.id);
+    
+    if (currentIndex >= stageOpps.length - 1) {
+      setContextMenu(null);
+      return;
+    }
+
+    const stageOppsCount = stageOpps.length;
+    reorderOpportunityInStage(opportunity, stageOppsCount - 1);
+    setContextMenu(null);
+  };
+
 
   return (
     <div className="flex gap-6 px-0 py-1 h-full overflow-x-auto">
@@ -331,68 +441,146 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                     <p className="text-xs">No opportunities</p>
                   </div>
                 ) : (
-                  opportunities.map((opportunity, index) => (
-                    <div
-                      key={opportunity.id}
-                      className={`bg-background border rounded-sm p-3 hover:bg-hover hover:border-[var(--primary)] transition-colors cursor-pointer relative ${
-                        opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' 
-                          ? 'border-error/20 bg-error/10' 
-                          : 'border-border'
-                      }`}
-                      draggable={true}
-                      onDragStart={(e) => handleDragStart(e, opportunity)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => onRecordClick(opportunity)}
-                    >
-                      {/* Rank Display */}
-                      <div className="absolute top-2 right-2">
-                        <span className="bg-hover text-foreground text-xs font-medium px-2 py-1 rounded-full">
-                          #{getPersonMasterRank(opportunity, index)}
-                        </span>
+                  <>
+                    {opportunities.map((opportunity, index) => {
+                      // Calculate rank within stage (1-based)
+                      const rank = index + 1;
+                      const oppStage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
+                      const isDragOverHere = dragOverColumn === stage.key && dragOverIndex === index;
+                      const isSameColumn = draggedItem?.stage === opportunity.stage;
+                      
+                      return (
+                        <React.Fragment key={`fragment-${opportunity.id}`}>
+                          {/* Drop zone before card */}
+                          {isSameColumn && draggedItem && draggedItem.id !== opportunity.id && (
+                            <div
+                              className={`h-2 transition-all ${
+                                isDragOverHere ? 'h-8 bg-primary/20 border-2 border-dashed border-primary rounded' : ''
+                              }`}
+                            />
+                          )}
+                          <div
+                            key={opportunity.id}
+                            className={`relative bg-background border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer ${
+                              draggedItem?.id === opportunity.id ? 'opacity-50' : ''
+                            } ${
+                              opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' 
+                                ? 'border-error/20 bg-error/10' 
+                                : ''
+                            }`}
+                            draggable={true}
+                            onDragStart={(e) => handleDragStart(e, opportunity)}
+                            onDragEnd={handleDragEnd}
+                            onClick={() => onRecordClick(opportunity)}
+                            onContextMenu={(e) => handleContextMenu(e, opportunity)}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (draggedItem && draggedItem.stage === opportunity.stage && draggedItem.id !== opportunity.id) {
+                                setDragOverIndex(index);
+                                setDragOverColumn(oppStage);
+                              }
+                            }}
+                          >
+                      {/* Rank Badge - Top left (like Stacks) */}
+                      <div className="absolute top-2 left-2">
+                        <OpportunityRankBadge rank={rank} />
                       </div>
                       
-                      <div className="mb-3 pr-8">
-                        {/* Company Name - Primary focus */}
-                        <h4 className="font-semibold text-foreground text-base leading-tight mb-2 flex items-center gap-1">
+                      {/* Stage Badge - Top right */}
+                      {opportunity.stage && (
+                        <div className="absolute top-3 right-3">
+                          <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                            opportunity.stage === 'QUALIFICATION' ? 'bg-blue-100 text-blue-700' :
+                            opportunity.stage === 'DISCOVERY' ? 'bg-purple-100 text-purple-700' :
+                            opportunity.stage === 'PROPOSAL' ? 'bg-orange-100 text-orange-700' :
+                            opportunity.stage === 'NEGOTIATION' ? 'bg-green-100 text-green-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {opportunity.stage}
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="pr-16 ml-8">
+                        {/* Opportunity Name - Primary focus */}
+                        <h4 className="font-semibold text-foreground text-base leading-tight mb-2">
                           {opportunity.name || 
                            opportunity.account?.name || 
                            (typeof opportunity.company === 'string' ? opportunity.company : opportunity.company?.name) || 
                            'Unnamed Opportunity'}
-                          {opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' && (
-                            <span className="text-red-600 text-xs font-medium px-1.5 py-0.5 bg-red-100 rounded" title="Lost to Competition">
-                              🏁
-                            </span>
-                          )}
                         </h4>
                         
-                        {/* Deal Value - Prominent if available */}
-                        {(opportunity.revenue || opportunity.amount) && (opportunity.revenue > 0 || opportunity.amount > 0) && (
-                          <div className="mb-2">
-                            <span className="font-bold text-lg text-foreground">
+                        {/* Deal Value - Only show if available */}
+                        {(opportunity.revenue || opportunity.amount) > 0 && (
+                          <div className="mb-3">
+                            <span className="font-bold text-xl text-foreground">
                               {formatCurrency(opportunity.revenue || opportunity.amount || 0)}
                             </span>
                           </div>
                         )}
                         
-                        {/* Industry - Only show if available and meaningful */}
-                        {opportunity.industry && opportunity.industry !== '-' && (
-                          <p className="text-xs text-muted-foreground">
-                            {opportunity.industry}
+                        {/* Summary - First sentence from descriptionEnriched or description */}
+                        {(opportunity.summary || opportunity.description) && (
+                          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                            {(() => {
+                              const text = opportunity.summary || opportunity.description || '';
+                              // Extract first sentence (up to first period, exclamation, or question mark)
+                              const firstSentence = text.match(/^[^.!?]+[.!?]/)?.[0] || text.split('.')[0] || text;
+                              // Limit to 120 characters
+                              return firstSentence.length > 120 ? firstSentence.substring(0, 117) + '...' : firstSentence;
+                            })()}
                           </p>
                         )}
                       </div>
 
+                      {/* Additional Info Section */}
+                      <div className="space-y-2 border-t border-border pt-3 mt-3">
+                        {/* Industry */}
+                        {opportunity.industry && opportunity.industry !== '-' && (
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            <span>{opportunity.industry}</span>
+                          </div>
+                        )}
+
+                        {/* Last Action - Only show if meaningful */}
+                        {opportunity.lastAction && 
+                         opportunity.lastAction !== '-' && 
+                         opportunity.lastAction !== 'Never' &&
+                         opportunity.lastAction !== 'Last contact' &&
+                         !opportunity.lastAction.toLowerCase().includes('record created') &&
+                         !opportunity.lastAction.toLowerCase().includes('last contact') && (
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="truncate">{opportunity.lastAction}</span>
+                          </div>
+                        )}
+
+                        {/* Next Action - Always show if available */}
+                        {opportunity.nextAction && opportunity.nextAction !== '-' && (
+                          <div className="flex items-start gap-2 text-xs text-primary">
+                            <span className="truncate font-medium leading-relaxed">{opportunity.nextAction}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Progress Bar */}
                       {(() => {
                         const progress = getStageProgress(opportunity.stage, opportunity);
                         return progress > 0 && (
-                          <div className="mb-2">
-                            <div className="flex justify-between text-xs text-muted mb-1">
+                          <div className="mt-3 pt-3 border-t border-border">
+                            <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
                               <span>Progress</span>
-                              <span>{progress}%</span>
+                              <span className="font-medium">{progress}%</span>
                             </div>
-                            <div className="w-full bg-loading-bg rounded-full h-1.5">
+                            <div className="w-full bg-loading-bg rounded-full h-2">
                               <div 
-                                className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(progress)}`}
+                                className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(progress)}`}
                                 style={{ width: `${progress}%` }}
                               ></div>
                             </div>
@@ -400,19 +588,39 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                         );
                       })()}
 
+                      {/* Assigned User */}
                       {opportunity['assignedUser'] && (
-                        <div className="text-xs text-muted border-t border-border pt-2">
-                          {opportunity.assignedUser.name}
+                        <div className="mt-3 pt-3 border-t border-border flex items-center gap-2 text-xs text-muted-foreground">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <span>{opportunity.assignedUser.name}</span>
                         </div>
                       )}
-                    </div>
-                  ))
+                          </div>
+                        </React.Fragment>
+                      );
+                    })}
+                  </>
                 )}
               </div>
             </div>
           </div>
         );
       })}
+      
+      {/* Context Menu */}
+      {contextMenu && (
+        <OpportunityContextMenu
+          isVisible={!!contextMenu}
+          position={{ x: contextMenu.x, y: contextMenu.y }}
+          onClose={() => setContextMenu(null)}
+          onMoveToTop={handleMoveToTop}
+          onMoveUp={handleMoveUp}
+          onMoveDown={handleMoveDown}
+          onMoveToBottom={handleMoveToBottom}
+        />
+      )}
     </div>
   );
 }

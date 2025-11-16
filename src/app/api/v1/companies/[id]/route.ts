@@ -180,6 +180,13 @@ export async function GET(
       lastActionDate: lastActionResult.lastActionDate ?? null,
       lastActionTime: lastActionResult.lastActionTime ?? null,
       nextAction: mergedCompany.nextAction ?? null,
+      nextActionDate: mergedCompany.nextActionDate ?? null,
+      // Opportunity fields (for opportunities)
+      opportunityAmount: mergedCompany.opportunityAmount ?? null,
+      opportunityStage: mergedCompany.opportunityStage ?? (mergedCompany.status === 'OPPORTUNITY' ? 'QUALIFICATION' : null),
+      opportunityProbability: mergedCompany.opportunityProbability ?? null,
+      expectedCloseDate: mergedCompany.expectedCloseDate ?? null,
+      actualCloseDate: mergedCompany.actualCloseDate ?? null,
       // Notes
       notes: mergedCompany.notes ?? null
     };

@@ -171,3 +171,4 @@ The Buyer Group tab loading issue is **fully fixed**. The audit identified and r
 - `src/frontend/components/pipeline/tabs/CompanyOverviewTab.tsx` - Reference implementation
 
 
+

@@ -6,6 +6,7 @@ import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 // 🚀 PERFORMANCE: Aggressive caching for speedrun data (rarely changes)
 const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const SPEEDRUN_CACHE_VERSION = 3; // Increment to bust cache when pagination logic changes
 
 /**
  * 🚀 SPEEDRUN API v1 - LIGHTNING FAST
@@ -46,7 +47,8 @@ export async function GET(request: NextRequest) {
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
     // 🚀 FIX: Include isPartnerOS in cache key to prevent stale PartnerOS-filtered results
-    const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-${limit}-${offset}-${isPartnerOS}`;
+    // 🔧 PAGINATION FIX: Include cache version to bust old caches with incorrect counts
+    const cacheKey = `speedrun-v${SPEEDRUN_CACHE_VERSION}-${context.workspaceId}-${context.userId}-${limit}-${offset}-${isPartnerOS}`;
     
     // Define the fetch function for cache
     const fetchSpeedrunData = async () => {
@@ -768,7 +770,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 🚀 CACHE INVALIDATION: Clear speedrun cache when data changes
-    const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-*`;
+    // 🔧 PAGINATION FIX: Include cache version pattern to invalidate correctly
+    const cacheKey = `speedrun-v${SPEEDRUN_CACHE_VERSION}-${context.workspaceId}-${context.userId}-*`;
     try {
       await cache.invalidate(cacheKey);
       console.log(`🗑️ [SPEEDRUN API] Invalidated cache for pattern: ${cacheKey}`);

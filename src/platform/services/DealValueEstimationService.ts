@@ -117,8 +117,9 @@ export class DealValueEstimationService {
       // Round to nearest $5K for cleaner numbers
       estimatedValue = Math.round(estimatedValue / 5000) * 5000;
 
-      // Ensure minimum of $25K and maximum of $5M
-      estimatedValue = Math.max(25000, Math.min(5000000, estimatedValue));
+      // For TOP Engineering Plus, contracts are typically $150k-$500k
+      // Ensure estimates fall within this range
+      estimatedValue = Math.max(150000, Math.min(500000, estimatedValue));
 
       console.log(`💰 [DEAL VALUE] Estimated for ${input.companyName}:`, {
         baseValue,

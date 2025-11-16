@@ -35,7 +35,7 @@ const PROGRESSIVE_LOAD_DELAY = 500; // Delay before loading remaining pages
 // 🔧 CACHE TTL CONSTANTS: Centralized TTL values for consistent cache behavior
 const CACHE_TTL_SPEEDRUN = 2 * 60 * 1000; // 2 minutes for speedrun (shorter TTL for freshness)
 const CACHE_TTL_DEFAULT = 5 * 60 * 1000; // 5 minutes for other sections
-const CACHE_VERSION = 2; // Increment this when sorting/data structure changes
+const CACHE_VERSION = 3; // Increment this when sorting/data structure changes - v3: pagination count fix
 
 export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
   const DEBUG_PIPELINE = process.env.NODE_ENV === 'development' && false; // Enable manually when needed
@@ -222,8 +222,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           break;
         case 'opportunities':
           // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
+          // Opportunities are companies with status=OPPORTUNITY
           const opportunitiesLimit = initialOnly ? INITIAL_PAGE_SIZE : 10000;
-          url = `/api/v1/people?section=opportunities&limit=${opportunitiesLimit}${refreshParam}${partnerosParam}`;
+          url = `/api/v1/companies?status=OPPORTUNITY&limit=${opportunitiesLimit}${refreshParam}${partnerosParam}`;
           break;
         case 'people':
           // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
@@ -366,9 +367,25 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         let responseCount: number;
         
         if (Array.isArray(result.data)) {
-          // V1 API format: { success: true, data: [...], meta: { count } }
+          // V1 API format: { success: true, data: [...], meta: { count, totalCount } }
           responseData = result.data;
-          responseCount = result.meta?.count || result.meta?.totalCount || responseData.length;
+          // 🔧 PAGINATION FIX: Prioritize totalCount over count for accurate pagination
+          // totalCount is the accurate database count, count might be the limited result count
+          responseCount = result.meta?.totalCount || result.meta?.pagination?.totalCount || result.meta?.count || responseData.length;
+          
+          // 🔍 DEBUG: Log count values for leads/people sections to diagnose pagination issues
+          if (section === 'leads' || section === 'people') {
+            console.log(`🔍 [FAST SECTION DATA] ${section} count extraction:`, {
+              section,
+              dataLength: responseData.length,
+              metaTotalCount: result.meta?.totalCount,
+              metaPaginationTotalCount: result.meta?.pagination?.totalCount,
+              metaCount: result.meta?.count,
+              finalCount: responseCount,
+              metaKeys: result.meta ? Object.keys(result.meta) : 'no meta',
+              paginationKeys: result.meta?.pagination ? Object.keys(result.meta.pagination) : 'no pagination'
+            });
+          }
         } else if (result.data && Array.isArray(result.data.data)) {
           // data/section API format: { success: true, data: { data: [...], count, totalCount }, meta }
           responseData = result.data.data;
@@ -377,16 +394,45 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           throw new Error('Invalid API response format - data is not an array');
         }
         
-        // If this is initial load, only show first 100 records
-        if (initialOnly && responseData.length > INITIAL_PAGE_SIZE) {
-          const initialData = responseData.slice(0, INITIAL_PAGE_SIZE);
-          setData(initialData);
-          setCount(responseCount); // Keep full count for pagination
-        } else {
-          // Full load - show all data
-          setData(responseData);
-          setCount(responseCount);
-        }
+        // 🔧 PAGINATION FIX: Always show all loaded data
+        // Client-side pagination will handle showing the correct page
+        // When initialOnly=true, we only fetch 100 records, so show those 100
+        // When initialOnly=false, we fetch up to 10000 records, so show all of them
+        setData(responseData);
+        
+        // 🔧 CRITICAL FIX: Preserve the larger count to prevent overwriting correct totals
+        // If we already have a count that's larger than the response count, keep it
+        // This prevents the count from being reset to 100 when we have the correct total (e.g., 1,355)
+        // Check if responseCount came from API meta (not data.length fallback)
+        const isFromMeta = !!(result.meta?.totalCount || result.meta?.pagination?.totalCount || result.meta?.count);
+        setCount((prevCount) => {
+          if (isFromMeta && responseCount > prevCount) {
+            // API provided a count that's larger than what we have - use it
+            return responseCount;
+          } else if (prevCount > 0 && prevCount > responseCount && responseCount === responseData.length) {
+            // We already have a larger count and responseCount is just data.length - preserve the larger count
+            return prevCount;
+          } else {
+            // Use the response count (either it's valid or it's our best guess)
+            return responseCount;
+          }
+        });
+        
+        // Log for debugging pagination issues - ALL sections for audit
+        console.log(`📊 [FAST SECTION DATA] ${section} data loaded:`, {
+          initialOnly,
+          dataLength: responseData.length,
+          totalCount: responseCount,
+          prevCount: count, // Log previous count to see if it's being overwritten
+          hasAllData: responseData.length >= responseCount,
+          isFromMeta: isFromMeta,
+          metaTotalCount: result.meta?.totalCount,
+          metaPaginationTotalCount: result.meta?.pagination?.totalCount,
+          metaCount: result.meta?.count,
+          responseCountSource: result.meta?.totalCount ? 'meta.totalCount' : 
+                              result.meta?.pagination?.totalCount ? 'meta.pagination.totalCount' :
+                              result.meta?.count ? 'meta.count' : 'responseData.length'
+        });
         loadedSectionsRef.current.add(section);
         
         // 🚀 PERFORMANCE: Cache data in localStorage (like leads pattern)
@@ -414,6 +460,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
           count: responseCount,
+          totalCount: result.meta?.totalCount || result.meta?.pagination?.totalCount,
           items: responseData.length,
           responseTime: result.meta?.responseTime,
           firstItem: responseData?.[0] ? {
@@ -486,6 +533,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   useEffect(() => {
     if (!workspaceId || authLoading) return;
     
+    // 🔧 BLANK TABLES FIX: Don't clear data when section changes - preserve until new data loads
+    // This prevents the flash of blank tables when navigating between sections
+    
     // Instant hydration from cache
     let hasCachedData = false;
     try {
@@ -507,18 +557,19 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
             cacheAge: Date.now() - parsed.ts
           });
           
-          // Show first 100 records immediately if we have more
-          const initialData = parsed.data.slice(0, INITIAL_PAGE_SIZE);
-          setData(initialData);
+          // 🔧 PAGINATION FIX: Show all cached data immediately, don't limit to 100
+          // The client-side pagination will handle showing the right page
+          setData(parsed.data);
           setCount(parsed.count || parsed.data.length);
           setLoading(false);
           hasCachedData = true;
           setHasLoadedInitial(true);
           hasHydratedRef.current = true; // Mark as hydrated to prevent fetchSectionData from checking cache
           
-          // If we have more data than initial page, load remaining in background
-          if (parsed.data.length > INITIAL_PAGE_SIZE && parsed.data.length < (parsed.count || parsed.data.length)) {
-            console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
+          // If we have less data than the total count, load remaining in background
+          const cachedCount = parsed.count || parsed.data.length;
+          if (parsed.data.length < cachedCount) {
+            console.log(`🔄 [FAST SECTION DATA] Cached data incomplete (${parsed.data.length}/${cachedCount}), loading remaining in background...`);
             setIsLoadingMore(true);
             // Load remaining data after a short delay
             setTimeout(() => {
@@ -526,9 +577,6 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
                 setIsLoadingMore(false);
               });
             }, PROGRESSIVE_LOAD_DELAY);
-          } else if (parsed.data.length >= (parsed.count || parsed.data.length)) {
-            // We already have all data, just show it all
-            setData(parsed.data);
           }
         } else {
           console.log(`🗑️ [FAST SECTION DATA] Cache invalid for ${section}, will fetch fresh:`, {
@@ -542,29 +590,81 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       console.warn(`⚠️ [FAST SECTION DATA] Failed to hydrate ${section} from cache:`, e);
     }
     
+    // Detect current section from URL
+    let isCurrentSection = false;
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      const sectionFromUrl = pathname.split('/').filter(Boolean).pop() || '';
+      
+      const urlToSectionMap: Record<string, string> = {
+        'speedrun': 'speedrun',
+        'leads': 'leads',
+        'prospects': 'prospects',
+        'opportunities': 'opportunities',
+        'people': 'people',
+        'companies': 'companies'
+      };
+      
+      if (urlToSectionMap[sectionFromUrl] === section || pathname.includes(`/${section}`)) {
+        isCurrentSection = true;
+        console.log(`🎯 [FAST SECTION DATA] Detected direct navigation to ${section}, prioritizing load`);
+      }
+    }
+    
     // If no cached data, fetch first 100 records immediately
+    // 🔧 BLANK TABLES FIX: Only fetch if we don't already have data for this section
+    // This prevents clearing data when switching sections
     if (workspaceId && userId && !authLoading && !loadedSectionsRef.current.has(section) && !hasCachedData) {
       // Mark as hydrated to prevent fetchSectionData from checking cache
       hasHydratedRef.current = true;
-      // First fetch: Get initial 100 records for instant display
-      console.log(`🚀 [FAST SECTION DATA] Fetching initial ${INITIAL_PAGE_SIZE} ${section} records...`);
-      fetchSectionData(false, true).then(() => {
-        setHasLoadedInitial(true);
-        // Then load remaining records in background
-        setTimeout(() => {
-          console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
-          setIsLoadingMore(true);
-          fetchSectionData(false, false).then(() => {
-            setIsLoadingMore(false);
-          });
-        }, PROGRESSIVE_LOAD_DELAY);
-      });
+      
+      // Set loading to true only if we don't have data yet
+      if (data.length === 0) {
+        setLoading(true);
+      }
+      
+      // Current section: Load immediately with no delay
+      if (isCurrentSection) {
+        console.log(`🚀 [FAST SECTION DATA] Prioritizing current section ${section} - loading immediately`);
+        fetchSectionData(false, true).then(() => {
+          setHasLoadedInitial(true);
+          // Load remaining records in background after short delay
+          setTimeout(() => {
+            console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
+            setIsLoadingMore(true);
+            fetchSectionData(false, false).then(() => {
+              setIsLoadingMore(false);
+            });
+          }, PROGRESSIVE_LOAD_DELAY);
+        });
+      } else {
+        // Other sections: Use progressive loading
+        console.log(`🚀 [FAST SECTION DATA] Fetching initial ${INITIAL_PAGE_SIZE} ${section} records...`);
+        fetchSectionData(false, true).then(() => {
+          setHasLoadedInitial(true);
+          // Then load remaining records in background
+          setTimeout(() => {
+            console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
+            setIsLoadingMore(true);
+            fetchSectionData(false, false).then(() => {
+              setIsLoadingMore(false);
+            });
+          }, PROGRESSIVE_LOAD_DELAY);
+        });
+      }
+    } else if (loadedSectionsRef.current.has(section) && data.length > 0) {
+      // 🔧 BLANK TABLES FIX: If we already have data for this section, don't show loading
+      // This prevents the flash of blank tables when switching back to a previously loaded section
+      setLoading(false);
     }
   }, [section, workspaceId, userId, authLoading, fetchSectionData]);
   
   // 🔧 RACE CONDITION FIX: Reset hydration flag when section changes
+  // BUT don't clear data - let the new section's useEffect handle loading
   useEffect(() => {
     hasHydratedRef.current = false;
+    // Don't clear data here - it causes blank tables when switching sections
+    // The new section's useEffect will load fresh data
   }, [section]);
 
   // 🚀 PERFORMANCE FIX: Event-based force refresh monitoring (no interval polling)

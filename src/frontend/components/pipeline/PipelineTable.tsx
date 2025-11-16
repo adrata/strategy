@@ -46,6 +46,8 @@ interface PipelineTableProps {
   visibleColumns?: string[];
   pageSize?: number;
   isLoading?: boolean;
+  totalCount?: number; // Total count from API for correct pagination
+  searchQuery?: string; // Search query for filtering
 }
 
 // -------- Constants --------
@@ -141,9 +143,44 @@ function getNextActionTiming(record: PipelineRecord) {
   }
 }
 
+// Map field names to display names for headers
+const FIELD_TO_DISPLAY_MAP: Record<string, string> = {
+  'rank': 'Rank',
+  'globalRank': 'Rank',
+  'name': 'Name',
+  'firstName': 'Name',
+  'lastName': 'Name',
+  'fullName': 'Name',
+  'company': 'Company',
+  'companyName': 'Company',
+  'person': 'Person',
+  'title': 'Title',
+  'jobTitle': 'Title',
+  'stage': 'Stage',
+  'dealStage': 'Stage',
+  'lastAction': 'Last Action',
+  'lastActionDate': 'Last Action',
+  'lastContact': 'Last Action',
+  'lastContactDate': 'Last Action',
+  'nextAction': 'Next Action',
+  'nextActionDescription': 'Next Action',
+  'amount': 'Amount',
+  'dealValue': 'Amount',
+  'opportunityAmount': 'Amount',
+  'priority': 'Priority',
+  'industry': 'Industry',
+  'email': 'Email',
+  'phone': 'Phone',
+  'state': 'State',
+  'hqState': 'State',
+  'actions': 'Actions',
+  'status': 'Status',
+};
+
 function getTableHeaders(visibleColumns?: string[], section?: string): string[] {
   if (visibleColumns && visibleColumns.length > 0) {
-    return visibleColumns;
+    // Convert field names to display names
+    return visibleColumns.map(col => FIELD_TO_DISPLAY_MAP[col] || col);
   }
   
   // Section-specific headers
@@ -317,7 +354,12 @@ export function PipelineTable({
     setCurrentPage,
     setSortField,
     setSortDirection,
-  } = usePipelineData({ data: processedData, pageSize });
+  } = usePipelineData({ 
+    data: processedData, 
+    pageSize,
+    totalCount: totalCount, // Pass totalCount from props
+    searchQuery: searchQuery // Pass searchQuery from props
+  });
   
   // Real-time timestamp refresh state
   const [timestampRefresh, setTimestampRefresh] = useState(0);
