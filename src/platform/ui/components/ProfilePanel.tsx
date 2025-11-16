@@ -879,31 +879,96 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               Get Started
             </h4>
             <div className="space-y-0.5">
-            {/* RevenueOS */}
-            <button
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'revenueos' 
-                  ? 'bg-slate-100 text-slate-700' 
-                  : 'text-foreground hover:bg-hover'
-              }`}
-              onClick={() => {
-                // Clear PartnerOS mode when switching to RevenueOS
-                if (typeof window !== 'undefined') {
-                  sessionStorage.removeItem('activeSubApp');
-                }
-                handleNavigation("/speedrun");
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <ChartBarIcon className="w-4 h-4" />
-                <span className="font-medium">RevenueOS</span>
-                {revenueOSSpeedrunCount > 0 && (
-                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20 ml-auto">
-                    <span className="text-xs font-semibold">{revenueOSSpeedrunCount}</span>
+            {/* Check if user has OS access - show OS routes for Notary Everyday Ryan */}
+            {authUser?.email?.toLowerCase().includes('ryan') && workspace && (typeof workspace === 'object' && (workspace as any)?.name?.toLowerCase().includes('notary')) ? (
+              <>
+                {/* ExpansionOS */}
+                <button
+                  className={`w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                    currentApp === 'expansionos' 
+                      ? 'bg-slate-100 text-slate-700' 
+                      : 'text-foreground hover:bg-hover'
+                  }`}
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      sessionStorage.removeItem('activeSubApp');
+                    }
+                    handleNavigation("/expansion-os/prospects");
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <ChartBarIcon className="w-4 h-4" />
+                    <span className="font-medium">ExpansionOS</span>
                   </div>
-                )}
-              </div>
-            </button>
+                </button>
+
+                {/* AcquisitionOS */}
+                <button
+                  className={`w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                    currentApp === 'acquisitionos' 
+                      ? 'bg-slate-100 text-slate-700' 
+                      : 'text-foreground hover:bg-hover'
+                  }`}
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      sessionStorage.removeItem('activeSubApp');
+                    }
+                    handleNavigation("/acquisition-os/leads");
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <ChartBarIcon className="w-4 h-4" />
+                    <span className="font-medium">AcquisitionOS</span>
+                  </div>
+                </button>
+
+                {/* RetentionOS */}
+                <button
+                  className={`w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                    currentApp === 'retentionos' 
+                      ? 'bg-slate-100 text-slate-700' 
+                      : 'text-foreground hover:bg-hover'
+                  }`}
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      sessionStorage.removeItem('activeSubApp');
+                    }
+                    handleNavigation("/retention-os/clients");
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <ChartBarIcon className="w-4 h-4" />
+                    <span className="font-medium">RetentionOS</span>
+                  </div>
+                </button>
+              </>
+            ) : (
+              /* RevenueOS - default for other users */
+              <button
+                className={`w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                  currentApp === 'revenueos' 
+                    ? 'bg-slate-100 text-slate-700' 
+                    : 'text-foreground hover:bg-hover'
+                }`}
+                onClick={() => {
+                  // Clear PartnerOS mode when switching to RevenueOS
+                  if (typeof window !== 'undefined') {
+                    sessionStorage.removeItem('activeSubApp');
+                  }
+                  handleNavigation("/speedrun");
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <ChartBarIcon className="w-4 h-4" />
+                  <span className="font-medium">RevenueOS</span>
+                  {revenueOSSpeedrunCount > 0 && (
+                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-muted/10 text-muted border border-muted/20 ml-auto">
+                      <span className="text-xs font-semibold">{revenueOSSpeedrunCount}</span>
+                    </div>
+                  )}
+                </div>
+              </button>
+            )}
 
             {/* PartnerOS */}
             {authUser?.workspaces?.some(w => w.name === 'Adrata' || w.id === authUser.activeWorkspaceId) && (

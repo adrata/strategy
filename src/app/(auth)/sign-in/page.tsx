@@ -245,9 +245,19 @@ export default function SignInPage() {
           
           if (activeWorkspace) {
             console.log("✅ [SIGN-IN PAGE] Found active workspace:", activeWorkspace.name);
-            // Fall back to generic path if no server redirect
-            redirectUrl = "/speedrun";
-            console.log("🚀 [SIGN-IN PAGE] Auto-redirecting to last workspace:", activeWorkspace.name);
+            
+            // Check if this is Ryan in Notary Everyday - redirect to ExpansionOS
+            const isRyan = result.session?.user?.email?.toLowerCase().includes('ryan');
+            const isNotaryEveryday = activeWorkspace.name?.toLowerCase().includes('notary');
+            
+            if (isRyan && isNotaryEveryday) {
+              redirectUrl = "/expansion-os/prospects";
+              console.log("🚀 [SIGN-IN PAGE] Redirecting Ryan to ExpansionOS");
+            } else {
+              // Fall back to generic path if no server redirect
+              redirectUrl = "/speedrun";
+              console.log("🚀 [SIGN-IN PAGE] Auto-redirecting to last workspace:", activeWorkspace.name);
+            }
           } else {
             console.log("⚠️ [SIGN-IN PAGE] Active workspace not found in user's workspaces");
             console.log("⚠️ [SIGN-IN PAGE] Available workspaces:", result.session.user.workspaces?.map((ws: { id: string; name: string; role: string }) => ({ id: ws.id, name: ws.name })));

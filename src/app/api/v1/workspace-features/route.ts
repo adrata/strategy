@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate feature names
-    const validFeatures = ['OASIS', 'STACKS', 'WORKSHOP', 'REVENUEOS', 'METRICS', 'CHRONICLE'];
+    const validFeatures = ['OASIS', 'STACKS', 'WORKSHOP', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'ACQUISITION_OS', 'RETENTION_OS', 'EXPANSION_OS'];
     const invalidFeatures = enabledFeatures.filter(f => !validFeatures.includes(f));
     
     if (invalidFeatures.length > 0) {

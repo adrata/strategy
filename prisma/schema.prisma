@@ -109,6 +109,7 @@ model workspaces {
   audit_logs                audit_logs[]
   auth_sessions             auth_sessions[]
   companies                 companies[]
+  opportunities             opportunities[]
   company_lists             company_lists[]
   company_os_access         company_os_access[]
   lists                     lists[]
@@ -131,6 +132,8 @@ model workspaces {
   // Meeting transcripts and documents
   meeting_transcripts meeting_transcripts[]
   documents           documents[]
+  calendars           calendar[]
+  events              events[]
 
   @@index([slug])
   @@index([isActive])
@@ -174,6 +177,7 @@ model users {
   grand_central_connections                                             grand_central_connections[]
   grand_central_workflows                                               grand_central_workflows[]
   main_seller_people                                                    people[]                    @relation("MainSellerPeople")
+  owned_opportunities                                                   opportunities[]              @relation("OpportunityOwner")
   person_co_sellers                                                     person_co_sellers[]
   reminders                                                             reminders[]                 @relation("UserReminders")
   reset_tokens                                                          reset_tokens[]
@@ -194,6 +198,8 @@ model users {
   workshopActivitiesPerformed workshopActivity[]
   stacksComments              StacksComment[]
   user_goals                  user_goals[]
+  calendars                   calendar[]
+  events                      events[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -491,6 +497,7 @@ model companies {
   workshopDocuments       workshopDocument[]
   meeting_transcripts     meeting_transcripts[]
   documents               documents[]
+  events                  events[]
 
   @@index([workspaceId])
   @@index([coreCompanyId])
@@ -522,6 +529,38 @@ model companies {
   @@index([workspaceId, dataQualityScore])
   @@index([dataSources], type: Gin)
   company_os_access company_os_access?
+  opportunities     opportunities[]
+}
+
+/// Opportunities table - separate from companies to allow multiple opportunities per company
+model opportunities {
+  id                String    @id @default(ulid()) @db.VarChar(30)
+  workspaceId       String    @db.VarChar(30)
+  companyId         String    @db.VarChar(30)
+  name              String    @db.VarChar(255)
+  description       String?
+  amount            Decimal?  @db.Decimal(15, 2)
+  stage             String    @default("Discovery") @db.VarChar(50)
+  probability       Float?    @default(0.1)
+  expectedCloseDate DateTime?
+  actualCloseDate   DateTime?
+  ownerId           String?   @db.VarChar(30)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+  
+  company           companies @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  owner             users?    @relation("OpportunityOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  workspace         workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([companyId])
+  @@index([ownerId])
+  @@index([deletedAt])
+  @@index([stage])
+  @@index([workspaceId, deletedAt])
+  @@index([workspaceId, companyId, deletedAt])
+  @@index([workspaceId, ownerId, deletedAt])
 }
 
 /// Company OS access configuration - tracks which OS modules are enabled per company
@@ -731,6 +770,7 @@ model people {
   actions                 actions[]
   emails                  email_messages[]
   documents               documents[]
+  events                  events[]
   company                 companies?          @relation(fields: [companyId], references: [id])
   mainSeller              users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
   workspace               workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)

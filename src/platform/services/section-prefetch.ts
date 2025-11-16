@@ -24,13 +24,21 @@ interface PrefetchOptions {
   trigger?: string;
   force?: boolean;
   initialOnly?: boolean; // Only fetch first page
+  osType?: 'acquisition' | 'retention' | 'expansion'; // OS type for filtering
+}
+
+/**
+ * Prefetch section data with OS type support
+ */
+async function prefetchSectionDataWithOSType(options: PrefetchOptions): Promise<void> {
+  return prefetchSectionData(options);
 }
 
 /**
  * Prefetch section data in the background and update cache
  */
 async function prefetchSectionData(options: PrefetchOptions): Promise<void> {
-  const { workspaceId, userId, section, trigger, force = false, initialOnly = false } = options;
+  const { workspaceId, userId, section, trigger, force = false, initialOnly = false, osType } = options;
   
   const prefetchKey = `${workspaceId}-${section}`;
   
@@ -60,24 +68,31 @@ async function prefetchSectionData(options: PrefetchOptions): Promise<void> {
     // The slight delay in prefetch is acceptable since it's background work
     const limit = 10000; // Always fetch full dataset for complete pagination support
     
+    // Add OS type parameter if provided
+    const osTypeParam = options.osType ? `&osType=${options.osType}` : '';
+    
     switch (section) {
       case 'leads':
-        url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=${limit}`;
+        url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=${limit}${osTypeParam}`;
         break;
       case 'prospects':
-        url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=${limit}`;
+        url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=${limit}${osTypeParam}`;
         break;
       case 'opportunities':
-        url = `/api/v1/people?section=opportunities&limit=${limit}`;
+        url = `/api/v1/people?section=opportunities&limit=${limit}${osTypeParam}`;
         break;
       case 'people':
-        url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${limit}`;
+        url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${limit}${osTypeParam}`;
         break;
       case 'companies':
-        url = `/api/v1/companies?sortBy=name&sortOrder=asc&limit=${limit}`;
+        url = `/api/v1/companies?sortBy=name&sortOrder=asc&limit=${limit}${osTypeParam}`;
+        break;
+      case 'clients':
+        // Clients section for retention/expansion OS
+        url = `/api/v1/companies?status=CLIENT&sortBy=name&sortOrder=asc&limit=${limit}${osTypeParam}`;
         break;
       case 'speedrun':
-        url = `/api/v1/speedrun?limit=${limit}`;
+        url = `/api/v1/speedrun?limit=${limit}${osTypeParam}`;
         break;
       default:
         console.warn(`⚠️ [SECTION PREFETCH] Unknown section: ${section}`);
@@ -221,9 +236,32 @@ export async function prefetchAfterAuth(
     redirectPath
   });
   
-  // Detect current section from redirect path
+  // Detect current section and OS type from redirect path
+  // Handle OS variants: /[workspace]/acquisition-os/leads, /[workspace]/retention-os/clients, etc.
   const pathParts = redirectPath.split('/').filter(Boolean);
-  const sectionFromPath = pathParts[pathParts.length - 1] || 'speedrun';
+  
+  // Check if this is an OS variant path (acquisition-os, retention-os, expansion-os)
+  const osVariants = ['acquisition-os', 'retention-os', 'expansion-os'];
+  const osIndex = pathParts.findIndex(part => osVariants.includes(part));
+  
+  let sectionFromPath: string;
+  let detectedOSType: 'acquisition' | 'retention' | 'expansion' | null = null;
+  
+  if (osIndex !== -1 && pathParts.length > osIndex + 1) {
+    // OS variant path: extract OS type and section after OS name
+    const osPart = pathParts[osIndex];
+    if (osPart === 'acquisition-os') {
+      detectedOSType = 'acquisition';
+    } else if (osPart === 'retention-os') {
+      detectedOSType = 'retention';
+    } else if (osPart === 'expansion-os') {
+      detectedOSType = 'expansion';
+    }
+    sectionFromPath = pathParts[osIndex + 1];
+  } else {
+    // Regular path: use last segment
+    sectionFromPath = pathParts[pathParts.length - 1] || 'speedrun';
+  }
   
   const urlToSectionMap: Record<string, string> = {
     'speedrun': 'speedrun',
@@ -232,10 +270,20 @@ export async function prefetchAfterAuth(
     'opportunities': 'opportunities',
     'people': 'people',
     'companies': 'companies',
+    'clients': 'clients', // Retention/Expansion OS default section
     'dashboard': 'speedrun', // Dashboard defaults to speedrun
   };
   
   const currentSection = urlToSectionMap[sectionFromPath] || 'speedrun';
+  
+  console.log(`🔍 [AUTH PREFETCH] Detected section and OS from path:`, {
+    redirectPath,
+    pathParts,
+    osIndex,
+    detectedOSType,
+    sectionFromPath,
+    currentSection
+  });
   
   try {
     // Pre-fetch critical data in parallel for maximum speed
@@ -265,10 +313,12 @@ export async function prefetchAfterAuth(
       }),
       
       // 2. Pre-fetch current section data (for main panel)
-      prefetchSectionData({
+      // Pass OS type if detected for proper filtering
+      prefetchSectionDataWithOSType({
         workspaceId,
         userId,
         section: currentSection,
+        osType: detectedOSType,
         trigger: 'auth-prefetch',
         force: true,
         initialOnly: false
