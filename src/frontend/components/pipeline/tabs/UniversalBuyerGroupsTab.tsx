@@ -38,6 +38,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const [isFetching, setIsFetching] = useState(false); // Prevent multiple simultaneous fetches
   const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // 🔧 FIX: Store fetched company name in state for cases where record.company is not loaded
+  const [fetchedCompanyName, setFetchedCompanyName] = useState<string>('');
   const router = useRouter();
   
   // Track previous companyId, companyName, and recordId to detect changes and invalidate cache
@@ -88,17 +90,21 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                                (recordType === 'leads' && record?.isCompanyLead === true) ||
                                (recordType === 'prospects' && record?.isCompanyLead === true);
     
+    let name = '';
     if (isCompanyOnlyRecord) {
       // For company records, use the record name as company name
-      return record.name || 
+      name = record.name || 
              (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
              record.companyName || '';
     } else {
       // For person records (people, leads, prospects that are NOT company leads), get company name from company object
-      return (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+      name = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
              record.companyName || '';
     }
-  }, [record?.id, record?.name, record?.company, record?.companyName, record?.isCompanyLead, recordType]);
+    
+    // 🔧 FIX: Use fetched company name as fallback if record doesn't have company name
+    return name || fetchedCompanyName;
+  }, [record?.id, record?.name, record?.company, record?.companyName, record?.isCompanyLead, recordType, fetchedCompanyName]);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -228,6 +234,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       previousRecordIdRef.current = null;
       previousCompanyIdRef.current = null;
       previousCompanyNameRef.current = null;
+      // 🔧 FIX: Clear fetched company name when record is not available
+      setFetchedCompanyName('');
       return;
     }
     
@@ -244,6 +252,38 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       setLoading(true); // 🚨 CRITICAL FIX: Show loading while waiting for companyId
       setIsFetching(false);
       return;
+    }
+    
+    // 🔧 FIX: If companyId exists but companyName is missing, fetch company name
+    // This handles cases where the company relation wasn't loaded initially
+    if (companyId && (!companyName || companyName.trim() === '')) {
+      console.log('🔍 [BUYER GROUPS] CompanyId exists but companyName is missing, fetching company name...');
+      // Fetch company name asynchronously
+      const fetchCompanyName = async () => {
+        try {
+          const response = await fetch(`/api/v1/companies/${companyId}`, {
+            credentials: 'include'
+          });
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data?.name) {
+              console.log(`✅ [BUYER GROUPS] Fetched company name: ${result.data.name}`);
+              // Update fetched company name state - this will trigger the companyName memo to update
+              setFetchedCompanyName(result.data.name);
+              // Don't return here - let the effect continue to fetch buyer groups
+              // The effect will re-run when fetchedCompanyName updates
+            }
+          }
+        } catch (error) {
+          console.warn('⚠️ [BUYER GROUPS] Failed to fetch company name:', error);
+          // Even if fetch fails, try to proceed with just companyId (some APIs might work with ID only)
+          setFetchedCompanyName(''); // Clear any stale fetched name
+        }
+      };
+      fetchCompanyName();
+      // Show loading while fetching company name, but don't return - continue to try fetching buyer groups
+      // The buyer groups API might work with just companyId
+      setLoading(true);
     }
     
     // 🚨 STEP 1: SYNCHRONOUSLY check for company changes and clear state IMMEDIATELY (before any async work)
@@ -271,6 +311,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       setLoading(false);
       setIsFetching(false);
       setLastFetchTime(null);
+      // 🔧 FIX: Clear fetched company name when record/company changes
+      setFetchedCompanyName('');
       
       // Clear cache for previous company (both ID and name-based keys)
       if (previousCompanyId || previousCompanyName) {
@@ -348,13 +390,20 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         console.log('🔍 [BUYER GROUPS DEBUG] Company ID:', companyId);
         console.log('🔍 [BUYER GROUPS DEBUG] Workspace ID:', workspaceId);
         
-        // 🔍 DEFENSIVE CHECK: Ensure both companyId and companyName are present before fetching
-        if (!companyId || !companyName) {
-          console.log('⚠️ [BUYER GROUPS] Missing companyId or companyName, cannot fetch buyer group data:', { companyId, companyName });
+        // 🔍 DEFENSIVE CHECK: Ensure companyId is present before fetching
+        // 🔧 FIX: companyName is optional - API can work with just companyId
+        if (!companyId) {
+          console.log('⚠️ [BUYER GROUPS] Missing companyId, cannot fetch buyer group data:', { companyId, companyName });
           setBuyerGroups([]);
           setLoading(false);
           setIsFetching(false);
           return;
+        }
+        
+        // 🔧 FIX: If companyName is missing, log a warning but continue (API can work with just companyId)
+        if (!companyName || companyName.trim() === '') {
+          console.log('⚠️ [BUYER GROUPS] CompanyName is missing, but proceeding with companyId only:', { companyId });
+          // Continue - the API endpoint uses companyId which is available
         }
         const userId = record.assignedUserId || ''; // Use record's assigned user
         
@@ -363,17 +412,22 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         let peopleData = [];
         
         // ⚡ PERFORMANCE: Check buyer group specific cache first (faster)
-        // 🔍 DEFENSIVE CHECK: Only use cache if companyId and companyName are both present
-        if (companyId && companyName && !companyIdChanged && !companyNameChanged) {
+        // 🔍 DEFENSIVE CHECK: Only use cache if companyId is present (companyName is optional for cache lookup)
+        if (companyId && !companyIdChanged && !companyNameChanged) {
           const buyerGroupCachedData = safeGetItem(buyerGroupCacheKey, 10 * 60 * 1000); // 10 minutes TTL for better performance
           if (buyerGroupCachedData && Array.isArray(buyerGroupCachedData) && buyerGroupCachedData.length > 0) {
-            // 🔍 STRICT CACHE VALIDATION: Require BOTH companyId AND companyName to match (AND logic)
-            const cacheIsValid = buyerGroupCachedData.every(member => 
-              (member.companyId === companyId) && (member.company === companyName)
-            );
+            // 🔍 CACHE VALIDATION: Match by companyId (required), companyName (optional if missing)
+            // If companyName is missing, only validate by companyId
+            const cacheIsValid = companyName && companyName.trim() !== ''
+              ? buyerGroupCachedData.every(member => 
+                  (member.companyId === companyId) && (member.company === companyName)
+                )
+              : buyerGroupCachedData.every(member => 
+                  member.companyId === companyId
+                );
             
             if (cacheIsValid) {
-              console.log('📦 [BUYER GROUPS] Using validated cached buyer group data for company:', companyName, 'ID:', companyId);
+              console.log('📦 [BUYER GROUPS] Using validated cached buyer group data for company:', companyName || 'Unknown', 'ID:', companyId);
               setBuyerGroups(buyerGroupCachedData);
               setLoading(false);
               setIsFetching(false);
@@ -394,17 +448,21 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         }
         
         // 🚀 PRELOAD: Check for preloaded buyer group data using safeGetItem (respects TTL)
-        // 🔍 DEFENSIVE CHECK: Only check preloaded data if companyId and companyName are both present
-        if (companyId && companyName && !companyIdChanged && !companyNameChanged) {
+        // 🔍 DEFENSIVE CHECK: Only check preloaded data if companyId is present (companyName is optional)
+        if (companyId && !companyIdChanged && !companyNameChanged) {
           const preloadedData = safeGetItem(`buyer-groups-${companyId}-${workspaceId}`, 5 * 60 * 1000); // Reduced from 10 to 5 minutes
           if (preloadedData && Array.isArray(preloadedData) && preloadedData.length > 0) {
-            // 🔍 STRICT VALIDATION: Require BOTH companyId AND companyName to match (AND logic)
-            const preloadedIsValid = preloadedData.every(member => 
-              (member.companyId === companyId) && (member.company === companyName)
-            );
+            // 🔍 VALIDATION: Match by companyId (required), companyName (optional if missing)
+            const preloadedIsValid = companyName && companyName.trim() !== ''
+              ? preloadedData.every(member => 
+                  (member.companyId === companyId) && (member.company === companyName)
+                )
+              : preloadedData.every(member => 
+                  member.companyId === companyId
+                );
             
             if (preloadedIsValid) {
-              console.log('⚡ [BUYER GROUPS] Using validated preloaded buyer group data for company:', companyName, 'ID:', companyId);
+              console.log('⚡ [BUYER GROUPS] Using validated preloaded buyer group data for company:', companyName || 'Unknown', 'ID:', companyId);
               setBuyerGroups(preloadedData);
               setLoading(false);
               setIsFetching(false);
