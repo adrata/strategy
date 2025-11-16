@@ -12,7 +12,7 @@ async function applyIndexes() {
 
   try {
     // Read the SQL file
-    const sqlPath = join(process.cwd(), 'apply_leads_people_indexes.sql');
+    const sqlPath = join(process.cwd(), 'sql', 'apply_leads_people_indexes.sql');
     let sql = readFileSync(sqlPath, 'utf-8');
 
     // Remove COMMENT statements (they can cause issues)
@@ -102,7 +102,7 @@ async function applyIndexes() {
   } catch (error: any) {
     console.error('\n❌ Error:', error.message);
     console.error('\n💡 The database user may not have CREATE INDEX permissions.');
-    console.error('   Please run apply_leads_people_indexes.sql directly in your database client.\n');
+      console.error('   Please run sql/apply_leads_people_indexes.sql directly in your database client.\n');
     process.exit(1);
   } finally {
     await prisma.$disconnect();
