@@ -186,6 +186,10 @@ export const PipelineContent = React.memo(function PipelineContent({
           break;
         case 'clients':
           columns = ['rank', 'company', 'industry', 'status', 'lastAction', 'nextAction'];
+          // Add Orders column for Notary Everyday clients section
+          if (workspaceName === 'Notary Everyday' || workspaceName?.toLowerCase().includes('notary')) {
+            columns.push('orders');
+          }
           break;
         case 'partners':
           columns = ['rank', 'company', 'lastAction', 'nextAction'];

@@ -237,11 +237,23 @@ export async function PATCH(
       }
     });
 
-    // Transform response
+    // Transform response - include company as object for full data access
+    const companyObject = {
+      id: updated.company.id,
+      name: updated.company.name,
+      industry: updated.company.industry,
+      size: updated.company.size,
+      revenue: updated.company.revenue,
+      description: updated.company.description,
+      descriptionEnriched: updated.company.descriptionEnriched,
+      status: updated.company.status
+    };
+
     const transformed = {
       id: updated.id,
       name: updated.name,
-      company: updated.company.name,
+      // Company as object (for full access to company data - UI handles both string and object formats)
+      company: companyObject,
       account: { name: updated.company.name },
       status: 'OPPORTUNITY',
       amount: updated.amount ? parseFloat(updated.amount.toString()) : 0,

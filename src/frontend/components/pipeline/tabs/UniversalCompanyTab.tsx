@@ -5,6 +5,7 @@ import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 import { authFetch } from '@/platform/api-fetch';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface UniversalCompanyTabProps {
   recordType: string;
@@ -15,10 +16,16 @@ interface UniversalCompanyTabProps {
 export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: UniversalCompanyTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  const { user: authUser } = useUnifiedAuth();
   
   // Success message state
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Check if this is Notary Everyday workspace
+  const isNotaryEveryday = authUser?.workspaces?.some(
+    (ws: any) => ws.name === 'Notary Everyday' || ws.slug === 'notary-everyday' || ws.slug === 'ne'
+  ) && authUser?.activeWorkspaceId && authUser.workspaces.find((ws: any) => ws.id === authUser.activeWorkspaceId)?.name === 'Notary Everyday';
   
   // Company data fetching state
   const [fullCompanyData, setFullCompanyData] = useState<any>(null);
@@ -584,6 +591,31 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       {/* Company Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground mb-4">Company Information</h3>
+        {isNotaryEveryday && (() => {
+          const orders = (mergedRecord?.customFields as any)?.orders || (fullCompanyData?.customFields as any)?.orders;
+          return (
+            <div className="bg-background p-4 rounded-lg border border-border mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium text-foreground mb-1">Orders</h4>
+                  <p className="text-xs text-muted">Total number of orders</p>
+                </div>
+                <div className="text-3xl font-bold text-purple-600">
+                  <InlineEditField
+                    value={orders ? orders.toString() : '-'}
+                    field="customFields.orders"
+                    onSave={onSave || (async () => {})}
+                    recordId={companyId || record?.id}
+                    recordType={companyId ? 'companies' : recordType}
+                    onSuccess={handleSuccess}
+                    placeholder="Enter number of orders"
+                    type="number"
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })()}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="bg-background p-4 rounded-lg border border-border">

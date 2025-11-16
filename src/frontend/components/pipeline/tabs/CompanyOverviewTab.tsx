@@ -857,6 +857,37 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             </div>
             <div className="text-xs text-muted mt-2">Technologies identified</div>
           </div>
+          {(() => {
+            // Check if this is Notary Everyday workspace
+            const isNotaryEveryday = currentUser?.workspaces?.some(
+              (ws: any) => ws.name === 'Notary Everyday' || ws.slug === 'notary-everyday' || ws.slug === 'ne'
+            ) && currentUser?.activeWorkspaceId && currentUser.workspaces.find((ws: any) => ws.id === currentUser.activeWorkspaceId)?.name === 'Notary Everyday';
+            
+            if (isNotaryEveryday) {
+              const orders = (mergedRecord?.customFields as any)?.orders || (fullCompanyData?.customFields as any)?.orders;
+              return (
+                <div className="bg-background p-4 rounded-lg border border-border flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-medium text-foreground mb-2">Orders</h4>
+                    <div className="text-2xl font-bold text-purple-600">
+                      <InlineEditField
+                        value={orders ? orders.toString() : '-'}
+                        field="customFields.orders"
+                        onSave={handleSave}
+                        recordId={companyId || record?.id}
+                        recordType={companyId ? 'companies' : recordType}
+                        onSuccess={handleSuccess}
+                        placeholder="Enter number of orders"
+                        type="number"
+                      />
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted mt-2">Total orders</div>
+                </div>
+              );
+            }
+            return null;
+          })()}
         </div>
       </div>
 

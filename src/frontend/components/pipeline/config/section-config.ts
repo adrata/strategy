@@ -349,7 +349,8 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'company', label: 'Company' },
       { value: 'totalValue', label: 'Total Value' },
       { value: 'lastActionDate', label: 'Last Action Date' },
-      { value: 'createdAt', label: 'Created Date' }
+      { value: 'createdAt', label: 'Created Date' },
+      { value: 'orders', label: 'Orders' }
     ],
     statusOptions: [
       { value: 'all', label: 'All Clients' },

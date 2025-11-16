@@ -1072,8 +1072,8 @@ export function TableRow({
     );
   }
 
-  // Companies section rendering
-  if (section === 'companies') {
+  // Companies and Clients section rendering (clients are companies with status=CLIENT)
+  if (section === 'companies' || section === 'clients') {
     return (
       <>
         <tr 

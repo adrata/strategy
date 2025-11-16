@@ -362,14 +362,19 @@ export async function GET(request: NextRequest) {
       // Optimized query with Prisma ORM for reliability
       console.log(`🗄️ [V1 COMPANIES API] Executing main database query with where clause:`, where);
       
+      // Handle Orders sorting (customFields.orders) - need to fetch all and sort client-side
+      const shouldSortByOrders = sortBy === 'orders';
+      const fetchLimit = shouldSortByOrders ? 10000 : limit; // Fetch more if sorting by orders
+      const fetchOffset = shouldSortByOrders ? 0 : offset; // Start from beginning if sorting by orders
+      
       const [companies, totalCount] = await Promise.all([
         prisma.companies.findMany({
           where,
-          orderBy: { 
+          orderBy: shouldSortByOrders ? { name: 'asc' } : { 
             [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
           },
-          skip: offset,
-          take: limit,
+          skip: fetchOffset,
+          take: fetchLimit,
           // 🚀 PERFORMANCE: Select only fields needed for list view (90% data reduction: 54MB → 6MB)
           select: {
             // Core fields
@@ -725,15 +730,36 @@ export async function GET(request: NextRequest) {
         }
       }));
 
+      // Sort by Orders if requested (customFields.orders is a JSON field, need client-side sorting)
+      let sortedCompanies = enrichedCompanies;
+      if (shouldSortByOrders) {
+        sortedCompanies = [...enrichedCompanies].sort((a, b) => {
+          const aOrders = (a.customFields as any)?.orders;
+          const bOrders = (b.customFields as any)?.orders;
+          const aNum = typeof aOrders === 'number' ? aOrders : (typeof aOrders === 'string' ? parseFloat(aOrders) || 0 : 0);
+          const bNum = typeof bOrders === 'number' ? bOrders : (typeof bOrders === 'string' ? parseFloat(bOrders) || 0 : 0);
+          
+          if (sortOrder === 'asc') {
+            return aNum - bNum;
+          } else {
+            return bNum - aNum;
+          }
+        });
+        
+        // Apply pagination after sorting
+        sortedCompanies = sortedCompanies.slice(offset, offset + limit);
+        console.log(`🔄 [V1 COMPANIES API] Sorted by Orders (${sortOrder}), showing page ${page} (${sortedCompanies.length} of ${enrichedCompanies.length} total)`);
+      }
+
       console.log(`🔧 [V1 COMPANIES API] Building response with enriched companies:`, {
-        enrichedCount: enrichedCompanies.length,
+        enrichedCount: sortedCompanies.length,
         totalCount,
         processingTime: Date.now() - startTime
       });
 
       result = {
         success: true,
-        data: enrichedCompanies,
+        data: sortedCompanies,
         meta: {
           timestamp: new Date().toISOString(),
           pagination: {

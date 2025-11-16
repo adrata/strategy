@@ -48,6 +48,10 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
     sellers: {
       columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action'],
       columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction']
+    },
+    clients: {
+      columns: ['Company', 'Industry', 'Status', 'Last Action', 'Next Action'],
+      columnOrder: ['company', 'industry', 'status', 'lastAction', 'nextAction']
     }
   }
 };
@@ -70,8 +74,8 @@ export function getSectionColumns(workspaceId: string, section: string, workspac
     columnOrder: ['rank', 'name', 'details', 'stage', 'lastAction', 'nextAction']
   };
   
-  // Add Orders column for Notary Everyday companies section
-  if (section === 'companies' && (workspaceName === 'Notary Everyday' || workspaceName?.toLowerCase().includes('notary'))) {
+  // Add Orders column for Notary Everyday companies and clients sections
+  if ((section === 'companies' || section === 'clients') && (workspaceName === 'Notary Everyday' || workspaceName?.toLowerCase().includes('notary'))) {
     return {
       columns: [...defaultConfig.columns, 'Orders'],
       columnOrder: [...defaultConfig.columnOrder, 'orders']
