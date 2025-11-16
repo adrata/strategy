@@ -1548,6 +1548,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  isLoadingMore={fastSectionData.isLoadingMore}
                   searchQuery={searchQuery}
                   totalCount={searchQuery ? filteredData.length : sectionData.count} // Pass total count for correct pagination
                 />
@@ -1563,6 +1564,7 @@ export const PipelineContent = React.memo(function PipelineContent({
               visibleColumns={visibleColumns}
               pageSize={100} // Default page size for other sections
               isLoading={isLoading}
+              isLoadingMore={fastSectionData.isLoadingMore}
               searchQuery={searchQuery}
               totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
             />

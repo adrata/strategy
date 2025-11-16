@@ -149,15 +149,18 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
               const maxAge = section === 'speedrun' ? CACHE_TTL_SPEEDRUN : CACHE_TTL_DEFAULT;
               
               if (cacheAge < maxAge) {
+                // Use cached count if available, otherwise fall back to data.length
+                const cachedCount = parsed.count || parsed.data.length;
                 console.log(`⚡ [FAST SECTION DATA] Loading ${section} from localStorage cache:`, {
                   section,
-                  cachedCount: parsed.data.length,
+                  cachedDataLength: parsed.data.length,
+                  cachedCount: cachedCount,
                   cacheTimestamp: parsed.ts,
                   cacheVersion: parsed.version,
                   cacheAge: Math.round(cacheAge / 1000) + 's'
                 });
                 setData(parsed.data);
-                setCount(parsed.data.length);
+                setCount(cachedCount); // Use cached count, not data.length
                 setLoading(false);
                 setError(null);
                 // Still mark as loaded in memory cache
@@ -211,25 +214,25 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/speedrun?limit=${limit}${refreshParam}${partnerosParam}`;
           break;
         case 'leads':
-          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
-          const leadsLimit = initialOnly ? INITIAL_PAGE_SIZE : 10000;
-          url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=${leadsLimit}${refreshParam}${partnerosParam}`;
+          // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
+          // Progressive loading caused blank pages when navigating to later pages
+          url = `/api/v1/people?section=leads&sortBy=globalRank&sortOrder=desc&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'prospects':
-          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
-          const prospectsLimit = initialOnly ? INITIAL_PAGE_SIZE : 10000;
-          url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=${prospectsLimit}${refreshParam}${partnerosParam}`;
+          // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
+          // Progressive loading caused blank pages when navigating to later pages
+          url = `/api/v1/people?section=prospects&sortBy=lastActionDate&sortOrder=asc&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'opportunities':
-          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
+          // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
+          // Progressive loading caused blank pages when navigating to later pages
           // Opportunities are companies with status=OPPORTUNITY
-          const opportunitiesLimit = initialOnly ? INITIAL_PAGE_SIZE : 10000;
-          url = `/api/v1/companies?status=OPPORTUNITY&limit=${opportunitiesLimit}${refreshParam}${partnerosParam}`;
+          url = `/api/v1/companies?status=OPPORTUNITY&limit=10000${refreshParam}${partnerosParam}`;
           break;
         case 'people':
-          // 🚀 PROGRESSIVE LOADING: Fetch first 100 records for instant display, then load more
-          const peopleLimit = initialOnly ? INITIAL_PAGE_SIZE : Math.max(limit, 10000);
-          url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${peopleLimit}${refreshParam}${partnerosParam}`;
+          // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
+          // Progressive loading caused blank pages when navigating to later pages
+          url = `/api/v1/people?sortBy=globalRank&sortOrder=desc&limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}`;
           break;
         case 'companies':
           // For companies, use v1 API with pre-sorting and increased limit
@@ -396,8 +399,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         
         // 🔧 PAGINATION FIX: Always show all loaded data
         // Client-side pagination will handle showing the correct page
-        // When initialOnly=true, we only fetch 100 records, so show those 100
-        // When initialOnly=false, we fetch up to 10000 records, so show all of them
+        // All tables now fetch 10,000 records upfront (like companies) to ensure all pages work
         setData(responseData);
         
         // 🔧 CRITICAL FIX: Preserve the larger count to prevent overwriting correct totals
@@ -406,11 +408,23 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         // Check if responseCount came from API meta (not data.length fallback)
         const isFromMeta = !!(result.meta?.totalCount || result.meta?.pagination?.totalCount || result.meta?.count);
         setCount((prevCount) => {
+          // If we have a large count (likely correct) and new count is small (likely wrong), preserve the large one
+          const isLargeCount = prevCount > 500; // Threshold for "large" counts (leads: 923, people: 1,355, etc.)
+          const isSmallCount = responseCount < 200; // Threshold for "small" counts (likely wrong: 100, 102, etc.)
+          
           if (isFromMeta && responseCount > prevCount) {
-            // API provided a count that's larger than what we have - use it
+            // API provided a count that's larger than what we have - use it (this is an improvement)
             return responseCount;
+          } else if (isLargeCount && isSmallCount) {
+            // We have a large count (likely correct) and new count is small (likely wrong) - preserve the large count
+            console.log(`🛡️ [FAST SECTION DATA] Preserving large count ${prevCount} over small count ${responseCount} for ${section}`);
+            return prevCount;
           } else if (prevCount > 0 && prevCount > responseCount && responseCount === responseData.length) {
             // We already have a larger count and responseCount is just data.length - preserve the larger count
+            return prevCount;
+          } else if (prevCount > 0 && prevCount > responseCount && isLargeCount) {
+            // We have a large count that's larger than response - preserve it (even if response is from meta)
+            console.log(`🛡️ [FAST SECTION DATA] Preserving large count ${prevCount} over ${responseCount} for ${section}`);
             return prevCount;
           } else {
             // Use the response count (either it's valid or it's our best guess)
@@ -623,33 +637,19 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         setLoading(true);
       }
       
-      // Current section: Load immediately with no delay
+      // 🔧 FIX: All tables now fetch 10,000 records upfront (like companies)
+      // This ensures all pages work correctly without progressive loading
+      // Progressive loading caused blank pages when navigating to later pages
       if (isCurrentSection) {
-        console.log(`🚀 [FAST SECTION DATA] Prioritizing current section ${section} - loading immediately`);
-        fetchSectionData(false, true).then(() => {
+        console.log(`🚀 [FAST SECTION DATA] Prioritizing current section ${section} - loading all data immediately`);
+        fetchSectionData(false, false).then(() => {
           setHasLoadedInitial(true);
-          // Load remaining records in background after short delay
-          setTimeout(() => {
-            console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
-            setIsLoadingMore(true);
-            fetchSectionData(false, false).then(() => {
-              setIsLoadingMore(false);
-            });
-          }, PROGRESSIVE_LOAD_DELAY);
         });
       } else {
-        // Other sections: Use progressive loading
-        console.log(`🚀 [FAST SECTION DATA] Fetching initial ${INITIAL_PAGE_SIZE} ${section} records...`);
-        fetchSectionData(false, true).then(() => {
+        // Other sections: Load all data upfront
+        console.log(`🚀 [FAST SECTION DATA] Fetching all ${section} records...`);
+        fetchSectionData(false, false).then(() => {
           setHasLoadedInitial(true);
-          // Then load remaining records in background
-          setTimeout(() => {
-            console.log(`🔄 [FAST SECTION DATA] Loading remaining ${section} records in background...`);
-            setIsLoadingMore(true);
-            fetchSectionData(false, false).then(() => {
-              setIsLoadingMore(false);
-            });
-          }, PROGRESSIVE_LOAD_DELAY);
         });
       }
     } else if (loadedSectionsRef.current.has(section) && data.length > 0) {

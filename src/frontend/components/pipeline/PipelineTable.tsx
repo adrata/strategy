@@ -46,6 +46,7 @@ interface PipelineTableProps {
   visibleColumns?: string[];
   pageSize?: number;
   isLoading?: boolean;
+  isLoadingMore?: boolean; // Whether more data is being loaded in background
   totalCount?: number; // Total count from API for correct pagination
   searchQuery?: string; // Search query for filtering
 }
@@ -228,6 +229,9 @@ export function PipelineTable({
   visibleColumns,
   pageSize = DEFAULT_PAGE_SIZE,
   isLoading = false,
+  isLoadingMore = false,
+  totalCount,
+  searchQuery,
 }: PipelineTableProps) {
   console.log('🔍 [PipelineTable] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
   console.log('🔍 [PipelineTable] Sample data:', data?.slice(0, 2));
@@ -487,6 +491,31 @@ export function PipelineTable({
         rowCount={pageSize}
       />
     );
+  }
+  
+  // Check if current page requires data not yet loaded
+  // This happens when user navigates to a page (e.g., page 10) but only first 100 records are loaded
+  const pageRequiresMoreData = totalCount && totalCount > data.length && 
+    currentPage * pageSize > data.length && 
+    paginatedData.length === 0;
+  
+  // Show loading skeleton if page requires data that's still loading
+  // Show loading if: page requires more data AND (we're loading more OR we're in initial load state)
+  // This handles the case where user navigates to page 10 before background load completes
+  if (pageRequiresMoreData) {
+    // If we're loading more data, show skeleton
+    if (isLoadingMore || isLoading) {
+      return (
+        <TableDataSkeleton 
+          visibleColumns={visibleColumns}
+          rowCount={pageSize}
+        />
+      );
+    }
+    // If background load hasn't started yet but page requires data, trigger it
+    // This is handled by useFastSectionData's progressive loading, but we show loading state
+    // to give user feedback that data is being fetched
+    console.log(`⏳ [PipelineTable] Page ${currentPage} requires data not yet loaded (have ${data.length}, need ${currentPage * pageSize})`);
   }
   
   return (

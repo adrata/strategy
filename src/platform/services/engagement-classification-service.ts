@@ -452,7 +452,7 @@ export class EngagementClassificationService {
       });
 
       if (emails.length === 0) {
-        break;
+          break;
       }
 
       for (const email of emails) {
