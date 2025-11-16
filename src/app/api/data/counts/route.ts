@@ -215,6 +215,8 @@ export async function GET(request: NextRequest) {
               take: 200 // Fetch more initially to account for filtering (matching speedrun API)
             });
             
+            console.log(`🔍 [COUNTS API] Fetched ${speedrunPeople.length} people before filtering`);
+            
             if (speedrunPeople.length === 0) return 0;
             
             // Step 2: Check actions table for meaningful actions from today/yesterday
@@ -238,7 +240,10 @@ export async function GET(request: NextRequest) {
             // Step 3: Filter out records with meaningful actions from today/yesterday
             const filteredPeople = speedrunPeople.filter(person => {
               const hasRecentMeaningfulAction = recordsWithRecentMeaningfulActions.has(person.id);
-              if (hasRecentMeaningfulAction) return false;
+              if (hasRecentMeaningfulAction) {
+                console.log(`🚫 [COUNTS API] Filtering out person ${person.id} - has meaningful action from today/yesterday`);
+                return false;
+              }
               
               // Check lastActionDate - exclude if contacted today or yesterday with meaningful action
               const lastAction = person.lastAction;
@@ -255,6 +260,7 @@ export async function GET(request: NextRequest) {
                     lastAction === 'Record added';
                   
                   if (!hasNonMeaningfulLastAction) {
+                    console.log(`🚫 [COUNTS API] Filtering out person ${person.id} - lastAction: ${lastAction}, lastActionDate: ${lastActionDate} (today/yesterday)`);
                     return false;
                   }
                 }
@@ -262,6 +268,8 @@ export async function GET(request: NextRequest) {
               
               return true;
             });
+            
+            console.log(`🔍 [COUNTS API] After filtering people: ${filteredPeople.length} records remaining (from ${speedrunPeople.length} initial)`);
             
             return filteredPeople;
           } catch (error) {
@@ -285,7 +293,13 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               mainSellerId: userId, // Only records assigned to this user (exclude null, matching speedrun API)
               globalRank: { not: null, gte: 1, lte: 50 },
-              people: { none: {} },
+              // 🏆 FIX: Match speedrun API exactly - companies with no people assigned to THIS user (not all users)
+              people: {
+                none: {
+                  deletedAt: null,
+                  mainSellerId: userId // Only people assigned to this user
+                }
+              },
               // Exclude records contacted today or yesterday (include older contacts or never contacted)
               OR: [
                 { lastActionDate: null }, // No action date = include them
@@ -310,6 +324,8 @@ export async function GET(request: NextRequest) {
               take: 200 // Fetch more initially to account for filtering (matching speedrun API)
             });
             
+            console.log(`🔍 [COUNTS API] Fetched ${speedrunCompanies.length} companies before filtering`);
+            
             if (speedrunCompanies.length === 0) return 0;
             
             // Step 2: Check actions table for meaningful actions from today/yesterday
@@ -333,7 +349,10 @@ export async function GET(request: NextRequest) {
             // Step 3: Filter out records with meaningful actions from today/yesterday
             const filteredCompanies = speedrunCompanies.filter(company => {
               const hasRecentMeaningfulAction = recordsWithRecentMeaningfulActions.has(company.id);
-              if (hasRecentMeaningfulAction) return false;
+              if (hasRecentMeaningfulAction) {
+                console.log(`🚫 [COUNTS API] Filtering out company ${company.id} - has meaningful action from today/yesterday`);
+                return false;
+              }
               
               // Check lastActionDate - exclude if contacted today or yesterday with meaningful action
               const lastAction = company.lastAction;
@@ -350,6 +369,7 @@ export async function GET(request: NextRequest) {
                     lastAction === 'Record added';
                   
                   if (!hasNonMeaningfulLastAction) {
+                    console.log(`🚫 [COUNTS API] Filtering out company ${company.id} - lastAction: ${lastAction}, lastActionDate: ${lastActionDate} (today/yesterday)`);
                     return false;
                   }
                 }
@@ -357,6 +377,8 @@ export async function GET(request: NextRequest) {
               
               return true;
             });
+            
+            console.log(`🔍 [COUNTS API] After filtering companies: ${filteredCompanies.length} records remaining (from ${speedrunCompanies.length} initial)`);
             
             return filteredCompanies;
           } catch (error) {
