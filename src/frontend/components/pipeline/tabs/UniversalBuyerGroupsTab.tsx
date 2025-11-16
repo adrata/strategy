@@ -47,6 +47,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const previousCompanyNameRef = useRef<string | null>(null);
   const previousRecordIdRef = useRef<string | null>(null);
   
+  // 🔧 FIX: Store fetched companyId in state for cases where record.companyId is not loaded initially
+  const [fetchedCompanyId, setFetchedCompanyId] = useState<string>('');
+  
   // 🚨 CRITICAL FIX: Extract companyId and companyName into memos to track changes properly
   // This ensures the effect re-runs when companyId/companyName become available
   const companyId = React.useMemo(() => {
@@ -68,7 +71,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       // For person records (people, leads, prospects that are NOT company leads), get company from companyId field
       // 🔧 FIX: Prioritize record.companyId (direct field) over company relation to handle cases where
       // company relation is null but companyId field exists (common on initial load)
+      // 🔧 FIX: Also check fetchedCompanyId as fallback if record.companyId is not available
       const id = record.companyId || 
+                 fetchedCompanyId ||
                  (record?.company && typeof record.company === 'object' && record.company !== null ? record.company.id : null) ||
                  (typeof record?.company === 'string' ? record.company : null) ||
                  '';
@@ -76,6 +81,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         recordType,
         hasCompanyId: !!record.companyId,
         companyIdValue: record.companyId,
+        hasFetchedCompanyId: !!fetchedCompanyId,
+        fetchedCompanyIdValue: fetchedCompanyId,
         hasCompanyObject: !!record?.company,
         companyObjectType: typeof record?.company,
         companyObjectId: record?.company && typeof record.company === 'object' ? record.company.id : null,
@@ -83,7 +90,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       });
       return id;
     }
-  }, [record?.id, record?.companyId, record?.company, record?.isCompanyLead, recordType]);
+  }, [record?.id, record?.companyId, record?.company, record?.isCompanyLead, recordType, fetchedCompanyId]);
   
   const companyName = React.useMemo(() => {
     if (!record) return '';
@@ -239,16 +246,17 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       previousRecordIdRef.current = null;
       previousCompanyIdRef.current = null;
       previousCompanyNameRef.current = null;
-      // 🔧 FIX: Clear fetched company name when record is not available
+      // 🔧 FIX: Clear fetched company name and companyId when record is not available
       setFetchedCompanyName('');
+      setFetchedCompanyId('');
       return;
     }
     
-    // 🚨 CRITICAL FIX: Check if companyId is available - if not, show loading and wait
+    // 🚨 CRITICAL FIX: Check if companyId is available - if not, try to fetch it from API
     // 🔧 FIX: This check ensures we wait for companyId to become available when record prop updates
-    // The effect will re-run when companyId changes from empty to a value (due to dependency on line 943)
+    // The effect will re-run when companyId changes from empty to a value (due to dependency on line 959)
     if (!companyId || companyId.trim() === '') {
-      console.log('⚠️ [BUYER GROUPS] No valid companyId found, waiting for company data to load:', {
+      console.log('⚠️ [BUYER GROUPS] No valid companyId found, attempting to fetch from API:', {
         recordType,
         recordId: record?.id,
         recordName: record?.name || record?.fullName,
@@ -258,6 +266,46 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         companyRelationType: typeof record?.company,
         companyRelationId: record?.company && typeof record.company === 'object' ? record.company.id : null
       });
+      
+      // 🔧 FIX: Try to fetch companyId from API if missing from record
+      // This handles cases where the record loads without companyId initially
+      // Only fetch if we haven't already fetched for this record ID (prevents duplicate fetches)
+      // Check previousRecordIdRef to ensure we're on a new record, not just a re-render
+      const isNewRecord = previousRecordIdRef.current === null || previousRecordIdRef.current !== record.id;
+      if (record?.id && !fetchedCompanyId && isNewRecord) {
+        // Set ref immediately to prevent duplicate fetches if effect runs again before API completes
+        previousRecordIdRef.current = record.id;
+        
+        const fetchCompanyIdFromAPI = async () => {
+          try {
+            console.log('🔍 [BUYER GROUPS] Fetching companyId from API for record:', record.id);
+            const response = await authFetch(`/api/v1/people/${record.id}`);
+            if (response && response.success && response.data) {
+              const apiCompanyId = response.data.companyId || 
+                                   (response.data.company && typeof response.data.company === 'object' ? response.data.company.id : null) ||
+                                   (typeof response.data.company === 'string' ? response.data.company : null);
+              
+              if (apiCompanyId && apiCompanyId.trim() !== '') {
+                console.log('✅ [BUYER GROUPS] Fetched companyId from API:', apiCompanyId);
+                setFetchedCompanyId(apiCompanyId);
+                
+                // Also update fetchedCompanyName if company object is available
+                if (response.data.company && typeof response.data.company === 'object' && response.data.company.name) {
+                  setFetchedCompanyName(response.data.company.name);
+                }
+              } else {
+                console.log('⚠️ [BUYER GROUPS] API response does not contain companyId');
+              }
+            }
+          } catch (error) {
+            console.warn('⚠️ [BUYER GROUPS] Failed to fetch companyId from API:', error);
+            // Don't reset previousRecordIdRef on error - allow retry on next record change
+          }
+        };
+        
+        fetchCompanyIdFromAPI();
+      }
+      
       // Show loading while waiting for companyId to become available
       // When companyId becomes available, this effect will re-run and proceed with fetch
       setBuyerGroups([]);
@@ -268,6 +316,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       previousCompanyIdRef.current = null;
       previousCompanyNameRef.current = null;
       return;
+    }
+    
+    // 🔧 FIX: Clear fetchedCompanyId if we now have companyId from record (to avoid stale state)
+    if (fetchedCompanyId && record?.companyId) {
+      console.log('🔄 [BUYER GROUPS] Clearing fetchedCompanyId since record.companyId is now available');
+      setFetchedCompanyId('');
     }
     
     // 🔧 FIX: If companyId exists but companyName is missing, fetch company name
@@ -327,8 +381,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       setLoading(false);
       setIsFetching(false);
       setLastFetchTime(null);
-      // 🔧 FIX: Clear fetched company name when record/company changes
+      // 🔧 FIX: Clear fetched company name and companyId when record/company changes
       setFetchedCompanyName('');
+      setFetchedCompanyId('');
       
       // Clear cache for previous company (both ID and name-based keys)
       if (previousCompanyId || previousCompanyName) {
@@ -956,7 +1011,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       abortController.abort(); // Cancel any in-flight fetches
       setIsFetching(false);
     };
-  }, [record?.id, recordType, companyId, companyName]); // 🚨 CRITICAL FIX: Added companyId and companyName to dependencies to re-run when they become available
+  }, [record?.id, recordType, companyId, companyName, fetchedCompanyId]); // 🚨 CRITICAL FIX: Added companyId, companyName, and fetchedCompanyId to dependencies to re-run when they become available
 
   const handleInlineSave = async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
     if (onSave) {

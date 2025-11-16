@@ -245,8 +245,8 @@ async function validateAllDescriptions() {
               console.log(`      Confidence: ${validation.confidence}, Action: ${validation.suggestedAction}`);
             }
 
-            // Clear invalid descriptions
-            if (!dryRunArg && validation.suggestedAction === 'clear') {
+            // Clear invalid descriptions (both 'clear' and 'regenerate' actions)
+            if (!dryRunArg && (validation.suggestedAction === 'clear' || validation.suggestedAction === 'regenerate')) {
               const updates: any = {};
               if (field === 'description') {
                 updates.description = null;

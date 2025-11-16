@@ -304,11 +304,23 @@ CRUD OPERATIONS CAPABILITY:
     });
 
     if (!currentRecord || !recordType) {
-      console.warn('⚠️ [AIContextService] No record context available - returning general guidance');
+      console.warn('⚠️ [AIContextService] No record context available - returning general guidance', {
+        hasCurrentRecord: !!currentRecord,
+        recordType,
+        currentRecordKeys: currentRecord ? Object.keys(currentRecord) : []
+      });
       return `GENERAL APPLICATION CONTEXT:
 - No specific record selected
 - Provide general guidance about methodology and best practices
 - Help with overall strategy and workflow optimization`;
+    }
+    
+    // 🔧 FIX: Ensure record has required fields
+    if (!currentRecord.id) {
+      console.warn('⚠️ [AIContextService] Record missing ID field:', {
+        recordKeys: Object.keys(currentRecord),
+        recordName: currentRecord.name || currentRecord.fullName
+      });
     }
 
     const recordName = currentRecord.fullName || currentRecord.name || 'Unknown';
@@ -359,7 +371,11 @@ Strategic Fit Analysis:
 - ${currentRecord.techStack?.length ? `Uses technologies: ${currentRecord.techStack.join(', ')}` : 'Technology stack not specified'}
 - ${currentRecord.businessChallenges?.length ? `Faces challenges: ${currentRecord.businessChallenges.join(', ')}` : 'Business challenges not specified'}
 
-CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses should be specific to this company and its business context.`;
+CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses should be specific to this company and its business context.
+
+COMPLETE COMPANY RECORD DATA (All Available Fields):
+The following is the complete company record data available. Use ALL of this information when providing responses:
+${JSON.stringify(currentRecord, null, 2).substring(0, 5000)}${JSON.stringify(currentRecord, null, 2).length > 5000 ? '\n... (truncated for length, but all key fields are included above)' : ''}`;
     } else {
       // Enhanced person/lead record context
       // 🔍 GET PERSON/LEAD INTELLIGENCE FROM DATABASE: Read stored intelligence from database
@@ -549,7 +565,11 @@ ${currentRecord.phone ? `- Phone: ${currentRecord.phone}` : ''}
 ${isOpportunityType ? `- Stage: ${currentRecord.stage || 'Not specified'}` : ''}
 ${isOpportunityType ? `- Value: ${currentRecord.value ? `$${currentRecord.value.toLocaleString()}` : 'Not specified'}` : ''}
 ${isOpportunityType ? `- Close Date: ${currentRecord.closeDate ? new Date(currentRecord.closeDate).toLocaleDateString() : 'Not specified'}` : ''}
-- This is the exact record the user has open and is viewing right now.`;
+- This is the exact record the user has open and is viewing right now.
+
+COMPLETE RECORD DATA (All Available Fields):
+The following is the complete record data available. Use ALL of this information when providing responses:
+${JSON.stringify(currentRecord, null, 2).substring(0, 5000)}${JSON.stringify(currentRecord, null, 2).length > 5000 ? '\n... (truncated for length, but all key fields are included above)' : ''}`;
     }
 
     // Add enrichment context if available (now with detailed extraction)
@@ -586,6 +606,37 @@ ${isOpportunityType ? `- Close Date: ${currentRecord.closeDate ? new Date(curren
 - Has Notes: ${currentRecord.pipelineContext.hasNotes ? 'Yes' : 'No'}
 - User expects strategic pipeline management guidance`;
     }
+
+    // 🔧 FIX: Ensure context is never empty - add fallback if context building failed
+    if (!context || context.trim().length < 50) {
+      console.warn('⚠️ [AIContextService] Record context is too short, adding fallback context', {
+        contextLength: context?.length || 0,
+        recordName: recordName,
+        recordCompany: recordCompany,
+        recordType
+      });
+      
+      // Build minimal but useful context
+      context = `=== CURRENT RECORD (WHO THEY ARE) ===
+Name: ${recordName}${recordCompany && recordCompany !== 'Unknown Company' ? ` at ${recordCompany}` : ''}
+${recordTitle && recordTitle !== 'Unknown Title' ? `Title: ${recordTitle}` : ''}
+${currentRecord.status ? `Status: ${currentRecord.status}` : ''}
+${currentRecord.priority ? `Priority: ${currentRecord.priority}` : ''}
+
+CRITICAL: The user is looking at ${recordName}${recordCompany && recordCompany !== 'Unknown Company' ? ` at ${recordCompany}` : ''} RIGHT NOW. Your responses should be specific to this person and company. Use all available information to craft personalized recommendations.
+
+COMPLETE RECORD DATA (All Available Fields):
+${JSON.stringify(currentRecord, null, 2).substring(0, 3000)}${JSON.stringify(currentRecord, null, 2).length > 3000 ? '\n... (truncated for length)' : ''}`;
+    }
+    
+    // 🔍 LOG FINAL CONTEXT LENGTH
+    console.log('✅ [AIContextService] Record context built successfully:', {
+      contextLength: context.length,
+      recordName,
+      recordCompany,
+      recordType,
+      contextPreview: context.substring(0, 200) + '...'
+    });
 
     return context;
   }
@@ -716,7 +767,8 @@ CURRENT PAGE VISIBLE RECORDS:`;
    - Title: ${title}
    - Status: ${status}
    - Priority: ${priority}
-   - ID: ${recordId}`;
+   - ID: ${recordId}
+   - Complete Record Data: ${JSON.stringify(record).substring(0, 500)}${JSON.stringify(record).length > 500 ? '...' : ''}`;
     });
 
     if (visibleRecords.length > 15) {

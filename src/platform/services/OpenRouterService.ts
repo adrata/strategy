@@ -734,6 +734,18 @@ You are Adrata's AI assistant, specialized in sales intelligence and pipeline op
       
       if (workspaceContext.recordContext) {
         basePrompt += `\n\nRECORD CONTEXT:\n${workspaceContext.recordContext}`;
+        
+        // 🔧 FIX: Emphasize that record context is available and should be used
+        basePrompt += `\n\nCRITICAL INSTRUCTION: The RECORD CONTEXT above contains comprehensive information about the person/company the user is currently viewing. You MUST use this context when answering questions. Do NOT say "I don't have enough context" - use the information provided in the RECORD CONTEXT section above.`;
+      } else {
+        // 🔧 FIX: Log warning if record context is missing when we have a currentRecord
+        if (currentRecord) {
+          console.warn('⚠️ [OpenRouterService] Record context is empty but currentRecord exists:', {
+            recordId: currentRecord.id,
+            recordName: currentRecord.name || currentRecord.fullName,
+            recordType
+          });
+        }
       }
       
       if (workspaceContext.listViewContext) {

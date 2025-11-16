@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
+import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
@@ -233,6 +234,9 @@ export function PipelineTable({
   totalCount,
   searchQuery,
 }: PipelineTableProps) {
+  // 🎯 AI CONTEXT: Get record context setter for list view
+  const { setListViewContext, clearListViewContext } = useRecordContext();
+  
   console.log('🔍 [PipelineTable] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
   console.log('🔍 [PipelineTable] Sample data:', data?.slice(0, 2));
   
@@ -385,6 +389,39 @@ export function PipelineTable({
     totalItems,
     samplePaginatedData: paginatedData?.slice(0, 2)
   });
+
+  // 🎯 AI CONTEXT: Update list view context with paginated data and pagination info
+  useEffect(() => {
+    if (paginatedData && paginatedData.length > 0) {
+      const listViewContext = {
+        visibleRecords: paginatedData, // Use paginated data, not all data
+        activeSection: section,
+        appliedFilters: {
+          searchQuery: searchQuery || '',
+          sortField: sortField || 'default',
+          sortDirection: sortDirection || 'asc',
+          page: currentPage,
+          pageSize: pageSize
+        },
+        totalCount: totalItems || paginatedData.length,
+        currentPage: currentPage,
+        totalPages: totalPages,
+        lastUpdated: new Date()
+      };
+      
+      console.log('🎯 [PipelineTable] Setting list view context:', {
+        section,
+        visibleRecords: paginatedData.length,
+        currentPage,
+        totalPages,
+        totalCount: totalItems
+      });
+      
+      setListViewContext(listViewContext);
+    } else {
+      clearListViewContext();
+    }
+  }, [paginatedData, section, currentPage, totalPages, totalItems, pageSize, searchQuery, sortField, sortDirection, setListViewContext, clearListViewContext]);
 
   
   const {

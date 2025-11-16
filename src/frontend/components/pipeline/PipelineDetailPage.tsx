@@ -70,14 +70,82 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         recordType = 'person';
       }
       
+      // 🔧 FIX: Normalize record data to ensure all fields expected by buildRecordContext are present
+      const normalizedRecord = {
+        ...selectedRecord,
+        // Ensure name fields are present
+        name: selectedRecord.name || selectedRecord.fullName || 'Unknown',
+        fullName: selectedRecord.fullName || selectedRecord.name || 'Unknown',
+        // Ensure company fields are present (handle both string and object company types)
+        company: typeof selectedRecord.company === 'string' 
+          ? selectedRecord.company 
+          : selectedRecord.company?.name || selectedRecord.companyName || 'Unknown Company',
+        companyName: typeof selectedRecord.company === 'string'
+          ? selectedRecord.company
+          : selectedRecord.company?.name || selectedRecord.companyName || 'Unknown Company',
+        // Ensure title fields are present
+        title: selectedRecord.title || selectedRecord.jobTitle || 'Unknown Title',
+        jobTitle: selectedRecord.jobTitle || selectedRecord.title || 'Unknown Title',
+        // Ensure contact fields are present
+        email: selectedRecord.email || selectedRecord.workEmail || null,
+        workEmail: selectedRecord.workEmail || selectedRecord.email || null,
+        phone: selectedRecord.phone || selectedRecord.workPhone || null,
+        workPhone: selectedRecord.workPhone || selectedRecord.phone || null,
+        // Ensure LinkedIn fields are present
+        linkedin: selectedRecord.linkedin || selectedRecord.linkedinUrl || null,
+        linkedinUrl: selectedRecord.linkedinUrl || selectedRecord.linkedin || selectedRecord.linkedinNavigatorUrl || null,
+        // Include all other fields from the original record
+        ...(selectedRecord.bio && { bio: selectedRecord.bio }),
+        ...(selectedRecord.interests && { interests: selectedRecord.interests }),
+        ...(selectedRecord.recentActivity && { recentActivity: selectedRecord.recentActivity }),
+        ...(selectedRecord.relationship && { relationship: selectedRecord.relationship }),
+        ...(selectedRecord.lastContact && { lastContact: selectedRecord.lastContact }),
+        ...(selectedRecord.nextAction && { nextAction: selectedRecord.nextAction }),
+        ...(selectedRecord.priority && { priority: selectedRecord.priority }),
+        ...(selectedRecord.status && { status: selectedRecord.status }),
+        ...(selectedRecord.department && { department: selectedRecord.department }),
+        ...(selectedRecord.seniority && { seniority: selectedRecord.seniority }),
+        ...(selectedRecord.decisionPower && { decisionPower: selectedRecord.decisionPower }),
+        ...(selectedRecord.buyerGroupRole && { buyerGroupRole: selectedRecord.buyerGroupRole }),
+        // Include Monaco enrichment data if available
+        ...(selectedRecord.monacoEnrichment && { monacoEnrichment: selectedRecord.monacoEnrichment }),
+        ...(selectedRecord.customFields?.monacoEnrichment && { 
+          monacoEnrichment: selectedRecord.customFields.monacoEnrichment 
+        }),
+        // Include company object if it exists (for nested company data)
+        ...(typeof selectedRecord.company === 'object' && selectedRecord.company && {
+          company: {
+            ...selectedRecord.company,
+            industry: selectedRecord.company.industry || null,
+            employeeCount: selectedRecord.company.size || selectedRecord.company.employeeCount || null,
+            size: selectedRecord.company.size || selectedRecord.company.employeeCount || null,
+            website: selectedRecord.company.website || null,
+            description: selectedRecord.company.description || null,
+          }
+        }),
+        // Add speedrun-specific context if this is a speedrun record
+        ...(section === 'speedrun' && {
+          speedrunContext: {
+            isSpeedrunProspect: true,
+            currentApp: 'Speedrun',
+            prospectIndex: selectedRecord.stableIndex || selectedRecord.rank,
+            winningScore: selectedRecord.winningScore
+          }
+        })
+      };
+      
       console.log('🎯 [AI CONTEXT] Syncing record context:', {
-        recordId: selectedRecord.id,
-        recordName: selectedRecord.name || selectedRecord.fullName,
+        recordId: normalizedRecord.id,
+        recordName: normalizedRecord.name || normalizedRecord.fullName,
         recordType,
-        section
+        section,
+        hasCompany: !!normalizedRecord.company,
+        hasTitle: !!normalizedRecord.title,
+        hasEmail: !!normalizedRecord.email,
+        fieldCount: Object.keys(normalizedRecord).length
       });
       
-      setCurrentRecord(selectedRecord, recordType);
+      setCurrentRecord(normalizedRecord, recordType);
     } else {
       clearCurrentRecord();
     }

@@ -1416,29 +1416,8 @@ export const PipelineView = React.memo(function PipelineView({
   // 🚀 CACHE OPTIMIZATION: Removed aggressive auto-refresh that was causing unnecessary reloads
   // The cache system now handles data freshness intelligently without forcing refreshes on navigation
 
-  // Update list view context for AI when filtered data changes
-  useEffect(() => {
-    if (filteredData && filteredData.length > 0) {
-      const listViewContext = {
-        visibleRecords: filteredData,
-        activeSection: section,
-        appliedFilters: {
-          searchQuery,
-          verticalFilter,
-          statusFilter,
-          priorityFilter,
-          sortField,
-          sortDirection
-        },
-        totalCount: filteredData.length,
-        lastUpdated: new Date()
-      };
-      
-      setListViewContext(listViewContext);
-    } else {
-      clearListViewContext();
-    }
-  }, [filteredData, section, searchQuery, verticalFilter, statusFilter, priorityFilter, sortField, sortDirection, setListViewContext, clearListViewContext]);
+  // 🎯 AI CONTEXT: List view context is now set by PipelineTable with pagination info
+  // Removed duplicate list view context setting - PipelineTable handles it with proper pagination
 
   // Handle add record
   const handleAddRecord = () => {
