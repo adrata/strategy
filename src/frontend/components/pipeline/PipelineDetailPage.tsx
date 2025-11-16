@@ -854,9 +854,33 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const dataRef = useRef<any[]>([]);
   
   // 🔧 FIX: Keep dataRef in sync with current data without triggering useEffect
+  // Also check for record when data becomes available and we're waiting for it
   useEffect(() => {
+    const previousLength = dataRef.current.length;
     dataRef.current = data;
-  }, [data]);
+    
+    // If data just became available (was empty, now has data) and we have a slug but no record,
+    // check if the record is in the data and set it directly
+    if (previousLength === 0 && data.length > 0 && slug && !selectedRecord && !directRecordLoading && !loading) {
+      const recordId = extractIdFromSlug(slug);
+      if (recordId && recordId !== 'undefined' && recordId !== 'null' && recordId.trim() !== '') {
+        // Check if record is in the newly available data
+        const recordInData = data.find((r: any) => r.id === recordId);
+        if (recordInData) {
+          console.log(`✅ [BLANK PAGE FIX] Found record in newly available data (${data.length} records), setting directly:`, {
+            recordId,
+            recordName: recordInData.name || recordInData.fullName
+          });
+          setSelectedRecord(recordInData);
+          lastFallbackCheckRef.current = recordId;
+        } else {
+          // Reset the ref to allow fallback useEffect to run again
+          console.log(`🔄 [BLANK PAGE FIX] Data became available (${data.length} records) but record ${recordId} not found, resetting fallback check`);
+          lastFallbackCheckRef.current = null;
+        }
+      }
+    }
+  }, [data, slug, selectedRecord, directRecordLoading, loading]);
   
   // 🔧 FIX: Reset ref when slug changes so we can check new records
   useEffect(() => {
@@ -910,8 +934,16 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         lastFallbackCheckRef.current = recordId;
       }
     } else {
-      // Mark as checked even if not found to prevent repeated searches
-      lastFallbackCheckRef.current = recordId;
+      // 🔧 FIX: Only mark as checked if we've searched in non-empty data
+      // If data is empty, allow the fallback to run again when data becomes available
+      if (dataRef.current.length > 0) {
+        // Data exists but record not found - mark as checked to prevent repeated searches
+        console.log(`⚠️ [BLANK PAGE FIX] Record ${recordId} not found in data array (${dataRef.current.length} records), marking as checked`);
+        lastFallbackCheckRef.current = recordId;
+      } else {
+        // Data is empty - don't mark as checked yet, allow retry when data loads
+        console.log(`⏳ [BLANK PAGE FIX] Data array is empty, will retry when data loads for record ${recordId}`);
+      }
     }
   }, [slug, selectedRecord, directRecordLoading, loading, section]); // 🔧 FIX: Removed data from dependencies to prevent flickering when leads data refreshes
 
