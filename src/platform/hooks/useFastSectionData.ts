@@ -523,20 +523,39 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
         errorMessage = err;
       }
       
-      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, {
-        error: errorMessage,
+      // Ensure we always have a meaningful error message
+      const safeErrorMessage = errorMessage || 'Unknown error occurred';
+      const errorDetails: any = {
+        error: safeErrorMessage,
         url,
         workspaceId,
         userId,
-        fullError: err,
-        errorType: typeof err,
-        errorConstructor: err?.constructor?.name,
-        errorKeys: err && typeof err === 'object' ? Object.keys(err) : 'not an object',
-        errorStringified: JSON.stringify(err, null, 2),
-        errorToString: err?.toString(),
-        errorMessage: err?.message,
-        errorStack: err?.stack
-      });
+        section
+      };
+      
+      // Only add error details if they exist and are meaningful
+      if (err) {
+        if (err instanceof Error) {
+          errorDetails.errorType = 'Error';
+          errorDetails.errorMessage = err.message;
+          errorDetails.errorStack = err.stack;
+        } else if (typeof err === 'object') {
+          errorDetails.errorType = typeof err;
+          errorDetails.errorConstructor = err?.constructor?.name;
+          errorDetails.errorKeys = Object.keys(err);
+          // Try to stringify, but catch if it fails
+          try {
+            errorDetails.errorStringified = JSON.stringify(err, null, 2);
+          } catch (e) {
+            errorDetails.errorStringified = '[Unable to stringify error]';
+          }
+        } else {
+          errorDetails.errorType = typeof err;
+          errorDetails.errorValue = String(err);
+        }
+      }
+      
+      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorDetails);
       
       // Don't set error for network failures - just log and continue
       if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('HTTP')) {
