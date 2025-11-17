@@ -17,7 +17,12 @@ export function URLFixer() {
       const currentPath = window.location.pathname;
       console.log(`🔍 [URL_FIXER] Checking current path: ${currentPath}`);
       
-      // Check for malformed URLs
+      // 🔧 FIX: Extract workspace prefix if present (e.g., /top/leads/prospects -> workspace: top, path: /leads/prospects)
+      const workspaceMatch = currentPath.match(/^\/([^\/]+)\/(.+)$/);
+      const workspacePrefix = workspaceMatch ? `/${workspaceMatch[1]}` : '';
+      const pathWithoutWorkspace = workspaceMatch ? `/${workspaceMatch[2]}` : currentPath;
+      
+      // Check for malformed URLs (workspace-aware)
       const malformedPatterns = [
         { pattern: /\/leads\/prospects/, fix: (path: string) => path.replace('/leads/prospects', '/prospects') },
         { pattern: /\/prospects\/leads/, fix: (path: string) => path.replace('/prospects/leads', '/leads') },
@@ -27,9 +32,11 @@ export function URLFixer() {
         { pattern: /\/opportunities\/prospects/, fix: (path: string) => path.replace('/opportunities/prospects', '/prospects') }
       ];
       
+      // Check if path (without workspace) matches malformed patterns
       for (const { pattern, fix } of malformedPatterns) {
-        if (pattern.test(currentPath)) {
-          const correctedPath = fix(currentPath);
+        if (pattern.test(pathWithoutWorkspace)) {
+          const correctedPathWithoutWorkspace = fix(pathWithoutWorkspace);
+          const correctedPath = workspacePrefix ? `${workspacePrefix}${correctedPathWithoutWorkspace}` : correctedPathWithoutWorkspace;
           console.warn(`⚠️ [URL_FIXER] Detected malformed URL: ${currentPath}`);
           console.log(`🔧 [URL_FIXER] Redirecting to corrected URL: ${correctedPath}`);
           
@@ -42,7 +49,7 @@ export function URLFixer() {
       console.log(`✅ [URL_FIXER] URL is valid: ${currentPath}`);
     };
 
-    // Run the fix on mount
+    // Run the fix on mount (only once to prevent reload loops)
     fixMalformedURLs();
   }, [router]);
 

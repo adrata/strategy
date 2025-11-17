@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
-import { getWorkspaceBySlug, parseWorkspaceFromUrl } from "@/platform/auth/workspace-slugs";
+import { getWorkspaceBySlug, parseWorkspaceFromUrl, generateWorkspaceSlug } from "@/platform/auth/workspace-slugs";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useWorkspaceSwitch } from "@/platform/hooks/useWorkspaceSwitch";
 import { initSpeedrunPrefetch } from "@/platform/services/speedrun-prefetch";
@@ -16,6 +16,7 @@ interface WorkspaceLayoutProps {
 export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname(); // 🔧 CRITICAL FIX: Use Next.js pathname hook to track URL changes
   const { user: authUser, isLoading } = useUnifiedAuth();
   const { switchToWorkspaceFromUrl } = useWorkspaceSwitch();
   const [isValidating, setIsValidating] = useState(true);
@@ -40,18 +41,20 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
     }
 
     const validateWorkspace = async () => {
-      if (!hasWorkspaces) {
+      if (!hasWorkspaces || !authUser?.workspaces) {
         console.log("❌ No workspaces available");
         router.push("/workspaces");
         return;
       }
 
-      const pathname = window.location.pathname;
+      // 🔧 CRITICAL FIX: Use pathname from hook instead of window.location.pathname
+      // This ensures React tracks pathname changes properly
       
       // 🔧 FIX: Skip validation if we've already validated this pathname with this workspace
       if (lastValidatedPathnameRef.current === pathname && 
           lastValidatedWorkspaceIdRef.current === activeWorkspaceId) {
         console.log("✅ [WORKSPACE LAYOUT] Already validated this pathname with current workspace, skipping");
+        setIsValidating(false);
         return;
       }
       
@@ -64,27 +67,75 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
       }
 
       const { slug } = parsed;
+      
+      // 🔧 CRITICAL: Get workspace from slug and verify slug generation matches
       const workspace = getWorkspaceBySlug(authUser.workspaces, slug);
+      
+      // 🔧 CRITICAL DEBUG: Log workspace matching details
+      const activeWorkspace = authUser.workspaces.find(w => w.id === activeWorkspaceId);
+      const activeWorkspaceSlug = activeWorkspace ? generateWorkspaceSlug(activeWorkspace.name) : null;
+      
+      console.log(`🔍 [WORKSPACE VALIDATION] Workspace matching check:`, {
+        urlSlug: slug,
+        activeWorkspaceId,
+        activeWorkspaceName: activeWorkspace?.name,
+        activeWorkspaceSlug,
+        foundWorkspaceId: workspace?.id,
+        foundWorkspaceName: workspace?.name,
+        foundWorkspaceSlug: workspace ? generateWorkspaceSlug(workspace.name) : null,
+        slugMatches: activeWorkspaceSlug === slug,
+        idMatches: workspace?.id === activeWorkspaceId
+      });
 
       if (!workspace) {
-        console.log(`❌ Workspace not found for slug: ${slug}`);
+        console.error(`❌ [WORKSPACE VALIDATION] Workspace not found for slug: ${slug}`, {
+          availableWorkspaces: authUser.workspaces.map(w => ({
+            id: w.id,
+            name: w.name,
+            generatedSlug: generateWorkspaceSlug(w.name)
+          }))
+        });
         router.push("/workspaces");
         return;
       }
 
+      // 🔧 CRITICAL FIX: Check if slug matches active workspace slug BEFORE checking ID
+      // This catches cases where workspace name changed but ID is the same
+      if (activeWorkspaceSlug !== slug) {
+        console.warn(`⚠️ [WORKSPACE VALIDATION] Slug mismatch detected:`, {
+          urlSlug: slug,
+          activeWorkspaceSlug,
+          activeWorkspaceName: activeWorkspace?.name,
+          foundWorkspaceName: workspace.name,
+          foundWorkspaceSlug: generateWorkspaceSlug(workspace.name),
+          note: 'URL slug does not match active workspace slug - this may cause reload loops'
+        });
+        
+        // If the workspace ID matches but slug doesn't, this is a slug generation mismatch
+        // We should still allow access but log the issue
+        if (workspace.id === activeWorkspaceId) {
+          console.warn(`⚠️ [WORKSPACE VALIDATION] Workspace ID matches but slug differs - allowing access but slug mismatch may cause issues`);
+          // Update refs and continue - workspace is correct, just slug generation issue
+          lastValidatedWorkspaceIdRef.current = activeWorkspaceId;
+          lastValidatedPathnameRef.current = pathname;
+          setIsValidating(false);
+          return;
+        }
+      }
+
       // Check if this is the active workspace
       if (workspace.id !== activeWorkspaceId) {
-        console.log(`🔄 Workspace mismatch: URL wants ${workspace.name} (${slug}), but active is ${activeWorkspaceId}`);
-        console.log(`🔄 Attempting to switch to the correct workspace...`);
+        console.log(`🔄 [WORKSPACE VALIDATION] Workspace ID mismatch: URL wants ${workspace.name} (${slug}, ID: ${workspace.id}), but active is ${activeWorkspaceId}`);
+        console.log(`🔄 [WORKSPACE VALIDATION] Attempting to switch to the correct workspace...`);
         
         // 🔧 FIX: Set flag to prevent re-entry during switch
         isValidatingRef.current = true;
         
         try {
           // Try to switch to the correct workspace
-          const switchSuccess = await switchToWorkspaceFromUrl(window.location.pathname);
+          const switchSuccess = await switchToWorkspaceFromUrl(pathname);
           if (!switchSuccess) {
-            console.warn(`⚠️ Failed to switch workspace, but allowing access to prevent navigation issues`);
+            console.warn(`⚠️ [WORKSPACE VALIDATION] Failed to switch workspace, but allowing access to prevent navigation issues`);
           } else {
             // Update tracking refs after successful switch
             lastValidatedWorkspaceIdRef.current = workspace.id;
@@ -97,7 +148,7 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
         lastValidatedWorkspaceIdRef.current = activeWorkspaceId;
       }
       
-      // Always update the pathname ref
+      // Always update the pathname ref AFTER validation completes
       lastValidatedPathnameRef.current = pathname;
 
       console.log(`✅ Valid workspace: ${workspace.name} (${slug})`);
@@ -105,7 +156,10 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
     };
 
     validateWorkspace();
-  }, [hasWorkspaces, workspacesLength, activeWorkspaceId, isLoading, router, switchToWorkspaceFromUrl, authUser?.workspaces]);
+    // 🔧 CRITICAL FIX: Include pathname in dependencies so validation runs when URL changes
+    // This ensures we validate when navigating to new routes (like lead records)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, hasWorkspaces, workspacesLength, activeWorkspaceId, isLoading, router, switchToWorkspaceFromUrl]);
 
   // Initialize speedrun background prefetch service
   useEffect(() => {
