@@ -107,6 +107,7 @@ interface UseUIReturn {
 export function useUI(): UseUIReturn {
   // Check if we're on client side
   const isClient = typeof window !== "undefined";
+  const router = useRouter();
 
   // Debug helper (development only)
   const debug = (phase: string, details: any) => {
