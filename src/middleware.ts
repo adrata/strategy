@@ -130,22 +130,30 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get('host') || '';
 
-  // CRITICAL: Handle API routes with trailing slashes BEFORE any other processing
-  // This must execute before Next.js trailingSlash redirect to prevent POST→GET conversion
+  // CRITICAL: Handle API routes BEFORE Next.js trailingSlash redirect
+  // Next.js trailingSlash: true redirects /api/ai-chat → /api/ai-chat/, converting POST→GET
+  // We must intercept and rewrite to preserve HTTP method
   // Rewrite preserves HTTP method (POST stays POST), unlike redirects
   
-  // Handle /api/ai-chat/ trailing slash
-  if (pathname === '/api/ai-chat/') {
+  // Handle /api/ai-chat (with or without trailing slash)
+  // Rewrite both to /api/ai-chat (no slash) to prevent Next.js redirect
+  if (pathname === '/api/ai-chat' || pathname === '/api/ai-chat/') {
+    const method = request.method;
+    console.log(`🔄 [MIDDLEWARE] Rewriting ${pathname} (${method}) to /api/ai-chat to preserve method`);
     const url = request.nextUrl.clone();
     url.pathname = '/api/ai-chat';
-    return NextResponse.rewrite(url);
+    const response = NextResponse.rewrite(url);
+    // Ensure method is preserved in headers for debugging
+    response.headers.set('X-Rewritten-From', pathname);
+    response.headers.set('X-Original-Method', method);
+    return response;
   }
   
-  // Handle /api/v1/conversations/[id]/messages/ trailing slash
-  // Pattern: /api/v1/conversations/{id}/messages/
-  const messagesTrailingSlashMatch = pathname.match(/^\/api\/v1\/conversations\/([^\/]+)\/messages\/$/);
-  if (messagesTrailingSlashMatch) {
-    const conversationId = messagesTrailingSlashMatch[1];
+  // Handle /api/v1/conversations/[id]/messages (with or without trailing slash)
+  // Pattern: /api/v1/conversations/{id}/messages or /api/v1/conversations/{id}/messages/
+  const messagesMatch = pathname.match(/^\/api\/v1\/conversations\/([^\/]+)\/messages\/?$/);
+  if (messagesMatch) {
+    const conversationId = messagesMatch[1];
     const url = request.nextUrl.clone();
     url.pathname = `/api/v1/conversations/${conversationId}/messages`;
     return NextResponse.rewrite(url);

@@ -1127,6 +1127,9 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     }
   }, [slug, selectedRecord, directRecordLoading, loading, section]); // 🔧 FIX: Removed data from dependencies to prevent flickering when leads data refreshes
 
+  // 🔧 INFINITE RELOAD FIX: Use ref to track if we're already processing this slug
+  const processingSlugRef = useRef<string | null>(null);
+  
   useEffect(() => {
     if (!slug) return;
 
@@ -1144,6 +1147,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
+    // 🔧 INFINITE RELOAD FIX: Prevent processing the same slug multiple times
+    if (processingSlugRef.current === slug) {
+      console.log(`✅ [RECORD LOADING] Already processing slug: ${slug}, skipping`);
+      return;
+    }
+    
     // 🔧 INFINITE LOOP FIX: Prevent loading the same record multiple times
     if (lastLoadedRecordIdRef.current === recordId && selectedRecord?.id === recordId && !directRecordLoading) {
       console.log(`✅ [RECORD LOADING] Record ${recordId} already loaded, skipping reload`);
@@ -1154,6 +1163,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     if (selectedRecord?.id === recordId && !directRecordLoading) {
       console.log(`✅ [RECORD LOADING] Record already loaded: ${recordId}, skipping reload`);
       lastLoadedRecordIdRef.current = recordId;
+      processingSlugRef.current = slug;
       return;
     }
     
@@ -1167,6 +1177,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         if (timeSinceUpdate < 5000) {
           console.log(`✅ [RECORD LOADING] Record ${recordId} was just updated ${timeSinceUpdate}ms ago, skipping reload to prevent flicker`);
           lastLoadedRecordIdRef.current = recordId;
+          processingSlugRef.current = slug;
           return;
         }
         // Clear old timestamp
@@ -1190,6 +1201,9 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
+    // 🔧 INFINITE RELOAD FIX: Mark this slug as being processed
+    processingSlugRef.current = slug;
+    
     // 🔧 INFINITE LOOP FIX: Mark this record as being loaded before calling loadDirectRecord
     lastLoadedRecordIdRef.current = recordId;
     
@@ -1199,6 +1213,13 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     return; // Exit early - loadDirectRecord handles everything
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, section]); // 🔧 FIX: Removed loadDirectRecord from dependencies to prevent infinite loops - it's stable (only depends on section which is already in deps)
+  
+  // 🔧 INFINITE RELOAD FIX: Clear processing flag when slug changes
+  useEffect(() => {
+    if (slug && processingSlugRef.current !== slug) {
+      processingSlugRef.current = null;
+    }
+  }, [slug]);
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {

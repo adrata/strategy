@@ -22,6 +22,17 @@ import { rateLimiter } from '@/platform/security/rate-limiter';
 import { securityMonitor } from '@/platform/security/security-monitor';
 import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } from '@/platform/ai/tools/role-finder-tool';
 
+// GET handler - return 405 to prevent Next.js from redirecting POST requests here
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    success: false,
+    error: 'Method not allowed. Use POST to send messages.',
+    code: 'METHOD_NOT_ALLOWED',
+    receivedMethod: 'GET',
+    expectedMethod: 'POST'
+  }, { status: 405 });
+}
+
 export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
   const requestMethod = request.method;

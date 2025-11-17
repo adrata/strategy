@@ -458,6 +458,7 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
         
         // 🚀 PERFORMANCE: Cache data in localStorage (like leads pattern)
         // Always cache full responseData, not just the displayed slice
+        // 🔧 FIX: Handle localStorage quota errors gracefully to prevent reload loops
         try {
           const storageKey = `adrata-${section}-${workspaceId}`;
           // Use centralized CACHE_VERSION constant
@@ -467,16 +468,48 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
             ts: Date.now(),
             version: CACHE_VERSION
           };
-          localStorage.setItem(storageKey, JSON.stringify(cacheData));
-          console.log(`💾 [FAST SECTION DATA] Cached ${section} data to localStorage:`, {
-            section,
-            storageKey,
-            cachedCount: responseData.length,
-            cacheTimestamp: cacheData.ts,
-            cacheVersion: CACHE_VERSION
-          });
-        } catch (e) {
-          console.warn(`⚠️ [FAST SECTION DATA] Failed to cache ${section} data:`, e);
+          
+          // Try to cache, but handle quota errors gracefully
+          const cacheString = JSON.stringify(cacheData);
+          const estimatedSize = new Blob([cacheString]).size;
+          
+          // If data is too large (>5MB), skip caching to prevent quota errors
+          if (estimatedSize > 5 * 1024 * 1024) {
+            console.warn(`⚠️ [FAST SECTION DATA] Data too large to cache (${Math.round(estimatedSize / 1024 / 1024)}MB), skipping cache for ${section}`);
+          } else {
+            localStorage.setItem(storageKey, cacheString);
+            console.log(`💾 [FAST SECTION DATA] Cached ${section} data to localStorage:`, {
+              section,
+              storageKey,
+              cachedCount: responseData.length,
+              cacheTimestamp: cacheData.ts,
+              cacheVersion: CACHE_VERSION,
+              estimatedSize: `${Math.round(estimatedSize / 1024)}KB`
+            });
+          }
+        } catch (e: any) {
+          // 🔧 FIX: Handle QuotaExceededError gracefully - don't retry or cause reloads
+          if (e?.name === 'QuotaExceededError' || e?.code === 22) {
+            console.warn(`⚠️ [FAST SECTION DATA] localStorage quota exceeded for ${section}, skipping cache. This is normal for large datasets.`);
+            // Try to clear old cache entries for this section only
+            try {
+              const keysToRemove: string[] = [];
+              for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith(`adrata-${section}-`) && key !== `adrata-${section}-${workspaceId}`) {
+                  keysToRemove.push(key);
+                }
+              }
+              // Remove old entries for this section
+              keysToRemove.forEach(key => localStorage.removeItem(key));
+              console.log(`🧹 [FAST SECTION DATA] Cleared ${keysToRemove.length} old cache entries for ${section}`);
+            } catch (cleanupError) {
+              // Ignore cleanup errors
+              console.warn(`⚠️ [FAST SECTION DATA] Failed to cleanup old cache entries:`, cleanupError);
+            }
+          } else {
+            console.warn(`⚠️ [FAST SECTION DATA] Failed to cache ${section} data:`, e);
+          }
         }
         
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
