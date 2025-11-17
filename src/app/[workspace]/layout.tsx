@@ -30,6 +30,16 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
   const activeWorkspaceId = authUser?.activeWorkspaceId;
   const hasWorkspaces = !!authUser?.workspaces;
   const workspacesLength = authUser?.workspaces?.length || 0;
+  
+  // 🔧 CRITICAL FIX: Extract workspace slug from pathname to prevent validation on every pathname change
+  // Only validate when workspace slug changes, not when navigating within the same workspace
+  const parsed = parseWorkspaceFromUrl(pathname);
+  const workspaceSlugFromUrl = parsed?.slug || null;
+  
+  // 🔧 CRITICAL FIX: Only validate when workspace slug or activeWorkspaceId changes
+  // This prevents validation loops when navigating between routes in the same workspace
+  // (e.g., /top/leads → /top/leads/record-slug should NOT trigger validation)
+  const lastValidatedWorkspaceSlugRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (isLoading) return;
@@ -37,6 +47,15 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
     // 🔧 FIX: Prevent re-entry if validation is already in progress
     if (isValidatingRef.current) {
       console.log("⏭️ [WORKSPACE LAYOUT] Validation already in progress, skipping");
+      return;
+    }
+    
+    // 🔧 CRITICAL FIX: Skip validation if workspace slug hasn't changed
+    // This prevents validation loops when navigating within the same workspace
+    if (workspaceSlugFromUrl === lastValidatedWorkspaceSlugRef.current && 
+        activeWorkspaceId === lastValidatedWorkspaceIdRef.current) {
+      console.log("✅ [WORKSPACE LAYOUT] Workspace slug and ID unchanged, skipping validation");
+      setIsValidating(false);
       return;
     }
 
@@ -50,7 +69,7 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
       // 🔧 CRITICAL FIX: Use pathname from hook instead of window.location.pathname
       // This ensures React tracks pathname changes properly
       
-      // 🔧 FIX: Skip validation if we've already validated this pathname with this workspace
+      // 🔧 FIX: Skip validation if we've already validated this workspace slug with this workspace ID
       if (lastValidatedPathnameRef.current === pathname && 
           lastValidatedWorkspaceIdRef.current === activeWorkspaceId) {
         console.log("✅ [WORKSPACE LAYOUT] Already validated this pathname with current workspace, skipping");
@@ -58,9 +77,7 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
         return;
       }
       
-      const parsed = parseWorkspaceFromUrl(pathname);
-      
-      if (!parsed) {
+      if (!parsed || !workspaceSlugFromUrl) {
         console.log("❌ Invalid workspace URL");
         router.push("/workspaces");
         return;
@@ -148,18 +165,20 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
         lastValidatedWorkspaceIdRef.current = activeWorkspaceId;
       }
       
-      // Always update the pathname ref AFTER validation completes
+      // Always update the refs AFTER validation completes
       lastValidatedPathnameRef.current = pathname;
+      lastValidatedWorkspaceSlugRef.current = workspaceSlugFromUrl;
 
       console.log(`✅ Valid workspace: ${workspace.name} (${slug})`);
       setIsValidating(false);
     };
 
     validateWorkspace();
-    // 🔧 CRITICAL FIX: Include pathname in dependencies so validation runs when URL changes
-    // This ensures we validate when navigating to new routes (like lead records)
+    // 🔧 CRITICAL FIX: Only validate when workspace slug or activeWorkspaceId changes
+    // NOT on every pathname change - this prevents infinite loops when navigating
+    // between routes in the same workspace (e.g., /top/leads → /top/leads/record-slug)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, hasWorkspaces, workspacesLength, activeWorkspaceId, isLoading, router, switchToWorkspaceFromUrl]);
+  }, [workspaceSlugFromUrl, hasWorkspaces, workspacesLength, activeWorkspaceId, isLoading, router, switchToWorkspaceFromUrl]);
 
   // Initialize speedrun background prefetch service
   useEffect(() => {
