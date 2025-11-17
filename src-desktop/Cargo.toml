@@ -65,6 +65,10 @@ rand = "0.8"
 regex = "1.11"
 tauri-plugin-websocket = "2.4.0"
 
+# Security: Force newer glib version to fix VariantStrIter unsoundness vulnerability
+# This overrides the transitive 0.18.5 dependency from Tauri
+glib = "0.21"
+
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
