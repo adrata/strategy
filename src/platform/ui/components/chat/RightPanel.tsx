@@ -1836,23 +1836,39 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     // Reset scroll state when sending a new message (user wants to see the response)
     userScrolledUpRef.current = false;
     
-    // 🔧 FIX: Use refs to get the latest record context at send time (avoid stale closures)
-    const latestRecord = currentRecordRef.current;
-    const latestRecordType = recordTypeRef.current;
-    const latestListViewContext = listViewContextRef.current;
-    
-    console.log('🔍 [RightPanel] Sending message with record context:', {
-      hasCurrentRecord: !!latestRecord,
-      recordId: latestRecord?.id,
-      recordName: latestRecord?.name || latestRecord?.fullName,
-      recordType: latestRecordType,
-      recordCompany: typeof latestRecord?.company === 'string' ? latestRecord.company : (latestRecord?.company?.name || latestRecord?.companyName),
-      recordTitle: latestRecord?.title || latestRecord?.jobTitle,
-      recordFieldCount: latestRecord ? Object.keys(latestRecord).length : 0,
-      // Also log the hook values for comparison
-      hookHasCurrentRecord: !!currentRecord,
-      hookRecordId: currentRecord?.id
-    });
+      // 🔧 FIX: Use refs to get the latest record context at send time (avoid stale closures)
+      const latestRecord = currentRecordRef.current;
+      const latestRecordType = recordTypeRef.current;
+      const latestListViewContext = listViewContextRef.current;
+      
+      // 🔧 SMART FIX: Extract record ID from URL if current record is not available
+      let recordIdFromUrl: string | null = null;
+      if (!latestRecord && typeof window !== 'undefined') {
+        const pathname = window.location.pathname;
+        // Extract ID from URLs like /top/speedrun/camille-murdock-01K9T0K41GN6Y4RJP6FJFDT742
+        const match = pathname.match(/\/([^\/]+)-([A-Z0-9]{26})/);
+        if (match) {
+          recordIdFromUrl = match[2];
+          console.log('🔍 [RightPanel] Extracted record ID from URL to send to API:', {
+            pathname,
+            recordId: recordIdFromUrl
+          });
+        }
+      }
+      
+      console.log('🔍 [RightPanel] Sending message with record context:', {
+        hasCurrentRecord: !!latestRecord,
+        recordId: latestRecord?.id,
+        recordIdFromUrl,
+        recordName: latestRecord?.name || latestRecord?.fullName,
+        recordType: latestRecordType,
+        recordCompany: typeof latestRecord?.company === 'string' ? latestRecord.company : (latestRecord?.company?.name || latestRecord?.companyName),
+        recordTitle: latestRecord?.title || latestRecord?.jobTitle,
+        recordFieldCount: latestRecord ? Object.keys(latestRecord).length : 0,
+        // Also log the hook values for comparison
+        hookHasCurrentRecord: !!currentRecord,
+        hookRecordId: currentRecord?.id
+      });
     
     try {
       // Add user message
@@ -2076,6 +2092,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-3), // Reduced to 3 messages for faster response
           currentRecord: latestRecord, // Use ref to ensure latest value
           recordType: latestRecordType, // Use ref to ensure latest value
+          recordIdFromUrl, // 🔧 NEW: Send record ID from URL as fallback
           listViewContext: latestListViewContext, // Use ref to ensure latest value
           enableVoiceResponse: false,
           selectedVoiceId: 'default',

@@ -521,58 +521,87 @@ function determineBestCompanyData(company: any): {
   // STEP 5: Determine description (Priority: descriptionEnriched > CoreSignal > Core Company > Company record, filter out mismatches)
   let description: string | null = null;
   
-  // Priority 1: Enriched description field (validate before using)
-  if (company.descriptionEnriched && company.descriptionEnriched.trim() !== '') {
-    const descLower = company.descriptionEnriched.toLowerCase();
-    const industryLower = industry?.toLowerCase() || '';
+  // Helper function to validate description matches company context
+  const validateDescription = (desc: string, companyName: string, companyIndustry: string | null, companyDomain: string | null): boolean => {
+    const descLower = desc.toLowerCase();
+    const industryLower = companyIndustry?.toLowerCase() || '';
+    const nameLower = companyName.toLowerCase();
     
-    // Filter out obvious mismatches (e.g., Israeli resort description with Utilities industry)
-    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
+    // Check for Israeli/resort keywords
+    const israeliKeywords = ['ישראל', 'israel', 'כפר נופש'];
     const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
     
-    // Also check for other mismatches: transportation/utilities industry with resort content
-    const hasResortContent = descLower.includes('resort') || descLower.includes('luxury');
-    const isUtilitiesOrTransport = industryLower.includes('utilities') || industryLower.includes('transportation') || industryLower.includes('electric');
+    // Check for resort/hospitality content
+    const hasResortContent = descLower.includes('resort') || descLower.includes('luxury resort') || descLower.includes('luxury hotel');
     
-    if ((hasIsraeliContent || hasResortContent) && isUtilitiesOrTransport && !industryLower.includes('hospitality') && !industryLower.includes('tourism')) {
-      // Description doesn't match industry - skip it and use next source
-      console.log(`⚠️ [INTELLIGENCE] Skipping descriptionEnriched due to industry mismatch for ${company.name}`);
-    } else {
+    // Check for utilities/transportation/energy industries
+    const isUtilitiesOrTransport = industryLower.includes('utilities') || 
+                                   industryLower.includes('transportation') || 
+                                   industryLower.includes('logistics') ||
+                                   industryLower.includes('supply chain') ||
+                                   industryLower.includes('electric') ||
+                                   industryLower.includes('energy');
+    
+    // Check for hospitality/tourism industries (where resort content would be valid)
+    const isHospitalityIndustry = industryLower.includes('hospitality') || 
+                                   industryLower.includes('tourism') || 
+                                   industryLower.includes('hotel') ||
+                                   industryLower.includes('resort');
+    
+    // Validate: If description has Israeli content, it should not be used for non-Israeli companies
+    // (unless it's a hospitality company)
+    if (hasIsraeliContent && !isHospitalityIndustry) {
+      // Check if company name/domain suggests it's actually an Israeli company
+      const isIsraeliCompany = nameLower.includes('israel') || 
+                               (companyDomain && (companyDomain.includes('.il') || companyDomain.includes('israel')));
+      if (!isIsraeliCompany) {
+        console.log(`⚠️ [INTELLIGENCE] Skipping description with Israeli content for non-Israeli company: ${companyName}`);
+        return false;
+      }
+    }
+    
+    // Validate: Resort content should not appear in utilities/transportation companies
+    if (hasResortContent && isUtilitiesOrTransport && !isHospitalityIndustry) {
+      console.log(`⚠️ [INTELLIGENCE] Skipping description with resort content for ${industryLower} company: ${companyName}`);
+      return false;
+    }
+    
+    // Additional validation: Check for major company name mismatches
+    // If description mentions a completely different company name, it's likely wrong
+    const majorCompanyNames = ['southern company', 'southernco', 'southern co'];
+    if (majorCompanyNames.some(name => nameLower.includes(name))) {
+      // This is Southern Company - description should not mention resorts
+      if (hasResortContent || hasIsraeliContent) {
+        console.log(`⚠️ [INTELLIGENCE] Skipping mismatched description for major utility company: ${companyName}`);
+        return false;
+      }
+    }
+    
+    return true;
+  };
+  
+  // Priority 1: Enriched description field (validate before using)
+  if (company.descriptionEnriched && company.descriptionEnriched.trim() !== '') {
+    if (validateDescription(company.descriptionEnriched, company.name, industry, finalDomain)) {
       description = company.descriptionEnriched.trim();
+    } else {
+      console.log(`⚠️ [INTELLIGENCE] Skipping descriptionEnriched due to validation failure for ${company.name}`);
     }
   }
   // Priority 2: CoreSignal enriched description (validate before using)
   else if (coresignalData.description_enriched && coresignalData.description_enriched.trim() !== '') {
-    const descLower = coresignalData.description_enriched.toLowerCase();
-    const industryLower = industry?.toLowerCase() || '';
-    
-    // Filter out obvious mismatches
-    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
-    const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
-    const hasResortContent = descLower.includes('resort') || descLower.includes('luxury');
-    const isUtilitiesOrTransport = industryLower.includes('utilities') || industryLower.includes('transportation') || industryLower.includes('electric');
-    
-    if ((hasIsraeliContent || hasResortContent) && isUtilitiesOrTransport && !industryLower.includes('hospitality') && !industryLower.includes('tourism')) {
-      console.log(`⚠️ [INTELLIGENCE] Skipping CoreSignal description_enriched due to industry mismatch for ${company.name}`);
-    } else {
+    if (validateDescription(coresignalData.description_enriched, company.name, industry, finalDomain)) {
       description = coresignalData.description_enriched.trim();
+    } else {
+      console.log(`⚠️ [INTELLIGENCE] Skipping CoreSignal description_enriched due to validation failure for ${company.name}`);
     }
   }
   // Priority 3: CoreSignal description (validate before using)
   else if (coresignalData.description && coresignalData.description.trim() !== '') {
-    const descLower = coresignalData.description.toLowerCase();
-    const industryLower = industry?.toLowerCase() || '';
-    
-    // Filter out obvious mismatches
-    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
-    const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
-    const hasResortContent = descLower.includes('resort') || descLower.includes('luxury');
-    const isUtilitiesOrTransport = industryLower.includes('utilities') || industryLower.includes('transportation') || industryLower.includes('electric');
-    
-    if ((hasIsraeliContent || hasResortContent) && isUtilitiesOrTransport && !industryLower.includes('hospitality') && !industryLower.includes('tourism')) {
-      console.log(`⚠️ [INTELLIGENCE] Skipping CoreSignal description due to industry mismatch for ${company.name}`);
-    } else {
+    if (validateDescription(coresignalData.description, company.name, industry, finalDomain)) {
       description = coresignalData.description.trim();
+    } else {
+      console.log(`⚠️ [INTELLIGENCE] Skipping CoreSignal description due to validation failure for ${company.name}`);
     }
   }
   // Priority 4: Core company description
@@ -581,19 +610,11 @@ function determineBestCompanyData(company: any): {
   }
   // Priority 5: Company record description (validate before using)
   else if (company.description && company.description.trim() !== '') {
-    // Validate description matches industry before using
-    const descLower = company.description.toLowerCase();
-    const industryLower = industry?.toLowerCase() || '';
-    
-    // Filter out obvious mismatches (e.g., Israeli resort description with Transportation industry)
-    const israeliKeywords = ['ישראל', 'israel', 'resort', 'כפר נופש', 'luxury resort'];
-    const hasIsraeliContent = israeliKeywords.some(keyword => descLower.includes(keyword.toLowerCase()));
-    
-    if (hasIsraeliContent && !industryLower.includes('hospitality') && !industryLower.includes('tourism') && !industryLower.includes('resort')) {
-      // Description doesn't match industry - don't use it
-      description = null;
-    } else {
+    if (validateDescription(company.description, company.name, industry, finalDomain)) {
       description = company.description.trim();
+    } else {
+      console.log(`⚠️ [INTELLIGENCE] Skipping company.description due to validation failure for ${company.name}`);
+      description = null;
     }
   }
   

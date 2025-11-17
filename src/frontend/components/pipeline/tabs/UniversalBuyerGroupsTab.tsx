@@ -50,6 +50,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   // 🔧 FIX: Store fetched companyId in state for cases where record.companyId is not loaded initially
   const [fetchedCompanyId, setFetchedCompanyId] = useState<string>('');
   
+  // 🔧 SYNC TRACKING: Track if sync has been attempted for current companyId to prevent duplicate syncs
+  const hasSyncedRef = useRef<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  
   // 🚨 CRITICAL FIX: Extract companyId and companyName into memos to track changes properly
   // This ensures the effect re-runs when companyId/companyName become available
   const companyId = React.useMemo(() => {

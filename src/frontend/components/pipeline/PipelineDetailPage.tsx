@@ -30,6 +30,9 @@ interface PipelineDetailPageProps {
 }
 
 export function PipelineDetailPage({ section, slug, standalone = false }: PipelineDetailPageProps) {
+  // 🔍 CRITICAL DEBUG: Log component mount - MUST APPEAR IN CONSOLE
+  console.log('🚀🚀🚀 [PIPELINE DETAIL PAGE] COMPONENT MOUNTING:', { section, slug, standalone });
+  
   const DEBUG_PIPELINE = process.env.NODE_ENV === 'development' && false; // Enable manually when needed
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
@@ -242,6 +245,15 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   // Only load data for the current section to prevent excessive hook calls
   const currentSectionHook = useFastSectionData(section, section === 'speedrun' ? 30 : 1000);
   const { data: currentSectionData, loading: currentSectionLoading } = currentSectionHook;
+  
+  // 🔍 CRITICAL DEBUG: Log what data we're getting from useFastSectionData
+  console.log('🔍 [PIPELINE DETAIL] useFastSectionData result:', {
+    section,
+    hasData: !!currentSectionData,
+    dataLength: currentSectionData?.length || 0,
+    loading: currentSectionLoading,
+    firstRecord: currentSectionData?.[0] ? { id: currentSectionData[0].id, name: currentSectionData[0].name } : 'no data'
+  });
   
   // Map to legacy variable names for compatibility
   const speedrunData = section === 'speedrun' ? currentSectionData : [];
@@ -908,9 +920,24 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   // 🚀 SPEEDRUN RECORD FIX: For speedrun records, find the current record in the speedrun data array
   // instead of loading it separately to ensure navigation works correctly
   useEffect(() => {
+    // 🔍 CRITICAL DEBUG: Log every time this useEffect runs
+    console.log('🔍 [SPEEDRUN RECORD useEffect] Running with:', {
+      section,
+      hasSpeedrunData: !!speedrunData,
+      speedrunDataLength: speedrunData?.length || 0,
+      hasSlug: !!slug,
+      slug,
+      conditionMet: section === 'speedrun' && speedrunData && speedrunData.length > 0 && slug
+    });
+    
     if (section === 'speedrun' && speedrunData && speedrunData.length > 0 && slug) {
       // Extract the record ID from the slug
       const recordId = extractIdFromSlug(slug);
+      
+      console.log('🔍 [SPEEDRUN RECORD] Extracted record ID from slug:', {
+        slug,
+        extractedId: recordId
+      });
       
       // 🔧 VALIDATION: Check if extracted ID is valid
       if (!recordId || recordId === 'undefined' || recordId === 'null' || recordId.trim() === '') {
@@ -928,7 +955,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           recordId,
           selectedRecordId: selectedRecord?.id,
           speedrunDataLength: speedrunData.length,
-          lookingForId: recordId
+          lookingForId: recordId,
+          firstRecordInData: speedrunData[0] ? { id: speedrunData[0].id, name: speedrunData[0].name } : 'no records'
         });
         
         const currentRecord = speedrunData.find((record: any) => record.id === recordId);
@@ -938,8 +966,10 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             name: currentRecord.name || currentRecord.fullName
           });
           setSelectedRecord(currentRecord);
+          console.log('✅ [SPEEDRUN RECORD] setSelectedRecord called - this should trigger AI context sync');
         } else {
           console.log('❌ [SPEEDRUN RECORD] Current record not found in speedrun data, falling back to direct load');
+          console.log('🔍 [SPEEDRUN RECORD] Available record IDs:', speedrunData.slice(0, 5).map((r: any) => r.id));
           // Fallback to direct loading if not found in speedrun data
           if (recordId && !directRecordLoading) {
             loadDirectRecord(recordId);
@@ -951,6 +981,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           selectedRecordId: selectedRecord?.id
         });
       }
+    } else {
+      console.log('⏭️ [SPEEDRUN RECORD useEffect] Condition not met - skipping record selection');
     }
   }, [section, speedrunData, selectedRecord, slug, directRecordLoading, loadDirectRecord]); // Added loadDirectRecord to dependencies
   

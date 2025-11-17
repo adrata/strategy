@@ -1,12 +1,12 @@
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * 🤖 AI CHAT API ENDPOINT
  * 
  * OpenRouter-powered AI integration with intelligent model routing
  * Provides fast, context-aware responses with automatic failover and cost optimization
  */
+
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { claudeAIService } from '@/platform/services/ClaudeAIService';
@@ -55,8 +55,9 @@ export async function POST(request: NextRequest) {
       workspaceId, 
       userId, 
       conversationHistory, 
-      currentRecord, 
-      recordType,
+      currentRecord: frontendRecord, 
+      recordType: frontendRecordType,
+      recordIdFromUrl, // 🔧 NEW: Record ID extracted from URL as fallback
       listViewContext,
       enableVoiceResponse,
       selectedVoiceId,
@@ -65,11 +66,57 @@ export async function POST(request: NextRequest) {
       selectedAIModel // Selected AI model from frontend
     } = body;
 
+    // 🔧 SMART RECORD FETCHING: If frontend didn't send record, try to fetch it from database
+    let currentRecord = frontendRecord;
+    let recordType = frontendRecordType;
+    
+    if (!currentRecord && recordIdFromUrl) {
+      console.log('🔍 [AI CHAT] Frontend did not send record, attempting to fetch from database using URL ID:', recordIdFromUrl);
+      
+      try {
+        const { PrismaClient } = await import('@prisma/client');
+        const prisma = new PrismaClient();
+        
+        // Try to fetch the record - check multiple tables
+        const personRecord = await prisma.people.findUnique({
+          where: { id: recordIdFromUrl },
+          include: {
+            company: true,
+            customFields: true
+          }
+        });
+        
+        if (personRecord) {
+          console.log('✅ [AI CHAT] Successfully fetched person record from database:', {
+            id: personRecord.id,
+            name: personRecord.fullName || personRecord.firstName + ' ' + personRecord.lastName,
+            company: personRecord.company?.name || personRecord.companyName
+          });
+          
+          currentRecord = {
+            ...personRecord,
+            name: personRecord.fullName || `${personRecord.firstName || ''} ${personRecord.lastName || ''}`.trim(),
+            fullName: personRecord.fullName || `${personRecord.firstName || ''} ${personRecord.lastName || ''}`.trim(),
+            company: personRecord.company?.name || personRecord.companyName,
+            companyName: personRecord.company?.name || personRecord.companyName,
+            title: personRecord.jobTitle || personRecord.title,
+            jobTitle: personRecord.jobTitle || personRecord.title
+          };
+          recordType = 'person';
+        }
+        
+        await prisma.$disconnect();
+      } catch (error) {
+        console.error('❌ [AI CHAT] Failed to fetch record from database:', error);
+      }
+    }
+
     // Reduced logging for performance (only in development)
     if (process.env.NODE_ENV === 'development') {
       console.log('🤖 [AI CHAT] Processing request:', {
         message: message?.substring(0, 50) + '...',
         hasCurrentRecord: !!currentRecord,
+        recordSource: frontendRecord ? 'frontend' : (currentRecord ? 'database' : 'none'),
         useOpenRouter
       });
     }
@@ -78,6 +125,7 @@ export async function POST(request: NextRequest) {
     if (currentRecord) {
       console.log('🎯 [AI CHAT] Current record context received:', {
         recordType,
+        source: frontendRecord ? 'frontend' : 'database',
         id: currentRecord.id,
         name: currentRecord.name || currentRecord.fullName,
         company: currentRecord.company || currentRecord.companyName,
