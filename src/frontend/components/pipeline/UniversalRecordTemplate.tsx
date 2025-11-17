@@ -170,6 +170,14 @@ export function UniversalRecordTemplate({
   // Record context is managed in PipelineDetailPage.tsx, not here
   // Only using updateCurrentRecord for AI chat updates
   
+  // Ref to track URL sync to prevent circular updates
+  // Track the last tab we synced to URL to prevent unnecessary updates
+  // MUST be declared before useState that uses it
+  const urlSyncRef = useRef<{ isSyncing: boolean; lastSyncedTab: string | null }>({ 
+    isSyncing: false, 
+    lastSyncedTab: null 
+  });
+  
   // Initialize active tab from URL parameter or default to first tab
   const urlTab = searchParams.get('tab');
   const validTabs = (customTabs || getTabsForRecordType(recordType, record));
@@ -420,12 +428,6 @@ export function UniversalRecordTemplate({
   
   // Ref for content container to reset scroll position
   const contentRef = useRef<HTMLDivElement>(null);
-  // Ref to track URL sync to prevent circular updates
-  // Track the last tab we synced to URL to prevent unnecessary updates
-  const urlSyncRef = useRef<{ isSyncing: boolean; lastSyncedTab: string | null }>({ 
-    isSyncing: false, 
-    lastSyncedTab: null 
-  });
   
   // Use universal inline edit hook
   const {
