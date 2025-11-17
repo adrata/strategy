@@ -385,16 +385,79 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     fetchActions();
   }, [fetchActions]);
 
-  // 🔧 DISABLED: Auto-enrichment - records are already enriched, no need for auto-triggering
-  // This was causing infinite reload loops and unnecessary API calls
-  // If enrichment is needed, it should be done manually or via batch processes
+  // 🔧 SMART AUTO-ENRICHMENT: Only trigger if record has NO enrichment indicators AND missing critical fields
+  // This prevents unnecessary enrichment of already-enriched records while still enriching truly empty records
   useEffect(() => {
-    // Auto-enrichment disabled - records are already enriched
-    // Keeping the effect structure but not triggering anything
-    if (record?.id && process.env.NODE_ENV === 'development') {
-      console.log(`ℹ️ [UNIVERSAL OVERVIEW] Auto-enrichment disabled - record ${record.id} is already enriched`);
+    const triggerEnrichmentAndIntelligence = async () => {
+      // Only for person records (not companies)
+      if (recordType === 'companies' || !record?.id || hasTriggeredEnrichment) {
+        return;
+      }
+
+      // Check if record has been enriched (has coresignalId or lastEnriched timestamp)
+      const hasBeenEnriched = record?.customFields?.coresignalId || record?.lastEnriched;
+      
+      // If already enriched, skip auto-enrichment
+      if (hasBeenEnriched) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`ℹ️ [UNIVERSAL OVERVIEW] Record ${record.id} already enriched, skipping auto-enrichment`);
+        }
+        return;
+      }
+
+      // Only trigger for records that have identifiers but are completely unenriched
+      const hasIdentifier = record?.linkedinUrl || record?.email;
+      const missingCriticalData = !record?.jobTitle && !record?.department; // Only critical fields, not optional ones
+      
+      // Only trigger if: has identifier, missing critical data, and NOT enriched
+      if (hasIdentifier && missingCriticalData) {
+        console.log(`🤖 [UNIVERSAL OVERVIEW] Auto-triggering enrichment for unenriched person: ${record.id}`);
+        setHasTriggeredEnrichment(true);
+        
+        try {
+          const enrichResult = await authFetch(`/api/v1/enrich`, {
+            method: 'POST',
+            body: JSON.stringify({
+              type: 'person',
+              entityId: record.id,
+              options: {
+                verifyEmail: true,
+                verifyPhone: true
+              }
+            })
+          });
+          
+          console.log(`📊 [UNIVERSAL OVERVIEW] Enrichment result:`, enrichResult);
+          
+          if (enrichResult?.status === 'completed') {
+            console.log(`✅ [UNIVERSAL OVERVIEW] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
+            
+            // 🔧 FIX: Use cache invalidation instead of full page reload to prevent infinite loops
+            if (typeof window !== 'undefined' && record?.id) {
+              sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, Date.now().toString());
+              window.dispatchEvent(new CustomEvent('cache-invalidated', {
+                detail: {
+                  recordType,
+                  recordId: record.id,
+                  reason: 'enrichment_completed'
+                }
+              }));
+              console.log(`🔄 [UNIVERSAL OVERVIEW] Cache invalidated, record will refresh on next load`);
+            }
+          } else if (enrichResult?.status === 'failed') {
+            console.warn(`⚠️ [UNIVERSAL OVERVIEW] Enrichment failed:`, enrichResult.message);
+          }
+        } catch (error) {
+          console.error('❌ [UNIVERSAL OVERVIEW] Error triggering enrichment:', error);
+        }
+      }
+    };
+
+    // Only trigger once when component mounts and we have person data
+    if (record && !hasTriggeredEnrichment) {
+      triggerEnrichmentAndIntelligence();
     }
-  }, [record?.id]);
+  }, [record, hasTriggeredEnrichment, recordType]);
 
   // Listen for action creation events to refresh actions
   useEffect(() => {

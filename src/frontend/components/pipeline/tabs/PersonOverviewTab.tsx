@@ -115,16 +115,76 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     syncBuyerGroupData();
   }, [record?.id]);
 
-  // 🔧 DISABLED: Auto-enrichment - records are already enriched, no need for auto-triggering
-  // This was causing infinite reload loops and unnecessary API calls
-  // If enrichment is needed, it should be done manually or via batch processes
+  // 🔧 SMART AUTO-ENRICHMENT: Only trigger if record has NO enrichment indicators AND missing critical fields
   useEffect(() => {
-    // Auto-enrichment disabled - records are already enriched
-    // Keeping the effect structure but not triggering anything
-    if (record?.id && process.env.NODE_ENV === 'development') {
-      console.log(`ℹ️ [PERSON OVERVIEW] Auto-enrichment disabled - record ${record.id} is already enriched`);
+    const triggerEnrichmentAndIntelligence = async () => {
+      if (!record?.id || hasTriggeredEnrichment) {
+        return;
+      }
+
+      // Check if record has been enriched (has coresignalId or lastEnriched timestamp)
+      const hasBeenEnriched = record?.customFields?.coresignalId || record?.lastEnriched;
+      
+      // If already enriched, skip auto-enrichment
+      if (hasBeenEnriched) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`ℹ️ [PERSON OVERVIEW] Record ${record.id} already enriched, skipping auto-enrichment`);
+        }
+        return;
+      }
+
+      // Only trigger for records that have identifiers but are completely unenriched
+      const hasIdentifier = record?.linkedinUrl || record?.email;
+      const missingCriticalData = !record?.jobTitle && !record?.department; // Only critical fields
+      
+      // Only trigger if: has identifier, missing critical data, and NOT enriched
+      if (hasIdentifier && missingCriticalData) {
+        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering enrichment for unenriched person: ${record.id}`);
+        setHasTriggeredEnrichment(true);
+        
+        try {
+          const enrichResult = await authFetch(`/api/v1/enrich`, {
+            method: 'POST',
+            body: JSON.stringify({
+              type: 'person',
+              entityId: record.id,
+              options: {
+                verifyEmail: true,
+                verifyPhone: true
+              }
+            })
+          });
+          
+          console.log(`📊 [PERSON OVERVIEW] Enrichment result:`, enrichResult);
+          
+          if (enrichResult?.status === 'completed') {
+            console.log(`✅ [PERSON OVERVIEW] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
+            
+            // 🔧 FIX: Use cache invalidation instead of full page reload
+            if (typeof window !== 'undefined' && record?.id) {
+              sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, Date.now().toString());
+              window.dispatchEvent(new CustomEvent('cache-invalidated', {
+                detail: {
+                  recordType,
+                  recordId: record.id,
+                  reason: 'enrichment_completed'
+                }
+              }));
+              console.log(`🔄 [PERSON OVERVIEW] Cache invalidated, record will refresh on next load`);
+            }
+          } else if (enrichResult?.status === 'failed') {
+            console.warn(`⚠️ [PERSON OVERVIEW] Enrichment failed:`, enrichResult.message);
+          }
+        } catch (error) {
+          console.error('❌ [PERSON OVERVIEW] Error triggering enrichment:', error);
+        }
+      }
+    };
+
+    if (record && !hasTriggeredEnrichment) {
+      triggerEnrichmentAndIntelligence();
     }
-  }, [record?.id]);
+  }, [record, hasTriggeredEnrichment]);
 
   // Fetch actions when component mounts or record changes
   useEffect(() => {
