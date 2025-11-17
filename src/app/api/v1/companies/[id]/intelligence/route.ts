@@ -566,13 +566,23 @@ function determineBestCompanyData(company: any): {
       return false;
     }
     
-    // Additional validation: Check for major company name mismatches
-    // If description mentions a completely different company name, it's likely wrong
+    // Additional validation: Check for major company name/domain mismatches
     const majorCompanyNames = ['southern company', 'southernco', 'southern co'];
-    if (majorCompanyNames.some(name => nameLower.includes(name))) {
-      // This is Southern Company - description should not mention resorts
+    const majorCompanyDomains = ['southernco.com', 'southerncompany.com'];
+    
+    const isMajorCompany = majorCompanyNames.some(name => nameLower.includes(name)) ||
+                          (companyDomain && majorCompanyDomains.some(domain => companyDomain.includes(domain)));
+    
+    if (isMajorCompany) {
+      // Major utility companies should not have resort/Israeli content
       if (hasResortContent || hasIsraeliContent) {
         console.log(`⚠️ [INTELLIGENCE] Skipping mismatched description for major utility company: ${companyName}`);
+        return false;
+      }
+      // Major companies should not be described as "small" with very few employees
+      const descLower = desc.toLowerCase();
+      if (descLower.includes('small') && descLower.includes('2 employees')) {
+        console.log(`⚠️ [INTELLIGENCE] Skipping description that incorrectly describes major utility company as small: ${companyName}`);
         return false;
       }
     }

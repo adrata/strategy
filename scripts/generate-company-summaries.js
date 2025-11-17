@@ -75,11 +75,21 @@ function validateGeneratedSummary(summary, companyName, companyIndustry, company
     return { valid: false, reason: 'Summary contains resort content for utilities/transportation company' };
   }
   
-  // Additional validation: Check for major company name mismatches
+  // Additional validation: Check for major company name/domain mismatches
   const majorCompanyNames = ['southern company', 'southernco', 'southern co'];
-  if (majorCompanyNames.some(name => nameLower.includes(name))) {
+  const majorCompanyDomains = ['southernco.com', 'southerncompany.com'];
+  
+  const isMajorCompany = majorCompanyNames.some(name => nameLower.includes(name)) ||
+                        (companyDomain && majorCompanyDomains.some(domain => companyDomain.includes(domain)));
+  
+  if (isMajorCompany) {
+    // Major utility companies should not have resort/Israeli content
     if (hasResortContent || hasIsraeliContent) {
       return { valid: false, reason: 'Summary contains mismatched content for major utility company' };
+    }
+    // Major companies should not be described as "small" with very few employees
+    if (summaryLower.includes('small') && summaryLower.includes('2 employees')) {
+      return { valid: false, reason: 'Summary incorrectly describes major utility company as small with 2 employees' };
     }
   }
   

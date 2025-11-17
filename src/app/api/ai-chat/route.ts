@@ -58,6 +58,8 @@ export async function POST(request: NextRequest) {
       currentRecord: frontendRecord, 
       recordType: frontendRecordType,
       recordIdFromUrl, // 🔧 NEW: Record ID extracted from URL as fallback
+      isListView, // 🔧 NEW: Whether user is on a list view
+      listViewSection, // 🔧 NEW: Which section list view (leads, prospects, etc.)
       listViewContext,
       enableVoiceResponse,
       selectedVoiceId,
@@ -67,6 +69,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // 🔧 SMART RECORD FETCHING: If frontend didn't send record, try to fetch it from database
+    // This works for ALL record types: people, companies, leads, prospects, opportunities, speedrun
     let currentRecord = frontendRecord;
     let recordType = frontendRecordType;
     
@@ -77,7 +80,9 @@ export async function POST(request: NextRequest) {
         const { PrismaClient } = await import('@prisma/client');
         const prisma = new PrismaClient();
         
-        // Try to fetch the record - check multiple tables
+        // 🔍 SMART DETECTION: Try multiple tables to find the record
+        
+        // 1. Try people table (handles: people, leads, prospects, speedrun)
         const personRecord = await prisma.people.findUnique({
           where: { id: recordIdFromUrl },
           include: {
@@ -89,8 +94,10 @@ export async function POST(request: NextRequest) {
         if (personRecord) {
           console.log('✅ [AI CHAT] Successfully fetched person record from database:', {
             id: personRecord.id,
-            name: personRecord.fullName || personRecord.firstName + ' ' + personRecord.lastName,
-            company: personRecord.company?.name || personRecord.companyName
+            name: personRecord.fullName || `${personRecord.firstName} ${personRecord.lastName}`,
+            company: personRecord.company?.name || personRecord.companyName,
+            status: personRecord.status,
+            title: personRecord.jobTitle || personRecord.title
           });
           
           currentRecord = {
@@ -100,12 +107,71 @@ export async function POST(request: NextRequest) {
             company: personRecord.company?.name || personRecord.companyName,
             companyName: personRecord.company?.name || personRecord.companyName,
             title: personRecord.jobTitle || personRecord.title,
-            jobTitle: personRecord.jobTitle || personRecord.title
+            jobTitle: personRecord.jobTitle || personRecord.title,
+            // Include all enrichment data
+            monacoEnrichment: personRecord.customFields?.monacoEnrichment,
+            personIntelligence: personRecord.customFields?.personIntelligence,
+            leadIntelligence: personRecord.customFields?.leadIntelligence
           };
-          recordType = 'person';
+          
+          // Determine record type based on status or URL pattern
+          if (personRecord.status === 'LEAD') {
+            recordType = 'lead';
+          } else if (personRecord.status === 'PROSPECT') {
+            recordType = 'prospect';
+          } else if (personRecord.status === 'OPPORTUNITY') {
+            recordType = 'opportunity';
+          } else {
+            recordType = 'person';
+          }
+        }
+        
+        // 2. Try companies table if not found in people
+        if (!currentRecord) {
+          const companyRecord = await prisma.companies.findUnique({
+            where: { id: recordIdFromUrl },
+            include: {
+              customFields: true
+            }
+          });
+          
+          if (companyRecord) {
+            console.log('✅ [AI CHAT] Successfully fetched company record from database:', {
+              id: companyRecord.id,
+              name: companyRecord.name,
+              industry: companyRecord.industry,
+              status: companyRecord.status
+            });
+            
+            currentRecord = {
+              ...companyRecord,
+              companyName: companyRecord.name,
+              // Include all enrichment data
+              coresignalData: companyRecord.customFields?.coresignalData,
+              companyIntelligence: companyRecord.customFields?.companyIntelligence
+            };
+            
+            // Determine record type
+            if (companyRecord.status === 'OPPORTUNITY') {
+              recordType = 'opportunity';
+            } else {
+              recordType = 'company';
+            }
+          }
         }
         
         await prisma.$disconnect();
+        
+        if (currentRecord) {
+          console.log('✅ [AI CHAT] Smart database fetch successful:', {
+            recordId: recordIdFromUrl,
+            recordType,
+            hasData: true,
+            source: 'database'
+          });
+        } else {
+          console.warn('⚠️ [AI CHAT] Record not found in database:', recordIdFromUrl);
+        }
       } catch (error) {
         console.error('❌ [AI CHAT] Failed to fetch record from database:', error);
       }
@@ -117,6 +183,8 @@ export async function POST(request: NextRequest) {
         message: message?.substring(0, 50) + '...',
         hasCurrentRecord: !!currentRecord,
         recordSource: frontendRecord ? 'frontend' : (currentRecord ? 'database' : 'none'),
+        isListView,
+        listViewSection,
         useOpenRouter
       });
     }

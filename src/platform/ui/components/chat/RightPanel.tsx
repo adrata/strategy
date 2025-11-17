@@ -1842,17 +1842,37 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       const latestListViewContext = listViewContextRef.current;
       
       // 🔧 SMART FIX: Extract record ID from URL if current record is not available
+      // Also detect list view vs detail view for better context
       let recordIdFromUrl: string | null = null;
-      if (!latestRecord && typeof window !== 'undefined') {
+      let isListView = false;
+      let listViewSection: string | null = null;
+      
+      if (typeof window !== 'undefined') {
         const pathname = window.location.pathname;
-        // Extract ID from URLs like /top/speedrun/camille-murdock-01K9T0K41GN6Y4RJP6FJFDT742
-        const match = pathname.match(/\/([^\/]+)-([A-Z0-9]{26})/);
-        if (match) {
-          recordIdFromUrl = match[2];
-          console.log('🔍 [RightPanel] Extracted record ID from URL to send to API:', {
+        
+        // Check if we're on a list view (no record ID in URL)
+        // Pattern: /workspace/section/ or /workspace/section (no ID after)
+        const listViewMatch = pathname.match(/\/([^\/]+)\/(speedrun|leads|prospects|opportunities|people|companies|clients|partners)\/?$/);
+        if (listViewMatch) {
+          isListView = true;
+          listViewSection = listViewMatch[2];
+          console.log('🔍 [RightPanel] Detected list view:', {
             pathname,
-            recordId: recordIdFromUrl
+            section: listViewSection
           });
+        }
+        
+        // Extract record ID if on detail view
+        if (!latestRecord && !isListView) {
+          // Extract ID from URLs like /top/speedrun/camille-murdock-01K9T0K41GN6Y4RJP6FJFDT742
+          const match = pathname.match(/\/([^\/]+)-([A-Z0-9]{26})/);
+          if (match) {
+            recordIdFromUrl = match[2];
+            console.log('🔍 [RightPanel] Extracted record ID from URL to send to API:', {
+              pathname,
+              recordId: recordIdFromUrl
+            });
+          }
         }
       }
       
@@ -1860,6 +1880,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         hasCurrentRecord: !!latestRecord,
         recordId: latestRecord?.id,
         recordIdFromUrl,
+        isListView,
+        listViewSection,
         recordName: latestRecord?.name || latestRecord?.fullName,
         recordType: latestRecordType,
         recordCompany: typeof latestRecord?.company === 'string' ? latestRecord.company : (latestRecord?.company?.name || latestRecord?.companyName),
@@ -2093,6 +2115,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           currentRecord: latestRecord, // Use ref to ensure latest value
           recordType: latestRecordType, // Use ref to ensure latest value
           recordIdFromUrl, // 🔧 NEW: Send record ID from URL as fallback
+          isListView, // 🔧 NEW: Indicate if on list view
+          listViewSection, // 🔧 NEW: Which section list view (leads, prospects, etc.)
           listViewContext: latestListViewContext, // Use ref to ensure latest value
           enableVoiceResponse: false,
           selectedVoiceId: 'default',

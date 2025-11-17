@@ -63,11 +63,21 @@ function validateSummary(
     return { valid: false, reason: 'Summary contains resort content for utilities/transportation company' };
   }
   
-  // Additional validation: Check for major company name mismatches
+  // Additional validation: Check for major company name/domain mismatches
   const majorCompanyNames = ['southern company', 'southernco', 'southern co'];
-  if (majorCompanyNames.some(name => nameLower.includes(name))) {
+  const majorCompanyDomains = ['southernco.com', 'southerncompany.com'];
+  
+  const isMajorCompany = majorCompanyNames.some(name => nameLower.includes(name)) ||
+                        majorCompanyDomains.some(domain => domainLower.includes(domain));
+  
+  if (isMajorCompany) {
+    // Major utility companies should not have resort/Israeli content
     if (hasResortContent || hasIsraeliContent) {
       return { valid: false, reason: 'Summary contains mismatched content for major utility company' };
+    }
+    // Major companies should not be described as "small" with very few employees
+    if (summaryLower.includes('small') && summaryLower.includes('2 employees')) {
+      return { valid: false, reason: 'Summary incorrectly describes major utility company as small with 2 employees' };
     }
   }
   
@@ -115,14 +125,24 @@ async function generateCompanySummary(company: any): Promise<string | null> {
       return null;
     }
 
+    // Detect if this is a known major company with potentially incorrect data
+    const majorCompanyDomains = ['southernco.com', 'southerncompany.com'];
+    const companyDomain = company.website ? company.website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0] : null;
+    const isMajorCompanyDomain = companyDomain && majorCompanyDomains.some(d => companyDomain.includes(d));
+    const hasSuspiciousData = isMajorCompanyDomain && company.employeeCount && company.employeeCount < 100;
+    
     // Generate using Claude AI
-    const prompt = `You are a B2B sales intelligence system. Generate a concise, professional company summary (2-3 sentences) based on the available information below. Focus on what's most relevant for a sales professional engaging with this company.
+    let prompt = `You are a B2B sales intelligence system. Generate a concise, professional company summary (2-3 sentences) based on the available information below. Focus on what's most relevant for a sales professional engaging with this company.
 
 Available Company Information:
-${availableContext}
+${availableContext}`;
 
-Generate a clear, factual summary that highlights:
-1. What the company does (infer from industry and name if needed)
+    if (hasSuspiciousData) {
+      prompt += `\n\nIMPORTANT: The company domain (${companyDomain}) suggests this is a major utility company, but the employee count data may be incorrect. Research the actual company (${company.name}) and generate an accurate summary based on what this company actually is, not the potentially incorrect employee count. If this is Southern Company (southernco.com), it is a major U.S. electric utility company, not a small transportation firm.`;
+    }
+
+    prompt += `\n\nGenerate a clear, factual summary that highlights:
+1. What the company does (infer from industry and name if needed, but prioritize domain/website information for known major companies)
 2. Key business characteristics (size, location, public/private status)
 3. Relevant context for sales engagement (if data is available)
 
@@ -143,8 +163,8 @@ Keep it professional, concise, and actionable. Do not make up information that i
     const generatedSummary = message.content[0].type === 'text' ? message.content[0].text : '';
     
     // Validate the generated summary before returning
-    const domain = company.website ? company.website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0] : null;
-    const validation = validateSummary(generatedSummary, company.name, company.industry, domain);
+    const validationDomain = company.website ? company.website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0] : null;
+    const validation = validateSummary(generatedSummary, company.name, company.industry, validationDomain);
     
     if (!validation.valid) {
       console.log(`   ⚠️  Generated summary failed validation: ${validation.reason}`);
