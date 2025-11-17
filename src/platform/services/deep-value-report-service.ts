@@ -439,8 +439,16 @@ Please provide the updated report content with the requested changes.`;
   ): Promise<string> {
     const prompt = this.buildReportPrompt(report, context);
     
+    // CRITICAL: Ensure no trailing slash - defensive fix for Next.js trailingSlash config
+    // Next.js trailingSlash: true causes POST→GET conversion on redirects
+    let apiUrl = '/api/ai-chat';
+    apiUrl = apiUrl.replace(/\/+$/, ''); // Remove trailing slashes
+    if (apiUrl.endsWith('/')) {
+      apiUrl = apiUrl.replace(/\/+$/, ''); // Double-check (defensive)
+    }
+    
     try {
-      const response = await fetch('/api/ai-chat', {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

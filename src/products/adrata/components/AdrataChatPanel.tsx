@@ -645,8 +645,13 @@ export function AdrataChatPanel() {
       ));
 
       // Call AI API - same endpoint as RightPanel
-      // Ensure no trailing slash - defensive fix for Next.js trailingSlash config
-      const apiUrl = '/api/ai-chat'.replace(/\/$/, '');
+      // CRITICAL: Ensure no trailing slash - defensive fix for Next.js trailingSlash config
+      // Next.js trailingSlash: true causes POST→GET conversion on redirects
+      let apiUrl = '/api/ai-chat';
+      apiUrl = apiUrl.replace(/\/+$/, ''); // Remove one or more trailing slashes
+      if (apiUrl.endsWith('/')) {
+        apiUrl = apiUrl.replace(/\/+$/, ''); // Double-check (defensive)
+      }
       const requestId = `adrata-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       // Enhanced logging: Capture actual URL being called

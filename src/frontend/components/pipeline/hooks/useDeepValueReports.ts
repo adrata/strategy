@@ -152,7 +152,15 @@ async function generateReportContent(report: DeepValueReport, record: any): Prom
   const prompt = buildReportPrompt(report, record);
   
   try {
-    const response = await fetch('/api/ai-chat', {
+    // CRITICAL: Ensure no trailing slash - defensive fix for Next.js trailingSlash config
+    // Next.js trailingSlash: true causes POST→GET conversion on redirects
+    let apiUrl = '/api/ai-chat';
+    apiUrl = apiUrl.replace(/\/+$/, ''); // Remove trailing slashes
+    if (apiUrl.endsWith('/')) {
+      apiUrl = apiUrl.replace(/\/+$/, ''); // Double-check (defensive)
+    }
+    
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

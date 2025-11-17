@@ -130,14 +130,18 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get('host') || '';
 
-  // Handle API routes for web builds
-  // Fix: Remove trailing slash from /api/ai-chat/ to prevent 405 errors
+  // CRITICAL: Handle /api/ai-chat/ trailing slash BEFORE any other processing
+  // This must execute before Next.js trailingSlash redirect to prevent POST→GET conversion
+  // Rewrite preserves HTTP method (POST stays POST), unlike redirects
   if (pathname === '/api/ai-chat/') {
     const url = request.nextUrl.clone();
     url.pathname = '/api/ai-chat';
+    // Use rewrite (not redirect) to preserve HTTP method
+    // This ensures POST requests remain POST and don't get converted to GET
     return NextResponse.rewrite(url);
   }
   
+  // Handle all other API routes
   if (pathname.startsWith('/api/')) {
     return NextResponse.next();
   }

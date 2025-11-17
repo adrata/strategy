@@ -24,7 +24,37 @@ import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } fr
 
 export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
+  const requestMethod = request.method;
+  const requestUrl = request.url;
+  const requestPathname = request.nextUrl.pathname;
+  
+  // Log request method and URL for debugging HTTP 405 issues
   console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
+  console.log('🔍 [AI CHAT] Request details:', {
+    method: requestMethod,
+    url: requestUrl,
+    pathname: requestPathname,
+    hasTrailingSlash: requestPathname.endsWith('/'),
+    expectedMethod: 'POST',
+    methodMatch: requestMethod === 'POST'
+  });
+  
+  // Verify we received POST method (not GET from redirect)
+  if (requestMethod !== 'POST') {
+    console.error('❌ [AI CHAT] CRITICAL: Received non-POST method:', {
+      receivedMethod: requestMethod,
+      pathname: requestPathname,
+      url: requestUrl,
+      possibleCause: 'Next.js trailingSlash redirect may have converted POST→GET'
+    });
+    return NextResponse.json({
+      success: false,
+      error: `Method not allowed. Expected POST but received ${requestMethod}. This may indicate a trailing slash redirect issue.`,
+      code: 'METHOD_NOT_ALLOWED',
+      receivedMethod: requestMethod,
+      expectedMethod: 'POST'
+    }, { status: 405 });
+  }
   
   try {
     // 1. AUTHENTICATION CHECK - Critical security requirement
