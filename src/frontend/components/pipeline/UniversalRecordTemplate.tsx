@@ -3143,14 +3143,16 @@ export function UniversalRecordTemplate({
           ]
         });
         
-        // 🚀 CRITICAL FIX: Use Next.js router.refresh() to invalidate client-side router cache
-        // This ensures fresh data is loaded when navigating back to the record
-        try {
-          router.refresh();
-          console.log('🔄 [ROUTER] Called router.refresh() to invalidate Next.js client-side cache');
-        } catch (error) {
-          console.warn('⚠️ [ROUTER] Failed to call router.refresh():', error);
-        }
+        // 🔧 RELOAD LOOP FIX: Removed router.refresh() call that was causing infinite reload loop
+        // The router.refresh() was triggering workspace layout validation on every inline edit,
+        // which caused workspace switch events to fire, which refreshed data, which triggered
+        // validation again in an infinite loop. Since we already:
+        // - Clear all sessionStorage caches above
+        // - Dispatch cache-invalidated events below
+        // - Set force-refresh flags
+        // The router.refresh() is redundant and harmful. Fresh data will be loaded naturally
+        // on next navigation via the force-refresh flags and cache invalidation.
+        console.log('🔄 [ROUTER] Skipped router.refresh() to prevent reload loop - using cache invalidation instead');
       }
       
       // Dispatch cache invalidation event for other components

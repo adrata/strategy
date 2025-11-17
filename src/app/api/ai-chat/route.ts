@@ -733,3 +733,16 @@ export async function DELETE() {
     error: 'Method not allowed. Use POST for AI chat requests.'
   }, { status: 405 });
 }
+
+// Handle OPTIONS for CORS preflight
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Cache-Control, Pragma, X-Request-ID, Authorization',
+      'Access-Control-Max-Age': '86400',
+    }
+  });
+}

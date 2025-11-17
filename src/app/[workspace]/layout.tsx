@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { getWorkspaceBySlug, parseWorkspaceFromUrl } from "@/platform/auth/workspace-slugs";
@@ -19,18 +19,42 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
   const { user: authUser, isLoading } = useUnifiedAuth();
   const { switchToWorkspaceFromUrl } = useWorkspaceSwitch();
   const [isValidating, setIsValidating] = useState(true);
+  
+  // 🔧 FIX: Use refs to prevent validation loop
+  const isValidatingRef = useRef(false);
+  const lastValidatedPathnameRef = useRef<string | null>(null);
+  const lastValidatedWorkspaceIdRef = useRef<string | null>(null);
+
+  // 🔧 FIX: Extract primitive values to prevent unnecessary re-runs
+  const activeWorkspaceId = authUser?.activeWorkspaceId;
+  const hasWorkspaces = !!authUser?.workspaces;
+  const workspacesLength = authUser?.workspaces?.length || 0;
 
   useEffect(() => {
     if (isLoading) return;
+    
+    // 🔧 FIX: Prevent re-entry if validation is already in progress
+    if (isValidatingRef.current) {
+      console.log("⏭️ [WORKSPACE LAYOUT] Validation already in progress, skipping");
+      return;
+    }
 
     const validateWorkspace = async () => {
-      if (!authUser?.workspaces) {
+      if (!hasWorkspaces) {
         console.log("❌ No workspaces available");
         router.push("/workspaces");
         return;
       }
 
       const pathname = window.location.pathname;
+      
+      // 🔧 FIX: Skip validation if we've already validated this pathname with this workspace
+      if (lastValidatedPathnameRef.current === pathname && 
+          lastValidatedWorkspaceIdRef.current === activeWorkspaceId) {
+        console.log("✅ [WORKSPACE LAYOUT] Already validated this pathname with current workspace, skipping");
+        return;
+      }
+      
       const parsed = parseWorkspaceFromUrl(pathname);
       
       if (!parsed) {
@@ -49,23 +73,39 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
       }
 
       // Check if this is the active workspace
-      if (workspace.id !== authUser.activeWorkspaceId) {
-        console.log(`🔄 Workspace mismatch: URL wants ${workspace.name} (${slug}), but active is ${authUser.activeWorkspaceId}`);
+      if (workspace.id !== activeWorkspaceId) {
+        console.log(`🔄 Workspace mismatch: URL wants ${workspace.name} (${slug}), but active is ${activeWorkspaceId}`);
         console.log(`🔄 Attempting to switch to the correct workspace...`);
         
-        // Try to switch to the correct workspace
-        const switchSuccess = await switchToWorkspaceFromUrl(window.location.pathname);
-        if (!switchSuccess) {
-          console.warn(`⚠️ Failed to switch workspace, but allowing access to prevent navigation issues`);
+        // 🔧 FIX: Set flag to prevent re-entry during switch
+        isValidatingRef.current = true;
+        
+        try {
+          // Try to switch to the correct workspace
+          const switchSuccess = await switchToWorkspaceFromUrl(window.location.pathname);
+          if (!switchSuccess) {
+            console.warn(`⚠️ Failed to switch workspace, but allowing access to prevent navigation issues`);
+          } else {
+            // Update tracking refs after successful switch
+            lastValidatedWorkspaceIdRef.current = workspace.id;
+          }
+        } finally {
+          isValidatingRef.current = false;
         }
+      } else {
+        // Workspace matches - update tracking refs
+        lastValidatedWorkspaceIdRef.current = activeWorkspaceId;
       }
+      
+      // Always update the pathname ref
+      lastValidatedPathnameRef.current = pathname;
 
       console.log(`✅ Valid workspace: ${workspace.name} (${slug})`);
       setIsValidating(false);
     };
 
     validateWorkspace();
-  }, [authUser, isLoading, router]);
+  }, [hasWorkspaces, workspacesLength, activeWorkspaceId, isLoading, router, switchToWorkspaceFromUrl, authUser?.workspaces]);
 
   // Initialize speedrun background prefetch service
   useEffect(() => {

@@ -65,7 +65,8 @@ export function useWorkspaceContext(): UseWorkspaceContextReturn {
             'adrata': '01K7464TNANHQXPCZT1FYX205V',
             'demo': '01K74N79PCW5W8D9X6EK7KJANM',
             'notary-everyday': '01K7DNYR5VZ7JY36KGKKN76XZ1',
-            'top-engineering-plus': '01K75ZD7DWHG1XF16HAF2YVKCK',
+            'top': '01K75ZD7DWHG1XF16HAF2YVKCK',  // 🔧 FIX: Correct slug is 'top' (was 'top-engineering-plus')
+            'top-engineering-plus': '01K75ZD7DWHG1XF16HAF2YVKCK',  // Keep old slug for backwards compatibility
             'cloudcaddie': '01K7DSWP8ZBA75K5VSWVXPEMAH',
             'pinpoint': '01K90EQWJCCN2JDMRQF12F49GN',
             'top-temp': '01K9QAP09FHT6EAP1B4G2KP3D2',
