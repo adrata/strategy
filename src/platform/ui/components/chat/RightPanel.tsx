@@ -2098,7 +2098,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         hookVsRefMatch: latestRecord?.id === currentRecord?.id
       });
 
-      const response = await fetch('/api/ai-chat/', {
+      const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

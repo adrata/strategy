@@ -645,7 +645,7 @@ export function AdrataChatPanel() {
       ));
 
       // Call AI API - same endpoint as RightPanel
-      const response = await fetch('/api/ai-chat/', {
+      const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
