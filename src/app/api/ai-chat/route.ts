@@ -753,14 +753,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Handle other HTTP methods
-export async function GET() {
-  return NextResponse.json({
-    success: false,
-    error: 'Method not allowed. Use POST for AI chat requests.'
-  }, { status: 405 });
-}
-
 export async function PUT() {
   return NextResponse.json({
     success: false,

@@ -674,12 +674,16 @@ Your rep may be pursuing the wrong contact for this specific deal. While Mary Gi
                 // Get document context for the current subApp
                 const storedDoc = getDocumentData(activeSubApp);
                 
-                // CRITICAL: Ensure no trailing slash - defensive fix for Next.js trailingSlash config
-                // Next.js trailingSlash: true causes POST→GET conversion on redirects
-                let apiUrl = '/api/ai-chat';
-                apiUrl = apiUrl.replace(/\/+$/, ''); // Remove trailing slashes
-                if (apiUrl.endsWith('/')) {
-                  apiUrl = apiUrl.replace(/\/+$/, ''); // Double-check (defensive)
+                // CRITICAL: Use trailing slash to match Next.js trailingSlash: true config
+                // Next.js trailingSlash: true expects URLs WITH trailing slashes
+                // If we send /api/ai-chat (no slash), Next.js redirects to /api/ai-chat/ (with slash)
+                // This redirect converts POST → GET, causing 405 errors
+                // Solution: Send /api/ai-chat/ (with slash) to match Next.js expectations, preventing redirect
+                let apiUrl = '/api/ai-chat/';
+                
+                // Ensure trailing slash is present (defensive)
+                if (!apiUrl.endsWith('/')) {
+                  apiUrl = apiUrl + '/';
                 }
                 
                 console.log('[HOOK] Making API call to /api/ai-chat with POST method');
