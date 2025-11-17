@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useTransition } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useTransition, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { authFetch, apiPost } from '@/platform/api-fetch';
@@ -489,7 +489,7 @@ export function UniversalRecordTemplate({
   }, [customTabs, recordType, record?.companyId]);
   
   // Function to update URL with tab parameter
-  const updateURLTab = (tabId: string) => {
+  const updateURLTab = useCallback((tabId: string) => {
     // Prevent circular updates - if we're already syncing this tab, don't update again
     if (urlSyncRef.current.isSyncing && urlSyncRef.current.lastSyncedTab === tabId) {
       return;
@@ -511,14 +511,20 @@ export function UniversalRecordTemplate({
     
     const currentPath = window.location.pathname;
     currentParams.set('tab', tabId);
-    router.replace(`${currentPath}?${currentParams.toString()}`, { scroll: false });
+    const newUrl = `${currentPath}?${currentParams.toString()}`;
+    
+    // Use window.history.replaceState instead of router.replace to avoid triggering Next.js navigation
+    // This prevents page reloads while still updating the URL
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({}, '', newUrl);
+    }
     
     // Reset sync flag after a short delay to allow searchParams to update
     // Keep lastSyncedTab to prevent re-syncing the same tab
     setTimeout(() => {
       urlSyncRef.current.isSyncing = false;
     }, 100);
-  };
+  }, []);
   
   // Handle profile click for popup
   const handleProfileClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -598,7 +604,7 @@ export function UniversalRecordTemplate({
         updateURLTab(activeTab);
       }
     }
-  }, [tabs, searchParams, activeTab]); // Include activeTab but guard against circular updates
+  }, [tabs, searchParams, updateURLTab]); // Removed activeTab to prevent loop when tab changes
 
   // Note: Record context is set in PipelineDetailPage.tsx to avoid conflicts
   // This component no longer sets/clears record context
