@@ -122,6 +122,10 @@
     {
       "source": "/api/v1/(.*)",
       "destination": "/api/v1/$1"
+    },
+    {
+      "source": "/api/ai-chat/",
+      "destination": "/api/ai-chat"
     }
   ],
   "redirects": [

@@ -2098,13 +2098,27 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         hookVsRefMatch: latestRecord?.id === currentRecord?.id
       });
 
-      const response = await fetch('/api/ai-chat', {
+      const apiUrl = '/api/ai-chat';
+      const requestId = `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Enhanced logging: Capture actual URL being called
+      const fullUrl = typeof window !== 'undefined' ? new URL(apiUrl, window.location.origin).href : apiUrl;
+      console.log('🤖 [AI CHAT] Making API request:', {
+        url: apiUrl,
+        fullUrl,
+        method: 'POST',
+        requestId,
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV
+      });
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
-          'X-Request-ID': `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          'X-Request-ID': requestId
         },
         body: JSON.stringify({
           message: input,
@@ -2139,19 +2153,59 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       const endTime = performance.now();
       const responseTime = endTime - startTime;
       
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🤖 [AI CHAT] Response received:', {
+      // Enhanced logging: Always log response details, especially in production for debugging
+      const responseHeaders = Object.fromEntries(response.headers.entries());
+      const responseDetails = {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        responseTime: `${responseTime.toFixed(2)}ms`,
+        url: response.url, // This will show the final URL after any redirects
+        headers: responseHeaders,
+        requestId
+      };
+      
+      console.log('🤖 [AI CHAT] Response received:', responseDetails);
+      
+      // Check for redirects (status 307, 308, or Location header)
+      if (response.status === 307 || response.status === 308 || responseHeaders['location']) {
+        console.warn('⚠️ [AI CHAT] Redirect detected:', {
           status: response.status,
-          statusText: response.statusText,
-          ok: response.ok,
-          responseTime: `${responseTime.toFixed(2)}ms`,
-          headers: Object.fromEntries(response.headers.entries())
+          location: responseHeaders['location'],
+          finalUrl: response.url,
+          originalUrl: apiUrl
         });
       }
 
       // Validate response before parsing JSON
       if (!response.ok) {
-        console.error('🚨 [AI CHAT] HTTP Error:', response.status, response.statusText);
+        // Enhanced error logging for 405 errors specifically
+        if (response.status === 405) {
+          console.error('🚨 [AI CHAT] HTTP 405 Method Not Allowed Error:', {
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+            originalUrl: apiUrl,
+            fullUrl,
+            method: 'POST',
+            headers: responseHeaders,
+            requestId,
+            environment: process.env.NODE_ENV,
+            timestamp: new Date().toISOString(),
+            redirectLocation: responseHeaders['location'],
+            // Log if URL changed (indicating redirect)
+            urlChanged: response.url !== fullUrl
+          });
+        } else {
+          console.error('🚨 [AI CHAT] HTTP Error:', {
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+            originalUrl: apiUrl,
+            headers: responseHeaders,
+            requestId
+          });
+        }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 

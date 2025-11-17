@@ -645,13 +645,27 @@ export function AdrataChatPanel() {
       ));
 
       // Call AI API - same endpoint as RightPanel
-      const response = await fetch('/api/ai-chat', {
+      const apiUrl = '/api/ai-chat';
+      const requestId = `adrata-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Enhanced logging: Capture actual URL being called
+      const fullUrl = typeof window !== 'undefined' ? new URL(apiUrl, window.location.origin).href : apiUrl;
+      console.log('🤖 [ADRATA CHAT] Making API request:', {
+        url: apiUrl,
+        fullUrl,
+        method: 'POST',
+        requestId,
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV
+      });
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
-          'X-Request-ID': `adrata-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          'X-Request-ID': requestId
         },
         body: JSON.stringify({
           message: input,
@@ -675,8 +689,58 @@ export function AdrataChatPanel() {
         })
       });
 
+      // Enhanced logging: Always log response details, especially in production for debugging
+      const responseHeaders = Object.fromEntries(response.headers.entries());
+      const responseDetails = {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        url: response.url, // This will show the final URL after any redirects
+        headers: responseHeaders,
+        requestId
+      };
+      
+      console.log('🤖 [ADRATA CHAT] Response received:', responseDetails);
+      
+      // Check for redirects (status 307, 308, or Location header)
+      if (response.status === 307 || response.status === 308 || responseHeaders['location']) {
+        console.warn('⚠️ [ADRATA CHAT] Redirect detected:', {
+          status: response.status,
+          location: responseHeaders['location'],
+          finalUrl: response.url,
+          originalUrl: apiUrl
+        });
+      }
+
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        // Enhanced error logging for 405 errors specifically
+        if (response.status === 405) {
+          console.error('🚨 [ADRATA CHAT] HTTP 405 Method Not Allowed Error:', {
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+            originalUrl: apiUrl,
+            fullUrl,
+            method: 'POST',
+            headers: responseHeaders,
+            requestId,
+            environment: process.env.NODE_ENV,
+            timestamp: new Date().toISOString(),
+            redirectLocation: responseHeaders['location'],
+            // Log if URL changed (indicating redirect)
+            urlChanged: response.url !== fullUrl
+          });
+        } else {
+          console.error('🚨 [ADRATA CHAT] HTTP Error:', {
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+            originalUrl: apiUrl,
+            headers: responseHeaders,
+            requestId
+          });
+        }
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
       const responseText = await response.text();
