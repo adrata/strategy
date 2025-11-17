@@ -2098,7 +2098,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         hookVsRefMatch: latestRecord?.id === currentRecord?.id
       });
 
-      const apiUrl = '/api/ai-chat';
+      // Ensure no trailing slash - defensive fix for Next.js trailingSlash config
+      const apiUrl = '/api/ai-chat'.replace(/\/$/, '');
       const requestId = `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       // Enhanced logging: Capture actual URL being called
@@ -2109,7 +2110,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         method: 'POST',
         requestId,
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV
+        environment: process.env.NODE_ENV,
+        hasTrailingSlash: apiUrl.endsWith('/')
       });
 
       const response = await fetch(apiUrl, {
