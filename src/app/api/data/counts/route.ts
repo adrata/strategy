@@ -606,38 +606,64 @@ export async function GET(request: NextRequest) {
     // 🚀 CLIENTS: Count people with CLIENT status (primary or additionalStatuses) - Only show records where user is main seller
     let clientsWithAdditionalStatusCount = 0;
     try {
-      const clientsWhere: any = {
-        ...peopleBaseWhere,
-        mainSellerId: userId, // Only count records where user is the main seller
-        AND: [
-          { additionalStatuses: { has: 'CLIENT' } },
-          { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
-        ]
-      };
-      clientsWithAdditionalStatusCount = await prisma.people.count({
-        where: clientsWhere
-      });
-    } catch (error) {
-      console.error('❌ [COUNTS API] Error fetching clients with additionalStatuses count:', error);
+      // Check if additionalStatuses field exists in Prisma model before querying
+      const dmmf = prisma._dmmf;
+      const peopleModel = dmmf?.datamodel?.models?.find((m: any) => m.name === 'people');
+      const hasAdditionalStatusesField = peopleModel?.fields?.some((f: any) => f.name === 'additionalStatuses');
+      
+      if (hasAdditionalStatusesField) {
+        const clientsWhere: any = {
+          ...peopleBaseWhere,
+          mainSellerId: userId, // Only count records where user is the main seller
+          AND: [
+            { additionalStatuses: { has: 'CLIENT' } },
+            { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
+          ]
+        };
+        clientsWithAdditionalStatusCount = await prisma.people.count({
+          where: clientsWhere
+        });
+      } else {
+        // Field doesn't exist in Prisma model, skip this count
+        console.warn('⚠️ [COUNTS API] additionalStatuses field not found in people model, skipping additional status count');
+      }
+    } catch (error: any) {
+      // Only log if it's not a field validation error (which we handle above)
+      if (!error?.message?.includes('Unknown argument') && !error?.message?.includes('additionalStatuses')) {
+        console.error('❌ [COUNTS API] Error fetching clients with additionalStatuses count:', error);
+      }
       clientsWithAdditionalStatusCount = 0;
     }
 
     // Also count companies with CLIENT in additionalStatuses - Only show records where user is main seller
     let companiesClientsWithAdditionalStatusCount = 0;
     try {
-      const companiesClientsWhere: any = {
-        ...companiesBaseWhere,
-        mainSellerId: userId, // Only count records where user is the main seller
-        AND: [
-          { additionalStatuses: { has: 'CLIENT' } },
-          { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
-        ]
-      };
-      companiesClientsWithAdditionalStatusCount = await prisma.companies.count({
-        where: companiesClientsWhere
-      });
-    } catch (error) {
-      console.error('❌ [COUNTS API] Error fetching companies with CLIENT in additionalStatuses count:', error);
+      // Check if additionalStatuses field exists in Prisma model before querying
+      const dmmf = prisma._dmmf;
+      const companiesModel = dmmf?.datamodel?.models?.find((m: any) => m.name === 'companies');
+      const hasAdditionalStatusesField = companiesModel?.fields?.some((f: any) => f.name === 'additionalStatuses');
+      
+      if (hasAdditionalStatusesField) {
+        const companiesClientsWhere: any = {
+          ...companiesBaseWhere,
+          mainSellerId: userId, // Only count records where user is the main seller
+          AND: [
+            { additionalStatuses: { has: 'CLIENT' } },
+            { status: { not: 'CLIENT' } } // Don't double-count those with primary status CLIENT
+          ]
+        };
+        companiesClientsWithAdditionalStatusCount = await prisma.companies.count({
+          where: companiesClientsWhere
+        });
+      } else {
+        // Field doesn't exist in Prisma model, skip this count
+        console.warn('⚠️ [COUNTS API] additionalStatuses field not found in companies model, skipping additional status count');
+      }
+    } catch (error: any) {
+      // Only log if it's not a field validation error (which we handle above)
+      if (!error?.message?.includes('Unknown argument') && !error?.message?.includes('additionalStatuses')) {
+        console.error('❌ [COUNTS API] Error fetching companies with CLIENT in additionalStatuses count:', error);
+      }
       companiesClientsWithAdditionalStatusCount = 0;
     }
 

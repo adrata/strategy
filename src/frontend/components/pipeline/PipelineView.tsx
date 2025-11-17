@@ -1280,12 +1280,12 @@ export const PipelineView = React.memo(function PipelineView({
         }
         
         console.log(`🔗 [PipelineView] Navigating to ${status} record: ${personUrl}`);
-        window.location.href = personUrl;
+        router.push(personUrl);
       } else {
         // Fallback to non-workspace URL
         const personUrl = `/people/${personSlug}`;
         console.log(`🔗 [PipelineView] Navigating to: ${personUrl}`);
-        window.location.href = personUrl;
+        router.push(personUrl);
       }
     } else {
       navigateToPipelineItem(section, recordId, recordName);
