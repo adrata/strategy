@@ -132,7 +132,9 @@ export async function GET(request: NextRequest) {
     // 🔧 FALLBACK: If no people with buyer group roles found, return ALL people for the company
     // This ensures buyer groups tab works even when roles haven't been assigned yet (like leads)
     let peopleToUse = validatedPeople;
-    if (validatedPeople.length === 0) {
+    const isUsingFallback = validatedPeople.length === 0;
+    
+    if (isUsingFallback) {
       console.log(`🔄 [FAST BUYER GROUPS] No people with buyer group roles found, fetching ALL people for company...`);
       
       const allCompanyPeople = await prisma.people.findMany({
@@ -189,7 +191,23 @@ export async function GET(request: NextRequest) {
       const buyerRole = getRoleLabel(rawRole);
       
       // Extract buyer group status from direct field or customFields
-      const buyerGroupStatus = person.buyerGroupStatus || customFields?.buyerGroupStatus || 'unknown';
+      // 🔧 FIX: If we're using the fallback (all company people), set status to 'in' so they're shown
+      // Otherwise, use the actual status or default to 'in' if they have a buyerGroupRole
+      let buyerGroupStatus = person.buyerGroupStatus || customFields?.buyerGroupStatus;
+      
+      // If status is explicitly 'out', keep it as 'out' (will be filtered by frontend)
+      // Otherwise, if they have a role or we're in fallback mode, set to 'in'
+      if (buyerGroupStatus !== 'out') {
+        // If we're using fallback (all company people) or they have a buyerGroupRole, they're implicitly 'in'
+        if (isUsingFallback || person.buyerGroupRole || storedRole) {
+          buyerGroupStatus = 'in';
+          if (isUsingFallback) {
+            console.log(`🔧 [FAST BUYER GROUPS] Setting status to 'in' for ${person.fullName} (fallback mode)`);
+          }
+        } else {
+          buyerGroupStatus = buyerGroupStatus || 'unknown';
+        }
+      }
       
       return {
         id: person.id,

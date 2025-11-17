@@ -59,6 +59,9 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   // 🚀 UNIFIED LOADING: Track page transitions for smooth UX
   const [isTransitioning, setIsTransitioning] = useState(false);
   
+  // 🔧 INFINITE LOOP FIX: Track last loaded record ID to prevent repeated loads
+  const lastLoadedRecordIdRef = useRef<string | null>(null);
+  
   // 🎯 AI CONTEXT FIX: Get record context setter to update AI panel
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
   
@@ -487,6 +490,17 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     speedrunLoading
   });
   
+  // 🔧 INFINITE LOOP FIX: Reset last loaded record ID when slug changes
+  useEffect(() => {
+    if (slug) {
+      const recordId = extractIdFromSlug(slug);
+      // Only reset if we're loading a different record
+      if (lastLoadedRecordIdRef.current !== recordId) {
+        lastLoadedRecordIdRef.current = null;
+      }
+    }
+  }, [slug]);
+
   // Direct record loading function for when accessed via URL
   const loadDirectRecord = useCallback(async (recordId: string) => {
     if (!recordId || directRecordLoading) return;
@@ -1130,9 +1144,16 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
+    // 🔧 INFINITE LOOP FIX: Prevent loading the same record multiple times
+    if (lastLoadedRecordIdRef.current === recordId && selectedRecord?.id === recordId && !directRecordLoading) {
+      console.log(`✅ [RECORD LOADING] Record ${recordId} already loaded, skipping reload`);
+      return;
+    }
+    
     // 🔧 FIX: Prevent infinite loop - don't reload if we already have the correct record
     if (selectedRecord?.id === recordId && !directRecordLoading) {
       console.log(`✅ [RECORD LOADING] Record already loaded: ${recordId}, skipping reload`);
+      lastLoadedRecordIdRef.current = recordId;
       return;
     }
     
@@ -1145,6 +1166,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         const timeSinceUpdate = Date.now() - parseInt(updateTimestamp, 10);
         if (timeSinceUpdate < 5000) {
           console.log(`✅ [RECORD LOADING] Record ${recordId} was just updated ${timeSinceUpdate}ms ago, skipping reload to prevent flicker`);
+          lastLoadedRecordIdRef.current = recordId;
           return;
         }
         // Clear old timestamp
@@ -1156,7 +1178,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       hasSelectedRecord: !!selectedRecord,
       selectedRecordId: selectedRecord?.id,
       directRecordLoading,
-      dataLength: data.length
+      dataLength: data.length,
+      lastLoadedRecordId: lastLoadedRecordIdRef.current
     });
 
     // 🚀 INDUSTRY BEST PRACTICE: Always call loadDirectRecord when navigating to a record
@@ -1167,11 +1190,15 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
+    // 🔧 INFINITE LOOP FIX: Mark this record as being loaded before calling loadDirectRecord
+    lastLoadedRecordIdRef.current = recordId;
+    
     // Always call loadDirectRecord - it will handle caching and force-refresh logic internally
     console.log(`🔄 [RECORD LOADING] Loading record: ${recordId} (always fresh)`);
     loadDirectRecord(recordId);
     return; // Exit early - loadDirectRecord handles everything
-  }, [slug, section, loadDirectRecord, setDirectRecordError]); // 🔧 FIX: Removed data.length and selectedRecord?.id to prevent infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, section]); // 🔧 FIX: Removed loadDirectRecord from dependencies to prevent infinite loops - it's stable (only depends on section which is already in deps)
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {

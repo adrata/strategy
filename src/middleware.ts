@@ -132,6 +132,13 @@ export function middleware(request: NextRequest) {
 
   // Handle API routes for web builds
   if (pathname.startsWith('/api/')) {
+    // Fix trailing slash issue for API routes when trailingSlash is enabled
+    // Ensure /api/ai-chat (without slash) works with POST requests
+    if (pathname === '/api/ai-chat' && request.method === 'POST') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/api/ai-chat/';
+      return NextResponse.rewrite(url);
+    }
     return NextResponse.next();
   }
 
