@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { REVENUE_OS_APPS } from "@/platform/config";
 import type { Workspace } from "@/platform/auth";
 
@@ -640,17 +641,17 @@ export function useUI(): UseUIReturn {
             const workspaceSlug = workspaceMatch[1];
             const newUrl = `/${workspaceSlug}/${sectionName}/${record.id}`;
             console.log(`[AcquisitionOS] Workspace-aware navigation to: ${newUrl}`);
-            window.history.pushState(null, '', newUrl);
+            router.push(newUrl);
           } else {
             // Not in workspace context, use regular navigation
             const newUrl = `/${sectionName}/${record.id}`;
             console.log(`[AcquisitionOS] Regular navigation to: ${newUrl}`);
-            window.history.pushState(null, '', newUrl);
+            router.push(newUrl);
           }
         }
       }
     },
-    [activeSection, isClient],
+    [activeSection, isClient, router],
   );
 
   // Handle company click

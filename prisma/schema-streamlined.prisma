@@ -383,6 +383,7 @@ model companies {
   logoUrl                 String?            @db.VarChar(500)
   status                  CompanyStatus?     @default(ACTIVE)
   relationshipType        RelationshipType?
+  additionalStatuses      String[]            @default([])
   priority                CompanyPriority?   @default(MEDIUM)
   tags                    String[]           @default([])
   customFields            Json?
@@ -586,6 +587,7 @@ model people {
   profilePictureUrl       String?             @db.VarChar(500)
   status                  PersonStatus?       @default(LEAD)
   relationshipType        RelationshipType?
+  additionalStatuses      String[]            @default([])
   priority                PersonPriority?     @default(MEDIUM)
   source                  String?
   tags                    String[]            @default([])
