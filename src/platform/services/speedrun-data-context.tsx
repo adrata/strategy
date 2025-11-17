@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
 import { SpeedrunDataService, SpeedrunProspect } from './speedrun-data-service';
 import { useUnifiedAuth } from '@/platform/auth';
 
@@ -96,7 +96,7 @@ export function SpeedrunDataProvider({ children }: SpeedrunDataProviderProps) {
     }
   }, [user?.activeWorkspaceId, user?.id]);
 
-  const value: SpeedrunDataContextType = {
+  const value: SpeedrunDataContextType = useMemo(() => ({
     prospects,
     addDataCorpProspects: (dataCorpProspects: SpeedrunProspect[]) => 
       speedrunServiceRef.current?.addDataCorpProspects?.(dataCorpProspects),
@@ -109,7 +109,7 @@ export function SpeedrunDataProvider({ children }: SpeedrunDataProviderProps) {
     applySpeedrunEngineSettings: (settings: any) => 
       speedrunServiceRef.current?.applySpeedrunEngineSettings?.(settings),
     isLoading
-  };
+  }), [prospects, isLoading]);
 
   return (
     <SpeedrunDataContext.Provider value={value}>

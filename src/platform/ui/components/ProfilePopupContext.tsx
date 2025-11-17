@@ -6,6 +6,8 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useCallback,
+  useMemo,
 } from "react";
 
 interface ProfilePopupContextType {
@@ -31,17 +33,17 @@ export function ProfilePopupProvider({
   const [profileAnchor, setProfileAnchor] = useState<HTMLElement | null>(null);
   const profilePopupRef = useRef<HTMLDivElement>(null);
 
-  const closeAllPopups = () => {
+  const closeAllPopups = useCallback(() => {
     console.log("🔒 ProfilePopup: Closing all profile popups");
     setIsProfileOpen(false);
     setProfileAnchor(null);
-  };
+  }, []);
 
-  const openProfilePopup = (anchor: HTMLElement) => {
+  const openProfilePopup = useCallback((anchor: HTMLElement) => {
     console.log("🔓 ProfilePopup: Opening profile popup");
     setProfileAnchor(anchor);
     setIsProfileOpen(true);
-  };
+  }, []);
 
   // Click outside to close popup
   useEffect(() => {
@@ -65,7 +67,7 @@ export function ProfilePopupProvider({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isProfileOpen, profileAnchor]);
+  }, [isProfileOpen, profileAnchor, closeAllPopups]);
 
   // Escape key to close popup
   useEffect(() => {
@@ -83,9 +85,9 @@ export function ProfilePopupProvider({
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
     };
-  }, [isProfileOpen]);
+  }, [isProfileOpen, closeAllPopups]);
 
-  const value = {
+  const value = useMemo(() => ({
     isProfileOpen,
     setIsProfileOpen,
     profileAnchor,
@@ -93,7 +95,12 @@ export function ProfilePopupProvider({
     profilePopupRef,
     closeAllPopups,
     openProfilePopup,
-  };
+  }), [
+    isProfileOpen,
+    profileAnchor,
+    closeAllPopups,
+    openProfilePopup,
+  ]);
 
   return (
     <ProfilePopupContext.Provider value={value}>
