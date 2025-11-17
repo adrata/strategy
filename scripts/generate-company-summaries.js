@@ -26,6 +26,66 @@ console.log(`Limit: ${limit || 'UNLIMITED'}`);
 console.log(`Mode: ${isDryRun ? 'DRY RUN' : 'LIVE'}`);
 console.log('');
 
+// Validate that a generated summary matches the company context
+function validateGeneratedSummary(summary, companyName, companyIndustry, companyDomain) {
+  if (!summary || summary.trim() === '') {
+    return { valid: false, reason: 'Summary is empty' };
+  }
+  
+  const summaryLower = summary.toLowerCase();
+  const industryLower = (companyIndustry || '').toLowerCase();
+  const nameLower = (companyName || '').toLowerCase();
+  const domainLower = (companyDomain || '').toLowerCase();
+  
+  // Check for Israeli/resort keywords
+  const israeliKeywords = ['ישראל', 'israel', 'כפר נופש'];
+  const hasIsraeliContent = israeliKeywords.some(keyword => summaryLower.includes(keyword.toLowerCase()));
+  
+  // Check for resort/hospitality content
+  const hasResortContent = summaryLower.includes('resort') || 
+                          summaryLower.includes('luxury resort') || 
+                          summaryLower.includes('luxury hotel');
+  
+  // Check for utilities/transportation/energy industries
+  const isUtilitiesOrTransport = industryLower.includes('utilities') || 
+                                 industryLower.includes('transportation') || 
+                                 industryLower.includes('logistics') ||
+                                 industryLower.includes('supply chain') ||
+                                 industryLower.includes('electric') ||
+                                 industryLower.includes('energy');
+  
+  // Check for hospitality/tourism industries (where resort content would be valid)
+  const isHospitalityIndustry = industryLower.includes('hospitality') || 
+                                 industryLower.includes('tourism') || 
+                                 industryLower.includes('hotel') ||
+                                 industryLower.includes('resort');
+  
+  // Validate: If summary has Israeli content, it should not be used for non-Israeli companies
+  if (hasIsraeliContent && !isHospitalityIndustry) {
+    const isIsraeliCompany = nameLower.includes('israel') || 
+                             domainLower.includes('.il') || 
+                             domainLower.includes('israel');
+    if (!isIsraeliCompany) {
+      return { valid: false, reason: 'Summary contains Israeli content for non-Israeli company' };
+    }
+  }
+  
+  // Validate: Resort content should not appear in utilities/transportation companies
+  if (hasResortContent && isUtilitiesOrTransport && !isHospitalityIndustry) {
+    return { valid: false, reason: 'Summary contains resort content for utilities/transportation company' };
+  }
+  
+  // Additional validation: Check for major company name mismatches
+  const majorCompanyNames = ['southern company', 'southernco', 'southern co'];
+  if (majorCompanyNames.some(name => nameLower.includes(name))) {
+    if (hasResortContent || hasIsraeliContent) {
+      return { valid: false, reason: 'Summary contains mismatched content for major utility company' };
+    }
+  }
+  
+  return { valid: true };
+}
+
 async function generateCompanySummary(company) {
   // Build context from available data
   const contextParts = [];
@@ -107,7 +167,20 @@ Keep it professional, concise, and actionable. Do not make up information that i
     ],
   });
 
-  return message.content[0].type === 'text' ? message.content[0].text : '';
+  const generatedSummary = message.content[0].type === 'text' ? message.content[0].text : '';
+  
+  // Validate the generated summary before returning
+  const domain = company.website ? company.website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0] : null;
+  const validation = validateGeneratedSummary(generatedSummary, company.name, company.industry, domain);
+  
+  if (!validation.valid) {
+    console.log(`⚠️  Generated summary failed validation: ${validation.reason}`);
+    console.log(`   Summary preview: ${generatedSummary.substring(0, 100)}...`);
+    // Return null to indicate validation failure - caller should handle this
+    return null;
+  }
+  
+  return generatedSummary;
 }
 
 async function main() {
@@ -184,6 +257,13 @@ async function main() {
         console.log(`[${i + 1}/${companies.length}] Generating summary for: ${company.name}`);
         
         const summary = await generateCompanySummary(company);
+        
+        // Skip if validation failed (summary will be null)
+        if (!summary) {
+          console.log(`⏭️  Skipped due to validation failure\n`);
+          errorCount++;
+          continue;
+        }
         
         // Update the company
         await prisma.companies.update({

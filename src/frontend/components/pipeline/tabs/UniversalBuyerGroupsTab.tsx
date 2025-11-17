@@ -236,6 +236,57 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     }
   }, [buyerGroups]);
 
+  // 🔧 SYNC FUNCTION: Proactively sync buyer group data when companyId becomes available
+  // This ensures buyer group roles are assigned even if API initially returns 0 results
+  const syncBuyerGroupData = React.useCallback(async (companyIdToSync: string, signal: AbortSignal): Promise<boolean> => {
+    // Check if we've already synced for this companyId
+    if (hasSyncedRef.current === companyIdToSync) {
+      console.log('🔄 [BUYER GROUPS SYNC] Already synced for companyId:', companyIdToSync);
+      return false;
+    }
+
+    // Check if sync was aborted
+    if (signal.aborted) {
+      console.log('🚫 [BUYER GROUPS SYNC] Sync aborted');
+      return false;
+    }
+
+    console.log('🔄 [BUYER GROUPS SYNC] Starting sync for companyId:', companyIdToSync);
+    setIsSyncing(true);
+    hasSyncedRef.current = companyIdToSync;
+
+    try {
+      const syncResponse = await authFetch(`/api/v1/companies/${companyIdToSync}/sync-buyer-group`, {
+        method: 'POST'
+      });
+
+      // Check if sync was aborted after API call
+      if (signal.aborted) {
+        console.log('🚫 [BUYER GROUPS SYNC] Sync aborted after API call');
+        setIsSyncing(false);
+        return false;
+      }
+
+      if (syncResponse && syncResponse.success) {
+        console.log('✅ [BUYER GROUPS SYNC] Sync completed:', {
+          synced: syncResponse.synced,
+          updated: syncResponse.updated,
+          errors: syncResponse.errors
+        });
+        setIsSyncing(false);
+        return syncResponse.updated > 0; // Return true if any records were updated
+      } else {
+        console.warn('⚠️ [BUYER GROUPS SYNC] Sync failed or returned no success:', syncResponse);
+        setIsSyncing(false);
+        return false;
+      }
+    } catch (error) {
+      console.warn('⚠️ [BUYER GROUPS SYNC] Failed to sync company buyer group data:', error);
+      setIsSyncing(false);
+      return false;
+    }
+  }, []);
+
   useEffect(() => {
     // 🚨 CRITICAL: Use an abort controller to cancel stale fetches when record changes
     const abortController = new AbortController();
@@ -388,6 +439,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       // 🔧 FIX: Clear fetched company name and companyId when record/company changes
       setFetchedCompanyName('');
       setFetchedCompanyId('');
+      // 🔧 SYNC TRACKING: Reset sync tracking when company changes
+      hasSyncedRef.current = null;
       
       // Clear cache for previous company (both ID and name-based keys)
       if (previousCompanyId || previousCompanyName) {
@@ -434,8 +487,18 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       previousCompanyNameRef.current = companyName || null;
     }
     
+    // 🔧 PROACTIVE SYNC: Trigger sync when companyId becomes available (before API call)
+    // This ensures buyer group roles are assigned even if API initially returns 0 results
+    if (companyId && companyId.trim() !== '' && hasSyncedRef.current !== companyId) {
+      console.log('🔄 [BUYER GROUPS] Triggering proactive sync for companyId:', companyId);
+      // Run sync in background - don't wait for it, but it will help populate data
+      syncBuyerGroupData(companyId, signal).catch(error => {
+        console.warn('⚠️ [BUYER GROUPS] Proactive sync failed:', error);
+      });
+    }
+    
       // 🚨 STEP 2: Now proceed with async fetch (state is already cleared if company changed)
-    const fetchBuyerGroups = async () => {
+    const fetchBuyerGroups = async (retryAfterSync = false) => {
       console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
       console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
       console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
@@ -626,40 +689,22 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               
               console.log(`🔍 [BUYER GROUPS] After validation: ${validatedMembers.length} members (was ${members.length})`);
               
-              // Sync buyer group data for all people in the company to ensure consistency
-              // This updates isBuyerGroupMember and influenceLevel fields based on buyerGroupRole
-              if (companyId) {
-                try {
-                  const syncResponse = await authFetch(`/api/v1/companies/${companyId}/sync-buyer-group`, {
-                    method: 'POST'
-                  });
-                  
-                  if (syncResponse && syncResponse.success) {
-                    console.log('✅ [BUYER GROUPS] Sync completed:', {
-                      synced: syncResponse.synced,
-                      updated: syncResponse.updated,
-                      errors: syncResponse.errors
-                    });
-                    
-                    // If any records were updated, refresh the data to show updated membership status
-                    if (syncResponse.updated > 0) {
-                      console.log('🔄 [BUYER GROUPS] Refreshing data after sync updates');
-                      // Re-fetch the data to get updated membership status
-                      const refreshResult = await authFetch(`/api/data/buyer-groups/fast?companyId=${companyId}`);
-                      if (refreshResult && refreshResult.success && refreshResult.data) {
-                        validatedMembers = refreshResult.data.filter((member: any) => {
-                          const memberCompanyMatches = 
-                            (member.companyId && member.companyId === companyId) ||
-                            (member.company && typeof member.company === 'string' && member.company === companyId);
-                          return memberCompanyMatches;
-                        });
-                        console.log('✅ [BUYER GROUPS] Refreshed data after sync');
-                      }
-                    }
-                  }
-                } catch (error) {
-                  // Log error but continue - sync is best effort
-                  console.warn('⚠️ [BUYER GROUPS] Failed to sync company buyer group data:', error);
+              // 🔧 SYNC & RETRY: If API returned 0 results and we haven't synced yet, sync and retry
+              if (validatedMembers.length === 0 && !retryAfterSync && companyId && hasSyncedRef.current !== companyId) {
+                console.log('🔄 [BUYER GROUPS] API returned 0 results, triggering sync and retry...');
+                const syncUpdated = await syncBuyerGroupData(companyId, signal);
+                
+                // Check if fetch was aborted after sync
+                if (signal.aborted) {
+                  console.log('🚫 [BUYER GROUPS] Fetch aborted after sync, discarding results');
+                  return;
+                }
+                
+                // If sync updated records, retry the API call
+                if (syncUpdated) {
+                  console.log('🔄 [BUYER GROUPS] Sync updated records, retrying API call...');
+                  // Retry the fetch with retryAfterSync flag to prevent infinite loop
+                  return fetchBuyerGroups(true);
                 }
               }
               
