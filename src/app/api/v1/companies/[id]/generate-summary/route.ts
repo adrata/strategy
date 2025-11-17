@@ -10,6 +10,73 @@ const anthropic = new Anthropic({
 });
 
 /**
+ * Validate that a generated summary matches the company context
+ */
+function validateGeneratedSummary(
+  summary: string,
+  companyName: string,
+  companyIndustry: string | null,
+  companyDomain: string | null
+): { valid: boolean; reason?: string } {
+  if (!summary || summary.trim() === '') {
+    return { valid: false, reason: 'Summary is empty' };
+  }
+  
+  const summaryLower = summary.toLowerCase();
+  const industryLower = (companyIndustry || '').toLowerCase();
+  const nameLower = (companyName || '').toLowerCase();
+  const domainLower = (companyDomain || '').toLowerCase();
+  
+  // Check for Israeli/resort keywords
+  const israeliKeywords = ['ישראל', 'israel', 'כפר נופש'];
+  const hasIsraeliContent = israeliKeywords.some(keyword => summaryLower.includes(keyword.toLowerCase()));
+  
+  // Check for resort/hospitality content
+  const hasResortContent = summaryLower.includes('resort') || 
+                          summaryLower.includes('luxury resort') || 
+                          summaryLower.includes('luxury hotel');
+  
+  // Check for utilities/transportation/energy industries
+  const isUtilitiesOrTransport = industryLower.includes('utilities') || 
+                                 industryLower.includes('transportation') || 
+                                 industryLower.includes('logistics') ||
+                                 industryLower.includes('supply chain') ||
+                                 industryLower.includes('electric') ||
+                                 industryLower.includes('energy');
+  
+  // Check for hospitality/tourism industries (where resort content would be valid)
+  const isHospitalityIndustry = industryLower.includes('hospitality') || 
+                                 industryLower.includes('tourism') || 
+                                 industryLower.includes('hotel') ||
+                                 industryLower.includes('resort');
+  
+  // Validate: If summary has Israeli content, it should not be used for non-Israeli companies
+  if (hasIsraeliContent && !isHospitalityIndustry) {
+    const isIsraeliCompany = nameLower.includes('israel') || 
+                             domainLower.includes('.il') || 
+                             domainLower.includes('israel');
+    if (!isIsraeliCompany) {
+      return { valid: false, reason: 'Summary contains Israeli content for non-Israeli company' };
+    }
+  }
+  
+  // Validate: Resort content should not appear in utilities/transportation companies
+  if (hasResortContent && isUtilitiesOrTransport && !isHospitalityIndustry) {
+    return { valid: false, reason: 'Summary contains resort content for utilities/transportation company' };
+  }
+  
+  // Additional validation: Check for major company name mismatches
+  const majorCompanyNames = ['southern company', 'southernco', 'southern co'];
+  if (majorCompanyNames.some(name => nameLower.includes(name))) {
+    if (hasResortContent || hasIsraeliContent) {
+      return { valid: false, reason: 'Summary contains mismatched content for major utility company' };
+    }
+  }
+  
+  return { valid: true };
+}
+
+/**
  * POST /api/v1/companies/[id]/generate-summary
  * Generate an AI-powered company summary based on available data
  */
@@ -229,6 +296,26 @@ Keep it professional, concise, and actionable. Do not make up information that i
     const aiSummary = message.content[0].type === 'text' ? message.content[0].text : '';
     
     console.log(`✅ [COMPANY SUMMARY] Generated AI summary: ${aiSummary}`);
+
+    // Validate the generated summary before saving
+    const domain = company.website ? company.website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0] : null;
+    const validation = validateGeneratedSummary(aiSummary, company.name, company.industry, domain);
+    
+    if (!validation.valid) {
+      console.error(`❌ [COMPANY SUMMARY] Generated summary failed validation: ${validation.reason}`);
+      console.error(`   Summary preview: ${aiSummary.substring(0, 200)}...`);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: `Generated summary failed validation: ${validation.reason}. Please try regenerating or contact support.`,
+          details: {
+            reason: validation.reason,
+            summaryPreview: aiSummary.substring(0, 200)
+          }
+        },
+        { status: 400 }
+      );
+    }
 
     // Save the AI-generated summary to the database
     await prisma.companies.update({

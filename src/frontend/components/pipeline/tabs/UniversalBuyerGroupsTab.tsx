@@ -690,21 +690,31 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               console.log(`🔍 [BUYER GROUPS] After validation: ${validatedMembers.length} members (was ${members.length})`);
               
               // 🔧 SYNC & RETRY: If API returned 0 results and we haven't synced yet, sync and retry
-              if (validatedMembers.length === 0 && !retryAfterSync && companyId && hasSyncedRef.current !== companyId) {
-                console.log('🔄 [BUYER GROUPS] API returned 0 results, triggering sync and retry...');
-                const syncUpdated = await syncBuyerGroupData(companyId, signal);
+              // Only do this if we haven't already retried (retryAfterSync flag prevents infinite loop)
+              if (validatedMembers.length === 0 && !retryAfterSync && companyId) {
+                // Check if we need to sync (either haven't synced yet, or companyId changed)
+                const needsSync = hasSyncedRef.current !== companyId;
                 
-                // Check if fetch was aborted after sync
-                if (signal.aborted) {
-                  console.log('🚫 [BUYER GROUPS] Fetch aborted after sync, discarding results');
-                  return;
-                }
-                
-                // If sync updated records, retry the API call
-                if (syncUpdated) {
-                  console.log('🔄 [BUYER GROUPS] Sync updated records, retrying API call...');
-                  // Retry the fetch with retryAfterSync flag to prevent infinite loop
-                  return fetchBuyerGroups(true);
+                if (needsSync) {
+                  console.log('🔄 [BUYER GROUPS] API returned 0 results, triggering sync and retry...');
+                  const syncUpdated = await syncBuyerGroupData(companyId, signal);
+                  
+                  // Check if fetch was aborted after sync
+                  if (signal.aborted) {
+                    console.log('🚫 [BUYER GROUPS] Fetch aborted after sync, discarding results');
+                    return;
+                  }
+                  
+                  // If sync updated records, retry the API call
+                  if (syncUpdated) {
+                    console.log('🔄 [BUYER GROUPS] Sync updated records, retrying API call...');
+                    // Retry the fetch with retryAfterSync flag to prevent infinite loop
+                    return fetchBuyerGroups(true);
+                  } else {
+                    console.log('🔄 [BUYER GROUPS] Sync completed but no records were updated, showing empty state');
+                  }
+                } else {
+                  console.log('🔄 [BUYER GROUPS] Already synced for this companyId, showing empty state');
                 }
               }
               
@@ -1160,7 +1170,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       <div className="space-y-8">
 
       {/* Loading State */}
-      {loading && (
+      {(loading || isSyncing) && (
         <div className="space-y-4">
           <div className="animate-pulse">
             <div className="h-4 bg-loading-bg rounded w-1/4 mb-4"></div>
@@ -1181,7 +1191,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       )}
 
       {/* Error State */}
-      {!loading && error && (
+      {!loading && !isSyncing && error && (
         <div className="text-center py-12">
           <div className="bg-error/10 border border-error rounded-lg p-6 mx-auto max-w-md">
             <h3 className="text-lg font-medium text-error mb-2">
@@ -1202,7 +1212,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       )}
 
       {/* Empty State */}
-      {!loading && !error && buyerGroups.length === 0 && (
+      {!loading && !isSyncing && !error && buyerGroups.length === 0 && (
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-muted mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">
@@ -1221,7 +1231,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       )}
 
       {/* Buyer Group Members */}
-      {!loading && buyerGroups.length > 0 && (
+      {!loading && !isSyncing && buyerGroups.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground">Buyer Group Members</h3>
