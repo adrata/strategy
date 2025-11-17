@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
 
 interface ListViewContext {
   visibleRecords: any[];
@@ -85,17 +85,28 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
     setListViewContextState(null);
   }, []);
 
+  const contextValue = useMemo(() => ({
+    currentRecord,
+    recordType,
+    listViewContext,
+    setCurrentRecord,
+    updateCurrentRecord,
+    clearCurrentRecord,
+    setListViewContext,
+    clearListViewContext
+  }), [
+    currentRecord,
+    recordType,
+    listViewContext,
+    setCurrentRecord,
+    updateCurrentRecord,
+    clearCurrentRecord,
+    setListViewContext,
+    clearListViewContext
+  ]);
+
   return (
-    <RecordContext.Provider value={{
-      currentRecord,
-      recordType,
-      listViewContext,
-      setCurrentRecord,
-      updateCurrentRecord,
-      clearCurrentRecord,
-      setListViewContext,
-      clearListViewContext
-    }}>
+    <RecordContext.Provider value={contextValue}>
       {children}
     </RecordContext.Provider>
   );
