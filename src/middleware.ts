@@ -131,14 +131,9 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
 
   // Handle API routes for web builds
+  // Note: Next.js App Router automatically handles trailing slashes for API routes
+  // when trailingSlash is enabled, so we don't need manual rewrites
   if (pathname.startsWith('/api/')) {
-    // Fix trailing slash issue for API routes when trailingSlash is enabled
-    // Ensure /api/ai-chat (without slash) works with POST requests
-    if (pathname === '/api/ai-chat' && request.method === 'POST') {
-      const url = request.nextUrl.clone();
-      url.pathname = '/api/ai-chat/';
-      return NextResponse.rewrite(url);
-    }
     return NextResponse.next();
   }
 
