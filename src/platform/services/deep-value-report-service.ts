@@ -440,7 +440,7 @@ Please provide the updated report content with the requested changes.`;
     const prompt = this.buildReportPrompt(report, context);
     
     try {
-      const response = await fetch('/api/ai-chat', {
+      const response = await fetch('/api/ai-chat/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

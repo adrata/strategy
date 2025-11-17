@@ -762,7 +762,7 @@ export function RightPanel() {
     if (!workspaceId || !userId) return;
     
     try {
-      const response = await fetch('/api/v1/conversations', {
+      const response = await fetch('/api/v1/conversations/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2098,7 +2098,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         hookVsRefMatch: latestRecord?.id === currentRecord?.id
       });
 
-      const response = await fetch('/api/ai-chat', {
+      const response = await fetch('/api/ai-chat/', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

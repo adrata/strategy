@@ -289,7 +289,7 @@ export function AdrataChatPanel() {
     if (!workspaceId || !userId) return;
     
     try {
-      const response = await fetch('/api/v1/conversations', {
+      const response = await fetch('/api/v1/conversations/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -645,7 +645,7 @@ export function AdrataChatPanel() {
       ));
 
       // Call AI API - same endpoint as RightPanel
-      const response = await fetch('/api/ai-chat', {
+      const response = await fetch('/api/ai-chat/', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

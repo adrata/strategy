@@ -675,7 +675,7 @@ Your rep may be pursuing the wrong contact for this specific deal. While Mary Gi
                 const storedDoc = getDocumentData(activeSubApp);
                 
                 console.log('[HOOK] Making API call to /api/ai-chat with POST method');
-                const chatResponse = await fetch('/api/ai-chat', {
+                const chatResponse = await fetch('/api/ai-chat/', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',

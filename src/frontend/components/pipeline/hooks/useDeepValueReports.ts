@@ -152,7 +152,7 @@ async function generateReportContent(report: DeepValueReport, record: any): Prom
   const prompt = buildReportPrompt(report, record);
   
   try {
-    const response = await fetch('/api/ai-chat', {
+    const response = await fetch('/api/ai-chat/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

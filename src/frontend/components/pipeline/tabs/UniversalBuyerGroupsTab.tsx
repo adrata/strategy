@@ -553,27 +553,34 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // 🔍 DEFENSIVE CHECK: Only use cache if companyId is present (companyName is optional for cache lookup)
         if (companyId && !companyIdChanged && !companyNameChanged) {
           const buyerGroupCachedData = safeGetItem(buyerGroupCacheKey, 10 * 60 * 1000); // 10 minutes TTL for better performance
-          if (buyerGroupCachedData && Array.isArray(buyerGroupCachedData) && buyerGroupCachedData.length > 0) {
-            // 🔍 CACHE VALIDATION: Match by companyId (required), companyName (optional if missing)
-            // If companyName is missing, only validate by companyId
-            const cacheIsValid = companyName && companyName.trim() !== ''
-              ? buyerGroupCachedData.every(member => 
-                  (member.companyId === companyId) && (member.company === companyName)
-                )
-              : buyerGroupCachedData.every(member => 
-                  member.companyId === companyId
-                );
-            
-            if (cacheIsValid) {
-              console.log('📦 [BUYER GROUPS] Using validated cached buyer group data for company:', companyName || 'Unknown', 'ID:', companyId);
-              setBuyerGroups(buyerGroupCachedData);
-              setLoading(false);
-              setIsFetching(false);
-              return;
-            } else {
-              console.log('⚠️ [BUYER GROUPS] Cache invalid for current company (ID or name mismatch), will fetch fresh data');
-              // Clear invalid cache
+          if (buyerGroupCachedData && Array.isArray(buyerGroupCachedData)) {
+            // 🚨 CRITICAL FIX: Empty arrays pass every() check (vacuous truth), so explicitly check length
+            // If cache is empty, don't use it - fetch fresh data to check if people exist now
+            if (buyerGroupCachedData.length === 0) {
+              console.log('⚠️ [BUYER GROUPS] Cache is empty, fetching fresh data to check for new members');
               localStorage.removeItem(buyerGroupCacheKey);
+            } else {
+              // 🔍 CACHE VALIDATION: Match by companyId (required), companyName (optional if missing)
+              // If companyName is missing, only validate by companyId
+              const cacheIsValid = companyName && companyName.trim() !== ''
+                ? buyerGroupCachedData.every(member => 
+                    (member.companyId === companyId) && (member.company === companyName)
+                  )
+                : buyerGroupCachedData.every(member => 
+                    member.companyId === companyId
+                  );
+              
+              if (cacheIsValid) {
+                console.log('📦 [BUYER GROUPS] Using validated cached buyer group data for company:', companyName || 'Unknown', 'ID:', companyId, `(${buyerGroupCachedData.length} members)`);
+                setBuyerGroups(buyerGroupCachedData);
+                setLoading(false);
+                setIsFetching(false);
+                return;
+              } else {
+                console.log('⚠️ [BUYER GROUPS] Cache invalid for current company (ID or name mismatch), will fetch fresh data');
+                // Clear invalid cache
+                localStorage.removeItem(buyerGroupCacheKey);
+              }
             }
           }
         } else {
@@ -664,7 +671,11 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               const members = fastResult.data;
               console.log('⚡ [BUYER GROUPS] Fast API returned:', members.length, 'members');
               console.log('⚡ [BUYER GROUPS] Performance:', fastResult.meta?.processingTime);
-              console.log('⚡ [BUYER GROUPS] Members:', members);
+              if (members.length > 0) {
+                console.log('⚡ [BUYER GROUPS] Sample members:', members.slice(0, 3).map(m => ({ name: m.name, role: m.role, status: m.buyerGroupStatus, companyId: m.companyId })));
+              } else {
+                console.log('⚠️ [BUYER GROUPS] API returned 0 members - checking if people exist for company:', companyId);
+              }
               
               // 🚨 VALIDATION: Filter API response to only include members that match the current company
               // NOTE: This validation is now redundant since we use companyId exact matching, but kept as defense in depth

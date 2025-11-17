@@ -177,7 +177,10 @@ export function UniversalRecordTemplate({
   const [activeTab, setActiveTab] = useState(() => {
     // Only use URL tab if it's valid for this record type
     const validTabIds = validTabs.map(t => t.id);
-    return (urlTab && validTabIds.includes(urlTab)) ? urlTab : defaultTab;
+    const initialTab = (urlTab && validTabIds.includes(urlTab)) ? urlTab : defaultTab;
+    // Track the initial tab in the sync ref to prevent unnecessary updates
+    urlSyncRef.current.lastSyncedTab = initialTab;
+    return initialTab;
   });
   const [loading, setLoading] = useState(false);
   const [activeReport, setActiveReport] = useState<DeepValueReport | null>(null);
@@ -222,6 +225,8 @@ export function UniversalRecordTemplate({
       console.log(`🔄 [UNIVERSAL] Record ID changed from ${localRecord.id} to ${record.id}, clearing recentlyUpdatedFields`);
       setRecentlyUpdatedFields(new Set());
       setPendingSaves(new Set());
+      // Reset URL sync ref when record changes to allow new record to sync its tab
+      urlSyncRef.current = { isSyncing: false, lastSyncedTab: null };
     }
   }, [record?.id, localRecord?.id]);
   
@@ -416,7 +421,11 @@ export function UniversalRecordTemplate({
   // Ref for content container to reset scroll position
   const contentRef = useRef<HTMLDivElement>(null);
   // Ref to track URL sync to prevent circular updates
-  const urlSyncRef = useRef(false);
+  // Track the last tab we synced to URL to prevent unnecessary updates
+  const urlSyncRef = useRef<{ isSyncing: boolean; lastSyncedTab: string | null }>({ 
+    isSyncing: false, 
+    lastSyncedTab: null 
+  });
   
   // Use universal inline edit hook
   const {
@@ -479,15 +488,34 @@ export function UniversalRecordTemplate({
   
   // Function to update URL with tab parameter
   const updateURLTab = (tabId: string) => {
+    // Prevent circular updates - if we're already syncing this tab, don't update again
+    if (urlSyncRef.current.isSyncing && urlSyncRef.current.lastSyncedTab === tabId) {
+      return;
+    }
+    
     const currentParams = new URLSearchParams(window.location.search);
     const currentTab = currentParams.get('tab');
     
     // Only update if tab actually changed
-    if (currentTab === tabId) return;
+    if (currentTab === tabId) {
+      // Update ref to track that this tab is already in URL
+      urlSyncRef.current.lastSyncedTab = tabId;
+      return;
+    }
+    
+    // Set sync ref to prevent circular updates
+    urlSyncRef.current.isSyncing = true;
+    urlSyncRef.current.lastSyncedTab = tabId;
     
     const currentPath = window.location.pathname;
     currentParams.set('tab', tabId);
     router.replace(`${currentPath}?${currentParams.toString()}`, { scroll: false });
+    
+    // Reset sync flag after a short delay to allow searchParams to update
+    // Keep lastSyncedTab to prevent re-syncing the same tab
+    setTimeout(() => {
+      urlSyncRef.current.isSyncing = false;
+    }, 100);
   };
   
   // Handle profile click for popup
@@ -530,29 +558,45 @@ export function UniversalRecordTemplate({
   
   // Reset active tab when tabs change or URL changes to ensure valid tab is selected
   useEffect(() => {
+    // Skip if we're already syncing to prevent circular updates
+    if (urlSyncRef.current.isSyncing) {
+      return;
+    }
+    
     const validTabIds = tabs.map(tab => tab.id);
     const urlTab = searchParams.get('tab');
     
-    // Reset sync ref when tabs or record changes
-    urlSyncRef.current = false;
-    
     // If URL has a valid tab parameter, sync state with it
     if (urlTab && validTabIds.includes(urlTab)) {
+      // Only update state if it's different to prevent unnecessary re-renders
       if (activeTab !== urlTab) {
         setActiveTab(urlTab);
+        // Track that this tab is now synced (don't update URL since it already matches)
+        urlSyncRef.current.lastSyncedTab = urlTab;
+      } else {
+        // State already matches URL, just track it
+        urlSyncRef.current.lastSyncedTab = urlTab;
       }
     } 
     // If current active tab is not valid for this record type, reset to first tab
     else if (!validTabIds.includes(activeTab)) {
       const newTab = tabs[0]?.id || 'overview';
       setActiveTab(newTab);
-      updateURLTab(newTab);
+      // Only update URL if it's different from what we're setting and we haven't just synced it
+      if (urlTab !== newTab && urlSyncRef.current.lastSyncedTab !== newTab) {
+        updateURLTab(newTab);
+      }
     }
     // If URL doesn't have a tab but we have an active tab, update URL
+    // BUT only if the active tab is valid and we haven't already synced it
     else if (!urlTab && activeTab && validTabIds.includes(activeTab)) {
-      updateURLTab(activeTab);
+      // Only update URL if we haven't just synced this tab
+      // This prevents updating URL on initial load when state is initialized
+      if (urlSyncRef.current.lastSyncedTab !== activeTab) {
+        updateURLTab(activeTab);
+      }
     }
-  }, [tabs, searchParams]); // Remove activeTab to prevent circular updates
+  }, [tabs, searchParams, activeTab]); // Include activeTab but guard against circular updates
 
   // Note: Record context is set in PipelineDetailPage.tsx to avoid conflicts
   // This component no longer sets/clears record context
