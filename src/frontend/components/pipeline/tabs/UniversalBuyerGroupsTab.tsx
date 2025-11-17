@@ -1156,13 +1156,22 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
   // No loading spinner - instant display
 
-  // Calculate stats from buyer groups
-  const totalMembers = buyerGroups.length;
-  const decisionMakers = buyerGroups.filter(p => p.role === 'Decision Maker').length;
-  const champions = buyerGroups.filter(p => p.role === 'Champion').length;
-  const stakeholders = buyerGroups.filter(p => p.role === 'Stakeholder').length;
-  const blockers = buyerGroups.filter(p => p.role === 'Blocker').length;
-  const introducers = buyerGroups.filter(p => p.role === 'Introducer').length;
+  // Filter buyer groups to only show people who are in the buyer group
+  // Include if status is 'in' or missing/null/unknown (implicitly in if they have a role)
+  const filteredBuyerGroups = React.useMemo(() => {
+    return buyerGroups.filter((member) => {
+      const status = member.buyerGroupStatus;
+      return status === 'in' || !status || status === 'unknown' || status === null;
+    });
+  }, [buyerGroups]);
+
+  // Calculate stats from filtered buyer groups
+  const totalMembers = filteredBuyerGroups.length;
+  const decisionMakers = filteredBuyerGroups.filter(p => p.role === 'Decision Maker').length;
+  const champions = filteredBuyerGroups.filter(p => p.role === 'Champion').length;
+  const stakeholders = filteredBuyerGroups.filter(p => p.role === 'Stakeholder').length;
+  const blockers = filteredBuyerGroups.filter(p => p.role === 'Blocker').length;
+  const introducers = filteredBuyerGroups.filter(p => p.role === 'Introducer').length;
   
 
   return (
@@ -1212,7 +1221,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       )}
 
       {/* Empty State */}
-      {!loading && !isSyncing && !error && buyerGroups.length === 0 && (
+      {!loading && !isSyncing && !error && filteredBuyerGroups.length === 0 && (
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-muted mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">
@@ -1231,13 +1240,13 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       )}
 
       {/* Buyer Group Members */}
-      {!loading && !isSyncing && buyerGroups.length > 0 && (
+      {!loading && !isSyncing && filteredBuyerGroups.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground">Buyer Group Members</h3>
           </div>
           <div className="space-y-3">
-            {buyerGroups.map((member, index) => {
+            {filteredBuyerGroups.map((member, index) => {
               const riskAssessment = riskAssessments[member.id] || calculatePersonRisk(member);
 
               return (
@@ -1273,20 +1282,6 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                     <span className={`px-2 py-1 text-xs rounded-full ${getRoleColorClasses(member.role)}`}>
                       {getRoleLabel(member.role)}
                     </span>
-                    {/* ADD THIS - Buyer Group Status Badge */}
-                    {member.buyerGroupStatus && (
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        member.buyerGroupStatus === 'in' ? 'bg-success/10 text-success border border-success' :
-                        member.buyerGroupStatus === 'out' ? 'bg-muted-light text-muted border border-border' :
-                        member.buyerGroupStatus === 'pending' ? 'bg-warning/10 text-warning border border-warning' :
-                        'bg-muted-light text-muted'
-                      }`}>
-                        {member.buyerGroupStatus === 'in' ? '✓ In Group' :
-                         member.buyerGroupStatus === 'out' ? 'Out' :
-                         member.buyerGroupStatus === 'pending' ? 'Pending' : 
-                         member.buyerGroupStatus}
-                      </span>
-                    )}
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       member.influence === 'high' ? 'bg-purple-100 text-purple-800' :
                       member.influence === 'medium' ? 'bg-orange-100 text-orange-800' :

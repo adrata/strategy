@@ -14,8 +14,8 @@ import { useProgress } from "@/platform/hooks/useProgress";
 // Import workspace mapping
 import { getWorkspaceIdBySlug, getAllWorkspaceSlugs } from "@/platform/config/workspace-mapping";
 
-// Import RecordContextProvider to provide record context to AI chat
-import { RecordContextProvider } from './RecordContextProvider';
+// Note: RecordContextProvider is now managed at the page level to avoid nesting conflicts
+// import { RecordContextProvider } from './RecordContextProvider';
 
 // Import modern loading components
 
@@ -240,9 +240,7 @@ export function RevenueOSProvider({
 
   return (
     <RevenueOSContext.Provider value={contextValue}>
-      <RecordContextProvider>
-        {children}
-      </RecordContextProvider>
+      {children}
     </RevenueOSContext.Provider>
   );
 }

@@ -11,6 +11,7 @@ import { companyStrategyService, CompanyStrategyRequest } from '@/platform/servi
 
 // Required for static export (desktop build)
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 // Allow 60 seconds for strategy generation (Claude AI can take time)
 export const maxDuration = 60;
@@ -38,29 +39,17 @@ export async function GET(
       return createErrorResponse('Company ID is required', 'VALIDATION_ERROR', 400);
     }
 
-    // Get company record with enriched data
+    // Get company record - only select fields needed for strategy check (fast query, no people join)
     const company = await prisma.companies.findFirst({
       where: {
         id: companyId,
         workspaceId: context.workspaceId,
         deletedAt: null
       },
-      include: {
-        // Include related people/contacts
-        people: {
-          where: { deletedAt: null },
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            jobTitle: true,
-            email: true,
-            phone: true,
-            linkedinUrl: true,
-            lastAction: true,
-            nextAction: true
-          }
-        }
+      select: {
+        id: true,
+        name: true,
+        customFields: true
       }
     });
 

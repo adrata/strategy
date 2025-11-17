@@ -80,58 +80,47 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   const autoGenerationAttemptedRef = useRef(false);
 
   // Load existing strategy data on component mount (non-blocking)
+  // Priority: 1) record prop customFields (instant), 2) API GET (fast), 3) Generate (slow)
   useEffect(() => {
     if (record?.id) {
+      // First check if data is already in the record prop (instant - no API call needed)
+      if (record.customFields?.strategyData) {
+        console.log('✅ [COMPANY STRATEGY] Using strategy data from record prop (instant)');
+        setStrategyData(record.customFields.strategyData);
+        return;
+      }
+      
+      // If not in record prop, try to load from API (fast database query)
       loadStrategyData();
     }
-  }, [record?.id]);
+  }, [record?.id, record?.customFields?.strategyData]);
 
-  // Auto-trigger generation in background if no data exists (silent, like other tabs)
-  useEffect(() => {
-    if (record?.id && !strategyData && !isGeneratingStrategy && !strategyError && !autoGenerationAttemptedRef.current) {
-      // Check if data exists in record first
-      if (!record.customFields?.strategyData) {
-        console.log('🔄 [COMPANY STRATEGY] No intelligence data found, triggering background generation...');
-        autoGenerationAttemptedRef.current = true;
-        // Trigger generation silently in background (non-blocking)
-        // Use a small delay to ensure component is fully mounted
-        const timer = setTimeout(() => {
-          handleGenerateStrategy(false).catch(err => {
-            console.warn('⚠️ [COMPANY STRATEGY] Background generation failed:', err);
-            // Reset the ref on error so it can retry if user refreshes
-            autoGenerationAttemptedRef.current = false;
-          });
-        }, 500);
-        
-        return () => clearTimeout(timer);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record?.id, record?.customFields?.strategyData, strategyData, isGeneratingStrategy, strategyError]);
+  // DISABLED: Auto-generation removed - data should be pre-generated via batch process
+  // If data is missing, show a message instead of generating in real-time
 
   const loadStrategyData = async () => {
     if (!record?.id) return;
     
+    // Double-check record prop (might have been updated)
+    if (record.customFields?.strategyData) {
+      console.log('✅ [COMPANY STRATEGY] Using strategy data from record prop');
+      setStrategyData(record.customFields.strategyData);
+      return;
+    }
+    
     try {
-      // First check if strategy data exists in the record's customFields (instant load)
-      if (record.customFields?.strategyData) {
-        console.log('✅ [COMPANY STRATEGY] Using cached strategy data from record');
-        setStrategyData(record.customFields.strategyData);
-        return;
-      }
-
       // Abort any previous request
       if (loadAbortControllerRef.current) {
         loadAbortControllerRef.current.abort();
       }
       
-      // Create new AbortController with timeout
+      // Create new AbortController with shorter timeout for GET (should be fast)
       const controller = new AbortController();
       loadAbortControllerRef.current = controller;
-      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds for GET (should be instant)
 
       try {
-        // If no cached data, try to load from API (fast check)
+        // Fast API call - only checks database for existing strategy (optimized query)
         const response = await fetch(`/api/v1/strategy/company/${record.id}`, {
           signal: controller.signal
         });
@@ -150,7 +139,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        const timeoutError = 'Request timed out after 60 seconds. Strategy generation may be taking longer than expected.';
+        const timeoutError = 'Request timed out. Please try again.';
         console.warn('⏱️ [COMPANY STRATEGY] Load request timed out:', timeoutError);
         setStrategyError(timeoutError);
       } else {
@@ -244,6 +233,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
         
         // Don't auto-retry on timeout - let user manually retry
         setIsGeneratingStrategy(false);
+        generateAbortControllerRef.current = null;
         return;
       }
       
@@ -265,7 +255,12 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
         }, 2000);
         return;
       }
+      
+      // Ensure loading state is cleared even if we don't retry
+      setIsGeneratingStrategy(false);
+      generateAbortControllerRef.current = null;
     } finally {
+      // Always clear loading state and abort controller
       setIsGeneratingStrategy(false);
       generateAbortControllerRef.current = null;
     }
@@ -461,30 +456,22 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             </div>
           </div>
         ) : (
-          // Empty state - generation happens automatically in background
-          <div className="space-y-6">
-            {isGeneratingStrategy ? (
-              <>
-                <StrategySkeleton />
-                <div className="text-center text-sm text-muted">
-                  Generating intelligence in the background. You can navigate away and return later.
-                </div>
-              </>
-            ) : (
-              <div className="bg-white border border-border rounded-lg p-8">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl">🧠</span>
-                  </div>
-                  <h4 className="text-lg font-semibold text-foreground mb-2">
-                    Intelligence Loading
-                  </h4>
-                  <p className="text-sm text-muted max-w-md mx-auto">
-                    Intelligence data is being generated. Please refresh the page in a moment.
-                  </p>
-                </div>
+          // Empty state - data not found (should be pre-generated via batch process)
+          <div className="bg-white border border-border rounded-lg p-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🧠</span>
               </div>
-            )}
+              <h4 className="text-lg font-semibold text-foreground mb-2">
+                Intelligence Data Not Available
+              </h4>
+              <p className="text-sm text-muted max-w-md mx-auto mb-4">
+                Intelligence data for this company has not been generated yet. Intelligence data is pre-generated via batch processes to ensure fast loading.
+              </p>
+              <p className="text-xs text-muted max-w-md mx-auto">
+                If you need intelligence data for this company, please contact your administrator to run the batch intelligence generation process.
+              </p>
+            </div>
           </div>
         )}
     </div>
