@@ -130,14 +130,24 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get('host') || '';
 
-  // CRITICAL: Handle /api/ai-chat/ trailing slash BEFORE any other processing
+  // CRITICAL: Handle API routes with trailing slashes BEFORE any other processing
   // This must execute before Next.js trailingSlash redirect to prevent POST→GET conversion
   // Rewrite preserves HTTP method (POST stays POST), unlike redirects
+  
+  // Handle /api/ai-chat/ trailing slash
   if (pathname === '/api/ai-chat/') {
     const url = request.nextUrl.clone();
     url.pathname = '/api/ai-chat';
-    // Use rewrite (not redirect) to preserve HTTP method
-    // This ensures POST requests remain POST and don't get converted to GET
+    return NextResponse.rewrite(url);
+  }
+  
+  // Handle /api/v1/conversations/[id]/messages/ trailing slash
+  // Pattern: /api/v1/conversations/{id}/messages/
+  const messagesTrailingSlashMatch = pathname.match(/^\/api\/v1\/conversations\/([^\/]+)\/messages\/$/);
+  if (messagesTrailingSlashMatch) {
+    const conversationId = messagesTrailingSlashMatch[1];
+    const url = request.nextUrl.clone();
+    url.pathname = `/api/v1/conversations/${conversationId}/messages`;
     return NextResponse.rewrite(url);
   }
   

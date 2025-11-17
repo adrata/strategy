@@ -3,13 +3,13 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-dynamic';;
-
  * Conversation Messages API v1
  * GET /api/v1/conversations/{id}/messages - Get messages for a conversation
  * POST /api/v1/conversations/{id}/messages - Add message to conversation
  */
+
+// Required for static export (desktop build)
+export const dynamic = 'force-dynamic';
 
 // GET /api/v1/conversations/{id}/messages - Get messages for a conversation
 export async function GET(
