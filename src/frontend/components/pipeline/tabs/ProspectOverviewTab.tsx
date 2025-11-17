@@ -97,62 +97,16 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     syncBuyerGroupData();
   }, [record?.id]);
 
-  // Auto-trigger enrichment if person has LinkedIn/email but missing key data (SILENT - no UI)
+  // 🔧 DISABLED: Auto-enrichment - records are already enriched, no need for auto-triggering
+  // This was causing infinite reload loops and unnecessary API calls
+  // If enrichment is needed, it should be done manually or via batch processes
   useEffect(() => {
-    const triggerEnrichment = async () => {
-      // Only trigger if we have a person ID and haven't triggered yet
-      if (!record?.id || hasTriggeredEnrichment) {
-        return;
-      }
-
-      // Check if person has LinkedIn or email but missing key data
-      const hasIdentifier = record?.linkedinUrl || record?.email;
-      const missingBasicData = !record?.jobTitle || !record?.department;
-      const hasBeenEnriched = record?.customFields?.coresignalId || record?.lastEnriched;
-      
-      // Check data staleness (only re-enrich if > 90 days old)
-      const isStale = record?.lastEnriched && 
-        (Date.now() - new Date(record.lastEnriched).getTime()) > 90 * 24 * 60 * 60 * 1000;
-      
-      // Only trigger if: has identifier, missing data, and (not enriched OR stale)
-      if (hasIdentifier && missingBasicData && (!hasBeenEnriched || isStale)) {
-        console.log(`🤖 [PROSPECT OVERVIEW] Auto-triggering silent enrichment for person: ${record.id}`);
-        setHasTriggeredEnrichment(true);
-        
-        try {
-          const enrichResult = await authFetch(`/api/v1/enrich`, {
-            method: 'POST',
-            body: JSON.stringify({
-              type: 'person',
-              entityId: record.id,
-              options: {
-                verifyEmail: true,
-                verifyPhone: true
-              }
-            })
-          });
-          
-          console.log(`📊 [PROSPECT OVERVIEW] Enrichment result:`, enrichResult);
-          
-          if (enrichResult?.status === 'completed') {
-            console.log(`✅ [PROSPECT OVERVIEW] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
-            
-            // Trigger page refresh to show new data
-            window.location.reload();
-          } else if (enrichResult?.status === 'failed') {
-            console.warn(`⚠️ [PROSPECT OVERVIEW] Enrichment failed:`, enrichResult.message);
-          }
-        } catch (error) {
-          console.error('❌ [PROSPECT OVERVIEW] Error triggering enrichment:', error);
-        }
-      }
-    };
-
-    // Only trigger once when component mounts and we have person data
-    if (record && !hasTriggeredEnrichment) {
-      triggerEnrichment();
+    // Auto-enrichment disabled - records are already enriched
+    // Keeping the effect structure but not triggering anything
+    if (record?.id && process.env.NODE_ENV === 'development') {
+      console.log(`ℹ️ [PROSPECT OVERVIEW] Auto-enrichment disabled - record ${record.id} is already enriched`);
     }
-  }, [record, hasTriggeredEnrichment]);
+  }, [record?.id]);
 
   // Fetch actions when component mounts or record changes
   useEffect(() => {

@@ -115,72 +115,16 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     syncBuyerGroupData();
   }, [record?.id]);
 
-  // Auto-trigger enrichment and intelligence if person has missing data (SILENT - no UI)
+  // 🔧 DISABLED: Auto-enrichment - records are already enriched, no need for auto-triggering
+  // This was causing infinite reload loops and unnecessary API calls
+  // If enrichment is needed, it should be done manually or via batch processes
   useEffect(() => {
-    const triggerEnrichmentAndIntelligence = async () => {
-      // Only trigger if we have a person ID and haven't triggered yet
-      if (!record?.id || hasTriggeredEnrichment) {
-        return;
-      }
-
-      // Check if person has LinkedIn or email but missing key data
-      const hasIdentifier = record?.linkedinUrl || record?.email;
-      const missingBasicData = !record?.jobTitle || !record?.department || !record?.state || !record?.bio;
-      const missingIntelligence = !record?.buyerGroupRole || !record?.customFields?.influenceLevel || 
-                                   !record?.customFields?.decisionPower || !record?.customFields?.engagementLevel;
-      const hasBeenEnriched = record?.customFields?.coresignalId || record?.lastEnriched;
-      
-      // Check data staleness (only re-enrich if > 90 days old)
-      const isStale = record?.lastEnriched && 
-        (Date.now() - new Date(record.lastEnriched).getTime()) > 90 * 24 * 60 * 60 * 1000;
-      
-      // Trigger enrichment if: has identifier, missing data, and (not enriched OR stale)
-      if (hasIdentifier && missingBasicData && (!hasBeenEnriched || isStale)) {
-        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering enrichment for person: ${record.id}`);
-        setHasTriggeredEnrichment(true);
-        
-        try {
-          const enrichResult = await authFetch(`/api/v1/enrich`, {
-            method: 'POST',
-            body: JSON.stringify({
-              type: 'person',
-              entityId: record.id,
-              options: {
-                verifyEmail: true,
-                verifyPhone: true
-              }
-            })
-          });
-          
-          console.log(`📊 [PERSON OVERVIEW] Enrichment result:`, enrichResult);
-          
-          if (enrichResult?.status === 'completed') {
-            console.log(`✅ [PERSON OVERVIEW] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
-            
-            // Trigger page refresh to show new data
-            window.location.reload();
-          } else if (enrichResult?.status === 'failed') {
-            console.warn(`⚠️ [PERSON OVERVIEW] Enrichment failed:`, enrichResult.message);
-          }
-        } catch (error) {
-          console.error('❌ [PERSON OVERVIEW] Error triggering enrichment:', error);
-        }
-      }
-      
-      // 🚧 DISABLED: Auto-triggering intelligence generation 
-      // This requires an API endpoint (/api/v1/people/[id]/generate-intelligence) to be created
-      // Previously was directly importing server-side service which caused security issues
-      // TODO: Create API endpoint and re-enable this functionality
-      if (false && missingIntelligence && !hasTriggeredEnrichment) {
-        console.log(`🤖 [PERSON OVERVIEW] Auto-triggering intelligence generation disabled - API endpoint needed`);
-      }
-    };
-
-    // Only trigger once when component mounts and we have person data
-    if (record && !hasTriggeredEnrichment) {
-      triggerEnrichmentAndIntelligence();
+    // Auto-enrichment disabled - records are already enriched
+    // Keeping the effect structure but not triggering anything
+    if (record?.id && process.env.NODE_ENV === 'development') {
+      console.log(`ℹ️ [PERSON OVERVIEW] Auto-enrichment disabled - record ${record.id} is already enriched`);
     }
-  }, [record, hasTriggeredEnrichment]);
+  }, [record?.id]);
 
   // Fetch actions when component mounts or record changes
   useEffect(() => {

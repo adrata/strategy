@@ -190,8 +190,20 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
           if (enrichResult?.status === 'completed') {
             console.log(`✅ [UniversalCompanyTab] Successfully enriched ${enrichResult.fieldsPopulated?.length || 0} fields`);
             
-            // Trigger page refresh to show new data
-            window.location.reload();
+            // 🔧 FIX: Use cache invalidation instead of full page reload to prevent infinite loops
+            // Set force-refresh flag and dispatch cache invalidation event
+            if (typeof window !== 'undefined' && companyId) {
+              sessionStorage.setItem(`force-refresh-companies-${companyId}`, Date.now().toString());
+              window.dispatchEvent(new CustomEvent('cache-invalidated', {
+                detail: {
+                  recordType: 'companies',
+                  recordId: companyId,
+                  reason: 'enrichment_completed'
+                }
+              }));
+              console.log(`🔄 [UniversalCompanyTab] Cache invalidated, company will refresh on next load`);
+            }
+            // Don't reload - let the cache invalidation trigger a fresh fetch
           } else if (enrichResult?.status === 'failed') {
             console.warn(`⚠️ [UniversalCompanyTab] Enrichment failed:`, enrichResult.message);
           }

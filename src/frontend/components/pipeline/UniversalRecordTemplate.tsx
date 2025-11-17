@@ -1862,8 +1862,20 @@ export function UniversalRecordTemplate({
           
           showMessage(`Updated company to ${value.name} successfully`);
           
-          // Trigger server refresh
-          setTimeout(() => router.refresh(), 500);
+          // 🔧 FIX: Use cache invalidation instead of router.refresh() to prevent reload loops
+          // Set force-refresh flag instead of triggering immediate refresh
+          if (typeof window !== 'undefined' && recordId) {
+            sessionStorage.setItem(`force-refresh-${recordType}-${recordId}`, Date.now().toString());
+            window.dispatchEvent(new CustomEvent('cache-invalidated', {
+              detail: {
+                recordType,
+                recordId,
+                reason: 'company_updated'
+              }
+            }));
+            console.log(`🔄 [UNIVERSAL] Cache invalidated after company update, record will refresh on next load`);
+          }
+          // Don't call router.refresh() - let cache invalidation handle it
           return;
         } else if (typeof value === 'string') {
           // String value - could be updating existing company name or creating new one
@@ -1967,7 +1979,14 @@ export function UniversalRecordTemplate({
               
               // Set force refresh flag for this record
               const forceRefreshKey = `force-refresh-${recordType}-${record.id}`;
-              sessionStorage.setItem(forceRefreshKey, 'true');
+              sessionStorage.setItem(forceRefreshKey, Date.now().toString());
+              window.dispatchEvent(new CustomEvent('cache-invalidated', {
+                detail: {
+                  recordType,
+                  recordId: record.id,
+                  reason: 'company_name_updated'
+                }
+              }));
               console.log(`🔄 [COMPANY UPDATE] Set force refresh flag for ${recordType} record ${record.id}`, {
                 recordType,
                 recordId: record.id,
@@ -1977,8 +1996,9 @@ export function UniversalRecordTemplate({
               });
             }
             
-            // Trigger server refresh
-            setTimeout(() => router.refresh(), 500);
+            // 🔧 FIX: Use cache invalidation instead of router.refresh() to prevent reload loops
+            // Cache invalidation already handled above, don't trigger immediate refresh
+            console.log(`🔄 [UNIVERSAL] Cache invalidated after company name update, record will refresh on next load`);
             return;
           } else {
             // No existing companyId - create new company and link it
@@ -2083,12 +2103,20 @@ export function UniversalRecordTemplate({
                 }
                 
                 // Set force refresh flag for this record
-                sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, 'true');
+                sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, Date.now().toString());
+                window.dispatchEvent(new CustomEvent('cache-invalidated', {
+                  detail: {
+                    recordType,
+                    recordId: record.id,
+                    reason: 'company_created'
+                  }
+                }));
                 console.log(`🔄 [COMPANY CREATE] Set force refresh flag for ${recordType} record ${record.id}`);
               }
               
-              // Trigger server refresh
-              setTimeout(() => router.refresh(), 500);
+              // 🔧 FIX: Use cache invalidation instead of router.refresh() to prevent reload loops
+              // Cache invalidation already handled above, don't trigger immediate refresh
+              console.log(`🔄 [UNIVERSAL] Cache invalidated after company creation, record will refresh on next load`);
               return;
             } else {
               throw new Error('Failed to create company');
