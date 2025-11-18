@@ -22,22 +22,32 @@ import { rateLimiter } from '@/platform/security/rate-limiter';
 import { securityMonitor } from '@/platform/security/security-monitor';
 import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } from '@/platform/ai/tools/role-finder-tool';
 
-// GET handler - return 405 to prevent Next.js from redirecting POST requests here
-export async function GET(request: NextRequest) {
-  return NextResponse.json({
-    success: false,
-    error: 'Method not allowed. Use POST to send messages.',
-    code: 'METHOD_NOT_ALLOWED',
-    receivedMethod: 'GET',
-    expectedMethod: 'POST'
-  }, { status: 405 });
-}
+// GET handler removed - Next.js will automatically return 405 for unsupported methods
+// The explicit GET handler was causing issues when POST requests were redirected to GET
+// Middleware rewrite now handles URL normalization, so this handler is no longer needed
 
 export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
   const requestMethod = request.method;
   const requestUrl = request.url;
   const requestPathname = request.nextUrl.pathname;
+  
+  // 🔍 COMPREHENSIVE DEBUGGING: Log route handler entry
+  console.log('🔍 [ROUTE DEBUG] STEP E - Route Handler: POST handler called:', {
+    timestamp: new Date().toISOString(),
+    method: requestMethod,
+    url: requestUrl,
+    pathname: requestPathname,
+    hasTrailingSlash: requestPathname.endsWith('/'),
+    expectedMethod: 'POST',
+    methodMatch: requestMethod === 'POST',
+    headers: {
+      'user-agent': request.headers.get('user-agent'),
+      'x-forwarded-for': request.headers.get('x-forwarded-for'),
+      'x-request-id': request.headers.get('x-request-id'),
+      'content-type': request.headers.get('content-type')
+    }
+  });
   
   // Log request method and URL for debugging HTTP 405 issues
   console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
@@ -52,20 +62,30 @@ export async function POST(request: NextRequest) {
   
   // Verify we received POST method (not GET from redirect)
   if (requestMethod !== 'POST') {
-    console.error('❌ [AI CHAT] CRITICAL: Received non-POST method:', {
+    console.error('🔍 [ROUTE DEBUG] STEP E - Route Handler: ❌ CRITICAL - Received non-POST method:', {
       receivedMethod: requestMethod,
       pathname: requestPathname,
       url: requestUrl,
-      possibleCause: 'Next.js trailingSlash redirect may have converted POST→GET'
+      possibleCause: 'Next.js trailingSlash redirect may have converted POST→GET',
+      headers: Object.fromEntries(request.headers.entries()),
+      timestamp: new Date().toISOString()
     });
+    
     return NextResponse.json({
       success: false,
       error: `Method not allowed. Expected POST but received ${requestMethod}. This may indicate a trailing slash redirect issue.`,
       code: 'METHOD_NOT_ALLOWED',
       receivedMethod: requestMethod,
-      expectedMethod: 'POST'
+      expectedMethod: 'POST',
+      debug: {
+        pathname: requestPathname,
+        url: requestUrl,
+        hasTrailingSlash: requestPathname.endsWith('/')
+      }
     }, { status: 405 });
   }
+  
+  console.log('🔍 [ROUTE DEBUG] STEP F - Route Handler: ✅ Method is POST, proceeding...');
   
   try {
     // 1. AUTHENTICATION CHECK - Critical security requirement

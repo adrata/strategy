@@ -2199,9 +2199,10 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       
       const requestId = `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
-      // Enhanced logging: Capture actual URL being called
+      // 🔍 COMPREHENSIVE DEBUGGING: Log everything about the request
       const fullUrl = typeof window !== 'undefined' ? new URL(apiUrl, window.location.origin).href : apiUrl;
-      console.log('🤖 [AI CHAT] Making API request:', {
+      const debugInfo = {
+        // Request details
         url: apiUrl,
         fullUrl,
         method: 'POST',
@@ -2209,9 +2210,32 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
         hasTrailingSlash: apiUrl.endsWith('/'),
-        originalPath: '/api/ai-chat'
-      });
+        originalPath: '/api/ai-chat',
+        // Environment details
+        windowLocation: typeof window !== 'undefined' ? window.location.href : 'N/A',
+        windowOrigin: typeof window !== 'undefined' ? window.location.origin : 'N/A',
+        windowPathname: typeof window !== 'undefined' ? window.location.pathname : 'N/A',
+        // Next.js config (if accessible)
+        nextConfigTrailingSlash: 'unknown (server-side)',
+        // Request will be made to
+        finalRequestUrl: fullUrl
+      };
+      
+      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Preparing request:', debugInfo);
+      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Request URL will be:', apiUrl);
+      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Full URL will be:', fullUrl);
+      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Method will be: POST');
+      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Has trailing slash?', apiUrl.endsWith('/'));
 
+      // 🔍 DEBUGGING: Log right before fetch
+      console.log('🔍 [AI CHAT DEBUG] STEP 2 - Frontend: About to call fetch:', {
+        url: apiUrl,
+        method: 'POST',
+        requestId,
+        timestamp: new Date().toISOString()
+      });
+      
+      const fetchStartTime = performance.now();
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 
@@ -2250,8 +2274,16 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         }),
       });
 
-      const endTime = performance.now();
-      const responseTime = endTime - startTime;
+      const fetchEndTime = performance.now();
+      const fetchTime = fetchEndTime - fetchStartTime;
+      const responseTime = fetchEndTime - startTime;
+      
+      // 🔍 COMPREHENSIVE DEBUGGING: Log response details
+      console.log('🔍 [AI CHAT DEBUG] STEP 3 - Frontend: Fetch completed:', {
+        fetchTime: `${fetchTime.toFixed(2)}ms`,
+        totalTime: `${responseTime.toFixed(2)}ms`,
+        timestamp: new Date().toISOString()
+      });
       
       // Enhanced logging: Always log response details, especially in production for debugging
       const responseHeaders = Object.fromEntries(response.headers.entries());
@@ -2262,18 +2294,31 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         responseTime: `${responseTime.toFixed(2)}ms`,
         url: response.url, // This will show the final URL after any redirects
         headers: responseHeaders,
-        requestId
+        requestId,
+        // 🔍 DEBUG: Compare URLs
+        originalRequestUrl: apiUrl,
+        originalFullUrl: fullUrl,
+        finalResponseUrl: response.url,
+        urlChanged: response.url !== fullUrl,
+        urlChangedFromOriginal: response.url !== apiUrl
       };
       
-      console.log('🤖 [AI CHAT] Response received:', responseDetails);
+      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response received:', responseDetails);
+      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response status:', response.status);
+      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response URL:', response.url);
+      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Original request URL:', apiUrl);
+      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: URL changed?', response.url !== fullUrl);
+      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response headers:', responseHeaders);
       
       // Check for redirects (status 307, 308, or Location header)
       if (response.status === 307 || response.status === 308 || responseHeaders['location']) {
-        console.warn('⚠️ [AI CHAT] Redirect detected:', {
+        console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: ⚠️ REDIRECT DETECTED:', {
           status: response.status,
           location: responseHeaders['location'],
           finalUrl: response.url,
-          originalUrl: apiUrl
+          originalUrl: apiUrl,
+          originalFullUrl: fullUrl,
+          redirectType: response.status === 307 ? 'Temporary' : response.status === 308 ? 'Permanent' : 'Unknown'
         });
       }
 
@@ -2281,12 +2326,12 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       if (!response.ok) {
         // Enhanced error logging for 405 errors specifically
         if (response.status === 405) {
-          console.error('🚨 [AI CHAT] HTTP 405 Method Not Allowed Error:', {
+          console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: 🚨 HTTP 405 ERROR DETAILS:', {
             status: response.status,
             statusText: response.statusText,
             url: response.url,
             originalUrl: apiUrl,
-            fullUrl,
+            originalFullUrl: fullUrl,
             method: 'POST',
             headers: responseHeaders,
             requestId,
@@ -2294,8 +2339,24 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             timestamp: new Date().toISOString(),
             redirectLocation: responseHeaders['location'],
             // Log if URL changed (indicating redirect)
-            urlChanged: response.url !== fullUrl
+            urlChanged: response.url !== fullUrl,
+            urlChangedFromOriginal: response.url !== apiUrl,
+            // Check for redirect indicators
+            hasLocationHeader: !!responseHeaders['location'],
+            isRedirectStatus: response.status === 307 || response.status === 308,
+            // Network debugging
+            responseType: response.type,
+            responseRedirected: response.redirected
           });
+          
+          // Try to get response body for more info
+          try {
+            const responseClone = response.clone();
+            const responseText = await responseClone.text();
+            console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: 405 Error response body:', responseText);
+          } catch (e) {
+            console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Could not read 405 error body:', e);
+          }
         } else {
           console.error('🚨 [AI CHAT] HTTP Error:', {
             status: response.status,
