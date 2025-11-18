@@ -759,16 +759,42 @@ export function RightPanel() {
   };
 
   const saveConversationToAPI = async (conversation: Conversation) => {
-    if (!workspaceId || !userId) return;
+    if (!workspaceId || !userId) return null;
     
     try {
-      const response = await fetch('/api/v1/conversations/', {
+      // If conversation already has an API ID (not a temp ID), try to update it
+      if (conversation.id && !conversation.id.startsWith('conv-') && conversation.id !== 'main-chat') {
+        // Try to update existing conversation
+        try {
+          const updateResponse = await fetch(`/api/v1/conversations/${conversation.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: conversation.title,
+              welcomeMessage: conversation.welcomeMessage
+            })
+          });
+          const updateResult = await updateResponse.json();
+          if (updateResult.success) {
+            return conversation.id;
+          }
+        } catch (updateError) {
+          // If update fails, fall through to create new
+          console.warn('⚠️ [CHAT] Failed to update conversation, will create new:', updateError);
+        }
+      }
+      
+      // Create new conversation
+      const response = await fetch('/api/v1/conversations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: conversation.title,
           welcomeMessage: conversation.welcomeMessage,
-          metadata: { source: 'frontend' }
+          metadata: { 
+            source: 'frontend',
+            isMainChat: conversation.id === 'main-chat'
+          }
         })
       });
       
@@ -781,6 +807,63 @@ export function RightPanel() {
       }
     } catch (error) {
       console.warn('⚠️ [CHAT] Failed to save conversation to API:', error);
+    }
+    return null;
+  };
+
+  // Ensure main-chat conversation exists in API and has a real ID
+  const ensureMainChatInAPI = async (): Promise<string | null> => {
+    if (!workspaceId || !userId) return null;
+    
+    // Use a ref to get current conversations state
+    let currentMainChat = conversations.find(c => c.id === 'main-chat');
+    if (!currentMainChat) return null;
+    
+    // Check if main-chat already has a real API ID
+    if (currentMainChat.id !== 'main-chat') return currentMainChat.id;
+    
+    try {
+      // Try to find existing main chat in API
+      const response = await fetch('/api/v1/conversations?includeMessages=true');
+      const result = await response.json();
+      
+      if (result.success && result.data.conversations) {
+        // Look for main chat (check metadata or title)
+        const existingMainChat = result.data.conversations.find((conv: any) => 
+          conv.metadata?.isMainChat === true || conv.title === 'Main Chat'
+        );
+        
+        if (existingMainChat) {
+          // Update local main-chat with API ID
+          setConversations(prev => prev.map(conv => 
+            conv.id === 'main-chat' 
+              ? { ...conv, id: existingMainChat.id }
+              : conv
+          ));
+          setActiveConversationId(existingMainChat.id);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ [CHAT] Found existing main-chat in API:', existingMainChat.id);
+          }
+          return existingMainChat.id;
+        }
+      }
+      
+      // Create main-chat in API if it doesn't exist
+      const apiId = await saveConversationToAPI(currentMainChat);
+      if (apiId) {
+        setConversations(prev => prev.map(conv => 
+          conv.id === 'main-chat' 
+            ? { ...conv, id: apiId }
+            : conv
+        ));
+        setActiveConversationId(apiId);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] Created main-chat in API:', apiId);
+        }
+        return apiId;
+      }
+    } catch (error) {
+      console.warn('⚠️ [CHAT] Failed to ensure main-chat in API:', error);
     }
     return null;
   };
@@ -845,8 +928,10 @@ export function RightPanel() {
   useEffect(() => {
     if (workspaceId && userId) {
       // Initial sync after a short delay to let localStorage load first
-      const timer = setTimeout(() => {
-        syncConversationsFromAPI();
+      const timer = setTimeout(async () => {
+        await syncConversationsFromAPI();
+        // Ensure main-chat exists in API after syncing
+        await ensureMainChatInAPI();
       }, 1000);
       
       return () => clearTimeout(timer);
@@ -1910,8 +1995,16 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       
       // Save to API in background
       const activeConv = conversations.find(c => c.isActive);
-      if (activeConv && activeConv.id !== 'main-chat') {
-        saveMessageToAPI(activeConv.id, userMessage);
+      if (activeConv) {
+        // Ensure main-chat has an API ID before saving
+        if (activeConv.id === 'main-chat') {
+          const apiId = await ensureMainChatInAPI();
+          if (apiId) {
+            saveMessageToAPI(apiId, userMessage);
+          }
+        } else {
+          saveMessageToAPI(activeConv.id, userMessage);
+        }
       }
       
       chat.setChatSessions(prev => ({
@@ -2098,17 +2191,11 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         hookVsRefMatch: latestRecord?.id === currentRecord?.id
       });
 
-      // CRITICAL: Use trailing slash to match Next.js trailingSlash: true config
-      // Next.js trailingSlash: true expects URLs WITH trailing slashes
-      // If we send /api/ai-chat (no slash), Next.js redirects to /api/ai-chat/ (with slash)
-      // This redirect converts POST → GET, causing 405 errors
-      // Solution: Send /api/ai-chat/ (with slash) to match Next.js expectations, preventing redirect
-      let apiUrl = '/api/ai-chat/';
-      
-      // Ensure trailing slash is present (defensive)
-      if (!apiUrl.endsWith('/')) {
-        apiUrl = apiUrl + '/';
-      }
+      // CRITICAL: API routes work better without trailing slashes
+      // Middleware will normalize /api/ai-chat/ → /api/ai-chat if needed
+      // Using no trailing slash prevents Next.js redirect issues with API routes
+      // Note: trailingSlash: true in next.config.mjs primarily affects page routes, not API routes
+      let apiUrl = '/api/ai-chat';
       
       const requestId = `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
@@ -2325,10 +2412,20 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         // Save to API in background
         const activeConv = conversations.find(c => c.isActive);
-        if (activeConv && activeConv.id !== 'main-chat') {
-          messagesToAdd.forEach(message => {
-            saveMessageToAPI(activeConv.id, message);
-          });
+        if (activeConv) {
+          // Ensure main-chat has an API ID before saving
+          if (activeConv.id === 'main-chat') {
+            const apiId = await ensureMainChatInAPI();
+            if (apiId) {
+              messagesToAdd.forEach(message => {
+                saveMessageToAPI(apiId, message);
+              });
+            }
+          } else {
+            messagesToAdd.forEach(message => {
+              saveMessageToAPI(activeConv.id, message);
+            });
+          }
         }
         
         chat.setChatSessions(prev => {
@@ -2401,8 +2498,16 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       
       // Save to API in background
       const activeConv = conversations.find(c => c.isActive);
-      if (activeConv && activeConv.id !== 'main-chat') {
-        saveMessageToAPI(activeConv.id, errorMessage);
+      if (activeConv) {
+        // Ensure main-chat has an API ID before saving
+        if (activeConv.id === 'main-chat') {
+          const apiId = await ensureMainChatInAPI();
+          if (apiId) {
+            saveMessageToAPI(apiId, errorMessage);
+          }
+        } else {
+          saveMessageToAPI(activeConv.id, errorMessage);
+        }
       }
     } finally {
       setIsProcessing(false);
