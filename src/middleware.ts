@@ -130,11 +130,17 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get('host') || '';
 
-  // CRITICAL: Handle API routes - let Next.js handle trailing slashes naturally
-  // Next.js route handlers automatically handle both /api/ai-chat and /api/ai-chat/
-  // The middleware rewrite was causing issues by removing trailing slash,
-  // which then triggered Next.js to redirect back, converting POST→GET
-  // Solution: Remove middleware rewrite and let Next.js route handler handle both variants
+  // CRITICAL: Normalize API routes to prevent trailing slash redirect issues
+  // Next.js trailingSlash: true affects page routes, but API routes work better without trailing slashes
+  // Use rewrite (not redirect) to preserve HTTP method (POST stays POST, doesn't become GET)
+  
+  // Handle /api/ai-chat (normalize trailing slash to prevent redirects)
+  // Pattern: /api/ai-chat or /api/ai-chat/
+  if (pathname === '/api/ai-chat' || pathname === '/api/ai-chat/') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/api/ai-chat';  // Normalize to no trailing slash
+    return NextResponse.rewrite(url);  // Rewrite preserves HTTP method
+  }
   
   // Handle /api/v1/conversations/[id]/messages (with or without trailing slash)
   // Pattern: /api/v1/conversations/{id}/messages or /api/v1/conversations/{id}/messages/
