@@ -585,8 +585,7 @@ export async function POST(request: NextRequest) {
         } : { error: openRouterError };
         console.error('❌ [AI CHAT] OpenRouter failed or timed out, falling back to Claude:', {
           error: errorDetails,
-          isTimeout: openRouterError instanceof Error && openRouterError.message.includes('timeout')
-          error: errorDetails,
+          isTimeout: openRouterError instanceof Error && openRouterError.message.includes('timeout'),
           userId: context.userId,
           workspaceId: context.workspaceId,
           hasCurrentRecord: !!currentRecord,
