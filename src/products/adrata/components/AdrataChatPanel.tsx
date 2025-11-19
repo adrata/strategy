@@ -645,17 +645,11 @@ export function AdrataChatPanel() {
       ));
 
       // Call AI API - same endpoint as RightPanel
-      // CRITICAL: Use trailing slash to match Next.js trailingSlash: true config
-      // Next.js trailingSlash: true expects URLs WITH trailing slashes
-      // If we send /api/ai-chat (no slash), Next.js redirects to /api/ai-chat/ (with slash)
-      // This redirect converts POST → GET, causing 405 errors
-      // Solution: Send /api/ai-chat/ (with slash) to match Next.js expectations, preventing redirect
-      let apiUrl = '/api/ai-chat/';
-      
-      // Ensure trailing slash is present (defensive)
-      if (!apiUrl.endsWith('/')) {
-        apiUrl = apiUrl + '/';
-      }
+      // 🏆 FIX: Use NO trailing slash for API routes
+      // Next.js App Router route handlers at app/api/ai-chat/route.ts handle /api/ai-chat (NO trailing slash)
+      // Middleware will normalize /api/ai-chat/ → /api/ai-chat if needed
+      // This prevents Next.js from redirecting and converting POST to GET
+      let apiUrl = '/api/ai-chat';
       const requestId = `adrata-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       // Enhanced logging: Capture actual URL being called
