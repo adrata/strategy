@@ -371,17 +371,43 @@ export async function POST(request: NextRequest) {
     let costRecordId: string | null = null;
 
     // Build comprehensive workspace context (optimized for speed)
+    // Add timeout protection to prevent hanging (30 second max for context building)
     const contextStartTime = Date.now();
-    const workspaceContext = await AIContextService.buildContext({
-      userId: context.userId,
-      workspaceId: context.workspaceId,
-      appType,
-      currentRecord,
-      recordType,
-      listViewContext,
-      conversationHistory: conversationHistory || [],
-      documentContext: null // Could be enhanced later
-    });
+    console.log('🔍 [AI CHAT] Starting context build...');
+    
+    let workspaceContext;
+    try {
+      const contextBuildPromise = AIContextService.buildContext({
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        appType,
+        currentRecord,
+        recordType,
+        listViewContext,
+        conversationHistory: conversationHistory || [],
+        documentContext: null // Could be enhanced later
+      });
+      
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Context build timeout after 30 seconds')), 30000);
+      });
+      
+      workspaceContext = await Promise.race([contextBuildPromise, timeoutPromise]);
+      console.log('✅ [AI CHAT] Context build completed:', `${Date.now() - contextStartTime}ms`);
+    } catch (contextError) {
+      console.error('❌ [AI CHAT] Context build failed or timed out:', contextError);
+      // Continue with minimal context rather than failing completely
+      workspaceContext = {
+        userContext: '',
+        applicationContext: '',
+        dataContext: '',
+        recordContext: '',
+        listViewContext: '',
+        documentContext: '',
+        systemContext: ''
+      };
+      console.warn('⚠️ [AI CHAT] Continuing with minimal context due to build failure');
+    }
     
     // 🔍 VALIDATE CONTEXT: Ensure both seller and buyer contexts are present
     // 🔍 REAL DATA VERIFICATION: Log detailed record data to confirm we're using real intelligence
@@ -463,8 +489,11 @@ export async function POST(request: NextRequest) {
           console.log('🌐 [AI CHAT] Using OpenRouter with intelligent routing');
         }
         
-        // Generate OpenRouter response with sanitized input and workspace context
-        const openRouterResponse = await openRouterService.generateResponse({
+        console.log('🔍 [AI CHAT] Starting OpenRouter response generation...');
+        const openRouterStartTime = Date.now();
+        
+        // Add timeout protection for OpenRouter call (25 seconds max)
+        const openRouterPromise = openRouterService.generateResponse({
           message: sanitizedMessage,
           conversationHistory,
           currentRecord,
@@ -482,6 +511,13 @@ export async function POST(request: NextRequest) {
           workspaceContext, // Pass the comprehensive workspace context
           preferredModel // Pass the preferred model if specified
         });
+        
+        const openRouterTimeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('OpenRouter response timeout after 25 seconds')), 25000);
+        });
+        
+        const openRouterResponse = await Promise.race([openRouterPromise, openRouterTimeoutPromise]);
+        console.log('✅ [AI CHAT] OpenRouter response received:', `${Date.now() - openRouterStartTime}ms`);
 
         // Record cost
         costRecordId = modelCostTracker.recordCost({
@@ -547,7 +583,9 @@ export async function POST(request: NextRequest) {
           stack: openRouterError.stack,
           name: openRouterError.name
         } : { error: openRouterError };
-        console.error('❌ [AI CHAT] OpenRouter failed, falling back to Claude:', {
+        console.error('❌ [AI CHAT] OpenRouter failed or timed out, falling back to Claude:', {
+          error: errorDetails,
+          isTimeout: openRouterError instanceof Error && openRouterError.message.includes('timeout')
           error: errorDetails,
           userId: context.userId,
           workspaceId: context.workspaceId,
@@ -617,7 +655,11 @@ export async function POST(request: NextRequest) {
       console.log('🤖 [AI CHAT] Using Claude directly (OpenRouter disabled or not selected)');
       console.log('⚠️ [AI CHAT] WARNING: Anthropic API credits may be low. Consider using OpenRouter instead.');
       
-      const claudeResponse = await claudeAIService.generateChatResponse({
+      console.log('🔍 [AI CHAT] Starting Claude response generation...');
+      const claudeStartTime = Date.now();
+      
+      // Add timeout protection for Claude call (25 seconds max)
+      const claudePromise = claudeAIService.generateChatResponse({
         message: sanitizedMessage,
         conversationHistory,
         currentRecord,
@@ -625,9 +667,16 @@ export async function POST(request: NextRequest) {
         listViewContext,
         appType,
           workspaceId: context.workspaceId,
-          userId: context.userId,
-          pageContext
+        userId: context.userId,
+        pageContext
       });
+      
+      const claudeTimeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Claude response timeout after 25 seconds')), 25000);
+      });
+      
+      const claudeResponse = await Promise.race([claudePromise, claudeTimeoutPromise]);
+      console.log('✅ [AI CHAT] Claude response received:', `${Date.now() - claudeStartTime}ms`);
 
       // Record Claude request for monitoring
       gradualRolloutService.recordRequest({
