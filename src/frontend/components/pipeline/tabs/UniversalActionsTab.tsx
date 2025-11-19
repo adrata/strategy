@@ -172,49 +172,76 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   };
 
   const getEventIcon = (type: string) => {
-    switch (type) {
-      case 'email':
-      case 'email_conversation':
-        return <EnvelopeIcon className="w-4 h-4" />;
-      case 'call':
-      case 'phone_call':
-        return <PhoneIcon className="w-4 h-4" />;
-      case 'meeting':
-      case 'MEETING':
-      case 'Meeting':
-      case 'appointment':
-        return <CalendarIcon className="w-4 h-4" />;
-      case 'note':
-        return <DocumentTextIcon className="w-4 h-4" />;
-      case 'created':
-        return <UserIcon className="w-4 h-4" />;
-      default:
-        return <DocumentTextIcon className="w-4 h-4" />;
+    if (!type) return <DocumentTextIcon className="w-4 h-4" />;
+    
+    const lowerType = type.toLowerCase();
+    
+    // Email types - check for various email action formats
+    if (lowerType.includes('email') || lowerType === 'email') {
+      return <EnvelopeIcon className="w-4 h-4" />;
     }
+    
+    // Phone/Call types
+    if (lowerType.includes('phone') || lowerType.includes('call')) {
+      return <PhoneIcon className="w-4 h-4" />;
+    }
+    
+    // Meeting types
+    if (lowerType.includes('meeting') || lowerType.includes('appointment')) {
+      return <CalendarIcon className="w-4 h-4" />;
+    }
+    
+    // Note types
+    if (lowerType.includes('note')) {
+      return <DocumentTextIcon className="w-4 h-4" />;
+    }
+    
+    // Created types
+    if (lowerType.includes('created')) {
+      return <UserIcon className="w-4 h-4" />;
+    }
+    
+    // Default fallback
+    return <DocumentTextIcon className="w-4 h-4" />;
   };
 
   const getEventColor = (type: string) => {
-    switch (type) {
-      case 'email':
-      case 'email_conversation':
-        return 'bg-info-bg text-info-text border-info-border';
-      case 'call':
-      case 'phone_call':
-        return 'bg-success-bg text-success-text border-success-border';
-      case 'meeting':
-      case 'MEETING':
-      case 'Meeting':
-      case 'appointment':
-        return 'bg-panel-background text-foreground border-border';
-      case 'note':
-        return 'bg-warning-bg text-warning-text border-warning-border';
-      case 'created':
-        return 'bg-hover text-foreground border-border';
-      case 'status_change':
-        return 'bg-warning-bg text-warning-text border-warning-border';
-      default:
-        return 'bg-hover text-foreground border-border';
+    if (!type) return 'bg-hover text-foreground border-border';
+    
+    const lowerType = type.toLowerCase();
+    
+    // Email types - check for various email action formats
+    if (lowerType.includes('email') || lowerType === 'email') {
+      return 'bg-info-bg text-info-text border-info-border';
     }
+    
+    // Phone/Call types
+    if (lowerType.includes('phone') || lowerType.includes('call')) {
+      return 'bg-success-bg text-success-text border-success-border';
+    }
+    
+    // Meeting types
+    if (lowerType.includes('meeting') || lowerType.includes('appointment')) {
+      return 'bg-panel-background text-foreground border-border';
+    }
+    
+    // Note types
+    if (lowerType.includes('note')) {
+      return 'bg-warning-bg text-warning-text border-warning-border';
+    }
+    
+    // Status change types
+    if (lowerType.includes('status')) {
+      return 'bg-warning-bg text-warning-text border-warning-border';
+    }
+    
+    // Created types
+    if (lowerType.includes('created')) {
+      return 'bg-hover text-foreground border-border';
+    }
+    
+    // Default fallback
+    return 'bg-hover text-foreground border-border';
   };
 
   const hasExpandableContent = (event: ActionEvent) => {
@@ -441,20 +468,39 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       });
 
       // Convert activities to action events
-      activityEvents = recordActivities.map((activity: any) => ({
-        id: activity.id,
-        type: 'activity' as const,
-        date: new Date(activity.completedAt || activity.createdAt || Date.now()),
-        title: activity.type || 'Activity',
-        description: activity.subject || (activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : ''),
-        content: activity.description || activity.outcome || '',
-        user: getUserName(activity.userId || 'System'),
-        metadata: {
-          type: activity.type,
-          status: activity.status,
-          priority: activity.priority
+      // CRITICAL: Preserve the original action type (Email, Phone, Meeting, etc.) in the type field
+      // This ensures email actions display correctly with email icons and styling
+      activityEvents = recordActivities.map((activity: any) => {
+        const actionType = activity.type || 'activity';
+        // Map action types to event types for proper display
+        let eventType: ActionEvent['type'] = 'activity';
+        if (actionType.toLowerCase().includes('email')) {
+          eventType = 'email';
+        } else if (actionType.toLowerCase().includes('note')) {
+          eventType = 'note';
+        } else if (actionType.toLowerCase().includes('status')) {
+          eventType = 'status_change';
+        } else if (actionType.toLowerCase().includes('created')) {
+          eventType = 'created';
+        } else if (actionType.toLowerCase().includes('updated')) {
+          eventType = 'updated';
         }
-      }));
+        
+        return {
+          id: activity.id,
+          type: eventType,
+          date: new Date(activity.completedAt || activity.createdAt || Date.now()),
+          title: actionType || 'Activity',
+          description: activity.subject || (activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : ''),
+          content: activity.description || activity.outcome || '',
+          user: getUserName(activity.userId || 'System'),
+          metadata: {
+            type: actionType, // Preserve original action type in metadata
+            status: activity.status,
+            priority: activity.priority
+          }
+        };
+      });
 
       // Filter to meaningful action types only (matches Last Action column filtering)
       // This filters out system actions like "record created", "record updated", etc.
@@ -838,7 +884,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                   <div key={event.id} className="flex items-start gap-4">
                     {/* Action indicator */}
                     <div className="flex flex-col items-center pt-1">
-                      <div className="w-8 h-8 rounded bg-background border-2 border-border flex items-center justify-center">
+                      <div className={`w-8 h-8 rounded border-2 flex items-center justify-center ${getEventColor(event.metadata?.type || event.type || 'activity')}`}>
                         {getEventIcon(event.metadata?.type || event.type || 'activity')}
                       </div>
                       {index < groupedActions[timePeriod].length - 1 && (

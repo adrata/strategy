@@ -7,6 +7,7 @@ import { getWorkspaceBySlug, parseWorkspaceFromUrl, generateWorkspaceSlug } from
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useWorkspaceSwitch } from "@/platform/hooks/useWorkspaceSwitch";
 import { initSpeedrunPrefetch } from "@/platform/services/speedrun-prefetch";
+import { initCompaniesPrefetch } from "@/platform/services/companies-prefetch";
 import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 
 interface WorkspaceLayoutProps {
@@ -187,6 +188,23 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
     console.log('🚀 [WORKSPACE LAYOUT] Initializing speedrun prefetch service');
     
     const cleanup = initSpeedrunPrefetch(
+      authUser.activeWorkspaceId,
+      authUser.id
+    );
+
+    // Cleanup on unmount or when workspace/user changes
+    return cleanup;
+  }, [authUser?.id, authUser?.activeWorkspaceId]);
+
+  // 🚀 WORLD-CLASS SPEED: Initialize companies accurate data prefetch service
+  // This prefetches accurate lastAction/nextAction on login/workspace load
+  // so when users navigate to companies, data is already accurate
+  useEffect(() => {
+    if (!authUser?.id || !authUser?.activeWorkspaceId) return;
+
+    console.log('🚀 [WORKSPACE LAYOUT] Initializing companies prefetch service');
+    
+    const cleanup = initCompaniesPrefetch(
       authUser.activeWorkspaceId,
       authUser.id
     );

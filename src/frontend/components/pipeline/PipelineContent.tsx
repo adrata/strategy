@@ -497,6 +497,121 @@ export const PipelineContent = React.memo(function PipelineContent({
     }
   }, [finalData, finalError]);
 
+  // 🚀 BACKGROUND PREFETCH: Fetch accurate lastAction/nextAction for companies after initial load
+  // This is a fallback/update mechanism - the global prefetch service handles initial prefetch on login
+  // This ensures the table updates if global prefetch hasn't completed yet
+  useEffect(() => {
+    if (section === 'companies' && finalData.length > 0 && !finalLoading && workspaceId && userId) {
+      // Check if global prefetch service is already running (avoid duplicate work)
+      // Wait a short delay to let the table render first, then fetch accurate values in background
+      const prefetchTimer = setTimeout(async () => {
+        try {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔄 [COMPANIES] Background prefetch: Fetching accurate lastAction/nextAction values...');
+          }
+          
+          // Check if cache was recently updated by global prefetch service (within last 3 seconds)
+          // This avoids duplicate work if global prefetch already completed
+          const storageKey = `adrata-companies-${workspaceId}`;
+          try {
+            const existingCache = localStorage.getItem(storageKey);
+            if (existingCache) {
+              const parsed = JSON.parse(existingCache);
+              const cacheAge = Date.now() - (parsed.ts || 0);
+              // If cache was updated within last 3 seconds, global prefetch likely already ran
+              if (cacheAge < 3000) {
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('⏭️ [COMPANIES] Skipping component prefetch - cache recently updated by global service');
+                }
+                return; // Skip duplicate prefetch
+              }
+            }
+          } catch (e) {
+            // Continue with prefetch if cache check fails
+          }
+          
+          // Fetch accurate lastAction values (limit to first 1000 for performance)
+          const companyIds = finalData.slice(0, 1000).map((c: any) => c.id).join(',');
+          const prefetchUrl = `/api/v1/companies?ids=${companyIds}&computeLastAction=true&limit=${Math.min(finalData.length, 1000)}&workspaceId=${encodeURIComponent(workspaceId)}`;
+          
+          const response = await fetch(prefetchUrl, { credentials: 'include' });
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success && Array.isArray(result.data)) {
+              // Update companies with accurate lastAction/nextAction values
+              const updatedCompanies = result.data.reduce((acc: any, company: any) => {
+                acc[company.id] = {
+                  lastAction: company.lastAction,
+                  lastActionDate: company.lastActionDate,
+                  nextAction: company.nextAction,
+                  nextActionDate: company.nextActionDate
+                };
+                return acc;
+              }, {});
+              
+              // Create a map of updated companies for efficient lookup
+              const updatedCompaniesMap = new Map(result.data.map((c: any) => [c.id, c]));
+              
+              // Update cache with accurate values
+              const storageKey = `adrata-companies-${workspaceId}`;
+              try {
+                const existingCache = localStorage.getItem(storageKey);
+                if (existingCache) {
+                  const parsed = JSON.parse(existingCache);
+                  if (Array.isArray(parsed.data)) {
+                    // Merge accurate lastAction/nextAction values into cached data
+                    const updatedData = parsed.data.map((company: any) => {
+                      const accurate = updatedCompaniesMap.get(company.id);
+                      if (accurate) {
+                        return {
+                          ...company,
+                          lastAction: accurate.lastAction,
+                          lastActionDate: accurate.lastActionDate,
+                          nextAction: accurate.nextAction,
+                          nextActionDate: accurate.nextActionDate
+                        };
+                      }
+                      return company;
+                    });
+                    
+                    const cacheData = {
+                      data: updatedData,
+                      count: parsed.count || updatedData.length,
+                      ts: Date.now(),
+                      version: 3 // CACHE_VERSION
+                    };
+                    localStorage.setItem(storageKey, JSON.stringify(cacheData));
+                    
+                    // Dispatch event to update UI with accurate values (without full reload)
+                    window.dispatchEvent(new CustomEvent('companies-data-updated', {
+                      detail: { updatedCompanies: Array.from(updatedCompaniesMap.values()) }
+                    }));
+                    
+                    if (process.env.NODE_ENV === 'development') {
+                      console.log('✅ [COMPANIES] Background prefetch complete: Updated lastAction/nextAction for', result.data.length, 'companies');
+                    }
+                  }
+                }
+              } catch (e) {
+                // Cache update failed, but that's okay
+                if (process.env.NODE_ENV === 'development') {
+                  console.warn('⚠️ [COMPANIES] Failed to update cache with accurate values:', e);
+                }
+              }
+            }
+          }
+        } catch (error) {
+          // Silently fail - stored values are still valid
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [COMPANIES] Background prefetch failed (using stored values):', error);
+          }
+        }
+      }, 1000); // Wait 1 second after initial load
+      
+      return () => clearTimeout(prefetchTimer);
+    }
+  }, [section, finalData, finalLoading, workspaceId, userId, fastSectionData]);
+
   // Speedrun signals hook for automatic Monaco Signal popup (only for speedrun section)
   const { activeSignal, acceptSignal, dismissSignal } = useSpeedrunSignals(
     workspaceId || '',

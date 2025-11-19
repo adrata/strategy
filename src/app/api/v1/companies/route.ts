@@ -133,6 +133,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
     const industry = searchParams.get('industry') || '';
+    const ids = searchParams.get('ids') || ''; // Comma-separated list of company IDs for background prefetch
     // Use alphabetical sorting by default for all company queries (UX best practice)
     const sortBy = searchParams.get('sortBy') || 'name';
     const sortOrder = searchParams.get('sortOrder') || 'asc';
@@ -303,6 +304,14 @@ export async function GET(request: NextRequest) {
       where.industry = { contains: industry, mode: 'insensitive' };
     }
 
+    // ID filtering (for background prefetch of specific companies)
+    if (ids) {
+      const idArray = ids.split(',').map(id => id.trim()).filter(Boolean);
+      if (idArray.length > 0) {
+        where.id = { in: idArray };
+      }
+    }
+
     // OS-based filtering: Apply OS-specific status filters
     // Note: OS filtering and PartnerOS filtering can work together - OS filters by status, PartnerOS filters by relationshipType
     if (osType && !isPartnerOS) {
@@ -465,19 +474,55 @@ export async function GET(request: NextRequest) {
       // 🚀 PERFORMANCE: Skip core data merge since we're not fetching coreCompany
       // This saves additional processing time
       
-      // 🚀 COMPUTE LAST ACTION: Use shared utility to compute accurate lastAction
-      // Checks both company-level actions AND actions from associated people
-      const { computeCompanyLastActionsBatch } = await import('@/platform/utils/company-last-action');
-      const lastActionResults = await computeCompanyLastActionsBatch(
-        companies.map(c => ({ id: c.id, lastAction: c.lastAction, lastActionDate: c.lastActionDate }))
-      );
+      // 🚀 PERFORMANCE: Smart lastAction computation strategy
+      // - For list views (limit > 100): Skip expensive computation, use stored values for fast load
+      // - For small result sets: Compute accurate values immediately
+      // - Background prefetch: List views can request accurate values via ?computeLastAction=true
+      const skipLastActionComputation = searchParams.get('skipLastActionComputation') === 'true';
+      const computeLastAction = searchParams.get('computeLastAction') === 'true';
+      const shouldCompute = computeLastAction || (!skipLastActionComputation && companies.length <= 100);
+      
+      let lastActionResults: Map<string, any> = new Map();
+      
+      if (shouldCompute) {
+        // Compute accurate lastAction values (for small sets or when explicitly requested)
+        try {
+          const { computeCompanyLastActionsBatch } = await import('@/platform/utils/company-last-action');
+          lastActionResults = await computeCompanyLastActionsBatch(
+            companies.map(c => ({ id: c.id, lastAction: c.lastAction, lastActionDate: c.lastActionDate }))
+          );
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`✅ [COMPANIES API] Computed accurate lastActions for ${lastActionResults.size} companies`);
+          }
+        } catch (error) {
+          console.warn(`⚠️ [COMPANIES API] Error computing lastActions, using stored values:`, error);
+          // Continue with stored values if computation fails
+        }
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`⚡ [COMPANIES API] Skipping lastAction computation for fast load (${companies.length} companies). Use ?computeLastAction=true for accurate values.`);
+        }
+      }
       
       const enrichedCompanies = await Promise.all(companies.map(async (company) => {
         try {
+          // Use computed lastAction if available, otherwise use stored values from database
           const lastActionResult = lastActionResults.get(company.id);
           const lastActionText = lastActionResult?.lastAction || company.lastAction || null;
           const lastActionDate = lastActionResult?.lastActionDate || company.lastActionDate || null;
-          const lastActionTime = lastActionResult?.lastActionTime || 'Never';
+          
+          // Calculate lastActionTime from date
+          let lastActionTime = 'Never';
+          if (lastActionDate) {
+            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          } else if (lastActionResult?.lastActionTime) {
+            lastActionTime = lastActionResult.lastActionTime;
+          }
 
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';

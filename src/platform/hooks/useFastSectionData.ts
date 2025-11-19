@@ -242,8 +242,10 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
         case 'companies':
           // For companies, use v1 API with pre-sorting and increased limit
           // Pass workspaceId to ensure correct workspace filtering
+          // 🚀 PERFORMANCE: Skip expensive lastAction computation for list views (saves 2-5 seconds)
           const workspaceParam = workspaceId ? `&workspaceId=${encodeURIComponent(workspaceId)}` : '';
-          url = `/api/v1/companies?sortBy=name&sortOrder=asc&limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}${partnerosParam}${osTypeParam}`;
+          const skipLastActionParam = '&skipLastActionComputation=true'; // Use stored lastAction from DB
+          url = `/api/v1/companies?sortBy=name&sortOrder=asc&limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}${skipLastActionParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'partners':
           url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}${partnerosParam}${osTypeParam}`;
@@ -859,10 +861,43 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
       }
     };
 
+    // 🚀 BACKGROUND PREFETCH: Listen for companies data updates from background prefetch
+    const handleCompaniesDataUpdate = (event: CustomEvent) => {
+      if (section === 'companies' && event.detail?.updatedCompanies) {
+        const updatedCompanies = event.detail.updatedCompanies;
+        const updatedMap = new Map(updatedCompanies.map((c: any) => [c.id, c]));
+        
+        // Update data state with accurate lastAction/nextAction values
+        setData((prevData: any[]) => {
+          const updated = prevData.map((company: any) => {
+            const accurate = updatedMap.get(company.id);
+            if (accurate) {
+              return {
+                ...company,
+                lastAction: accurate.lastAction,
+                lastActionDate: accurate.lastActionDate,
+                nextAction: accurate.nextAction,
+                nextActionDate: accurate.nextActionDate
+              };
+            }
+            return company;
+          });
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`🔄 [FAST SECTION DATA] Updated ${updatedCompanies.length} companies with accurate lastAction/nextAction`);
+          }
+          
+          return updated;
+        });
+      }
+    };
+
     if (typeof window !== 'undefined') {
       window.addEventListener('cache-invalidate', handleCacheInvalidate as EventListener);
+      window.addEventListener('companies-data-updated', handleCompaniesDataUpdate as EventListener);
       return () => {
         window.removeEventListener('cache-invalidate', handleCacheInvalidate as EventListener);
+        window.removeEventListener('companies-data-updated', handleCompaniesDataUpdate as EventListener);
       };
     }
   }, [section, fetchSectionData]);
