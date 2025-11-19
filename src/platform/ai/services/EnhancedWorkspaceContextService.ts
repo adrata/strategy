@@ -138,11 +138,7 @@ export class EnhancedWorkspaceContextService {
 
       // 🏆 FIX: Add individual timeouts to prevent any single query from hanging
       // OPTIMIZATION: Parallelize all data statistics queries with timeout protection
-      const queryTimeout = 10000; // 10 seconds max per query
-      
-      const createTimeoutPromise = (ms: number) => 
-        new Promise((_, reject) => setTimeout(() => reject(new Error(`Query timeout after ${ms}ms`)), ms));
-      
+      // Reuse queryTimeout and createTimeoutPromise from above (same scope)
       const [peopleCount, companiesCount, peopleData, companiesData] = await Promise.all([
         Promise.race([
           prisma.people.count({ where: { workspaceId } }),
