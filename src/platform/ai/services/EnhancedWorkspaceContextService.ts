@@ -164,7 +164,7 @@ export class EnhancedWorkspaceContextService {
                 select: { name: true }
               }
             },
-            take: 100
+            take: 20 // 🏆 OPTIMIZATION: Reduced from 100 to 20 for faster context building (best practice: minimize data for context)
           }),
           createTimeoutPromise(queryTimeout)
         ]).catch(() => []), // Fallback to empty array on timeout
