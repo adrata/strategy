@@ -695,6 +695,7 @@ export function RightPanel() {
 
   // Load conversations from localStorage on component mount - WORKSPACE ISOLATED
   // Only load once to prevent closed tabs from reappearing
+  // BUT: Don't load non-main-chat conversations - let API sync handle that
   useEffect(() => {
     if (typeof window !== 'undefined' && workspaceId && !conversationsLoadedRef.current) {
       try {
@@ -704,7 +705,21 @@ export function RightPanel() {
           const parsed = JSON.parse(stored);
           // Filter out conversations that were deleted locally
           const filteredConversations = parsed.filter((conv: any) => !deletedConversationIds.has(conv.id));
-          const restoredConversations = filteredConversations.map((conv: any) => ({
+          
+          // IMPORTANT: Only restore main-chat from localStorage initially
+          // Let API sync handle other conversations to ensure they're not deleted
+          const mainChatOnly = filteredConversations.filter((conv: any) => conv.id === 'main-chat');
+          
+          // If no main-chat exists, create it
+          const conversationsToRestore = mainChatOnly.length > 0 ? mainChatOnly : [{
+            id: 'main-chat',
+            title: 'Main Chat',
+            messages: [],
+            lastActivity: new Date(),
+            isActive: true
+          }];
+          
+          const restoredConversations = conversationsToRestore.map((conv: any) => ({
             ...conv,
             lastActivity: new Date(conv.lastActivity),
             messages: conv.messages.map((msg: any) => ({
@@ -720,11 +735,14 @@ export function RightPanel() {
               typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
             }))
           }));
+          
           setConversations(restoredConversations);
+          setActiveConversationId('main-chat');
+          
           if (process.env.NODE_ENV === 'development') {
-            console.log('📂 [CHAT] Loaded conversations from localStorage:', restoredConversations.length, 'for workspace:', workspaceId);
-            if (parsed.length > filteredConversations.length) {
-              console.log('🗑️ [CHAT] Filtered out', parsed.length - filteredConversations.length, 'deleted conversations');
+            console.log('📂 [CHAT] Loaded conversations from localStorage (main-chat only):', restoredConversations.length, 'for workspace:', workspaceId);
+            if (filteredConversations.length > mainChatOnly.length) {
+              console.log('🧹 [CHAT] Deferred', filteredConversations.length - mainChatOnly.length, 'non-main-chat conversations to API sync');
             }
           }
           conversationsLoadedRef.current = true;
@@ -799,24 +817,19 @@ export function RightPanel() {
           // Get list of API conversation IDs to check against
           const apiConvIds = new Set(apiConversations.map(c => c.id));
           
-          // Add any localStorage conversations that aren't in API (for offline support)
-          // BUT: If API returned empty and localStorage has conversations, they might be deleted
-          // So only add localStorage conversations if API has conversations OR if it's main-chat
-          prevConversations.forEach(localConv => {
-            const isInAPI = apiConvIds.has(localConv.id);
-            const isMainChat = localConv.id === 'main-chat';
-            const notDeletedLocally = !deletedConversationIds.has(localConv.id);
-            
-            // Only add if: it's main-chat OR (it's not in API but API has other conversations - meaning it's new/offline)
-            if ((isMainChat || (!isInAPI && apiConversations.length > 0)) && notDeletedLocally) {
-              if (!merged.find(apiConv => apiConv.id === localConv.id)) {
-                merged.push(localConv);
+          // If API returned empty (all conversations deleted), clear localStorage and reset to main-chat
+          if (apiConversations.length === 0) {
+            // Clear localStorage for this workspace
+            if (typeof window !== 'undefined' && workspaceId) {
+              const storageKey = `adrata-conversations-${workspaceId}`;
+              localStorage.removeItem(storageKey);
+              if (process.env.NODE_ENV === 'development') {
+                console.log('🧹 [CHAT] Cleared localStorage conversations for workspace:', workspaceId);
               }
             }
-          });
-          
-          // If no conversations exist, ensure main-chat exists
-          if (merged.length === 0) {
+            
+            // Reset to main-chat only - clear any localStorage conversations
+            merged.length = 0;
             merged.push({
               id: 'main-chat',
               title: 'Main Chat',
@@ -824,19 +837,59 @@ export function RightPanel() {
               lastActivity: new Date(),
               isActive: true
             });
+            
+            // Also update activeConversationId to main-chat
+            setActiveConversationId('main-chat');
+          } else {
+            // API has conversations - merge with localStorage (for offline support)
+            // Only add localStorage conversations if they're main-chat OR if API has other conversations
+            prevConversations.forEach(localConv => {
+              const isInAPI = apiConvIds.has(localConv.id);
+              const isMainChat = localConv.id === 'main-chat';
+              const notDeletedLocally = !deletedConversationIds.has(localConv.id);
+              
+              // Only add if: it's main-chat OR (it's not in API but API has other conversations - meaning it's new/offline)
+              if ((isMainChat || (!isInAPI && apiConversations.length > 0)) && notDeletedLocally) {
+                if (!merged.find(apiConv => apiConv.id === localConv.id)) {
+                  merged.push(localConv);
+                }
+              }
+            });
+            
+            // If no conversations exist after merge, ensure main-chat exists
+            if (merged.length === 0) {
+              merged.push({
+                id: 'main-chat',
+                title: 'Main Chat',
+                messages: [],
+                lastActivity: new Date(),
+                isActive: true
+              });
+            }
           }
           
           // Ensure only one conversation is active (prefer main-chat if it exists)
           const mainChat = merged.find(c => c.id === 'main-chat');
-          if (mainChat && !mainChat.isActive) {
+          if (mainChat) {
+            // If main-chat exists, make it active and deactivate others
             merged.forEach(c => {
               c.isActive = c.id === 'main-chat';
             });
-          } else if (!mainChat) {
+            // Move main-chat to the front
+            const mainChatIndex = merged.findIndex(c => c.id === 'main-chat');
+            if (mainChatIndex > 0) {
+              merged.splice(mainChatIndex, 1);
+              merged.unshift(mainChat);
+            }
+            setActiveConversationId('main-chat');
+          } else {
             // If no main-chat, make the first one active
             merged.forEach((c, index) => {
               c.isActive = index === 0;
             });
+            if (merged.length > 0) {
+              setActiveConversationId(merged[0].id);
+            }
           }
           
           return merged.sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
