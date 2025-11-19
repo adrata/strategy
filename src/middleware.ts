@@ -158,38 +158,42 @@ export function middleware(request: NextRequest) {
   // Use rewrite (not redirect) to preserve HTTP method (POST stays POST, doesn't become GET)
   
   // 🏆 FIX: Handle /api/ai-chat trailing slash normalization
-  // With trailingSlash: true, Next.js expects /api/ai-chat/ (with slash)
-  // If request comes without slash, rewrite to with slash to prevent redirect
-  // If request already has slash, let it pass through (no rewrite needed)
-  if (pathname === '/api/ai-chat') {
-    // Request without trailing slash - rewrite to with slash to match Next.js config
-    console.log('🔍 [MIDDLEWARE DEBUG] STEP B - Middleware: Normalizing /api/ai-chat (adding trailing slash):', {
-      originalPathname: pathname,
-      method: request.method,
-      hasTrailingSlash: false,
-      url: request.url,
-      willRewriteTo: '/api/ai-chat/',
-      timestamp: new Date().toISOString()
-    });
+  // CRITICAL: Next.js App Router route handlers at app/api/ai-chat/route.ts handle /api/ai-chat (NO trailing slash)
+  // Even with trailingSlash: true, API route handlers expect paths WITHOUT trailing slashes
+  // We need to rewrite /api/ai-chat/ → /api/ai-chat to match the route handler
+  if (pathname === '/api/ai-chat' || pathname === '/api/ai-chat/') {
+    // Normalize to NO trailing slash to match the route handler
+    const normalizedPath = '/api/ai-chat';  // Always use no trailing slash for API routes
     
-    const normalizedUrl = request.nextUrl.clone();
-    normalizedUrl.pathname = '/api/ai-chat/';  // Add trailing slash to match Next.js config
-    
-    console.log('🔍 [MIDDLEWARE DEBUG] STEP C - Middleware: Performing rewrite:', {
-      from: pathname,
-      to: normalizedUrl.pathname,
-      method: request.method,
-      preservingMethod: true,
-      timestamp: new Date().toISOString()
-    });
-    
-    const rewriteResponse = NextResponse.rewrite(normalizedUrl);  // Rewrite preserves HTTP method
-    
-    console.log('🔍 [MIDDLEWARE DEBUG] STEP D - Middleware: Rewrite complete, returning response');
-    
-    return rewriteResponse;
+    if (pathname !== normalizedPath) {
+      console.log('🔍 [MIDDLEWARE DEBUG] STEP B - Middleware: Normalizing /api/ai-chat (removing trailing slash):', {
+        originalPathname: pathname,
+        method: request.method,
+        hasTrailingSlash: pathname.endsWith('/'),
+        url: request.url,
+        willRewriteTo: normalizedPath,
+        timestamp: new Date().toISOString()
+      });
+      
+      const normalizedUrl = request.nextUrl.clone();
+      normalizedUrl.pathname = normalizedPath;  // Remove trailing slash to match route handler
+      
+      console.log('🔍 [MIDDLEWARE DEBUG] STEP C - Middleware: Performing rewrite:', {
+        from: pathname,
+        to: normalizedUrl.pathname,
+        method: request.method,
+        preservingMethod: true,
+        timestamp: new Date().toISOString()
+      });
+      
+      const rewriteResponse = NextResponse.rewrite(normalizedUrl);  // Rewrite preserves HTTP method
+      
+      console.log('🔍 [MIDDLEWARE DEBUG] STEP D - Middleware: Rewrite complete, returning response');
+      
+      return rewriteResponse;
+    }
+    // If already normalized (no trailing slash), let it pass through
   }
-  // If pathname === '/api/ai-chat/', let it pass through (already has trailing slash, no rewrite needed)
   
   // Handle /api/v1/conversations/[id]/messages (with or without trailing slash)
   // Pattern: /api/v1/conversations/{id}/messages or /api/v1/conversations/{id}/messages/

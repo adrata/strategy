@@ -2228,10 +2228,11 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         hookVsRefMatch: latestRecord?.id === currentRecord?.id
       });
 
-      // 🏆 FIX: Use trailing slash to match Next.js trailingSlash: true configuration
-      // This prevents Next.js from redirecting /api/ai-chat → /api/ai-chat/ (which converts POST to GET)
-      // By sending /api/ai-chat/ directly, we avoid the redirect and preserve the POST method
-      let apiUrl = '/api/ai-chat/';
+      // 🏆 FIX: Use NO trailing slash for API routes
+      // Next.js App Router route handlers at app/api/ai-chat/route.ts handle /api/ai-chat (NO trailing slash)
+      // Middleware will normalize /api/ai-chat/ → /api/ai-chat if needed
+      // This prevents Next.js from redirecting and converting POST to GET
+      let apiUrl = '/api/ai-chat';
       
       const requestId = `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
@@ -2246,7 +2247,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
         hasTrailingSlash: apiUrl.endsWith('/'),
-        originalPath: '/api/ai-chat/',
+        originalPath: '/api/ai-chat',
         // Environment details
         windowLocation: typeof window !== 'undefined' ? window.location.href : 'N/A',
         windowOrigin: typeof window !== 'undefined' ? window.location.origin : 'N/A',
