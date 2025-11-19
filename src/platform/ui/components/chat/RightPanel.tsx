@@ -2059,14 +2059,27 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       }));
 
       // TEMPORARY: Return simple message instead of processing AI request
-      // Extract first name from full name if needed
-      let username = user?.firstName || 'there';
-      if (!username && user?.name) {
-        const nameParts = user.name.trim().split(' ');
-        username = nameParts[0] || 'there';
-      }
+      // Check if the temporary message already exists in the conversation
+      const activeConvForCheck = conversations.find(c => c.isActive);
+      const hasTemporaryMessage = activeConvForCheck?.messages.some(msg => 
+        msg.type === 'assistant' && 
+        msg.content.includes("I'm adding competitive intelligence to your system")
+      );
       
-      const responseText = `Hey, ${username}! I'm adding competitive intelligence to your system. I'll have the Adrata team send you a message when I'm done!`;
+      let responseText: string;
+      if (hasTemporaryMessage) {
+        // If user responds after the temporary message, give a follow-up response
+        responseText = "Let me get back to you shortly.";
+      } else {
+        // First time - show the initial temporary message
+        // Extract first name from full name if needed
+        let username = user?.firstName || 'there';
+        if (!username && user?.name) {
+          const nameParts = user.name.trim().split(' ');
+          username = nameParts[0] || 'there';
+        }
+        responseText = `Hey, ${username}! I'm adding competitive intelligence to your system. I'll have the Adrata team send you a message when I'm done!`;
+      }
 
       // Add typing indicator (same as regular AI responses)
       const typingMessage: ChatMessage = {
