@@ -2469,8 +2469,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           // Try to get response body for more info
           try {
             const responseClone = response.clone();
-            const responseText = await responseClone.text();
-            console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: 405 Error response body:', responseText);
+            const responseTextError = await responseClone.text();
+            console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: 405 Error response body:', responseTextError);
           } catch (e) {
             console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Could not read 405 error body:', e);
           }
@@ -2488,24 +2488,25 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
 
       // Check if response has content
-      const responseText = await response.text();
-      if (!responseText || responseText.trim() === '') {
+      // NOTE: This code is unreachable due to early return above, but kept for future restoration
+      const responseTextOriginal = await response.text();
+      if (!responseTextOriginal || responseTextOriginal.trim() === '') {
         throw new Error('Empty response from server');
       }
 
       // Check if response is HTML (error page) instead of JSON
-      if (responseText.trim().startsWith('<!DOCTYPE html>') || responseText.trim().startsWith('<html')) {
-        console.error('Received HTML instead of JSON:', responseText.substring(0, 200));
+      if (responseTextOriginal.trim().startsWith('<!DOCTYPE html>') || responseTextOriginal.trim().startsWith('<html')) {
+        console.error('Received HTML instead of JSON:', responseTextOriginal.substring(0, 200));
         throw new Error('Server returned an error page instead of JSON response');
       }
 
       // Try to parse JSON
       let data;
       try {
-        data = JSON.parse(responseText);
+        data = JSON.parse(responseTextOriginal);
       } catch (parseError) {
         console.error('Failed to parse JSON response:', parseError);
-        console.error('Response text:', responseText);
+        console.error('Response text:', responseTextOriginal);
         throw new Error('Invalid response format from server');
       }
       
@@ -2558,10 +2559,11 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         messagesToAdd.push(assistantMessage);
 
         // Check if response indicates a technical issue - clear files if so
-        const responseText = assistantMessage.content.toLowerCase();
-        if (responseText.includes('brief technical issue') || 
-            responseText.includes('technical difficulties') ||
-            responseText.includes('technical hiccup')) {
+        // NOTE: This code is unreachable due to early return above, but kept for future restoration
+        const responseTextCheck = assistantMessage.content.toLowerCase();
+        if (responseTextCheck.includes('brief technical issue') || 
+            responseTextCheck.includes('technical difficulties') ||
+            responseTextCheck.includes('technical hiccup')) {
           // Clear context files when technical issues occur
           if (contextFiles.length > 0) {
             setContextFiles([]);
