@@ -2056,28 +2056,46 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         const nameParts = user.name.trim().split(' ');
         username = nameParts[0] || 'there';
       }
+      
+      const responseText = `Hey, ${username}! I'm adding competitive intelligence to your system. I'll have the Adrata team send you a message when I'm done!`;
+
+      // Add typing indicator (same as regular AI responses)
+      const typingMessage: ChatMessage = {
+        id: `typing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type: 'assistant',
+        content: 'typing',
+        timestamp: new Date()
+      };
+      
+      setConversations(prev => prev.map(conv => 
+        conv.isActive 
+          ? { ...conv, messages: [...conv.messages, typingMessage] }
+          : conv
+      ));
+      
+      scrollToBottom();
+
+      // Wait a bit to simulate processing (same timing as regular responses)
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      // Remove typing indicator and add the response with typewriter effect
       const simpleResponse: ChatMessage = {
         id: `assistant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         type: 'assistant',
-        content: `Hey, ${username}! I'm adding competitive intelligence to your system. I'll have the Adrata team send you a message when I'm done!`,
-        timestamp: new Date()
+        content: responseText,
+        timestamp: new Date(),
+        isTypewriter: true // Enable typewriter effect (same speed as regular messages)
       };
 
-      // Remove typing indicator if it exists
       setConversations(prev => prev.map(conv => 
         conv.isActive 
           ? { 
               ...conv, 
-              messages: conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
+              messages: conv.messages
+                .filter(msg => msg.content !== 'typing' && msg.content !== 'browsing')
+                .concat(simpleResponse),
               lastActivity: new Date()
             }
-          : conv
-      ));
-
-      // Add the simple response
-      setConversations(prev => prev.map(conv => 
-        conv.isActive 
-          ? { ...conv, messages: [...conv.messages, simpleResponse], lastActivity: new Date() }
           : conv
       ));
 
