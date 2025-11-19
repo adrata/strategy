@@ -5,6 +5,7 @@ import { InChatTodoList } from './InChatTodoList';
 import { TypewriterText } from './TypewriterText';
 import { FileDisplayWidget } from './FileDisplayWidget';
 import { EnrichmentProgressTracker, createCFOEnrichmentSteps } from './EnrichmentProgressTracker';
+import { ReasoningWindow } from './ReasoningWindow';
 
 // Progress component with state management
 function EnrichmentProgressComponent({ message }: { message: any }) {
@@ -425,6 +426,11 @@ export function MessageList({
                 )}
               </div>
             </div>
+          )}
+          
+          {/* Display AI Reasoning Window for assistant messages */}
+          {message.type === 'assistant' && message.reasoning && (
+            <ReasoningWindow reasoning={message.reasoning} />
           )}
         </div>
       ))}

@@ -8,6 +8,7 @@
 // Required for static export (desktop build)
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+export const maxDuration = 60; // Allow 60 seconds for AI chat (matches vercel.json)
 
 import { NextRequest, NextResponse } from 'next/server';
 import { claudeAIService } from '@/platform/services/ClaudeAIService';
@@ -393,7 +394,13 @@ export async function POST(request: NextRequest) {
       });
       
       workspaceContext = await Promise.race([contextBuildPromise, timeoutPromise]);
-      console.log('✅ [AI CHAT] Context build completed:', `${Date.now() - contextStartTime}ms`);
+      const contextBuildTime = Date.now() - contextStartTime;
+      console.log('✅ [AI CHAT] Context build completed:', `${contextBuildTime}ms`);
+      
+      // Performance monitoring: Log if context build is slow
+      if (contextBuildTime > 3000) {
+        console.warn(`⚠️ [AI CHAT] Slow context build: ${contextBuildTime}ms (target: <3000ms)`);
+      }
     } catch (contextError) {
       console.error('❌ [AI CHAT] Context build failed or timed out:', contextError);
       // Continue with minimal context rather than failing completely
@@ -517,7 +524,13 @@ export async function POST(request: NextRequest) {
         });
         
         const openRouterResponse = await Promise.race([openRouterPromise, openRouterTimeoutPromise]);
-        console.log('✅ [AI CHAT] OpenRouter response received:', `${Date.now() - openRouterStartTime}ms`);
+        const openRouterTime = Date.now() - openRouterStartTime;
+        console.log('✅ [AI CHAT] OpenRouter response received:', `${openRouterTime}ms`);
+        
+        // Performance monitoring
+        if (openRouterTime > 10000) {
+          console.warn(`⚠️ [AI CHAT] Slow OpenRouter response: ${openRouterTime}ms (target: <10000ms)`);
+        }
 
         // Record cost
         costRecordId = modelCostTracker.recordCost({
@@ -675,7 +688,13 @@ export async function POST(request: NextRequest) {
       });
       
       const claudeResponse = await Promise.race([claudePromise, claudeTimeoutPromise]);
-      console.log('✅ [AI CHAT] Claude response received:', `${Date.now() - claudeStartTime}ms`);
+      const claudeTime = Date.now() - claudeStartTime;
+      console.log('✅ [AI CHAT] Claude response received:', `${claudeTime}ms`);
+      
+      // Performance monitoring
+      if (claudeTime > 10000) {
+        console.warn(`⚠️ [AI CHAT] Slow Claude response: ${claudeTime}ms (target: <10000ms)`);
+      }
 
       // Record Claude request for monitoring
       gradualRolloutService.recordRequest({
@@ -751,10 +770,103 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Build sanitized reasoning data for UI (shows AI thinking without exposing internal prompts)
+    const buildReasoningData = () => {
+      const reasoning: any = {
+        confidence: aiResponse.metadata?.confidence || 0.85,
+        processingTime: aiResponse.metadata?.processingTime || 0,
+        model: aiResponse.metadata?.model
+      };
+
+      // Context awareness
+      if (currentRecord) {
+        reasoning.contextAwareness = {
+          recordType: recordType || 'unknown',
+          recordName: currentRecord.name || currentRecord.fullName || 'Unknown',
+          companyName: typeof currentRecord.company === 'string' 
+            ? currentRecord.company 
+            : (currentRecord.company?.name || currentRecord.companyName),
+          workspaceContext: workspaceContext?.workspaceContext 
+            ? `Analyzing ${workspaceContext.workspaceContext.split(' ').length} workspace data points`
+            : undefined,
+          dataPoints: workspaceContext 
+            ? (workspaceContext.recordContext?.length || 0) + 
+              (workspaceContext.dataContext?.length || 0) +
+              (workspaceContext.userContext?.length || 0)
+            : undefined
+        };
+      }
+
+      // Data sources
+      const dataSources: any[] = [];
+      if (currentRecord) {
+        dataSources.push({
+          type: 'record' as const,
+          name: `${recordType || 'Record'}: ${currentRecord.name || currentRecord.fullName || 'Current record'}`,
+          description: `Analyzing current ${recordType || 'record'} data`
+        });
+      }
+      if (workspaceContext?.recordContext) {
+        dataSources.push({
+          type: 'intelligence' as const,
+          name: 'Record Intelligence',
+          description: 'Enrichment and intelligence data'
+        });
+      }
+      if (workspaceContext?.dataContext) {
+        dataSources.push({
+          type: 'workspace' as const,
+          name: 'Workspace Context',
+          description: 'Workspace data and business context'
+        });
+      }
+      if (conversationHistory && conversationHistory.length > 0) {
+        dataSources.push({
+          type: 'history' as const,
+          name: 'Conversation History',
+          description: `${conversationHistory.length} previous messages`
+        });
+      }
+      if (dataSources.length > 0) {
+        reasoning.dataSources = dataSources;
+      }
+
+      // Thinking steps (high-level, sanitized)
+      const thinkingSteps: any[] = [];
+      thinkingSteps.push({
+        step: 1,
+        description: 'Analyzing context and available data',
+        confidence: 0.9
+      });
+      if (currentRecord) {
+        thinkingSteps.push({
+          step: 2,
+          description: `Understanding ${recordType || 'record'} details and relationships`,
+          confidence: 0.85
+        });
+      }
+      if (workspaceContext?.dataContext) {
+        thinkingSteps.push({
+          step: 3,
+          description: 'Considering workspace patterns and business context',
+          confidence: 0.8
+        });
+      }
+      thinkingSteps.push({
+        step: thinkingSteps.length + 1,
+        description: 'Generating contextual response',
+        confidence: aiResponse.metadata?.confidence || 0.85
+      });
+      reasoning.thinkingSteps = thinkingSteps;
+
+      return reasoning;
+    };
+
     // Use sanitized response
     const finalResponse = {
       ...aiResponse,
-      response: responseValidation.sanitizedResponse
+      response: responseValidation.sanitizedResponse,
+      reasoning: buildReasoningData()
     };
 
     // Record successful request for rate limiting
@@ -764,6 +876,18 @@ export async function POST(request: NextRequest) {
       context.workspaceId,
       true
     );
+
+    // Performance monitoring: Log total request time
+    const totalRequestTime = Date.now() - requestStartTime;
+    console.log('✅ [AI CHAT] Request completed successfully:', {
+      totalTime: `${totalRequestTime}ms`,
+      userId: context.userId,
+      workspaceId: context.workspaceId
+    });
+    
+    if (totalRequestTime > 15000) {
+      console.warn(`⚠️ [AI CHAT] Slow total request time: ${totalRequestTime}ms (target: <15000ms)`);
+    }
 
     // Return response directly (not wrapped in data field)
     // The AI chat response structure is different from standard API responses

@@ -7,6 +7,15 @@
 
 import { getPrismaClient } from '@/platform/database/connection-pool';
 
+// Cache for workspace context (5 minute TTL)
+interface CachedContext {
+  context: WorkspaceContext;
+  timestamp: number;
+}
+
+const workspaceContextCache = new Map<string, CachedContext>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export interface WorkspaceContext {
   workspace: {
     id: string;
@@ -57,55 +66,65 @@ export class EnhancedWorkspaceContextService {
   
   /**
    * Build comprehensive workspace context for AI
+   * Uses caching to avoid repeated database queries (5 minute TTL)
    */
   static async buildWorkspaceContext(workspaceId: string): Promise<WorkspaceContext | null> {
+    // Check cache first
+    const cached = workspaceContextCache.get(workspaceId);
+    if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ [EnhancedWorkspaceContextService] Using cached workspace context');
+      }
+      return cached.context;
+    }
+
     try {
       const prisma = getPrismaClient();
       
-      // Fetch workspace data with new business context fields
-      const workspace = await prisma.workspaces.findUnique({
-        where: { id: workspaceId },
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          businessModel: true,
-          industry: true,
-          serviceOfferings: true,
-          productPortfolio: true,
-          valuePropositions: true,
-          targetIndustries: true,
-          targetCompanySize: true,
-          idealCustomerProfile: true,
-          competitiveAdvantages: true,
-          salesMethodology: true,
-        }
-      });
+      // OPTIMIZATION: Parallelize workspace and company queries (they're independent)
+      const [workspace, company] = await Promise.all([
+        prisma.workspaces.findUnique({
+          where: { id: workspaceId },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            businessModel: true,
+            industry: true,
+            serviceOfferings: true,
+            productPortfolio: true,
+            valuePropositions: true,
+            targetIndustries: true,
+            targetCompanySize: true,
+            idealCustomerProfile: true,
+            competitiveAdvantages: true,
+            salesMethodology: true,
+          }
+        }),
+        prisma.companies.findFirst({
+          where: { 
+            workspaceId: workspaceId
+          },
+          select: {
+            name: true,
+            industry: true,
+            description: true,
+            businessChallenges: true,
+            businessPriorities: true,
+            competitiveAdvantages: true,
+            growthOpportunities: true,
+            marketPosition: true,
+            strategicInitiatives: true,
+            successMetrics: true,
+          }
+        })
+      ]);
 
       if (!workspace) {
         return null;
       }
 
-      // Fetch the main company record for this workspace (look for any company, not just TOP Engineers Plus)
-      const company = await prisma.companies.findFirst({
-        where: { 
-          workspaceId: workspaceId
-        },
-        select: {
-          name: true,
-          industry: true,
-          description: true,
-          businessChallenges: true,
-          businessPriorities: true,
-          competitiveAdvantages: true,
-          growthOpportunities: true,
-          marketPosition: true,
-          strategicInitiatives: true,
-          successMetrics: true,
-        }
-      });
-
-      // Fetch data statistics
+      // OPTIMIZATION: Parallelize all data statistics queries
       const [peopleCount, companiesCount, peopleData, companiesData] = await Promise.all([
         prisma.people.count({ where: { workspaceId } }),
         prisma.companies.count({ where: { workspaceId } }),
@@ -154,7 +173,7 @@ export class EnhancedWorkspaceContextService {
         return [];
       };
 
-      return {
+      const context: WorkspaceContext = {
         workspace: {
           id: workspace.id,
           name: workspace.name,
@@ -195,6 +214,14 @@ export class EnhancedWorkspaceContextService {
           geographicDistribution,
         }
       };
+
+      // Cache the context for 5 minutes
+      workspaceContextCache.set(workspaceId, {
+        context,
+        timestamp: Date.now()
+      });
+
+      return context;
     } catch (error) {
       console.error('Error building workspace context:', error);
       return null;

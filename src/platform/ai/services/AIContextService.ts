@@ -66,26 +66,26 @@ export class AIContextService {
       documentContext
     } = config;
 
-    // Build user context (including personality preferences)
-    const userContext = await this.buildUserContext(userId, workspaceId);
-    
-    // Build application context
+    const contextStartTime = Date.now();
+
+    // OPTIMIZATION: Parallelize independent context building operations
+    // Build synchronous contexts first (no DB queries)
     const applicationContext = this.buildApplicationContext(appType);
-    
-    // Build data context (fetch real data)
-    const dataContext = await this.buildDataContext(appType, workspaceId, userId);
-    
-    // Build record context (now async to fetch company intelligence)
-    const recordContext = await this.buildRecordContext(currentRecord, recordType, workspaceId);
-    
-    // Build list view context
     const listViewContextString = this.buildListViewContext(listViewContext);
-    
-    // Build document context
     const documentContextString = this.buildDocumentContext(documentContext);
-    
-    // Build system context (fetch user timezone for accurate date/time)
-    const systemContext = await this.buildSystemContext(conversationHistory, userId);
+
+    // OPTIMIZATION: Parallelize all async context building (independent operations)
+    const [userContext, dataContext, recordContext, systemContext] = await Promise.all([
+      this.buildUserContext(userId, workspaceId),
+      this.buildDataContext(appType, workspaceId, userId),
+      this.buildRecordContext(currentRecord, recordType, workspaceId),
+      this.buildSystemContext(conversationHistory, userId)
+    ]);
+
+    const contextBuildTime = Date.now() - contextStartTime;
+    if (contextBuildTime > 2000) {
+      console.warn(`⚠️ [AIContextService] Context build took ${contextBuildTime}ms (target: <2000ms)`);
+    }
 
     return {
       userContext,

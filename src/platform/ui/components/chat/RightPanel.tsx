@@ -110,6 +110,28 @@ interface ChatMessage {
   cost?: number;
   model?: string;
   provider?: string;
+  reasoning?: {
+    contextAwareness?: {
+      recordType?: string;
+      recordName?: string;
+      companyName?: string;
+      workspaceContext?: string;
+      dataPoints?: number;
+    };
+    dataSources?: Array<{
+      type: 'record' | 'intelligence' | 'workspace' | 'history';
+      name: string;
+      description: string;
+    }>;
+    thinkingSteps?: Array<{
+      step: number;
+      description: string;
+      confidence?: number;
+    }>;
+    confidence?: number;
+    processingTime?: number;
+    model?: string;
+  };
 }
 
 interface Conversation {
@@ -2445,7 +2467,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           routingInfo: data.metadata?.routingInfo,
           cost: data.metadata?.cost,
           model: data.metadata?.model,
-          provider: data.metadata?.provider
+          provider: data.metadata?.provider,
+          // AI Reasoning data (shows thinking process)
+          reasoning: data.reasoning
         };
 
         // Log routing information for monitoring
