@@ -725,13 +725,11 @@ export function RightPanel() {
             messages: conv.messages.map((msg: any) => ({
               ...msg,
               timestamp: new Date(msg.timestamp),
-              // Preserve typewriter state for temporary messages (don't reset to false)
-              // Only reset if it's not a temporary message (check content)
-              isTypewriter: msg['isTypewriter'] === true && 
-                (msg.content?.includes("I'm adding competitive intelligence") || 
-                 msg.content?.includes("Let me get back to you shortly")) 
-                ? true : (msg['isTypewriter'] === true ? false : undefined),
-              // Restore typewriterSpeed from metadata if it exists
+              // CRITICAL FIX: Don't preserve isTypewriter for completed messages
+              // Only preserve if it's a temporary message that was just created (check if message was saved recently)
+              // For now, always set to false when loading - typewriter should only run once
+              isTypewriter: false, // Always false when loading - prevents re-triggering
+              // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
               typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
             }))
           }));
@@ -746,9 +744,30 @@ export function RightPanel() {
             }
           }
           conversationsLoadedRef.current = true;
+        } else {
+          // No localStorage data - create fresh main-chat
+          setConversations([{
+            id: 'main-chat',
+            title: 'Main Chat',
+            messages: [],
+            lastActivity: new Date(),
+            isActive: true
+          }]);
+          setActiveConversationId('main-chat');
+          conversationsLoadedRef.current = true;
         }
       } catch (error) {
         console.warn('Failed to load stored conversations:', error);
+        // On error, create fresh main-chat
+        setConversations([{
+          id: 'main-chat',
+          title: 'Main Chat',
+          messages: [],
+          lastActivity: new Date(),
+          isActive: true
+        }]);
+        setActiveConversationId('main-chat');
+        conversationsLoadedRef.current = true;
       }
     }
   }, [workspaceId]);
@@ -766,12 +785,22 @@ export function RightPanel() {
       const result = await response.json();
       
       if (result.success && result.data.conversations) {
+        // CRITICAL: Capture current active conversation ID BEFORE sync to preserve user's selection
+        const currentActiveId = activeConversationId;
+        
         // Capture current conversations state to preserve temporary messages during sync
         const currentConversationsSnapshot = [...conversations];
         
+        // Find main-chat in API (by metadata.isMainChat or title)
+        const apiMainChat = result.data.conversations.find((conv: any) => 
+          conv.metadata?.isMainChat === true || conv.title === 'Main Chat'
+        );
+        
         const apiConversations = result.data.conversations.map((conv: any) => {
           // Get local conversation to merge messages (preserve temporary messages that might not be in API yet)
-          const localConv = currentConversationsSnapshot.find(lc => lc.id === conv.id);
+          const localConv = currentConversationsSnapshot.find(lc => 
+            lc.id === conv.id || (conv.metadata?.isMainChat === true && lc.id === 'main-chat')
+          );
           const localTempMessages = localConv?.messages.filter(msg => 
             msg.type === 'assistant' && 
             (msg.content?.includes("I'm adding competitive intelligence") || 
@@ -782,12 +811,10 @@ export function RightPanel() {
           const apiMessages = (conv.messages || []).map((msg: any) => ({
             ...msg,
             timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
-            // Preserve typewriter state for temporary messages
-            isTypewriter: msg.metadata?.isTypewriter === true && 
-              (msg.content?.includes("I'm adding competitive intelligence") || 
-               msg.content?.includes("Let me get back to you shortly"))
-              ? true : (msg.metadata?.isTypewriter === true ? false : undefined),
-            // Restore typewriterSpeed from metadata if it exists
+            // CRITICAL FIX: Don't preserve isTypewriter - always false when loading from API
+            // This prevents typewriter from re-triggering when navigating back to chat
+            isTypewriter: false,
+            // Restore typewriterSpeed from metadata if it exists (for reference)
             typewriterSpeed: msg.metadata?.typewriterSpeed
           }));
           
@@ -814,6 +841,34 @@ export function RightPanel() {
             apiConv => !deletedConversationIds.has(apiConv.id)
           );
           
+          // CRITICAL FIX: If API has a main-chat, replace local 'main-chat' with API version
+          // This prevents duplicate main-chat creation
+          if (apiMainChat) {
+            // Remove any local main-chat (id='main-chat') and use API version instead
+            const filteredMerged = merged.filter(c => c.id !== 'main-chat');
+            // Add API main-chat (which has real API ID)
+            filteredMerged.push({
+              ...apiMainChat,
+              id: apiMainChat.id, // Use API ID, not 'main-chat'
+              messages: apiMainChat.messages || []
+            });
+            merged.length = 0;
+            merged.push(...filteredMerged);
+          } else {
+            // No main-chat in API - check if we have a local one
+            const hasLocalMainChat = prevConversations.some(c => c.id === 'main-chat');
+            if (!hasLocalMainChat && merged.length === 0) {
+              // No conversations at all - create main-chat
+              merged.push({
+                id: 'main-chat',
+                title: 'Main Chat',
+                messages: [],
+                lastActivity: new Date(),
+                isActive: true
+              });
+            }
+          }
+          
           // Get list of API conversation IDs to check against
           const apiConvIds = new Set(apiConversations.map(c => c.id));
           
@@ -828,7 +883,7 @@ export function RightPanel() {
               }
             }
             
-            // Reset to main-chat only - clear any localStorage conversations
+            // Reset to main-chat only
             merged.length = 0;
             merged.push({
               id: 'main-chat',
@@ -837,67 +892,82 @@ export function RightPanel() {
               lastActivity: new Date(),
               isActive: true
             });
-            
-            // Also update activeConversationId to main-chat
-            setActiveConversationId('main-chat');
           } else {
             // API has conversations - merge with localStorage (for offline support)
-            // Only add localStorage conversations if they're main-chat OR if API has other conversations
+            // Only add localStorage conversations if they're not in API and not deleted
             prevConversations.forEach(localConv => {
               const isInAPI = apiConvIds.has(localConv.id);
-              const isMainChat = localConv.id === 'main-chat';
+              const isMainChatLocal = localConv.id === 'main-chat';
               const notDeletedLocally = !deletedConversationIds.has(localConv.id);
               
-              // Only add if: it's main-chat OR (it's not in API but API has other conversations - meaning it's new/offline)
-              if ((isMainChat || (!isInAPI && apiConversations.length > 0)) && notDeletedLocally) {
+              // Don't add local main-chat if API has one (already handled above)
+              // Only add if: it's not main-chat AND not in API AND not deleted
+              if (!isMainChatLocal && !isInAPI && notDeletedLocally) {
                 if (!merged.find(apiConv => apiConv.id === localConv.id)) {
                   merged.push(localConv);
                 }
               }
             });
-            
-            // If no conversations exist after merge, ensure main-chat exists
-            if (merged.length === 0) {
-              merged.push({
-                id: 'main-chat',
-                title: 'Main Chat',
-                messages: [],
-                lastActivity: new Date(),
-                isActive: true
-              });
-            }
           }
           
-          // Ensure only one conversation is active (prefer main-chat if it exists)
-          const mainChat = merged.find(c => c.id === 'main-chat');
-          if (mainChat) {
-            // If main-chat exists, make it active and deactivate others
+          // CRITICAL FIX: Preserve current active conversation instead of forcing main-chat
+          // Only switch to main-chat if no conversation is currently active
+          const currentActiveConv = merged.find(c => c.id === currentActiveId);
+          if (currentActiveConv) {
+            // Preserve user's current selection
             merged.forEach(c => {
-              c.isActive = c.id === 'main-chat';
+              c.isActive = c.id === currentActiveId;
             });
-            // Move main-chat to the front
-            const mainChatIndex = merged.findIndex(c => c.id === 'main-chat');
-            if (mainChatIndex > 0) {
-              merged.splice(mainChatIndex, 1);
-              merged.unshift(mainChat);
-            }
-            setActiveConversationId('main-chat');
+            // Don't change activeConversationId - keep user's selection
           } else {
-            // If no main-chat, make the first one active
-            merged.forEach((c, index) => {
-              c.isActive = index === 0;
-            });
-            if (merged.length > 0) {
+            // Current active conversation not found - find main-chat or first conversation
+            const mainChat = merged.find(c => c.id === 'main-chat' || (apiMainChat && c.id === apiMainChat.id));
+            if (mainChat) {
+              merged.forEach(c => {
+                c.isActive = c.id === mainChat.id;
+              });
+              setActiveConversationId(mainChat.id);
+            } else if (merged.length > 0) {
+              // No main-chat, activate first conversation
+              merged.forEach((c, index) => {
+                c.isActive = index === 0;
+              });
               setActiveConversationId(merged[0].id);
             }
           }
           
-          return merged.sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
+          // Sort by lastActivity, but keep main-chat first if it exists
+          const sorted = merged.sort((a, b) => {
+            const aIsMain = a.id === 'main-chat' || (apiMainChat && a.id === apiMainChat.id);
+            const bIsMain = b.id === 'main-chat' || (apiMainChat && b.id === apiMainChat.id);
+            if (aIsMain && !bIsMain) return -1;
+            if (!aIsMain && bIsMain) return 1;
+            return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
+          });
+          
+          return sorted;
         });
         
         setLastSyncTime(new Date());
         if (process.env.NODE_ENV === 'development') {
           console.log('✅ [CHAT] Synced conversations from API:', apiConversations.length);
+        }
+      } else if (result.success && result.data.conversations.length === 0) {
+        // If API explicitly returns an empty array, clear local storage and reset to main-chat
+        const storageKey = `adrata-conversations-${workspaceId}`;
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem(storageKey);
+        }
+        setConversations([{
+          id: 'main-chat',
+          title: 'Main Chat',
+          messages: [],
+          lastActivity: new Date(),
+          isActive: true
+        }]);
+        setActiveConversationId('main-chat');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] API returned no conversations. Local storage cleared and reset to Main Chat.');
         }
       }
     } catch (error) {
@@ -964,11 +1034,22 @@ export function RightPanel() {
   const ensureMainChatInAPI = async (): Promise<string | null> => {
     if (!workspaceId || !userId) return null;
     
-    // Use a ref to get current conversations state
-    let currentMainChat = conversations.find(c => c.id === 'main-chat');
-    if (!currentMainChat) return null;
+    // CRITICAL: Preserve current active conversation - don't switch away from user's selection
+    const currentActiveId = activeConversationId;
     
-    // Check if main-chat already has a real API ID
+    // Use a ref to get current conversations state
+    let currentMainChat = conversations.find(c => c.id === 'main-chat' || (c.metadata?.isMainChat === true));
+    if (!currentMainChat) {
+      // Also check if there's a main-chat with API ID
+      const mainChatByTitle = conversations.find(c => c.title === 'Main Chat');
+      if (mainChatByTitle && mainChatByTitle.id !== 'main-chat') {
+        // Already has API ID
+        return mainChatByTitle.id;
+      }
+      return null;
+    }
+    
+    // Check if main-chat already has a real API ID (not 'main-chat')
     if (currentMainChat.id !== 'main-chat') return currentMainChat.id;
     
     try {
@@ -989,7 +1070,11 @@ export function RightPanel() {
               ? { ...conv, id: existingMainChat.id }
               : conv
           ));
-          setActiveConversationId(existingMainChat.id);
+          // CRITICAL: Only update activeConversationId if main-chat was the active conversation
+          // Don't switch away from user's current selection
+          if (currentActiveId === 'main-chat') {
+            setActiveConversationId(existingMainChat.id);
+          }
           if (process.env.NODE_ENV === 'development') {
             console.log('✅ [CHAT] Found existing main-chat in API:', existingMainChat.id);
           }
@@ -1005,7 +1090,10 @@ export function RightPanel() {
             ? { ...conv, id: apiId }
             : conv
         ));
-        setActiveConversationId(apiId);
+        // CRITICAL: Only update activeConversationId if main-chat was the active conversation
+        if (currentActiveId === 'main-chat') {
+          setActiveConversationId(apiId);
+        }
         if (process.env.NODE_ENV === 'development') {
           console.log('✅ [CHAT] Created main-chat in API:', apiId);
         }
@@ -3294,6 +3382,19 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                   activeSubApp={activeSubApp}
                   onRecordSearch={handleRecordSearch}
                   scrollToBottom={scrollToBottom}
+                  onTypewriterComplete={(messageId: string) => {
+                    // Mark message as completed in conversations state to prevent re-triggering
+                    setConversations(prev => prev.map(conv => 
+                      conv.isActive
+                        ? {
+                            ...conv,
+                            messages: conv.messages.map(msg =>
+                              msg.id === messageId ? { ...msg, isTypewriter: false } : msg
+                            )
+                          }
+                        : conv
+                    ));
+                  }}
                 />
               </div>
             )}

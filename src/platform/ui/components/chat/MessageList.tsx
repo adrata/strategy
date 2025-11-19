@@ -101,6 +101,7 @@ interface MessageListProps {
   activeSubApp: string;
   onRecordSearch?: (recordName: string) => void;
   scrollToBottom?: () => void; // Optional scroll callback for typewriter updates
+  onTypewriterComplete?: (messageId: string) => void; // Callback when typewriter completes
 }
 
 // Helper function to render markdown with proper styling
@@ -156,7 +157,8 @@ export function MessageList({
   onUpdateChatSessions, 
   activeSubApp,
   onRecordSearch,
-  scrollToBottom
+  scrollToBottom,
+  onTypewriterComplete
 }: MessageListProps) {
   
   // Handle record search functionality
@@ -174,6 +176,7 @@ export function MessageList({
 
   // Memoized callback to prevent infinite re-renders
   const handleTypewriterComplete = useCallback((messageId: string) => {
+    // Update chat sessions
     onUpdateChatSessions(prev => {
       const currentMessages = prev[activeSubApp] || [];
       const updatedMessages = currentMessages.map((msg: ChatMessage) => 
@@ -199,7 +202,12 @@ export function MessageList({
         [activeSubApp]: updatedMessages
       };
     });
-  }, [onUpdateChatSessions, activeSubApp]);
+    
+    // Also update conversations state if callback provided
+    if (onTypewriterComplete) {
+      onTypewriterComplete(messageId);
+    }
+  }, [onUpdateChatSessions, activeSubApp, scrollToBottom, onTypewriterComplete]);
   return (
     <div style={{ 
       paddingTop: messages['length'] === 0 ? '0' : '12px',
