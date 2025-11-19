@@ -14,7 +14,7 @@ import { claudeAIService } from '@/platform/services/ClaudeAIService';
 import { openRouterService } from '@/platform/services/OpenRouterService';
 import { modelCostTracker } from '@/platform/services/ModelCostTracker';
 import { gradualRolloutService } from '@/platform/services/GradualRolloutService';
-import { getUnifiedAuthUser } from '@/platform/api-auth';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { AIContextService } from '@/platform/ai/services/AIContextService';
 import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
 import { aiResponseValidator } from '@/platform/security/ai-response-validator';
@@ -22,90 +22,49 @@ import { rateLimiter } from '@/platform/security/rate-limiter';
 import { securityMonitor } from '@/platform/security/security-monitor';
 import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } from '@/platform/ai/tools/role-finder-tool';
 
-// GET handler removed - Next.js will automatically return 405 for unsupported methods
-// The explicit GET handler was causing issues when POST requests were redirected to GET
-// Middleware rewrite now handles URL normalization, so this handler is no longer needed
-
+/**
+ * POST /api/ai-chat - AI Chat API Endpoint
+ * 
+ * OpenRouter-powered AI integration with intelligent model routing
+ * Provides fast, context-aware responses with automatic failover and cost optimization
+ * 
+ * Note: Next.js will automatically return 405 for unsupported HTTP methods (GET, PUT, DELETE, etc.)
+ * No explicit method checking needed - Next.js route handlers only respond to their defined method
+ */
 export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
-  const requestMethod = request.method;
-  const requestUrl = request.url;
-  const requestPathname = request.nextUrl.pathname;
   
-  // 🔍 COMPREHENSIVE DEBUGGING: Log route handler entry
-  console.log('🔍 [ROUTE DEBUG] STEP E - Route Handler: POST handler called:', {
-    timestamp: new Date().toISOString(),
-    method: requestMethod,
-    url: requestUrl,
-    pathname: requestPathname,
-    hasTrailingSlash: requestPathname.endsWith('/'),
-    expectedMethod: 'POST',
-    methodMatch: requestMethod === 'POST',
-    headers: {
-      'user-agent': request.headers.get('user-agent'),
-      'x-forwarded-for': request.headers.get('x-forwarded-for'),
-      'x-request-id': request.headers.get('x-request-id'),
-      'content-type': request.headers.get('content-type')
-    }
-  });
-  
-  // Log request method and URL for debugging HTTP 405 issues
-  console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
-  console.log('🔍 [AI CHAT] Request details:', {
-    method: requestMethod,
-    url: requestUrl,
-    pathname: requestPathname,
-    hasTrailingSlash: requestPathname.endsWith('/'),
-    expectedMethod: 'POST',
-    methodMatch: requestMethod === 'POST'
-  });
-  
-  // Verify we received POST method (not GET from redirect)
-  if (requestMethod !== 'POST') {
-    console.error('🔍 [ROUTE DEBUG] STEP E - Route Handler: ❌ CRITICAL - Received non-POST method:', {
-      receivedMethod: requestMethod,
-      pathname: requestPathname,
-      url: requestUrl,
-      possibleCause: 'Next.js trailingSlash redirect may have converted POST→GET',
-      headers: Object.fromEntries(request.headers.entries()),
-      timestamp: new Date().toISOString()
-    });
-    
-    return NextResponse.json({
-      success: false,
-      error: `Method not allowed. Expected POST but received ${requestMethod}. This may indicate a trailing slash redirect issue.`,
-      code: 'METHOD_NOT_ALLOWED',
-      receivedMethod: requestMethod,
-      expectedMethod: 'POST',
-      debug: {
-        pathname: requestPathname,
-        url: requestUrl,
-        hasTrailingSlash: requestPathname.endsWith('/')
-      }
-    }, { status: 405 });
+  // Log request for debugging (reduced in production)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
   }
   
-  console.log('🔍 [ROUTE DEBUG] STEP F - Route Handler: ✅ Method is POST, proceeding...');
-  
   try {
-    // 1. AUTHENTICATION CHECK - Critical security requirement
-    console.log('🔐 [AI CHAT] Starting authentication check...');
-    const authUser = await getUnifiedAuthUser(request);
-    console.log('✅ [AI CHAT] Authentication check complete:', { hasAuthUser: !!authUser, userId: authUser?.id });
-    if (!authUser) {
-      // Log authentication failure
+    // 1. AUTHENTICATION CHECK - Use standardized auth helper (matches other working routes)
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      // Log authentication failure for security monitoring
       securityMonitor.logAuthenticationFailure(
         '/api/ai-chat',
         request.headers.get('user-agent') || undefined,
         request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
-        'No valid authentication token'
+        'Authentication failed via getSecureApiContext'
       );
-      
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required',
-        code: 'AUTH_REQUIRED'
-      }, { status: 401 });
+      return response; // Return standardized error response
+    }
+
+    if (!context) {
+      securityMonitor.logAuthenticationFailure(
+        '/api/ai-chat',
+        request.headers.get('user-agent') || undefined,
+        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+        'No context returned from getSecureApiContext'
+      );
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
@@ -284,8 +243,8 @@ export async function POST(request: NextRequest) {
 
     // Check for prompt injection attacks
     const injectionDetection = promptInjectionGuard.detectInjection(message, {
-      userId: authUser.id,
-      workspaceId: authUser.workspaceId || workspaceId,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
       conversationHistory
     });
 
@@ -294,8 +253,8 @@ export async function POST(request: NextRequest) {
         (injectionDetection.riskLevel === 'critical' || injectionDetection.riskLevel === 'high')) {
       // Log injection attempt
       securityMonitor.logInjectionAttempt(
-        authUser.id,
-        authUser.workspaceId || workspaceId,
+        context.userId,
+        context.workspaceId,
         '/api/ai-chat',
         injectionDetection.attackType,
         injectionDetection.riskLevel,
@@ -309,20 +268,20 @@ export async function POST(request: NextRequest) {
       );
 
       console.warn('🚨 [AI CHAT] Prompt injection blocked:', {
-        userId: authUser.id,
-        workspaceId: authUser.workspaceId || workspaceId,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
         attackType: injectionDetection.attackType,
         riskLevel: injectionDetection.riskLevel,
         confidence: injectionDetection.confidence,
         blockedPatterns: injectionDetection.blockedPatterns
       });
 
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid input detected. Please rephrase your message.',
-        code: 'INJECTION_BLOCKED',
-        riskLevel: injectionDetection.riskLevel
-      }, { status: 400 });
+      return createErrorResponse(
+        'Invalid input detected. Please rephrase your message.',
+        'INJECTION_BLOCKED',
+        400,
+        { riskLevel: injectionDetection.riskLevel }
+      );
     }
 
     // Use sanitized input for processing
@@ -337,11 +296,10 @@ export async function POST(request: NextRequest) {
         try {
           const toolResult = await executeRoleFinderTool(
             roleFinderInput,
-            authUser.workspaceId || workspaceId
+            context.workspaceId
           );
 
-          return NextResponse.json({
-            success: true,
+          return createSuccessResponse({
             response: toolResult.message,
             toolUsed: 'role_finder',
             toolResult: {
@@ -364,16 +322,16 @@ export async function POST(request: NextRequest) {
 
     // 3. RATE LIMITING - Prevent abuse and DoS attacks
     const rateLimitResult = rateLimiter.checkRateLimit(
-      authUser.id,
+      context.userId,
       'ai_chat',
-      authUser.workspaceId || workspaceId
+      context.workspaceId
     );
 
     if (!rateLimitResult.allowed) {
       // Log rate limit exceeded
       securityMonitor.logRateLimitExceeded(
-        authUser.id,
-        authUser.workspaceId || workspaceId,
+        context.userId,
+        context.workspaceId,
         '/api/ai-chat',
         rateLimitResult.limit,
         rateLimitResult.totalHits,
@@ -383,29 +341,29 @@ export async function POST(request: NextRequest) {
       );
 
       console.warn('🚨 [AI CHAT] Rate limit exceeded:', {
-        userId: authUser.id,
-        workspaceId: authUser.workspaceId || workspaceId,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
         totalHits: rateLimitResult.totalHits,
         limit: rateLimitResult.limit,
         retryAfter: rateLimitResult.retryAfter
       });
 
-      return NextResponse.json({
-        success: false,
-        error: 'Rate limit exceeded. Please try again later.',
-        code: 'RATE_LIMIT_EXCEEDED',
-        retryAfter: rateLimitResult.retryAfter,
-        limit: rateLimitResult.limit,
-        remaining: rateLimitResult.remaining
-      }, { 
-        status: 429,
-        headers: {
+      return createErrorResponse(
+        'Rate limit exceeded. Please try again later.',
+        'RATE_LIMIT_EXCEEDED',
+        429,
+        {
+          retryAfter: rateLimitResult.retryAfter,
+          limit: rateLimitResult.limit,
+          remaining: rateLimitResult.remaining
+        },
+        {
           'Retry-After': rateLimitResult.retryAfter?.toString() || '60',
           'X-RateLimit-Limit': rateLimitResult.limit.toString(),
           'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
           'X-RateLimit-Reset': rateLimitResult.resetTime.toString()
         }
-      });
+      );
     }
 
     let response: any;
@@ -414,8 +372,8 @@ export async function POST(request: NextRequest) {
     // Build comprehensive workspace context (optimized for speed)
     const contextStartTime = Date.now();
     const workspaceContext = await AIContextService.buildContext({
-      userId: authUser.id,
-      workspaceId: authUser.workspaceId || workspaceId,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
       appType,
       currentRecord,
       recordType,
@@ -483,7 +441,7 @@ export async function POST(request: NextRequest) {
     // Determine if we should use OpenRouter based on gradual rollout
     // 🔧 FIX: Prefer OpenRouter when available (bypass gradual rollout if OpenRouter key exists)
     const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
-    const gradualRolloutDecision = gradualRolloutService.shouldUseOpenRouter(userId, workspaceId);
+    const gradualRolloutDecision = gradualRolloutService.shouldUseOpenRouter(context.userId, context.workspaceId);
     // Use OpenRouter if: user requested it AND we have the key AND (gradual rollout allows it OR we're forcing it for low Anthropic credits)
     const shouldUseOpenRouter = useOpenRouter && hasOpenRouterKey && (gradualRolloutDecision || true); // Temporarily bypass gradual rollout
     
@@ -512,8 +470,8 @@ export async function POST(request: NextRequest) {
           recordType,
           listViewContext,
           appType,
-          workspaceId: authUser.workspaceId || workspaceId,
-          userId: authUser.id,
+          workspaceId: context.workspaceId,
+          userId: context.userId,
           context: {
             currentUrl: request.headers.get('referer'),
             userAgent: request.headers.get('user-agent'),
@@ -535,8 +493,8 @@ export async function POST(request: NextRequest) {
                    openRouterResponse.routingInfo.complexity < 70 ? 'standard' : 'complex',
           complexity: openRouterResponse.routingInfo.complexity,
           processingTime: openRouterResponse.processingTime,
-          userId,
-          workspaceId,
+          userId: context.userId,
+          workspaceId: context.workspaceId,
           appType,
           success: true,
           fallbackUsed: openRouterResponse.routingInfo.fallbackUsed
@@ -574,8 +532,8 @@ export async function POST(request: NextRequest) {
 
         // Record request for gradual rollout monitoring
         gradualRolloutService.recordRequest({
-          userId,
-          workspaceId,
+          userId: context.userId,
+          workspaceId: context.workspaceId,
           usedOpenRouter: true,
           success: true,
           responseTime: openRouterResponse.processingTime,
@@ -590,8 +548,8 @@ export async function POST(request: NextRequest) {
         } : { error: openRouterError };
         console.error('❌ [AI CHAT] OpenRouter failed, falling back to Claude:', {
           error: errorDetails,
-          userId,
-          workspaceId,
+          userId: context.userId,
+          workspaceId: context.workspaceId,
           hasCurrentRecord: !!currentRecord,
           recordId: currentRecord?.id,
           recordName: currentRecord?.name || currentRecord?.fullName,
@@ -603,8 +561,8 @@ export async function POST(request: NextRequest) {
         
         // Record OpenRouter failure
         gradualRolloutService.recordRequest({
-          userId,
-          workspaceId,
+          userId: context.userId,
+          workspaceId: context.workspaceId,
           usedOpenRouter: true,
           success: false,
           responseTime: 0,
@@ -620,8 +578,8 @@ export async function POST(request: NextRequest) {
           recordType,
           listViewContext,
           appType,
-          workspaceId: authUser.workspaceId || workspaceId,
-          userId: authUser.id,
+          workspaceId: context.workspaceId,
+          userId: context.userId,
           pageContext,
           workspaceContext // Pass the comprehensive workspace context
         });
@@ -665,15 +623,15 @@ export async function POST(request: NextRequest) {
         recordType,
         listViewContext,
         appType,
-        workspaceId: authUser.workspaceId || workspaceId,
-        userId: authUser.id,
-        pageContext
+          workspaceId: context.workspaceId,
+          userId: context.userId,
+          pageContext
       });
 
       // Record Claude request for monitoring
       gradualRolloutService.recordRequest({
-        userId: authUser.id,
-        workspaceId: authUser.workspaceId || workspaceId,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
         usedOpenRouter: false,
         success: true,
         responseTime: claudeResponse.processingTime,
@@ -709,8 +667,8 @@ export async function POST(request: NextRequest) {
 
     // 3. RESPONSE VALIDATION - Critical security requirement
     const responseValidation = aiResponseValidator.validateResponse(response.response, {
-      userId: authUser.id,
-      workspaceId: authUser.workspaceId || workspaceId,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
       conversationHistory
     });
 
@@ -719,8 +677,8 @@ export async function POST(request: NextRequest) {
         (responseValidation.riskLevel === 'critical' || responseValidation.riskLevel === 'high')) {
       // Log response validation failure
       securityMonitor.logResponseValidationFailure(
-        authUser.id,
-        authUser.workspaceId || workspaceId,
+        context.userId,
+        context.workspaceId,
         '/api/ai-chat',
         responseValidation.riskLevel,
         responseValidation.issues,
@@ -730,19 +688,18 @@ export async function POST(request: NextRequest) {
       );
 
       console.warn('🚨 [AI CHAT] Response validation failed:', {
-        userId: authUser.id,
-        workspaceId: authUser.workspaceId || workspaceId,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
         riskLevel: responseValidation.riskLevel,
         issues: responseValidation.issues,
         confidence: responseValidation.confidence
       });
 
-      return NextResponse.json({
-        success: false,
-        error: 'Response validation failed. Please try again.',
-        code: 'RESPONSE_VALIDATION_FAILED',
-        riskLevel: responseValidation.riskLevel
-      }, { status: 400 });
+      return createErrorResponse(
+        'Response validation failed. Please try again.',
+        'RESPONSE_VALIDATION_FAILED',
+        400
+      );
     }
 
     // Use sanitized response
@@ -753,49 +710,28 @@ export async function POST(request: NextRequest) {
 
     // Record successful request for rate limiting
     rateLimiter.recordRequest(
-      authUser.id,
+      context.userId,
       'ai_chat',
-      authUser.workspaceId || workspaceId,
+      context.workspaceId,
       true
     );
 
+    // Return response directly (not wrapped in data field)
+    // The AI chat response structure is different from standard API responses
     return NextResponse.json(finalResponse);
 
   } catch (error) {
     console.error('❌ [AI CHAT] Error:', error);
     
     // Return a helpful error response
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-      response: "I apologize, but I'm experiencing some technical difficulties. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions."
-    }, { status: 500 });
+    return createErrorResponse(
+      error instanceof Error ? error.message : 'Unknown error occurred',
+      'INTERNAL_ERROR',
+      500
+    );
   }
 }
 
-export async function PUT() {
-  return NextResponse.json({
-    success: false,
-    error: 'Method not allowed. Use POST for AI chat requests.'
-  }, { status: 405 });
-}
-
-export async function DELETE() {
-  return NextResponse.json({
-    success: false,
-    error: 'Method not allowed. Use POST for AI chat requests.'
-  }, { status: 405 });
-}
-
-// Handle OPTIONS for CORS preflight
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Cache-Control, Pragma, X-Request-ID, Authorization',
-      'Access-Control-Max-Age': '86400',
-    }
-  });
-}
+// Note: PUT, DELETE, and OPTIONS handlers removed
+// Next.js will automatically return 405 for unsupported methods (PUT, DELETE)
+// OPTIONS is handled automatically by Next.js for CORS preflight
