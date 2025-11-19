@@ -844,8 +844,18 @@ export function RightPanel() {
           // NOTE: We no longer preserve temporary messages from local state - they should only exist if saved to API
           // This prevents the temporary message from loading proactively
           
+          // Filter out temporary messages from Main Chat to ensure it starts clean
+          const isMainChat = conv.metadata?.isMainChat === true || conv.title === 'Main Chat';
+          const filteredApiMessages = isMainChat
+            ? (conv.messages || []).filter((msg: any) => 
+                !(msg.type === 'assistant' && 
+                  (msg.content?.includes("I'm adding competitive intelligence") || 
+                   msg.content?.includes("Let me get back to you shortly")))
+              )
+            : (conv.messages || []);
+          
           // Merge API messages only (don't add local temporary messages)
-          const apiMessages = (conv.messages || []).map((msg: any) => ({
+          const apiMessages = filteredApiMessages.map((msg: any) => ({
             ...msg,
             timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
             // CRITICAL FIX: Don't preserve isTypewriter - always false when loading from API
