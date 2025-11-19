@@ -2049,6 +2049,60 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         [activeSubApp]: [...(prev[activeSubApp] || []), userMessage]
       }));
 
+      // TEMPORARY: Return simple message instead of processing AI request
+      // Extract first name from full name if needed
+      let username = user?.firstName || 'there';
+      if (!username && user?.name) {
+        const nameParts = user.name.trim().split(' ');
+        username = nameParts[0] || 'there';
+      }
+      const simpleResponse: ChatMessage = {
+        id: `assistant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type: 'assistant',
+        content: `Hey, ${username}! I'm adding competitive intelligence to your system. I'll have the Adrata team send you a message when I'm done!`,
+        timestamp: new Date()
+      };
+
+      // Remove typing indicator if it exists
+      setConversations(prev => prev.map(conv => 
+        conv.isActive 
+          ? { 
+              ...conv, 
+              messages: conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
+              lastActivity: new Date()
+            }
+          : conv
+      ));
+
+      // Add the simple response
+      setConversations(prev => prev.map(conv => 
+        conv.isActive 
+          ? { ...conv, messages: [...conv.messages, simpleResponse], lastActivity: new Date() }
+          : conv
+      ));
+
+      // Save response to API in background
+      const activeConv = conversations.find(c => c.isActive);
+      if (activeConv) {
+        if (activeConv.id === 'main-chat') {
+          const apiId = await ensureMainChatInAPI();
+          if (apiId) {
+            saveMessageToAPI(apiId, simpleResponse);
+          }
+        } else {
+          saveMessageToAPI(activeConv.id, simpleResponse);
+        }
+      }
+
+      chat.setChatSessions(prev => ({
+        ...prev,
+        [activeSubApp]: [...(prev[activeSubApp] || []), simpleResponse]
+      }));
+
+      scrollToBottom();
+      setIsProcessing(false);
+      return;
+
       // Add typing indicator (check if this might be a web research query)
       const isWebResearchQuery = input.toLowerCase().includes('search') || 
                                 input.toLowerCase().includes('find') || 
