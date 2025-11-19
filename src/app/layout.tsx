@@ -21,6 +21,7 @@ import { DynamicFavicon } from "@/platform/ui/components/DynamicFavicon";
 import { DynamicTitle } from "@/platform/ui/components/DynamicTitle";
 import { SafariImmediateFix } from "@/platform/components/SafariImmediateFix";
 import { usePathname } from "next/navigation";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Import desktop auto-updater (only works in desktop environment)
 // Desktop updater removed - handled by Tauri directly
@@ -144,6 +145,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
         <DynamicTitle />
       </Suspense>
       <SafariImmediateFix />
+      <SpeedInsights />
       <DesktopErrorBoundary>
         <ThemeProvider>
           <FeatureAccessProvider>

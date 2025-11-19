@@ -189,6 +189,7 @@
     "ai": "^5.0.44",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
+    "botid": "^1.5.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",

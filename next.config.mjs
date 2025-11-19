@@ -1,5 +1,7 @@
 
 // ADRATA DESKTOP BUILD CONFIGURATION
+import { withBotId } from 'botid/next/config';
+
 const isDesktop = process.env.TAURI_BUILD === 'true';
 
 const nextConfig = {
@@ -109,4 +111,5 @@ const nextConfig = {
   }
 };
 
-export default nextConfig;
+// Wrap with BotID for bot protection (only in production, not for desktop builds)
+export default isDesktop ? nextConfig : withBotId(nextConfig);
