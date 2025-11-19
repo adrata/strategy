@@ -710,8 +710,12 @@ export function RightPanel() {
             messages: conv.messages.map((msg: any) => ({
               ...msg,
               timestamp: new Date(msg.timestamp),
-              // Ensure typewriter state is properly handled on load
-              isTypewriter: msg['isTypewriter'] === true ? false : undefined,
+              // Preserve typewriter state for temporary messages (don't reset to false)
+              // Only reset if it's not a temporary message (check content)
+              isTypewriter: msg['isTypewriter'] === true && 
+                (msg.content?.includes("I'm adding competitive intelligence") || 
+                 msg.content?.includes("Let me get back to you shortly")) 
+                ? true : (msg['isTypewriter'] === true ? false : undefined),
               // Restore typewriterSpeed from metadata if it exists
               typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
             }))
@@ -744,19 +748,46 @@ export function RightPanel() {
       const result = await response.json();
       
       if (result.success && result.data.conversations) {
-        const apiConversations = result.data.conversations.map((conv: any) => ({
-          id: conv.id,
-          title: conv.title,
-          messages: (conv.messages || []).map((msg: any) => ({
+        // Capture current conversations state to preserve temporary messages during sync
+        const currentConversationsSnapshot = [...conversations];
+        
+        const apiConversations = result.data.conversations.map((conv: any) => {
+          // Get local conversation to merge messages (preserve temporary messages that might not be in API yet)
+          const localConv = currentConversationsSnapshot.find(lc => lc.id === conv.id);
+          const localTempMessages = localConv?.messages.filter(msg => 
+            msg.type === 'assistant' && 
+            (msg.content?.includes("I'm adding competitive intelligence") || 
+             msg.content?.includes("Let me get back to you shortly"))
+          ) || [];
+          
+          // Merge API messages with local temporary messages
+          const apiMessages = (conv.messages || []).map((msg: any) => ({
             ...msg,
             timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+            // Preserve typewriter state for temporary messages
+            isTypewriter: msg.metadata?.isTypewriter === true && 
+              (msg.content?.includes("I'm adding competitive intelligence") || 
+               msg.content?.includes("Let me get back to you shortly"))
+              ? true : (msg.metadata?.isTypewriter === true ? false : undefined),
             // Restore typewriterSpeed from metadata if it exists
             typewriterSpeed: msg.metadata?.typewriterSpeed
-          })),
-          lastActivity: new Date(conv.lastActivity),
-          isActive: conv.isActive,
-          welcomeMessage: conv.welcomeMessage
-        }));
+          }));
+          
+          // Add local temporary messages that aren't in API yet
+          const apiMessageIds = new Set(apiMessages.map((m: any) => m.id));
+          const newTempMessages = localTempMessages.filter(lm => !apiMessageIds.has(lm.id));
+          
+          return {
+            id: conv.id,
+            title: conv.title,
+            messages: [...apiMessages, ...newTempMessages].sort((a, b) => 
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            ),
+            lastActivity: new Date(conv.lastActivity),
+            isActive: conv.isActive,
+            welcomeMessage: conv.welcomeMessage
+          };
+        });
         
         // Merge with localStorage data (API is source of truth)
         setConversations(prevConversations => {
@@ -1329,7 +1360,7 @@ export function RightPanel() {
       return activeConv.welcomeMessage;
     }
 
-    const greeting = "Hi. I'm Adrata. What would you like to work on today?";
+    const greeting = "Hi. I'm Adrata. I'm looking forward to helping you succeed.";
 
     if (activeConv?.id === 'main-chat') {
       const isPipelineContext = typeof window !== 'undefined' && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/speedrun'));
@@ -2158,14 +2189,21 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       ));
 
       // Save response to API in background (reuse activeConv from above)
+      // IMPORTANT: Save immediately to ensure persistence
       if (activeConv) {
         if (activeConv.id === 'main-chat') {
           const apiId = await ensureMainChatInAPI();
           if (apiId) {
-            saveMessageToAPI(apiId, simpleResponse);
+            // Save message to API - don't await to avoid blocking, but ensure it's saved
+            saveMessageToAPI(apiId, simpleResponse).catch(err => {
+              console.warn('Failed to save temporary message to API:', err);
+            });
           }
         } else {
-          saveMessageToAPI(activeConv.id, simpleResponse);
+          // Save message to API - don't await to avoid blocking, but ensure it's saved
+          saveMessageToAPI(activeConv.id, simpleResponse).catch(err => {
+            console.warn('Failed to save temporary message to API:', err);
+          });
         }
       }
 
