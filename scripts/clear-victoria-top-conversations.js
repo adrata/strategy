@@ -124,6 +124,22 @@ async function clearVictoriaTopConversations() {
     console.log(`✅ Successfully soft deleted ${result.count} conversation(s).`);
     console.log(`   Deleted at: ${deletedAt.toISOString()}\n`);
 
+    // Also ensure no conversations are marked as active
+    const deactivateResult = await prisma.ai_conversations.updateMany({
+      where: {
+        userId: victoria.id,
+        workspaceId: topWorkspace.id,
+        isActive: true
+      },
+      data: {
+        isActive: false
+      }
+    });
+
+    if (deactivateResult.count > 0) {
+      console.log(`✅ Deactivated ${deactivateResult.count} active conversation(s).\n`);
+    }
+
     // Verify deletion
     console.log('🔍 Verifying deletion...\n');
     const remaining = await prisma.ai_conversations.count({
@@ -140,8 +156,11 @@ async function clearVictoriaTopConversations() {
       console.log(`⚠️  Warning: ${remaining} conversation(s) still remain.\n`);
     }
 
-    console.log('📝 Note: localStorage conversations will be cleared when Victoria logs in fresh.');
-    console.log(`   Storage key: adrata-conversations-${topWorkspace.id}\n`);
+    console.log('📝 IMPORTANT: localStorage needs to be cleared manually:');
+    console.log(`   1. Open browser console (F12)`);
+    console.log(`   2. Run: localStorage.removeItem('adrata-conversations-${topWorkspace.id}')`);
+    console.log(`   3. Refresh the page\n`);
+    console.log(`   Or Victoria can log out and log back in to get a fresh start.\n`);
 
   } catch (error) {
     console.error('❌ Error:', error);

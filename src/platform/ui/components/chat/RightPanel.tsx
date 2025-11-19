@@ -765,13 +765,48 @@ export function RightPanel() {
             apiConv => !deletedConversationIds.has(apiConv.id)
           );
           
+          // Get list of API conversation IDs to check against
+          const apiConvIds = new Set(apiConversations.map(c => c.id));
+          
           // Add any localStorage conversations that aren't in API (for offline support)
+          // BUT: If API returned empty and localStorage has conversations, they might be deleted
+          // So only add localStorage conversations if API has conversations OR if it's main-chat
           prevConversations.forEach(localConv => {
-            if (!merged.find(apiConv => apiConv.id === localConv.id) && 
-                !deletedConversationIds.has(localConv.id)) {
-              merged.push(localConv);
+            const isInAPI = apiConvIds.has(localConv.id);
+            const isMainChat = localConv.id === 'main-chat';
+            const notDeletedLocally = !deletedConversationIds.has(localConv.id);
+            
+            // Only add if: it's main-chat OR (it's not in API but API has other conversations - meaning it's new/offline)
+            if ((isMainChat || (!isInAPI && apiConversations.length > 0)) && notDeletedLocally) {
+              if (!merged.find(apiConv => apiConv.id === localConv.id)) {
+                merged.push(localConv);
+              }
             }
           });
+          
+          // If no conversations exist, ensure main-chat exists
+          if (merged.length === 0) {
+            merged.push({
+              id: 'main-chat',
+              title: 'Main Chat',
+              messages: [],
+              lastActivity: new Date(),
+              isActive: true
+            });
+          }
+          
+          // Ensure only one conversation is active (prefer main-chat if it exists)
+          const mainChat = merged.find(c => c.id === 'main-chat');
+          if (mainChat && !mainChat.isActive) {
+            merged.forEach(c => {
+              c.isActive = c.id === 'main-chat';
+            });
+          } else if (!mainChat) {
+            // If no main-chat, make the first one active
+            merged.forEach((c, index) => {
+              c.isActive = index === 0;
+            });
+          }
           
           return merged.sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
         });
@@ -2069,7 +2104,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       let responseText: string;
       if (hasTemporaryMessage) {
         // If user responds after the temporary message, give a follow-up response
-        responseText = "Let me get back to you shortly.";
+        responseText = "Let me get back to you shortly. If I take too long, please email clients@adrata.com.";
       } else {
         // First time - show the initial temporary message
         // Extract first name from full name if needed
