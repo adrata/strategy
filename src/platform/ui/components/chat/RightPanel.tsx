@@ -2081,8 +2081,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           : conv
       ));
 
-      // Save response to API in background
-      const activeConv = conversations.find(c => c.isActive);
+      // Save response to API in background (reuse activeConv from above)
       if (activeConv) {
         if (activeConv.id === 'main-chat') {
           const apiId = await ensureMainChatInAPI();
