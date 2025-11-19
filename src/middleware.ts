@@ -157,21 +157,23 @@ export function middleware(request: NextRequest) {
   // Next.js trailingSlash: true affects page routes, but API routes work better without trailing slashes
   // Use rewrite (not redirect) to preserve HTTP method (POST stays POST, doesn't become GET)
   
-  // Handle /api/ai-chat (normalize trailing slash to prevent redirects)
-  // Pattern: /api/ai-chat or /api/ai-chat/
-  // CRITICAL: This must run BEFORE Next.js trailingSlash redirect
-  if (pathname === '/api/ai-chat' || pathname === '/api/ai-chat/') {
-    console.log('🔍 [MIDDLEWARE DEBUG] STEP B - Middleware: Normalizing /api/ai-chat:', {
+  // 🏆 FIX: Handle /api/ai-chat trailing slash normalization
+  // With trailingSlash: true, Next.js expects /api/ai-chat/ (with slash)
+  // If request comes without slash, rewrite to with slash to prevent redirect
+  // If request already has slash, let it pass through (no rewrite needed)
+  if (pathname === '/api/ai-chat') {
+    // Request without trailing slash - rewrite to with slash to match Next.js config
+    console.log('🔍 [MIDDLEWARE DEBUG] STEP B - Middleware: Normalizing /api/ai-chat (adding trailing slash):', {
       originalPathname: pathname,
       method: request.method,
-      hasTrailingSlash: pathname.endsWith('/'),
+      hasTrailingSlash: false,
       url: request.url,
-      willRewriteTo: '/api/ai-chat',
+      willRewriteTo: '/api/ai-chat/',
       timestamp: new Date().toISOString()
     });
     
     const normalizedUrl = request.nextUrl.clone();
-    normalizedUrl.pathname = '/api/ai-chat';  // Normalize to no trailing slash
+    normalizedUrl.pathname = '/api/ai-chat/';  // Add trailing slash to match Next.js config
     
     console.log('🔍 [MIDDLEWARE DEBUG] STEP C - Middleware: Performing rewrite:', {
       from: pathname,
@@ -187,6 +189,7 @@ export function middleware(request: NextRequest) {
     
     return rewriteResponse;
   }
+  // If pathname === '/api/ai-chat/', let it pass through (already has trailing slash, no rewrite needed)
   
   // Handle /api/v1/conversations/[id]/messages (with or without trailing slash)
   // Pattern: /api/v1/conversations/{id}/messages or /api/v1/conversations/{id}/messages/
