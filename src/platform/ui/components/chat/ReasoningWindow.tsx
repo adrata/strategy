@@ -97,7 +97,7 @@ export function ReasoningWindow({ reasoning, isVisible = false, onToggle }: Reas
           <div className="flex items-center gap-2">
             <BoltIcon className="h-4 w-4 text-primary" />
             <CardTitle className="text-sm font-medium text-foreground">
-              AI Thinking Process
+              Thinking...
             </CardTitle>
             {isAnimating && (
               <span className="text-xs text-muted-foreground">Analyzing...</span>
