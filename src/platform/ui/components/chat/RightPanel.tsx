@@ -87,6 +87,7 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   isTypewriter?: boolean;
+  typewriterSpeed?: number; // Custom typewriter speed in ms per character
   hasTodos?: boolean;
   todos?: Array<{
     id: string;
@@ -710,7 +711,9 @@ export function RightPanel() {
               ...msg,
               timestamp: new Date(msg.timestamp),
               // Ensure typewriter state is properly handled on load
-              isTypewriter: msg['isTypewriter'] === true ? false : undefined
+              isTypewriter: msg['isTypewriter'] === true ? false : undefined,
+              // Restore typewriterSpeed from metadata if it exists
+              typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
             }))
           }));
           setConversations(restoredConversations);
@@ -744,7 +747,12 @@ export function RightPanel() {
         const apiConversations = result.data.conversations.map((conv: any) => ({
           id: conv.id,
           title: conv.title,
-          messages: conv.messages || [],
+          messages: (conv.messages || []).map((msg: any) => ({
+            ...msg,
+            timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+            // Restore typewriterSpeed from metadata if it exists
+            typewriterSpeed: msg.metadata?.typewriterSpeed
+          })),
           lastActivity: new Date(conv.lastActivity),
           isActive: conv.isActive,
           welcomeMessage: conv.welcomeMessage
@@ -902,6 +910,7 @@ export function RightPanel() {
           content: message.content,
           metadata: {
             isTypewriter: message.isTypewriter,
+            typewriterSpeed: message.typewriterSpeed,
             hasTodos: message.hasTodos,
             todos: message.todos,
             sources: message.sources,
@@ -2075,8 +2084,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       
       scrollToBottom();
 
-      // Wait a bit to simulate processing (same timing as regular responses)
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Wait a bit longer to simulate processing (increased delay)
+      await new Promise(resolve => setTimeout(resolve, 1800));
 
       // Remove typing indicator and add the response with typewriter effect
       const simpleResponse: ChatMessage = {
@@ -2084,7 +2093,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         type: 'assistant',
         content: responseText,
         timestamp: new Date(),
-        isTypewriter: true // Enable typewriter effect (same speed as regular messages)
+        isTypewriter: true, // Enable typewriter effect
+        typewriterSpeed: 20 // Faster typewriter speed (20ms per character instead of default 35ms)
       };
 
       setConversations(prev => prev.map(conv => 
