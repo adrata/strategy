@@ -2121,6 +2121,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       return;
 
       // Add typing indicator (check if this might be a web research query)
+      // NOTE: This code is unreachable due to early return above, but kept for future restoration
       const isWebResearchQuery = input.toLowerCase().includes('search') || 
                                 input.toLowerCase().includes('find') || 
                                 input.toLowerCase().includes('look up') ||
@@ -2128,7 +2129,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
                                 input.toLowerCase().includes('http') ||
                                 input.toLowerCase().includes('www.');
       
-      const typingMessage: ChatMessage = {
+      const typingMessageOriginal: ChatMessage = {
         id: `typing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         type: 'assistant',
         content: isWebResearchQuery ? 'browsing' : 'typing',
@@ -2138,7 +2139,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       
       setConversations(prev => prev.map(conv => 
         conv.isActive 
-          ? { ...conv, messages: [...conv.messages, typingMessage] }
+          ? { ...conv, messages: [...conv.messages, typingMessageOriginal] }
           : conv
       ));
 
