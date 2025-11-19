@@ -8,7 +8,7 @@
 // Required for static export (desktop build)
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-export const maxDuration = 60; // Allow 60 seconds for AI chat (matches vercel.json)
+export const maxDuration = 50; // 🏆 FIX: Reduced to 50 seconds to fail faster than Vercel's 60s timeout
 
 import { NextRequest, NextResponse } from 'next/server';
 import { claudeAIService } from '@/platform/services/ClaudeAIService';
@@ -103,85 +103,95 @@ export async function POST(request: NextRequest) {
         const { getPrismaClient } = await import('@/platform/database/connection-pool');
         const prisma = getPrismaClient();
         
-        // 🔍 SMART DETECTION: Try multiple tables to find the record
-        
-        // 1. Try people table (handles: people, leads, prospects, speedrun)
-        const personRecord = await prisma.people.findUnique({
-          where: { id: recordIdFromUrl },
-          include: {
-            company: true,
-            customFields: true
-          }
-        });
-        
-        if (personRecord) {
-          console.log('✅ [AI CHAT] Successfully fetched person record from database:', {
-            id: personRecord.id,
-            name: personRecord.fullName || `${personRecord.firstName} ${personRecord.lastName}`,
-            company: personRecord.company?.name || personRecord.companyName,
-            status: personRecord.status,
-            title: personRecord.jobTitle || personRecord.title
-          });
+        // 🏆 FIX: Add timeout to database record fetching (5 seconds max)
+        const recordFetchPromise = (async () => {
+          // 🔍 SMART DETECTION: Try multiple tables to find the record
           
-          currentRecord = {
-            ...personRecord,
-            name: personRecord.fullName || `${personRecord.firstName || ''} ${personRecord.lastName || ''}`.trim(),
-            fullName: personRecord.fullName || `${personRecord.firstName || ''} ${personRecord.lastName || ''}`.trim(),
-            company: personRecord.company?.name || personRecord.companyName,
-            companyName: personRecord.company?.name || personRecord.companyName,
-            title: personRecord.jobTitle || personRecord.title,
-            jobTitle: personRecord.jobTitle || personRecord.title,
-            // Include all enrichment data
-            monacoEnrichment: personRecord.customFields?.monacoEnrichment,
-            personIntelligence: personRecord.customFields?.personIntelligence,
-            leadIntelligence: personRecord.customFields?.leadIntelligence
-          };
-          
-          // Determine record type based on status or URL pattern
-          if (personRecord.status === 'LEAD') {
-            recordType = 'lead';
-          } else if (personRecord.status === 'PROSPECT') {
-            recordType = 'prospect';
-          } else if (personRecord.status === 'OPPORTUNITY') {
-            recordType = 'opportunity';
-          } else {
-            recordType = 'person';
-          }
-        }
-        
-        // 2. Try companies table if not found in people
-        if (!currentRecord) {
-          const companyRecord = await prisma.companies.findUnique({
+          // 1. Try people table (handles: people, leads, prospects, speedrun)
+          const personRecord = await prisma.people.findUnique({
             where: { id: recordIdFromUrl },
             include: {
+              company: true,
               customFields: true
             }
           });
           
-          if (companyRecord) {
-            console.log('✅ [AI CHAT] Successfully fetched company record from database:', {
-              id: companyRecord.id,
-              name: companyRecord.name,
-              industry: companyRecord.industry,
-              status: companyRecord.status
+          if (personRecord) {
+            console.log('✅ [AI CHAT] Successfully fetched person record from database:', {
+              id: personRecord.id,
+              name: personRecord.fullName || `${personRecord.firstName} ${personRecord.lastName}`,
+              company: personRecord.company?.name || personRecord.companyName,
+              status: personRecord.status,
+              title: personRecord.jobTitle || personRecord.title
             });
             
             currentRecord = {
-              ...companyRecord,
-              companyName: companyRecord.name,
+              ...personRecord,
+              name: personRecord.fullName || `${personRecord.firstName || ''} ${personRecord.lastName || ''}`.trim(),
+              fullName: personRecord.fullName || `${personRecord.firstName || ''} ${personRecord.lastName || ''}`.trim(),
+              company: personRecord.company?.name || personRecord.companyName,
+              companyName: personRecord.company?.name || personRecord.companyName,
+              title: personRecord.jobTitle || personRecord.title,
+              jobTitle: personRecord.jobTitle || personRecord.title,
               // Include all enrichment data
-              coresignalData: companyRecord.customFields?.coresignalData,
-              companyIntelligence: companyRecord.customFields?.companyIntelligence
+              monacoEnrichment: personRecord.customFields?.monacoEnrichment,
+              personIntelligence: personRecord.customFields?.personIntelligence,
+              leadIntelligence: personRecord.customFields?.leadIntelligence
             };
             
-            // Determine record type
-            if (companyRecord.status === 'OPPORTUNITY') {
+            // Determine record type based on status or URL pattern
+            if (personRecord.status === 'LEAD') {
+              recordType = 'lead';
+            } else if (personRecord.status === 'PROSPECT') {
+              recordType = 'prospect';
+            } else if (personRecord.status === 'OPPORTUNITY') {
               recordType = 'opportunity';
             } else {
-              recordType = 'company';
+              recordType = 'person';
+            }
+            return;
+          }
+          
+          // 2. Try companies table if not found in people
+          if (!currentRecord) {
+            const companyRecord = await prisma.companies.findUnique({
+              where: { id: recordIdFromUrl },
+              include: {
+                customFields: true
+              }
+            });
+            
+            if (companyRecord) {
+              console.log('✅ [AI CHAT] Successfully fetched company record from database:', {
+                id: companyRecord.id,
+                name: companyRecord.name,
+                industry: companyRecord.industry,
+                status: companyRecord.status
+              });
+              
+              currentRecord = {
+                ...companyRecord,
+                companyName: companyRecord.name,
+                // Include all enrichment data
+                coresignalData: companyRecord.customFields?.coresignalData,
+                companyIntelligence: companyRecord.customFields?.companyIntelligence
+              };
+              
+              // Determine record type
+              if (companyRecord.status === 'OPPORTUNITY') {
+                recordType = 'opportunity';
+              } else {
+                recordType = 'company';
+              }
             }
           }
-        }
+        })();
+        
+        const recordFetchTimeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Record fetch timeout after 5 seconds')), 5000);
+        });
+        
+        await Promise.race([recordFetchPromise, recordFetchTimeoutPromise]);
         
         // No need to disconnect - using singleton connection pool
         
@@ -196,7 +206,8 @@ export async function POST(request: NextRequest) {
           console.warn('⚠️ [AI CHAT] Record not found in database:', recordIdFromUrl);
         }
       } catch (error) {
-        console.error('❌ [AI CHAT] Failed to fetch record from database:', error);
+        console.error('❌ [AI CHAT] Failed to fetch record from database (or timed out):', error);
+        // Continue without record - AI can still respond without it
       }
     }
 
@@ -896,11 +907,16 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ [AI CHAT] Error:', error);
     
+    // Check if it's a timeout error
+    const isTimeout = error instanceof Error && error.message.includes('timeout');
+    
     // Return a helpful error response
     return createErrorResponse(
-      error instanceof Error ? error.message : 'Unknown error occurred',
-      'INTERNAL_ERROR',
-      500
+      isTimeout 
+        ? 'Request timed out. The AI service may be experiencing high load. Please try again.'
+        : (error instanceof Error ? error.message : 'Unknown error occurred'),
+      isTimeout ? 'TIMEOUT' : 'INTERNAL_ERROR',
+      isTimeout ? 504 : 500
     );
   }
 }
