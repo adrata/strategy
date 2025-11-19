@@ -183,7 +183,7 @@
     "@vercel/analytics": "^1.4.1",
     "@vercel/blob": "^1.1.1",
     "@vercel/kv": "^3.0.0",
-    "@vercel/speed-insights": "^1.1.0",
+    "@vercel/speed-insights": "^1.2.0",
     "ag-grid-enterprise": "^34.2.0",
     "ag-grid-react": "^34.2.0",
     "ai": "^5.0.44",

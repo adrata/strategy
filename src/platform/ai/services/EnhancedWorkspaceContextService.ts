@@ -81,71 +81,101 @@ export class EnhancedWorkspaceContextService {
     try {
       const prisma = getPrismaClient();
       
-      // OPTIMIZATION: Parallelize workspace and company queries (they're independent)
+      // 🏆 FIX: Add individual timeouts to prevent any single query from hanging
+      // OPTIMIZATION: Parallelize workspace and company queries (they're independent) with timeout protection
+      const queryTimeout = 10000; // 10 seconds max per query
+      
+      const createTimeoutPromise = (ms: number) => 
+        new Promise((_, reject) => setTimeout(() => reject(new Error(`Query timeout after ${ms}ms`)), ms));
+      
       const [workspace, company] = await Promise.all([
-        prisma.workspaces.findUnique({
-          where: { id: workspaceId },
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            businessModel: true,
-            industry: true,
-            serviceOfferings: true,
-            productPortfolio: true,
-            valuePropositions: true,
-            targetIndustries: true,
-            targetCompanySize: true,
-            idealCustomerProfile: true,
-            competitiveAdvantages: true,
-            salesMethodology: true,
-          }
-        }),
-        prisma.companies.findFirst({
-          where: { 
-            workspaceId: workspaceId
-          },
-          select: {
-            name: true,
-            industry: true,
-            description: true,
-            businessChallenges: true,
-            businessPriorities: true,
-            competitiveAdvantages: true,
-            growthOpportunities: true,
-            marketPosition: true,
-            strategicInitiatives: true,
-            successMetrics: true,
-          }
-        })
+        Promise.race([
+          prisma.workspaces.findUnique({
+            where: { id: workspaceId },
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              businessModel: true,
+              industry: true,
+              serviceOfferings: true,
+              productPortfolio: true,
+              valuePropositions: true,
+              targetIndustries: true,
+              targetCompanySize: true,
+              idealCustomerProfile: true,
+              competitiveAdvantages: true,
+              salesMethodology: true,
+            }
+          }),
+          createTimeoutPromise(queryTimeout)
+        ]).catch(() => null), // Fallback to null on timeout
+        Promise.race([
+          prisma.companies.findFirst({
+            where: { 
+              workspaceId: workspaceId
+            },
+            select: {
+              name: true,
+              industry: true,
+              description: true,
+              businessChallenges: true,
+              businessPriorities: true,
+              competitiveAdvantages: true,
+              growthOpportunities: true,
+              marketPosition: true,
+              strategicInitiatives: true,
+              successMetrics: true,
+            }
+          }),
+          createTimeoutPromise(queryTimeout)
+        ]).catch(() => null) // Fallback to null on timeout
       ]);
 
       if (!workspace) {
         return null;
       }
 
-      // OPTIMIZATION: Parallelize all data statistics queries
+      // 🏆 FIX: Add individual timeouts to prevent any single query from hanging
+      // OPTIMIZATION: Parallelize all data statistics queries with timeout protection
+      const queryTimeout = 10000; // 10 seconds max per query
+      
+      const createTimeoutPromise = (ms: number) => 
+        new Promise((_, reject) => setTimeout(() => reject(new Error(`Query timeout after ${ms}ms`)), ms));
+      
       const [peopleCount, companiesCount, peopleData, companiesData] = await Promise.all([
-        prisma.people.count({ where: { workspaceId } }),
-        prisma.companies.count({ where: { workspaceId } }),
-        prisma.people.findMany({
-          where: { workspaceId },
-          select: { 
-            tags: true,
-            city: true,
-            state: true,
-            country: true,
-            company: {
-              select: { name: true }
-            }
-          },
-          take: 100
-        }),
-        prisma.companies.findMany({
-          where: { workspaceId },
-          select: { name: true },
-          take: 20
-        })
+        Promise.race([
+          prisma.people.count({ where: { workspaceId } }),
+          createTimeoutPromise(queryTimeout)
+        ]).catch(() => 0), // Fallback to 0 on timeout
+        Promise.race([
+          prisma.companies.count({ where: { workspaceId } }),
+          createTimeoutPromise(queryTimeout)
+        ]).catch(() => 0), // Fallback to 0 on timeout
+        Promise.race([
+          prisma.people.findMany({
+            where: { workspaceId },
+            select: { 
+              tags: true,
+              city: true,
+              state: true,
+              country: true,
+              company: {
+                select: { name: true }
+              }
+            },
+            take: 100
+          }),
+          createTimeoutPromise(queryTimeout)
+        ]).catch(() => []), // Fallback to empty array on timeout
+        Promise.race([
+          prisma.companies.findMany({
+            where: { workspaceId },
+            select: { name: true },
+            take: 20
+          }),
+          createTimeoutPromise(queryTimeout)
+        ]).catch(() => []) // Fallback to empty array on timeout
       ]);
 
       // Analyze funnel distribution from tags

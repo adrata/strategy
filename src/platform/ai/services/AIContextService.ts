@@ -74,12 +74,42 @@ export class AIContextService {
     const listViewContextString = this.buildListViewContext(listViewContext);
     const documentContextString = this.buildDocumentContext(documentContext);
 
-    // OPTIMIZATION: Parallelize all async context building (independent operations)
+    // 🏆 FIX: Add individual timeouts to each context builder to prevent hanging
+    // OPTIMIZATION: Parallelize all async context building (independent operations) with timeout protection
+    const contextBuilderTimeout = 15000; // 15 seconds max per context builder
+    
+    const createTimeoutPromise = (ms: number) => 
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`Context builder timeout after ${ms}ms`)), ms));
+    
     const [userContext, dataContext, recordContext, systemContext] = await Promise.all([
-      this.buildUserContext(userId, workspaceId),
-      this.buildDataContext(appType, workspaceId, userId),
-      this.buildRecordContext(currentRecord, recordType, workspaceId),
-      this.buildSystemContext(conversationHistory, userId)
+      Promise.race([
+        this.buildUserContext(userId, workspaceId),
+        createTimeoutPromise(contextBuilderTimeout)
+      ]).catch((error) => {
+        console.warn('⚠️ [AIContextService] User context build timed out, using fallback:', error);
+        return `CURRENT USER CONTEXT:\n- User ID: ${userId}\n- Workspace: ${workspaceId}`;
+      }),
+      Promise.race([
+        this.buildDataContext(appType, workspaceId, userId),
+        createTimeoutPromise(contextBuilderTimeout)
+      ]).catch((error) => {
+        console.warn('⚠️ [AIContextService] Data context build timed out, using fallback:', error);
+        return `DATA CONTEXT: Unable to load workspace data (timeout).`;
+      }),
+      Promise.race([
+        this.buildRecordContext(currentRecord, recordType, workspaceId),
+        createTimeoutPromise(contextBuilderTimeout)
+      ]).catch((error) => {
+        console.warn('⚠️ [AIContextService] Record context build timed out, using fallback:', error);
+        return currentRecord ? `RECORD CONTEXT: ${currentRecord.name || currentRecord.fullName || 'Current record'}` : '';
+      }),
+      Promise.race([
+        this.buildSystemContext(conversationHistory, userId),
+        createTimeoutPromise(contextBuilderTimeout)
+      ]).catch((error) => {
+        console.warn('⚠️ [AIContextService] System context build timed out, using fallback:', error);
+        return 'SYSTEM CONTEXT: Conversation history unavailable (timeout).';
+      })
     ]);
 
     const contextBuildTime = Date.now() - contextStartTime;
@@ -108,7 +138,9 @@ export class AIContextService {
     try {
       const prisma = getPrismaClient();
       
-      const user = await prisma.users.findUnique({
+      // 🏆 FIX: Add timeout to user query (5 seconds max)
+      const userQueryTimeout = 5000;
+      const userQueryPromise = prisma.users.findUnique({
         where: { id: userId },
         select: {
           firstName: true,
@@ -116,6 +148,11 @@ export class AIContextService {
           email: true
         }
       });
+      
+      const user = await Promise.race([
+        userQueryPromise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('User query timeout')), userQueryTimeout))
+      ]).catch(() => null);
       
       if (user) {
         // Use firstName for signature (e.g., "Best regards, Victoria")
@@ -136,19 +173,24 @@ export class AIContextService {
 
 CRITICAL: When signing messages or referring to the user, use their actual first name (${userName}) in the signature. For example, use "Best regards, ${userName}" instead of "Best regards, [Your Name]". Do not use placeholders like "[Your Name]" or "the user" when signing messages.`;
 
-    // Get user personality preferences
+      // Get user personality preferences
     try {
       const prisma = getPrismaClient();
       
       // Check if user_ai_preferences table exists before querying
       let userPreferences = null;
       if (prisma.user_ai_preferences && typeof prisma.user_ai_preferences.findFirst === 'function') {
-        userPreferences = await prisma.user_ai_preferences.findFirst({
-          where: {
-            userId,
-            workspaceId
-          }
-      });
+        // 🏆 FIX: Add timeout to preferences query (5 seconds max)
+        const preferencesQueryTimeout = 5000;
+        userPreferences = await Promise.race([
+          prisma.user_ai_preferences.findFirst({
+            where: {
+              userId,
+              workspaceId
+            }
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Preferences query timeout')), preferencesQueryTimeout))
+        ]).catch(() => null);
 
       } else {
         console.log('ℹ️ [AIContextService] user_ai_preferences table not available');
