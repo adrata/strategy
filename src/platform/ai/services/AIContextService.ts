@@ -8,6 +8,7 @@
 // import { WorkspaceDataRouter } from '../../services/workspace-data-router';
 
 import { authFetch } from '@/platform/api-fetch';
+import { getPrismaClient } from '@/platform/database/connection-pool';
 export interface ListViewContext {
   visibleRecords: any[];
   activeSection: string;
@@ -105,8 +106,7 @@ export class AIContextService {
     let userName = 'the user';
     let userEmail = '';
     try {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = getPrismaClient();
       
       const user = await prisma.users.findUnique({
         where: { id: userId },
@@ -138,8 +138,7 @@ CRITICAL: When signing messages or referring to the user, use their actual first
 
     // Get user personality preferences
     try {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = getPrismaClient();
       
       // Check if user_ai_preferences table exists before querying
       let userPreferences = null;
@@ -274,8 +273,7 @@ CRUD OPERATIONS CAPABILITY:
       } else {
         // Fallback: Build minimal seller context from workspace name
         try {
-          const { PrismaClient } = await import('@prisma/client');
-          const prisma = new PrismaClient();
+          const prisma = getPrismaClient();
           const workspace = await prisma.workspaces.findUnique({
             where: { id: workspaceId },
             select: { name: true, industry: true, description: true }
@@ -351,8 +349,7 @@ CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspec
       if (!dataContext || dataContext.trim().length < 50) {
         // Last resort fallback
         try {
-          const { PrismaClient } = await import('@prisma/client');
-          const prisma = new PrismaClient();
+          const prisma = getPrismaClient();
           const workspace = await prisma.workspaces.findUnique({
             where: { id: workspaceId },
             select: { name: true }
@@ -375,8 +372,7 @@ CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspec
       
       // Even on error, try to provide seller context
       try {
-        const { PrismaClient } = await import('@prisma/client');
-        const prisma = new PrismaClient();
+        const prisma = getPrismaClient();
         const workspace = await prisma.workspaces.findUnique({
           where: { id: workspaceId },
           select: { name: true }
@@ -1050,8 +1046,7 @@ DOCUMENT CONTENT ANALYSIS:`;
     let userTimezone: string | null = null;
     if (userId) {
       try {
-        const { PrismaClient } = await import('@prisma/client');
-        const prisma = new PrismaClient();
+        const prisma = getPrismaClient();
         const user = await prisma.users.findUnique({
           where: { id: userId },
           select: { timezone: true }
@@ -1142,8 +1137,7 @@ IMPORTANT RULES:
     }
 
     try {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = getPrismaClient();
 
       // Try to find company by ID first (if it's a UUID)
       let company = null;
@@ -1263,8 +1257,7 @@ IMPORTANT RULES:
     }
 
     try {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = getPrismaClient();
 
       const person = await prisma.people.findFirst({
         where: {
@@ -1338,8 +1331,7 @@ IMPORTANT RULES:
     }
 
     try {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = getPrismaClient();
 
       const opportunity = await prisma.opportunities.findFirst({
         where: {
@@ -1431,8 +1423,7 @@ IMPORTANT RULES:
     }
 
     try {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = getPrismaClient();
 
       const lead = await prisma.leads.findFirst({
         where: {

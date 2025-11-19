@@ -5,9 +5,7 @@
  * Specifically enhanced for TOP Engineering Plus and other enriched workspaces
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { getPrismaClient } from '@/platform/database/connection-pool';
 
 export interface WorkspaceContext {
   workspace: {
@@ -62,6 +60,8 @@ export class EnhancedWorkspaceContextService {
    */
   static async buildWorkspaceContext(workspaceId: string): Promise<WorkspaceContext | null> {
     try {
+      const prisma = getPrismaClient();
+      
       // Fetch workspace data with new business context fields
       const workspace = await prisma.workspaces.findUnique({
         where: { id: workspaceId },

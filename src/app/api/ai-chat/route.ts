@@ -99,8 +99,8 @@ export async function POST(request: NextRequest) {
       console.log('🔍 [AI CHAT] Frontend did not send record, attempting to fetch from database using URL ID:', recordIdFromUrl);
       
       try {
-        const { PrismaClient } = await import('@prisma/client');
-        const prisma = new PrismaClient();
+        const { getPrismaClient } = await import('@/platform/database/connection-pool');
+        const prisma = getPrismaClient();
         
         // 🔍 SMART DETECTION: Try multiple tables to find the record
         
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
           }
         }
         
-        await prisma.$disconnect();
+        // No need to disconnect - using singleton connection pool
         
         if (currentRecord) {
           console.log('✅ [AI CHAT] Smart database fetch successful:', {
