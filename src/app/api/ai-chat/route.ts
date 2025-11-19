@@ -366,7 +366,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let response: any;
+    let aiResponse: any;
     let costRecordId: string | null = null;
 
     // Build comprehensive workspace context (optimized for speed)
@@ -500,7 +500,7 @@ export async function POST(request: NextRequest) {
           fallbackUsed: openRouterResponse.routingInfo.fallbackUsed
         });
 
-        response = {
+        aiResponse = {
           success: true,
           response: openRouterResponse.response,
           todos: [],
@@ -584,7 +584,7 @@ export async function POST(request: NextRequest) {
           workspaceContext // Pass the comprehensive workspace context
         });
 
-        response = {
+        aiResponse = {
           success: true,
           response: claudeResponse.response,
           todos: [],
@@ -666,7 +666,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. RESPONSE VALIDATION - Critical security requirement
-    const responseValidation = aiResponseValidator.validateResponse(response.response, {
+    const responseValidation = aiResponseValidator.validateResponse(aiResponse.response, {
       userId: context.userId,
       workspaceId: context.workspaceId,
       conversationHistory
@@ -682,7 +682,7 @@ export async function POST(request: NextRequest) {
         '/api/ai-chat',
         responseValidation.riskLevel,
         responseValidation.issues,
-        response.response,
+        aiResponse.response,
         responseValidation.sanitizedResponse,
         responseValidation.metadata.validationTime
       );
@@ -704,7 +704,7 @@ export async function POST(request: NextRequest) {
 
     // Use sanitized response
     const finalResponse = {
-      ...response,
+      ...aiResponse,
       response: responseValidation.sanitizedResponse
     };
 
