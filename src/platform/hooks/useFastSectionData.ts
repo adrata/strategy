@@ -214,7 +214,9 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
 
       switch (section) {
         case 'speedrun':
-          url = `/api/v1/speedrun?limit=${limit}${refreshParam}${partnerosParam}${osTypeParam}`;
+          // 🏆 FIX: Fetch all speedrun items (up to 50) initially, not just 30
+          // This ensures all 44 items load immediately instead of showing "30 of 30" when there are actually 44
+          url = `/api/v1/speedrun?limit=50${refreshParam}${partnerosParam}${osTypeParam}`;
           break;
         case 'leads':
           // 🔧 FIX: Always fetch 10,000 records like companies (ensures all pages work)
