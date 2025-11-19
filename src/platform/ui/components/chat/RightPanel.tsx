@@ -1132,9 +1132,24 @@ export function RightPanel() {
   const chatMessages = activeConversation?.messages || [];
 
   const createNewConversation = async () => {
+    // Find the highest chat number to avoid duplicates
+    const chatNumberPattern = /^Chat (\d+)$/;
+    let maxChatNumber = 0;
+    
+    conversations.forEach(conv => {
+      const match = conv.title.match(chatNumberPattern);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (num > maxChatNumber) {
+          maxChatNumber = num;
+        }
+      }
+    });
+    
+    const newChatNumber = maxChatNumber + 1;
     const newConv: Conversation = {
       id: `conv-${Date.now()}`, // Temporary ID, will be replaced by API
-      title: `Chat ${conversations.length + 1}`,
+      title: `Chat ${newChatNumber}`,
       messages: [],
       lastActivity: new Date(),
       isActive: true
@@ -2236,7 +2251,13 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       });
       
       const fetchStartTime = performance.now();
-      const response = await fetch(apiUrl, {
+      
+      // Add timeout to prevent hanging requests (60 seconds)
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout after 60 seconds')), 60000);
+      });
+      
+      const fetchPromise = fetch(apiUrl, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -2273,6 +2294,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           pageContext: currentPageContext || getPageContext()
         }),
       });
+      
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
 
       const fetchEndTime = performance.now();
       const fetchTime = fetchEndTime - fetchStartTime;

@@ -34,10 +34,11 @@ import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } fr
 export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
   
-  // Log request for debugging (reduced in production)
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
-  }
+  // Log request for debugging (always log in staging/production to debug 405 issues)
+  console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
+  console.log('🔍 [AI CHAT] Request method:', request.method);
+  console.log('🔍 [AI CHAT] Request URL:', request.url);
+  console.log('🔍 [AI CHAT] Request pathname:', request.nextUrl.pathname);
   
   try {
     // 1. AUTHENTICATION CHECK - Use standardized auth helper (matches other working routes)
