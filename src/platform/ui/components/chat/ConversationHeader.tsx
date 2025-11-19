@@ -24,6 +24,7 @@ interface Conversation {
   messages: any[];
   lastActivity: Date;
   isActive: boolean;
+  deletedAt?: Date; // For deleted conversations in history
 }
 
 interface ConversationHeaderProps {
@@ -44,6 +45,7 @@ interface ConversationHeaderProps {
   showChatIcon?: boolean;
   onToggleDirectMessages?: () => void;
   onToggleLeftPanel?: () => void;
+  historyConversations?: Conversation[]; // Includes deleted conversations
 }
 
 function formatTimeAgo(date: Date): string {
@@ -77,7 +79,8 @@ export function ConversationHeader({
   conversationHistoryRef,
   showChatIcon = false,
   onToggleDirectMessages,
-  onToggleLeftPanel
+  onToggleLeftPanel,
+  historyConversations = []
 }: ConversationHeaderProps) {
   // Feature access control
   const hasOasis = useOasisAccess();
@@ -211,6 +214,7 @@ export function ConversationHeader({
           <div className="px-4 py-2 text-sm font-medium text-foreground border-b border-border">
             Conversation History
           </div>
+          {/* Show active conversations first */}
           {conversations.map((conv) => (
             <button
               key={conv.id}
@@ -229,6 +233,27 @@ export function ConversationHeader({
                 {conv['isActive'] && (
                   <div className="w-2 h-2 bg-blue-500 rounded-full ml-2"></div>
                 )}
+              </div>
+            </button>
+          ))}
+          {/* Show deleted conversations (from historyConversations prop) */}
+          {historyConversations && historyConversations.filter(conv => conv.deletedAt && !conversations.find(c => c.id === conv.id)).map((conv) => (
+            <button
+              key={conv.id}
+              onClick={() => onSwitchConversation(conv.id)}
+              className="w-full px-4 py-3 text-left hover:bg-panel-background border-b border-border last:border-b-0 transition-colors opacity-60"
+              title="Click to restore"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-foreground truncate flex items-center gap-2">
+                    <span>{conv.title}</span>
+                    <span className="text-xs text-muted">(deleted)</span>
+                  </div>
+                  <div className="text-xs text-muted mt-1">
+                    {formatTimeAgo(conv.lastActivity)}
+                  </div>
+                </div>
               </div>
             </button>
           ))}

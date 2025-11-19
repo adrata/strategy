@@ -142,6 +142,7 @@ interface Conversation {
   lastActivity: Date;
   isActive: boolean;
   welcomeMessage?: string;
+  deletedAt?: Date; // For deleted conversations in history
 }
 
 interface AIAction {
@@ -606,6 +607,9 @@ export function RightPanel() {
   const [showConversationHistory, setShowConversationHistory] = useState(false);
   const [showMenuPopup, setShowMenuPopup] = useState(false);
   
+  // History conversations state (includes deleted conversations)
+  const [historyConversations, setHistoryConversations] = useState<Conversation[]>([]);
+  
   // Track if conversations have been initially loaded to prevent re-loading on workspace changes
   const conversationsLoadedRef = useRef(false);
   
@@ -699,6 +703,10 @@ export function RightPanel() {
   useEffect(() => {
     if (typeof window !== 'undefined' && workspaceId && !conversationsLoadedRef.current) {
       try {
+        // Restore last active conversation ID from localStorage
+        const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+        const savedActiveId = localStorage.getItem(activeConversationKey);
+        
         const storageKey = `adrata-conversations-${workspaceId}`;
         const stored = localStorage.getItem(storageKey);
         if (stored) {
@@ -735,10 +743,16 @@ export function RightPanel() {
           }));
           
           setConversations(restoredConversations);
-          setActiveConversationId('main-chat');
+          
+          // Restore last active conversation if it was saved, otherwise default to main-chat
+          const initialActiveId = savedActiveId || 'main-chat';
+          setActiveConversationId(initialActiveId);
           
           if (process.env.NODE_ENV === 'development') {
             console.log('📂 [CHAT] Loaded conversations from localStorage (main-chat only):', restoredConversations.length, 'for workspace:', workspaceId);
+            if (savedActiveId && savedActiveId !== 'main-chat') {
+              console.log('🔄 [CHAT] Restoring last active conversation:', savedActiveId);
+            }
             if (filteredConversations.length > mainChatOnly.length) {
               console.log('🧹 [CHAT] Deferred', filteredConversations.length - mainChatOnly.length, 'non-main-chat conversations to API sync');
             }
@@ -753,7 +767,9 @@ export function RightPanel() {
             lastActivity: new Date(),
             isActive: true
           }]);
-          setActiveConversationId('main-chat');
+          // Restore last active conversation if saved, otherwise default to main-chat
+          const initialActiveId = savedActiveId || 'main-chat';
+          setActiveConversationId(initialActiveId);
           conversationsLoadedRef.current = true;
         }
       } catch (error) {
@@ -771,6 +787,21 @@ export function RightPanel() {
       }
     }
   }, [workspaceId]);
+  
+  // Save active conversation ID to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && workspaceId && activeConversationId) {
+      try {
+        const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+        localStorage.setItem(activeConversationKey, activeConversationId);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('💾 [CHAT] Saved active conversation ID:', activeConversationId);
+        }
+      } catch (error) {
+        console.warn('Failed to save active conversation ID:', error);
+      }
+    }
+  }, [activeConversationId, workspaceId]);
 
   // API sync functions for hybrid persistence
   const syncConversationsFromAPI = async () => {
@@ -911,28 +942,47 @@ export function RightPanel() {
           }
           
           // CRITICAL FIX: Preserve current active conversation instead of forcing main-chat
-          // Only switch to main-chat if no conversation is currently active
+          // Verify the restored conversation still exists (not deleted)
           const currentActiveConv = merged.find(c => c.id === currentActiveId);
-          if (currentActiveConv) {
-            // Preserve user's current selection
+          if (currentActiveConv && !currentActiveConv.deletedAt) {
+            // Preserve user's current selection - conversation exists and is not deleted
             merged.forEach(c => {
               c.isActive = c.id === currentActiveId;
             });
             // Don't change activeConversationId - keep user's selection
           } else {
-            // Current active conversation not found - find main-chat or first conversation
-            const mainChat = merged.find(c => c.id === 'main-chat' || (apiMainChat && c.id === apiMainChat.id));
-            if (mainChat) {
+            // Current active conversation not found or was deleted - restore from localStorage or fall back to main-chat
+            const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+            const savedActiveId = typeof window !== 'undefined' ? localStorage.getItem(activeConversationKey) : null;
+            const savedActiveConv = savedActiveId ? merged.find(c => c.id === savedActiveId && !c.deletedAt) : null;
+            
+            if (savedActiveConv) {
+              // Restore from localStorage
               merged.forEach(c => {
-                c.isActive = c.id === mainChat.id;
+                c.isActive = c.id === savedActiveId;
               });
-              setActiveConversationId(mainChat.id);
-            } else if (merged.length > 0) {
-              // No main-chat, activate first conversation
-              merged.forEach((c, index) => {
-                c.isActive = index === 0;
-              });
-              setActiveConversationId(merged[0].id);
+              setActiveConversationId(savedActiveId);
+              if (process.env.NODE_ENV === 'development') {
+                console.log('🔄 [CHAT] Restored saved active conversation from localStorage:', savedActiveId);
+              }
+            } else {
+              // Fall back to main-chat or first conversation
+              const mainChat = merged.find(c => c.id === 'main-chat' || (apiMainChat && c.id === apiMainChat.id));
+              if (mainChat) {
+                merged.forEach(c => {
+                  c.isActive = c.id === mainChat.id;
+                });
+                setActiveConversationId(mainChat.id);
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('🔄 [CHAT] Restored conversation not found, falling back to Main Chat');
+                }
+              } else if (merged.length > 0) {
+                // No main-chat, activate first conversation
+                merged.forEach((c, index) => {
+                  c.isActive = index === 0;
+                });
+                setActiveConversationId(merged[0].id);
+              }
             }
           }
           
@@ -1004,6 +1054,11 @@ export function RightPanel() {
       }
       
       // Create new conversation
+      // Ensure Main Chat always has metadata.isMainChat: true
+      const isMainChat = conversation.id === 'main-chat' || 
+                        (conversation.metadata as any)?.isMainChat === true ||
+                        conversation.title === 'Main Chat';
+      
       const response = await fetch('/api/v1/conversations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1012,7 +1067,7 @@ export function RightPanel() {
           welcomeMessage: conversation.welcomeMessage,
           metadata: { 
             source: 'frontend',
-            isMainChat: conversation.id === 'main-chat'
+            isMainChat: isMainChat
           }
         })
       });
@@ -1161,6 +1216,66 @@ export function RightPanel() {
       console.warn('⚠️ [CHAT] Failed to delete conversation from API:', error);
     }
   };
+  
+  // Fetch conversation history (includes deleted conversations)
+  const fetchConversationHistory = async () => {
+    if (!workspaceId || !userId) return;
+    
+    try {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔄 [CHAT] Fetching conversation history (including deleted)...');
+      }
+      const response = await fetch('/api/v1/conversations?includeMessages=false&includeDeleted=true');
+      const result = await response.json();
+      
+      if (result.success && result.data.conversations) {
+        const historyConvs = result.data.conversations.map((conv: any) => ({
+          id: conv.id,
+          title: conv.title,
+          messages: [], // History doesn't need full messages
+          lastActivity: new Date(conv.lastActivity),
+          isActive: conv.isActive || false,
+          welcomeMessage: conv.welcomeMessage,
+          deletedAt: conv.deletedAt ? new Date(conv.deletedAt) : undefined
+        }));
+        
+        setHistoryConversations(historyConvs);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] Fetched conversation history:', historyConvs.length, 'conversations');
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ [CHAT] Failed to fetch conversation history:', error);
+    }
+  };
+  
+  // Restore deleted conversation
+  const restoreConversation = async (conversationId: string) => {
+    if (!workspaceId || !userId) return;
+    
+    try {
+      const response = await fetch(`/api/v1/conversations/${conversationId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ restore: true })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        // Refresh conversations from API
+        await syncConversationsFromAPI();
+        // Refresh history
+        await fetchConversationHistory();
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [CHAT] Restored conversation:', conversationId);
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ [CHAT] Failed to restore conversation:', error);
+    }
+  };
 
   // Sync from API on mount and periodically
   useEffect(() => {
@@ -1186,6 +1301,26 @@ export function RightPanel() {
     
     return () => clearInterval(interval);
   }, [workspaceId, userId]);
+  
+  // Multi-tab sync: Listen for localStorage changes from other tabs
+  useEffect(() => {
+    if (typeof window === 'undefined' || !workspaceId) return;
+    
+    const handleStorageChange = (e: StorageEvent) => {
+      // Check if the change is related to our conversations
+      if (e.key === `adrata-conversations-${workspaceId}` || 
+          e.key === `adrata-active-conversation-${workspaceId}`) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔄 [CHAT] Storage changed in another tab, syncing...');
+        }
+        // Sync from API to get latest state
+        syncConversationsFromAPI();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [workspaceId]);
 
   // Update page context when pathname changes
   useEffect(() => {
@@ -1419,8 +1554,17 @@ export function RightPanel() {
     }
   };
 
-  const switchToConversation = (conversationId: string) => {
+  const switchToConversation = async (conversationId: string) => {
     if (activeConversationId === conversationId) return;
+    
+    // Check if this conversation is deleted - if so, restore it first
+    const deletedConv = historyConversations.find(c => c.id === conversationId && c.deletedAt);
+    if (deletedConv) {
+      await restoreConversation(conversationId);
+      // After restore, the conversation will be in the main conversations list
+      // The sync will handle activating it
+      return;
+    }
     
     setConversations(prev => prev.map(c => ({
       ...c,
@@ -1451,6 +1595,9 @@ export function RightPanel() {
     
     // Delete from API
     deleteConversationFromAPI(conversationId);
+    
+    // Refresh history to include the deleted conversation
+    fetchConversationHistory();
   };
 
   const handleReorderConversations = (newOrder: Conversation[]) => {
@@ -3293,7 +3440,14 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           showMenuPopup={showMenuPopup}
           onSwitchConversation={switchToConversation}
           onCreateNewConversation={createNewConversation}
-          onToggleConversationHistory={() => setShowConversationHistory(!showConversationHistory)}
+          onToggleConversationHistory={async () => {
+            const newValue = !showConversationHistory;
+            setShowConversationHistory(newValue);
+            // Fetch history when opening the panel
+            if (newValue) {
+              await fetchConversationHistory();
+            }
+          }}
           onToggleMenuPopup={() => setShowMenuPopup(!showMenuPopup)}
           onCloseConversation={closeConversation}
           onSetViewMode={setViewMode}

@@ -32,16 +32,21 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
     const includeMessages = searchParams.get('includeMessages') === 'true';
+    const includeDeleted = searchParams.get('includeDeleted') === 'true';
     const offset = (page - 1) * limit;
 
-    console.log(`🔍 [V1 CONVERSATIONS API] Querying conversations for workspace: ${context.workspaceId}, user: ${context.userId}`);
+    console.log(`🔍 [V1 CONVERSATIONS API] Querying conversations for workspace: ${context.workspaceId}, user: ${context.userId}, includeDeleted: ${includeDeleted}`);
 
     // Build where clause for workspace and user isolation
-    const where = {
+    const where: any = {
       workspaceId: context.workspaceId,
-      userId: context.userId,
-      deletedAt: null
+      userId: context.userId
     };
+    
+    // Only filter by deletedAt if includeDeleted is false
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     // Get conversations with optional message inclusion
     const conversations = await prisma.ai_conversations.findMany({
@@ -76,6 +81,7 @@ export async function GET(request: NextRequest) {
       metadata: conv.metadata,
       createdAt: conv.createdAt,
       updatedAt: conv.updatedAt,
+      deletedAt: conv.deletedAt, // Include deletedAt to indicate deletion status
       messageCount: conv._count.messages,
       messages: includeMessages ? conv.messages.map(msg => ({
         id: msg.id,

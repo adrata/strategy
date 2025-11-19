@@ -154,15 +154,29 @@ export async function PATCH(
     if (welcomeMessage !== undefined) updateData.welcomeMessage = welcomeMessage;
     if (metadata !== undefined) updateData.metadata = metadata;
     if (isActive !== undefined) updateData.isActive = isActive;
+    
+    // Support restoring deleted conversations
+    if (body.restore === true) {
+      updateData.deletedAt = null;
+      updateData.isActive = false; // Don't auto-activate when restoring
+    }
+
+    // Build where clause - allow updating deleted conversations if restoring
+    const whereClause: any = {
+      id: conversationId,
+      workspaceId: context.workspaceId,
+      userId: context.userId
+    };
+    
+    // If restoring, don't filter by deletedAt (allow restoring deleted conversations)
+    // Otherwise, only update non-deleted conversations
+    if (body.restore !== true) {
+      whereClause.deletedAt = null;
+    }
 
     // Update conversation with workspace and user isolation
     const conversation = await prisma.ai_conversations.updateMany({
-      where: {
-        id: conversationId,
-        workspaceId: context.workspaceId,
-        userId: context.userId,
-        deletedAt: null
-      },
+      where: whereClause,
       data: updateData
     });
 
@@ -170,13 +184,12 @@ export async function PATCH(
       return createErrorResponse('Conversation not found', 'CONVERSATION_NOT_FOUND', 404);
     }
 
-    // Fetch updated conversation
+    // Fetch updated conversation (may be deleted if we just restored it)
     const updatedConversation = await prisma.ai_conversations.findFirst({
       where: {
         id: conversationId,
         workspaceId: context.workspaceId,
-        userId: context.userId,
-        deletedAt: null
+        userId: context.userId
       },
       include: {
         _count: {
