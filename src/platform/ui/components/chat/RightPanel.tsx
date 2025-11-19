@@ -727,20 +727,32 @@ export function RightPanel() {
             isActive: true
           }];
           
-          const restoredConversations = conversationsToRestore.map((conv: any) => ({
-            ...conv,
-            lastActivity: new Date(conv.lastActivity),
-            messages: conv.messages.map((msg: any) => ({
-              ...msg,
-              timestamp: new Date(msg.timestamp),
-              // CRITICAL FIX: Don't preserve isTypewriter for completed messages
-              // Only preserve if it's a temporary message that was just created (check if message was saved recently)
-              // For now, always set to false when loading - typewriter should only run once
-              isTypewriter: false, // Always false when loading - prevents re-triggering
-              // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
-              typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
-            }))
-          }));
+          const restoredConversations = conversationsToRestore.map((conv: any) => {
+            // Filter out temporary messages from Main Chat on initial load
+            // This ensures Main Chat starts clean with only the welcome message
+            const isMainChat = conv.id === 'main-chat';
+            const filteredMessages = isMainChat 
+              ? conv.messages.filter((msg: any) => 
+                  !(msg.type === 'assistant' && 
+                    (msg.content?.includes("I'm adding competitive intelligence") || 
+                     msg.content?.includes("Let me get back to you shortly")))
+                )
+              : conv.messages;
+            
+            return {
+              ...conv,
+              lastActivity: new Date(conv.lastActivity),
+              messages: filteredMessages.map((msg: any) => ({
+                ...msg,
+                timestamp: new Date(msg.timestamp),
+                // CRITICAL FIX: Don't preserve isTypewriter for completed messages
+                // Always set to false when loading - typewriter should only run once
+                isTypewriter: false, // Always false when loading - prevents re-triggering
+                // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
+                typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
+              }))
+            };
+          });
           
           setConversations(restoredConversations);
           
@@ -1328,6 +1340,25 @@ export function RightPanel() {
         await syncConversationsFromAPI();
         // Ensure main-chat exists in API after syncing
         await ensureMainChatInAPI();
+        
+        // After sync, ensure Main Chat has no temporary messages and is active
+        setConversations(prev => prev.map(conv => {
+          const isMainChat = conv.id === 'main-chat' || 
+                            (conv.metadata as any)?.isMainChat === true;
+          if (isMainChat) {
+            // Filter out temporary messages from Main Chat
+            const filteredMessages = conv.messages.filter(msg => 
+              !(msg.type === 'assistant' && 
+                (msg.content?.includes("I'm adding competitive intelligence") || 
+                 msg.content?.includes("Let me get back to you shortly")))
+            );
+            return {
+              ...conv,
+              messages: filteredMessages
+            };
+          }
+          return conv;
+        }));
       }, 1000);
       
       return () => clearTimeout(timer);
