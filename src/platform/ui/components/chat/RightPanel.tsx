@@ -828,17 +828,11 @@ export function RightPanel() {
         );
         
         const apiConversations = result.data.conversations.map((conv: any) => {
-          // Get local conversation to merge messages (preserve temporary messages that might not be in API yet)
-          const localConv = currentConversationsSnapshot.find(lc => 
-            lc.id === conv.id || (conv.metadata?.isMainChat === true && lc.id === 'main-chat')
-          );
-          const localTempMessages = localConv?.messages.filter(msg => 
-            msg.type === 'assistant' && 
-            (msg.content?.includes("I'm adding competitive intelligence") || 
-             msg.content?.includes("Let me get back to you shortly"))
-          ) || [];
+          // Get local conversation to merge messages
+          // NOTE: We no longer preserve temporary messages from local state - they should only exist if saved to API
+          // This prevents the temporary message from loading proactively
           
-          // Merge API messages with local temporary messages
+          // Merge API messages only (don't add local temporary messages)
           const apiMessages = (conv.messages || []).map((msg: any) => ({
             ...msg,
             timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
@@ -849,14 +843,10 @@ export function RightPanel() {
             typewriterSpeed: msg.metadata?.typewriterSpeed
           }));
           
-          // Add local temporary messages that aren't in API yet
-          const apiMessageIds = new Set(apiMessages.map((m: any) => m.id));
-          const newTempMessages = localTempMessages.filter(lm => !apiMessageIds.has(lm.id));
-          
           return {
             id: conv.id,
             title: conv.title,
-            messages: [...apiMessages, ...newTempMessages].sort((a, b) => 
+            messages: apiMessages.sort((a, b) => 
               new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
             ),
             lastActivity: new Date(conv.lastActivity),
@@ -875,19 +865,28 @@ export function RightPanel() {
           // CRITICAL FIX: If API has a main-chat, replace local 'main-chat' with API version
           // This prevents duplicate main-chat creation
           if (apiMainChat) {
-            // Remove any local main-chat (id='main-chat') and use API version instead
-            const filteredMerged = merged.filter(c => c.id !== 'main-chat');
-            // Add API main-chat (which has real API ID)
-            filteredMerged.push({
-              ...apiMainChat,
-              id: apiMainChat.id, // Use API ID, not 'main-chat'
-              messages: apiMainChat.messages || []
-            });
+            // Remove ANY local main-chat (id='main-chat' OR any conversation with main-chat metadata)
+            const filteredMerged = merged.filter(c => 
+              c.id !== 'main-chat' && 
+              !(c.metadata as any)?.isMainChat &&
+              c.id !== apiMainChat.id
+            );
+            // Add API main-chat (which has real API ID) - ensure it's not already there
+            if (!filteredMerged.find(c => c.id === apiMainChat.id)) {
+              filteredMerged.push({
+                ...apiMainChat,
+                id: apiMainChat.id, // Use API ID, not 'main-chat'
+                messages: apiMainChat.messages || []
+              });
+            }
             merged.length = 0;
             merged.push(...filteredMerged);
           } else {
             // No main-chat in API - check if we have a local one
-            const hasLocalMainChat = prevConversations.some(c => c.id === 'main-chat');
+            const hasLocalMainChat = prevConversations.some(c => 
+              c.id === 'main-chat' || (c.metadata as any)?.isMainChat === true
+            );
+            // Only add local main-chat if it doesn't already exist in merged
             if (!hasLocalMainChat && merged.length === 0) {
               // No conversations at all - create main-chat
               merged.push({
@@ -897,6 +896,14 @@ export function RightPanel() {
                 lastActivity: new Date(),
                 isActive: true
               });
+            } else if (hasLocalMainChat) {
+              // We have a local main-chat but no API main-chat - check if it's already in merged
+              const localMainChat = prevConversations.find(c => 
+                c.id === 'main-chat' || (c.metadata as any)?.isMainChat === true
+              );
+              if (localMainChat && !merged.find(c => c.id === localMainChat.id || c.id === 'main-chat')) {
+                merged.push(localMainChat);
+              }
             }
           }
           
@@ -967,7 +974,12 @@ export function RightPanel() {
               }
             } else {
               // Fall back to main-chat or first conversation
-              const mainChat = merged.find(c => c.id === 'main-chat' || (apiMainChat && c.id === apiMainChat.id));
+              // Find main-chat by checking both id='main-chat' and metadata.isMainChat
+              const mainChat = merged.find(c => 
+                c.id === 'main-chat' || 
+                (apiMainChat && c.id === apiMainChat.id) ||
+                (c.metadata as any)?.isMainChat === true
+              );
               if (mainChat) {
                 merged.forEach(c => {
                   c.isActive = c.id === mainChat.id;
@@ -986,10 +998,41 @@ export function RightPanel() {
             }
           }
           
+          // Remove any duplicate main-chats before sorting
+          // Keep only one main-chat (prefer API version if exists)
+          const mainChats = merged.filter(c => 
+            c.id === 'main-chat' || 
+            (c.metadata as any)?.isMainChat === true ||
+            (apiMainChat && c.id === apiMainChat.id)
+          );
+          
+          if (mainChats.length > 1) {
+            // Remove duplicates, keep the one with API ID if available
+            const mainChatToKeep = apiMainChat 
+              ? merged.find(c => c.id === apiMainChat.id)
+              : merged.find(c => c.id === 'main-chat' || (c.metadata as any)?.isMainChat === true);
+            
+            if (mainChatToKeep) {
+              // Remove all main-chats except the one to keep
+              const filtered = merged.filter(c => 
+                c.id !== mainChatToKeep.id &&
+                !(c.id === 'main-chat' && mainChatToKeep.id !== 'main-chat') &&
+                !((c.metadata as any)?.isMainChat === true && c.id !== mainChatToKeep.id)
+              );
+              filtered.push(mainChatToKeep);
+              merged.length = 0;
+              merged.push(...filtered);
+            }
+          }
+          
           // Sort by lastActivity, but keep main-chat first if it exists
           const sorted = merged.sort((a, b) => {
-            const aIsMain = a.id === 'main-chat' || (apiMainChat && a.id === apiMainChat.id);
-            const bIsMain = b.id === 'main-chat' || (apiMainChat && b.id === apiMainChat.id);
+            const aIsMain = a.id === 'main-chat' || 
+                           (apiMainChat && a.id === apiMainChat.id) ||
+                           (a.metadata as any)?.isMainChat === true;
+            const bIsMain = b.id === 'main-chat' || 
+                           (apiMainChat && b.id === apiMainChat.id) ||
+                           (b.metadata as any)?.isMainChat === true;
             if (aIsMain && !bIsMain) return -1;
             if (!aIsMain && bIsMain) return 1;
             return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
