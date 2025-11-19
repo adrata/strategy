@@ -93,13 +93,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       setCompanyError(null);
 
       try {
-        console.log(`🏢 [UniversalCompanyTab] Fetching full company data for companyId: ${companyId}`);
+        // Only log in development to reduce console noise
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🏢 [UniversalCompanyTab] Fetching full company data for companyId: ${companyId}`);
+        }
         
         // authFetch returns parsed JSON, not a Response object
         const result = await authFetch(`/api/v1/companies/${companyId}`);
         
         if (result?.success && result?.data) {
-          console.log(`✅ [UniversalCompanyTab] Fetched company data:`, result.data);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`✅ [UniversalCompanyTab] Fetched company data:`, result.data);
+          }
           setFullCompanyData(result.data);
         } else {
           // Extract error message with better handling
@@ -120,7 +125,10 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
           throw new Error(errorMessage);
         }
       } catch (error) {
-        console.error('❌ [UniversalCompanyTab] Error fetching company data:', error);
+        // Only log errors in development to reduce console noise
+        if (process.env.NODE_ENV === 'development') {
+          console.error('❌ [UniversalCompanyTab] Error fetching company data:', error);
+        }
         
         // Extract meaningful error message
         let errorMessage = 'Failed to fetch company data';

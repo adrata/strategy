@@ -208,19 +208,17 @@ export function RightPanel() {
     recordTypeRef.current = recordType;
     listViewContextRef.current = listViewContext;
     
-    // Log when record context changes
+    // Only log when record context is present (reduces console noise)
+    // It's normal for record context to be null when not viewing a specific record
     if (currentRecord) {
-      console.log('✅ [RightPanel] Record context updated in ref:', {
-        recordId: currentRecord.id,
-        recordName: currentRecord.name || currentRecord.fullName,
-        recordType,
-        recordCompany: typeof currentRecord.company === 'string' ? currentRecord.company : (currentRecord.company?.name || currentRecord.companyName),
-        fieldCount: Object.keys(currentRecord).length,
-        hasId: !!currentRecord.id,
-        hasName: !!(currentRecord.name || currentRecord.fullName)
-      });
-    } else {
-      console.warn('⚠️ [RightPanel] Record context is NULL - AI will not have record context!');
+      // Only log in development mode to reduce production console noise
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ [RightPanel] Record context updated:', {
+          recordId: currentRecord.id,
+          recordName: currentRecord.name || currentRecord.fullName,
+          recordType,
+        });
+      }
     }
   }, [currentRecord, recordType, listViewContext]);
 
@@ -756,15 +754,16 @@ export function RightPanel() {
           
           setConversations(restoredConversations);
           
-          // Restore last active conversation if it was saved, otherwise default to main-chat
-          const initialActiveId = savedActiveId || 'main-chat';
+          // CRITICAL: Only restore saved active conversation if it's main-chat
+          // Since we only load main-chat from localStorage initially, any other saved ID won't exist
+          // This ensures we always default to main-chat on fresh load
+          const initialActiveId = (savedActiveId === 'main-chat' && restoredConversations.some(c => c.id === 'main-chat')) 
+            ? 'main-chat' 
+            : 'main-chat';
           setActiveConversationId(initialActiveId);
           
           if (process.env.NODE_ENV === 'development') {
             console.log('📂 [CHAT] Loaded conversations from localStorage (main-chat only):', restoredConversations.length, 'for workspace:', workspaceId);
-            if (savedActiveId && savedActiveId !== 'main-chat') {
-              console.log('🔄 [CHAT] Restoring last active conversation:', savedActiveId);
-            }
             if (filteredConversations.length > mainChatOnly.length) {
               console.log('🧹 [CHAT] Deferred', filteredConversations.length - mainChatOnly.length, 'non-main-chat conversations to API sync');
             }
@@ -779,9 +778,15 @@ export function RightPanel() {
             lastActivity: new Date(),
             isActive: true
           }]);
-          // Restore last active conversation if saved, otherwise default to main-chat
-          const initialActiveId = savedActiveId || 'main-chat';
-          setActiveConversationId(initialActiveId);
+          // Always default to main-chat when no localStorage data exists
+          setActiveConversationId('main-chat');
+          
+          // Clear any stale active conversation ID from localStorage
+          if (typeof window !== 'undefined' && workspaceId) {
+            const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+            localStorage.removeItem(activeConversationKey);
+          }
+          
           conversationsLoadedRef.current = true;
         }
       } catch (error) {
@@ -938,12 +943,17 @@ export function RightPanel() {
             if (typeof window !== 'undefined' && workspaceId) {
               const storageKey = `adrata-conversations-${workspaceId}`;
               localStorage.removeItem(storageKey);
+              
+              // Also clear the active conversation ID
+              const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+              localStorage.removeItem(activeConversationKey);
+              
               if (process.env.NODE_ENV === 'development') {
-                console.log('🧹 [CHAT] Cleared localStorage conversations for workspace:', workspaceId);
+                console.log('🧹 [CHAT] Cleared localStorage conversations and active conversation ID for workspace:', workspaceId);
               }
             }
             
-            // Reset to main-chat only
+            // Reset to main-chat only and set as active
             merged.length = 0;
             merged.push({
               id: 'main-chat',
@@ -952,6 +962,9 @@ export function RightPanel() {
               lastActivity: new Date(),
               isActive: true
             });
+            
+            // Explicitly set active conversation to main-chat
+            setActiveConversationId('main-chat');
           } else {
             // API has conversations - merge with localStorage (for offline support)
             // Only add localStorage conversations if they're not in API and not deleted

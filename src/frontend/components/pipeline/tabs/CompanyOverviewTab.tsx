@@ -175,14 +175,29 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     setCompanyError(null);
 
     try {
-      console.log(`🏢 [COMPANY OVERVIEW] Fetching full company data for companyId: ${companyId}`);
+      // Only log in development to reduce console noise
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🏢 [COMPANY OVERVIEW] Fetching full company data for companyId: ${companyId}`);
+      }
       
       const result = await authFetch(`/api/v1/companies/${companyId}`);
       
       if (result?.success && result?.data) {
         setFullCompanyData(result.data);
-        console.log(`✅ [COMPANY OVERVIEW] Successfully fetched full company data:`, result.data.name);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`✅ [COMPANY OVERVIEW] Successfully fetched full company data:`, result.data.name);
+        }
       } else {
+        // Fallback: Check if we have company data from the record relation before throwing error
+        if (record?.company && typeof record.company === 'object' && record.company.id === companyId) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`⚠️ [COMPANY OVERVIEW] API call failed (404), but using company data from record relation`);
+          }
+          setFullCompanyData(record.company);
+          setCompanyError(null); // Clear error since we have fallback data
+          return; // Exit early, no error to log
+        }
+        
         // Extract error message with better handling
         let errorMessage = 'Failed to fetch company data';
         if (result) {
@@ -198,17 +213,13 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
           errorMessage = 'Company not found. The company ID may be incorrect or the company may have been deleted.';
         }
         
-        // Fallback: Check if we have company data from the record relation
-        if (record?.company && typeof record.company === 'object' && record.company.id === companyId) {
-          console.log(`⚠️ [COMPANY OVERVIEW] API call failed, but using company data from record relation`);
-          setFullCompanyData(record.company);
-          setCompanyError(null); // Clear error since we have fallback data
-        } else {
-          throw new Error(errorMessage);
-        }
+        throw new Error(errorMessage);
       }
     } catch (error) {
-      console.error('❌ [COMPANY OVERVIEW] Error fetching company data:', error);
+      // Only log errors in development or when there's no fallback data
+      if (process.env.NODE_ENV === 'development') {
+        console.error('❌ [COMPANY OVERVIEW] Error fetching company data:', error);
+      }
       
       // Extract meaningful error message
       let errorMessage = 'Failed to fetch company data';
