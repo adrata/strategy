@@ -230,6 +230,10 @@ export function initCompaniesPrefetch(workspaceId: string, userId: string): () =
   
   scheduleInitialPrefetch();
   
+  if (process.env.NODE_ENV === 'development') {
+    console.log('✅ [COMPANIES PREFETCH] Service initialized and scheduled initial prefetch');
+  }
+  
   // Event handlers for reactive updates
   const handleActionCreated = (event: Event) => {
     const customEvent = event as CustomEvent;

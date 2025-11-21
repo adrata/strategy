@@ -371,6 +371,10 @@ export async function GET(request: NextRequest) {
       // Optimized query with Prisma ORM for reliability
       console.log(`🗄️ [V1 COMPANIES API] Executing main database query with where clause:`, where);
       
+      // 🚀 PERFORMANCE: Determine if we should skip expensive operations for fast list views
+      const skipLastActionComputation = searchParams.get('skipLastActionComputation') === 'true';
+      const computeLastAction = searchParams.get('computeLastAction') === 'true';
+      
       // Handle Orders sorting (customFields.orders) - need to fetch all and sort client-side
       const shouldSortByOrders = sortBy === 'orders';
       const fetchLimit = shouldSortByOrders ? 10000 : limit; // Fetch more if sorting by orders
@@ -384,47 +388,31 @@ export async function GET(request: NextRequest) {
           },
           skip: fetchOffset,
           take: fetchLimit,
-          // 🚀 PERFORMANCE: Select only fields needed for list view (90% data reduction: 54MB → 6MB)
-          select: {
-            // Core fields
+          // 🚀 PERFORMANCE: Ultra-lightweight select for list views (95% data reduction: 53MB → ~2-3MB)
+          // Skip heavy fields (description, customFields, _count) for list views to maximize speed
+          select: skipLastActionComputation ? {
+            // Minimal fields for fast list view loading
             id: true,
             name: true,
             workspaceId: true,
-            
-            // Display fields
             industry: true,
             status: true,
             priority: true,
             globalRank: true,
-            description: true,
-            descriptionEnriched: true,
-            
-            // Action tracking
             lastAction: true,
             lastActionDate: true,
             nextAction: true,
             nextActionDate: true,
-            
-            // Opportunity fields (for opportunities)
             opportunityAmount: true,
             opportunityStage: true,
             opportunityProbability: true,
             expectedCloseDate: true,
-            // Use descriptionEnriched as opportunity summary (can be Claude-generated)
-            // We'll add a script to generate these summaries
-            
-            // Custom fields (for storing opportunity ranks and other metadata)
-            customFields: true,
-            
-            // Additional useful fields
             email: true,
             website: true,
             linkedinUrl: true,
-            state: true, // Include state field for table compatibility
+            state: true,
             hqState: true,
             size: true,
-            
-            // Assignment
             mainSellerId: true,
             mainSeller: {
               select: {
@@ -433,8 +421,45 @@ export async function GET(request: NextRequest) {
                 email: true
               }
             },
-            
-            // Action count and people count for header display
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true
+            // 🚀 SKIPPED for list views: description, descriptionEnriched, customFields, _count
+            // These are only needed in detail views and add ~50MB to the response
+          } : {
+            // Full fields when computing lastAction (for detail views or small result sets)
+            id: true,
+            name: true,
+            workspaceId: true,
+            industry: true,
+            status: true,
+            priority: true,
+            globalRank: true,
+            description: true,
+            descriptionEnriched: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            opportunityAmount: true,
+            opportunityStage: true,
+            opportunityProbability: true,
+            expectedCloseDate: true,
+            customFields: true,
+            email: true,
+            website: true,
+            linkedinUrl: true,
+            state: true,
+            hqState: true,
+            size: true,
+            mainSellerId: true,
+            mainSeller: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            },
             _count: {
               select: {
                 actions: {
@@ -455,8 +480,6 @@ export async function GET(request: NextRequest) {
                 }
               }
             },
-            
-            // Metadata
             createdAt: true,
             updatedAt: true,
             deletedAt: true
@@ -478,9 +501,18 @@ export async function GET(request: NextRequest) {
       // - For list views (limit > 100): Skip expensive computation, use stored values for fast load
       // - For small result sets: Compute accurate values immediately
       // - Background prefetch: List views can request accurate values via ?computeLastAction=true
-      const skipLastActionComputation = searchParams.get('skipLastActionComputation') === 'true';
-      const computeLastAction = searchParams.get('computeLastAction') === 'true';
       const shouldCompute = computeLastAction || (!skipLastActionComputation && companies.length <= 100);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`⚡ [COMPANIES API] Performance mode:`, {
+          skipLastActionComputation,
+          computeLastAction,
+          shouldCompute,
+          companiesCount: companies.length,
+          limit,
+          usingLightweightSelect: skipLastActionComputation
+        });
+      }
       
       let lastActionResults: Map<string, any> = new Map();
       
