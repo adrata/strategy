@@ -127,6 +127,7 @@ interface ChatMessage {
     thinkingSteps?: Array<{
       step: number;
       description: string;
+      timestamp?: number;
       confidence?: number;
     }>;
     confidence?: number;
@@ -565,9 +566,9 @@ export function RightPanel() {
   
   // Conversation management with hybrid persistence (localStorage + API)
   const [conversations, setConversations] = useState<Conversation[]>(() => {
-    if (typeof window !== 'undefined' && workspaceId) {
+    if (typeof window !== 'undefined' && workspaceId && userId) {
       try {
-        const storageKey = `adrata-conversations-${workspaceId}`;
+        const storageKey = `adrata-conversations-${workspaceId}-${userId}`;
         const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
@@ -619,7 +620,7 @@ export function RightPanel() {
   const [deletedConversationIds, setDeletedConversationIds] = useState<Set<string>>(() => {
     if (typeof window !== 'undefined' && workspaceId) {
       try {
-        const storageKey = `adrata-deleted-conversations-${workspaceId}`;
+        const storageKey = `adrata-deleted-conversations-${workspaceId}-${userId}`;
         const stored = localStorage.getItem(storageKey);
         if (stored) {
           return new Set(JSON.parse(stored));
@@ -655,7 +656,7 @@ export function RightPanel() {
   const [contextFiles, setContextFiles] = useState<ContextFile[]>(() => {
     if (typeof window !== 'undefined' && workspaceId) {
       try {
-        const storageKey = `adrata-context-files-${workspaceId}`;
+        const storageKey = `adrata-context-files-${workspaceId}-${userId}`;
         const stored = localStorage.getItem(storageKey);
         return stored ? JSON.parse(stored) : [];
       } catch (error) {
@@ -668,11 +669,11 @@ export function RightPanel() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [showAddFilesPopup, setShowAddFilesPopup] = useState(false);
 
-  // Save conversations to localStorage whenever they change
+  // Save conversations to localStorage whenever they change - USER ISOLATED
   useEffect(() => {
-    if (typeof window !== 'undefined' && conversations.length > 0 && workspaceId) {
+    if (typeof window !== 'undefined' && conversations.length > 0 && workspaceId && userId) {
       try {
-        const storageKey = `adrata-conversations-${workspaceId}`;
+        const storageKey = `adrata-conversations-${workspaceId}-${userId}`;
         localStorage.setItem(storageKey, JSON.stringify(conversations));
         if (process.env.NODE_ENV === 'development') {
           console.log('💾 [CHAT] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
@@ -683,11 +684,11 @@ export function RightPanel() {
     }
   }, [conversations, workspaceId]);
 
-  // Save deleted conversation IDs to localStorage whenever they change
+  // Save deleted conversation IDs to localStorage whenever they change - USER ISOLATED
   useEffect(() => {
-    if (typeof window !== 'undefined' && workspaceId) {
+    if (typeof window !== 'undefined' && workspaceId && userId) {
       try {
-        const storageKey = `adrata-deleted-conversations-${workspaceId}`;
+        const storageKey = `adrata-deleted-conversations-${workspaceId}-${userId}`;
         localStorage.setItem(storageKey, JSON.stringify(Array.from(deletedConversationIds)));
       } catch (error) {
         console.warn('Failed to save deleted conversation IDs:', error);
@@ -695,22 +696,49 @@ export function RightPanel() {
     }
   }, [deletedConversationIds, workspaceId]);
 
-  // Load conversations from localStorage on component mount - WORKSPACE ISOLATED
+  // Load conversations from localStorage on component mount - WORKSPACE AND USER ISOLATED
   // Only load once to prevent closed tabs from reappearing
   // BUT: Don't load non-main-chat conversations - let API sync handle that
   useEffect(() => {
-    if (typeof window !== 'undefined' && workspaceId && !conversationsLoadedRef.current) {
+    if (typeof window !== 'undefined' && workspaceId && userId && !conversationsLoadedRef.current) {
       try {
-        // Restore last active conversation ID from localStorage
-        const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+        // 🔒 SECURITY FIX: Clear old format localStorage keys (workspace-only, not user-specific)
+        // This prevents cross-user data leakage when users share the same workspace
+        const oldFormatKeys = [
+          `adrata-conversations-${workspaceId}`,
+          `adrata-active-conversation-${workspaceId}`,
+          `adrata-deleted-conversations-${workspaceId}`,
+          `adrata-context-files-${workspaceId}`
+        ];
+        oldFormatKeys.forEach(key => {
+          if (localStorage.getItem(key)) {
+            console.log(`🧹 [SECURITY] Clearing old format localStorage key: ${key}`);
+            localStorage.removeItem(key);
+          }
+        });
+        
+        // Restore last active conversation ID from localStorage (user-specific)
+        const activeConversationKey = `adrata-active-conversation-${workspaceId}-${userId}`;
         const savedActiveId = localStorage.getItem(activeConversationKey);
         
-        const storageKey = `adrata-conversations-${workspaceId}`;
+        const storageKey = `adrata-conversations-${workspaceId}-${userId}`;
         const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
+          
+          // 🔒 SECURITY: Validate that stored conversations don't contain messages from other users
+          // This is a defense-in-depth measure in case old data somehow gets into localStorage
+          const validatedConversations = parsed.filter((conv: any) => {
+            // Check if conversation has metadata indicating it belongs to a different user
+            if (conv.metadata?.userId && conv.metadata.userId !== userId) {
+              console.warn(`🧹 [SECURITY] Filtered out conversation with mismatched userId:`, conv.id);
+              return false;
+            }
+            return true;
+          });
+          
           // Filter out conversations that were deleted locally
-          const filteredConversations = parsed.filter((conv: any) => !deletedConversationIds.has(conv.id));
+          const filteredConversations = validatedConversations.filter((conv: any) => !deletedConversationIds.has(conv.id));
           
           // IMPORTANT: Only restore main-chat from localStorage initially
           // Let API sync handle other conversations to ensure they're not deleted
@@ -726,21 +754,21 @@ export function RightPanel() {
           }];
           
           const restoredConversations = conversationsToRestore.map((conv: any) => {
-            // Filter out temporary messages from Main Chat on initial load
-            // This ensures Main Chat starts clean with only the welcome message
-            const isMainChat = conv.id === 'main-chat';
-            const filteredMessages = isMainChat 
-              ? conv.messages.filter((msg: any) => 
-                  !(msg.type === 'assistant' && 
-                    (msg.content?.includes("I'm adding competitive intelligence") || 
-                     msg.content?.includes("Let me get back to you shortly")))
-                )
-              : conv.messages;
-            
-            return {
-              ...conv,
-              lastActivity: new Date(conv.lastActivity),
-              messages: filteredMessages.map((msg: any) => ({
+            // Filter out hardcoded competitive intelligence messages and temporary messages
+            const filteredMessages = conv.messages
+              .filter((msg: any) => {
+                // Remove hardcoded competitive intelligence messages
+                if (msg.type === 'assistant' && msg.content) {
+                  const content = msg.content.toLowerCase();
+                  if (content.includes("i'm adding competitive intelligence") ||
+                      content.includes("let me get back to you shortly") ||
+                      content.includes("i'll have the adrata team send you a message")) {
+                    return false;
+                  }
+                }
+                return true;
+              })
+              .map((msg: any) => ({
                 ...msg,
                 timestamp: new Date(msg.timestamp),
                 // CRITICAL FIX: Don't preserve isTypewriter for completed messages
@@ -748,7 +776,12 @@ export function RightPanel() {
                 isTypewriter: false, // Always false when loading - prevents re-triggering
                 // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
                 typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
-              }))
+              }));
+            
+            return {
+              ...conv,
+              lastActivity: new Date(conv.lastActivity),
+              messages: filteredMessages
             };
           });
           
@@ -782,8 +815,8 @@ export function RightPanel() {
           setActiveConversationId('main-chat');
           
           // Clear any stale active conversation ID from localStorage
-          if (typeof window !== 'undefined' && workspaceId) {
-            const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+          if (typeof window !== 'undefined' && workspaceId && userId) {
+            const activeConversationKey = `adrata-active-conversation-${workspaceId}-${userId}`;
             localStorage.removeItem(activeConversationKey);
           }
           
@@ -809,7 +842,7 @@ export function RightPanel() {
   useEffect(() => {
     if (typeof window !== 'undefined' && workspaceId && activeConversationId) {
       try {
-        const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+        const activeConversationKey = `adrata-active-conversation-${workspaceId}-${userId}`;
         localStorage.setItem(activeConversationKey, activeConversationId);
         if (process.env.NODE_ENV === 'development') {
           console.log('💾 [CHAT] Saved active conversation ID:', activeConversationId);
@@ -829,7 +862,13 @@ export function RightPanel() {
       if (process.env.NODE_ENV === 'development') {
         console.log('🔄 [CHAT] Syncing conversations from API...');
       }
-      const response = await fetch('/api/v1/conversations?includeMessages=true');
+      // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
+      const response = await fetch('/api/v1/conversations?includeMessages=true', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       const result = await response.json();
       
       if (result.success && result.data.conversations) {
@@ -847,20 +886,8 @@ export function RightPanel() {
         const apiConversations = result.data.conversations.map((conv: any) => {
           // Get local conversation to merge messages
           // NOTE: We no longer preserve temporary messages from local state - they should only exist if saved to API
-          // This prevents the temporary message from loading proactively
-          
-          // Filter out temporary messages from Main Chat to ensure it starts clean
-          const isMainChat = conv.metadata?.isMainChat === true || conv.title === 'Main Chat';
-          const filteredApiMessages = isMainChat
-            ? (conv.messages || []).filter((msg: any) => 
-                !(msg.type === 'assistant' && 
-                  (msg.content?.includes("I'm adding competitive intelligence") || 
-                   msg.content?.includes("Let me get back to you shortly")))
-              )
-            : (conv.messages || []);
-          
-          // Merge API messages only (don't add local temporary messages)
-          const apiMessages = filteredApiMessages.map((msg: any) => ({
+          // Merge API messages
+          const apiMessages = (conv.messages || []).map((msg: any) => ({
             ...msg,
             timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
             // CRITICAL FIX: Don't preserve isTypewriter - always false when loading from API
@@ -941,11 +968,11 @@ export function RightPanel() {
           if (apiConversations.length === 0) {
             // Clear localStorage for this workspace
             if (typeof window !== 'undefined' && workspaceId) {
-              const storageKey = `adrata-conversations-${workspaceId}`;
+              const storageKey = `adrata-conversations-${workspaceId}-${userId}`;
               localStorage.removeItem(storageKey);
               
               // Also clear the active conversation ID
-              const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+              const activeConversationKey = `adrata-active-conversation-${workspaceId}-${userId}`;
               localStorage.removeItem(activeConversationKey);
               
               if (process.env.NODE_ENV === 'development') {
@@ -994,7 +1021,7 @@ export function RightPanel() {
             // Don't change activeConversationId - keep user's selection
           } else {
             // Current active conversation not found or was deleted - restore from localStorage or fall back to main-chat
-            const activeConversationKey = `adrata-active-conversation-${workspaceId}`;
+            const activeConversationKey = `adrata-active-conversation-${workspaceId}-${userId}`;
             const savedActiveId = typeof window !== 'undefined' ? localStorage.getItem(activeConversationKey) : null;
             const savedActiveConv = savedActiveId ? merged.find(c => c.id === savedActiveId && !c.deletedAt) : null;
             
@@ -1082,7 +1109,7 @@ export function RightPanel() {
         }
       } else if (result.success && result.data.conversations.length === 0) {
         // If API explicitly returns an empty array, clear local storage and reset to main-chat
-        const storageKey = `adrata-conversations-${workspaceId}`;
+        const storageKey = `adrata-conversations-${workspaceId}-${userId}`;
         if (typeof window !== 'undefined') {
           localStorage.removeItem(storageKey);
         }
@@ -1113,8 +1140,10 @@ export function RightPanel() {
       if (conversation.id && !conversation.id.startsWith('conv-') && conversation.id !== 'main-chat') {
         // Try to update existing conversation
         try {
+          // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
           const updateResponse = await fetch(`/api/v1/conversations/${conversation.id}`, {
             method: 'PATCH',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               title: conversation.title,
@@ -1137,8 +1166,10 @@ export function RightPanel() {
                         (conversation.metadata as any)?.isMainChat === true ||
                         conversation.title === 'Main Chat';
       
+      // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
       const response = await fetch('/api/v1/conversations', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: conversation.title,
@@ -1187,7 +1218,13 @@ export function RightPanel() {
     
     try {
       // Try to find existing main chat in API
-      const response = await fetch('/api/v1/conversations?includeMessages=true');
+      // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
+      const response = await fetch('/api/v1/conversations?includeMessages=true', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       const result = await response.json();
       
       if (result.success && result.data.conversations) {
@@ -1242,8 +1279,10 @@ export function RightPanel() {
     if (!workspaceId || !userId) return;
     
     try {
+      // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
       const response = await fetch(`/api/v1/conversations/${conversationId}/messages`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: message.type,
@@ -1280,8 +1319,11 @@ export function RightPanel() {
     if (!workspaceId || !userId) return;
     
     try {
+      // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
       const response = await fetch(`/api/v1/conversations/${conversationId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
       });
       
       const result = await response.json();
@@ -1303,7 +1345,13 @@ export function RightPanel() {
       if (process.env.NODE_ENV === 'development') {
         console.log('🔄 [CHAT] Fetching conversation history (including deleted)...');
       }
-      const response = await fetch('/api/v1/conversations?includeMessages=false&includeDeleted=true');
+      // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
+      const response = await fetch('/api/v1/conversations?includeMessages=false&includeDeleted=true', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       const result = await response.json();
       
       if (result.success && result.data.conversations) {
@@ -1333,8 +1381,10 @@ export function RightPanel() {
     if (!workspaceId || !userId) return;
     
     try {
+      // 🔒 SECURITY: Use credentials: 'include' to ensure proper authentication and user isolation
       const response = await fetch(`/api/v1/conversations/${conversationId}`, {
         method: 'PATCH',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ restore: true })
       });
@@ -1368,18 +1418,6 @@ export function RightPanel() {
         setConversations(prev => prev.map(conv => {
           const isMainChat = conv.id === 'main-chat' || 
                             (conv.metadata as any)?.isMainChat === true;
-          if (isMainChat) {
-            // Filter out temporary messages from Main Chat
-            const filteredMessages = conv.messages.filter(msg => 
-              !(msg.type === 'assistant' && 
-                (msg.content?.includes("I'm adding competitive intelligence") || 
-                 msg.content?.includes("Let me get back to you shortly")))
-            );
-            return {
-              ...conv,
-              messages: filteredMessages
-            };
-          }
           return conv;
         }));
       }, 1000);
@@ -1405,8 +1443,11 @@ export function RightPanel() {
     
     const handleStorageChange = (e: StorageEvent) => {
       // Check if the change is related to our conversations
-      if (e.key === `adrata-conversations-${workspaceId}` || 
-          e.key === `adrata-active-conversation-${workspaceId}`) {
+      if ((workspaceId && userId && (e.key === `adrata-conversations-${workspaceId}-${userId}` || 
+          e.key === `adrata-active-conversation-${workspaceId}-${userId}`)) ||
+          // Also listen for old format keys (for migration)
+          (!userId && (e.key === `adrata-conversations-${workspaceId}` || 
+          e.key === `adrata-active-conversation-${workspaceId}`))) {
         if (process.env.NODE_ENV === 'development') {
           console.log('🔄 [CHAT] Storage changed in another tab, syncing...');
         }
@@ -2100,7 +2141,7 @@ You can also try uploading the file again or use a different format.`,
         // Persist to localStorage - WORKSPACE ISOLATED
         try {
           if (workspaceId) {
-            const storageKey = `adrata-context-files-${workspaceId}`;
+            const storageKey = `adrata-context-files-${workspaceId}-${userId}`;
             localStorage.setItem(storageKey, JSON.stringify(updated));
           }
         } catch (error) {
@@ -2213,7 +2254,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           // Persist to localStorage - WORKSPACE ISOLATED
           try {
             if (workspaceId) {
-              const storageKey = `adrata-context-files-${workspaceId}`;
+              const storageKey = `adrata-context-files-${workspaceId}-${userId}`;
               localStorage.setItem(storageKey, JSON.stringify(updated));
             }
           } catch (storageError) {
@@ -2418,6 +2459,9 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     // Reset scroll state when sending a new message (user wants to see the response)
     userScrolledUpRef.current = false;
     
+    // Declare thinkingTimeout at function scope so it's accessible in try/catch
+    let thinkingTimeout: NodeJS.Timeout | null = null;
+    
       // 🔧 FIX: Use refs to get the latest record context at send time (avoid stale closures)
       const latestRecord = currentRecordRef.current;
       const latestRecordType = recordTypeRef.current;
@@ -2509,100 +2553,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         [activeSubApp]: [...(prev[activeSubApp] || []), userMessage]
       }));
 
-      // TEMPORARY: Return simple message instead of processing AI request
-      // Check if the temporary message already exists in the conversation
-      const activeConvForCheck = conversations.find(c => c.isActive);
-      const hasTemporaryMessage = activeConvForCheck?.messages.some(msg => 
-        msg.type === 'assistant' && 
-        msg.content.includes("I'm adding competitive intelligence to your system")
-      );
-      
-      let responseText: string;
-      if (hasTemporaryMessage) {
-        // If user responds after the temporary message, give a follow-up response
-        responseText = "Let me get back to you shortly. If I take too long, please email clients@adrata.com.";
-      } else {
-        // First time - show the initial temporary message
-        // Extract first name from full name if needed
-        let username = user?.firstName || 'there';
-        if (!username && user?.name) {
-          const nameParts = user.name.trim().split(' ');
-          username = nameParts[0] || 'there';
-        }
-        responseText = `Hey, ${username}! I'm adding competitive intelligence to your system. I'll have the Adrata team send you a message when I'm done!`;
-      }
-
-      // Add typing indicator (same as regular AI responses)
-      const typingMessage: ChatMessage = {
-        id: `typing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        type: 'assistant',
-        content: 'typing',
-        timestamp: new Date()
-      };
-      
-      setConversations(prev => prev.map(conv => 
-        conv.isActive 
-          ? { ...conv, messages: [...conv.messages, typingMessage] }
-          : conv
-      ));
-      
-      scrollToBottom();
-
-      // Wait a bit longer to simulate processing (increased delay)
-      await new Promise(resolve => setTimeout(resolve, 1800));
-
-      // Remove typing indicator and add the response with typewriter effect
-      const simpleResponse: ChatMessage = {
-        id: `assistant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        type: 'assistant',
-        content: responseText,
-        timestamp: new Date(),
-        isTypewriter: true, // Enable typewriter effect
-        typewriterSpeed: 20 // Faster typewriter speed (20ms per character instead of default 35ms)
-      };
-
-      setConversations(prev => prev.map(conv => 
-        conv.isActive 
-          ? { 
-              ...conv, 
-              messages: conv.messages
-                .filter(msg => msg.content !== 'typing' && msg.content !== 'browsing')
-                .concat(simpleResponse),
-              lastActivity: new Date()
-            }
-          : conv
-      ));
-
-      // Save response to API in background (reuse activeConv from above)
-      // IMPORTANT: Save immediately to ensure persistence
-      if (activeConv) {
-        if (activeConv.id === 'main-chat') {
-          const apiId = await ensureMainChatInAPI();
-          if (apiId) {
-            // Save message to API - don't await to avoid blocking, but ensure it's saved
-            saveMessageToAPI(apiId, simpleResponse).catch(err => {
-              console.warn('Failed to save temporary message to API:', err);
-            });
-          }
-        } else {
-          // Save message to API - don't await to avoid blocking, but ensure it's saved
-          saveMessageToAPI(activeConv.id, simpleResponse).catch(err => {
-            console.warn('Failed to save temporary message to API:', err);
-          });
-        }
-      }
-
-      chat.setChatSessions(prev => ({
-        ...prev,
-        [activeSubApp]: [...(prev[activeSubApp] || []), simpleResponse]
-      }));
-
-      scrollToBottom();
-      setIsProcessing(false);
-      return;
-
       // Add typing indicator (check if this might be a web research query)
-      // NOTE: This code is unreachable due to early return above, but kept for future restoration
       const isWebResearchQuery = input.toLowerCase().includes('search') || 
                                 input.toLowerCase().includes('find') || 
                                 input.toLowerCase().includes('look up') ||
@@ -2610,6 +2561,11 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
                                 input.toLowerCase().includes('http') ||
                                 input.toLowerCase().includes('www.');
       
+      // Track request start time for thinking indicator
+      const requestStartTime = Date.now();
+      const THINKING_THRESHOLD = 500; // Show thinking box if response takes >500ms
+      
+      // Show simple "..." immediately (lightning fast)
       const typingMessageOriginal: ChatMessage = {
         id: `typing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         type: 'assistant',
@@ -2623,6 +2579,29 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           ? { ...conv, messages: [...conv.messages, typingMessageOriginal] }
           : conv
       ));
+      
+      // Show thinking widget if response takes >500ms (expanded by default with cycling preview)
+      let thinkingMessageId: string | null = null;
+      if (!isWebResearchQuery) {
+        thinkingTimeout = setTimeout(() => {
+          // Add thinking widget (expanded by default)
+          thinkingMessageId = `thinking-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          const thinkingMessage: ChatMessage = {
+            id: thinkingMessageId,
+            type: 'assistant',
+            content: 'thinking',
+            timestamp: new Date(),
+            reasoning: {
+              thinkingSteps: [] // Will be updated when response arrives
+            }
+          };
+          setConversations(prev => prev.map(conv => 
+            conv.isActive 
+              ? { ...conv, messages: [...conv.messages, thinkingMessage] }
+              : conv
+          ));
+        }, THINKING_THRESHOLD);
+      }
 
       // Check for Excel import request
       const isExcelImportRequest = input.toLowerCase().includes('import the excel data') || 
@@ -2845,7 +2824,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           appType: effectiveAppType,
           workspaceId,
           userId,
-          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-3), // Reduced to 3 messages for faster response
+          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing' && msg.content !== 'thinking').slice(-3), // Reduced to 3 messages for faster response
           currentRecord: latestRecord, // Use ref to ensure latest value
           recordType: latestRecordType, // Use ref to ensure latest value
           recordIdFromUrl, // 🔧 NEW: Send record ID from URL as fallback
@@ -3050,7 +3029,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             setContextFiles([]);
             try {
               if (workspaceId) {
-                const storageKey = `adrata-context-files-${workspaceId}`;
+                const storageKey = `adrata-context-files-${workspaceId}-${userId}`;
                 localStorage.removeItem(storageKey);
               }
             } catch (storageError) {
@@ -3059,19 +3038,44 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           }
         }
 
-        // Update UI immediately (optimistic update)
-        setConversations(prev => prev.map(conv => 
-          conv.isActive 
-            ? { 
-                ...conv, 
-                messages: [
-                  ...conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
-                  ...messagesToAdd
-                ],
-                lastActivity: new Date()
-              }
-            : conv
-        ));
+        // Clear thinking timeout if response came quickly
+        if (thinkingTimeout) {
+          clearTimeout(thinkingTimeout);
+        }
+        
+        // Update thinking message with real thinkingSteps from response before replacing it
+        // This allows the thinking widget to show actual processing steps
+        setConversations(prev => prev.map(conv => {
+          if (!conv.isActive) return conv;
+          
+          const updatedMessages = conv.messages.map(msg => {
+            if (msg.content === 'thinking' && data.reasoning?.thinkingSteps) {
+              // Update thinking message with real thinkingSteps
+              return {
+                ...msg,
+                reasoning: {
+                  ...msg.reasoning,
+                  thinkingSteps: data.reasoning.thinkingSteps
+                }
+              };
+            }
+            return msg;
+          });
+          
+          // Remove typing/browsing/thinking messages and add final response
+          return {
+            ...conv,
+            messages: [
+              ...updatedMessages.filter(msg => 
+                msg.content !== 'typing' && 
+                msg.content !== 'browsing' && 
+                msg.content !== 'thinking'
+              ),
+              ...messagesToAdd
+            ],
+            lastActivity: new Date()
+          };
+        }));
         
         // Save to API in background
         const activeConv = conversations.find(c => c.isActive);
@@ -3130,7 +3134,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         // Clear from localStorage - WORKSPACE ISOLATED
         try {
           if (workspaceId) {
-            const storageKey = `adrata-context-files-${workspaceId}`;
+            const storageKey = `adrata-context-files-${workspaceId}-${userId}`;
             localStorage.removeItem(storageKey);
           }
         } catch (storageError) {
@@ -3145,13 +3149,18 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         timestamp: new Date()
       };
 
+      // Clear thinking timeout on error
+      if (thinkingTimeout) {
+        clearTimeout(thinkingTimeout);
+      }
+      
       // Update UI immediately (optimistic update)
       setConversations(prev => prev.map(conv => 
         conv.isActive 
           ? { 
               ...conv, 
               messages: [
-                ...conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
+                ...conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing' && msg.content !== 'thinking'),
                 errorMessage
               ],
               lastActivity: new Date()

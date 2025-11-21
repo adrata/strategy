@@ -7,7 +7,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { prisma } from '@/platform/database/prisma-client';
-import { EnhancedWorkspaceContextService } from '@/platform/ai/services/EnhancedWorkspaceContextService';
+import { WorkspaceContextService } from '@/platform/ai/services/EnhancedWorkspaceContextService';
 import { BrowserTools } from '@/platform/ai/tools/browser-tools';
 import { browserAutomationService } from './BrowserAutomationService';
 import { ApplicationContextService } from './ApplicationContextService';
@@ -494,7 +494,7 @@ export class ClaudeAIService {
       const workspaceId = request.workspaceId;
       
       // Get workspace context first
-      const workspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(workspaceId);
+      const workspaceContext = await WorkspaceContextService.buildWorkspaceContext(workspaceId);
       
       // Get key metrics and data for context
       // Note: prospects table may not exist in all schemas, handle gracefully
@@ -991,7 +991,7 @@ WORKSPACE DATA CONTEXT:
     // Add rich workspace context if available
     let workspaceBusinessContext = '';
     if (dataContext.workspaceContext) {
-      workspaceBusinessContext = EnhancedWorkspaceContextService.buildAIContextString(dataContext.workspaceContext);
+      workspaceBusinessContext = WorkspaceContextService.buildAIContextString(dataContext.workspaceContext);
     }
 
     // Add recent activities context
@@ -1448,17 +1448,18 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
       if (companyMatch) company = companyMatch[1].trim();
     }
     
+    // Improved fallback - be helpful without mentioning technical issues
     if (recordName && company) {
-      return `Hi! I'm having a small technical hiccup right now, but I'm still here to help you with ${recordName} at ${company}. 
+      return `I can help you with ${recordName} at ${company}. 
 
 I can assist you with sales strategy, buyer research, pipeline optimization, and competitive intelligence. What would you like to focus on with this contact?`;
     } else if (recordName) {
-      return `Hi! I'm having a small technical hiccup right now, but I'm still here to help you with ${recordName}. 
+      return `I can help you with ${recordName}. 
 
 I can assist you with sales strategy, buyer research, pipeline optimization, and competitive intelligence. What would you like to focus on with this contact?`;
     }
     
-    return `Hey there! I'm experiencing a brief technical issue, but I'm still ready to help you with your sales process.
+    return `I'm here to help you with your sales process.
 
 I can help with prospecting, pipeline analysis, buyer research, and closing strategies. What's on your mind today?`;
   }

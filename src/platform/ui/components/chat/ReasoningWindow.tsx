@@ -97,11 +97,8 @@ export function ReasoningWindow({ reasoning, isVisible = false, onToggle }: Reas
           <div className="flex items-center gap-2">
             <BoltIcon className="h-4 w-4 text-primary" />
             <CardTitle className="text-sm font-medium text-foreground">
-              Thinking...
+              Reasoning
             </CardTitle>
-            {isAnimating && (
-              <span className="text-xs text-muted-foreground">Analyzing...</span>
-            )}
           </div>
           <div className="flex items-center gap-2">
             {reasoning.processingTime && reasoning.processingTime < 3000 && (

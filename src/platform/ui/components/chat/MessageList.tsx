@@ -6,6 +6,7 @@ import { TypewriterText } from './TypewriterText';
 import { FileDisplayWidget } from './FileDisplayWidget';
 import { EnrichmentProgressTracker, createCFOEnrichmentSteps } from './EnrichmentProgressTracker';
 import { ReasoningWindow } from './ReasoningWindow';
+import { ThinkingWidget } from './ThinkingWidget';
 
 // Progress component with state management
 function EnrichmentProgressComponent({ message }: { message: any }) {
@@ -66,19 +67,9 @@ function EnrichmentProgressComponent({ message }: { message: any }) {
   );
 }
 
-// Cycling dots animation component
-function CyclingDots() {
-  const [dotState, setDotState] = React.useState(0);
-  const dots = ['.', '..', '...'];
-  
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setDotState(prev => (prev + 1) % 3);
-    }, 250);
-    return () => clearInterval(interval);
-  }, []);
-  
-  return <span>{dots[dotState]}</span>;
+// Simple typing indicator - just show ... immediately (lightning fast)
+function TypingIndicator() {
+  return <span>...</span>;
 }
 
 interface ChatMessage {
@@ -234,11 +225,13 @@ export function MessageList({
               }}
             />
           ) : message['content'] === 'typing' ? (
-            <div className="space-y-1">
-              <div className="text-base text-muted">
-                <CyclingDots />
-              </div>
+            <div className="text-base text-muted-foreground">
+              <TypingIndicator />
             </div>
+          ) : message['content'] === 'thinking' ? (
+            <ThinkingWidget 
+              thinkingSteps={message.reasoning?.thinkingSteps || []}
+            />
           ) : message['content'] === 'browsing' ? (
             <div className="space-y-1">
               <div className="text-base text-muted flex items-center gap-2">

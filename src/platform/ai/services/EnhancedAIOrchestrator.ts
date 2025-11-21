@@ -253,8 +253,8 @@ export class EnhancedAIOrchestrator {
       ]);
 
       // Get enhanced workspace context
-      const { EnhancedWorkspaceContextService } = await import('./EnhancedWorkspaceContextService');
-      const enhancedWorkspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(context.workspaceId);
+      const { WorkspaceContextService } = await import('./EnhancedWorkspaceContextService');
+      const enhancedWorkspaceContext = await WorkspaceContextService.buildWorkspaceContext(context.workspaceId);
 
       const enrichedContext = {
         workspace: {

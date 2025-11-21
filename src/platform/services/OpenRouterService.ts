@@ -254,14 +254,15 @@ export class OpenRouterService {
     const startTime = Date.now();
     
     if (!this.apiKey) {
-      console.error('❌ [OPENROUTER] Cannot generate response - missing API key:', {
+      console.error('❌ [OPENROUTER] Cannot generate response - missing API key, throwing error for Claude fallback:', {
         hasCurrentRecord: !!request.currentRecord,
         recordId: request.currentRecord?.id,
         recordName: request.currentRecord?.name || request.currentRecord?.fullName,
         hasRecordContext: !!request.workspaceContext?.recordContext,
         recordContextLength: request.workspaceContext?.recordContext?.length || 0
       });
-      return this.generateFallbackResponse(request, startTime);
+      // Throw error instead of returning fallback - let API route handle Claude fallback
+      throw new Error('OpenRouter API key not configured');
     }
 
     // SECURITY: Input sanitization and injection detection
@@ -391,8 +392,8 @@ export class OpenRouterService {
         }
       }
 
-      // All models failed
-      throw lastError || new Error('All models failed');
+      // All models failed - throw error so API route can fall back to Claude
+      throw lastError || new Error('All OpenRouter models failed');
 
     } catch (error) {
       const errorDetails = error instanceof Error ? {
@@ -400,7 +401,7 @@ export class OpenRouterService {
         stack: error.stack,
         name: error.name
       } : { error };
-      console.error('❌ [OPENROUTER] All models failed:', {
+      console.error('❌ [OPENROUTER] All models failed, throwing error for Claude fallback:', {
         error: errorDetails,
         requestId: request.requestId,
         userId: request.userId,
@@ -412,7 +413,8 @@ export class OpenRouterService {
         messagePreview: request.message.substring(0, 100),
         processingTime: Date.now() - startTime
       });
-      return this.generateFallbackResponse(request, startTime);
+      // Throw error instead of returning fallback - let API route handle Claude fallback
+      throw error instanceof Error ? error : new Error('OpenRouter service failed');
     }
   }
 
@@ -423,7 +425,7 @@ export class OpenRouterService {
     const startTime = Date.now();
     
     if (!this.apiKey) {
-      return this.generateFallbackResponse(request, startTime);
+      throw new Error('OpenRouter API key not configured');
     }
 
     try {
@@ -441,8 +443,8 @@ export class OpenRouterService {
       return response;
 
     } catch (error) {
-      console.error('❌ [OPENROUTER] Excel import error:', error);
-      return this.generateFallbackResponse(request, startTime);
+      console.error('❌ [OPENROUTER] Excel import error, throwing for Claude fallback:', error);
+      throw error instanceof Error ? error : new Error('Excel import failed');
     }
   }
 
@@ -1039,8 +1041,9 @@ YOU MUST USE THIS CONTEXT. The context above is complete and sufficient. Provide
    * Generate cache key for request
    */
   private generateCacheKey(request: OpenRouterRequest): string {
-    const key = `${request.message}-${request.appType}-${request.recordType}-${JSON.stringify(request.currentRecord)}`;
-    return Buffer.from(key).toString('base64').slice(0, 32);
+    // 🔒 SECURITY: Include userId and workspaceId in cache key to prevent cross-user cache collisions
+    const key = `${request.userId}-${request.workspaceId}-${request.message}-${request.appType}-${request.recordType}-${JSON.stringify(request.currentRecord)}`;
+    return Buffer.from(key).toString('base64').slice(0, 64);
   }
 
   /**

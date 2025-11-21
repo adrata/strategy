@@ -293,14 +293,14 @@ CRUD OPERATIONS CAPABILITY:
     try {
       let dataContext = '';
       
-      // Import the enhanced workspace context service
-      const { EnhancedWorkspaceContextService } = await import('./EnhancedWorkspaceContextService');
+      // Import the workspace context service
+      const { WorkspaceContextService } = await import('./EnhancedWorkspaceContextService');
       
       // Build comprehensive workspace context (CRITICAL: Seller/Company profile)
-      const workspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(workspaceId);
+      const workspaceContext = await WorkspaceContextService.buildWorkspaceContext(workspaceId);
       
       if (workspaceContext) {
-        dataContext = EnhancedWorkspaceContextService.buildAIContextString(workspaceContext);
+        dataContext = WorkspaceContextService.buildAIContextString(workspaceContext);
         
         // Log seller context for verification
         if (process.env.NODE_ENV === 'development') {
@@ -335,26 +335,15 @@ CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspec
       }
       
       if (appType === 'Speedrun') {
-        const speedrunData = await this.fetchSpeedrunData(workspaceId, userId);
-        if (speedrunData) {
-          const prospectsCount = speedrunData.prospects?.length || 0;
-          const readyCount = speedrunData.prospects?.filter((p: any) => p['status'] === 'ready')?.length || 0;
-          const completedCount = speedrunData.prospects?.filter((p: any) => p['status'] === 'completed')?.length || 0;
-          
-          dataContext += `\n\nREAL SPEEDRUN DATA CONTEXT:
-- Total Prospects: ${prospectsCount}
-- Ready to Contact: ${readyCount}
-- Completed Today: ${completedCount}
-- User's actual prospect pipeline is loaded and visible
-- Provide insights based on this REAL data, not hypothetical examples
-- Reference specific prospect counts and pipeline status in responses`;
-
-          // Add sample prospect names for context
-          if (speedrunData.prospects?.length > 0) {
-            const sampleProspects = speedrunData.prospects.slice(0, 5).map((p: any) => `${p.name} at ${p.company}`).join(', ');
-            dataContext += `\n- Sample prospects in pipeline: ${sampleProspects}`;
-          }
-        }
+        // 🏆 OPTIMIZATION: Skip slow Speedrun data fetch to improve response time
+        // The data fetch makes an HTTP request to another API endpoint which is slow
+        // Instead, add minimal context that doesn't require data fetching
+        dataContext += `\n\nSPEEDRUN APPLICATION CONTEXT:
+- User is working in the Speedrun application (high-velocity sales methodology)
+- Speedrun focuses on rapid prospect contact and qualification
+- User can see prospect lists, selected prospect details, and pipeline metrics
+- Provide insights based on Speedrun methodology and best practices
+- Reference Speedrun-specific workflows and strategies in responses`;
       } else if (appType === 'Pipeline') {
         const pipelineData = await this.fetchPipelineData(workspaceId, userId);
         if (pipelineData) {
@@ -1132,20 +1121,15 @@ IMPORTANT RULES:
   /**
    * Fetch Speedrun data
    */
+  /**
+   * Fetch Speedrun data - DEPRECATED: This method makes slow HTTP requests
+   * Kept for backwards compatibility but no longer used in buildDataContext
+   * to improve response times
+   */
   private static async fetchSpeedrunData(workspaceId: string, userId: string): Promise<any> {
-    try {
-      // 🔐 SECURITY: Use authenticated fetch without query parameters
-      const response = await authFetch(`${process['env']['NEXT_PUBLIC_BASE_URL'] || 'http://localhost:3000'}/api/data/unified?type=speedrun&action=get`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      if (response.ok) {
-        return await response.json();
-      }
-    } catch (error) {
-      console.warn('Failed to fetch Speedrun data:', error);
-    }
+    // 🏆 OPTIMIZATION: Skip this slow operation - it makes HTTP requests to another API endpoint
+    // This was causing 20+ second response times
+    // If Speedrun data is needed, it should be fetched directly from the database with proper timeouts
     return null;
   }
 

@@ -382,10 +382,21 @@ export async function POST(request: NextRequest) {
     let aiResponse: any;
     let costRecordId: string | null = null;
 
+    // Track real-time thinking steps during processing
+    const thinkingSteps: Array<{step: number, description: string, timestamp: number}> = [];
+    const addThinkingStep = (description: string) => {
+      thinkingSteps.push({
+        step: thinkingSteps.length + 1,
+        description,
+        timestamp: Date.now()
+      });
+    };
+
     // Build comprehensive workspace context (optimized for speed)
     // Add timeout protection to prevent hanging (30 second max for context building)
     const contextStartTime = Date.now();
     console.log('🔍 [AI CHAT] Starting context build...');
+    addThinkingStep('Building context...');
     
     let workspaceContext;
     try {
@@ -407,6 +418,14 @@ export async function POST(request: NextRequest) {
       workspaceContext = await Promise.race([contextBuildPromise, timeoutPromise]);
       const contextBuildTime = Date.now() - contextStartTime;
       console.log('✅ [AI CHAT] Context build completed:', `${contextBuildTime}ms`);
+      
+      // Add thinking step after context is built
+      if (currentRecord) {
+        addThinkingStep(`Analyzing ${recordType || 'record'} data...`);
+      }
+      if (workspaceContext?.dataContext) {
+        addThinkingStep('Querying workspace data...');
+      }
       
       // Performance monitoring: Log if context build is slow
       if (contextBuildTime > 3000) {
@@ -508,6 +527,7 @@ export async function POST(request: NextRequest) {
         }
         
         console.log('🔍 [AI CHAT] Starting OpenRouter response generation...');
+        addThinkingStep('Generating AI response...');
         const openRouterStartTime = Date.now();
         
         // Add timeout protection for OpenRouter call (25 seconds max)
@@ -679,6 +699,7 @@ export async function POST(request: NextRequest) {
       console.log('⚠️ [AI CHAT] WARNING: Anthropic API credits may be low. Consider using OpenRouter instead.');
       
       console.log('🔍 [AI CHAT] Starting Claude response generation...');
+      addThinkingStep('Generating AI response...');
       const claudeStartTime = Date.now();
       
       // Add timeout protection for Claude call (25 seconds max)
@@ -842,33 +863,16 @@ export async function POST(request: NextRequest) {
         reasoning.dataSources = dataSources;
       }
 
-      // Thinking steps (high-level, sanitized)
-      const thinkingSteps: any[] = [];
-      thinkingSteps.push({
-        step: 1,
-        description: 'Analyzing context and available data',
-        confidence: 0.9
-      });
-      if (currentRecord) {
-        thinkingSteps.push({
-          step: 2,
-          description: `Understanding ${recordType || 'record'} details and relationships`,
-          confidence: 0.85
-        });
-      }
-      if (workspaceContext?.dataContext) {
-        thinkingSteps.push({
-          step: 3,
-          description: 'Considering workspace patterns and business context',
-          confidence: 0.8
-        });
-      }
-      thinkingSteps.push({
-        step: thinkingSteps.length + 1,
-        description: 'Generating contextual response',
-        confidence: aiResponse.metadata?.confidence || 0.85
-      });
-      reasoning.thinkingSteps = thinkingSteps;
+      // Use real-time thinking steps tracked during processing (not static)
+      // Map to format expected by frontend with confidence scores
+      reasoning.thinkingSteps = thinkingSteps.map((step, index) => ({
+        step: step.step,
+        description: step.description,
+        timestamp: step.timestamp,
+        confidence: index === thinkingSteps.length - 1 
+          ? (aiResponse.metadata?.confidence || 0.85)
+          : 0.9 - (index * 0.05) // Decreasing confidence for earlier steps
+      }));
 
       return reasoning;
     };
@@ -919,6 +923,28 @@ export async function POST(request: NextRequest) {
       isTimeout ? 504 : 500
     );
   }
+}
+
+/**
+ * GET /api/ai-chat - Returns helpful error message
+ * 
+ * This endpoint only accepts POST requests. GET requests return a helpful error
+ * to assist with debugging routing issues.
+ */
+export async function GET(request: NextRequest) {
+  console.log('⚠️ [AI CHAT] GET request received (this endpoint only accepts POST)');
+  console.log('🔍 [AI CHAT] Request URL:', request.url);
+  console.log('🔍 [AI CHAT] Request pathname:', request.nextUrl.pathname);
+  
+  return NextResponse.json({
+    success: false,
+    error: 'This endpoint only accepts POST requests. Use POST to send chat messages.',
+    code: 'METHOD_NOT_ALLOWED',
+    receivedMethod: 'GET',
+    expectedMethod: 'POST',
+    endpoint: '/api/ai-chat',
+    help: 'Make sure you are sending a POST request to /api/ai-chat (without trailing slash)'
+  }, { status: 405 });
 }
 
 // Note: PUT, DELETE, and OPTIONS handlers removed

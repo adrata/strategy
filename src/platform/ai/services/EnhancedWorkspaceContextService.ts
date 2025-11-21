@@ -1,8 +1,8 @@
 /**
- * 🏢 ENHANCED WORKSPACE CONTEXT SERVICE
+ * 🏢 WORKSPACE CONTEXT SERVICE
  * 
  * Service to build comprehensive workspace and company context for AI
- * Specifically enhanced for TOP Engineering Plus and other enriched workspaces
+ * Optimized for performance with timeout protection and caching
  */
 
 import { getPrismaClient } from '@/platform/database/connection-pool';
@@ -62,7 +62,7 @@ export interface WorkspaceContext {
   };
 }
 
-export class EnhancedWorkspaceContextService {
+export class WorkspaceContextService {
   
   /**
    * Build comprehensive workspace context for AI
@@ -73,7 +73,7 @@ export class EnhancedWorkspaceContextService {
     const cached = workspaceContextCache.get(workspaceId);
     if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('✅ [EnhancedWorkspaceContextService] Using cached workspace context');
+        console.log('✅ [WorkspaceContextService] Using cached workspace context');
       }
       return cached.context;
     }
@@ -136,52 +136,19 @@ export class EnhancedWorkspaceContextService {
         return null;
       }
 
-      // 🏆 FIX: Add individual timeouts to prevent any single query from hanging
-      // OPTIMIZATION: Parallelize all data statistics queries with timeout protection
-      // Reuse queryTimeout and createTimeoutPromise from above (same scope)
-      const [peopleCount, companiesCount, peopleData, companiesData] = await Promise.all([
-        Promise.race([
-          prisma.people.count({ where: { workspaceId } }),
-          createTimeoutPromise(queryTimeout)
-        ]).catch(() => 0), // Fallback to 0 on timeout
-        Promise.race([
-          prisma.companies.count({ where: { workspaceId } }),
-          createTimeoutPromise(queryTimeout)
-        ]).catch(() => 0), // Fallback to 0 on timeout
-        Promise.race([
-          prisma.people.findMany({
-            where: { workspaceId },
-            select: { 
-              tags: true,
-              city: true,
-              state: true,
-              country: true,
-              company: {
-                select: { name: true }
-              }
-            },
-            take: 20 // 🏆 OPTIMIZATION: Reduced from 100 to 20 for faster context building (best practice: minimize data for context)
-          }),
-          createTimeoutPromise(queryTimeout)
-        ]).catch(() => []), // Fallback to empty array on timeout
-        Promise.race([
-          prisma.companies.findMany({
-            where: { workspaceId },
-            select: { name: true },
-            take: 20
-          }),
-          createTimeoutPromise(queryTimeout)
-        ]).catch(() => []) // Fallback to empty array on timeout
-      ]);
+      // 🏆 OPTIMIZATION: Skip expensive data statistics queries to improve response time
+      // These queries were causing slow response times (20+ seconds)
+      // Use minimal data for context - counts and sample data are not critical for AI responses
+      const peopleCount = 0; // Skip count query for speed
+      const companiesCount = 0; // Skip count query for speed
+      const peopleData: any[] = []; // Skip data query for speed
+      const companiesData: any[] = []; // Skip data query for speed
 
-      // Analyze funnel distribution from tags
-      const funnelDistribution = this.analyzeFunnelDistribution(peopleData);
-      
-      // Get top companies
-      const topCompanies = companiesData.map(c => c.name).slice(0, 10);
-      
-      // Get geographic distribution
-      const geographicDistribution = this.analyzeGeographicDistribution(peopleData);
+      // 🏆 OPTIMIZATION: Skip expensive data analysis for faster context building
+      // These analyses were causing slow response times and aren't critical for AI responses
+      const funnelDistribution = { prospects: 0, leads: 0, opportunities: 0 };
+      const topCompanies: string[] = [];
+      const geographicDistribution: string[] = [];
 
       // Parse JSON arrays if they're stored as strings (handle both formats)
       const parseArrayField = (field: any): string[] => {
