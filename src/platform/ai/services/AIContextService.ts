@@ -171,7 +171,13 @@ export class AIContextService {
 - This is a PRODUCTION environment with REAL data
 - User expects context-aware responses about their current view
 
-CRITICAL: When signing messages or referring to the user, use their actual first name (${userName}) in the signature. For example, use "Best regards, ${userName}" instead of "Best regards, [Your Name]". Do not use placeholders like "[Your Name]" or "the user" when signing messages.`;
+CRITICAL RESPONSE FORMATTING:
+- This is a CHAT conversation, NOT an email
+- DO NOT add email-style signatures like "Best regards, ${userName}" or "Sincerely, ${userName}"
+- DO NOT add closing signatures at the end of responses
+- Chat messages should end naturally without formal closings
+- Only use signatures when explicitly asked to draft an EMAIL (not for chat responses)
+- Keep responses conversational and natural, like a chat assistant`;
 
       // Get user personality preferences
     try {
@@ -235,55 +241,57 @@ RESPONSE REQUIREMENTS:
   private static buildApplicationContext(appType: string): string {
     const appContexts = {
       'Speedrun': {
-        description: 'High-velocity sales methodology',
-        purpose: 'Rapid prospect contact and qualification',
-        features: 'Prospect list, selected prospect details, pipeline metrics',
-        behavior: 'Provide specific advice about visible prospects and speedrun methodology'
+        description: 'THE DAILY LIST - ranked prospects to contact today',
+        purpose: 'Daily prioritized prospect list that always exists. Shows prospects ranked by strategic priority (Rank 1, Rank 2, etc.). Main workflow for daily revenue activities.',
+        features: 'Ranked prospect list, prospect details (name, company, stage, actions, last contact), priority ranking, daily workflow tracking',
+        behavior: 'CRITICAL: Speedrun IS the daily list - it always exists (may be empty but Speedrun itself exists). When users say "Speedrun", "my list", "daily list", or "today\'s list" - they mean THIS existing list. NEVER say "Speedrun doesn\'t exist" or "you need to create Speedrun". If empty, say "Your Speedrun list appears empty" and help them add prospects. Provide insights about prospects in their Speedrun list, help prioritize, suggest actions, and explain rankings.',
+        keyUnderstanding: 'Speedrun = daily prioritized prospect list that already exists. Not a campaign to create. Users work through this ranked list daily.'
       },
       'Pipeline': {
-        description: 'Lead and opportunity management',
-        purpose: 'Lead nurturing, opportunity tracking, and pipeline management',
-        features: 'Lead details, opportunity stages, pipeline analytics, CRUD operations',
-        behavior: 'Help with lead management, opportunity progression, data operations, and pipeline optimization'
+        description: 'Lead and opportunity management system',
+        purpose: 'Manage leads through qualification, track opportunities through sales stages, and optimize pipeline health',
+        features: 'Lead details, opportunity stages, pipeline analytics, conversion tracking, CRUD operations',
+        behavior: 'Help with lead qualification, opportunity progression, pipeline analysis, and data operations. Focus on moving leads through stages and closing deals.',
+        keyUnderstanding: 'Pipeline tracks the full sales journey from lead to closed deal. Includes leads, prospects, opportunities, and clients.'
       },
       'Monaco': {
-        description: 'Buyer group intelligence platform',
-        purpose: 'Strategic sales intelligence and buyer group analysis',
-        features: 'Intelligence dashboards, insights, and analytics',
-        behavior: 'Provide strategic insights and intelligence analysis'
+        description: 'Buyer group intelligence and strategic sales platform',
+        purpose: 'Strategic sales intelligence, buyer group analysis, and relationship mapping for complex B2B sales',
+        features: 'Buyer group intelligence, relationship mapping, strategic insights, enrichment data, analytics',
+        behavior: 'Provide strategic insights about buyer groups, decision-making processes, and relationship dynamics. Help identify key stakeholders and engagement strategies.',
+        keyUnderstanding: 'Monaco focuses on understanding buyer groups and decision-making processes in complex B2B sales scenarios.'
       }
     };
 
     const context = appContexts[appType as keyof typeof appContexts] || appContexts['Pipeline'];
 
     return `CURRENT APPLICATION STATE:
-- Application: ${appType} (${context.description})
+- Application: ${appType}
+- Description: ${context.description}
 - Purpose: ${context.purpose}
 - User can see: ${context.features}
+- Key understanding: ${context.keyUnderstanding}
 - Expected AI behavior: ${context.behavior}
 
-CODEBASE KNOWLEDGE:
-- This is the Adrata platform built with Next.js 15, React 19, TypeScript
-- Speedrun is a core product for high-velocity sales
-- Pipeline manages leads, opportunities, and sales processes
-- Users work with prospect lists of 50+ contacts per day
-- System includes Monaco enrichment, buyer group intelligence, and AI-powered insights
+ADRATA PLATFORM OVERVIEW:
+- Built with Next.js 15, React 19, TypeScript
+- Core applications: Speedrun (daily list), Pipeline (lead/opportunity management), Monaco (buyer group intelligence)
 - Platform supports web, desktop (Tauri), and mobile (Capacitor)
+- Includes AI-powered insights, enrichment data, and intelligent automation
 
-DATABASE SCHEMA UNDERSTANDING:
-- Lead model: Contains prospect information (name, email, company, title, status, priority)
-- Opportunity model: Tracks sales opportunities with stages, values, close dates
-- User model: Manages user accounts, workspaces, and permissions
-- Workspace model: Organizes data by company/team boundaries
-- Relationships: Leads can have multiple opportunities, users are assigned to leads
-- Key fields: workspaceId (for data isolation), status (for pipeline stages), priority (for ranking)
+DATABASE SCHEMA:
+- People/Leads: Contact info (name, email, company, title, status, priority)
+- Companies: Company data, relationships, industry info
+- Opportunities: Deal stages, values, close dates, probability
+- Users/Workspaces: Accounts, permissions, data isolation (workspaceId)
+- Key relationships: People → Companies, Leads → Opportunities, Users → Workspaces
 
-CRUD OPERATIONS CAPABILITY:
-- CREATE: Can help create new leads, opportunities, notes, and tasks
-- READ: Can query and analyze existing data, generate reports and insights
-- UPDATE: Can help update lead status, priority, notes, and opportunity stages
-- DELETE: Can help archive or remove outdated records (with proper validation)
-- BUSINESS RULES: Understands validation requirements, required fields, and workflow constraints`;
+CAPABILITIES:
+- CREATE: Leads, opportunities, notes, tasks, contacts
+- READ: Query data, generate insights, analyze patterns
+- UPDATE: Status, priority, stages, notes, relationships
+- DELETE: Archive outdated records (with validation)
+- BUSINESS RULES: Understands validation, required fields, workflow constraints`;
   }
 
   /**
@@ -336,14 +344,14 @@ CRITICAL: You are helping ${workspace.name}. Frame all advice from their perspec
       
       if (appType === 'Speedrun') {
         // 🏆 OPTIMIZATION: Skip slow Speedrun data fetch to improve response time
-        // The data fetch makes an HTTP request to another API endpoint which is slow
-        // Instead, add minimal context that doesn't require data fetching
-        dataContext += `\n\nSPEEDRUN APPLICATION CONTEXT:
-- User is working in the Speedrun application (high-velocity sales methodology)
-- Speedrun focuses on rapid prospect contact and qualification
-- User can see prospect lists, selected prospect details, and pipeline metrics
-- Provide insights based on Speedrun methodology and best practices
-- Reference Speedrun-specific workflows and strategies in responses`;
+        // Add succinct Speedrun context (detailed definition already in buildApplicationContext)
+        dataContext += `\n\nSPEEDRUN DATA CONTEXT:
+- Speedrun = daily prioritized prospect list (always exists, may be empty)
+- Prospects ranked by strategic priority (Rank 1 = highest priority)
+- Each prospect shows: name, company, stage (LEAD/PROSPECT/OPPORTUNITY), actions count, last contact date
+- Users work through list daily in priority order
+- If list appears empty: say "Your Speedrun list appears empty" (not "Speedrun doesn't exist")
+- Help users add prospects to Speedrun if empty, or prioritize/contact existing prospects`;
       } else if (appType === 'Pipeline') {
         const pipelineData = await this.fetchPipelineData(workspaceId, userId);
         if (pipelineData) {

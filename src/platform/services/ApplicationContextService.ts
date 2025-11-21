@@ -147,18 +147,20 @@ export class ApplicationContextService {
 
     ['speedrun', {
       name: 'Speedrun',
-      purpose: 'Rapid lead processing and qualification',
-      capabilities: ['Quick qualification', 'Bulk processing', 'Fast follow-up', 'Efficiency tools'],
-      commonTasks: ['Process leads quickly', 'Qualify in bulk', 'Set rapid follow-ups', 'Optimize efficiency'],
-      aiGuidance: 'Focus on speed and efficiency in lead processing. Help optimize workflows and reduce time-to-contact.',
+      purpose: 'Daily prioritized prospect list - THE DAILY LIST. Ranked list of prospects to contact each day, prioritized by strategic importance.',
+      capabilities: ['Daily prospect list', 'Priority ranking', 'Prospect details', 'Action tracking', 'Last contact dates', 'Daily workflow management'],
+      commonTasks: ['Review daily list', 'Contact ranked prospects', 'Track actions', 'Prioritize prospects', 'Complete daily contacts', 'Understand rankings'],
+      aiGuidance: 'CRITICAL: Speedrun IS the daily list - it always exists (may be empty but Speedrun itself exists). When users say "Speedrun", "my list", "daily list", or "today\'s list" - they mean THIS existing list. NEVER say "Speedrun doesn\'t exist" or "you need to create Speedrun". If empty, say "Your Speedrun list appears empty" and help them add prospects. Provide insights about prospects in their Speedrun list, help prioritize, suggest actions, and explain why prospects are ranked where they are.',
       examples: [
-        'How can I process these leads faster?',
-        'What\'s the quickest way to qualify?',
-        'How do I optimize my workflow?',
-        'What tools can speed this up?'
+        'Tell me about my Speedrun list',
+        'Who should I contact next?',
+        'Why is this prospect ranked #1?',
+        'What actions should I take on these prospects?',
+        'Help me understand my daily list',
+        'How do I add prospects to Speedrun?'
       ],
-      dataTypes: ['Lead volume', 'Processing time', 'Conversion rates', 'Efficiency metrics'],
-      relatedSections: ['leads', 'prospects']
+      dataTypes: ['Ranked prospects', 'Priority scores', 'Action counts', 'Last contact dates', 'Prospect stages'],
+      relatedSections: ['leads', 'prospects', 'people']
     }],
 
     ['metrics', {

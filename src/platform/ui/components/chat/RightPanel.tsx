@@ -674,15 +674,24 @@ export function RightPanel() {
     if (typeof window !== 'undefined' && conversations.length > 0 && workspaceId && userId) {
       try {
         const storageKey = `adrata-conversations-${workspaceId}-${userId}`;
-        localStorage.setItem(storageKey, JSON.stringify(conversations));
+        // Filter out typing/browsing indicators before saving (they're temporary UI states)
+        const conversationsToSave = conversations.map(conv => ({
+          ...conv,
+          messages: conv.messages.filter(msg => 
+            msg.content !== 'typing' && 
+            msg.content !== 'browsing' &&
+            msg.content !== 'thinking'
+          )
+        }));
+        localStorage.setItem(storageKey, JSON.stringify(conversationsToSave));
         if (process.env.NODE_ENV === 'development') {
-          console.log('💾 [CHAT] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
+          console.log('💾 [CHAT] Saved conversations to localStorage:', conversationsToSave.length, 'conversations for workspace:', workspaceId, 'user:', userId);
         }
       } catch (error) {
         console.warn('Failed to save conversations to localStorage:', error);
       }
     }
-  }, [conversations, workspaceId]);
+  }, [conversations, workspaceId, userId]);
 
   // Save deleted conversation IDs to localStorage whenever they change - USER ISOLATED
   useEffect(() => {
@@ -2459,8 +2468,6 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     // Reset scroll state when sending a new message (user wants to see the response)
     userScrolledUpRef.current = false;
     
-    // Declare thinkingTimeout at function scope so it's accessible in try/catch
-    let thinkingTimeout: NodeJS.Timeout | null = null;
     
       // 🔧 FIX: Use refs to get the latest record context at send time (avoid stale closures)
       const latestRecord = currentRecordRef.current;
@@ -2534,17 +2541,17 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           : conv
       ));
       
-      // Save to API in background
+      // Save user message to API FIRST (ensure it's persisted before proceeding)
       const activeConv = conversations.find(c => c.isActive);
       if (activeConv) {
         // Ensure main-chat has an API ID before saving
         if (activeConv.id === 'main-chat') {
           const apiId = await ensureMainChatInAPI();
           if (apiId) {
-            saveMessageToAPI(apiId, userMessage);
+            await saveMessageToAPI(apiId, userMessage);
           }
         } else {
-          saveMessageToAPI(activeConv.id, userMessage);
+          await saveMessageToAPI(activeConv.id, userMessage);
         }
       }
       
@@ -2561,10 +2568,6 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
                                 input.toLowerCase().includes('http') ||
                                 input.toLowerCase().includes('www.');
       
-      // Track request start time for thinking indicator
-      const requestStartTime = Date.now();
-      const THINKING_THRESHOLD = 500; // Show thinking box if response takes >500ms
-      
       // Show simple "..." immediately (lightning fast)
       const typingMessageOriginal: ChatMessage = {
         id: `typing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -2580,28 +2583,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           : conv
       ));
       
-      // Show thinking widget if response takes >500ms (expanded by default with cycling preview)
-      let thinkingMessageId: string | null = null;
-      if (!isWebResearchQuery) {
-        thinkingTimeout = setTimeout(() => {
-          // Add thinking widget (expanded by default)
-          thinkingMessageId = `thinking-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-          const thinkingMessage: ChatMessage = {
-            id: thinkingMessageId,
-            type: 'assistant',
-            content: 'thinking',
-            timestamp: new Date(),
-            reasoning: {
-              thinkingSteps: [] // Will be updated when response arrives
-            }
-          };
-          setConversations(prev => prev.map(conv => 
-            conv.isActive 
-              ? { ...conv, messages: [...conv.messages, thinkingMessage] }
-              : conv
-          ));
-        }, THINKING_THRESHOLD);
-      }
+      // No thinking widget - just keep the simple "..." typing indicator
 
       // Check for Excel import request
       const isExcelImportRequest = input.toLowerCase().includes('import the excel data') || 
@@ -3038,62 +3020,42 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           }
         }
 
-        // Clear thinking timeout if response came quickly
-        if (thinkingTimeout) {
-          clearTimeout(thinkingTimeout);
-        }
-        
-        // Update thinking message with real thinkingSteps from response before replacing it
-        // This allows the thinking widget to show actual processing steps
-        setConversations(prev => prev.map(conv => {
-          if (!conv.isActive) return conv;
-          
-          const updatedMessages = conv.messages.map(msg => {
-            if (msg.content === 'thinking' && data.reasoning?.thinkingSteps) {
-              // Update thinking message with real thinkingSteps
-              return {
-                ...msg,
-                reasoning: {
-                  ...msg.reasoning,
-                  thinkingSteps: data.reasoning.thinkingSteps
-                }
-              };
-            }
-            return msg;
-          });
-          
-          // Remove typing/browsing/thinking messages and add final response
-          return {
-            ...conv,
-            messages: [
-              ...updatedMessages.filter(msg => 
-                msg.content !== 'typing' && 
-                msg.content !== 'browsing' && 
-                msg.content !== 'thinking'
-              ),
-              ...messagesToAdd
-            ],
-            lastActivity: new Date()
-          };
-        }));
-        
-        // Save to API in background
+        // Save to API FIRST before updating UI (ensure messages are persisted)
         const activeConv = conversations.find(c => c.isActive);
         if (activeConv) {
           // Ensure main-chat has an API ID before saving
           if (activeConv.id === 'main-chat') {
             const apiId = await ensureMainChatInAPI();
             if (apiId) {
-              messagesToAdd.forEach(message => {
-                saveMessageToAPI(apiId, message);
-              });
+              // Save all messages before filtering
+              for (const message of messagesToAdd) {
+                await saveMessageToAPI(apiId, message);
+              }
             }
           } else {
-            messagesToAdd.forEach(message => {
-              saveMessageToAPI(activeConv.id, message);
-            });
+            // Save all messages before filtering
+            for (const message of messagesToAdd) {
+              await saveMessageToAPI(activeConv.id, message);
+            }
           }
         }
+        
+        // Remove typing/browsing messages and add final response AFTER saving
+        setConversations(prev => prev.map(conv => 
+          conv.isActive 
+            ? { 
+                ...conv, 
+                messages: [
+                  ...conv.messages.filter(msg => 
+                    msg.content !== 'typing' && 
+                    msg.content !== 'browsing'
+                  ),
+                  ...messagesToAdd
+                ],
+                lastActivity: new Date()
+              }
+            : conv
+        ));
         
         chat.setChatSessions(prev => {
           const currentMessages = prev[activeSubApp] || [];
@@ -3149,11 +3111,6 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         timestamp: new Date()
       };
 
-      // Clear thinking timeout on error
-      if (thinkingTimeout) {
-        clearTimeout(thinkingTimeout);
-      }
-      
       // Update UI immediately (optimistic update)
       setConversations(prev => prev.map(conv => 
         conv.isActive 

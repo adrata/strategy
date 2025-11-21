@@ -6,7 +6,6 @@ import { TypewriterText } from './TypewriterText';
 import { FileDisplayWidget } from './FileDisplayWidget';
 import { EnrichmentProgressTracker, createCFOEnrichmentSteps } from './EnrichmentProgressTracker';
 import { ReasoningWindow } from './ReasoningWindow';
-import { ThinkingWidget } from './ThinkingWidget';
 
 // Progress component with state management
 function EnrichmentProgressComponent({ message }: { message: any }) {
@@ -228,10 +227,6 @@ export function MessageList({
             <div className="text-base text-muted-foreground">
               <TypingIndicator />
             </div>
-          ) : message['content'] === 'thinking' ? (
-            <ThinkingWidget 
-              thinkingSteps={message.reasoning?.thinkingSteps || []}
-            />
           ) : message['content'] === 'browsing' ? (
             <div className="space-y-1">
               <div className="text-base text-muted flex items-center gap-2">
