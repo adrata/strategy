@@ -61,16 +61,57 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   const timestamp = new Date().toISOString();
+  const results: Record<string, any> = {};
   
-  console.log('✅ [AI-CHAT-DEBUG] GET handler REACHED at:', timestamp);
+  // Test each import that the main route uses
+  try {
+    const { claudeAIService } = await import('@/platform/services/ClaudeAIService');
+    results['ClaudeAIService'] = '✅ OK';
+  } catch (e: any) { results['ClaudeAIService'] = `❌ ${e.message}`; }
+
+  try {
+    const { openRouterService } = await import('@/platform/services/OpenRouterService');
+    results['OpenRouterService'] = '✅ OK';
+  } catch (e: any) { results['OpenRouterService'] = `❌ ${e.message}`; }
+
+  try {
+    const { AIContextService } = await import('@/platform/ai/services/AIContextService');
+    results['AIContextService'] = '✅ OK';
+  } catch (e: any) { results['AIContextService'] = `❌ ${e.message}`; }
+
+  try {
+    const helpers = await import('@/platform/services/secure-api-helper');
+    results['secure-api-helper'] = '✅ OK';
+  } catch (e: any) { results['secure-api-helper'] = `❌ ${e.message}`; }
+
+  try {
+    const { promptInjectionGuard } = await import('@/platform/security/prompt-injection-guard');
+    results['promptInjectionGuard'] = '✅ OK';
+  } catch (e: any) { results['promptInjectionGuard'] = `❌ ${e.message}`; }
+
+  try {
+    const { rateLimiter } = await import('@/platform/security/rate-limiter');
+    results['rateLimiter'] = '✅ OK';
+  } catch (e: any) { results['rateLimiter'] = `❌ ${e.message}`; }
+
+  try {
+    const { securityMonitor } = await import('@/platform/security/security-monitor');
+    results['securityMonitor'] = '✅ OK';
+  } catch (e: any) { results['securityMonitor'] = `❌ ${e.message}`; }
+
+  try {
+    const tools = await import('@/platform/ai/tools/role-finder-tool');
+    results['role-finder-tool'] = '✅ OK';
+  } catch (e: any) { results['role-finder-tool'] = `❌ ${e.message}`; }
+
+  const failed = Object.entries(results).filter(([_, v]) => String(v).startsWith('❌'));
   
   return NextResponse.json({
-    success: true,
-    message: 'Debug endpoint is working. Use POST to test.',
+    success: failed.length === 0,
+    message: failed.length === 0 ? 'All imports OK!' : `${failed.length} imports failed`,
     timestamp,
-    method: 'GET',
-    pathname: request.nextUrl.pathname,
-    info: 'If you see this, the route is accessible. Try POST next.'
+    results,
+    failedImports: failed.map(([k]) => k)
   });
 }
 
