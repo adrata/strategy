@@ -1429,6 +1429,9 @@ export function RightPanel() {
                             (conv.metadata as any)?.isMainChat === true;
           return conv;
         }));
+        
+        // Scroll to bottom after messages load
+        setTimeout(() => scrollToBottom(true), 100);
       }, 1000);
       
       return () => clearTimeout(timer);
@@ -1951,6 +1954,16 @@ export function RightPanel() {
       });
     }
   }, []); // Only on mount
+  
+  // Scroll to bottom when messages are first loaded
+  const prevMessageCountRef = useRef(0);
+  useEffect(() => {
+    // If messages went from 0 to some, scroll to bottom (initial load)
+    if (prevMessageCountRef.current === 0 && chatMessages.length > 0) {
+      setTimeout(() => scrollToBottom(true), 100);
+    }
+    prevMessageCountRef.current = chatMessages.length;
+  }, [chatMessages.length]);
 
   // Excel import handling with AI analysis
   const handleExcelImport = async (file: File, parsedDoc: any, tableCount: number, rowCount: number) => {
