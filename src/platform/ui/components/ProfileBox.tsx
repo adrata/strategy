@@ -400,32 +400,35 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
     // Use appropriate navigation method for platform
     if (isDesktop) {
       // Allow navigation to Grand Central routes, pipeline, settings pages, and workspace apps for admin users
-      const allowedDesktopRoutes = [
+      // Support both relative paths (./grand-central) and absolute paths (/workspace/grand-central)
+      const allowedDesktopRoutePatterns = [
         "/pipeline",
-        "./grand-central/dashboard",
-        "./grand-central/profile",
-        "./grand-central/integrations",
-        "./grand-central/settings",
+        "grand-central/dashboard",
+        "grand-central/profile",
+        "grand-central/integrations",
+        "grand-central/settings",
+        "grand-central",
         "/highway",
         "/optimization",
         "/docs/", // Allow all docs routes
-        "./action-guide", // Allow action guide routes
+        "action-guide", // Allow action guide routes
         // Workspace apps - only for admin users
         ...(isAdminUser ? [
-          "./stacks",
-          "./particle",
-          "./tower",
-          "./olympus",
-          "./encode",
-          "./database"
+          "stacks",
+          "particle",
+          "tower",
+          "olympus",
+          "encode",
+          "database"
         ] : []),
-        // Grand Central - available for all users
-        "./grand-central"
       ];
 
-      const isAllowedRoute = allowedDesktopRoutes.some(
-        (allowedRoute) =>
-          route === allowedRoute || route.startsWith(allowedRoute),
+      const isAllowedRoute = allowedDesktopRoutePatterns.some(
+        (pattern) =>
+          route === pattern || 
+          route.startsWith(pattern) || 
+          route.includes(`/${pattern}`) ||
+          route.startsWith(`./${pattern}`),
       );
 
       if (isAllowedRoute) {
@@ -1169,10 +1172,23 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         })() && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-foreground rounded-lg cursor-pointer hover:bg-hover transition-colors"
-            onClick={() => handleNavigation("./action-guide")}
+            onClick={() => {
+              // Use absolute path with workspace slug to ensure correct navigation from any page
+              const actionGuidePath = currentWorkspaceSlug 
+                ? `/${currentWorkspaceSlug}/action-guide`
+                : "./action-guide";
+              handleNavigation(actionGuidePath);
+            }}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => e['key'] === "Enter" && handleNavigation("./action-guide")}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                const actionGuidePath = currentWorkspaceSlug 
+                  ? `/${currentWorkspaceSlug}/action-guide`
+                  : "./action-guide";
+                handleNavigation(actionGuidePath);
+              }
+            }}
           >
             Action Guide
           </div>
@@ -1190,16 +1206,22 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             onClick={() => {
               console.log("🚉 Grand Central clicked - navigating to grand-central/integrations");
               setIsProfileOpen(false);
-              // Use relative path to ensure it works with current workspace
-              handleNavigation("./grand-central/integrations");
+              // Use absolute path with workspace slug to ensure correct navigation from any page
+              const grandCentralPath = currentWorkspaceSlug 
+                ? `/${currentWorkspaceSlug}/grand-central/integrations`
+                : "./grand-central/integrations";
+              handleNavigation(grandCentralPath);
             }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e['key'] === "Enter") {
                 setIsProfileOpen(false);
-                // Use relative path to ensure it works with current workspace
-                handleNavigation("./grand-central/integrations");
+                // Use absolute path with workspace slug to ensure correct navigation from any page
+                const grandCentralPath = currentWorkspaceSlug 
+                  ? `/${currentWorkspaceSlug}/grand-central/integrations`
+                  : "./grand-central/integrations";
+                handleNavigation(grandCentralPath);
               }
             }}
           >

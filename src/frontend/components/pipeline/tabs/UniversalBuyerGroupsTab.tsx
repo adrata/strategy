@@ -149,38 +149,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
           break;
         case 'OPPORTUNITY':
-          // For OPPORTUNITY status, navigate to the company's opportunity record
-          // Get company information from the record prop
-          let companyName = '';
-          let companyId = '';
-          
-          // Check if this is a company-only record
-          const isCompanyOnlyRecord = recordType === 'companies' ||
-                                     (recordType === 'speedrun' && record?.recordType === 'company') ||
-                                     (recordType === 'leads' && record?.isCompanyLead === true) ||
-                                     (recordType === 'prospects' && record?.isCompanyLead === true);
-          
-          if (isCompanyOnlyRecord) {
-            // For company records, use the record name as company name
-            companyName = record.name || 
-                         (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                         record.companyName ||
-                         'Company';
-            companyId = record.id; // For company records, the record ID is the company ID
-          } else {
-            // For person records (people, leads, prospects that are NOT company leads), get company from companyId or company object
-            companyId = record.companyId || 
-                       record?.company?.id || 
-                       (typeof record?.company === 'object' && record?.company?.id) ||
-                       '';
-            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                         record.companyName || 'Company';
-          }
-          
-          // Generate company slug for opportunity navigation
-          const companySlug = generateSlug(companyName, companyId);
-          personUrl = `/${workspaceSlug}/opportunities/${companySlug}`;
-          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to company opportunity: ${companyName} (${companyId})`);
+          // For OPPORTUNITY status, navigate to the person's prospect record
+          // (A person with OPPORTUNITY status is still a prospect - they're part of an opportunity)
+          personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
+          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to person's prospect record: ${personName}`);
           break;
         default:
           // CLIENT, SUPERFAN, or any other status
@@ -1116,38 +1088,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
           break;
         case 'OPPORTUNITY':
-          // For OPPORTUNITY status, navigate to the company's opportunity record
-          // Get company information from the record prop
-          let companyName = '';
-          let companyId = '';
-          
-          // Check if this is a company-only record
-          const isCompanyOnlyRecord = recordType === 'companies' ||
-                                     (recordType === 'speedrun' && record?.recordType === 'company') ||
-                                     (recordType === 'leads' && record?.isCompanyLead === true) ||
-                                     (recordType === 'prospects' && record?.isCompanyLead === true);
-          
-          if (isCompanyOnlyRecord) {
-            // For company records, use the record name as company name
-            companyName = record.name || 
-                         (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                         record.companyName ||
-                         'Company';
-            companyId = record.id; // For company records, the record ID is the company ID
-          } else {
-            // For person records (people, leads, prospects that are NOT company leads), get company from companyId or company object
-            companyId = record.companyId || 
-                       record?.company?.id || 
-                       (typeof record?.company === 'object' && record?.company?.id) ||
-                       '';
-            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                         record.companyName || 'Company';
-          }
-          
-          // Generate company slug for opportunity navigation
-          const companySlug = generateSlug(companyName, companyId);
-          personUrl = `/${workspaceSlug}/opportunities/${companySlug}`;
-          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to company opportunity: ${companyName} (${companyId})`);
+          // For OPPORTUNITY status, navigate to the person's prospect record
+          // (A person with OPPORTUNITY status is still a prospect - they're part of an opportunity)
+          personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
+          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to person's prospect record: ${personName}`);
           break;
         default:
           // CLIENT, SUPERFAN, or any other status

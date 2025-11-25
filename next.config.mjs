@@ -1,6 +1,9 @@
 
 // ADRATA DESKTOP BUILD CONFIGURATION
-import { withBotId } from 'botid/next/config';
+// NOTE: withBotId removed - it was causing 405 errors on API routes in production
+// The Vercel BotID wrapper adds rewrites and potentially middleware that interferes
+// with POST requests to API routes. If bot protection is needed, configure it
+// at the Vercel dashboard level instead, or use checkBotId() selectively on specific routes.
 
 const isDesktop = process.env.TAURI_BUILD === 'true';
 
@@ -8,7 +11,6 @@ const nextConfig = {
   // Enable static export for Tauri desktop builds
   output: isDesktop ? 'export' : undefined,
   trailingSlash: true,
-  
   
   // Disable image optimization for static export
   images: {
@@ -111,5 +113,5 @@ const nextConfig = {
   }
 };
 
-// Wrap with BotID for bot protection (only in production, not for desktop builds)
-export default isDesktop ? nextConfig : withBotId(nextConfig);
+// Export config directly - withBotId wrapper removed due to 405 errors on API routes
+export default nextConfig;
