@@ -1913,7 +1913,7 @@ export function RightPanel() {
     return findScrollContainer();
   }, [chatEndRef]);
 
-  // Scroll to bottom helper - respects user scroll intent
+  // Scroll to bottom helper - instant scroll, no animation
   const scrollToBottom = (force = false) => {
     if (chatEndRef.current && scrollContainerRef.current) {
       const container = scrollContainerRef.current;
@@ -1923,23 +1923,16 @@ export function RightPanel() {
       // 1. Forced (e.g., new message sent)
       // 2. User hasn't manually scrolled up AND is near bottom (within 100px)
       if (force || (!userScrolledUpRef.current && scrollBottom < 100)) {
-        // Use requestAnimationFrame for smoother scrolling
-        requestAnimationFrame(() => {
-          chatEndRef.current?.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'end',
-            inline: 'nearest'
-          });
+        chatEndRef.current?.scrollIntoView({ 
+          behavior: 'instant', 
+          block: 'end'
         });
       }
     } else if (chatEndRef.current) {
       // Fallback if container not found yet
-      requestAnimationFrame(() => {
-        chatEndRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
+      chatEndRef.current?.scrollIntoView({ 
+        behavior: 'instant', 
+        block: 'end'
       });
     }
   };
