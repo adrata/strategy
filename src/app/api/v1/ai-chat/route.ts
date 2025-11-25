@@ -7,8 +7,8 @@
 
 // Required for static export (desktop build)
 export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-export const maxDuration = 50; // 🏆 FIX: Reduced to 50 seconds to fail faster than Vercel's 60s timeout
+// NOTE: Removed 'runtime' and 'maxDuration' exports - they were causing 405 errors
+// maxDuration is set in vercel.json instead (60 seconds for this route)
 
 import { NextRequest, NextResponse } from 'next/server';
 import { claudeAIService } from '@/platform/services/ClaudeAIService';
