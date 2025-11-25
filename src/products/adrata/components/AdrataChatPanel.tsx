@@ -645,9 +645,9 @@ export function AdrataChatPanel() {
       ));
 
       // Call AI API - same endpoint as RightPanel
-      // API route moved to /api/v1/ai-chat to be protected by Vercel rewrites
-      // This prevents trailing slash redirect issues that convert POST to GET
-      let apiUrl = '/api/v1/ai-chat';
+      // API route uses trailing slash to match Next.js trailingSlash: true config
+      // This prevents 308 redirect that converts POST to GET
+      let apiUrl = '/api/v1/ai-chat/';
       const requestId = `adrata-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       // Enhanced logging: Capture actual URL being called

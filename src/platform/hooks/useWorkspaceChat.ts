@@ -674,11 +674,11 @@ Your rep may be pursuing the wrong contact for this specific deal. While Mary Gi
                 // Get document context for the current subApp
                 const storedDoc = getDocumentData(activeSubApp);
                 
-                // API route moved to /api/v1/ai-chat to be protected by Vercel rewrites
-                // This prevents trailing slash redirect issues that convert POST to GET
-                let apiUrl = '/api/v1/ai-chat';
+                // API route uses trailing slash to match Next.js trailingSlash: true config
+                // This prevents 308 redirect that converts POST to GET
+                let apiUrl = '/api/v1/ai-chat/';
                 
-                console.log('[HOOK] Making API call to /api/v1/ai-chat with POST method');
+                console.log('[HOOK] Making API call to /api/v1/ai-chat/ with POST method');
                 const chatResponse = await fetch(apiUrl, {
                   method: 'POST',
                   headers: {

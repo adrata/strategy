@@ -125,7 +125,7 @@ export class DeepValueReportService {
       
       const prompt = this.buildReportPrompt(report, context);
       
-      const response = await fetch('/api/v1/ai-chat', {
+      const response = await fetch('/api/v1/ai-chat/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ ${currentContent}
 
 Please provide the updated report content with the requested changes.`;
 
-      const response = await fetch('/api/v1/ai-chat', {
+      const response = await fetch('/api/v1/ai-chat/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -439,9 +439,9 @@ Please provide the updated report content with the requested changes.`;
   ): Promise<string> {
     const prompt = this.buildReportPrompt(report, context);
     
-    // API route moved to /api/v1/ai-chat to be protected by Vercel rewrites
-    // This prevents trailing slash redirect issues that convert POST to GET
-    let apiUrl = '/api/v1/ai-chat';
+    // API route uses trailing slash to match Next.js trailingSlash: true config
+    // This prevents 308 redirect that converts POST to GET
+    let apiUrl = '/api/v1/ai-chat/';
     
     try {
       const response = await fetch(apiUrl, {

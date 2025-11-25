@@ -152,9 +152,9 @@ async function generateReportContent(report: DeepValueReport, record: any): Prom
   const prompt = buildReportPrompt(report, record);
   
   try {
-    // API route moved to /api/v1/ai-chat to be protected by Vercel rewrites
-    // This prevents trailing slash redirect issues that convert POST to GET
-    let apiUrl = '/api/v1/ai-chat';
+    // API route uses trailing slash to match Next.js trailingSlash: true config
+    // This prevents 308 redirect that converts POST to GET
+    let apiUrl = '/api/v1/ai-chat/';
     
     const response = await fetch(apiUrl, {
       method: 'POST',
