@@ -35,12 +35,6 @@ import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } fr
 export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
   
-  // Log request for debugging (always log in staging/production to debug 405 issues)
-  console.log('🚀 [AI CHAT] Request received at:', new Date().toISOString());
-  console.log('🔍 [AI CHAT] Request method:', request.method);
-  console.log('🔍 [AI CHAT] Request URL:', request.url);
-  console.log('🔍 [AI CHAT] Request pathname:', request.nextUrl.pathname);
-  
   try {
     // 1. AUTHENTICATION CHECK - Use standardized auth helper (matches other working routes)
     const { context, response } = await getSecureApiContext(request, {
@@ -421,7 +415,7 @@ export async function POST(request: NextRequest) {
       });
       
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Context build timeout after 30 seconds')), 30000);
+        setTimeout(() => reject(new Error('Context build timeout')), 10000); // 10s for speed
       });
       
       workspaceContext = await Promise.race([contextBuildPromise, timeoutPromise]) as typeof workspaceContext;
@@ -560,7 +554,7 @@ export async function POST(request: NextRequest) {
         });
         
         const openRouterTimeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('OpenRouter response timeout after 25 seconds')), 25000);
+          setTimeout(() => reject(new Error('OpenRouter timeout')), 15000); // 15s for speed
         });
         
         const openRouterResponse = await Promise.race([openRouterPromise, openRouterTimeoutPromise]) as any;
@@ -725,7 +719,7 @@ export async function POST(request: NextRequest) {
       });
       
       const claudeTimeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Claude response timeout after 25 seconds')), 25000);
+        setTimeout(() => reject(new Error('Claude timeout')), 15000); // 15s for speed
       });
       
       const claudeResponse = await Promise.race([claudePromise, claudeTimeoutPromise]) as any;

@@ -2541,6 +2541,9 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           : conv
       ));
       
+      // Scroll to show user message immediately
+      setTimeout(() => scrollToBottom(true), 50);
+      
       // Save user message to API FIRST (ensure it's persisted before proceeding)
       const activeConv = conversations.find(c => c.isActive);
       if (activeConv) {
@@ -2582,6 +2585,9 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           ? { ...conv, messages: [...conv.messages, typingMessageOriginal] }
           : conv
       ));
+      
+      // Scroll to show typing indicator
+      setTimeout(() => scrollToBottom(true), 50);
       
       // No thinking widget - just keep the simple "..." typing indicator
 
@@ -2684,107 +2690,16 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         }
       }
 
-      // Enhanced AI API call with OpenRouter integration
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🤖 [AI CHAT] Making optimized API call to /api/v1/ai-chat/ with OpenRouter');
-      }
-      const startTime = performance.now();
-      
-      // 🚀 PARTNEROS DETECTION: Determine if we're in PartnerOS mode
+      // Determine if we're in PartnerOS mode
       const isPartnerOSMode = typeof window !== 'undefined' && (
         window.location.pathname.includes('/partner-os/') || 
         sessionStorage.getItem('activeSubApp') === 'partneros'
       );
-      // Use 'partneros' as appType when in PartnerOS mode, otherwise use activeSubApp
       const effectiveAppType = isPartnerOSMode ? 'partneros' : activeSubApp;
       
-      // 🔍 ENHANCED LOGGING: Show what record context is being sent to AI
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🤖 [AI CHAT REQUEST] Sending context to AI:', {
-          hasCurrentRecord: !!currentRecord,
-          recordType,
-          recordId: currentRecord?.id,
-          recordName: currentRecord?.name || currentRecord?.fullName,
-          recordCompany: currentRecord?.company || currentRecord?.companyName,
-          recordTitle: currentRecord?.title || currentRecord?.jobTitle,
-          recordWebsite: currentRecord?.website,
-          recordIndustry: currentRecord?.industry,
-          recordEmployeeCount: currentRecord?.employeeCount || currentRecord?.size,
-          recordDescription: currentRecord?.description ? 'Yes' : 'No',
-          hasListViewContext: !!listViewContext,
-          listViewRecordCount: listViewContext?.visibleRecords?.length || 0,
-          currentUrl: window.location.href,
-          pathname: window.location.pathname
-        });
-      }
-      
-      // 🔍 VISUAL FEEDBACK: Warn user if no record context available on a record page
-      const isOnRecordPage = window.location.pathname.match(/\/(companies|people|leads|prospects|opportunities)\/[^/]+$/);
-      if (isOnRecordPage && !currentRecord) {
-        console.warn('⚠️ [AI CHAT] User is on a record page but no record context is available:', {
-          pathname: window.location.pathname,
-          hasCurrentRecord: !!currentRecord,
-          recordType
-        });
-      }
-      
-      // Log what we're sending to the API for debugging
-      console.log('📤 [AI RIGHT PANEL] Sending AI chat request:', {
-        hasCurrentRecord: !!latestRecord,
-        recordType: latestRecordType,
-        recordId: latestRecord?.id,
-        recordName: latestRecord?.name || latestRecord?.fullName,
-        recordCompany: typeof latestRecord?.company === 'string' ? latestRecord.company : (latestRecord?.company?.name || latestRecord?.companyName),
-        recordTitle: latestRecord?.title || latestRecord?.jobTitle,
-        recordFieldCount: latestRecord ? Object.keys(latestRecord).length : 0,
-        message: input.substring(0, 100) + '...',
-        // Debug: Show if there's a mismatch between hook and ref
-        hookVsRefMatch: latestRecord?.id === currentRecord?.id
-      });
-
       // API route uses trailing slash to match Next.js trailingSlash: true config
-      // This prevents 308 redirect that converts POST to GET
-      let apiUrl = '/api/v1/ai-chat/';
-      
+      const apiUrl = '/api/v1/ai-chat/';
       const requestId = `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      // 🔍 COMPREHENSIVE DEBUGGING: Log everything about the request
-      const fullUrl = typeof window !== 'undefined' ? new URL(apiUrl, window.location.origin).href : apiUrl;
-      const debugInfo = {
-        // Request details
-        url: apiUrl,
-        fullUrl,
-        method: 'POST',
-        requestId,
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV,
-        hasTrailingSlash: apiUrl.endsWith('/'),
-        originalPath: '/api/v1/ai-chat/',
-        // Environment details
-        windowLocation: typeof window !== 'undefined' ? window.location.href : 'N/A',
-        windowOrigin: typeof window !== 'undefined' ? window.location.origin : 'N/A',
-        windowPathname: typeof window !== 'undefined' ? window.location.pathname : 'N/A',
-        // Next.js config (if accessible)
-        nextConfigTrailingSlash: 'unknown (server-side)',
-        // Request will be made to
-        finalRequestUrl: fullUrl
-      };
-      
-      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Preparing request:', debugInfo);
-      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Request URL will be:', apiUrl);
-      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Full URL will be:', fullUrl);
-      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Method will be: POST');
-      console.log('🔍 [AI CHAT DEBUG] STEP 1 - Frontend: Has trailing slash?', apiUrl.endsWith('/'));
-
-      // 🔍 DEBUGGING: Log right before fetch
-      console.log('🔍 [AI CHAT DEBUG] STEP 2 - Frontend: About to call fetch:', {
-        url: apiUrl,
-        method: 'POST',
-        requestId,
-        timestamp: new Date().toISOString()
-      });
-      
-      const fetchStartTime = performance.now();
       
       // Add timeout to prevent hanging requests (60 seconds)
       const timeoutPromise = new Promise<never>((_, reject) => {
@@ -2831,99 +2746,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       
       const response = await Promise.race([fetchPromise, timeoutPromise]);
 
-      const fetchEndTime = performance.now();
-      const fetchTime = fetchEndTime - fetchStartTime;
-      const responseTime = fetchEndTime - startTime;
-      
-      // 🔍 COMPREHENSIVE DEBUGGING: Log response details
-      console.log('🔍 [AI CHAT DEBUG] STEP 3 - Frontend: Fetch completed:', {
-        fetchTime: `${fetchTime.toFixed(2)}ms`,
-        totalTime: `${responseTime.toFixed(2)}ms`,
-        timestamp: new Date().toISOString()
-      });
-      
-      // Enhanced logging: Always log response details, especially in production for debugging
-      const responseHeaders = Object.fromEntries(response.headers.entries());
-      const responseDetails = {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        responseTime: `${responseTime.toFixed(2)}ms`,
-        url: response.url, // This will show the final URL after any redirects
-        headers: responseHeaders,
-        requestId,
-        // 🔍 DEBUG: Compare URLs
-        originalRequestUrl: apiUrl,
-        originalFullUrl: fullUrl,
-        finalResponseUrl: response.url,
-        urlChanged: response.url !== fullUrl,
-        urlChangedFromOriginal: response.url !== apiUrl
-      };
-      
-      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response received:', responseDetails);
-      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response status:', response.status);
-      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response URL:', response.url);
-      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Original request URL:', apiUrl);
-      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: URL changed?', response.url !== fullUrl);
-      console.log('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Response headers:', responseHeaders);
-      
-      // Check for redirects (status 307, 308, or Location header)
-      if (response.status === 307 || response.status === 308 || responseHeaders['location']) {
-        console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: ⚠️ REDIRECT DETECTED:', {
-          status: response.status,
-          location: responseHeaders['location'],
-          finalUrl: response.url,
-          originalUrl: apiUrl,
-          originalFullUrl: fullUrl,
-          redirectType: response.status === 307 ? 'Temporary' : response.status === 308 ? 'Permanent' : 'Unknown'
-        });
-      }
-
-      // Validate response before parsing JSON
+      // Validate response
       if (!response.ok) {
-        // Enhanced error logging for 405 errors specifically
-        if (response.status === 405) {
-          console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: 🚨 HTTP 405 ERROR DETAILS:', {
-            status: response.status,
-            statusText: response.statusText,
-            url: response.url,
-            originalUrl: apiUrl,
-            originalFullUrl: fullUrl,
-            method: 'POST',
-            headers: responseHeaders,
-            requestId,
-            environment: process.env.NODE_ENV,
-            timestamp: new Date().toISOString(),
-            redirectLocation: responseHeaders['location'],
-            // Log if URL changed (indicating redirect)
-            urlChanged: response.url !== fullUrl,
-            urlChangedFromOriginal: response.url !== apiUrl,
-            // Check for redirect indicators
-            hasLocationHeader: !!responseHeaders['location'],
-            isRedirectStatus: response.status === 307 || response.status === 308,
-            // Network debugging
-            responseType: response.type,
-            responseRedirected: response.redirected
-          });
-          
-          // Try to get response body for more info
-          try {
-            const responseClone = response.clone();
-            const responseTextError = await responseClone.text();
-            console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: 405 Error response body:', responseTextError);
-          } catch (e) {
-            console.error('🔍 [AI CHAT DEBUG] STEP 4 - Frontend: Could not read 405 error body:', e);
-          }
-        } else {
-          console.error('🚨 [AI CHAT] HTTP Error:', {
-            status: response.status,
-            statusText: response.statusText,
-            url: response.url,
-            originalUrl: apiUrl,
-            headers: responseHeaders,
-            requestId
-          });
-        }
+        console.error('[AI CHAT] HTTP Error:', response.status, response.statusText);
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
@@ -3138,7 +2963,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
     } finally {
       setIsProcessing(false);
-      setTimeout(scrollToBottom, 100);
+      setTimeout(() => scrollToBottom(true), 100);
     }
   };
 
