@@ -5,7 +5,7 @@ import { InChatTodoList } from './InChatTodoList';
 import { TypewriterText } from './TypewriterText';
 import { FileDisplayWidget } from './FileDisplayWidget';
 import { EnrichmentProgressTracker, createCFOEnrichmentSteps } from './EnrichmentProgressTracker';
-import { ReasoningWindow } from './ReasoningWindow';
+// import { ReasoningWindow } from './ReasoningWindow'; // Removed - reasoning box disabled
 
 // Progress component with state management
 function EnrichmentProgressComponent({ message }: { message: any }) {
@@ -424,10 +424,7 @@ export function MessageList({
             </div>
           )}
           
-          {/* Display AI Reasoning Window for assistant messages */}
-          {message.type === 'assistant' && message.reasoning && (
-            <ReasoningWindow reasoning={message.reasoning} />
-          )}
+          {/* AI Reasoning Window removed - was causing UI clutter */}
         </div>
       ))}
       
