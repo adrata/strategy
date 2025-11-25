@@ -120,8 +120,16 @@
   ],
   "rewrites": [
     {
-      "source": "/api/v1/(.*)",
-      "destination": "/api/v1/$1"
+      "source": "/api/v1/ai-chat",
+      "destination": "/api/v1/ai-chat/"
+    },
+    {
+      "source": "/api/v1/ai-chat-debug",
+      "destination": "/api/v1/ai-chat-debug/"
+    },
+    {
+      "source": "/api/test-post",
+      "destination": "/api/test-post/"
     }
   ],
   "redirects": [

@@ -11,6 +11,9 @@ const nextConfig = {
   // Enable static export for Tauri desktop builds
   output: isDesktop ? 'export' : undefined,
   trailingSlash: true,
+  // 🔧 FIX 405: Skip trailing slash redirects to prevent POST→GET conversion
+  // This allows API routes to work without redirect issues
+  skipTrailingSlashRedirect: true,
   
   // Disable image optimization for static export
   images: {
