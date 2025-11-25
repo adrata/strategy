@@ -398,7 +398,16 @@ export async function POST(request: NextRequest) {
     console.log('🔍 [AI CHAT] Starting context build...');
     addThinkingStep('Building context...');
     
-    let workspaceContext;
+    let workspaceContext: {
+      userContext: string;
+      applicationContext: string;
+      dataContext: string;
+      recordContext: string;
+      listViewContext: string;
+      documentContext: string;
+      systemContext: string;
+      workspaceContext?: string;
+    };
     try {
       const contextBuildPromise = AIContextService.buildContext({
         userId: context.userId,
@@ -415,7 +424,7 @@ export async function POST(request: NextRequest) {
         setTimeout(() => reject(new Error('Context build timeout after 30 seconds')), 30000);
       });
       
-      workspaceContext = await Promise.race([contextBuildPromise, timeoutPromise]);
+      workspaceContext = await Promise.race([contextBuildPromise, timeoutPromise]) as typeof workspaceContext;
       const contextBuildTime = Date.now() - contextStartTime;
       console.log('✅ [AI CHAT] Context build completed:', `${contextBuildTime}ms`);
       
@@ -554,7 +563,7 @@ export async function POST(request: NextRequest) {
           setTimeout(() => reject(new Error('OpenRouter response timeout after 25 seconds')), 25000);
         });
         
-        const openRouterResponse = await Promise.race([openRouterPromise, openRouterTimeoutPromise]);
+        const openRouterResponse = await Promise.race([openRouterPromise, openRouterTimeoutPromise]) as any;
         const openRouterTime = Date.now() - openRouterStartTime;
         console.log('✅ [AI CHAT] OpenRouter response received:', `${openRouterTime}ms`);
         
@@ -719,7 +728,7 @@ export async function POST(request: NextRequest) {
         setTimeout(() => reject(new Error('Claude response timeout after 25 seconds')), 25000);
       });
       
-      const claudeResponse = await Promise.race([claudePromise, claudeTimeoutPromise]);
+      const claudeResponse = await Promise.race([claudePromise, claudeTimeoutPromise]) as any;
       const claudeTime = Date.now() - claudeStartTime;
       console.log('✅ [AI CHAT] Claude response received:', `${claudeTime}ms`);
       
