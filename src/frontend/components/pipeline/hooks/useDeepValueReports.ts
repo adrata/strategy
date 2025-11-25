@@ -152,17 +152,9 @@ async function generateReportContent(report: DeepValueReport, record: any): Prom
   const prompt = buildReportPrompt(report, record);
   
   try {
-    // CRITICAL: Use trailing slash to match Next.js trailingSlash: true config
-    // Next.js trailingSlash: true expects URLs WITH trailing slashes
-    // If we send /api/ai-chat (no slash), Next.js redirects to /api/ai-chat/ (with slash)
-    // This redirect converts POST → GET, causing 405 errors
-    // Solution: Send /api/ai-chat/ (with slash) to match Next.js expectations, preventing redirect
-    let apiUrl = '/api/ai-chat/';
-    
-    // Ensure trailing slash is present (defensive)
-    if (!apiUrl.endsWith('/')) {
-      apiUrl = apiUrl + '/';
-    }
+    // API route moved to /api/v1/ai-chat to be protected by Vercel rewrites
+    // This prevents trailing slash redirect issues that convert POST to GET
+    let apiUrl = '/api/v1/ai-chat';
     
     const response = await fetch(apiUrl, {
       method: 'POST',

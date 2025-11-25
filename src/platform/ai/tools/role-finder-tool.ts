@@ -84,7 +84,7 @@ export async function executeRoleFinderTool(
   try {
     console.log(`🔧 [ROLE FINDER TOOL] Executing: ${input.role} at ${input.company}`);
 
-    const response = await fetch('/api/ai-chat/tools/find-role-at-company', {
+    const response = await fetch('/api/v1/ai-chat/tools/find-role-at-company', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

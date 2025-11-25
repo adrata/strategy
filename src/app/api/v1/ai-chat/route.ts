@@ -24,7 +24,7 @@ import { securityMonitor } from '@/platform/security/security-monitor';
 import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } from '@/platform/ai/tools/role-finder-tool';
 
 /**
- * POST /api/ai-chat - AI Chat API Endpoint
+ * POST /api/v1/ai-chat - AI Chat API Endpoint
  * 
  * OpenRouter-powered AI integration with intelligent model routing
  * Provides fast, context-aware responses with automatic failover and cost optimization
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     if (response) {
       // Log authentication failure for security monitoring
       securityMonitor.logAuthenticationFailure(
-        '/api/ai-chat',
+        '/api/v1/ai-chat',
         request.headers.get('user-agent') || undefined,
         request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
         'Authentication failed via getSecureApiContext'
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     if (!context) {
       securityMonitor.logAuthenticationFailure(
-        '/api/ai-chat',
+        '/api/v1/ai-chat',
         request.headers.get('user-agent') || undefined,
         request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
         'No context returned from getSecureApiContext'
@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
       securityMonitor.logInjectionAttempt(
         context.userId,
         context.workspaceId,
-        '/api/ai-chat',
+        '/api/v1/ai-chat',
         injectionDetection.attackType,
         injectionDetection.riskLevel,
         injectionDetection.confidence,
@@ -345,7 +345,7 @@ export async function POST(request: NextRequest) {
       securityMonitor.logRateLimitExceeded(
         context.userId,
         context.workspaceId,
-        '/api/ai-chat',
+        '/api/v1/ai-chat',
         rateLimitResult.limit,
         rateLimitResult.totalHits,
         rateLimitResult.retryAfter || 60,
@@ -779,7 +779,7 @@ export async function POST(request: NextRequest) {
       securityMonitor.logResponseValidationFailure(
         context.userId,
         context.workspaceId,
-        '/api/ai-chat',
+        '/api/v1/ai-chat',
         responseValidation.riskLevel,
         responseValidation.issues,
         aiResponse.response,
@@ -926,7 +926,7 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/ai-chat - Returns helpful error message
+ * GET /api/v1/ai-chat - Returns helpful error message
  * 
  * This endpoint only accepts POST requests. GET requests return a helpful error
  * to assist with debugging routing issues.
@@ -942,8 +942,8 @@ export async function GET(request: NextRequest) {
     code: 'METHOD_NOT_ALLOWED',
     receivedMethod: 'GET',
     expectedMethod: 'POST',
-    endpoint: '/api/ai-chat',
-    help: 'Make sure you are sending a POST request to /api/ai-chat (without trailing slash)'
+    endpoint: '/api/v1/ai-chat',
+    help: 'Make sure you are sending a POST request to /api/v1/ai-chat'
   }, { status: 405 });
 }
 

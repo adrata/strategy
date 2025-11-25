@@ -123,78 +123,14 @@ function isAuthenticated(request: NextRequest): boolean {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const method = request.method;
-  const url = request.url;
-  
-  // 🔍 COMPREHENSIVE DEBUGGING: Log middleware entry for /api/ai-chat
-  if (pathname === '/api/ai-chat' || pathname === '/api/ai-chat/') {
-    console.log('🔍 [MIDDLEWARE DEBUG] STEP A - Middleware: Request intercepted:', {
-      pathname,
-      method,
-      url,
-      hasTrailingSlash: pathname.endsWith('/'),
-      isDesktopBuild,
-      timestamp: new Date().toISOString(),
-      headers: {
-        'user-agent': request.headers.get('user-agent'),
-        'x-forwarded-for': request.headers.get('x-forwarded-for'),
-        'x-request-id': request.headers.get('x-request-id')
-      }
-    });
-  }
   
   // Skip middleware for desktop builds (static export)
   if (isDesktopBuild) {
-    if (pathname === '/api/ai-chat' || pathname === '/api/ai-chat/') {
-      console.log('🔍 [MIDDLEWARE DEBUG] STEP A - Middleware: ⚠️ SKIPPING (isDesktopBuild=true)');
-    }
     return NextResponse.next();
   }
 
   const hostname = request.headers.get('host') || '';
 
-  // CRITICAL: Normalize API routes to prevent trailing slash redirect issues
-  // Next.js trailingSlash: true affects page routes, but API routes work better without trailing slashes
-  // Use rewrite (not redirect) to preserve HTTP method (POST stays POST, doesn't become GET)
-  
-  // 🏆 FIX: Handle /api/ai-chat trailing slash normalization
-  // CRITICAL: Next.js App Router route handlers at app/api/ai-chat/route.ts handle /api/ai-chat (NO trailing slash)
-  // Even with trailingSlash: true, API route handlers expect paths WITHOUT trailing slashes
-  // We need to rewrite /api/ai-chat/ → /api/ai-chat to match the route handler
-  if (pathname === '/api/ai-chat' || pathname === '/api/ai-chat/') {
-    // Normalize to NO trailing slash to match the route handler
-    const normalizedPath = '/api/ai-chat';  // Always use no trailing slash for API routes
-    
-    if (pathname !== normalizedPath) {
-      console.log('🔍 [MIDDLEWARE DEBUG] STEP B - Middleware: Normalizing /api/ai-chat (removing trailing slash):', {
-        originalPathname: pathname,
-        method: request.method,
-        hasTrailingSlash: pathname.endsWith('/'),
-        url: request.url,
-        willRewriteTo: normalizedPath,
-        timestamp: new Date().toISOString()
-      });
-      
-      const normalizedUrl = request.nextUrl.clone();
-      normalizedUrl.pathname = normalizedPath;  // Remove trailing slash to match route handler
-      
-      console.log('🔍 [MIDDLEWARE DEBUG] STEP C - Middleware: Performing rewrite:', {
-        from: pathname,
-        to: normalizedUrl.pathname,
-        method: request.method,
-        preservingMethod: true,
-        timestamp: new Date().toISOString()
-      });
-      
-      const rewriteResponse = NextResponse.rewrite(normalizedUrl);  // Rewrite preserves HTTP method
-      
-      console.log('🔍 [MIDDLEWARE DEBUG] STEP D - Middleware: Rewrite complete, returning response');
-      
-      return rewriteResponse;
-    }
-    // If already normalized (no trailing slash), let it pass through
-  }
-  
   // Handle /api/v1/conversations/[id]/messages (with or without trailing slash)
   // Pattern: /api/v1/conversations/{id}/messages or /api/v1/conversations/{id}/messages/
   const messagesMatch = pathname.match(/^\/api\/v1\/conversations\/([^\/]+)\/messages\/?$/);
