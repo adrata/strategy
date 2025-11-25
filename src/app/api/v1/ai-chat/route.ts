@@ -738,7 +738,7 @@ export async function POST(request: NextRequest) {
         cost: 0 // Claude costs not tracked in this context
       });
 
-      response = {
+      aiResponse = {
         success: true,
         response: claudeResponse.response,
         todos: [],
