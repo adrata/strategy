@@ -66,9 +66,24 @@ function EnrichmentProgressComponent({ message }: { message: any }) {
   );
 }
 
-// Simple typing indicator - just show ... immediately (lightning fast)
+// Smooth typing indicator - gentle breathing animation on all dots together
 function TypingIndicator() {
-  return <span>...</span>;
+  return (
+    <span 
+      className="inline-block"
+      style={{
+        animation: 'breathing 2s ease-in-out infinite',
+      }}
+    >
+      <style>{`
+        @keyframes breathing {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
+        }
+      `}</style>
+      ...
+    </span>
+  );
 }
 
 interface ChatMessage {
