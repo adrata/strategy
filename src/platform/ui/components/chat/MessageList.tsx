@@ -66,30 +66,18 @@ function EnrichmentProgressComponent({ message }: { message: any }) {
   );
 }
 
-// Classic bouncing dots typing indicator - each dot bounces in sequence
+// Hyperminimal typing indicator - just periods appearing in sequence
 function TypingIndicator() {
-  return (
-    <span className="inline-flex items-center gap-[2px]">
-      <style>{`
-        @keyframes bounce {
-          0%, 60%, 100% { transform: translateY(0); }
-          30% { transform: translateY(-4px); }
-        }
-      `}</style>
-      <span 
-        className="w-[5px] h-[5px] bg-current rounded-full opacity-60"
-        style={{ animation: 'bounce 1.4s ease-in-out infinite' }}
-      />
-      <span 
-        className="w-[5px] h-[5px] bg-current rounded-full opacity-60"
-        style={{ animation: 'bounce 1.4s ease-in-out infinite', animationDelay: '0.2s' }}
-      />
-      <span 
-        className="w-[5px] h-[5px] bg-current rounded-full opacity-60"
-        style={{ animation: 'bounce 1.4s ease-in-out infinite', animationDelay: '0.4s' }}
-      />
-    </span>
-  );
+  const [dots, setDots] = React.useState(1);
+  
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(d => d >= 3 ? 1 : d + 1);
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return <span>{'.'.repeat(dots)}</span>;
 }
 
 interface ChatMessage {
