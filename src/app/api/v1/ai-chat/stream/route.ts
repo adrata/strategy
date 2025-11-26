@@ -341,8 +341,9 @@ export async function POST(request: NextRequest) {
               documentContext: null
             });
             
+            // 🔧 INCREASED: 5 second timeout for context build to allow intelligence queries
             const timeoutPromise = new Promise((_, reject) => {
-              setTimeout(() => reject(new Error('Context build timeout')), 3000);
+              setTimeout(() => reject(new Error('Context build timeout')), 5000);
             });
             
             workspaceContext = await Promise.race([contextPromise, timeoutPromise]);

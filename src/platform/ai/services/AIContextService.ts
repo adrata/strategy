@@ -639,9 +639,10 @@ ${JSON.stringify(currentRecord, null, 2).substring(0, 5000)}${JSON.stringify(cur
       let leadIntelligence = null;
       
       // Determine record type and fetch appropriate intelligence
-      const isPersonType = recordType === 'people' || recordType === 'person' || recordType === 'speedrun-prospect' || recordType?.includes('person');
+      // 🔧 FIX: Include 'speedrun' as a person type - Speedrun records are people/prospects
+      const isPersonType = recordType === 'people' || recordType === 'person' || recordType === 'speedrun' || recordType === 'speedrun-prospect' || recordType?.includes('person') || recordType?.includes('speedrun');
       const isLeadType = recordType === 'leads' || recordType === 'lead' || recordType?.includes('lead');
-      const isProspectType = recordType === 'prospects' || recordType === 'prospect' || recordType?.includes('prospect');
+      const isProspectType = recordType === 'prospects' || recordType === 'prospect' || recordType?.includes('prospect') || recordType === 'speedrun';
       const isOpportunityType = recordType === 'opportunities' || recordType === 'opportunity' || recordType?.includes('opportunity');
       
       console.log('🔍 [AIContextService] Record type analysis:', {
@@ -863,6 +864,72 @@ ${JSON.stringify(currentRecord, null, 2).substring(0, 5000)}${JSON.stringify(cur
 - Use this data to provide highly personalized recommendations
 - Reference specific pain points, motivations, and decision factors
 - Leverage buyer group analysis and opportunity intelligence`;
+    }
+
+    // 🔧 NEW: Extract intelligence from customFields (where strategy/intelligence data is stored)
+    if (currentRecord.customFields) {
+      const cf = currentRecord.customFields;
+      const hasStrategicIntel = cf.strategySummary || cf.strategySituation || cf.strategyComplication || cf.strategyFutureState;
+      const cfPainPoints = cf.painPoints || [];
+      const cfGoals = cf.goals || [];
+      const cfChallenges = cf.challenges || [];
+      const cfOpportunities = cf.opportunities || [];
+      
+      if (hasStrategicIntel || cfPainPoints.length > 0 || cfGoals.length > 0) {
+        context += `\n\n=== STRATEGIC INTELLIGENCE (from customFields) ===`;
+        
+        if (cf.strategySummary) {
+          context += `\nStrategy Summary: ${cf.strategySummary}`;
+        }
+        if (cf.strategySituation) {
+          context += `\nSituation: ${cf.strategySituation}`;
+        }
+        if (cf.strategyComplication || cf.complications) {
+          context += `\nComplication/Pain: ${cf.strategyComplication || cf.complications}`;
+        }
+        if (cf.strategyFutureState) {
+          context += `\nDesired Future State: ${cf.strategyFutureState}`;
+        }
+        if (cf.buyerGroupArchetype) {
+          context += `\nBuyer Archetype: ${cf.buyerGroupArchetype}`;
+        }
+        if (cf.industryContext) {
+          context += `\nIndustry Context: ${cf.industryContext}`;
+        }
+        if (cf.influenceLevel) {
+          context += `\nInfluence Level: ${cf.influenceLevel}`;
+        }
+        if (cf.engagementPriority) {
+          context += `\nEngagement Priority: ${cf.engagementPriority}`;
+        }
+        if (cf.buyerGroupRole) {
+          context += `\nBuyer Group Role: ${cf.buyerGroupRole}`;
+        }
+        if (cfPainPoints.length > 0) {
+          context += `\n\nIdentified Pain Points:`;
+          cfPainPoints.forEach((p: string) => context += `\n- ${p}`);
+        }
+        if (cfGoals.length > 0) {
+          context += `\n\nGoals/Objectives:`;
+          cfGoals.forEach((g: string) => context += `\n- ${g}`);
+        }
+        if (cfChallenges.length > 0) {
+          context += `\n\nKey Challenges:`;
+          cfChallenges.forEach((c: string) => context += `\n- ${c}`);
+        }
+        if (cfOpportunities.length > 0) {
+          context += `\n\nOpportunities:`;
+          cfOpportunities.forEach((o: string) => context += `\n- ${o}`);
+        }
+        if (cf.strategicIntelligence) {
+          context += `\n\nStrategic Intelligence: ${cf.strategicIntelligence}`;
+        }
+        if (cf.situationAnalysis) {
+          context += `\n\nSituation Analysis: ${cf.situationAnalysis}`;
+        }
+        
+        context += `\n\nCRITICAL: Use this strategic intelligence to provide highly targeted, personalized advice. Reference specific pain points, goals, and the buyer's situation in your recommendations.`;
+      }
     }
 
     // Add application-specific context
