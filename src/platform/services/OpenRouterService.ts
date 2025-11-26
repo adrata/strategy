@@ -619,6 +619,7 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
 
   /**
    * Call OpenRouter API with specific model
+   * Includes exponential backoff retry for transient errors (429, 503)
    */
   private async callOpenRouter(
     modelId: string, 
@@ -638,22 +639,63 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
     // Calculate max tokens based on model and complexity
     const maxTokens = this.calculateMaxTokens(model, complexity);
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': this.siteUrl,
-        'X-Title': this.appName
-      },
-      body: JSON.stringify({
-        model: modelId,
-        messages,
-        max_tokens: maxTokens,
-        temperature: 0.7,
-        stream: false
-      })
-    });
+    // Exponential backoff retry for transient errors (429, 503)
+    const maxRetries = 3;
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        response = await fetch(`${this.baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': this.siteUrl,
+            'X-Title': this.appName
+          },
+          body: JSON.stringify({
+            model: modelId,
+            messages,
+            max_tokens: maxTokens,
+            temperature: 0.7,
+            stream: false
+          })
+        });
+
+        // Check for transient errors that should trigger retry
+        if (response.status === 429 || response.status === 503) {
+          const retryAfter = response.headers.get('Retry-After');
+          const delay = retryAfter 
+            ? parseInt(retryAfter, 10) * 1000 
+            : Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
+          
+          console.warn(`⚠️ [OPENROUTER] Rate limited (${response.status}), retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+          
+          if (attempt < maxRetries - 1) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+        }
+        
+        // Success or non-retryable error - break retry loop
+        break;
+        
+      } catch (fetchError) {
+        lastError = fetchError as Error;
+        // Network error - retry with backoff
+        if (attempt < maxRetries - 1) {
+          const delay = Math.pow(2, attempt) * 1000;
+          console.warn(`⚠️ [OPENROUTER] Network error, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+      }
+    }
+
+    if (!response) {
+      throw lastError || new Error('Failed to connect to OpenRouter API');
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -1134,25 +1176,61 @@ NEVER:
 
           console.log(`🌐 [OPENROUTER STREAM] Starting streaming with model: ${modelId}`);
 
-          const response = await fetch(`${this.baseUrl}/chat/completions`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${this.apiKey}`,
-              'Content-Type': 'application/json',
-              'HTTP-Referer': this.siteUrl,
-              'X-Title': this.appName
-            },
-            body: JSON.stringify({
-              model: modelId,
-              messages,
-              max_tokens: maxTokens,
-              temperature: 0.7,
-              stream: true
-            })
-          });
+          // Exponential backoff retry for transient errors (429, 503)
+          const maxRetries = 3;
+          let response: Response | null = null;
+          
+          for (let attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+              response = await fetch(`${this.baseUrl}/chat/completions`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${this.apiKey}`,
+                  'Content-Type': 'application/json',
+                  'HTTP-Referer': this.siteUrl,
+                  'X-Title': this.appName
+                },
+                body: JSON.stringify({
+                  model: modelId,
+                  messages,
+                  max_tokens: maxTokens,
+                  temperature: 0.7,
+                  stream: true
+                })
+              });
+              
+              // Check for transient errors that should trigger retry
+              if (response.status === 429 || response.status === 503) {
+                const retryAfter = response.headers.get('Retry-After');
+                const delay = retryAfter 
+                  ? parseInt(retryAfter, 10) * 1000 
+                  : Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
+                
+                console.warn(`⚠️ [OPENROUTER STREAM] Rate limited (${response.status}), retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+                
+                if (attempt < maxRetries - 1) {
+                  await new Promise(resolve => setTimeout(resolve, delay));
+                  continue;
+                }
+              }
+              
+              // Success or non-retryable error - break retry loop
+              break;
+              
+            } catch (fetchError) {
+              // Network error - retry with backoff
+              if (attempt < maxRetries - 1) {
+                const delay = Math.pow(2, attempt) * 1000;
+                console.warn(`⚠️ [OPENROUTER STREAM] Network error, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                continue;
+              }
+              throw fetchError;
+            }
+          }
 
-          if (!response.ok) {
-            console.warn(`⚠️ [OPENROUTER STREAM] Model ${modelId} failed: ${response.status}`);
+          if (!response || !response.ok) {
+            console.warn(`⚠️ [OPENROUTER STREAM] Model ${modelId} failed: ${response?.status || 'no response'}`);
             continue;
           }
 

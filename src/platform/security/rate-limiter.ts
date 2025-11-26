@@ -42,6 +42,12 @@ export class RateLimiter {
       skipSuccessfulRequests: false,
       skipFailedRequests: false
     },
+    ai_chat_stream: {
+      maxRequests: 100, // 100 requests per hour (same as ai_chat)
+      windowMs: 60 * 60 * 1000, // 1 hour
+      skipSuccessfulRequests: false,
+      skipFailedRequests: false
+    },
     ai_response: {
       maxRequests: 200, // 200 requests per hour
       windowMs: 60 * 60 * 1000, // 1 hour

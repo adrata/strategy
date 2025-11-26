@@ -130,7 +130,8 @@ export class AIContextService {
 
     // 🏆 FIX: Add individual timeouts to each context builder to prevent hanging
     // OPTIMIZATION: Parallelize all async context building (independent operations) with timeout protection
-    const contextBuilderTimeout = 15000; // 15 seconds max per context builder
+    // Reduced from 15s to 5s for faster perceived performance - fallbacks provide graceful degradation
+    const contextBuilderTimeout = 5000; // 5 seconds max per context builder
     
     const createTimeoutPromise = (ms: number) => 
       new Promise((_, reject) => setTimeout(() => reject(new Error(`Context builder timeout after ${ms}ms`)), ms));

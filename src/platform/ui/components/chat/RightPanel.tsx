@@ -204,7 +204,7 @@ export function RightPanel() {
   const recordTypeRef = useRef(recordType);
   const listViewContextRef = useRef(listViewContext);
   
-  // Update refs whenever context changes
+  // Update refs whenever context changes and pre-warm AI context cache
   useEffect(() => {
     currentRecordRef.current = currentRecord;
     recordTypeRef.current = recordType;
@@ -221,8 +221,39 @@ export function RightPanel() {
           recordType,
         });
       }
+      
+      // 🔥 PRE-WARM: Build AI context cache ahead of time for faster responses
+      // This runs in the background and doesn't block the UI
+      const prewarmContext = async () => {
+        try {
+          const response = await fetch('/api/v1/ai-chat/prewarm/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              appType: activeSubApp,
+              currentRecord,
+              recordType,
+              listViewContext
+            })
+          });
+          
+          if (process.env.NODE_ENV === 'development' && response.ok) {
+            const data = await response.json();
+            console.log('🔥 [RightPanel] Context pre-warmed:', data);
+          }
+        } catch (error) {
+          // Silently fail - pre-warming is optional optimization
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ [RightPanel] Context pre-warm failed:', error);
+          }
+        }
+      };
+      
+      // Debounce pre-warm to avoid excessive calls during rapid navigation
+      const timeoutId = setTimeout(prewarmContext, 300);
+      return () => clearTimeout(timeoutId);
     }
-  }, [currentRecord, recordType, listViewContext]);
+  }, [currentRecord, recordType, listViewContext, activeSubApp]);
 
   // Get workspace and user info
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
