@@ -1792,7 +1792,10 @@ export function RightPanel() {
                         (currentRecord['firstName'] && currentRecord.lastName ? `${currentRecord.firstName} ${currentRecord.lastName}` : '') ||
                         currentRecord.companyName || 'this record';
       
-      const company = currentRecord.company || currentRecord.companyName || (recordType === 'companies' ? currentRecord.name : 'their company');
+      // Extract company name - company might be an object with a name property or just a string
+      const company = (typeof currentRecord.company === 'object' && currentRecord.company !== null) 
+        ? (currentRecord.company.name || currentRecord.company.companyName || currentRecord.company.legalName || 'their company')
+        : (currentRecord.company || currentRecord.companyName || (recordType === 'companies' ? currentRecord.name : 'their company'));
       const title = currentRecord.title || currentRecord.jobTitle || 'their role';
       const status = currentRecord.status || 'new';
       const priority = currentRecord.priority || 'medium';
