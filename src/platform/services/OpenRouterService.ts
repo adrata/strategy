@@ -2,10 +2,13 @@
  * 🌐 OPENROUTER AI SERVICE
  * 
  * Unified AI gateway providing access to 400+ models with intelligent routing,
- * automatic failover, and cost optimization. Replaces direct provider APIs
- * with a single, reliable interface.
+ * automatic failover, and cost optimization. Uses OpenAI SDK with OpenRouter
+ * baseURL for battle-tested reliability and streaming support.
+ * 
+ * @see https://openrouter.ai/docs/quickstart
  */
 
+import OpenAI from 'openai';
 import { ApplicationContextService } from './ApplicationContextService';
 import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
 import { systemPromptProtector } from '@/platform/security/system-prompt-protector';
@@ -233,6 +236,9 @@ export class OpenRouterService {
     ]
   };
 
+  // OpenAI SDK client configured for OpenRouter
+  private openaiClient: OpenAI | null = null;
+
   constructor() {
     this.apiKey = process.env.OPENROUTER_API_KEY || '';
     this.siteUrl = process.env.OPENROUTER_SITE_URL || 'https://adrata.com';
@@ -241,9 +247,22 @@ export class OpenRouterService {
     if (!this.apiKey) {
       console.error('❌ [OPENROUTER] Service not available - missing OPENROUTER_API_KEY environment variable');
     } else {
-      console.log('✅ [OPENROUTER] Service initialized with API key');
+      // Initialize OpenAI SDK with OpenRouter baseURL
+      // This provides better streaming, retries, and error handling
+      // See: https://openrouter.ai/docs/quickstart
+      this.openaiClient = new OpenAI({
+        baseURL: this.baseUrl,
+        apiKey: this.apiKey,
+        defaultHeaders: {
+          'HTTP-Referer': this.siteUrl,
+          'X-Title': this.appName,
+        },
+        timeout: 45000, // 45 second timeout
+        maxRetries: 3,  // Built-in retry with exponential backoff
+      });
+      
+      console.log('✅ [OPENROUTER] Service initialized with OpenAI SDK');
       console.log('🔑 [OPENROUTER] API key prefix:', this.apiKey.substring(0, 20) + '...');
-      console.log('🔑 [OPENROUTER] API key length:', this.apiKey.length);
     }
   }
 
@@ -655,23 +674,23 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
       
       try {
         response = await fetch(`${this.baseUrl}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': this.siteUrl,
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': this.siteUrl,
             'X-Title': this.appName,
             'Connection': 'keep-alive'
-          },
-          body: JSON.stringify({
-            model: modelId,
-            messages,
-            max_tokens: maxTokens,
-            temperature: 0.7,
-            stream: false
+      },
+      body: JSON.stringify({
+        model: modelId,
+        messages,
+        max_tokens: maxTokens,
+        temperature: 0.7,
+        stream: false
           }),
           signal: controller.signal
-        });
+    });
         
         clearTimeout(timeoutId);
 

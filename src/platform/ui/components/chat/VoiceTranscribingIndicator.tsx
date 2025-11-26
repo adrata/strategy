@@ -454,7 +454,7 @@ export function VoiceTranscribingIndicator({
         className={`
           relative flex items-center justify-center rounded-lg text-sm border transition-all duration-300 ease-out cursor-pointer overflow-hidden
           ${isExpanded 
-            ? 'bg-muted/60 text-muted-foreground border-border px-3 py-2 gap-2 min-w-[160px]' 
+            ? 'bg-muted/60 text-muted-foreground border-border px-3 py-2 gap-2 min-w-[140px]' 
             : 'p-2 border-border hover:border-border hover:bg-hover text-foreground'
           }
           ${!isExpanded && 'bg-[var(--panel-background)]'}
@@ -462,19 +462,16 @@ export function VoiceTranscribingIndicator({
         style={{ 
           filter: !isExpanded ? 'brightness(1.05)' : undefined,
         }}
-        title={isListening ? "Stop listening" : "Start voice input"}
+        title={isListening ? "Click to send" : "Voice input"}
       >
-        {/* Voice icon with subtle opacity pulse when listening */}
+        {/* Voice icon */}
         <div className="relative flex items-center justify-center">
-          <RiVoiceAiFill 
-            className={`w-4 h-4 transition-opacity ${isListening ? 'text-blue-500' : ''}`}
-            style={{ opacity: isListening ? 0.7 + audioLevel * 0.3 : 1 }}
-          />
+          <RiVoiceAiFill className="w-4 h-4" />
         </div>
         
-        {/* Expanded text - subtle styling with command hint */}
+        {/* Expanded text */}
         {isExpanded && (
-          <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+          <span className="text-sm font-medium whitespace-nowrap">
             {commandHint || 'Transcribing'}
           </span>
         )}
@@ -493,8 +490,6 @@ export function VoiceTranscribingIndicator({
           {commandFeedback}
         </div>
       )}
-      
-      {/* Note: Live transcript is now shown in chat area via onLiveTranscript callback */}
     </div>
   );
 }
