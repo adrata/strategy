@@ -82,6 +82,30 @@ interface ChatMessage {
     content: string;
     status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   }>;
+  sources?: Array<{
+    title: string;
+    url: string;
+    snippet: string;
+  }>;
+  // Context quality indicators
+  reasoning?: {
+    contextAwareness?: {
+      recordType?: string;
+      recordName?: string;
+      companyName?: string;
+      workspaceContext?: string;
+      dataPoints?: number;
+    };
+    dataSources?: Array<{
+      type: 'record' | 'intelligence' | 'workspace' | 'history';
+      name: string;
+      description: string;
+    }>;
+    confidence?: number;
+    model?: string;
+  };
+  model?: string;
+  provider?: string;
 }
 
 interface MessageListProps {
@@ -424,7 +448,35 @@ export function MessageList({
             </div>
           )}
           
-          {/* AI Reasoning Window removed - was causing UI clutter */}
+          {/* Context Quality Indicator - Small, non-intrusive badge */}
+          {message.type === 'assistant' && message.reasoning?.contextAwareness && (
+            <div className="mt-2 flex items-center gap-2 text-xs text-muted">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded-full border border-green-200">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Context-aware
+              </span>
+              {message.reasoning.contextAwareness.recordName && (
+                <span className="text-muted">
+                  Using: {message.reasoning.contextAwareness.recordName}
+                  {message.reasoning.contextAwareness.companyName && ` @ ${message.reasoning.contextAwareness.companyName}`}
+                </span>
+              )}
+              {message.reasoning.contextAwareness.dataPoints && message.reasoning.contextAwareness.dataPoints > 0 && (
+                <span className="text-muted">
+                  ({message.reasoning.contextAwareness.dataPoints} data points)
+                </span>
+              )}
+            </div>
+          )}
+          
+          {/* Model/Provider indicator for transparency */}
+          {message.type === 'assistant' && message.model && (
+            <div className="mt-1 text-xs text-muted/60">
+              {message.provider && `${message.provider} / `}{message.model}
+            </div>
+          )}
         </div>
       ))}
       

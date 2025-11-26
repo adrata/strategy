@@ -53,7 +53,7 @@ interface WorkspaceContext {
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   const { user } = useUnifiedAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme' | 'daily100'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme' | 'daily100' | 'ai-context'>('profile');
   const [loading, setLoading] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   
@@ -433,6 +433,16 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               >
                 Daily 100
               </button>
+              <button
+                onClick={() => setActiveTab('ai-context')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'ai-context'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
+                }`}
+              >
+                AI Context
+              </button>
             </nav>
           </div>
 
@@ -461,6 +471,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                   {activeTab === 'notifications' && 'Notifications'}
                   {activeTab === 'theme' && 'Theme'}
                   {activeTab === 'daily100' && 'Daily 100'}
+                  {activeTab === 'ai-context' && 'AI Context'}
                 </span>
               </div>
               <button
@@ -934,6 +945,242 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                   </p>
                   <ThemePicker />
                 </div>
+              </div>
+            </div>
+          ) : activeTab === 'ai-context' ? (
+            <div className="space-y-6">
+              {/* AI Context Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <SparklesIcon className="w-5 h-5" />
+                  AI Context Settings
+                </h3>
+                <p className="text-sm text-muted mb-6">
+                  This information is used by the AI to provide personalized sales coaching and recommendations. 
+                  Keep it updated for the best results.
+                </p>
+                
+                {/* Value Propositions */}
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Value Propositions
+                    </label>
+                    <p className="text-xs text-muted mb-2">
+                      Key value propositions your company offers. The AI uses these to help you articulate value in conversations.
+                    </p>
+                    <div className="space-y-2">
+                      {(workspaceContext.valuePropositions || []).map((prop, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={prop}
+                            onChange={(e) => {
+                              const updated = [...(workspaceContext.valuePropositions || [])];
+                              updated[index] = e.target.value;
+                              setWorkspaceContext(prev => ({ ...prev, valuePropositions: updated }));
+                            }}
+                            className="flex-1 p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                            placeholder="e.g., Increase revenue by 30% in 6 months"
+                          />
+                          <button
+                            onClick={() => {
+                              const updated = (workspaceContext.valuePropositions || []).filter((_, i) => i !== index);
+                              setWorkspaceContext(prev => ({ ...prev, valuePropositions: updated }));
+                            }}
+                            className="p-2 text-muted hover:text-error transition-colors"
+                          >
+                            <XMarkIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => setWorkspaceContext(prev => ({ 
+                          ...prev, 
+                          valuePropositions: [...(prev.valuePropositions || []), ''] 
+                        }))}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        + Add value proposition
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Target Industries */}
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Target Industries
+                    </label>
+                    <p className="text-xs text-muted mb-2">
+                      Industries you typically sell to. The AI uses this to provide industry-specific insights.
+                    </p>
+                    <div className="space-y-2">
+                      {(workspaceContext.targetIndustries || []).map((industry, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={industry}
+                            onChange={(e) => {
+                              const updated = [...(workspaceContext.targetIndustries || [])];
+                              updated[index] = e.target.value;
+                              setWorkspaceContext(prev => ({ ...prev, targetIndustries: updated }));
+                            }}
+                            className="flex-1 p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                            placeholder="e.g., SaaS, Healthcare, Financial Services"
+                          />
+                          <button
+                            onClick={() => {
+                              const updated = (workspaceContext.targetIndustries || []).filter((_, i) => i !== index);
+                              setWorkspaceContext(prev => ({ ...prev, targetIndustries: updated }));
+                            }}
+                            className="p-2 text-muted hover:text-error transition-colors"
+                          >
+                            <XMarkIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => setWorkspaceContext(prev => ({ 
+                          ...prev, 
+                          targetIndustries: [...(prev.targetIndustries || []), ''] 
+                        }))}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        + Add target industry
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Product Portfolio */}
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Product Portfolio
+                    </label>
+                    <p className="text-xs text-muted mb-2">
+                      Products and services you sell. The AI uses this to recommend relevant solutions to prospects.
+                    </p>
+                    <div className="space-y-2">
+                      {(workspaceContext.productPortfolio || []).map((product, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={product}
+                            onChange={(e) => {
+                              const updated = [...(workspaceContext.productPortfolio || [])];
+                              updated[index] = e.target.value;
+                              setWorkspaceContext(prev => ({ ...prev, productPortfolio: updated }));
+                            }}
+                            className="flex-1 p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                            placeholder="e.g., Enterprise CRM, Analytics Platform"
+                          />
+                          <button
+                            onClick={() => {
+                              const updated = (workspaceContext.productPortfolio || []).filter((_, i) => i !== index);
+                              setWorkspaceContext(prev => ({ ...prev, productPortfolio: updated }));
+                            }}
+                            className="p-2 text-muted hover:text-error transition-colors"
+                          >
+                            <XMarkIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => setWorkspaceContext(prev => ({ 
+                          ...prev, 
+                          productPortfolio: [...(prev.productPortfolio || []), ''] 
+                        }))}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        + Add product
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Business Model & Industry */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Business Model
+                    </label>
+                    <select
+                      value={workspaceContext.businessModel || ''}
+                      onChange={(e) => setWorkspaceContext(prev => ({ ...prev, businessModel: e.target.value }))}
+                      className="w-full p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                    >
+                      <option value="">Select business model</option>
+                      <option value="B2B SaaS">B2B SaaS</option>
+                      <option value="B2B Services">B2B Services</option>
+                      <option value="B2B Hardware">B2B Hardware</option>
+                      <option value="B2C">B2C</option>
+                      <option value="Marketplace">Marketplace</option>
+                      <option value="Enterprise">Enterprise</option>
+                      <option value="SMB">SMB</option>
+                      <option value="Mid-Market">Mid-Market</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Your Industry
+                    </label>
+                    <input
+                      type="text"
+                      value={workspaceContext.industry || ''}
+                      onChange={(e) => setWorkspaceContext(prev => ({ ...prev, industry: e.target.value }))}
+                      className="w-full p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                      placeholder="e.g., Sales Technology"
+                    />
+                  </div>
+                </div>
+
+                {/* Info Box */}
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <SparklesIcon className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground mb-1">How the AI uses this data</h4>
+                      <p className="text-xs text-muted">
+                        The AI assistant uses this context to provide personalized coaching, suggest relevant talking points, 
+                        and help you position your solutions effectively. The more accurate this information, the better 
+                        the AI can assist you in your sales conversations.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div className="flex justify-end pt-4 border-t border-border">
+                <button
+                  onClick={async () => {
+                    setLoading(true);
+                    try {
+                      const response = await fetch('/api/settings/workspace-context', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(workspaceContext)
+                      });
+                      const data = await response.json();
+                      if (data.success) {
+                        alert('AI Context settings saved successfully!');
+                      } else {
+                        alert('Failed to save: ' + data.error);
+                      }
+                    } catch (error) {
+                      alert('Failed to save AI context settings');
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {loading ? 'Saving...' : 'Save AI Context'}
+                </button>
               </div>
             </div>
           ) : null}

@@ -6,6 +6,7 @@ import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
+import { SettingsPopupProvider } from "@/platform/ui/components/SettingsPopupContext";
 import { useUnifiedAuth } from "@/platform/auth";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 
@@ -78,9 +79,11 @@ function TestDriveLayoutInner({ children }: TestDriveLayoutProps) {
 export default function TestDriveLayout({ children }: TestDriveLayoutProps) {
   return (
     <RevenueOSProvider>
-      <ProfilePanelProvider>
-        <TestDriveLayoutInner>{children}</TestDriveLayoutInner>
-      </ProfilePanelProvider>
+      <SettingsPopupProvider>
+        <ProfilePanelProvider>
+          <TestDriveLayoutInner>{children}</TestDriveLayoutInner>
+        </ProfilePanelProvider>
+      </SettingsPopupProvider>
     </RevenueOSProvider>
   );
 }
