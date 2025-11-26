@@ -16,12 +16,14 @@ import { elevenLabsVoice } from '@/platform/services/elevenlabs-voice';
 
 interface VoiceTranscribingIndicatorProps {
   onTranscriptComplete: (transcript: string, isVoiceInput: boolean) => void;
+  onLiveTranscript?: (transcript: string) => void; // Stream partial transcripts to chat area
   onListeningChange?: (isListening: boolean) => void;
   className?: string;
 }
 
 export function VoiceTranscribingIndicator({ 
   onTranscriptComplete, 
+  onLiveTranscript,
   onListeningChange,
   className = ''
 }: VoiceTranscribingIndicatorProps) {
@@ -39,6 +41,14 @@ export function VoiceTranscribingIndicator({
   useEffect(() => {
     voiceCommandProcessor.setRouter(router);
   }, [router]);
+  
+  // Stream live transcript to chat area
+  useEffect(() => {
+    const currentTranscript = transcript || interimTranscript;
+    if (onLiveTranscript && currentTranscript) {
+      onLiveTranscript(currentTranscript);
+    }
+  }, [transcript, interimTranscript, onLiveTranscript]);
   
   const deepgramServiceRef = useRef<DeepgramRecognitionService | null>(null);
   const webSpeechRecognitionRef = useRef<SpeechRecognition | null>(null);
@@ -409,7 +419,7 @@ export function VoiceTranscribingIndicator({
         className={`
           relative flex items-center justify-center rounded-lg text-sm border transition-all duration-300 ease-out cursor-pointer overflow-hidden
           ${isExpanded 
-            ? 'bg-blue-500 text-white border-blue-500 px-3 py-2 gap-2 min-w-[180px]' 
+            ? 'bg-muted/60 text-muted-foreground border-border px-3 py-2 gap-2 min-w-[160px]' 
             : 'p-2 border-border hover:border-border hover:bg-hover text-foreground'
           }
           ${!isExpanded && 'bg-[var(--panel-background)]'}
@@ -419,38 +429,19 @@ export function VoiceTranscribingIndicator({
         }}
         title={isListening ? "Stop listening" : "Start voice input"}
       >
-        {/* Voice icon with pulse when listening */}
-        <div className={`relative flex items-center justify-center ${isListening ? 'animate-pulse' : ''}`}>
-          <RiVoiceAiFill className={`w-4 h-4 ${isExpanded ? 'text-white' : ''}`} />
-          
-          {/* Audio level indicator rings */}
-          {isListening && (
-            <>
-              <span 
-                className="absolute inset-0 rounded-full bg-white/30 animate-ping"
-                style={{ 
-                  transform: `scale(${1 + audioLevel * 0.5})`,
-                  opacity: 0.3 + audioLevel * 0.4
-                }}
-              />
-            </>
-          )}
+        {/* Voice icon with subtle opacity pulse when listening */}
+        <div className="relative flex items-center justify-center">
+          <RiVoiceAiFill 
+            className={`w-4 h-4 transition-opacity ${isListening ? 'text-blue-500' : ''}`}
+            style={{ opacity: isListening ? 0.7 + audioLevel * 0.3 : 1 }}
+          />
         </div>
         
-        {/* Expanded text */}
+        {/* Expanded text - subtle styling */}
         {isExpanded && (
-          <span className="text-sm font-medium whitespace-nowrap animate-fadeIn">
-            Adrata Transcribing
+          <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+            Transcribing
           </span>
-        )}
-        
-        {/* Pulsing dots when listening */}
-        {isExpanded && isListening && (
-          <div className="flex gap-0.5 items-center">
-            <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-            <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-            <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-          </div>
         )}
       </button>
       
@@ -463,18 +454,12 @@ export function VoiceTranscribingIndicator({
       
       {/* Command feedback (shown briefly after command execution) */}
       {commandFeedback && (
-        <div className="absolute top-full mt-2 right-0 bg-blue-500 text-white rounded-lg px-3 py-2 text-sm font-medium max-w-[300px] shadow-lg z-50 animate-fadeIn">
+        <div className="absolute top-full mt-2 right-0 bg-muted text-foreground rounded-lg px-3 py-2 text-sm font-medium max-w-[300px] shadow-lg z-50 animate-fade-in border border-border">
           {commandFeedback}
         </div>
       )}
       
-      {/* Live transcript preview (shown below when expanded) */}
-      {isExpanded && !commandFeedback && (transcript || interimTranscript) && (
-        <div className="absolute top-full mt-2 right-0 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground max-w-[300px] shadow-lg z-50 animate-fadeIn">
-          <span className="text-muted text-xs">Hearing: </span>
-          <span>{transcript || interimTranscript}</span>
-        </div>
-      )}
+      {/* Note: Live transcript is now shown in chat area via onLiveTranscript callback */}
     </div>
   );
 }

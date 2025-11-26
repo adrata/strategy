@@ -6,6 +6,7 @@
  */
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60; // 60 seconds for AI streaming responses
 
 import { NextRequest } from 'next/server';
 import { openRouterService } from '@/platform/services/OpenRouterService';

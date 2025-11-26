@@ -155,13 +155,138 @@ const NAVIGATION_PATTERNS: Array<{
   },
 ];
 
-// Quick action patterns
+// Quick action patterns - organized by user persona
 const QUICK_ACTION_PATTERNS: Array<{
   patterns: RegExp[];
   action: string;
   extractParam?: (match: RegExpMatchArray) => Record<string, string>;
   feedback: string;
+  category: 'novice' | 'power' | 'expert' | 'universal';
 }> = [
+  // ============================================
+  // NOVICE USER COMMANDS (explicit, simple)
+  // ============================================
+  {
+    patterns: [
+      /^help$/i,
+      /what can (?:i|you) do/i,
+      /show\s+(?:me\s+)?commands/i,
+      /what (?:are|can) (?:the\s+)?voice commands/i,
+    ],
+    action: 'show_help',
+    feedback: 'Here are some things you can say...',
+    category: 'novice'
+  },
+  {
+    patterns: [
+      /^cancel$/i,
+      /^stop$/i,
+      /^never\s*mind$/i,
+    ],
+    action: 'cancel',
+    feedback: 'Cancelled',
+    category: 'novice'
+  },
+  {
+    patterns: [
+      /go\s+back/i,
+      /(?:navigate|go)\s+(?:to\s+)?previous/i,
+      /^back$/i,
+    ],
+    action: 'go_back',
+    feedback: 'Going back',
+    category: 'novice'
+  },
+  {
+    patterns: [
+      /call\s+["']?([^"']+)["']?/i,
+      /dial\s+["']?([^"']+)["']?/i,
+      /phone\s+["']?([^"']+)["']?/i,
+    ],
+    action: 'call_contact',
+    extractParam: (match) => ({ name: match[1]?.trim() || '' }),
+    feedback: 'Initiating call',
+    category: 'novice'
+  },
+  {
+    patterns: [
+      /email\s+["']?([^"']+)["']?/i,
+      /send\s+(?:an?\s+)?email\s+to\s+["']?([^"']+)["']?/i,
+      /compose\s+(?:an?\s+)?email\s+(?:to\s+)?["']?([^"']+)["']?/i,
+    ],
+    action: 'email_contact',
+    extractParam: (match) => ({ name: match[1]?.trim() || match[2]?.trim() || '' }),
+    feedback: 'Opening email',
+    category: 'novice'
+  },
+
+  // ============================================
+  // POWER USER COMMANDS (shortcuts)
+  // ============================================
+  {
+    patterns: [
+      /^next$/i,
+      /next\s+(?:record|person|contact|company)/i,
+      /go\s+(?:to\s+)?next/i,
+    ],
+    action: 'next_record',
+    feedback: 'Next record',
+    category: 'power'
+  },
+  {
+    patterns: [
+      /^previous$/i,
+      /previous\s+(?:record|person|contact|company)/i,
+      /go\s+(?:to\s+)?previous/i,
+      /^prev$/i,
+    ],
+    action: 'previous_record',
+    feedback: 'Previous record',
+    category: 'power'
+  },
+  {
+    patterns: [
+      /mark\s+(?:as\s+)?(?:done|complete|completed)/i,
+      /complete\s+(?:this\s+)?task/i,
+      /^done$/i,
+      /finish\s+(?:this\s+)?task/i,
+    ],
+    action: 'mark_complete',
+    feedback: 'Marked complete',
+    category: 'power'
+  },
+  {
+    patterns: [
+      /schedule\s+(?:a\s+)?call\s+(?:with\s+)?["']?([^"']+)["']?/i,
+      /set\s+up\s+(?:a\s+)?call\s+(?:with\s+)?["']?([^"']+)["']?/i,
+      /book\s+(?:a\s+)?(?:call|meeting)\s+(?:with\s+)?["']?([^"']+)["']?/i,
+    ],
+    action: 'schedule_call',
+    extractParam: (match) => ({ name: match[1]?.trim() || '' }),
+    feedback: 'Scheduling call',
+    category: 'power'
+  },
+  {
+    patterns: [
+      /add\s+(?:a\s+)?note\s+["']?(.+)["']?/i,
+      /note\s*:\s*["']?(.+)["']?/i,
+      /make\s+(?:a\s+)?note\s+["']?(.+)["']?/i,
+    ],
+    action: 'add_note',
+    extractParam: (match) => ({ content: match[1]?.trim() || '' }),
+    feedback: 'Adding note',
+    category: 'power'
+  },
+  {
+    patterns: [
+      /snooze\s+(?:for\s+)?(\d+)\s*(?:day|days|hour|hours|week|weeks)/i,
+      /remind\s+me\s+(?:in\s+)?(\d+)\s*(?:day|days|hour|hours|week|weeks)/i,
+    ],
+    action: 'snooze',
+    extractParam: (match) => ({ duration: match[1]?.trim() || '1' }),
+    feedback: 'Snoozed',
+    category: 'power'
+  },
   {
     patterns: [
       /search\s+(?:for\s+)?(?:a\s+)?(?:person|contact|someone)\s+(?:named\s+)?["']?([^"']+)["']?/i,
@@ -169,7 +294,8 @@ const QUICK_ACTION_PATTERNS: Array<{
     ],
     action: 'search_person',
     extractParam: (match) => ({ query: match[1]?.trim() || '' }),
-    feedback: 'Searching for person'
+    feedback: 'Searching for person',
+    category: 'power'
   },
   {
     patterns: [
@@ -178,14 +304,16 @@ const QUICK_ACTION_PATTERNS: Array<{
     ],
     action: 'search_company',
     extractParam: (match) => ({ query: match[1]?.trim() || '' }),
-    feedback: 'Searching for company'
+    feedback: 'Searching for company',
+    category: 'power'
   },
   {
     patterns: [
       /(?:create|add|new)\s+(?:a\s+)?lead/i,
     ],
     action: 'create_lead',
-    feedback: 'Creating new lead'
+    feedback: 'Creating new lead',
+    category: 'power'
   },
   {
     patterns: [
@@ -193,23 +321,126 @@ const QUICK_ACTION_PATTERNS: Array<{
       /(?:create|add|new)\s+(?:a\s+)?person/i,
     ],
     action: 'create_contact',
-    feedback: 'Creating new contact'
+    feedback: 'Creating new contact',
+    category: 'power'
   },
+
+  // ============================================
+  // EXPERT USER COMMANDS (complex, AI-assisted)
+  // These pass to AI but with special handling
+  // ============================================
+  {
+    patterns: [
+      /analyze\s+(?:this\s+)?(?:pipeline|funnel)/i,
+      /how\s+(?:is|are)\s+(?:my|the)\s+pipeline/i,
+      /pipeline\s+(?:health|status|analysis)/i,
+    ],
+    action: 'analyze_pipeline',
+    feedback: 'Analyzing pipeline',
+    category: 'expert'
+  },
+  {
+    patterns: [
+      /summarize\s+(?:this\s+)?(?:record|contact|person|company)/i,
+      /give\s+me\s+(?:a\s+)?summary/i,
+      /what\s+(?:do\s+)?(?:i|we)\s+know\s+about\s+(?:this|them)/i,
+    ],
+    action: 'summarize_record',
+    feedback: 'Summarizing',
+    category: 'expert'
+  },
+  {
+    patterns: [
+      /draft\s+(?:an?\s+)?email\s+(?:to\s+)?["']?([^"']+)["']?\s+about\s+["']?(.+)["']?/i,
+      /write\s+(?:an?\s+)?email\s+(?:to\s+)?["']?([^"']+)["']?\s+about\s+["']?(.+)["']?/i,
+    ],
+    action: 'draft_email',
+    extractParam: (match) => ({ recipient: match[1]?.trim() || '', topic: match[2]?.trim() || '' }),
+    feedback: 'Drafting email',
+    category: 'expert'
+  },
+  {
+    patterns: [
+      /find\s+(?:all\s+)?(?:CFO|CEO|CTO|VP|director)s?\s+(?:at\s+)?(?:companies?\s+)?(?:that\s+are\s+)?(.+)/i,
+      /show\s+me\s+(?:all\s+)?(?:CFO|CEO|CTO|VP|director)s?\s+(?:at\s+)?(?:companies?\s+)?(?:that\s+are\s+)?(.+)/i,
+    ],
+    action: 'advanced_search',
+    extractParam: (match) => ({ criteria: match[0] }),
+    feedback: 'Searching',
+    category: 'expert'
+  },
+  {
+    patterns: [
+      /what\s+(?:should|can)\s+i\s+do\s+(?:next|now)/i,
+      /suggest\s+(?:next\s+)?(?:steps|actions)/i,
+      /recommend\s+(?:next\s+)?(?:steps|actions)/i,
+    ],
+    action: 'suggest_actions',
+    feedback: 'Getting suggestions',
+    category: 'expert'
+  },
+
+  // ============================================
+  // UNIVERSAL COMMANDS (all users)
+  // ============================================
   {
     patterns: [
       /refresh\s+(?:the\s+)?(?:page|view|data)/i,
       /reload\s+(?:the\s+)?(?:page|view|data)/i,
+      /^refresh$/i,
+      /^reload$/i,
     ],
     action: 'refresh',
-    feedback: 'Refreshing'
+    feedback: 'Refreshing',
+    category: 'universal'
   },
   {
     patterns: [
-      /go\s+back/i,
-      /(?:navigate|go)\s+(?:to\s+)?previous/i,
+      /scroll\s+(?:down|up)/i,
+      /page\s+(?:down|up)/i,
     ],
-    action: 'go_back',
-    feedback: 'Going back'
+    action: 'scroll',
+    extractParam: (match) => ({ direction: match[0].includes('down') ? 'down' : 'up' }),
+    feedback: 'Scrolling',
+    category: 'universal'
+  },
+  {
+    patterns: [
+      /^close$/i,
+      /dismiss/i,
+      /close\s+(?:this|the)\s+(?:panel|modal|popup|dialog)/i,
+    ],
+    action: 'close',
+    feedback: 'Closing',
+    category: 'universal'
+  },
+  {
+    patterns: [
+      /^save$/i,
+      /save\s+(?:this|changes)/i,
+      /^submit$/i,
+    ],
+    action: 'save',
+    feedback: 'Saving',
+    category: 'universal'
+  },
+  {
+    patterns: [
+      /^undo$/i,
+      /undo\s+(?:that|last)/i,
+    ],
+    action: 'undo',
+    feedback: 'Undoing',
+    category: 'universal'
+  },
+  {
+    patterns: [
+      /^redo$/i,
+      /redo\s+(?:that|last)/i,
+    ],
+    action: 'redo',
+    feedback: 'Redoing',
+    category: 'universal'
   },
 ];
 
@@ -332,6 +563,7 @@ export class VoiceCommandProcessor {
     console.log('[VoiceCommandProcessor] Executing action:', action, params);
     
     switch (action) {
+      // Universal actions
       case 'refresh':
         if (typeof window !== 'undefined') {
           window.location.reload();
@@ -340,26 +572,119 @@ export class VoiceCommandProcessor {
         break;
         
       case 'go_back':
+      case 'cancel':
         if (typeof window !== 'undefined' && window.history.length > 1) {
           window.history.back();
           return true;
         }
         break;
         
+      case 'scroll':
+        if (typeof window !== 'undefined') {
+          const direction = params?.direction === 'up' ? -1 : 1;
+          window.scrollBy({ top: direction * 400, behavior: 'smooth' });
+          return true;
+        }
+        break;
+        
+      case 'close':
+        // Try to close any open modal or panel
+        if (typeof document !== 'undefined') {
+          const closeButton = document.querySelector('[aria-label="Close"]') as HTMLElement;
+          if (closeButton) {
+            closeButton.click();
+            return true;
+          }
+        }
+        break;
+        
+      case 'save':
+      case 'submit':
+        // Try to trigger save/submit
+        if (typeof document !== 'undefined') {
+          const submitButton = document.querySelector('button[type="submit"]') as HTMLElement;
+          if (submitButton) {
+            submitButton.click();
+            return true;
+          }
+        }
+        break;
+        
+      case 'undo':
+        if (typeof document !== 'undefined') {
+          document.execCommand('undo');
+          return true;
+        }
+        break;
+        
+      case 'redo':
+        if (typeof document !== 'undefined') {
+          document.execCommand('redo');
+          return true;
+        }
+        break;
+        
+      // Navigation actions
       case 'search_person':
+        return this.executeNavigation('people');
+        
       case 'search_company':
-        // These would trigger a search in the UI
-        // For now, navigate to the relevant section
-        const section = action === 'search_person' ? 'people' : 'companies';
-        return this.executeNavigation(section);
+        return this.executeNavigation('companies');
         
       case 'create_lead':
-        // Navigate to leads with create mode
         return this.executeNavigation('leads');
         
       case 'create_contact':
-        // Navigate to people with create mode
         return this.executeNavigation('people');
+        
+      case 'next_record':
+        // Try to click next button
+        if (typeof document !== 'undefined') {
+          const nextButton = document.querySelector('[aria-label*="Next"], [aria-label*="next"], button:has(svg[class*="right"])') as HTMLElement;
+          if (nextButton) {
+            nextButton.click();
+            return true;
+          }
+        }
+        break;
+        
+      case 'previous_record':
+        // Try to click previous button
+        if (typeof document !== 'undefined') {
+          const prevButton = document.querySelector('[aria-label*="Previous"], [aria-label*="previous"], button:has(svg[class*="left"])') as HTMLElement;
+          if (prevButton) {
+            prevButton.click();
+            return true;
+          }
+        }
+        break;
+        
+      case 'mark_complete':
+        // Try to find and click a complete/done button
+        if (typeof document !== 'undefined') {
+          const completeButton = document.querySelector('[aria-label*="Complete"], [aria-label*="Done"], button:contains("Complete")') as HTMLElement;
+          if (completeButton) {
+            completeButton.click();
+            return true;
+          }
+        }
+        break;
+      
+      // Actions that pass through to AI (return false to let AI handle)
+      case 'show_help':
+      case 'analyze_pipeline':
+      case 'summarize_record':
+      case 'draft_email':
+      case 'advanced_search':
+      case 'suggest_actions':
+      case 'call_contact':
+      case 'email_contact':
+      case 'schedule_call':
+      case 'add_note':
+      case 'snooze':
+        // These are complex actions that should be handled by AI
+        // Return false to pass through
+        return false;
         
       default:
         console.warn('[VoiceCommandProcessor] Unknown action:', action);
@@ -371,20 +696,55 @@ export class VoiceCommandProcessor {
   
   /**
    * Process and execute a voice command
-   * Returns true if command was handled, false if should be passed to AI
+   * Returns result with handled=true if command was executed directly,
+   * handled=false if should be passed to AI
    */
   processAndExecute(transcript: string): VoiceCommandResult {
     const result = this.processCommand(transcript);
     
     if (result.handled) {
       if (result.action === 'navigate' && result.target) {
-        this.executeNavigation(result.target);
+        const success = this.executeNavigation(result.target);
+        if (!success) {
+          // Navigation failed, let AI handle it
+          return { ...result, handled: false };
+        }
       } else if (result.action === 'action' && result.target) {
-        this.executeAction(result.target, result.params);
+        const success = this.executeAction(result.target, result.params);
+        if (!success) {
+          // Action couldn't be executed directly, let AI handle it
+          // Keep the feedback but mark as not handled
+          return { ...result, handled: false, action: 'ai' };
+        }
       }
     }
     
     return result;
+  }
+  
+  /**
+   * Get help text for available voice commands
+   */
+  getHelpText(): string {
+    return `You can say things like:
+    
+**Navigation:**
+- "Go to leads" / "Open prospects" / "Show people"
+- "Go to settings" / "Open dashboard"
+- "Go back" / "Next" / "Previous"
+
+**Actions:**
+- "Call [name]" / "Email [name]"
+- "Create new lead" / "Add contact"
+- "Mark done" / "Save" / "Refresh"
+
+**Search:**
+- "Find person [name]" / "Search for company [name]"
+
+**Smart Commands:**
+- "Analyze pipeline" / "Summarize this record"
+- "Draft email to [name] about [topic]"
+- "What should I do next?"`;
   }
 }
 

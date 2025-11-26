@@ -289,6 +289,7 @@ export function RightPanel() {
   
   // Voice listening state (inline indicator, no modal)
   const [isVoiceListening, setIsVoiceListening] = useState(false);
+  const [liveVoiceTranscript, setLiveVoiceTranscript] = useState<string>('');
 
   // Voice recognition is now handled inline by VoiceTranscribingIndicator in ChatInput
 
@@ -3471,6 +3472,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                         : conv
                     ));
                   }}
+                  liveVoiceTranscript={liveVoiceTranscript}
+                  isVoiceListening={isVoiceListening}
                 />
               </div>
             )}
@@ -3522,7 +3525,18 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           processMessageWithQueue={processMessageWithQueue}
           scrollToBottom={scrollToBottom}
           chatHistory={chatMessages.filter(msg => msg['type'] === 'user').map(msg => msg.content).slice(-20)} // Last 20 user messages
-          onVoiceListeningChange={setIsVoiceListening}
+          onVoiceListeningChange={(listening) => {
+            setIsVoiceListening(listening);
+            // Clear live transcript when listening stops
+            if (!listening) {
+              setLiveVoiceTranscript('');
+            }
+          }}
+          onLiveVoiceTranscript={(transcript) => {
+            setLiveVoiceTranscript(transcript);
+            // Auto-scroll to show transcript
+            setTimeout(() => scrollToBottom(), 50);
+          }}
         />
       )}
 

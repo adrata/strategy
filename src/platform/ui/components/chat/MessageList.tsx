@@ -127,6 +127,8 @@ interface MessageListProps {
   onRecordSearch?: (recordName: string) => void;
   scrollToBottom?: () => void; // Optional scroll callback for typewriter updates
   onTypewriterComplete?: (messageId: string) => void; // Callback when typewriter completes
+  liveVoiceTranscript?: string; // Live voice transcript being spoken
+  isVoiceListening?: boolean; // Whether voice is currently listening
 }
 
 // Helper function to render markdown with proper styling
@@ -183,7 +185,9 @@ export function MessageList({
   activeSubApp,
   onRecordSearch,
   scrollToBottom,
-  onTypewriterComplete
+  onTypewriterComplete,
+  liveVoiceTranscript,
+  isVoiceListening
 }: MessageListProps) {
   
   // Handle record search functionality
@@ -491,6 +495,21 @@ export function MessageList({
           {/* Model/provider info removed - not needed in UI */}
         </div>
       ))}
+      
+      {/* Live voice transcript - shown while speaking */}
+      {isVoiceListening && liveVoiceTranscript && (
+        <div
+          className="bg-transparent px-0 py-0 text-base text-black w-fit max-w-full leading-snug p-3"
+          style={{ marginBottom: '16px' }}
+        >
+          <div className="bg-hover rounded-lg px-3 py-2 w-full flex items-start gap-2">
+            <span className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="Voice input">
+              <MicrophoneIcon className="w-3 h-3" />
+            </span>
+            <span className="flex-1 text-muted-foreground italic">{liveVoiceTranscript}</span>
+          </div>
+        </div>
+      )}
       
       <div ref={chatEndRef} />
     </div>

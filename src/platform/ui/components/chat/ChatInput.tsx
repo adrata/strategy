@@ -41,6 +41,7 @@ interface ChatInputProps {
   scrollToBottom: () => void;
   chatHistory?: string[]; // Add chat history for terminal-like navigation
   onVoiceListeningChange?: (isListening: boolean) => void; // Voice listening state callback
+  onLiveVoiceTranscript?: (transcript: string) => void; // Live voice transcript for chat area
 }
 
 export function ChatInput({
@@ -69,6 +70,7 @@ export function ChatInput({
   scrollToBottom,
   chatHistory = [],
   onVoiceListeningChange,
+  onLiveVoiceTranscript,
 }: ChatInputProps) {
   
   // Get current user from auth system
@@ -191,6 +193,7 @@ export function ChatInput({
                   processMessageWithQueue(transcript, isVoiceInput);
                   setTimeout(scrollToBottom, 100);
                 }}
+                onLiveTranscript={onLiveVoiceTranscript}
                 onListeningChange={onVoiceListeningChange}
               />
             </div>
