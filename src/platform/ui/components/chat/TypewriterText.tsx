@@ -12,7 +12,7 @@ interface TypewriterTextProps {
 
 export const TypewriterText: React.FC<TypewriterTextProps> = ({
   text,
-  speed = 35, // Optimized: 35ms per character (30-50ms range for optimal readability)
+  speed = 8, // Fast: 8ms per character for snappy feel
   onComplete,
   onUpdate,
   className = ""

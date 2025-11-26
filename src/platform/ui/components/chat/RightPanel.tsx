@@ -134,6 +134,7 @@ interface ChatMessage {
     processingTime?: number;
     model?: string;
   };
+  isPartial?: boolean; // True if response was interrupted
 }
 
 interface Conversation {
@@ -2884,9 +2885,59 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         });
 
       } catch (streamError) {
-        // Streaming failed - fall back to non-streaming endpoint
-        console.warn('⚠️ [STREAMING] Failed, falling back to non-streaming:', streamError);
+        // Streaming failed - check if we have partial content to save
+        console.warn('⚠️ [STREAMING] Failed:', streamError);
         
+        // If we have partial content, save it with an interrupted indicator
+        if (streamedContent && streamedContent.trim().length > 0) {
+          console.log('💾 [STREAMING] Saving partial content:', streamedContent.length, 'chars');
+          
+          const partialMessage: ChatMessage = {
+            id: streamingMessageId,
+            type: 'assistant',
+            content: streamedContent + '\n\n---\n*Response was interrupted. You can ask me to continue.*',
+            timestamp: new Date(),
+            isTypewriter: false,
+            isPartial: true
+          };
+          
+          // Update UI with partial content
+          setConversations(prev => prev.map(conv => 
+            conv.isActive 
+              ? { 
+                  ...conv, 
+                  messages: conv.messages.map(msg => 
+                    msg.id === streamingMessageId 
+                      ? partialMessage
+                      : msg
+                  ).filter(msg => 
+                    msg.content !== 'typing' && 
+                    msg.content !== 'browsing'
+                  ),
+                  lastActivity: new Date()
+                }
+              : conv
+          ));
+          
+          // Save partial to API
+          const activeConv = conversations.find(c => c.isActive);
+          if (activeConv) {
+            if (activeConv.id === 'main-chat') {
+              const apiId = await ensureMainChatInAPI();
+              if (apiId) {
+                await saveMessageToAPI(apiId, partialMessage);
+              }
+            } else {
+              await saveMessageToAPI(activeConv.id, partialMessage);
+            }
+          }
+          
+          // Don't fall back - we saved the partial content
+          return;
+        }
+        
+        // No partial content - fall back to non-streaming endpoint
+        console.log('🔄 [STREAMING] No partial content, falling back to non-streaming');
         const fallbackUrl = '/api/v1/ai-chat/';
         const fallbackResponse = await fetch(fallbackUrl, {
           method: 'POST',

@@ -76,7 +76,9 @@ export function ChatInput({
   onLogVoiceConversation,
   onVoiceModeClick,
   isVoiceModeActive = false,
-  isModalListening = false
+  isModalListening = false,
+  isProcessing = false,
+  onStopGeneration
 }: ChatInputProps) {
   
   // Get current user from auth system

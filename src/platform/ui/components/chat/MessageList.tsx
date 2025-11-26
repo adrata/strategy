@@ -472,11 +472,7 @@ export function MessageList({
           )}
           
           {/* Model/Provider indicator for transparency */}
-          {message.type === 'assistant' && message.model && (
-            <div className="mt-1 text-xs text-muted/60">
-              {message.provider && `${message.provider} / `}{message.model}
-            </div>
-          )}
+          {/* Model/provider info removed - not needed in UI */}
         </div>
       ))}
       
