@@ -242,10 +242,49 @@ export async function POST(request: NextRequest) {
           controller.close();
         } catch (error) {
           console.error('❌ [STREAM] Error:', error);
+          
+          // 🔧 ENHANCED ERROR FALLBACK: Include record data in error response
+          let fallbackContent = '';
+          if (currentRecord) {
+            const recordName = currentRecord.fullName || currentRecord.name || 'this contact';
+            const company = typeof currentRecord.company === 'string' 
+              ? currentRecord.company 
+              : (currentRecord.company?.name || currentRecord.companyName || '');
+            const title = currentRecord.title || currentRecord.jobTitle || '';
+            
+            // Build comprehensive record summary for fallback
+            const fields: string[] = [];
+            if (recordName) fields.push(`**Name:** ${recordName}`);
+            if (title) fields.push(`**Title:** ${title}`);
+            if (company) fields.push(`**Company:** ${company}`);
+            if (currentRecord.email) fields.push(`**Email:** ${currentRecord.email}`);
+            if (currentRecord.phone) fields.push(`**Phone:** ${currentRecord.phone}`);
+            if (currentRecord.linkedinUrl || currentRecord.linkedin) fields.push(`**LinkedIn:** ${currentRecord.linkedinUrl || currentRecord.linkedin || 'Not available'}`);
+            if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
+            if (currentRecord.priority) fields.push(`**Priority:** ${currentRecord.priority}`);
+            if (currentRecord.seniority) fields.push(`**Seniority:** ${currentRecord.seniority}`);
+            if (currentRecord.lastContact) fields.push(`**Last Contact:** ${currentRecord.lastContact}`);
+            if (currentRecord.nextAction) fields.push(`**Next Action:** ${currentRecord.nextAction}`);
+            if (currentRecord.createdAt) fields.push(`**Created:** ${new Date(currentRecord.createdAt).toLocaleDateString()}`);
+            if (currentRecord.updatedAt) fields.push(`**Updated:** ${new Date(currentRecord.updatedAt).toLocaleDateString()}`);
+            
+            fallbackContent = `Here's the data I have for **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\nHow can I help you with this contact?`;
+          } else {
+            fallbackContent = "I'm here to help you with your sales process. What would you like to work on?";
+          }
+          
+          // Send fallback content as tokens
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-            type: 'error',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            type: 'token',
+            content: fallbackContent
           })}\n\n`));
+          
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            type: 'done',
+            metadata: { model: 'fallback', fallbackUsed: true },
+            totalTime: Date.now() - requestStartTime
+          })}\n\n`));
+          
           controller.close();
         }
       }

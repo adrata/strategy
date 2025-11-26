@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useRef, useEffect } from 'react';
-import { DocumentIcon, PowerIcon } from "@heroicons/react/24/outline";
+import React, { useEffect } from 'react';
 import { AIModelSelector, type AIModel } from './AIModelSelector';
 import { ContextFiles } from './ContextFiles';
 import { AddFilesPopup } from './AddFilesPopup';
-import { VoiceModeModal } from './VoiceModeModal';
-import { RiVoiceAiFill } from "react-icons/ri";
+import { VoiceTranscribingIndicator } from './VoiceTranscribingIndicator';
 import { useUnifiedAuth } from "@/platform/auth";
 
 interface ContextFile {
@@ -39,13 +37,10 @@ interface ChatInputProps {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   addFilesPopupRef: React.RefObject<HTMLDivElement>;
   isEnterHandledRef: React.MutableRefObject<boolean>;
-  processMessageWithQueue: (message: string) => void;
+  processMessageWithQueue: (message: string, isVoiceInput?: boolean) => void;
   scrollToBottom: () => void;
   chatHistory?: string[]; // Add chat history for terminal-like navigation
-  onLogVoiceConversation?: (messages: { role: 'user' | 'assistant', content: string }[]) => void;
-  onVoiceModeClick?: () => void; // Add voice mode click handler
-  isVoiceModeActive?: boolean; // Add voice mode active state
-  isModalListening?: boolean; // Add modal listening state
+  onVoiceListeningChange?: (isListening: boolean) => void; // Voice listening state callback
 }
 
 export function ChatInput({
@@ -73,10 +68,7 @@ export function ChatInput({
   processMessageWithQueue,
   scrollToBottom,
   chatHistory = [],
-  onLogVoiceConversation,
-  onVoiceModeClick,
-  isVoiceModeActive = false,
-  isModalListening = false
+  onVoiceListeningChange,
 }: ChatInputProps) {
   
   // Get current user from auth system
@@ -191,21 +183,16 @@ export function ChatInput({
             </div>
           </div>
 
-          {/* Voice Mode Button - Only for Adrata workspace and Ross */}
+          {/* Inline Voice Transcribing Indicator - Only for Adrata workspace and Ross */}
           {isVoiceModeAllowed && (
             <div className="absolute right-2 top-2 z-10">
-              <button
-                onClick={onVoiceModeClick}
-                className={`relative flex items-center justify-center rounded-lg p-2 text-sm border border-border hover:border-border hover:bg-hover transition-colors cursor-pointer ${
-                  isVoiceModeActive || isModalListening
-                    ? 'bg-blue-100 text-blue-700 border-blue-300 shadow-sm'
-                    : 'text-foreground'
-                }`}
-                style={{ backgroundColor: isVoiceModeActive || isModalListening ? undefined : 'var(--panel-background)', filter: isVoiceModeActive || isModalListening ? undefined : 'brightness(1.05)' }}
-                title="Voice mode"
-              >
-                <RiVoiceAiFill className="w-4 h-4" />
-              </button>
+              <VoiceTranscribingIndicator
+                onTranscriptComplete={(transcript, isVoiceInput) => {
+                  processMessageWithQueue(transcript, isVoiceInput);
+                  setTimeout(scrollToBottom, 100);
+                }}
+                onListeningChange={onVoiceListeningChange}
+              />
             </div>
           )}
 

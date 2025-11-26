@@ -957,7 +957,10 @@ FORBIDDEN RESPONSES - DO NOT USE THESE PHRASES:
 - "I'm not able to see"
 - Any variation suggesting you lack context
 
-YOU MUST USE THIS CONTEXT. The context above is complete and sufficient. Provide specific, personalized advice based on this exact record data. Reference specific details (name, company, role, pain points, motivations, etc.) in your response.`;
+YOU MUST USE THIS CONTEXT. The context above is complete and sufficient. Provide specific, personalized advice based on this exact record data. Reference specific details (name, company, role, pain points, motivations, etc.) in your response.
+
+WHEN USER ASKS ABOUT RECORD DATA:
+If the user asks about "data", "fields", "information", "everything", "details", or similar - YOU MUST LIST THE ACTUAL DATA from the record context above. Format it clearly with field names and values. Include ALL available fields: name, title, company, email, phone, LinkedIn, status, stage, priority, seniority, last contact, next action, created date, updated date, notes, and any other fields present in the context.`;
         }
       } else {
         // 🔧 FIX: Log warning if record context is missing when we have a currentRecord
@@ -1339,6 +1342,7 @@ NEVER:
 
   /**
    * Generate fallback response when OpenRouter is unavailable
+   * Now includes FULL record data when available
    */
   private generateFallbackResponse(request: OpenRouterRequest, startTime: number): OpenRouterResponse {
     const processingTime = Date.now() - startTime;
@@ -1348,26 +1352,64 @@ NEVER:
     // Try to extract record info for personalized fallback
     let recordName: string | null = null;
     let company: string | null = null;
+    let title: string | null = null;
     
     if (currentRecord) {
       recordName = currentRecord.fullName || currentRecord.name || null;
       company = typeof currentRecord.company === 'string' 
         ? currentRecord.company 
-        : currentRecord.company?.name || null;
+        : (currentRecord.company?.name || currentRecord.companyName || null);
+      title = currentRecord.title || currentRecord.jobTitle || null;
     } else if (recordContext) {
       const nameMatch = recordContext.match(/Name:\s*([^\n]+)/i);
       const companyMatch = recordContext.match(/at\s+([^\n]+)/i) || recordContext.match(/Company:\s*([^\n]+)/i);
+      const titleMatch = recordContext.match(/Title:\s*([^\n]+)/i);
       if (nameMatch) recordName = nameMatch[1].trim();
       if (companyMatch) company = companyMatch[1].trim();
+      if (titleMatch) title = titleMatch[1].trim();
     }
     
     let response: string;
-    if (recordName && company) {
-      response = `I'm currently experiencing some technical difficulties with my AI models, but I can still help you with ${recordName} at ${company}. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions.`;
+    
+    // 🔧 ENHANCED FALLBACK: Include actual record data when available
+    if (currentRecord && recordName) {
+      // Build comprehensive record summary from actual data
+      const fields: string[] = [];
+      
+      fields.push(`**Name:** ${recordName}`);
+      if (title) fields.push(`**Title:** ${title}`);
+      if (company) fields.push(`**Company:** ${company}`);
+      if (currentRecord.email) fields.push(`**Email:** ${currentRecord.email}`);
+      if (currentRecord.phone) fields.push(`**Phone:** ${currentRecord.phone}`);
+      if (currentRecord.linkedinUrl || currentRecord.linkedin) fields.push(`**LinkedIn:** ${currentRecord.linkedinUrl || currentRecord.linkedin}`);
+      if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
+      if (currentRecord.stage) fields.push(`**Stage:** ${currentRecord.stage}`);
+      if (currentRecord.priority) fields.push(`**Priority:** ${currentRecord.priority}`);
+      if (currentRecord.seniority) fields.push(`**Seniority:** ${currentRecord.seniority}`);
+      if (currentRecord.department) fields.push(`**Department:** ${currentRecord.department}`);
+      if (currentRecord.lastContact) fields.push(`**Last Contact:** ${currentRecord.lastContact}`);
+      if (currentRecord.nextAction) fields.push(`**Next Action:** ${currentRecord.nextAction}`);
+      if (currentRecord.createdAt) fields.push(`**Created:** ${new Date(currentRecord.createdAt).toLocaleDateString()}`);
+      if (currentRecord.updatedAt) fields.push(`**Last Updated:** ${new Date(currentRecord.updatedAt).toLocaleDateString()}`);
+      if (currentRecord.notes) fields.push(`**Notes:** ${currentRecord.notes}`);
+      if (currentRecord.bio) fields.push(`**Bio:** ${currentRecord.bio}`);
+      
+      // Company details if available
+      if (currentRecord.company && typeof currentRecord.company === 'object') {
+        if (currentRecord.company.industry) fields.push(`**Industry:** ${currentRecord.company.industry}`);
+        if (currentRecord.company.size || currentRecord.company.employeeCount) {
+          fields.push(`**Company Size:** ${currentRecord.company.size || currentRecord.company.employeeCount} employees`);
+        }
+        if (currentRecord.company.website) fields.push(`**Website:** ${currentRecord.company.website}`);
+      }
+      
+      response = `Here's all the data I have for **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\n---\n\nHow can I help you with this contact? I can assist with:\n- Writing personalized outreach\n- Sales strategy and next steps\n- Qualification analysis\n- Research recommendations`;
+    } else if (recordName && company) {
+      response = `I can help you with **${recordName}** at **${company}**. What would you like to know or do? I can assist with sales strategy, outreach, pipeline optimization, or answer questions about this contact.`;
     } else if (recordName) {
-      response = `I'm currently experiencing some technical difficulties with my AI models, but I can still help you with ${recordName}. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions.`;
+      response = `I can help you with **${recordName}**. What would you like to know or do? I can assist with sales strategy, outreach, pipeline optimization, or answer questions about this contact.`;
     } else {
-      response = "I'm currently experiencing some technical difficulties with my AI models. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions.";
+      response = "I'm here to help with your sales process. I can assist with prospecting, pipeline analysis, buyer research, and closing strategies. What's on your mind today?";
     }
     
     return {
@@ -1377,7 +1419,7 @@ NEVER:
       tokensUsed: 0,
       cost: 0,
       processingTime,
-      confidence: 0.3,
+      confidence: 0.5, // Higher confidence since we're providing actual data
       routingInfo: {
         complexity: 0,
         selectedModel: 'fallback',

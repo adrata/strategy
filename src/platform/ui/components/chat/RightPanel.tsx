@@ -78,7 +78,7 @@ import { AIActionsView } from './AIActionsView';
 import { TeamWinsView } from './TeamWinsView';
 import { DMChatInterface } from './DMChatInterface';
 import { DirectMessagesList } from './DirectMessagesList';
-import { VoiceModeModal } from './VoiceModeModal';
+// VoiceModeModal removed - using inline VoiceTranscribingIndicator in ChatInput
 
 // Types
 interface ChatMessage {
@@ -88,6 +88,7 @@ interface ChatMessage {
   timestamp: Date;
   isTypewriter?: boolean;
   typewriterSpeed?: number; // Custom typewriter speed in ms per character
+  isVoiceInput?: boolean; // True if message was input via voice
   hasTodos?: boolean;
   todos?: Array<{
     id: string;
@@ -286,157 +287,10 @@ export function RightPanel() {
   const [isListeningForWakeWord, setIsListeningForWakeWord] = useState(false);
   const wakeWordRecognitionRef = useRef<SpeechRecognition | null>(null);
   
-  // Voice modal state
-  const [showVoiceModal, setShowVoiceModal] = useState(false);
-  const [isVoiceModeActive, setIsVoiceModeActive] = useState(false);
-  const [isModalListening, setIsModalListening] = useState(false);
-  const [backgroundRecognition, setBackgroundRecognition] = useState<SpeechRecognition | null>(null);
-  const [isBackgroundListening, setIsBackgroundListening] = useState(false);
+  // Voice listening state (inline indicator, no modal)
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
 
-  // Background voice recognition when modal is closed
-  useEffect(() => {
-    if (!isVoiceModeActive || showVoiceModal) {
-      // Stop background listening if modal is open or voice mode is off
-      if (backgroundRecognition) {
-        backgroundRecognition.stop();
-        setBackgroundRecognition(null);
-        setIsBackgroundListening(false);
-      }
-      return;
-    }
-
-    // Start background listening
-    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognition) return;
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 3;
-    recognition.lang = 'en-US';
-
-    // Add speech grammar for Adrata
-    if ('SpeechGrammarList' in window) {
-      const SpeechGrammarList = (window as any).SpeechGrammarList || (window as any).webkitSpeechGrammarList;
-      const grammarList = new SpeechGrammarList();
-      const grammar = '#JSGF V1.0; grammar adrata; public <phrase> = Adrata | Hey Adrata | Hi Adrata ;';
-      grammarList.addFromString(grammar, 1.0);
-      recognition.grammars = grammarList;
-    }
-
-    let finalTranscriptAccumulator = '';
-    let silenceTimeout: NodeJS.Timeout | null = null;
-
-    recognition.onstart = () => {
-      setIsBackgroundListening(true);
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🎤 Background voice recognition started');
-      }
-    };
-
-    recognition.onresult = (event) => {
-      let finalTranscript = '';
-      
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        const alternatives = Array.from(result);
-        
-        // Enhanced alternative selection with context awareness
-        const scoredAlternatives = alternatives.map(alt => {
-          let score = alt.confidence;
-          const text = alt.transcript.toLowerCase();
-          
-          // Boost for greetings
-          if (text.includes('hey') || text.includes('hi') || text.includes('hello')) {
-            score *= 1.3;
-          }
-          
-          // Boost for Adrata mentions
-          const adrataVariations = ['adrata', 'edrata', 'adra', 'edra', 'a drata', 'ah drata'];
-          if (adrataVariations.some(v => text.includes(v))) {
-            score *= 1.5;
-          }
-          
-          return { ...alt, adjustedScore: score };
-        });
-        
-        const bestAlternative = scoredAlternatives.reduce((best, current) => 
-          current.adjustedScore > best.adjustedScore ? current : best
-        );
-        
-        if (result.isFinal && bestAlternative.confidence > 0.7) {
-          finalTranscript += bestAlternative.transcript;
-        }
-      }
-
-      if (finalTranscript) {
-        finalTranscriptAccumulator += finalTranscript + ' ';
-        
-        // Clear existing timeout
-        if (silenceTimeout) {
-          clearTimeout(silenceTimeout);
-        }
-        
-        // Set new timeout to process after 2 seconds of silence
-        silenceTimeout = setTimeout(() => {
-          if (finalTranscriptAccumulator.trim()) {
-            // Fix Adrata spelling
-            const fixedTranscript = finalTranscriptAccumulator
-              .replace(/\bedrada\b/gi, 'Adrata')
-              .replace(/\badrata\b/gi, 'Adrata')
-              .replace(/\bedra\b/gi, 'Adrata')
-              .replace(/\badra\b/gi, 'Adrata')
-              .replace(/\ba\s*drata\b/gi, 'Adrata')
-              .replace(/\bah\s*drata\b/gi, 'Adrata')
-              .replace(/\bhey,?\s+adrata\b/gi, 'Hey, Adrata')
-              .replace(/\bhey,?\s+edrada\b/gi, 'Hey, Adrata')
-              .replace(/\bhi,?\s+adrata\b/gi, 'Hi, Adrata')
-              .replace(/\bhello,?\s+adrata\b/gi, 'Hello, Adrata')
-              .trim();
-            
-            // Send directly to chat
-            if (process.env.NODE_ENV === 'development') {
-              console.log('🎤 Background voice input:', fixedTranscript);
-            }
-            processMessageWithQueue(fixedTranscript);
-            
-            finalTranscriptAccumulator = '';
-          }
-        }, 2000);
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error('Background recognition error:', event.error);
-      if (event.error === 'no-speech') {
-        // Restart on no-speech
-        setTimeout(() => {
-          if (isVoiceModeActive && !showVoiceModal) {
-            recognition.start();
-          }
-        }, 100);
-      }
-    };
-
-    recognition.onend = () => {
-      setIsBackgroundListening(false);
-      // Auto-restart if voice mode is still active and modal is closed
-      if (isVoiceModeActive && !showVoiceModal) {
-        setTimeout(() => recognition.start(), 100);
-      }
-    };
-
-    recognition.start();
-    setBackgroundRecognition(recognition);
-
-    return () => {
-      if (silenceTimeout) {
-        clearTimeout(silenceTimeout);
-      }
-      recognition.stop();
-      setIsBackgroundListening(false);
-    };
-  }, [isVoiceModeActive, showVoiceModal]);
+  // Voice recognition is now handled inline by VoiceTranscribingIndicator in ChatInput
 
   // Wake word detection setup
   useEffect(() => {
@@ -2493,7 +2347,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     };
   };
 
-  const processMessageWithQueue = async (input: string) => {
+  const processMessageWithQueue = async (input: string, isVoiceInput: boolean = false) => {
     if (isProcessing) return;
 
     setIsProcessing(true);
@@ -2564,7 +2418,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         type: 'user',
         content: input,
-        timestamp: new Date()
+        timestamp: new Date(),
+        isVoiceInput: isVoiceInput // Track if message was input via voice
       };
       
       // Update UI immediately (optimistic update)
@@ -3667,85 +3522,13 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           processMessageWithQueue={processMessageWithQueue}
           scrollToBottom={scrollToBottom}
           chatHistory={chatMessages.filter(msg => msg['type'] === 'user').map(msg => msg.content).slice(-20)} // Last 20 user messages
-          onLogVoiceConversation={(messages) => {
-            // Log voice conversation to chat
-            messages.forEach((message) => {
-              const chatMessage = {
-                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                type: message.role === 'user' ? 'user' : 'assistant',
-                content: message.content,
-                timestamp: new Date().toISOString(),
-                workspaceId: workspaceId
-              };
-              setChatMessages(prev => [...prev, chatMessage]);
-            });
-            scrollToBottom();
-          }}
-          onVoiceModeClick={() => {
-            if (isVoiceModeActive) {
-              // Turn off voice mode completely
-              setIsVoiceModeActive(false);
-              setShowVoiceModal(false);
-              if (backgroundRecognition) {
-                backgroundRecognition.stop();
-                setBackgroundRecognition(null);
-              }
-            } else {
-              // Turn on voice mode and show modal
-              setShowVoiceModal(true);
-              setIsVoiceModeActive(true);
-            }
-          }}
-          isVoiceModeActive={isVoiceModeActive}
-          isModalListening={isModalListening}
+          onVoiceListeningChange={setIsVoiceListening}
         />
       )}
 
-      {/* Voice Mode Modal */}
-      <VoiceModeModal
-        isOpen={showVoiceModal}
-        onClose={() => {
-          setShowVoiceModal(false);
-          setIsModalListening(false);
-          // Keep voice mode active, background listening will start
-          // Don't set isVoiceModeActive to false
-        }}
-        onLogToChat={(messages) => {
-          // Log voice conversation to chat
-          const chatMessages: ChatMessage[] = messages.map((message) => ({
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-            type: message.role === 'user' ? 'user' : 'assistant',
-            content: message.content,
-            timestamp: new Date(),
-            workspaceId: workspaceId
-          }));
-
-          // Add messages to active conversation
-          setConversations(prev => prev.map(conv => 
-            conv.isActive 
-              ? { 
-                  ...conv, 
-                  messages: [...conv.messages, ...chatMessages],
-                  lastActivity: new Date()
-                }
-              : conv
-          ));
-          
-          scrollToBottom();
-        }}
-        processMessageWithQueue={processMessageWithQueue}
-        onListeningChange={(listening) => setIsModalListening(listening)}
-      />
+      {/* Voice input is handled inline by VoiceTranscribingIndicator in ChatInput */}
 
       </div>
-
-      {/* Background listening indicator */}
-      {isBackgroundListening && !showVoiceModal && (
-        <div className="fixed bottom-24 right-8 z-50 flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg shadow-md">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-          <span className="text-xs text-blue-700 font-medium">Listening...</span>
-        </div>
-      )}
 
     </>
   );

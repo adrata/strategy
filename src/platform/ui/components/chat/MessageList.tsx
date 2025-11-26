@@ -5,6 +5,7 @@ import { InChatTodoList } from './InChatTodoList';
 import { TypewriterText } from './TypewriterText';
 import { FileDisplayWidget } from './FileDisplayWidget';
 import { EnrichmentProgressTracker, createCFOEnrichmentSteps } from './EnrichmentProgressTracker';
+import { MicrophoneIcon } from "@heroicons/react/24/solid";
 // import { ReasoningWindow } from './ReasoningWindow'; // Removed - reasoning box disabled
 
 // Progress component with state management
@@ -86,6 +87,7 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   isTypewriter?: boolean;
+  isVoiceInput?: boolean; // True if message was input via voice
   todos?: Array<{
     id: string;
     content: string;
@@ -243,8 +245,13 @@ export function MessageList({
           style={{ marginBottom: '16px' }}
         >
           {message['type'] === 'user' ? (
-            <div className="bg-hover rounded-lg px-3 py-2 w-full">
-              {message.content}
+            <div className="bg-hover rounded-lg px-3 py-2 w-full flex items-start gap-2">
+              {message.isVoiceInput && (
+                <span className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="Voice input">
+                  <MicrophoneIcon className="w-3 h-3" />
+                </span>
+              )}
+              <span className="flex-1">{message.content}</span>
             </div>
           ) : message['type'] === 'todos' ? (
             <InChatTodoList 
