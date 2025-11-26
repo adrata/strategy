@@ -32,6 +32,7 @@ import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/
 import { FeatureAccessProvider } from "@/platform/ui/context/FeatureAccessProvider";
 import { OasisProvider } from "@/products/oasis/context/OasisProvider";
 import { OasisLayoutContext, useOasisLayout, type OasisLayoutContextType } from "@/products/oasis/context/OasisLayoutContext";
+import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
 
 // Re-export useOasisLayout for backward compatibility
 export { useOasisLayout };
@@ -604,18 +605,19 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   return (
     <RevenueOSProvider>
       <FeatureAccessProvider>
-        <ZoomProvider>
-          <PipelineProvider>
-            <StacksProvider>
-              <SpeedrunDataProvider>
-                <SprintProvider>
-                  <OasisLayoutContext.Provider value={oasisLayoutContextValue}>
-                    <OasisProvider>
-                      <InboxProvider>
-                        <ProfilePopupProvider>
-                          <SettingsPopupProvider>
-                            <ProfilePanelProvider>
-                              <PipelineLayoutInner
+        <RecordContextProvider>
+          <ZoomProvider>
+            <PipelineProvider>
+              <StacksProvider>
+                <SpeedrunDataProvider>
+                  <SprintProvider>
+                    <OasisLayoutContext.Provider value={oasisLayoutContextValue}>
+                      <OasisProvider>
+                        <InboxProvider>
+                          <ProfilePopupProvider>
+                            <SettingsPopupProvider>
+                              <ProfilePanelProvider>
+                                <PipelineLayoutInner
                               currentSection={isNovaActive ? "nova" : currentSection}
                               onSectionChange={handleSectionChange}
                               isSpeedrunVisible={isSpeedrunVisible}
@@ -633,18 +635,19 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
                               isNovaActive={isNovaActive}
                             >
                               {children}
-                            </PipelineLayoutInner>
-                          </ProfilePanelProvider>
-                        </SettingsPopupProvider>
-                      </ProfilePopupProvider>
-                      </InboxProvider>
-                    </OasisProvider>
-                  </OasisLayoutContext.Provider>
-                </SprintProvider>
-              </SpeedrunDataProvider>
-            </StacksProvider>
-          </PipelineProvider>
-        </ZoomProvider>
+                              </PipelineLayoutInner>
+                            </ProfilePanelProvider>
+                          </SettingsPopupProvider>
+                        </ProfilePopupProvider>
+                        </InboxProvider>
+                      </OasisProvider>
+                    </OasisLayoutContext.Provider>
+                  </SprintProvider>
+                </SpeedrunDataProvider>
+              </StacksProvider>
+            </PipelineProvider>
+          </ZoomProvider>
+        </RecordContextProvider>
       </FeatureAccessProvider>
     </RevenueOSProvider>
   );
