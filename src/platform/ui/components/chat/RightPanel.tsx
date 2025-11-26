@@ -198,6 +198,7 @@ export function RightPanel() {
   };
   const { currentRecord, recordType, listViewContext } = useRecordContext();
   const { user } = useUnifiedAuth();
+  const { activeSubApp } = ui;
 
   // 🔧 FIX: Use refs to capture latest record context at message send time
   const currentRecordRef = useRef(currentRecord);
@@ -291,8 +292,6 @@ export function RightPanel() {
   const [isModalListening, setIsModalListening] = useState(false);
   const [backgroundRecognition, setBackgroundRecognition] = useState<SpeechRecognition | null>(null);
   const [isBackgroundListening, setIsBackgroundListening] = useState(false);
-
-  const { activeSubApp } = ui;
 
   // Background voice recognition when modal is closed
   useEffect(() => {
