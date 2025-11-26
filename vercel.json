@@ -66,6 +66,9 @@
     "src/app/api/v1/ai-chat/route.ts": {
       "maxDuration": 60
     },
+    "src/app/api/v1/ai-chat/stream/route.ts": {
+      "maxDuration": 60
+    },
     "src/app/api/v1/strategy/company/[id]/route.ts": {
       "maxDuration": 60
     },
