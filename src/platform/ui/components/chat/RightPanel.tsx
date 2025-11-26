@@ -1414,39 +1414,35 @@ export function RightPanel() {
     }
   };
 
-  // Sync from API on mount and periodically
-  useEffect(() => {
-    if (workspaceId && userId) {
-      // Initial sync after a short delay to let localStorage load first
-      const timer = setTimeout(async () => {
-        await syncConversationsFromAPI();
-        // Ensure main-chat exists in API after syncing
-        await ensureMainChatInAPI();
-        
-        // After sync, ensure Main Chat has no temporary messages and is active
-        setConversations(prev => prev.map(conv => {
-          const isMainChat = conv.id === 'main-chat' || 
-                            (conv.metadata as any)?.isMainChat === true;
-          return conv;
-        }));
-        
-        // Scroll to bottom after messages load
-        setTimeout(() => scrollToBottom(true), 100);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [workspaceId, userId]);
-
-  // Periodic sync every 30 seconds
+  // 🚀 CONSOLIDATED: API sync on mount and periodic refresh (combined from 2 effects)
   useEffect(() => {
     if (!workspaceId || !userId) return;
     
-    const interval = setInterval(() => {
+    // Initial sync after a short delay to let localStorage load first
+    const initTimer = setTimeout(async () => {
+      await syncConversationsFromAPI();
+      await ensureMainChatInAPI();
+      
+      // After sync, ensure Main Chat has no temporary messages
+      setConversations(prev => prev.map(conv => {
+        const isMainChat = conv.id === 'main-chat' || 
+                          (conv.metadata as any)?.isMainChat === true;
+        return conv;
+      }));
+      
+      // Scroll to bottom after messages load
+      setTimeout(() => scrollToBottom(true), 100);
+    }, 1000);
+    
+    // Periodic sync every 30 seconds
+    const syncInterval = setInterval(() => {
       syncConversationsFromAPI();
     }, 30000);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(initTimer);
+      clearInterval(syncInterval);
+    };
   }, [workspaceId, userId]);
   
   // Multi-tab sync: Listen for localStorage changes from other tabs
@@ -1472,27 +1468,24 @@ export function RightPanel() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [workspaceId]);
 
-  // Update page context when pathname changes
+  // 🚀 CONSOLIDATED: Context updates (page + record) combined from 2 effects
   useEffect(() => {
+    // Update page context when pathname changes
     const newContext = getPageContext();
-      if (newContext) {
-        setCurrentPageContext(newContext);
-        setContextLastUpdated(new Date());
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🧭 [AI CONTEXT] Page context updated:', {
-            section: newContext.secondarySection,
-            detailView: newContext.detailView,
-            isDetailPage: newContext.isDetailPage,
-            itemId: newContext.itemId,
-            itemName: newContext.itemName,
-            viewType: newContext.viewType
-          });
-        }
+    if (newContext) {
+      setCurrentPageContext(newContext);
+      setContextLastUpdated(new Date());
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🧭 [AI CONTEXT] Page context updated:', {
+          section: newContext.secondarySection,
+          detailView: newContext.detailView,
+          isDetailPage: newContext.isDetailPage,
+          itemId: newContext.itemId
+        });
       }
-  }, [pathname]);
-
-  // Update context when current record changes
-  useEffect(() => {
+    }
+    
+    // Update when current record changes
     if (currentRecord) {
       setContextLastUpdated(new Date());
       if (process.env.NODE_ENV === 'development') {
@@ -1503,7 +1496,7 @@ export function RightPanel() {
         });
       }
     }
-  }, [currentRecord, recordType]);
+  }, [pathname, currentRecord, recordType]);
 
   
   // Refs
@@ -1937,21 +1930,21 @@ export function RightPanel() {
     }
   };
 
-  // Auto-scroll to bottom instantly on component mount (no animation)
+  // 🚀 CONSOLIDATED: Auto-scroll on mount + initial message load (combined from 2 effects)
+  const prevMessageCountRef = useRef(0);
+  const mountScrolledRef = useRef(false);
+  
   useEffect(() => {
-    if (chatEndRef.current) {
-      // Use instant scroll without animation
+    // Initial mount scroll (only once)
+    if (!mountScrolledRef.current && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ 
         behavior: 'instant', 
         block: 'end' 
       });
+      mountScrolledRef.current = true;
     }
-  }, []); // Only on mount
-  
-  // Scroll to bottom when messages are first loaded
-  const prevMessageCountRef = useRef(0);
-  useEffect(() => {
-    // If messages went from 0 to some, scroll to bottom (initial load)
+    
+    // Scroll when messages first loaded (0 -> some)
     if (prevMessageCountRef.current === 0 && chatMessages.length > 0) {
       setTimeout(() => scrollToBottom(true), 100);
     }
@@ -2703,97 +2696,243 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       );
       const effectiveAppType = isPartnerOSMode ? 'partneros' : activeSubApp;
       
-      // API route uses trailing slash to match Next.js trailingSlash: true config
-      const apiUrl = '/api/v1/ai-chat/';
-      const requestId = `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // 🚀 STREAMING: Use streaming endpoint for faster perceived response
+      const streamingUrl = '/api/v1/ai-chat/stream/';
+      const requestId = `ai-chat-stream-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
-      // Add timeout to prevent hanging requests (60 seconds)
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Request timeout after 60 seconds')), 60000);
-      });
+      // Create streaming message ID upfront
+      const streamingMessageId = `ai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      let streamedContent = '';
+      let streamMetadata: any = null;
+      let streamingStarted = false;
       
-      const fetchPromise = fetch(apiUrl, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'X-Request-ID': requestId
-        },
-        body: JSON.stringify({
-          message: input,
-          appType: effectiveAppType,
-          workspaceId,
-          userId,
-          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing' && msg.content !== 'thinking').slice(-3), // Reduced to 3 messages for faster response
-          currentRecord: latestRecord, // Use ref to ensure latest value
-          recordType: latestRecordType, // Use ref to ensure latest value
-          recordIdFromUrl, // 🔧 NEW: Send record ID from URL as fallback
-          isListView, // 🔧 NEW: Indicate if on list view
-          listViewSection, // 🔧 NEW: Which section list view (leads, prospects, etc.)
-          listViewContext: latestListViewContext, // Use ref to ensure latest value
-          enableVoiceResponse: false,
-          selectedVoiceId: 'default',
-          useOpenRouter: true, // Enable OpenRouter intelligent routing
-          selectedAIModel, // Pass selected AI model to API
-          // Enhanced context for smarter responses
-          context: {
-            currentUrl: window.location.href,
-            userAgent: navigator.userAgent,
-            timestamp: new Date().toISOString(),
-            sessionId: `session-${Date.now()}`,
-            // 🚀 PARTNEROS CONTEXT: Include PartnerOS mode in context
-            isPartnerOS: isPartnerOSMode
-          },
-          // Add page context for better AI awareness
-          pageContext: currentPageContext || getPageContext()
-        }),
-      });
-      
-      const response = await Promise.race([fetchPromise, timeoutPromise]);
-
-      // Validate response
-      if (!response.ok) {
-        console.error('[AI CHAT] HTTP Error:', response.status, response.statusText);
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      // Check if response has content
-      // NOTE: This code is unreachable due to early return above, but kept for future restoration
-      const responseTextOriginal = await response.text();
-      if (!responseTextOriginal || responseTextOriginal.trim() === '') {
-        throw new Error('Empty response from server');
-      }
-
-      // Check if response is HTML (error page) instead of JSON
-      if (responseTextOriginal.trim().startsWith('<!DOCTYPE html>') || responseTextOriginal.trim().startsWith('<html')) {
-        console.error('Received HTML instead of JSON:', responseTextOriginal.substring(0, 200));
-        throw new Error('Server returned an error page instead of JSON response');
-      }
-
-      // Try to parse JSON
-      let data;
       try {
-        data = JSON.parse(responseTextOriginal);
-      } catch (parseError) {
-        console.error('Failed to parse JSON response:', parseError);
-        console.error('Response text:', responseTextOriginal);
-        throw new Error('Invalid response format from server');
-      }
-      
-      if (data.success) {
-        const messagesToAdd: ChatMessage[] = [];
+        const response = await fetch(streamingUrl, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            'X-Request-ID': requestId
+          },
+          body: JSON.stringify({
+            message: input,
+            appType: effectiveAppType,
+            conversationHistory: chatMessages.filter(msg => 
+              msg.content !== 'typing' && 
+              msg.content !== 'browsing' && 
+              msg.content !== 'thinking'
+            ).slice(-3),
+            currentRecord: latestRecord,
+            recordType: latestRecordType,
+            recordIdFromUrl,
+            isListView,
+            listViewSection,
+            listViewContext: latestListViewContext,
+            pageContext: currentPageContext || getPageContext(),
+            selectedAIModel
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        if (!response.body) {
+          throw new Error('No response body for streaming');
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        // Process streaming response
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
+
+          for (const line of lines) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.type === 'start') {
+                // Stream started - replace typing indicator with empty streaming message
+                if (!streamingStarted) {
+                  streamingStarted = true;
+                  setConversations(prev => prev.map(conv => 
+                    conv.isActive 
+                      ? { 
+                          ...conv, 
+                          messages: [
+                            ...conv.messages.filter(msg => 
+                              msg.content !== 'typing' && 
+                              msg.content !== 'browsing'
+                            ),
+                            {
+                              id: streamingMessageId,
+                              type: 'assistant' as const,
+                              content: '',
+                              timestamp: new Date(),
+                              isTypewriter: false // No typewriter for streaming - show as it arrives
+                            }
+                          ]
+                        }
+                      : conv
+                  ));
+                }
+              } else if (data.type === 'token' && data.content) {
+                // Append token to streamed content
+                streamedContent += data.content;
+                
+                // Update the streaming message with new content
+                setConversations(prev => prev.map(conv => 
+                  conv.isActive 
+                    ? { 
+                        ...conv, 
+                        messages: conv.messages.map(msg => 
+                          msg.id === streamingMessageId 
+                            ? { ...msg, content: streamedContent }
+                            : msg
+                        )
+                      }
+                    : conv
+                ));
+                
+                // Auto-scroll as content streams in
+                scrollToBottom(false);
+              } else if (data.type === 'done') {
+                // Stream complete - finalize message with metadata
+                streamMetadata = data.metadata;
+                
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('🎯 [STREAMING] Complete:', {
+                    model: streamMetadata?.model,
+                    provider: streamMetadata?.provider,
+                    totalTime: data.totalTime,
+                    tokensUsed: streamMetadata?.tokensUsed
+                  });
+                }
+              } else if (data.type === 'error') {
+                throw new Error(data.error || 'Streaming error');
+              }
+            } catch (parseError) {
+              // Skip malformed SSE chunks
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('SSE parse error:', parseError);
+              }
+            }
+          }
+        }
+
+        // Ensure we have content
+        if (!streamedContent || streamedContent.trim() === '') {
+          throw new Error('Empty response from AI');
+        }
+
+        // Create final message with metadata
+        const assistantMessage: ChatMessage = {
+          id: streamingMessageId,
+          type: 'assistant',
+          content: streamedContent,
+          timestamp: new Date(),
+          isTypewriter: false, // Already streamed
+          routingInfo: streamMetadata?.routingInfo,
+          cost: streamMetadata?.cost,
+          model: streamMetadata?.model,
+          provider: streamMetadata?.provider
+        };
+
+        // Save to API
+        const activeConv = conversations.find(c => c.isActive);
+        if (activeConv) {
+          if (activeConv.id === 'main-chat') {
+            const apiId = await ensureMainChatInAPI();
+            if (apiId) {
+              await saveMessageToAPI(apiId, assistantMessage);
+            }
+          } else {
+            await saveMessageToAPI(activeConv.id, assistantMessage);
+          }
+        }
         
-        // Handle todos as part of the assistant message
-        // 🔧 FIX: Ensure response content exists
-        if (!data.response || typeof data.response !== 'string' || data.response.trim() === '') {
-          console.error('❌ [AI CHAT] Empty or invalid response content:', { 
-            hasResponse: !!data.response, 
-            responseType: typeof data.response,
-            responseLength: data.response?.length || 0,
-            responsePreview: data.response?.substring(0, 100)
-          });
-          throw new Error('AI response is empty or invalid');
+        // Final update with complete message
+        setConversations(prev => prev.map(conv => 
+          conv.isActive 
+            ? { 
+                ...conv, 
+                messages: conv.messages.map(msg => 
+                  msg.id === streamingMessageId 
+                    ? assistantMessage
+                    : msg
+                ),
+                lastActivity: new Date()
+              }
+            : conv
+        ));
+        
+        chat.setChatSessions(prev => {
+          const currentMessages = prev[activeSubApp] || [];
+          const withoutTyping = currentMessages.filter(msg => 
+            msg.content !== 'typing' && 
+            msg.content !== 'browsing'
+          );
+          return {
+            ...prev,
+            [activeSubApp]: [...withoutTyping, assistantMessage]
+          };
+        });
+
+      } catch (streamError) {
+        // Streaming failed - fall back to non-streaming endpoint
+        console.warn('⚠️ [STREAMING] Failed, falling back to non-streaming:', streamError);
+        
+        const fallbackUrl = '/api/v1/ai-chat/';
+        const fallbackResponse = await fetch(fallbackUrl, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+          },
+          body: JSON.stringify({
+            message: input,
+            appType: effectiveAppType,
+            workspaceId,
+            userId,
+            conversationHistory: chatMessages.filter(msg => 
+              msg.content !== 'typing' && 
+              msg.content !== 'browsing' && 
+              msg.content !== 'thinking'
+            ).slice(-3),
+            currentRecord: latestRecord,
+            recordType: latestRecordType,
+            recordIdFromUrl,
+            isListView,
+            listViewSection,
+            listViewContext: latestListViewContext,
+            enableVoiceResponse: false,
+            selectedVoiceId: 'default',
+            useOpenRouter: true,
+            selectedAIModel,
+            context: {
+              currentUrl: window.location.href,
+              userAgent: navigator.userAgent,
+              timestamp: new Date().toISOString(),
+              sessionId: `session-${Date.now()}`,
+              isPartnerOS: isPartnerOSMode
+            },
+            pageContext: currentPageContext || getPageContext()
+          }),
+        });
+
+        if (!fallbackResponse.ok) {
+          throw new Error(`HTTP ${fallbackResponse.status}: ${fallbackResponse.statusText}`);
+        }
+
+        const data = await fallbackResponse.json();
+        
+        if (!data.success || !data.response) {
+          throw new Error(data.error || 'Invalid response');
         }
         
         const assistantMessage: ChatMessage = {
@@ -2802,74 +2941,25 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           content: data.response,
           timestamp: new Date(),
           isTypewriter: true,
-          hasTodos: !!(data['todos'] && data.todos.length > 0),
-          todos: data.todos || undefined,
-          sources: data.sources || undefined,
-          browserResults: data.browserResults || undefined,
-          isBrowsing: data.metadata?.hasWebResearch || false,
-          // OpenRouter routing information
           routingInfo: data.metadata?.routingInfo,
           cost: data.metadata?.cost,
           model: data.metadata?.model,
-          provider: data.metadata?.provider,
-          // AI Reasoning data (shows thinking process)
-          reasoning: data.reasoning
+          provider: data.metadata?.provider
         };
 
-        // Log routing information for monitoring
-        if (data.metadata?.routingInfo && process.env.NODE_ENV === 'development') {
-          console.log('🎯 [AI CHAT] Routing info:', {
-            model: data.metadata.model,
-            provider: data.metadata.provider,
-            complexity: data.metadata.routingInfo.complexity,
-            cost: data.metadata.cost,
-            fallbackUsed: data.metadata.routingInfo.fallbackUsed
-          });
-        }
-        
-        messagesToAdd.push(assistantMessage);
-
-        // Check if response indicates a technical issue - clear files if so
-        // NOTE: This code is unreachable due to early return above, but kept for future restoration
-        const responseTextCheck = assistantMessage.content.toLowerCase();
-        if (responseTextCheck.includes('brief technical issue') || 
-            responseTextCheck.includes('technical difficulties') ||
-            responseTextCheck.includes('technical hiccup')) {
-          // Clear context files when technical issues occur
-          if (contextFiles.length > 0) {
-            setContextFiles([]);
-            try {
-              if (workspaceId) {
-                const storageKey = `adrata-context-files-${workspaceId}-${userId}`;
-                localStorage.removeItem(storageKey);
-              }
-            } catch (storageError) {
-              console.warn('Failed to clear context files:', storageError);
-            }
-          }
-        }
-
-        // Save to API FIRST before updating UI (ensure messages are persisted)
+        // Save to API
         const activeConv = conversations.find(c => c.isActive);
         if (activeConv) {
-          // Ensure main-chat has an API ID before saving
           if (activeConv.id === 'main-chat') {
             const apiId = await ensureMainChatInAPI();
             if (apiId) {
-              // Save all messages before filtering
-              for (const message of messagesToAdd) {
-                await saveMessageToAPI(apiId, message);
-              }
+              await saveMessageToAPI(apiId, assistantMessage);
             }
           } else {
-            // Save all messages before filtering
-            for (const message of messagesToAdd) {
-              await saveMessageToAPI(activeConv.id, message);
-            }
+            await saveMessageToAPI(activeConv.id, assistantMessage);
           }
         }
         
-        // Remove typing/browsing messages and add final response AFTER saving
         setConversations(prev => prev.map(conv => 
           conv.isActive 
             ? { 
@@ -2879,7 +2969,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                     msg.content !== 'typing' && 
                     msg.content !== 'browsing'
                   ),
-                  ...messagesToAdd
+                  assistantMessage
                 ],
                 lastActivity: new Date()
               }
@@ -2888,33 +2978,15 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         chat.setChatSessions(prev => {
           const currentMessages = prev[activeSubApp] || [];
-          const withoutTyping = currentMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing');
+          const withoutTyping = currentMessages.filter(msg => 
+            msg.content !== 'typing' && 
+            msg.content !== 'browsing'
+          );
           return {
             ...prev,
-            [activeSubApp]: [...withoutTyping, ...messagesToAdd]
+            [activeSubApp]: [...withoutTyping, assistantMessage]
           };
         });
-
-        // Handle navigation response
-        if (data.navigation) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('🧭 Navigation response received:', data.navigation);
-          }
-          
-          // Navigate after speaking (if voice is enabled) - use in-app navigation
-          const navigationDelay = data['voice'] && data.voice.shouldSpeak ? 2000 : 1000;
-          setTimeout(() => {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('🚀 Navigating to:', data.navigation.route);
-            }
-            // Use in-app navigation instead of router.push to prevent new tab opening
-            window['location']['href'] = data.navigation.route;
-          }, navigationDelay);
-        }
-
-        // Voice response handling disabled for now
-      } else {
-        throw new Error(data.error || 'Unknown error');
       }
     } catch (error) {
       console.error('AI API call failed:', error);

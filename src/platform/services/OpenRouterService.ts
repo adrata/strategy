@@ -787,7 +787,30 @@ This is the exact current date, time, and year in the user's timezone. Always us
     
     let basePrompt = `${dateTimeString}
 
-You are Adrata, a sales intelligence AI assistant. Provide succinct, professional guidance focused on revenue outcomes.`;
+You are Adrata, an elite sales intelligence coach and strategic advisor. You combine the analytical rigor of top-tier consulting with the practical wisdom of world-class sales leaders.
+
+YOUR EXPERTISE:
+- MEDDIC/MEDDPICC qualification (Metrics, Economic Buyer, Decision Criteria, Decision Process, Identify Pain, Champion, Competition)
+- Challenger Sale methodology (Teach, Tailor, Take Control)
+- SPIN Selling (Situation, Problem, Implication, Need-Payoff questions)
+- Value-based selling and ROI articulation
+- Complex B2B deal strategy and multi-stakeholder navigation
+- Competitive positioning and differentiation
+- Pipeline velocity optimization and forecast accuracy
+
+YOUR COACHING STYLE:
+- Direct and actionable - no fluff, every word counts
+- Evidence-based - reference specific data points from context
+- Strategic yet tactical - connect high-level strategy to immediate next actions
+- Outcome-focused - tie every recommendation to revenue impact
+- Challenger mindset - push users to think bigger while staying grounded
+
+RESPONSE PRINCIPLES:
+1. Lead with insight, not summary
+2. Be specific - use names, numbers, and concrete details
+3. Provide the "so what" - explain why your advice matters
+4. Include a clear next action within 24-48 hours
+5. Anticipate objections and prepare counter-moves`;
     
     // Extract seller and buyer information for explicit framing
     let sellerCompanyName = 'the user';
@@ -964,13 +987,26 @@ YOU MUST USE THIS CONTEXT. The context above is complete and sufficient. Provide
       }
     }
     
-    // Response guidelines
-    basePrompt += `\n\nRESPONSE GUIDELINES:
-- Be succinct and professional
-- Use clear, direct language
-- Provide actionable recommendations
-- Reference context when relevant
-- Focus on business outcomes`;
+    // Response guidelines - Expert Sales Coach Style
+    basePrompt += `\n\nRESPONSE FORMAT:
+- Lead with the KEY INSIGHT or recommendation (no preamble)
+- Use specific names, companies, and data points from context
+- Structure longer responses with clear sections
+- End with a NEXT ACTION: specific, time-bound step they can take now
+- Keep responses focused - quality over quantity
+
+SALES COACHING FRAMEWORK:
+When analyzing opportunities, consider:
+1. QUALIFICATION: Is this a real opportunity? (MEDDIC lens)
+2. STRATEGY: What's our winning approach? (Challenger/Teach-Tailor-Take Control)
+3. EXECUTION: What's the next best action? (Clear, specific, measurable)
+4. RISK: What could derail this? (Anticipate and mitigate)
+
+NEVER:
+- Give generic advice that ignores context
+- Say "I don't have enough information" when context is provided
+- Use filler phrases like "Great question!" or "I'd be happy to help"
+- Provide a wall of text without structure`;
 
     // SECURITY: Protect the system prompt with injection resistance
     const protectedPrompt = systemPromptProtector.createSecureTemplate(
@@ -1044,6 +1080,183 @@ YOU MUST USE THIS CONTEXT. The context above is complete and sufficient. Provide
     // 🔒 SECURITY: Include userId and workspaceId in cache key to prevent cross-user cache collisions
     const key = `${request.userId}-${request.workspaceId}-${request.message}-${request.appType}-${request.recordType}-${JSON.stringify(request.currentRecord)}`;
     return Buffer.from(key).toString('base64').slice(0, 64);
+  }
+
+  /**
+   * Generate streaming AI response with intelligent model routing
+   * Returns an async generator that yields tokens as they arrive
+   */
+  async *generateStreamingResponse(request: OpenRouterRequest): AsyncGenerator<{
+    type: 'token' | 'done' | 'error';
+    content?: string;
+    metadata?: any;
+  }> {
+    const startTime = Date.now();
+    
+    if (!this.apiKey) {
+      yield { type: 'error', content: 'OpenRouter API key not configured' };
+      return;
+    }
+
+    // SECURITY: Input sanitization
+    const injectionDetection = promptInjectionGuard.detectInjection(request.message, {
+      userId: request.userId,
+      workspaceId: request.workspaceId,
+      conversationHistory: request.conversationHistory
+    });
+
+    if (injectionDetection.isInjection && 
+        (injectionDetection.riskLevel === 'critical' || injectionDetection.riskLevel === 'high')) {
+      yield { type: 'error', content: 'Invalid input detected. Please rephrase your message.' };
+      return;
+    }
+
+    const sanitizedRequest = {
+      ...request,
+      message: injectionDetection.sanitizedInput
+    };
+
+    try {
+      // Analyze complexity and select model
+      const complexity = this.analyzeQueryComplexity(sanitizedRequest);
+      const modelChain = request.preferredModel 
+        ? [request.preferredModel, ...this.selectModelChain(complexity, sanitizedRequest)]
+        : this.selectModelChain(complexity, sanitizedRequest);
+      
+      // Try models in order
+      for (const modelId of modelChain) {
+        try {
+          const model = this.models.get(modelId);
+          if (!model) continue;
+
+          const messages = await this.buildMessages(sanitizedRequest, complexity);
+          const maxTokens = this.calculateMaxTokens(model, complexity);
+
+          console.log(`🌐 [OPENROUTER STREAM] Starting streaming with model: ${modelId}`);
+
+          const response = await fetch(`${this.baseUrl}/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.apiKey}`,
+              'Content-Type': 'application/json',
+              'HTTP-Referer': this.siteUrl,
+              'X-Title': this.appName
+            },
+            body: JSON.stringify({
+              model: modelId,
+              messages,
+              max_tokens: maxTokens,
+              temperature: 0.7,
+              stream: true
+            })
+          });
+
+          if (!response.ok) {
+            console.warn(`⚠️ [OPENROUTER STREAM] Model ${modelId} failed: ${response.status}`);
+            continue;
+          }
+
+          if (!response.body) {
+            console.warn(`⚠️ [OPENROUTER STREAM] No response body from ${modelId}`);
+            continue;
+          }
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let fullContent = '';
+          let inputTokens = 0;
+          let outputTokens = 0;
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n').filter(line => line.trim() !== '');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data === '[DONE]') {
+                  // Stream complete
+                  const processingTime = Date.now() - startTime;
+                  const cost = this.calculateCost(model, inputTokens, outputTokens);
+                  
+                  yield {
+                    type: 'done',
+                    metadata: {
+                      model: modelId,
+                      provider: model.provider,
+                      tokensUsed: inputTokens + outputTokens,
+                      cost,
+                      processingTime,
+                      confidence: this.calculateConfidence(complexity, model, processingTime),
+                      routingInfo: {
+                        complexity: complexity.score,
+                        selectedModel: modelId,
+                        fallbackUsed: false,
+                        failoverChain: modelChain
+                      }
+                    }
+                  };
+                  return;
+                }
+
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content;
+                  if (content) {
+                    fullContent += content;
+                    outputTokens++;
+                    yield { type: 'token', content };
+                  }
+                  // Track usage if provided
+                  if (parsed.usage) {
+                    inputTokens = parsed.usage.prompt_tokens || inputTokens;
+                    outputTokens = parsed.usage.completion_tokens || outputTokens;
+                  }
+                } catch {
+                  // Skip malformed JSON chunks
+                }
+              }
+            }
+          }
+
+          // If we got here, stream ended without [DONE]
+          const processingTime = Date.now() - startTime;
+          const cost = this.calculateCost(model, inputTokens, outputTokens);
+          yield {
+            type: 'done',
+            metadata: {
+              model: modelId,
+              provider: model.provider,
+              tokensUsed: inputTokens + outputTokens,
+              cost,
+              processingTime,
+              confidence: this.calculateConfidence(complexity, model, processingTime),
+              routingInfo: {
+                complexity: complexity.score,
+                selectedModel: modelId,
+                fallbackUsed: false,
+                failoverChain: modelChain
+              }
+            }
+          };
+          return;
+
+        } catch (modelError) {
+          console.warn(`⚠️ [OPENROUTER STREAM] Model ${modelId} error:`, modelError);
+          continue;
+        }
+      }
+
+      // All models failed
+      yield { type: 'error', content: 'All AI models failed. Please try again.' };
+
+    } catch (error) {
+      console.error('❌ [OPENROUTER STREAM] Error:', error);
+      yield { type: 'error', content: error instanceof Error ? error.message : 'Unknown error' };
+    }
   }
 
   /**

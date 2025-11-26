@@ -3,12 +3,37 @@
  * 
  * Modular service for building comprehensive AI context
  * Handles user, application, and data context assembly
+ * 
+ * 🚀 PERFORMANCE: Session-level caching to avoid rebuilding context per message
  */
 
 // import { WorkspaceDataRouter } from '../../services/workspace-data-router';
 
 import { authFetch } from '@/platform/api-fetch';
 import { getPrismaClient } from '@/platform/database/connection-pool';
+
+// 🚀 SESSION-LEVEL CONTEXT CACHE
+// Caches full built context per user+workspace+record to avoid rebuilding every message
+interface CachedSessionContext {
+  context: EnhancedAIContext;
+  timestamp: number;
+  recordId?: string;
+  appType: string;
+}
+
+const sessionContextCache = new Map<string, CachedSessionContext>();
+const SESSION_CACHE_TTL = 5 * 60 * 1000; // 5 minutes TTL
+
+// Clean up expired cache entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, cached] of sessionContextCache.entries()) {
+    if (now - cached.timestamp > SESSION_CACHE_TTL) {
+      sessionContextCache.delete(key);
+    }
+  }
+}, 60000); // Clean every minute
+
 export interface ListViewContext {
   visibleRecords: any[];
   activeSection: string;
@@ -53,6 +78,7 @@ export class AIContextService {
   
   /**
    * Build comprehensive AI context from configuration
+   * 🚀 OPTIMIZED: Uses session-level caching to avoid rebuilding every message
    */
   static async buildContext(config: AIContextConfig): Promise<EnhancedAIContext> {
     const {
@@ -67,6 +93,34 @@ export class AIContextService {
     } = config;
 
     const contextStartTime = Date.now();
+    
+    // 🚀 SESSION CACHE CHECK: Reuse cached context if same user/workspace/record
+    const recordId = currentRecord?.id || 'no-record';
+    const cacheKey = `${userId}-${workspaceId}-${recordId}`;
+    const cached = sessionContextCache.get(cacheKey);
+    
+    if (cached && 
+        (Date.now() - cached.timestamp) < SESSION_CACHE_TTL &&
+        cached.appType === appType) {
+      // Cache hit - reuse context but update list view context (it changes frequently)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🚀 [AIContextService] Using cached session context:', {
+          cacheKey,
+          cacheAge: `${Math.round((Date.now() - cached.timestamp) / 1000)}s`,
+          recordId
+        });
+      }
+      
+      // Update only the parts that change frequently
+      const updatedContext = {
+        ...cached.context,
+        listViewContext: this.buildListViewContext(listViewContext),
+        documentContext: this.buildDocumentContext(documentContext),
+        systemContext: await this.buildSystemContext(conversationHistory, userId)
+      };
+      
+      return updatedContext;
+    }
 
     // OPTIMIZATION: Parallelize independent context building operations
     // Build synchronous contexts first (no DB queries)
@@ -117,7 +171,8 @@ export class AIContextService {
       console.warn(`⚠️ [AIContextService] Context build took ${contextBuildTime}ms (target: <2000ms)`);
     }
 
-    return {
+    // Build the final context object
+    const builtContext: EnhancedAIContext = {
       userContext,
       applicationContext,
       dataContext,
@@ -126,6 +181,44 @@ export class AIContextService {
       documentContext: documentContextString,
       systemContext
     };
+    
+    // 🚀 CACHE: Store built context for session reuse
+    sessionContextCache.set(cacheKey, {
+      context: builtContext,
+      timestamp: Date.now(),
+      recordId,
+      appType
+    });
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ [AIContextService] Context built and cached:', {
+        cacheKey,
+        buildTime: `${contextBuildTime}ms`,
+        recordId
+      });
+    }
+    
+    return builtContext;
+  }
+  
+  /**
+   * Clear session context cache for a specific user/workspace or all
+   * Call this when user logs out, workspace changes, or context needs refresh
+   */
+  static clearSessionCache(userId?: string, workspaceId?: string): void {
+    if (userId && workspaceId) {
+      // Clear specific user's cache entries
+      for (const key of sessionContextCache.keys()) {
+        if (key.startsWith(`${userId}-${workspaceId}`)) {
+          sessionContextCache.delete(key);
+        }
+      }
+      console.log(`🧹 [AIContextService] Cleared session cache for user ${userId} in workspace ${workspaceId}`);
+    } else {
+      // Clear all cache
+      sessionContextCache.clear();
+      console.log('🧹 [AIContextService] Cleared all session context cache');
+    }
   }
 
   /**
