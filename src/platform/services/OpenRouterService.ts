@@ -640,7 +640,8 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
     const maxTokens = this.calculateMaxTokens(model, complexity);
 
     // Exponential backoff retry for transient errors (429, 503)
-    const maxRetries = 3;
+    // Enhanced with jitter to prevent thundering herd
+    const maxRetries = 5;
     let response: Response | null = null;
     let lastError: Error | null = null;
     
@@ -666,11 +667,16 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
         // Check for transient errors that should trigger retry
         if (response.status === 429 || response.status === 503) {
           const retryAfter = response.headers.get('Retry-After');
-          const delay = retryAfter 
+          // Use Retry-After header if present, otherwise exponential backoff with jitter
+          // Base delays: 2s, 4s, 8s, 16s, 32s (more patient for rate limits)
+          const baseDelay = retryAfter 
             ? parseInt(retryAfter, 10) * 1000 
-            : Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
+            : Math.pow(2, attempt + 1) * 1000;
+          // Add jitter (0-25% of base delay) to prevent thundering herd
+          const jitter = Math.random() * baseDelay * 0.25;
+          const delay = baseDelay + jitter;
           
-          console.warn(`⚠️ [OPENROUTER] Rate limited (${response.status}), retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+          console.warn(`⚠️ [OPENROUTER] Rate limited (${response.status}), retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries})`);
           
           if (attempt < maxRetries - 1) {
             await new Promise(resolve => setTimeout(resolve, delay));
@@ -683,10 +689,12 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
         
       } catch (fetchError) {
         lastError = fetchError as Error;
-        // Network error - retry with backoff
+        // Network error - retry with backoff and jitter
         if (attempt < maxRetries - 1) {
-          const delay = Math.pow(2, attempt) * 1000;
-          console.warn(`⚠️ [OPENROUTER] Network error, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
+          const baseDelay = Math.pow(2, attempt + 1) * 1000;
+          const jitter = Math.random() * baseDelay * 0.25;
+          const delay = baseDelay + jitter;
+          console.warn(`⚠️ [OPENROUTER] Network error, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
           await new Promise(resolve => setTimeout(resolve, delay));
           continue;
         }
@@ -1180,7 +1188,8 @@ NEVER:
           console.log(`🌐 [OPENROUTER STREAM] Starting streaming with model: ${modelId}`);
 
           // Exponential backoff retry for transient errors (429, 503)
-          const maxRetries = 3;
+          // Enhanced with jitter to prevent thundering herd
+          const maxRetries = 5;
           let response: Response | null = null;
           
           for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -1205,11 +1214,16 @@ NEVER:
               // Check for transient errors that should trigger retry
               if (response.status === 429 || response.status === 503) {
                 const retryAfter = response.headers.get('Retry-After');
-                const delay = retryAfter 
+                // Use Retry-After header if present, otherwise exponential backoff with jitter
+                // Base delays: 2s, 4s, 8s, 16s, 32s (more patient for rate limits)
+                const baseDelay = retryAfter 
                   ? parseInt(retryAfter, 10) * 1000 
-                  : Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
+                  : Math.pow(2, attempt + 1) * 1000;
+                // Add jitter (0-25% of base delay) to prevent thundering herd
+                const jitter = Math.random() * baseDelay * 0.25;
+                const delay = baseDelay + jitter;
                 
-                console.warn(`⚠️ [OPENROUTER STREAM] Rate limited (${response.status}), retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+                console.warn(`⚠️ [OPENROUTER STREAM] Rate limited (${response.status}), retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries})`);
                 
                 if (attempt < maxRetries - 1) {
                   await new Promise(resolve => setTimeout(resolve, delay));
@@ -1221,10 +1235,12 @@ NEVER:
               break;
               
             } catch (fetchError) {
-              // Network error - retry with backoff
+              // Network error - retry with backoff and jitter
               if (attempt < maxRetries - 1) {
-                const delay = Math.pow(2, attempt) * 1000;
-                console.warn(`⚠️ [OPENROUTER STREAM] Network error, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
+                const baseDelay = Math.pow(2, attempt + 1) * 1000;
+                const jitter = Math.random() * baseDelay * 0.25;
+                const delay = baseDelay + jitter;
+                console.warn(`⚠️ [OPENROUTER STREAM] Network error, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 continue;
               }

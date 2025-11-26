@@ -37,16 +37,16 @@ export class RateLimiter {
   // Default configurations for different endpoint types
   private readonly DEFAULT_CONFIGS = {
     ai_chat: {
-      maxRequests: 100, // 100 requests per hour
+      maxRequests: 200, // 200 requests per hour (generous for active users)
       windowMs: 60 * 60 * 1000, // 1 hour
       skipSuccessfulRequests: false,
-      skipFailedRequests: false
+      skipFailedRequests: true // Don't count failed requests against limit
     },
     ai_chat_stream: {
-      maxRequests: 100, // 100 requests per hour (same as ai_chat)
+      maxRequests: 200, // 200 requests per hour (generous for active users)
       windowMs: 60 * 60 * 1000, // 1 hour
       skipSuccessfulRequests: false,
-      skipFailedRequests: false
+      skipFailedRequests: true // Don't count failed requests against limit
     },
     ai_response: {
       maxRequests: 200, // 200 requests per hour
