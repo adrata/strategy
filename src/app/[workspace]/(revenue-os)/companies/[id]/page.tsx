@@ -2,30 +2,28 @@
 
 import { useParams } from "next/navigation";
 import { PipelineDetailPage } from "@/frontend/components/pipeline/PipelineDetailPage";
-import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
-import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
-import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
-import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
-import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 
+/**
+ * Company Detail Page
+ * 
+ * IMPORTANT: This page inherits all providers from layout.tsx:
+ * - RevenueOSProvider
+ * - RecordContextProvider (critical for AI right panel context)
+ * - PipelineProvider
+ * - SpeedrunDataProvider
+ * - ProfilePopupProvider
+ * 
+ * DO NOT add redundant providers here - they create context isolation issues
+ * where PipelineDetailPage sets context in the wrong provider tree.
+ */
 export default function CompanyDetailPage() {
   const params = useParams();
   const slug = params['id'] as string;
 
   return (
-    <RevenueOSProvider>
-      <PipelineProvider>
-        <SpeedrunDataProvider>
-          <RecordContextProvider>
-            <ProfilePopupProvider>
-              <PipelineDetailPage
-                section="companies"
-                slug={slug}
-              />
-            </ProfilePopupProvider>
-          </RecordContextProvider>
-        </SpeedrunDataProvider>
-      </PipelineProvider>
-    </RevenueOSProvider>
+    <PipelineDetailPage
+      section="companies"
+      slug={slug}
+    />
   );
 }

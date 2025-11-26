@@ -3,32 +3,29 @@
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { PipelineDetailPage } from "@/frontend/components/pipeline/PipelineDetailPage";
-import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
-import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
-import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
-import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
-// import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
-import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 
+/**
+ * Prospect Detail Page
+ * 
+ * IMPORTANT: This page inherits all providers from layout.tsx:
+ * - RevenueOSProvider
+ * - RecordContextProvider (critical for AI right panel context)
+ * - PipelineProvider
+ * - SpeedrunDataProvider
+ * - ProfilePopupProvider
+ * 
+ * DO NOT add redundant providers here - they create context isolation issues
+ * where PipelineDetailPage sets context in the wrong provider tree.
+ */
 export default function ProspectDetailPage() {
   const params = useParams();
   // 🔧 PERFORMANCE: Memoize slug to prevent unnecessary re-renders
   const slug = useMemo(() => params['id'] as string, [params['id']]);
 
   return (
-    <RevenueOSProvider>
-      <PipelineProvider>
-        <SpeedrunDataProvider>
-          <RecordContextProvider>
-            <ProfilePopupProvider>
-              <PipelineDetailPage
-                section="prospects"
-                slug={slug}
-              />
-            </ProfilePopupProvider>
-          </RecordContextProvider>
-        </SpeedrunDataProvider>
-      </PipelineProvider>
-    </RevenueOSProvider>
+    <PipelineDetailPage
+      section="prospects"
+      slug={slug}
+    />
   );
 }
