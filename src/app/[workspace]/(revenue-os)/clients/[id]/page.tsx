@@ -21,9 +21,9 @@ export default function ClientDetailPage() {
   const slug = params['id'] as string;
   
   return (
-    <PipelineDetailPage
-      section="clients"
-      slug={slug}
-    />
+              <PipelineDetailPage
+                section="clients"
+                slug={slug}
+              />
   );
 }

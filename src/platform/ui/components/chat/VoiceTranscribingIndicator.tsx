@@ -13,6 +13,7 @@ import { voiceMonitoring } from '@/platform/services/voice-monitoring';
 import { voiceInterruptionHandler } from '@/platform/services/voice-interruption-handler';
 import { voiceCommandProcessor } from '@/platform/services/voice-command-processor';
 import { elevenLabsVoice } from '@/platform/services/elevenlabs-voice';
+import { voiceNLU } from '@/platform/services/voice-nlu';
 
 interface VoiceTranscribingIndicatorProps {
   onTranscriptComplete: (transcript: string, isVoiceInput: boolean) => void;
@@ -36,6 +37,7 @@ export function VoiceTranscribingIndicator({
   const [error, setError] = useState<string | null>(null);
   const [useWebSpeechFallback, setUseWebSpeechFallback] = useState(false);
   const [commandFeedback, setCommandFeedback] = useState<string | null>(null);
+  const [commandHint, setCommandHint] = useState<string | null>(null);
   
   // Initialize command processor with router
   useEffect(() => {
@@ -49,6 +51,39 @@ export function VoiceTranscribingIndicator({
       onLiveTranscript(currentTranscript);
     }
   }, [transcript, interimTranscript, onLiveTranscript]);
+  
+  // Streaming command detection - detect intent from interim results for instant feedback
+  useEffect(() => {
+    if (!interimTranscript) {
+      setCommandHint(null);
+      return;
+    }
+    
+    // Use NLU to detect intent from partial transcript
+    const intent = voiceNLU.detectIntent(interimTranscript);
+    
+    if (intent === 'navigation') {
+      const entities = voiceNLU.extractEntities(interimTranscript);
+      if (entities.target) {
+        setCommandHint(`Navigate to ${entities.target}...`);
+      } else {
+        setCommandHint('Navigation command...');
+      }
+    } else if (intent === 'communication') {
+      const entities = voiceNLU.extractEntities(interimTranscript);
+      if (entities.name) {
+        setCommandHint(`Contact ${entities.name}...`);
+      } else {
+        setCommandHint('Communication command...');
+      }
+    } else if (intent === 'create') {
+      setCommandHint('Create command...');
+    } else if (intent === 'search') {
+      setCommandHint('Search command...');
+    } else {
+      setCommandHint(null);
+    }
+  }, [interimTranscript]);
   
   const deepgramServiceRef = useRef<DeepgramRecognitionService | null>(null);
   const webSpeechRecognitionRef = useRef<SpeechRecognition | null>(null);
@@ -437,10 +472,10 @@ export function VoiceTranscribingIndicator({
           />
         </div>
         
-        {/* Expanded text - subtle styling */}
+        {/* Expanded text - subtle styling with command hint */}
         {isExpanded && (
           <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
-            Transcribing
+            {commandHint || 'Transcribing'}
           </span>
         )}
       </button>

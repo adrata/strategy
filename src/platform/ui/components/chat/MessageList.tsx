@@ -249,13 +249,17 @@ export function MessageList({
           style={{ marginBottom: '16px' }}
         >
           {message['type'] === 'user' ? (
-            <div className="bg-hover rounded-lg px-3 py-2 w-full flex items-start gap-2">
+            <div className="bg-hover rounded-lg px-3 py-2 w-full">
+              {/* Voice transcription pill badge */}
               {message.isVoiceInput && (
-                <span className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="Voice input">
-                  <MicrophoneIcon className="w-3 h-3" />
-                </span>
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium">
+                    <MicrophoneIcon className="w-3 h-3" />
+                    <span>Transcribed</span>
+                  </span>
+                </div>
               )}
-              <span className="flex-1">{message.content}</span>
+              <span className="text-foreground">{message.content}</span>
             </div>
           ) : message['type'] === 'todos' ? (
             <InChatTodoList 
@@ -502,11 +506,16 @@ export function MessageList({
           className="bg-transparent px-0 py-0 text-base text-black w-fit max-w-full leading-snug p-3"
           style={{ marginBottom: '16px' }}
         >
-          <div className="bg-hover rounded-lg px-3 py-2 w-full flex items-start gap-2">
-            <span className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="Voice input">
-              <MicrophoneIcon className="w-3 h-3" />
-            </span>
-            <span className="flex-1 text-muted-foreground italic">{liveVoiceTranscript}</span>
+          <div className="bg-hover rounded-lg px-3 py-2 w-full">
+            {/* Transcribing pill badge */}
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium">
+                <MicrophoneIcon className="w-3 h-3" />
+                <span>Transcribing...</span>
+                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+              </span>
+            </div>
+            <span className="text-muted-foreground italic">{liveVoiceTranscript}</span>
           </div>
         </div>
       )}

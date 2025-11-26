@@ -21,9 +21,9 @@ export default function PersonDetailPage() {
   const slug = params['id'] as string;
 
   return (
-    <PipelineDetailPage
-      section="people"
-      slug={slug}
-    />
+              <PipelineDetailPage
+                section="people"
+                slug={slug}
+              />
   );
 }

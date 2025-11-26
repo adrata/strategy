@@ -21,9 +21,9 @@ export default function SpeedrunDetailPage() {
   const slug = params['id'] as string;
 
   return (
-    <PipelineDetailPage
-      section="speedrun"
-      slug={slug}
-    />
+            <PipelineDetailPage
+              section="speedrun"
+              slug={slug}
+            />
   );
 }

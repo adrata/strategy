@@ -606,18 +606,18 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     <RevenueOSProvider>
       <FeatureAccessProvider>
         <RecordContextProvider>
-          <ZoomProvider>
-            <PipelineProvider>
-              <StacksProvider>
-                <SpeedrunDataProvider>
-                  <SprintProvider>
-                    <OasisLayoutContext.Provider value={oasisLayoutContextValue}>
-                      <OasisProvider>
-                        <InboxProvider>
-                          <ProfilePopupProvider>
-                            <SettingsPopupProvider>
-                              <ProfilePanelProvider>
-                                <PipelineLayoutInner
+        <ZoomProvider>
+          <PipelineProvider>
+            <StacksProvider>
+              <SpeedrunDataProvider>
+                <SprintProvider>
+                  <OasisLayoutContext.Provider value={oasisLayoutContextValue}>
+                    <OasisProvider>
+                      <InboxProvider>
+                        <ProfilePopupProvider>
+                          <SettingsPopupProvider>
+                            <ProfilePanelProvider>
+                              <PipelineLayoutInner
                               currentSection={isNovaActive ? "nova" : currentSection}
                               onSectionChange={handleSectionChange}
                               isSpeedrunVisible={isSpeedrunVisible}
@@ -635,18 +635,18 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
                               isNovaActive={isNovaActive}
                             >
                               {children}
-                              </PipelineLayoutInner>
-                            </ProfilePanelProvider>
-                          </SettingsPopupProvider>
-                        </ProfilePopupProvider>
-                        </InboxProvider>
-                      </OasisProvider>
-                    </OasisLayoutContext.Provider>
-                  </SprintProvider>
-                </SpeedrunDataProvider>
-              </StacksProvider>
-            </PipelineProvider>
-          </ZoomProvider>
+                            </PipelineLayoutInner>
+                          </ProfilePanelProvider>
+                        </SettingsPopupProvider>
+                      </ProfilePopupProvider>
+                      </InboxProvider>
+                    </OasisProvider>
+                  </OasisLayoutContext.Provider>
+                </SprintProvider>
+              </SpeedrunDataProvider>
+            </StacksProvider>
+          </PipelineProvider>
+        </ZoomProvider>
         </RecordContextProvider>
       </FeatureAccessProvider>
     </RevenueOSProvider>

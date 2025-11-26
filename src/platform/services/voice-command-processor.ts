@@ -7,7 +7,12 @@
  * - Navigation commands (go to leads, open settings, etc.)
  * - Quick actions (search for, create new, etc.)
  * - Falls through to AI for complex queries
+ * 
+ * Now with fuzzy NLU for robust command matching
  */
+
+import { voiceNLU } from './voice-nlu';
+import { voiceContext } from './voice-context';
 
 export interface VoiceCommandResult {
   handled: boolean;
@@ -381,6 +386,110 @@ const QUICK_ACTION_PATTERNS: Array<{
   },
 
   // ============================================
+  // CONTEXTUAL COMMANDS (require record context)
+  // ============================================
+  {
+    patterns: [
+      /(?:show|open|go to)\s+(?:the\s+)?notes?\s*(?:tab)?/i,
+      /^notes$/i,
+      /open\s+(?:the\s+)?notes?\s+(?:for\s+)?(?:this\s+)?(?:person|contact|record)?/i,
+    ],
+    action: 'switch_tab',
+    extractParam: () => ({ tab: 'Notes' }),
+    feedback: 'Opening notes',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /(?:show|open|go to)\s+(?:the\s+)?timeline\s*(?:tab)?/i,
+      /(?:show|view)\s+(?:the\s+)?history/i,
+      /(?:show|view)\s+(?:the\s+)?activities/i,
+      /^timeline$/i,
+      /^history$/i,
+    ],
+    action: 'switch_tab',
+    extractParam: () => ({ tab: 'Timeline' }),
+    feedback: 'Opening timeline',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /(?:show|open|go to)\s+(?:the\s+)?overview\s*(?:tab)?/i,
+      /^overview$/i,
+    ],
+    action: 'switch_tab',
+    extractParam: () => ({ tab: 'Overview' }),
+    feedback: 'Opening overview',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /(?:show|open|go to)\s+(?:the\s+)?intelligence\s*(?:tab)?/i,
+      /(?:show|view)\s+(?:the\s+)?insights?/i,
+      /^intelligence$/i,
+      /^insights?$/i,
+    ],
+    action: 'switch_tab',
+    extractParam: () => ({ tab: 'Intelligence' }),
+    feedback: 'Opening intelligence',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /(?:show|open|go to)\s+(?:the\s+)?reports?\s*(?:tab)?/i,
+      /^reports?$/i,
+    ],
+    action: 'switch_tab',
+    extractParam: () => ({ tab: 'Reports' }),
+    feedback: 'Opening reports',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /log\s+(?:a\s+)?call/i,
+      /(?:i\s+)?(?:just\s+)?called\s+(?:them|this\s+person)/i,
+      /record\s+(?:a\s+)?call/i,
+    ],
+    action: 'log_activity',
+    extractParam: () => ({ activityType: 'call' }),
+    feedback: 'Logging call',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /log\s+(?:a\s+)?meeting/i,
+      /(?:i\s+)?(?:just\s+)?(?:had\s+)?(?:a\s+)?meeting\s+(?:with\s+)?(?:them)?/i,
+      /record\s+(?:a\s+)?meeting/i,
+    ],
+    action: 'log_activity',
+    extractParam: () => ({ activityType: 'meeting' }),
+    feedback: 'Logging meeting',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /log\s+(?:an?\s+)?email/i,
+      /(?:i\s+)?(?:just\s+)?(?:sent|emailed)\s+(?:them)?/i,
+      /record\s+(?:an?\s+)?email/i,
+    ],
+    action: 'log_activity',
+    extractParam: () => ({ activityType: 'email' }),
+    feedback: 'Logging email',
+    category: 'contextual' as const
+  },
+  {
+    patterns: [
+      /start\s+(?:a\s+)?note/i,
+      /begin\s+(?:a\s+)?note/i,
+      /write\s+(?:a\s+)?note/i,
+      /open\s+note\s+(?:composer|editor)/i,
+    ],
+    action: 'open_note_composer',
+    feedback: 'Opening note composer',
+    category: 'contextual' as const
+  },
+
+  // ============================================
   // UNIVERSAL COMMANDS (all users)
   // ============================================
   {
@@ -481,12 +590,15 @@ export class VoiceCommandProcessor {
   
   /**
    * Process a voice transcript and determine if it's a command
+   * Uses fuzzy NLU for robust matching against natural speech variations
    */
   processCommand(transcript: string): VoiceCommandResult {
     const cleanedTranscript = transcript.trim().toLowerCase();
+    const normalizedTranscript = voiceNLU.normalize(transcript);
     
-    // Check navigation patterns first
+    // Check navigation patterns first (with fuzzy matching)
     for (const nav of NAVIGATION_PATTERNS) {
+      // Try regex patterns first (exact)
       for (const pattern of nav.patterns) {
         if (pattern.test(cleanedTranscript)) {
           return {
@@ -498,9 +610,27 @@ export class VoiceCommandProcessor {
           };
         }
       }
+      
+      // Try fuzzy NLU matching for navigation targets
+      const targetSynonyms = voiceNLU.expandSynonyms(nav.section);
+      const hasTargetMatch = targetSynonyms.some(synonym => 
+        normalizedTranscript.includes(synonym)
+      );
+      
+      // Check if it looks like a navigation command with this target
+      const intent = voiceNLU.detectIntent(transcript);
+      if (intent === 'navigation' && hasTargetMatch) {
+        return {
+          handled: true,
+          action: 'navigate',
+          target: nav.route,
+          feedback: nav.feedback,
+          originalTranscript: transcript
+        };
+      }
     }
     
-    // Check quick action patterns
+    // Check quick action patterns (with fuzzy matching)
     for (const action of QUICK_ACTION_PATTERNS) {
       for (const pattern of action.patterns) {
         const match = cleanedTranscript.match(pattern);
@@ -514,6 +644,66 @@ export class VoiceCommandProcessor {
             originalTranscript: transcript
           };
         }
+      }
+    }
+    
+    // Try fuzzy matching for common action phrases
+    const entities = voiceNLU.extractEntities(transcript);
+    const intent = voiceNLU.detectIntent(transcript);
+    
+    // Communication intent with extracted name
+    if (intent === 'communication' && entities.name) {
+      if (normalizedTranscript.includes('call') || normalizedTranscript.includes('dial')) {
+        return {
+          handled: true,
+          action: 'action',
+          target: 'call_contact',
+          params: { name: entities.name },
+          feedback: `Calling ${entities.name}`,
+          originalTranscript: transcript
+        };
+      }
+      if (normalizedTranscript.includes('email') || normalizedTranscript.includes('mail')) {
+        return {
+          handled: true,
+          action: 'action',
+          target: 'email_contact',
+          params: { name: entities.name },
+          feedback: `Emailing ${entities.name}`,
+          originalTranscript: transcript
+        };
+      }
+    }
+    
+    // Create intent
+    if (intent === 'create') {
+      if (normalizedTranscript.includes('note')) {
+        return {
+          handled: true,
+          action: 'action',
+          target: 'add_note',
+          params: entities.content ? { content: entities.content } : undefined,
+          feedback: 'Adding note',
+          originalTranscript: transcript
+        };
+      }
+      if (normalizedTranscript.includes('lead')) {
+        return {
+          handled: true,
+          action: 'action',
+          target: 'create_lead',
+          feedback: 'Creating new lead',
+          originalTranscript: transcript
+        };
+      }
+      if (normalizedTranscript.includes('contact') || normalizedTranscript.includes('person')) {
+        return {
+          handled: true,
+          action: 'action',
+          target: 'create_contact',
+          feedback: 'Creating new contact',
+          originalTranscript: transcript
+        };
       }
     }
     
@@ -670,6 +860,69 @@ export class VoiceCommandProcessor {
         }
         break;
       
+      // Contextual commands - dispatch events for UI to handle
+      case 'switch_tab':
+        if (typeof window !== 'undefined') {
+          const context = voiceContext.getContext();
+          if (context.currentRecord) {
+            window.dispatchEvent(new CustomEvent('voice-action', {
+              detail: { 
+                action: 'switch_tab', 
+                params: params,
+                recordId: context.currentRecord.id,
+                recordType: context.currentRecord.type
+              }
+            }));
+            voiceContext.recordAction('switch_tab', params?.tab, true);
+            return true;
+          } else {
+            console.warn('[VoiceCommandProcessor] No record context for tab switch');
+            return false;
+          }
+        }
+        break;
+        
+      case 'log_activity':
+        if (typeof window !== 'undefined') {
+          const context = voiceContext.getContext();
+          if (context.currentRecord) {
+            window.dispatchEvent(new CustomEvent('voice-action', {
+              detail: { 
+                action: 'log_activity', 
+                params: params,
+                recordId: context.currentRecord.id,
+                recordType: context.currentRecord.type
+              }
+            }));
+            voiceContext.recordAction('log_activity', params?.activityType, true);
+            return true;
+          } else {
+            console.warn('[VoiceCommandProcessor] No record context for activity logging');
+            return false;
+          }
+        }
+        break;
+        
+      case 'open_note_composer':
+        if (typeof window !== 'undefined') {
+          const context = voiceContext.getContext();
+          if (context.currentRecord) {
+            window.dispatchEvent(new CustomEvent('voice-action', {
+              detail: { 
+                action: 'open_note_composer', 
+                recordId: context.currentRecord.id,
+                recordType: context.currentRecord.type
+              }
+            }));
+            voiceContext.recordAction('open_note_composer', undefined, true);
+            return true;
+          } else {
+            console.warn('[VoiceCommandProcessor] No record context for note composer');
+            return false;
+          }
+        }
+        break;
+
       // Actions that pass through to AI (return false to let AI handle)
       case 'show_help':
       case 'analyze_pipeline':

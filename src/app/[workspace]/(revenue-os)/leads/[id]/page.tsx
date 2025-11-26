@@ -24,9 +24,9 @@ export default function LeadDetailPage() {
   const slug = useMemo(() => params['id'] as string, [params['id']]);
 
   return (
-    <PipelineDetailPage
-      section="leads"
-      slug={slug}
-    />
+              <PipelineDetailPage
+                section="leads"
+                slug={slug}
+              />
   );
 }

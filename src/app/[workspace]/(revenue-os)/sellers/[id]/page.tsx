@@ -19,11 +19,11 @@ import { PipelineDetailPage } from "@/frontend/components/pipeline/PipelineDetai
 export default function SellerDetailPage() {
   const params = useParams();
   const slug = params['id'] as string;
-  
+
   return (
-    <PipelineDetailPage
-      section="sellers"
-      slug={slug}
-    />
+              <PipelineDetailPage
+                section="sellers"
+                slug={slug}
+              />
   );
 }

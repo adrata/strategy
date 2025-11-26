@@ -80,9 +80,9 @@ export default function TestDriveLayout({ children }: TestDriveLayoutProps) {
   return (
     <RevenueOSProvider>
       <SettingsPopupProvider>
-        <ProfilePanelProvider>
-          <TestDriveLayoutInner>{children}</TestDriveLayoutInner>
-        </ProfilePanelProvider>
+      <ProfilePanelProvider>
+        <TestDriveLayoutInner>{children}</TestDriveLayoutInner>
+      </ProfilePanelProvider>
       </SettingsPopupProvider>
     </RevenueOSProvider>
   );

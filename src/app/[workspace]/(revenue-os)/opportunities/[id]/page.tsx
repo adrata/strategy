@@ -23,9 +23,9 @@ export default function OpportunityDetailPage() {
   const slug = useMemo(() => params['id'] as string, [params['id']]);
 
   return (
-    <PipelineDetailPage
-      section="opportunities"
-      slug={slug}
-    />
+              <PipelineDetailPage
+                section="opportunities"
+                slug={slug}
+              />
   );
 }

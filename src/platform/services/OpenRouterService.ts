@@ -646,6 +646,13 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
     let lastError: Error | null = null;
     
     for (let attempt = 0; attempt < maxRetries; attempt++) {
+      // Create AbortController with 45s timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        console.warn(`⚠️ [OPENROUTER] Request timeout after 45s, aborting`);
+        controller.abort();
+      }, 45000);
+      
       try {
         response = await fetch(`${this.baseUrl}/chat/completions`, {
           method: 'POST',
@@ -653,7 +660,8 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
             'Authorization': `Bearer ${this.apiKey}`,
             'Content-Type': 'application/json',
             'HTTP-Referer': this.siteUrl,
-            'X-Title': this.appName
+            'X-Title': this.appName,
+            'Connection': 'keep-alive'
           },
           body: JSON.stringify({
             model: modelId,
@@ -661,17 +669,20 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
             max_tokens: maxTokens,
             temperature: 0.7,
             stream: false
-          })
+          }),
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
 
         // Check for transient errors that should trigger retry
         if (response.status === 429 || response.status === 503) {
           const retryAfter = response.headers.get('Retry-After');
           // Use Retry-After header if present, otherwise exponential backoff with jitter
-          // Base delays: 2s, 4s, 8s, 16s, 32s (more patient for rate limits)
+          // Base delays: 1s, 2s, 4s, 8s, 8s (capped at 8s for faster failover)
           const baseDelay = retryAfter 
-            ? parseInt(retryAfter, 10) * 1000 
-            : Math.pow(2, attempt + 1) * 1000;
+            ? Math.min(parseInt(retryAfter, 10) * 1000, 8000)
+            : Math.min(Math.pow(2, attempt) * 1000, 8000);
           // Add jitter (0-25% of base delay) to prevent thundering herd
           const jitter = Math.random() * baseDelay * 0.25;
           const delay = baseDelay + jitter;
@@ -688,10 +699,18 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
         break;
         
       } catch (fetchError) {
+        clearTimeout(timeoutId);
         lastError = fetchError as Error;
-        // Network error - retry with backoff and jitter
+        
+        // Check if this was a timeout abort
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          console.warn(`⚠️ [OPENROUTER] Request aborted (timeout)`);
+          break; // Don't retry on timeout, let caller handle failover
+        }
+        
+        // Network error - retry with backoff and jitter (capped at 8s)
         if (attempt < maxRetries - 1) {
-          const baseDelay = Math.pow(2, attempt + 1) * 1000;
+          const baseDelay = Math.min(Math.pow(2, attempt) * 1000, 8000);
           const jitter = Math.random() * baseDelay * 0.25;
           const delay = baseDelay + jitter;
           console.warn(`⚠️ [OPENROUTER] Network error, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
@@ -1257,6 +1276,13 @@ NEVER:
           let response: Response | null = null;
           
           for (let attempt = 0; attempt < maxRetries; attempt++) {
+            // Create AbortController with 45s timeout to prevent hanging requests
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+              console.warn(`⚠️ [OPENROUTER STREAM] Request timeout after 45s, aborting`);
+              controller.abort();
+            }, 45000);
+            
             try {
               response = await fetch(`${this.baseUrl}/chat/completions`, {
                 method: 'POST',
@@ -1264,7 +1290,8 @@ NEVER:
                   'Authorization': `Bearer ${this.apiKey}`,
                   'Content-Type': 'application/json',
                   'HTTP-Referer': this.siteUrl,
-                  'X-Title': this.appName
+                  'X-Title': this.appName,
+                  'Connection': 'keep-alive'
                 },
                 body: JSON.stringify({
                   model: modelId,
@@ -1272,17 +1299,20 @@ NEVER:
                   max_tokens: maxTokens,
                   temperature: 0.7,
                   stream: true
-                })
+                }),
+                signal: controller.signal
               });
+              
+              clearTimeout(timeoutId);
               
               // Check for transient errors that should trigger retry
               if (response.status === 429 || response.status === 503) {
                 const retryAfter = response.headers.get('Retry-After');
                 // Use Retry-After header if present, otherwise exponential backoff with jitter
-                // Base delays: 2s, 4s, 8s, 16s, 32s (more patient for rate limits)
+                // Base delays: 1s, 2s, 4s, 8s, 8s (capped at 8s for faster failover)
                 const baseDelay = retryAfter 
-                  ? parseInt(retryAfter, 10) * 1000 
-                  : Math.pow(2, attempt + 1) * 1000;
+                  ? Math.min(parseInt(retryAfter, 10) * 1000, 8000)
+                  : Math.min(Math.pow(2, attempt) * 1000, 8000);
                 // Add jitter (0-25% of base delay) to prevent thundering herd
                 const jitter = Math.random() * baseDelay * 0.25;
                 const delay = baseDelay + jitter;
@@ -1299,9 +1329,17 @@ NEVER:
               break;
               
             } catch (fetchError) {
-              // Network error - retry with backoff and jitter
+              clearTimeout(timeoutId);
+              
+              // Check if this was a timeout abort
+              if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+                console.warn(`⚠️ [OPENROUTER STREAM] Request aborted (timeout), trying next model`);
+                break; // Don't retry on timeout, move to next model
+              }
+              
+              // Network error - retry with backoff and jitter (capped at 8s)
               if (attempt < maxRetries - 1) {
-                const baseDelay = Math.pow(2, attempt + 1) * 1000;
+                const baseDelay = Math.min(Math.pow(2, attempt) * 1000, 8000);
                 const jitter = Math.random() * baseDelay * 0.25;
                 const delay = baseDelay + jitter;
                 console.warn(`⚠️ [OPENROUTER STREAM] Network error, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries}):`, fetchError);
