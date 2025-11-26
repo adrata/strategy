@@ -3150,9 +3150,28 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       console.log(`🔍 Smart search for record: ${recordName}`);
     }
     
-    // Add a search message to the chat
-    const searchMessage = `Searching for "${recordName}"...`;
-    await processMessageWithQueue(searchMessage);
+    // Extract workspace from current pathname
+    const workspaceMatch = pathname?.match(/^\/([^\/]+)/);
+    const workspace = workspaceMatch ? workspaceMatch[1] : '';
+    
+    if (!workspace) {
+      console.error('Could not determine workspace from pathname');
+      return;
+    }
+    
+    // Create a URL-friendly slug from the record name
+    const nameSlug = recordName.toLowerCase().replace(/\s+/g, '-');
+    
+    // Try to find in speedrun section first (since user is often looking at speedrun)
+    // This navigates to speedrun with a search query that will highlight/filter to this record
+    const targetUrl = `/${workspace}/speedrun?search=${encodeURIComponent(recordName)}`;
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔍 Navigating to: ${targetUrl}`);
+    }
+    
+    // Navigate to the search/filtered view
+    window.location.href = targetUrl;
   };
 
   // Smart link generation for records and actions
