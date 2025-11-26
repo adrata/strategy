@@ -66,22 +66,28 @@ function EnrichmentProgressComponent({ message }: { message: any }) {
   );
 }
 
-// Smooth typing indicator - gentle breathing animation on all dots together
+// Classic bouncing dots typing indicator - each dot bounces in sequence
 function TypingIndicator() {
   return (
-    <span 
-      className="inline-block"
-      style={{
-        animation: 'breathing 2s ease-in-out infinite',
-      }}
-    >
+    <span className="inline-flex items-center gap-[2px]">
       <style>{`
-        @keyframes breathing {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 1; }
+        @keyframes bounce {
+          0%, 60%, 100% { transform: translateY(0); }
+          30% { transform: translateY(-4px); }
         }
       `}</style>
-      ...
+      <span 
+        className="w-[5px] h-[5px] bg-current rounded-full opacity-60"
+        style={{ animation: 'bounce 1.4s ease-in-out infinite' }}
+      />
+      <span 
+        className="w-[5px] h-[5px] bg-current rounded-full opacity-60"
+        style={{ animation: 'bounce 1.4s ease-in-out infinite', animationDelay: '0.2s' }}
+      />
+      <span 
+        className="w-[5px] h-[5px] bg-current rounded-full opacity-60"
+        style={{ animation: 'bounce 1.4s ease-in-out infinite', animationDelay: '0.4s' }}
+      />
     </span>
   );
 }
