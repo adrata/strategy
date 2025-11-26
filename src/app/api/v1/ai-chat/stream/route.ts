@@ -153,52 +153,51 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 6. BUILD CONTEXT (with timeout protection)
-    let workspaceContext: any;
-    try {
-      const contextPromise = AIContextService.buildContext({
-        userId: context.userId,
-        workspaceId: context.workspaceId,
-        appType,
-        currentRecord,
-        recordType,
-        listViewContext,
-        conversationHistory: conversationHistory || [],
-        documentContext: null
-      });
-      
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Context build timeout')), 8000);
-      });
-      
-      workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
-    } catch (contextError) {
-      console.warn('⚠️ [STREAM] Context build failed, using minimal context');
-      workspaceContext = {
-        userContext: '',
-        applicationContext: '',
-        dataContext: '',
-        recordContext: '',
-        listViewContext: '',
-        documentContext: '',
-        systemContext: ''
-      };
-    }
-
-    // 7. CREATE STREAMING RESPONSE
+    // 6. CREATE STREAMING RESPONSE IMMEDIATELY (context builds in parallel)
     const encoder = new TextEncoder();
     
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          const preferredModel = selectedAIModel?.openRouterModelId || undefined;
-          
-          // Send initial event with context metadata
+          // Send start event IMMEDIATELY so user sees activity
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({
             type: 'start',
-            timestamp: Date.now(),
-            contextBuiltIn: Date.now() - requestStartTime
+            timestamp: Date.now()
           })}\n\n`));
+          
+          const preferredModel = selectedAIModel?.openRouterModelId || undefined;
+          
+          // Build context with timeout (happens in parallel with streaming setup)
+          let workspaceContext: any;
+          try {
+            const contextPromise = AIContextService.buildContext({
+              userId: context.userId,
+              workspaceId: context.workspaceId,
+              appType,
+              currentRecord,
+              recordType,
+              listViewContext,
+              conversationHistory: conversationHistory || [],
+              documentContext: null
+            });
+            
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('Context build timeout')), 3000); // Reduced to 3s
+            });
+            
+            workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
+          } catch (contextError) {
+            console.warn('⚠️ [STREAM] Context build failed, using minimal context');
+            workspaceContext = {
+              userContext: '',
+              applicationContext: '',
+              dataContext: '',
+              recordContext: '',
+              listViewContext: '',
+              documentContext: '',
+              systemContext: ''
+            };
+          }
 
           // Stream tokens from OpenRouter
           const generator = openRouterService.generateStreamingResponse({
