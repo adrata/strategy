@@ -427,10 +427,13 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
     'make sense to explore',
     'open to exploring',
     'worth a conversation',
-    'worth connecting'
+    'worth connecting',
+    'worth a quick',
+    'make sense to',
+    'interested in'
   ];
   if (interestBased.some(i => lower.includes(i))) {
-    score += 12;
+    score += 15; // Increased - Gong data is strong on this
   }
   
   // CHRIS VOSS: "No"-oriented questions (powerful for buy-in)
@@ -890,7 +893,7 @@ function evaluatePersonalization(content: string, context: EvaluationContext): n
  * Lavender: Grade 5 reading level = optimal
  */
 function evaluateElegance(content: string): number {
-  let score = 70;
+  let score = 75; // Higher baseline - most business writing is decent
   const lower = content.toLowerCase();
   
   // FILLER WORDS (penalize)
@@ -976,12 +979,13 @@ function evaluateBrevity(content: string, contentType: ContentType): number {
   const wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
   
   // Research-backed optimal ranges (Gong + Lavender + 30MPC)
+  // Note: These are "optimal" but anything under 100 should score well
   const ranges: Record<ContentType, { min: number; ideal: number; max: number }> = {
-    email: { min: 40, ideal: 65, max: 100 },     // Lavender: under 100
-    linkedin: { min: 20, ideal: 45, max: 75 },   // Even shorter for LinkedIn
+    email: { min: 35, ideal: 60, max: 100 },     // Lavender: under 100 is great
+    linkedin: { min: 20, ideal: 40, max: 80 },   // LinkedIn can be slightly longer
     text: { min: 10, ideal: 20, max: 40 },
     advice: { min: 75, ideal: 150, max: 250 },
-    general: { min: 40, ideal: 75, max: 125 }
+    general: { min: 35, ideal: 70, max: 125 }
   };
   
   const range = ranges[contentType];
@@ -1016,28 +1020,37 @@ function evaluateBrevity(content: string, contentType: ContentType): number {
 }
 
 function evaluateActionability(content: string, stage: OpportunityStage): number {
-  let score = 45; // Higher baseline
+  let score = 50; // Higher baseline
   const lower = content.toLowerCase();
   
-  // Has a question - questions increase reply rates by 50%
+  // Has a question - Gong: questions increase reply rates by 50%
   const questionCount = (content.match(/\?/g) || []).length;
-  if (questionCount === 1) score += 20;
-  else if (questionCount === 2) score += 18;
-  else if (questionCount > 2) score += 12;
-  else score -= 10; // No question = weak CTA
+  if (questionCount === 1) score += 22; // One clear ask = ideal (30MPC)
+  else if (questionCount === 2) score += 20;
+  else if (questionCount > 2) score += 15;
+  else score -= 15; // No question = major weakness
   
-  // Specific time reference - increases response by 20%
+  // Specific time reference - Gong: 20% higher response
   const timeRefs = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
                     'this week', 'next week', 'tomorrow', '15 minutes', '30 minutes',
-                    '2pm', '2 pm', 'afternoon', 'morning'];
+                    '2pm', '2 pm', '10am', '10 am', 'afternoon', 'morning'];
   if (timeRefs.some(t => lower.includes(t))) score += 12;
   
-  // Binary choice - 25% higher response
-  if (lower.includes(' or ') && questionCount > 0) score += 10;
+  // Binary choice - Gong: 25% higher response
+  const hasBinaryChoice = (lower.includes(' or ') && questionCount > 0);
+  if (hasBinaryChoice) score += 12;
   
   // Direct ask patterns
-  const directAsks = ['would you', 'can we', 'shall i', 'should i', 'would it', 'could we'];
-  if (directAsks.some(d => lower.includes(d))) score += 8;
+  const directAsks = ['would you', 'can we', 'shall i', 'should i', 'would it', 'could we', 'are you'];
+  if (directAsks.some(d => lower.includes(d))) score += 10;
+  
+  // Interest-based asks (30MPC + Gong: these convert well)
+  const interestAsks = [
+    'worth connecting', 'worth a', 'worth exploring',
+    'make sense to', 'open to', 'interested in',
+    'still open', 'still interested'
+  ];
+  if (interestAsks.some(i => lower.includes(i))) score += 12;
   
   // Stage-appropriate language
   if (stage === 'CLOSING' || stage === 'NEGOTIATION') {
@@ -1045,6 +1058,9 @@ function evaluateActionability(content: string, stage: OpportunityStage): number
   }
   if (stage === 'PROPOSAL') {
     if (lower.includes('proposal') || lower.includes('walk through') || lower.includes('loop in')) score += 8;
+  }
+  if (stage === 'DISCOVERY' || stage === 'QUALIFICATION') {
+    if (lower.includes('explore') || lower.includes('discuss') || lower.includes('learn')) score += 6;
   }
   
   return Math.max(0, Math.min(100, score));
