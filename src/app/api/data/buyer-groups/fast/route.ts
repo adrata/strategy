@@ -100,6 +100,7 @@ export async function GET(request: NextRequest) {
         buyerGroupRole: true,
         buyerGroupStatus: true,  // ADD THIS - direct field from people table
         status: true, // Include status field for frontend display
+        companyId: true, // Include companyId for validation filter
         createdAt: true,
         updatedAt: true,
         lastEnriched: true
@@ -156,6 +157,7 @@ export async function GET(request: NextRequest) {
           buyerGroupRole: true,
           buyerGroupStatus: true,
           status: true,
+          companyId: true, // Include companyId for validation
           createdAt: true,
           updatedAt: true,
           lastEnriched: true

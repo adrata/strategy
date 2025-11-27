@@ -758,7 +758,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
               </div>
 
               {/* Opportunities List */}
-              <div className={`flex-1 p-4 space-y-2.5 overflow-y-auto transition-colors duration-200 ${
+              <div className={`flex-1 p-4 space-y-4 overflow-y-auto transition-colors duration-200 ${
                 isDragOver ? 'bg-hover/20' : ''
               }`}>
                 {opportunities['length'] === 0 ? (
