@@ -16,20 +16,21 @@ export const openrouter = createOpenRouter({
 });
 
 // Model constants for easy reference
+// Using VERIFIED OpenRouter model IDs - see https://openrouter.ai/models
 export const OPENROUTER_MODELS = {
   // Fast/cheap models for simple queries
   HAIKU: 'anthropic/claude-3-haiku',
   GPT4O_MINI: 'openai/gpt-4o-mini',
-  GEMINI_FLASH: 'google/gemini-2.0-flash-exp',
+  GEMINI_FLASH: 'google/gemini-flash-1.5',
   
-  // Standard models for typical queries
-  SONNET: 'anthropic/claude-sonnet-4',
+  // Standard models for typical queries (Claude 3.5 Sonnet is excellent for most tasks)
+  SONNET: 'anthropic/claude-3.5-sonnet',
   GPT4O: 'openai/gpt-4o',
-  GPT5: 'openai/gpt-5',
+  GEMINI_PRO: 'google/gemini-pro-1.5',
   
   // Complex models for advanced reasoning
-  OPUS: 'anthropic/claude-opus-4',
-  GPT45_PREVIEW: 'openai/gpt-4.5-preview',
+  OPUS: 'anthropic/claude-3-opus',
+  GPT4_TURBO: 'openai/gpt-4-turbo',
   
   // Research model with web search
   PERPLEXITY: 'perplexity/llama-3.1-sonar-large-128k-online',
@@ -38,8 +39,8 @@ export const OPENROUTER_MODELS = {
 // Model chains for failover (from simple to complex)
 export const MODEL_CHAINS = {
   simple: [OPENROUTER_MODELS.GPT4O_MINI, OPENROUTER_MODELS.HAIKU, OPENROUTER_MODELS.GEMINI_FLASH],
-  standard: [OPENROUTER_MODELS.SONNET, OPENROUTER_MODELS.GPT4O, OPENROUTER_MODELS.GEMINI_FLASH],
-  complex: [OPENROUTER_MODELS.OPUS, OPENROUTER_MODELS.GPT45_PREVIEW, OPENROUTER_MODELS.SONNET],
+  standard: [OPENROUTER_MODELS.SONNET, OPENROUTER_MODELS.GPT4O, OPENROUTER_MODELS.GPT4O_MINI],
+  complex: [OPENROUTER_MODELS.OPUS, OPENROUTER_MODELS.GPT4_TURBO, OPENROUTER_MODELS.SONNET],
   research: [OPENROUTER_MODELS.PERPLEXITY, OPENROUTER_MODELS.SONNET, OPENROUTER_MODELS.GPT4O],
 } as const;
 

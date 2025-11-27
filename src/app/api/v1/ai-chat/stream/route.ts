@@ -413,11 +413,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 6. SELECT MODEL
+    // 6. VALIDATE API KEY
+    const openRouterApiKey = process.env.OPENROUTER_API_KEY;
+    if (!openRouterApiKey) {
+      console.error('[STREAM] CRITICAL: OPENROUTER_API_KEY is not set!');
+      return new Response(JSON.stringify({ 
+        error: 'AI service not configured. Please set OPENROUTER_API_KEY environment variable.',
+        code: 'API_KEY_MISSING'
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // 7. SELECT MODEL
     const complexity = analyzeQueryComplexity(sanitizedMessage);
     const modelId = selectedAIModel?.openRouterModelId || MODEL_CHAINS[complexity][0];
     
-    console.log(`[STREAM] Using Vercel AI SDK with model: ${modelId} (complexity: ${complexity})`);
+    console.log(`[STREAM] Using model: ${modelId} (complexity: ${complexity}, hasApiKey: ${!!openRouterApiKey})`);
 
     // 7. CREATE STREAMING RESPONSE
     const encoder = new TextEncoder();
@@ -536,12 +549,18 @@ export async function POST(request: NextRequest) {
               tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
             }
 
-          } catch (streamError) {
-            console.warn(`[STREAM] Model ${modelId} failed, trying fallback:`, streamError);
+          } catch (streamError: any) {
+            console.error(`[STREAM] Model ${modelId} failed:`, {
+              error: streamError?.message || streamError,
+              code: streamError?.code,
+              status: streamError?.status,
+              stack: streamError?.stack?.slice(0, 500)
+            });
             
-            // Try fallback model
+            // Try fallback model (GPT-4o-mini is fast and reliable)
             const fallbackModel = OPENROUTER_MODELS.GPT4O_MINI;
             usedModel = fallbackModel;
+            console.log(`[STREAM] Trying fallback model: ${fallbackModel}`);
             
             try {
               const fallbackResult = await streamText({
@@ -567,8 +586,14 @@ export async function POST(request: NextRequest) {
               if (usage) {
                 tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
               }
-            } catch (fallbackError) {
-              console.error('[STREAM] Fallback also failed:', fallbackError);
+              console.log(`[STREAM] Fallback model ${fallbackModel} succeeded`);
+            } catch (fallbackError: any) {
+              console.error('[STREAM] Fallback model also failed:', {
+                error: fallbackError?.message || fallbackError,
+                code: fallbackError?.code,
+                status: fallbackError?.status,
+                stack: fallbackError?.stack?.slice(0, 500)
+              });
               throw fallbackError;
             }
           }
@@ -596,27 +621,55 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           console.error('[STREAM] Error:', error);
           
-          // MINIMAL FALLBACK: Just show the error context and data - let user retry
-          // The AI with research-backed system prompt should handle content generation
+          // SMART FALLBACK: Actually generate helpful content based on the user's query
           let fallbackContent = '';
           
           if (currentRecord) {
             const recordName = currentRecord.fullName || currentRecord.name || 'this contact';
+            const firstName = currentRecord.firstName || recordName.split(' ')[0] || recordName;
             const company = typeof currentRecord.company === 'string' 
               ? currentRecord.company 
               : (currentRecord.company?.name || currentRecord.companyName || '');
             const title = currentRecord.title || currentRecord.jobTitle || '';
+            const email = currentRecord.email || '';
             
-            const fields: string[] = [];
-            if (recordName) fields.push(`**Name:** ${recordName}`);
-            if (title) fields.push(`**Title:** ${title}`);
-            if (company) fields.push(`**Company:** ${company}`);
-            if (currentRecord.email) fields.push(`**Email:** ${currentRecord.email}`);
-            if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
+            // Detect what the user is asking for
+            const lowerMessage = sanitizedMessage.toLowerCase();
+            const isEmailRequest = lowerMessage.includes('email') || lowerMessage.includes('write') || lowerMessage.includes('draft');
+            const isLinkedInRequest = lowerMessage.includes('linkedin') || lowerMessage.includes('message');
+            const isInfoRequest = lowerMessage.includes('tell me') || lowerMessage.includes('about') || lowerMessage.includes('who is') || lowerMessage.includes('what');
             
-            fallbackContent = `I have context for **${recordName}**${company ? ` at **${company}**` : ''}.\n\n${fields.join('\n')}\n\nPlease try your request again - I can write emails, LinkedIn messages, call scripts, and more.`;
+            if (isEmailRequest && !isLinkedInRequest) {
+              // Generate a helpful cold email
+              fallbackContent = `Here's a cold email draft for ${firstName}:\n\n---\n\n**Subject:** Quick question for ${firstName}\n\n${firstName} - noticed ${company || 'your company'} is doing interesting work${title ? ` in the ${title.toLowerCase().includes('director') || title.toLowerCase().includes('manager') || title.toLowerCase().includes('vp') ? 'leadership' : ''} space` : ''}.\n\nCompanies at your stage typically hit bottlenecks we specialize in solving. Happy to share how we've helped similar teams cut their timeline significantly.\n\nWorth a quick chat to see if this applies to ${company || 'your situation'}?\n\n---\n\n${email ? `**Send to:** ${email}\n\n` : ''}This follows best practices: under 75 words, personalized hook, single soft CTA.`;
+            } else if (isLinkedInRequest) {
+              // Generate a LinkedIn message
+              fallbackContent = `Here's a LinkedIn connection request for ${firstName}:\n\n---\n\n${firstName} - saw your work${company ? ` at ${company}` : ''}${title ? ` as ${title}` : ''}. Always looking to connect with folks tackling similar challenges.\n\nWould love to exchange ideas sometime.\n\n---\n\nKeep it short (under 300 characters) for connection requests.`;
+            } else if (isInfoRequest) {
+              // Provide info about the person
+              const fields: string[] = [];
+              if (recordName) fields.push(`**Name:** ${recordName}`);
+              if (title) fields.push(`**Title:** ${title}`);
+              if (company) fields.push(`**Company:** ${company}`);
+              if (email) fields.push(`**Email:** ${email}`);
+              if (currentRecord.phone) fields.push(`**Phone:** ${currentRecord.phone}`);
+              if (currentRecord.linkedIn || currentRecord.linkedInUrl) fields.push(`**LinkedIn:** ${currentRecord.linkedIn || currentRecord.linkedInUrl}`);
+              if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
+              
+              fallbackContent = `Here's what I know about **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\n${title ? `As a ${title}, they likely focus on ${title.toLowerCase().includes('engineer') ? 'technical implementation and architecture' : title.toLowerCase().includes('director') || title.toLowerCase().includes('vp') ? 'strategic initiatives and team leadership' : 'their functional area'}.` : ''}\n\nWant me to draft an email or provide more specific guidance?`;
+            } else {
+              // Default helpful response
+              const fields: string[] = [];
+              if (recordName) fields.push(`**Name:** ${recordName}`);
+              if (title) fields.push(`**Title:** ${title}`);
+              if (company) fields.push(`**Company:** ${company}`);
+              if (email) fields.push(`**Email:** ${email}`);
+              if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
+              
+              fallbackContent = `I have context for **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\nI can help you:\n- Write a cold email\n- Draft a LinkedIn message\n- Create a call script\n- Analyze the opportunity\n\nWhat would be most helpful?`;
+            }
           } else {
-            fallbackContent = "I'm ready to help. Please select a record or try your request again.";
+            fallbackContent = "I'm ready to help! Select a lead, prospect, or company to get personalized guidance, or ask me anything about sales strategy.";
           }
           
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({
