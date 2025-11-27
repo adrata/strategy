@@ -721,8 +721,19 @@ export function UniversalRecordTemplate({
 
   // Get record display name with fallbacks
   const getDisplayName = () => {
-    // For opportunities, always use company name (opportunities are company records)
+    // For opportunities, check if it's a person record first (people with OPPORTUNITY status)
+    // or a company record (actual opportunity deals)
     if (recordType === 'opportunities') {
+      // If this record has person fields (firstName/lastName/fullName), it's a person with OPPORTUNITY status
+      if (localRecord?.firstName || localRecord?.fullName) {
+        const personName = localRecord?.fullName || 
+                          (localRecord?.firstName && localRecord?.lastName ? `${localRecord.firstName} ${localRecord.lastName}` : localRecord?.firstName) ||
+                          localRecord?.displayName;
+        if (personName) {
+          return sanitizeName(personName) || personName;
+        }
+      }
+      // Otherwise it's an actual opportunity deal - use company name
       const companyName = localRecord?.name || 
                          localRecord?.companyName ||
                          (typeof localRecord?.company === 'string' ? localRecord.company : localRecord?.company?.name) ||
