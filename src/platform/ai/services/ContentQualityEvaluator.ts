@@ -1,670 +1,1141 @@
 /**
- * 🎯 CONTENT QUALITY EVALUATOR
+ * INTELLIGENT CONTENT QUALITY EVALUATOR
  * 
- * Research-backed evaluation of AI-generated content quality.
- * Optimized for highest conversion rates based on industry data.
+ * Enterprise-grade message evaluation combining:
+ * - Russell Brunson's Hook-Story-Offer (enterprise adapted)
+ * - Skip Miller's ProActive Selling (ATL/BTL buyer awareness)
+ * - Personality-aware messaging
+ * - User writing style learning
+ * - Research-backed conversion optimization
  * 
- * KEY RESEARCH INSIGHTS:
- * - Personalized emails get 29% higher open rates and 41% higher click rates
- * - Emails with 50-125 words have 50%+ response rates
- * - Subject lines under 50 characters have 12% higher open rates
- * - Following up 5+ times increases response rates by 25%
- * - Tuesday-Thursday sends outperform Monday/Friday by 20%
- * - LinkedIn messages under 100 words have 50% higher response rates
+ * The goal: Messages that feel like they were written by the best version
+ * of the sender - elegant, specific, and impossible to ignore.
  */
 
+// =============================================================================
+// TYPES
+// =============================================================================
+
+export type PersonStatus = 'LEAD' | 'PROSPECT' | 'CUSTOMER' | 'PARTNER';
+export type OpportunityStage = 'QUALIFICATION' | 'DISCOVERY' | 'PROPOSAL' | 'NEGOTIATION' | 'CLOSING';
+export type BuyerLevel = 'ATL' | 'BTL'; // Above/Below The Line (Skip Miller)
+export type CommunicationStyle = 'direct' | 'analytical' | 'expressive' | 'amiable';
+export type ContentType = 'email' | 'linkedin' | 'text' | 'advice' | 'general';
+
 export interface QualityScore {
-  overall: number; // 0-100
-  breakdown: {
-    clarity: number;           // Clear, easy to understand
-    personalization: number;   // Tailored to recipient
-    professionalism: number;   // Appropriate tone
-    actionability: number;     // Clear CTA
-    brevity: number;           // Optimal length
-    relevance: number;         // On-topic
-    hookStrength: number;      // Opening line impact
-    valueProposition: number;  // Clear benefit to recipient
-    urgencyBalance: number;    // Creates urgency without pressure
+  overall: number;
+  grade: 'A+' | 'A' | 'B+' | 'B' | 'C' | 'D' | 'F';
+  conversionPotential: 'exceptional' | 'high' | 'medium' | 'low';
+  
+  // Core Framework Scores
+  framework: {
+    hook: number;              // Russell Brunson - pattern interrupt
+    story: number;             // Epiphany bridge / transformation narrative
+    offer: number;             // Clear, low-friction next step
+    storyBrand: number;        // Hero's journey structure
   };
+  
+  // Sales Intelligence Scores
+  salesIntelligence: {
+    buyerLevelAlignment: number;   // ATL vs BTL messaging
+    statusAlignment: number;       // LEAD/PROSPECT/CUSTOMER appropriate
+    stageAlignment: number;        // DISCOVERY/PROPOSAL/etc appropriate
+    personalityMatch: number;      // Matches recipient's style
+  };
+  
+  // Craft Scores
+  craft: {
+    clarity: number;
+    personalization: number;
+    elegance: number;              // Sophistication without stuffiness
+    brevity: number;
+    actionability: number;
+    writingStyleMatch: number;     // Sounds like sender's best self
+  };
+  
   suggestions: string[];
-  contentType: 'email' | 'linkedin' | 'text' | 'advice' | 'general';
-  conversionPotential: 'high' | 'medium' | 'low';
-  stage: 'cold' | 'warm' | 'follow-up' | 'closing';
+  contentType: ContentType;
+  detectedStatus: PersonStatus;
+  detectedStage: OpportunityStage;
+  detectedBuyerLevel: BuyerLevel;
+}
+
+export interface RecipientPersonality {
+  communicationStyle: CommunicationStyle;
+  decisionMakingStyle?: string;
+  motivations?: string[];
+  concerns?: string[];
+  keyNeeds?: string[];
 }
 
 export interface EvaluationContext {
+  // Recipient Info
   recipientName?: string;
   recipientCompany?: string;
   recipientTitle?: string;
+  industry?: string;
+  
+  // Model-Aligned Fields (from Prisma schema)
+  status?: PersonStatus;
+  stage?: OpportunityStage;
+  
+  // Skip Miller - Buyer Level
+  buyerLevel?: BuyerLevel;
+  
+  // Personality (from buyer archetypes)
+  recipientPersonality?: RecipientPersonality;
+  
+  // Conversation Context
+  priorMessages?: string[];
+  touchpointNumber?: number;
+  lastInteraction?: 'opened' | 'clicked' | 'replied' | 'no_response' | 'meeting_held';
+  
+  // Research & Intelligence
+  recipientPainPoints?: string[];
+  recentNews?: string;
+  competitorMentioned?: string;
+  
+  // User Writing Style (for learning)
+  userWritingSamples?: string[];
   senderName?: string;
   senderCompany?: string;
-  purpose?: string;
-  industry?: string;
-  // NEW: Stage and conversation context
-  stage?: 'cold' | 'warm' | 'follow-up' | 'closing';
-  priorMessages?: string[];        // Previous messages in the thread
-  priorResponseRate?: number;      // 0-100, how engaged is recipient
-  touchpointNumber?: number;       // 1st, 2nd, 3rd outreach
-  lastInteraction?: string;        // "opened email", "clicked link", "replied", "no response"
-  recipientPainPoints?: string[];  // Known challenges
-  recentNews?: string;             // Recent company news to reference
 }
 
-// Research-backed weights optimized for conversion
-const WEIGHTS: Record<string, Record<string, number>> = {
-  email: {
-    clarity: 0.10,
-    personalization: 0.20,      // High impact on open/response rates
-    professionalism: 0.10,
-    actionability: 0.15,
-    brevity: 0.10,
-    relevance: 0.10,
-    hookStrength: 0.10,         // First line determines if they read more
-    valueProposition: 0.10,     // Why should they care?
-    urgencyBalance: 0.05
-  },
-  linkedin: {
-    clarity: 0.10,
-    personalization: 0.25,      // Critical for LinkedIn acceptance
-    professionalism: 0.10,
-    actionability: 0.10,
-    brevity: 0.15,              // LinkedIn messages must be SHORT
-    relevance: 0.10,
-    hookStrength: 0.10,
-    valueProposition: 0.05,
-    urgencyBalance: 0.05
-  },
-  text: {
-    clarity: 0.20,
-    personalization: 0.10,
-    professionalism: 0.05,
-    actionability: 0.20,
-    brevity: 0.25,              // Texts must be very short
-    relevance: 0.10,
-    hookStrength: 0.05,
-    valueProposition: 0.05,
-    urgencyBalance: 0.00
-  },
-  advice: {
-    clarity: 0.20,
-    personalization: 0.10,
-    professionalism: 0.10,
-    actionability: 0.25,        // Advice must be actionable
-    brevity: 0.05,
-    relevance: 0.15,
-    hookStrength: 0.05,
-    valueProposition: 0.05,
-    urgencyBalance: 0.05
-  },
-  general: {
-    clarity: 0.15,
-    personalization: 0.15,
-    professionalism: 0.10,
-    actionability: 0.15,
-    brevity: 0.10,
-    relevance: 0.15,
-    hookStrength: 0.10,
-    valueProposition: 0.05,
-    urgencyBalance: 0.05
-  }
-};
+// =============================================================================
+// MAIN EVALUATION FUNCTION
+// =============================================================================
 
-// Stage-specific adjustments
-const STAGE_MULTIPLIERS: Record<string, Record<string, number>> = {
-  cold: {
-    hookStrength: 1.5,          // Critical for cold outreach
-    personalization: 1.3,
-    valueProposition: 1.2
-  },
-  warm: {
-    relevance: 1.3,             // Reference prior interaction
-    actionability: 1.2
-  },
-  'follow-up': {
-    brevity: 1.3,               // Follow-ups should be shorter
-    urgencyBalance: 1.2,
-    actionability: 1.2
-  },
-  closing: {
-    actionability: 1.5,         // Clear next steps critical
-    urgencyBalance: 1.3
-  }
-};
-
-/**
- * Research-backed content evaluation
- */
-export function evaluateContentFast(
+export function evaluateContent(
   content: string,
-  contentType: 'email' | 'linkedin' | 'text' | 'advice' | 'general',
-  context?: EvaluationContext
+  contentType: ContentType,
+  context: EvaluationContext = {}
 ): QualityScore {
-  const stage = context?.stage || detectStage(content, context);
+  // Detect context from content if not provided
+  const detectedStatus = context.status || detectStatus(content, context);
+  const detectedStage = context.stage || detectStage(content, context);
+  const detectedBuyerLevel = context.buyerLevel || detectBuyerLevel(content, context);
   
-  const breakdown = {
+  // Evaluate all dimensions
+  const framework = {
+    hook: evaluateHook(content, contentType, context),
+    story: evaluateStory(content, context),
+    offer: evaluateOffer(content, detectedStage, context),
+    storyBrand: evaluateStoryBrand(content, context)
+  };
+  
+  const salesIntelligence = {
+    buyerLevelAlignment: evaluateBuyerLevelAlignment(content, detectedBuyerLevel, context),
+    statusAlignment: evaluateStatusAlignment(content, detectedStatus, context),
+    stageAlignment: evaluateStageAlignment(content, detectedStage, context),
+    personalityMatch: evaluatePersonalityMatch(content, context)
+  };
+  
+  const craft = {
     clarity: evaluateClarity(content),
     personalization: evaluatePersonalization(content, context),
-    professionalism: evaluateProfessionalism(content, contentType),
-    actionability: evaluateActionability(content, stage),
+    elegance: evaluateElegance(content),
     brevity: evaluateBrevity(content, contentType),
-    relevance: evaluateRelevance(content, context),
-    hookStrength: evaluateHookStrength(content, contentType),
-    valueProposition: evaluateValueProposition(content, context),
-    urgencyBalance: evaluateUrgencyBalance(content, stage)
+    actionability: evaluateActionability(content, detectedStage),
+    writingStyleMatch: evaluateWritingStyleMatch(content, context)
   };
-
-  // Apply stage-specific multipliers
-  const stageMultipliers = STAGE_MULTIPLIERS[stage] || {};
-  Object.keys(stageMultipliers).forEach(key => {
-    if (breakdown[key as keyof typeof breakdown] !== undefined) {
-      breakdown[key as keyof typeof breakdown] = Math.min(100, 
-        breakdown[key as keyof typeof breakdown] * stageMultipliers[key]
-      );
-    }
-  });
-
-  const weights = WEIGHTS[contentType];
-  const overall = Math.round(
-    breakdown.clarity * weights.clarity +
-    breakdown.personalization * weights.personalization +
-    breakdown.professionalism * weights.professionalism +
-    breakdown.actionability * weights.actionability +
-    breakdown.brevity * weights.brevity +
-    breakdown.relevance * weights.relevance +
-    breakdown.hookStrength * weights.hookStrength +
-    breakdown.valueProposition * weights.valueProposition +
-    breakdown.urgencyBalance * weights.urgencyBalance
+  
+  // Calculate weighted overall score
+  const overall = calculateOverallScore(framework, salesIntelligence, craft, contentType);
+  const grade = getGrade(overall);
+  const conversionPotential = getConversionPotential(overall, framework.hook, craft.personalization);
+  
+  // Generate intelligent suggestions
+  const suggestions = generateSuggestions(
+    framework, salesIntelligence, craft, 
+    content, contentType, context,
+    detectedStatus, detectedStage, detectedBuyerLevel
   );
-
-  const suggestions = generateSuggestions(breakdown, contentType, content, context, stage);
-  const conversionPotential = overall >= 85 ? 'high' : overall >= 70 ? 'medium' : 'low';
-
+  
   return {
     overall,
-    breakdown,
+    grade,
+    conversionPotential,
+    framework,
+    salesIntelligence,
+    craft,
     suggestions,
     contentType,
-    conversionPotential,
-    stage
+    detectedStatus,
+    detectedStage,
+    detectedBuyerLevel
   };
 }
 
+// Alias for backwards compatibility
+export const evaluateContentFast = evaluateContent;
+
+// =============================================================================
+// RUSSELL BRUNSON FRAMEWORK (Enterprise Adapted)
+// =============================================================================
+
 /**
- * Detect the stage based on content and context
+ * HOOK EVALUATION
+ * Russell Brunson: "You have 3 seconds to stop the scroll"
+ * 
+ * Enterprise hooks that work:
+ * - Pattern interrupt (unexpected insight)
+ * - Specificity (concrete detail that proves research)
+ * - Curiosity gap (incomplete loop)
+ * - Status trigger (peer reference)
  */
-function detectStage(content: string, context?: EvaluationContext): 'cold' | 'warm' | 'follow-up' | 'closing' {
-  if (context?.stage) return context.stage;
+function evaluateHook(content: string, contentType: string, context: EvaluationContext): number {
+  let score = 40; // Baseline - must earn a good hook score
   
-  const lowerContent = content.toLowerCase();
+  const firstLine = content.split(/[.!?\n]/)[0].toLowerCase().trim();
+  const firstTwoSentences = content.split(/[.!?]/).slice(0, 2).join('. ').toLowerCase();
   
-  // Follow-up indicators
-  if (lowerContent.includes('following up') || 
-      lowerContent.includes('checking in') ||
-      lowerContent.includes('last email') ||
-      lowerContent.includes('previous message') ||
-      lowerContent.includes('circling back')) {
-    return 'follow-up';
+  // PATTERN INTERRUPT - Does it break the expected pattern?
+  const patternInterrupts = [
+    { pattern: /^(noticed|saw|caught) (your|that|the)/, points: 20 },
+    { pattern: /^(quick question|curious|wondering)/, points: 18 },
+    { pattern: /^(congrats|impressive|loved)/, points: 15 },
+    { pattern: /^\d+%|\$[\d,]+|\d+x/, points: 20 }, // Opens with a stat
+    { pattern: /^"[^"]+"/,  points: 15 }, // Opens with a quote
+  ];
+  
+  for (const { pattern, points } of patternInterrupts) {
+    if (pattern.test(firstLine)) {
+      score += points;
+      break;
+    }
   }
   
-  // Closing indicators
-  if (lowerContent.includes('final') ||
-      lowerContent.includes('last chance') ||
-      lowerContent.includes('before we close') ||
-      lowerContent.includes('ready to move forward')) {
-    return 'closing';
+  // SPECIFICITY - Concrete details signal research
+  if (context.recipientCompany && firstTwoSentences.includes(context.recipientCompany.toLowerCase())) {
+    score += 15;
+  }
+  if (context.recentNews && firstTwoSentences.includes(context.recentNews.substring(0, 15).toLowerCase())) {
+    score += 15;
   }
   
-  // Warm indicators (reference to prior interaction)
-  if (lowerContent.includes('great speaking') ||
-      lowerContent.includes('enjoyed our') ||
-      lowerContent.includes('as we discussed') ||
-      lowerContent.includes('per our conversation')) {
-    return 'warm';
+  // WEAK HOOKS - Heavy penalties
+  const weakHooks = [
+    'i hope this', 'i wanted to', 'i am writing', 'my name is',
+    'i\'m reaching out', 'i\'d like to', 'our company', 'we are a'
+  ];
+  if (weakHooks.some(weak => firstLine.includes(weak))) {
+    score -= 35;
   }
   
-  return 'cold';
+  // Short, punchy first line is better
+  const firstLineWords = firstLine.split(/\s+/).length;
+  if (firstLineWords <= 10) score += 10;
+  else if (firstLineWords > 20) score -= 10;
+  
+  // Question hooks are powerful
+  if (firstLine.includes('?')) score += 12;
+  
+  return Math.max(0, Math.min(100, score));
 }
 
 /**
- * Evaluate clarity - sentence structure, readability
+ * STORY EVALUATION
+ * Russell Brunson's "Epiphany Bridge" - enterprise adapted
+ * 
+ * Great enterprise stories:
+ * - Transformation narrative (before → after)
+ * - Social proof through narrative (not just claims)
+ * - Emotional resonance with business impact
  */
+function evaluateStory(content: string, context: EvaluationContext): number {
+  let score = 50;
+  const lower = content.toLowerCase();
+  
+  // TRANSFORMATION SIGNALS
+  const transformationPairs = [
+    ['struggling', 'now'],
+    ['before', 'after'],
+    ['used to', 'now'],
+    ['was', 'became'],
+    ['went from', 'to'],
+    ['reduced', 'by'],
+    ['increased', 'to'],
+    ['saved', 'hours']
+  ];
+  
+  for (const [before, after] of transformationPairs) {
+    if (lower.includes(before) && lower.includes(after)) {
+      score += 15;
+      break;
+    }
+  }
+  
+  // SOCIAL PROOF THROUGH STORY
+  const storyProofPatterns = [
+    /helped ([\w\s]+) (achieve|save|reduce|increase|grow)/i,
+    /companies like ([\w\s,]+) (use|trust|chose)/i,
+    /when ([\w\s]+) (faced|struggled|needed)/i,
+    /similar (situation|challenge|problem)/i
+  ];
+  
+  for (const pattern of storyProofPatterns) {
+    if (pattern.test(content)) {
+      score += 12;
+    }
+  }
+  
+  // CONCRETE RESULTS (numbers in narrative context)
+  if (/\d+%\s*(increase|decrease|reduction|improvement|faster|growth)/i.test(content)) {
+    score += 15;
+  }
+  if (/\$[\d,]+\s*(saved|revenue|growth|impact)/i.test(content)) {
+    score += 15;
+  }
+  
+  // PAIN POINT ACKNOWLEDGMENT
+  if (context.recipientPainPoints?.some(pain => lower.includes(pain.toLowerCase()))) {
+    score += 10;
+  }
+  
+  // Penalize pure feature lists (not story-driven)
+  const bulletCount = (content.match(/^[-•*]\s/gm) || []).length;
+  if (bulletCount > 3) score -= 10;
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * OFFER EVALUATION
+ * Russell Brunson: "Make them an offer they can't refuse"
+ * 
+ * Enterprise offers that convert:
+ * - Low friction (15 min, not 1 hour)
+ * - High value perception
+ * - Clear next step
+ * - Risk reversal (no commitment language)
+ */
+function evaluateOffer(content: string, stage: OpportunityStage, context: EvaluationContext): number {
+  let score = 40;
+  const lower = content.toLowerCase();
+  
+  // LOW FRICTION CTAs
+  const lowFriction = [
+    { pattern: '15 minutes', points: 20 },
+    { pattern: '15-minute', points: 20 },
+    { pattern: 'quick call', points: 18 },
+    { pattern: 'brief chat', points: 18 },
+    { pattern: 'quick question', points: 15 },
+    { pattern: 'short call', points: 15 }
+  ];
+  
+  for (const { pattern, points } of lowFriction) {
+    if (lower.includes(pattern)) {
+      score += points;
+      break;
+    }
+  }
+  
+  // SOFT CTAs (work better for cold/early stage)
+  const softCTAs = [
+    'would you be open to',
+    'would it make sense',
+    'worth a conversation',
+    'interested in exploring',
+    'open to learning'
+  ];
+  
+  const hardCTAs = [
+    'schedule a demo',
+    'book a call',
+    'sign up',
+    'get started'
+  ];
+  
+  const hasSoftCTA = softCTAs.some(cta => lower.includes(cta));
+  const hasHardCTA = hardCTAs.some(cta => lower.includes(cta));
+  
+  // Stage-appropriate CTA scoring
+  if (stage === 'QUALIFICATION' || stage === 'DISCOVERY') {
+    if (hasSoftCTA) score += 20;
+    if (hasHardCTA) score -= 10; // Too aggressive for early stage
+  } else if (stage === 'PROPOSAL' || stage === 'NEGOTIATION' || stage === 'CLOSING') {
+    if (hasHardCTA) score += 15;
+    if (hasSoftCTA) score += 10;
+  }
+  
+  // BINARY CHOICE (easy decision)
+  if (lower.includes(' or ') && content.includes('?')) {
+    score += 12;
+  }
+  
+  // SPECIFIC TIME OFFERS
+  const dayMentioned = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 
+                        'this week', 'next week'].some(d => lower.includes(d));
+  if (dayMentioned) score += 10;
+  
+  // RISK REVERSAL LANGUAGE
+  const riskReversal = ['no commitment', 'no obligation', 'just to explore', 'see if it makes sense'];
+  if (riskReversal.some(r => lower.includes(r))) {
+    score += 10;
+  }
+  
+  // Must have a question (CTA)
+  if (!content.includes('?')) {
+    score -= 20;
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * STORYBRAND EVALUATION
+ * Donald Miller's 7-part framework (streamlined)
+ * 
+ * 1. Hero (customer) - Message is about them
+ * 2. Problem - Their challenge acknowledged
+ * 3. Guide (you) - Empathy + Authority
+ * 4. Plan - Clear path forward
+ * 5. CTA - Specific action
+ * 6. Success - Vision of transformation
+ */
+function evaluateStoryBrand(content: string, context: EvaluationContext): number {
+  let score = 0;
+  const lower = content.toLowerCase();
+  
+  // HERO - Is the message about them? (count "you" vs "we/I")
+  const youCount = (lower.match(/\byou\b|\byour\b/g) || []).length;
+  const weCount = (lower.match(/\bwe\b|\bour\b|\bi\b/g) || []).length;
+  
+  if (youCount > weCount) score += 20;
+  else if (youCount === weCount) score += 10;
+  // If we > you, no points
+  
+  // PROBLEM - Pain point acknowledged
+  const problemIndicators = [
+    'challenge', 'struggling', 'difficult', 'pain', 'problem',
+    'frustrated', 'time-consuming', 'costly', 'complex', 'overwhelming'
+  ];
+  if (problemIndicators.some(p => lower.includes(p))) score += 15;
+  if (context.recipientPainPoints?.some(p => lower.includes(p.toLowerCase()))) score += 10;
+  
+  // GUIDE - Empathy + Authority
+  const empathy = ['understand', 'know how', 'been there', 'hear you', 'makes sense'];
+  const authority = ['helped', 'worked with', 'experience', 'companies like', 'proven'];
+  
+  if (empathy.some(e => lower.includes(e))) score += 10;
+  if (authority.some(a => lower.includes(a))) score += 10;
+  
+  // PLAN - Clear path
+  const planIndicators = ['here\'s how', 'simple', 'step', 'process', 'approach', 'path'];
+  if (planIndicators.some(p => lower.includes(p))) score += 10;
+  
+  // CTA - Has ask
+  if (content.includes('?')) score += 10;
+  
+  // SUCCESS - Transformation vision
+  const successIndicators = [
+    'imagine', 'picture', 'result', 'outcome', 'achieve',
+    'success', 'growth', 'improvement', 'transformation'
+  ];
+  if (successIndicators.some(s => lower.includes(s))) score += 15;
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+// =============================================================================
+// SKIP MILLER - PROACTIVE SELLING
+// =============================================================================
+
+/**
+ * ATL (Above The Line) vs BTL (Below The Line) Alignment
+ * 
+ * ATL (Executives): Focus on outcomes, ROI, strategic impact, time savings
+ * BTL (Users/Evaluators): Focus on features, implementation, ease of use, support
+ */
+function evaluateBuyerLevelAlignment(
+  content: string, 
+  buyerLevel: BuyerLevel,
+  context: EvaluationContext
+): number {
+  let score = 50;
+  const lower = content.toLowerCase();
+  
+  const atlKeywords = [
+    'roi', 'revenue', 'growth', 'strategic', 'competitive advantage',
+    'market share', 'board', 'stakeholder', 'bottom line', 'investment',
+    'scale', 'efficiency', 'productivity', 'cost reduction', 'risk'
+  ];
+  
+  const btlKeywords = [
+    'feature', 'integration', 'workflow', 'dashboard', 'interface',
+    'setup', 'implementation', 'training', 'support', 'documentation',
+    'api', 'automation', 'configuration', 'user experience', 'how it works'
+  ];
+  
+  const atlMatches = atlKeywords.filter(k => lower.includes(k)).length;
+  const btlMatches = btlKeywords.filter(k => lower.includes(k)).length;
+  
+  if (buyerLevel === 'ATL') {
+    score += atlMatches * 8;
+    score -= btlMatches * 3; // Too tactical for execs
+  } else {
+    score += btlMatches * 8;
+    score -= atlMatches * 2; // Evaluators want specifics
+  }
+  
+  // Title-based adjustments
+  if (context.recipientTitle) {
+    const title = context.recipientTitle.toLowerCase();
+    const isExecutive = ['ceo', 'cfo', 'cto', 'coo', 'vp', 'chief', 'president', 'director'].some(t => title.includes(t));
+    
+    if (isExecutive && buyerLevel === 'ATL') score += 10;
+    if (!isExecutive && buyerLevel === 'BTL') score += 10;
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * STATUS ALIGNMENT (LEAD/PROSPECT/CUSTOMER/PARTNER)
+ */
+function evaluateStatusAlignment(
+  content: string,
+  status: PersonStatus,
+  context: EvaluationContext
+): number {
+  let score = 60;
+  const lower = content.toLowerCase();
+  
+  const statusStrategies: Record<PersonStatus, { good: string[], bad: string[] }> = {
+    LEAD: {
+      good: ['introduce', 'learn more', 'explore', 'curious', 'initial', 'new'],
+      bad: ['renew', 'upgrade', 'existing', 'continue', 'expand our']
+    },
+    PROSPECT: {
+      good: ['next step', 'demo', 'proposal', 'solution', 'requirements', 'timeline'],
+      bad: ['introduce myself', 'who we are', 'let me tell you about']
+    },
+    CUSTOMER: {
+      good: ['thank you', 'appreciate', 'value', 'feedback', 'expand', 'additional'],
+      bad: ['introduce', 'who we are', 'cold outreach']
+    },
+    PARTNER: {
+      good: ['collaborate', 'partnership', 'mutual', 'together', 'joint', 'co-'],
+      bad: ['sell you', 'pitch', 'demo', 'pricing']
+    }
+  };
+  
+  const strategy = statusStrategies[status];
+  if (strategy) {
+    const goodMatches = strategy.good.filter(g => lower.includes(g)).length;
+    const badMatches = strategy.bad.filter(b => lower.includes(b)).length;
+    
+    score += goodMatches * 10;
+    score -= badMatches * 15;
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * STAGE ALIGNMENT (QUALIFICATION/DISCOVERY/PROPOSAL/NEGOTIATION/CLOSING)
+ */
+function evaluateStageAlignment(
+  content: string,
+  stage: OpportunityStage,
+  context: EvaluationContext
+): number {
+  let score = 60;
+  const lower = content.toLowerCase();
+  
+  const stageStrategies: Record<OpportunityStage, { tone: string, keywords: string[] }> = {
+    QUALIFICATION: {
+      tone: 'exploratory',
+      keywords: ['fit', 'right', 'make sense', 'explore', 'learn', 'understand', 'challenges']
+    },
+    DISCOVERY: {
+      tone: 'curious',
+      keywords: ['tell me more', 'help me understand', 'walk me through', 'priorities', 'goals', 'timeline']
+    },
+    PROPOSAL: {
+      tone: 'confident',
+      keywords: ['solution', 'recommend', 'based on', 'proposal', 'approach', 'investment', 'roi']
+    },
+    NEGOTIATION: {
+      tone: 'collaborative',
+      keywords: ['terms', 'pricing', 'flexibility', 'options', 'package', 'value', 'commitment']
+    },
+    CLOSING: {
+      tone: 'direct',
+      keywords: ['ready', 'move forward', 'next steps', 'start', 'begin', 'finalize', 'decision']
+    }
+  };
+  
+  const strategy = stageStrategies[stage];
+  if (strategy) {
+    const matches = strategy.keywords.filter(k => lower.includes(k)).length;
+    score += matches * 8;
+  }
+  
+  // Touchpoint awareness
+  if (context.touchpointNumber) {
+    if (context.touchpointNumber > 1 && !lower.includes('follow')) {
+      score -= 10; // Should acknowledge this isn't first touch
+    }
+    if (context.touchpointNumber > 3 && !lower.includes('last') && !lower.includes('final')) {
+      score -= 5; // Later touches should have more urgency
+    }
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * PERSONALITY MATCH
+ * Adapts to recipient's communication style
+ */
+function evaluatePersonalityMatch(content: string, context: EvaluationContext): number {
+  if (!context.recipientPersonality?.communicationStyle) {
+    return 70; // Neutral if unknown
+  }
+  
+  let score = 50;
+  const lower = content.toLowerCase();
+  const style = context.recipientPersonality.communicationStyle;
+  
+  const stylePatterns: Record<CommunicationStyle, { good: RegExp[], bad: RegExp[] }> = {
+    direct: {
+      good: [/^[^.]{1,50}\./, /let's|here's|bottom line/i, /\?$/],
+      bad: [/i think|perhaps|maybe|might/i, /to be honest|frankly/i]
+    },
+    analytical: {
+      good: [/\d+%|\$[\d,]+|\d+x/i, /data|metrics|analysis|research/i, /specifically|precisely/i],
+      bad: [/trust me|believe me/i, /gut feeling/i]
+    },
+    expressive: {
+      good: [/excited|thrilled|love|great/i, /!/, /imagine|vision/i],
+      bad: [/strictly|merely|simply/i]
+    },
+    amiable: {
+      good: [/team|together|partnership|collaborate/i, /help|support|assist/i, /relationship/i],
+      bad: [/aggressive|push|demand/i, /immediately|urgent/i]
+    }
+  };
+  
+  const patterns = stylePatterns[style];
+  if (patterns) {
+    for (const good of patterns.good) {
+      if (good.test(content)) score += 12;
+    }
+    for (const bad of patterns.bad) {
+      if (bad.test(content)) score -= 15;
+    }
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+// =============================================================================
+// CRAFT EVALUATORS
+// =============================================================================
+
 function evaluateClarity(content: string): number {
   let score = 100;
   
+  // Sentence length
   const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-  const longSentences = sentences.filter(s => s.split(/\s+/).length > 25);
-  score -= longSentences.length * 8;
+  const avgWords = content.split(/\s+/).length / Math.max(sentences.length, 1);
   
-  // Jargon detection (research shows jargon reduces response rates by 10-15%)
-  const jargonWords = [
-    'synergy', 'leverage', 'paradigm', 'holistic', 'proactive', 'bandwidth',
-    'circle back', 'touch base', 'low-hanging fruit', 'move the needle',
-    'deep dive', 'thought leader', 'best-in-class', 'disruptive'
-  ];
-  const jargonCount = jargonWords.reduce((count, word) => 
-    count + (content.toLowerCase().match(new RegExp(word, 'gi')) || []).length, 0
-  );
-  score -= jargonCount * 10;
+  if (avgWords > 25) score -= 15;
+  else if (avgWords > 20) score -= 8;
+  else if (avgWords <= 12) score += 5;
   
-  // Bonus for short paragraphs
-  const paragraphs = content.split(/\n\n+/);
-  if (paragraphs.length > 1 && paragraphs.every(p => p.split(/\s+/).length < 50)) {
-    score += 5;
-  }
+  // Jargon penalty
+  const jargon = ['synergy', 'leverage', 'paradigm', 'holistic', 'bandwidth', 
+                  'circle back', 'touch base', 'move the needle', 'low-hanging fruit'];
+  const jargonCount = jargon.filter(j => content.toLowerCase().includes(j)).length;
+  score -= jargonCount * 12;
   
-  // Check readability (simple sentences score higher)
-  const avgWordsPerSentence = content.split(/\s+/).length / Math.max(sentences.length, 1);
-  if (avgWordsPerSentence <= 15) score += 5;
-  else if (avgWordsPerSentence > 25) score -= 10;
+  // Passive voice penalty (simple detection)
+  const passivePatterns = /\b(was|were|been|being|is|are|am)\s+\w+ed\b/gi;
+  const passiveCount = (content.match(passivePatterns) || []).length;
+  score -= passiveCount * 5;
   
   return Math.max(0, Math.min(100, score));
 }
 
-/**
- * Evaluate personalization - research shows 29% higher open rates
- */
-function evaluatePersonalization(content: string, context?: EvaluationContext): number {
-  let score = 40; // Start lower - personalization must be earned
+function evaluatePersonalization(content: string, context: EvaluationContext): number {
+  let score = 30; // Must earn personalization
+  const lower = content.toLowerCase();
   
-  if (!context) return score;
-  
-  const lowerContent = content.toLowerCase();
-  
-  // First name usage (+20) - most impactful personalization
+  // Name usage (+25)
   if (context.recipientName) {
     const firstName = context.recipientName.split(' ')[0].toLowerCase();
-    if (lowerContent.includes(firstName)) {
-      score += 20;
-      // Extra points for using name naturally (not just in greeting)
-      const nameOccurrences = (lowerContent.match(new RegExp(firstName, 'g')) || []).length;
-      if (nameOccurrences >= 2) score += 5;
+    if (lower.includes(firstName)) {
+      score += 25;
+      // Bonus for using beyond greeting
+      const afterGreeting = lower.substring(lower.indexOf(firstName) + firstName.length);
+      if (afterGreeting.includes(firstName)) score += 10;
     }
   }
   
-  // Company name reference (+15)
-  if (context.recipientCompany) {
-    if (lowerContent.includes(context.recipientCompany.toLowerCase())) {
-      score += 15;
-    }
+  // Company reference (+20)
+  if (context.recipientCompany && lower.includes(context.recipientCompany.toLowerCase())) {
+    score += 20;
   }
   
-  // Title/role reference (+10)
+  // Industry/title reference (+10)
+  if (context.industry && lower.includes(context.industry.toLowerCase())) score += 10;
   if (context.recipientTitle) {
     const titleWords = context.recipientTitle.toLowerCase().split(' ');
-    if (titleWords.some(word => lowerContent.includes(word) && word.length > 3)) {
-      score += 10;
+    if (titleWords.some(w => w.length > 3 && lower.includes(w))) score += 8;
+  }
+  
+  // Pain point reference (+15)
+  if (context.recipientPainPoints?.some(p => lower.includes(p.toLowerCase()))) {
+    score += 15;
+  }
+  
+  // Recent news reference (+15)
+  if (context.recentNews && lower.includes(context.recentNews.substring(0, 15).toLowerCase())) {
+    score += 15;
+  }
+  
+  // Generic penalty
+  const genericPhrases = [
+    'i hope this finds you well', 'to whom it may concern',
+    'dear sir', 'dear hiring manager'
+  ];
+  if (genericPhrases.some(g => lower.includes(g))) score -= 30;
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * ELEGANCE SCORING
+ * Sophisticated without being stuffy
+ * Confident without being arrogant
+ * Clear without being simplistic
+ */
+function evaluateElegance(content: string): number {
+  let score = 70;
+  const lower = content.toLowerCase();
+  
+  // FILLER WORDS (penalize)
+  const fillers = ['just', 'really', 'very', 'actually', 'basically', 'literally',
+                   'honestly', 'simply', 'definitely', 'absolutely', 'totally'];
+  const fillerCount = fillers.filter(f => {
+    const regex = new RegExp(`\\b${f}\\b`, 'gi');
+    return regex.test(content);
+  }).length;
+  score -= fillerCount * 6;
+  
+  // WEAK LANGUAGE (penalize)
+  const weakPhrases = ['i think', 'i believe', 'i feel', 'maybe', 'perhaps',
+                       'sort of', 'kind of', 'a little bit', 'in my opinion'];
+  const weakCount = weakPhrases.filter(w => lower.includes(w)).length;
+  score -= weakCount * 8;
+  
+  // APOLOGETIC LANGUAGE (penalize)
+  const apologetic = ['sorry to bother', 'sorry for', 'apologize for', 
+                      'hate to ask', 'don\'t mean to'];
+  if (apologetic.some(a => lower.includes(a))) score -= 15;
+  
+  // STRONG VERBS (reward)
+  const strongVerbs = ['transform', 'accelerate', 'eliminate', 'streamline',
+                       'optimize', 'empower', 'enable', 'drive', 'achieve', 'deliver'];
+  const strongCount = strongVerbs.filter(v => lower.includes(v)).length;
+  score += strongCount * 5;
+  
+  // CONFIDENT LANGUAGE (reward)
+  const confident = ['will', 'can', 'proven', 'results', 'demonstrated', 'track record'];
+  const confidentCount = confident.filter(c => lower.includes(c)).length;
+  score += confidentCount * 4;
+  
+  // CONCISE STRUCTURE (reward)
+  const paragraphs = content.split(/\n\n+/);
+  if (paragraphs.length >= 2 && paragraphs.length <= 4) score += 8;
+  
+  // No excessive punctuation
+  if ((content.match(/!!/g) || []).length > 0) score -= 10;
+  if ((content.match(/\.\.\./g) || []).length > 1) score -= 5;
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+function evaluateBrevity(content: string, contentType: ContentType): number {
+  const wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
+  
+  // Research-backed optimal ranges
+  const ranges: Record<ContentType, { min: number; ideal: number; max: number }> = {
+    email: { min: 50, ideal: 75, max: 125 },
+    linkedin: { min: 25, ideal: 50, max: 90 },
+    text: { min: 10, ideal: 20, max: 40 },
+    advice: { min: 75, ideal: 150, max: 250 },
+    general: { min: 40, ideal: 80, max: 150 }
+  };
+  
+  const range = ranges[contentType];
+  
+  if (wordCount >= range.min && wordCount <= range.max) {
+    const deviation = Math.abs(wordCount - range.ideal);
+    const maxDeviation = Math.max(range.ideal - range.min, range.max - range.ideal);
+    return Math.round(100 - (deviation / maxDeviation) * 25);
+  } else if (wordCount < range.min) {
+    return Math.max(30, 75 - (range.min - wordCount) * 3);
+  } else {
+    return Math.max(20, 75 - (wordCount - range.max) * 2);
+  }
+}
+
+function evaluateActionability(content: string, stage: OpportunityStage): number {
+  let score = 35;
+  const lower = content.toLowerCase();
+  
+  // Has a question
+  const questionCount = (content.match(/\?/g) || []).length;
+  if (questionCount === 1) score += 25;
+  else if (questionCount === 2) score += 20;
+  else if (questionCount > 2) score += 10;
+  else score -= 15; // No question = no CTA
+  
+  // Specific time reference
+  const timeRefs = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
+                    'this week', 'next week', 'tomorrow', '15 minutes', '30 minutes'];
+  if (timeRefs.some(t => lower.includes(t))) score += 15;
+  
+  // Binary choice
+  if (lower.includes(' or ') && questionCount > 0) score += 12;
+  
+  // Stage-appropriate urgency
+  if (stage === 'CLOSING' || stage === 'NEGOTIATION') {
+    if (lower.includes('ready') || lower.includes('move forward')) score += 10;
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * WRITING STYLE MATCH
+ * Learn from user's previous messages to sound like their best self
+ */
+function evaluateWritingStyleMatch(content: string, context: EvaluationContext): number {
+  if (!context.userWritingSamples || context.userWritingSamples.length === 0) {
+    return 75; // Neutral if no samples
+  }
+  
+  let score = 50;
+  
+  // Analyze user's writing patterns
+  const samples = context.userWritingSamples.join(' ');
+  const samplesLower = samples.toLowerCase();
+  
+  // Sentence length similarity
+  const userSentences = samples.split(/[.!?]+/).filter(s => s.trim());
+  const userAvgLength = samples.split(/\s+/).length / Math.max(userSentences.length, 1);
+  
+  const contentSentences = content.split(/[.!?]+/).filter(s => s.trim());
+  const contentAvgLength = content.split(/\s+/).length / Math.max(contentSentences.length, 1);
+  
+  const lengthDiff = Math.abs(userAvgLength - contentAvgLength);
+  if (lengthDiff < 3) score += 15;
+  else if (lengthDiff < 6) score += 8;
+  
+  // Formality matching
+  const userContractions = (samplesLower.match(/\b(i'm|you're|we're|don't|can't|won't|it's|that's)\b/g) || []).length;
+  const contentContractions = (content.toLowerCase().match(/\b(i'm|you're|we're|don't|can't|won't|it's|that's)\b/g) || []).length;
+  
+  const userHasContractions = userContractions > 0;
+  const contentHasContractions = contentContractions > 0;
+  
+  if (userHasContractions === contentHasContractions) score += 10;
+  
+  // Greeting style matching
+  const userGreetings = ['hi', 'hey', 'hello', 'dear'].filter(g => samplesLower.includes(g));
+  const contentGreeting = ['hi', 'hey', 'hello', 'dear'].find(g => content.toLowerCase().startsWith(g));
+  
+  if (userGreetings.length > 0 && contentGreeting && userGreetings.includes(contentGreeting)) {
+    score += 10;
+  }
+  
+  // Exclamation usage
+  const userExclamations = (samples.match(/!/g) || []).length / Math.max(userSentences.length, 1);
+  const contentExclamations = (content.match(/!/g) || []).length / Math.max(contentSentences.length, 1);
+  
+  if (Math.abs(userExclamations - contentExclamations) < 0.2) score += 10;
+  
+  // Common phrase patterns
+  const userPhrases = extractCommonPhrases(samples);
+  const matchingPhrases = userPhrases.filter(p => content.toLowerCase().includes(p));
+  score += matchingPhrases.length * 5;
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+function extractCommonPhrases(text: string): string[] {
+  const phrases: string[] = [];
+  const lower = text.toLowerCase();
+  
+  // Common sales phrases to detect
+  const detectPhrases = [
+    'let me know', 'looking forward', 'happy to', 'feel free',
+    'would love to', 'excited to', 'great to', 'thanks for'
+  ];
+  
+  for (const phrase of detectPhrases) {
+    if (lower.includes(phrase)) {
+      phrases.push(phrase);
     }
   }
   
-  // Recent news/event reference (+15) - shows research effort
-  if (context.recentNews && lowerContent.includes(context.recentNews.toLowerCase().substring(0, 20))) {
-    score += 15;
-  }
-  
-  // Pain point reference (+10)
-  if (context.recipientPainPoints?.some(pain => lowerContent.includes(pain.toLowerCase()))) {
-    score += 10;
-  }
-  
-  // Industry reference (+5)
-  if (context.industry && lowerContent.includes(context.industry.toLowerCase())) {
-    score += 5;
-  }
-  
-  // Penalize generic openings heavily
-  const genericOpenings = [
-    'dear sir', 'to whom it may concern', 'dear hiring manager',
-    'i hope this email finds you well', 'i hope you are doing well',
-    'i am writing to', 'i wanted to reach out'
-  ];
-  if (genericOpenings.some(opening => lowerContent.includes(opening))) {
-    score -= 25;
-  }
-  
-  return Math.max(0, Math.min(100, score));
+  return phrases;
 }
 
-/**
- * Evaluate professionalism
- */
-function evaluateProfessionalism(content: string, contentType: string): number {
-  let score = 100;
-  const lowerContent = content.toLowerCase();
+// =============================================================================
+// DETECTION FUNCTIONS
+// =============================================================================
+
+function detectStatus(content: string, context: EvaluationContext): PersonStatus {
+  const lower = content.toLowerCase();
   
-  const unprofessionalWords = ['gonna', 'wanna', 'kinda', 'sorta', 'ya', 'yep', 'nope', 'lol', 'omg', 'tbh', 'btw'];
-  const unprofessionalCount = unprofessionalWords.reduce((count, word) => 
-    count + (lowerContent.match(new RegExp(`\\b${word}\\b`, 'g')) || []).length, 0
+  if (lower.includes('partnership') || lower.includes('collaborate')) return 'PARTNER';
+  if (lower.includes('thank you for being') || lower.includes('valued customer')) return 'CUSTOMER';
+  if (lower.includes('following up') || lower.includes('our conversation')) return 'PROSPECT';
+  
+  return 'LEAD';
+}
+
+function detectStage(content: string, context: EvaluationContext): OpportunityStage {
+  const lower = content.toLowerCase();
+  
+  if (lower.includes('ready to') || lower.includes('move forward') || lower.includes('finalize')) return 'CLOSING';
+  if (lower.includes('terms') || lower.includes('pricing') || lower.includes('contract')) return 'NEGOTIATION';
+  if (lower.includes('proposal') || lower.includes('recommend') || lower.includes('solution')) return 'PROPOSAL';
+  if (lower.includes('understand') || lower.includes('tell me more') || lower.includes('learn about')) return 'DISCOVERY';
+  
+  return 'QUALIFICATION';
+}
+
+function detectBuyerLevel(content: string, context: EvaluationContext): BuyerLevel {
+  if (context.recipientTitle) {
+    const title = context.recipientTitle.toLowerCase();
+    const execTitles = ['ceo', 'cfo', 'cto', 'coo', 'cmo', 'chief', 'president', 'vp ', 'vice president', 'director', 'head of'];
+    if (execTitles.some(t => title.includes(t))) return 'ATL';
+  }
+  
+  const lower = content.toLowerCase();
+  const atlSignals = ['roi', 'strategic', 'board', 'revenue', 'growth', 'competitive'];
+  const btlSignals = ['feature', 'integration', 'workflow', 'implementation', 'how it works'];
+  
+  const atlCount = atlSignals.filter(s => lower.includes(s)).length;
+  const btlCount = btlSignals.filter(s => lower.includes(s)).length;
+  
+  return atlCount >= btlCount ? 'ATL' : 'BTL';
+}
+
+// =============================================================================
+// SCORING HELPERS
+// =============================================================================
+
+function calculateOverallScore(
+  framework: QualityScore['framework'],
+  salesIntelligence: QualityScore['salesIntelligence'],
+  craft: QualityScore['craft'],
+  contentType: ContentType
+): number {
+  // Framework weights (Russell Brunson + StoryBrand)
+  const frameworkWeight = 0.35;
+  const frameworkScore = (
+    framework.hook * 0.35 +      // Hook is critical
+    framework.story * 0.20 +
+    framework.offer * 0.30 +     // Offer/CTA matters
+    framework.storyBrand * 0.15
   );
   
-  const penalty = contentType === 'text' ? 3 : 8;
-  score -= unprofessionalCount * penalty;
+  // Sales intelligence weights (Skip Miller)
+  const salesWeight = 0.25;
+  const salesScore = (
+    salesIntelligence.buyerLevelAlignment * 0.30 +
+    salesIntelligence.statusAlignment * 0.25 +
+    salesIntelligence.stageAlignment * 0.25 +
+    salesIntelligence.personalityMatch * 0.20
+  );
   
-  // Excessive exclamation marks (more than 1 looks unprofessional)
-  const exclamationCount = (content.match(/!/g) || []).length;
-  if (exclamationCount > 1) {
-    score -= (exclamationCount - 1) * 8;
-  }
+  // Craft weights
+  const craftWeight = 0.40;
+  const craftScore = (
+    craft.clarity * 0.15 +
+    craft.personalization * 0.25 +
+    craft.elegance * 0.20 +
+    craft.brevity * 0.15 +
+    craft.actionability * 0.15 +
+    craft.writingStyleMatch * 0.10
+  );
   
-  // ALL CAPS detection
-  const capsWords = content.match(/\b[A-Z]{4,}\b/g) || [];
-  const acceptableAcronyms = ['ASAP', 'CEO', 'CFO', 'CTO', 'COO', 'VP', 'ROI', 'KPI', 'SaaS', 'API', 'CRM', 'AI', 'ML'];
-  const badCaps = capsWords.filter(w => !acceptableAcronyms.includes(w));
-  score -= badCaps.length * 10;
-  
-  // Check for greeting
-  const hasGreeting = /^(hi|hello|hey|dear|good morning|good afternoon|good evening)/i.test(content.trim());
-  if (hasGreeting) score += 5;
-  
-  return Math.max(0, Math.min(100, score));
+  return Math.round(
+    frameworkScore * frameworkWeight +
+    salesScore * salesWeight +
+    craftScore * craftWeight
+  );
 }
 
-/**
- * Evaluate actionability - stage-aware CTA evaluation
- */
-function evaluateActionability(content: string, stage: string): number {
-  let score = 40;
-  const lowerContent = content.toLowerCase();
-  
-  // Strong CTAs by stage
-  const strongCTAs: Record<string, string[]> = {
-    cold: ['would you be open to', 'can i send you', 'worth a conversation', 'quick call'],
-    warm: ['shall we schedule', 'how about we', 'ready to', 'let\'s set up'],
-    'follow-up': ['still interested', 'would next week work', 'any thoughts', 'quick update'],
-    closing: ['ready to move forward', 'shall i send over', 'next steps would be', 'let\'s finalize']
-  };
-  
-  const stageCTAs = strongCTAs[stage] || strongCTAs.cold;
-  const ctaMatches = stageCTAs.filter(cta => lowerContent.includes(cta)).length;
-  score += ctaMatches * 20;
-  
-  // Questions encourage response
-  const questionCount = (content.match(/\?/g) || []).length;
-  if (questionCount === 1) score += 15;  // One clear question is best
-  else if (questionCount === 2) score += 10;
-  else if (questionCount > 2) score += 5;  // Too many questions = overwhelming
-  
-  // Specific time references increase conversion
-  const timeRefs = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
-    'this week', 'next week', 'tomorrow', '15 minutes', '15-minute', 'quick call'];
-  const hasTimeRef = timeRefs.some(ref => lowerContent.includes(ref));
-  if (hasTimeRef) score += 15;
-  
-  // Binary choice (easy to respond to)
-  if (lowerContent.includes(' or ') && questionCount > 0) {
-    score += 10;
-  }
-  
-  return Math.max(0, Math.min(100, score));
+function getGrade(score: number): QualityScore['grade'] {
+  if (score >= 95) return 'A+';
+  if (score >= 90) return 'A';
+  if (score >= 85) return 'B+';
+  if (score >= 80) return 'B';
+  if (score >= 70) return 'C';
+  if (score >= 60) return 'D';
+  return 'F';
 }
 
-/**
- * Evaluate brevity - research-backed optimal lengths
- */
-function evaluateBrevity(content: string, contentType: string): number {
-  const wordCount = content.split(/\s+/).length;
-  
-  // Research-backed optimal ranges
-  const optimalRanges: Record<string, { min: number; max: number; ideal: number }> = {
-    email: { min: 50, max: 125, ideal: 75 },      // 50-125 words = 50%+ response rate
-    linkedin: { min: 25, max: 100, ideal: 50 },   // Under 100 words = 50% higher response
-    text: { min: 10, max: 40, ideal: 20 },        // Texts should be very short
-    advice: { min: 75, max: 250, ideal: 150 },
-    general: { min: 50, max: 150, ideal: 100 }
-  };
-  
-  const range = optimalRanges[contentType] || optimalRanges.general;
-  
-  if (wordCount >= range.min && wordCount <= range.max) {
-    const distanceFromIdeal = Math.abs(wordCount - range.ideal);
-    const maxDistance = Math.max(range.ideal - range.min, range.max - range.ideal);
-    return Math.round(100 - (distanceFromIdeal / maxDistance) * 20);
-  } else if (wordCount < range.min) {
-    return Math.max(40, 80 - (range.min - wordCount) * 3);
-  } else {
-    // Heavily penalize being too long
-    return Math.max(20, 80 - (wordCount - range.max) * 1.5);
-  }
+function getConversionPotential(
+  overall: number, 
+  hookScore: number, 
+  personalizationScore: number
+): QualityScore['conversionPotential'] {
+  // High hook + high personalization = exceptional even with moderate overall
+  if (hookScore >= 85 && personalizationScore >= 80 && overall >= 80) return 'exceptional';
+  if (overall >= 90) return 'exceptional';
+  if (overall >= 80) return 'high';
+  if (overall >= 65) return 'medium';
+  return 'low';
 }
 
-/**
- * Evaluate relevance
- */
-function evaluateRelevance(content: string, context?: EvaluationContext): number {
-  if (!context?.purpose) return 70;
-  
-  let score = 60;
-  const lowerContent = content.toLowerCase();
-  
-  const purposeKeywords: Record<string, string[]> = {
-    'cold outreach': ['reaching out', 'noticed', 'impressed', 'interested', 'connect', 'introduction'],
-    'follow-up': ['following up', 'checking in', 'last', 'previous', 'discussed', 'mentioned'],
-    'introduction': ['introduce', 'meet', 'mutual', 'recommended', 'referred', 'connect'],
-    'meeting request': ['schedule', 'meet', 'call', 'time', 'available', 'calendar', '15 minutes'],
-    'thank you': ['thank', 'appreciate', 'grateful', 'enjoyed', 'pleasure', 'great meeting'],
-    'proposal': ['proposal', 'solution', 'recommend', 'option', 'approach', 'pricing']
-  };
-  
-  const keywords = purposeKeywords[context.purpose] || [];
-  const matchCount = keywords.filter(keyword => lowerContent.includes(keyword)).length;
-  score += Math.min(matchCount * 8, 40);
-  
-  return Math.max(0, Math.min(100, score));
-}
+// =============================================================================
+// SUGGESTION GENERATION
+// =============================================================================
 
-/**
- * NEW: Evaluate hook strength - the opening line determines if they read more
- */
-function evaluateHookStrength(content: string, contentType: string): number {
-  let score = 50;
-  
-  // Get first sentence
-  const firstSentence = content.split(/[.!?]/)[0].toLowerCase().trim();
-  
-  // Weak openings (penalize heavily)
-  const weakOpenings = [
-    'i hope this', 'i am writing', 'i wanted to', 'my name is',
-    'i\'m reaching out', 'we are a company', 'our company'
-  ];
-  if (weakOpenings.some(weak => firstSentence.includes(weak))) {
-    score -= 30;
-  }
-  
-  // Strong openings (reward)
-  const strongOpenings = [
-    'noticed', 'congrats', 'saw your', 'loved your', 'impressed by',
-    'quick question', 'thought you\'d', 'given your'
-  ];
-  if (strongOpenings.some(strong => firstSentence.includes(strong))) {
-    score += 30;
-  }
-  
-  // Starting with recipient's name or company is strong
-  if (firstSentence.length < 50) {
-    score += 10;  // Short first lines work better
-  }
-  
-  // Question as opener (attention-grabbing)
-  if (firstSentence.includes('?')) {
-    score += 15;
-  }
-  
-  return Math.max(0, Math.min(100, score));
-}
-
-/**
- * NEW: Evaluate value proposition - why should recipient care?
- */
-function evaluateValueProposition(content: string, context?: EvaluationContext): number {
-  let score = 50;
-  const lowerContent = content.toLowerCase();
-  
-  // Value-focused language
-  const valueWords = [
-    'help you', 'save', 'increase', 'reduce', 'improve', 'grow',
-    'benefit', 'result', 'achieve', 'success', 'faster', 'easier',
-    'automate', 'streamline', 'eliminate'
-  ];
-  const valueMatches = valueWords.filter(word => lowerContent.includes(word)).length;
-  score += Math.min(valueMatches * 10, 30);
-  
-  // Specific numbers/results (social proof)
-  if (/\d+%|\$\d+|\d+x|saved \d+|increased \d+/i.test(content)) {
-    score += 15;
-  }
-  
-  // Reference to similar companies (social proof)
-  if (lowerContent.includes('companies like') || lowerContent.includes('similar to')) {
-    score += 10;
-  }
-  
-  // Penalize self-focused language
-  const selfFocused = ['we are', 'our company', 'i have', 'we have', 'our product', 'we offer'];
-  const selfCount = selfFocused.filter(phrase => lowerContent.includes(phrase)).length;
-  score -= selfCount * 5;
-  
-  return Math.max(0, Math.min(100, score));
-}
-
-/**
- * NEW: Evaluate urgency balance - creates urgency without being pushy
- */
-function evaluateUrgencyBalance(content: string, stage: string): number {
-  let score = 70; // Neutral start
-  const lowerContent = content.toLowerCase();
-  
-  // Good urgency (time-bounded, not pushy)
-  const goodUrgency = ['this week', 'next week', 'before end of', 'quick', 'brief'];
-  const goodCount = goodUrgency.filter(phrase => lowerContent.includes(phrase)).length;
-  score += goodCount * 8;
-  
-  // Bad urgency (too pushy, can hurt response rates)
-  const badUrgency = ['act now', 'limited time', 'don\'t miss', 'last chance', 'urgent', 'asap'];
-  const badCount = badUrgency.filter(phrase => lowerContent.includes(phrase)).length;
-  score -= badCount * 15;
-  
-  // Stage-appropriate urgency
-  if (stage === 'follow-up' || stage === 'closing') {
-    // More urgency acceptable in later stages
-    score += 10;
-  } else if (stage === 'cold') {
-    // Less urgency for cold outreach
-    if (badCount > 0) score -= 10;
-  }
-  
-  return Math.max(0, Math.min(100, score));
-}
-
-/**
- * Generate research-backed suggestions
- */
 function generateSuggestions(
-  breakdown: QualityScore['breakdown'],
-  contentType: string,
+  framework: QualityScore['framework'],
+  salesIntelligence: QualityScore['salesIntelligence'],
+  craft: QualityScore['craft'],
   content: string,
-  context?: EvaluationContext,
-  stage?: string
+  contentType: ContentType,
+  context: EvaluationContext,
+  status: PersonStatus,
+  stage: OpportunityStage,
+  buyerLevel: BuyerLevel
 ): string[] {
   const suggestions: string[] = [];
   const wordCount = content.split(/\s+/).length;
   
-  // Hook suggestions
-  if (breakdown.hookStrength < 70) {
-    suggestions.push('Open with something specific about them (research shows 50% higher response rates)');
+  // Hook suggestions (most important)
+  if (framework.hook < 70) {
+    suggestions.push('Start with a pattern interrupt: specific insight, surprising stat, or observation about them');
   }
   
-  // Personalization suggestions
-  if (breakdown.personalization < 70) {
-    if (context?.recipientName) {
-      suggestions.push(`Use ${context.recipientName.split(' ')[0]}'s name naturally in the body, not just greeting`);
+  // Personalization
+  if (craft.personalization < 70) {
+    if (context.recipientName && !content.toLowerCase().includes(context.recipientName.split(' ')[0].toLowerCase())) {
+      suggestions.push(`Use ${context.recipientName.split(' ')[0]}'s name - personalization increases response 29%`);
     }
-    if (context?.recipientCompany) {
-      suggestions.push(`Reference something specific about ${context.recipientCompany} (recent news, product, growth)`);
-    }
-    if (!context?.recipientName && !context?.recipientCompany) {
-      suggestions.push('Add recipient name and company - personalized emails get 29% higher open rates');
+    if (context.recipientCompany) {
+      suggestions.push(`Reference ${context.recipientCompany} specifically - shows you did research`);
     }
   }
   
-  // Brevity suggestions
-  if (breakdown.brevity < 70) {
-    if (contentType === 'email' && wordCount > 125) {
-      suggestions.push(`Shorten to ~75 words (currently ${wordCount}). Emails 50-125 words get 50%+ response rates`);
-    } else if (contentType === 'linkedin' && wordCount > 100) {
-      suggestions.push(`Cut to under 100 words (currently ${wordCount}). Short LinkedIn messages get 50% more replies`);
+  // Story/narrative
+  if (framework.story < 60) {
+    suggestions.push('Add a transformation narrative: "We helped [similar company] go from X to Y"');
+  }
+  
+  // Offer/CTA
+  if (framework.offer < 70) {
+    if (stage === 'QUALIFICATION' || stage === 'DISCOVERY') {
+      suggestions.push('Use a soft CTA: "Would you be open to a 15-minute call to explore?"');
+    } else {
+      suggestions.push('Add a clear next step with specific timing');
     }
   }
   
-  // Actionability suggestions
-  if (breakdown.actionability < 70) {
-    suggestions.push('Add a specific ask with a time frame (e.g., "15-minute call this Thursday?")');
-    if (stage === 'cold') {
-      suggestions.push('Try a soft CTA: "Would you be open to..." works better for cold outreach');
+  // Buyer level
+  if (salesIntelligence.buyerLevelAlignment < 70) {
+    if (buyerLevel === 'ATL') {
+      suggestions.push('Focus on strategic outcomes and ROI for executive audiences');
+    } else {
+      suggestions.push('Include more tactical details and implementation specifics for evaluators');
     }
   }
   
-  // Value proposition suggestions
-  if (breakdown.valueProposition < 70) {
-    suggestions.push('Focus on their benefit, not your features. Use "you" more than "we"');
-    suggestions.push('Add a specific result or stat (e.g., "helped X save 50% on Y")');
+  // Elegance
+  if (craft.elegance < 70) {
+    suggestions.push('Remove filler words (just, really, actually) and weak language (I think, maybe)');
   }
   
-  // Stage-specific suggestions
-  if (stage === 'follow-up' && !content.toLowerCase().includes('last')) {
-    suggestions.push('Reference your previous message specifically');
+  // Brevity
+  if (craft.brevity < 65) {
+    const ideal = contentType === 'email' ? 75 : contentType === 'linkedin' ? 50 : 80;
+    if (wordCount > ideal * 1.5) {
+      suggestions.push(`Shorten to ~${ideal} words (currently ${wordCount}). Concise messages get higher response rates`);
+    }
   }
   
-  if (stage === 'cold' && breakdown.hookStrength < 80) {
-    suggestions.push('For cold emails, the first line is critical. Make it about them, not you');
+  // Stage alignment
+  if (salesIntelligence.stageAlignment < 70) {
+    suggestions.push(`Adjust tone for ${stage.toLowerCase()} stage - ${getStageAdvice(stage)}`);
   }
   
-  return suggestions.slice(0, 4); // Max 4 suggestions
+  return suggestions.slice(0, 4);
 }
 
-/**
- * Get quality rating label
- */
+function getStageAdvice(stage: OpportunityStage): string {
+  const advice: Record<OpportunityStage, string> = {
+    QUALIFICATION: 'focus on fit and exploring if there\'s mutual value',
+    DISCOVERY: 'ask thoughtful questions about their priorities',
+    PROPOSAL: 'present your recommendation with confidence',
+    NEGOTIATION: 'be collaborative on terms while protecting value',
+    CLOSING: 'be direct about next steps and timeline'
+  };
+  return advice[stage];
+}
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
+
 export function getQualityLabel(score: number): string {
+  if (score >= 95) return 'Exceptional';
   if (score >= 90) return 'Excellent';
-  if (score >= 80) return 'Very Good';
-  if (score >= 70) return 'Good';
-  if (score >= 60) return 'Fair';
-  if (score >= 50) return 'Needs Work';
+  if (score >= 85) return 'Very Good';
+  if (score >= 80) return 'Good';
+  if (score >= 70) return 'Decent';
+  if (score >= 60) return 'Needs Work';
   return 'Poor';
 }
 
-/**
- * Get conversion potential description
- */
-export function getConversionDescription(potential: 'high' | 'medium' | 'low'): string {
+export function getConversionDescription(potential: QualityScore['conversionPotential']): string {
   const descriptions = {
-    high: 'High conversion potential - this message follows best practices for engagement',
-    medium: 'Moderate conversion potential - consider the suggestions to improve response rates',
-    low: 'Low conversion potential - significant improvements needed for better results'
+    exceptional: 'Exceptional - This message is primed to convert. Strong hook, personalization, and clear CTA.',
+    high: 'High - Solid message with good conversion potential. Minor optimizations could make it exceptional.',
+    medium: 'Medium - Message has potential but needs refinement to maximize response rates.',
+    low: 'Low - Significant improvements needed. Focus on hook, personalization, and clear CTA.'
   };
   return descriptions[potential];
 }
 
-/**
- * Format score breakdown for display
- */
 export function formatScoreBreakdown(score: QualityScore): string {
-  const { breakdown } = score;
   return `
-Quality Score: ${score.overall}/100 (${getQualityLabel(score.overall)})
+SCORE: ${score.overall}/100 (${score.grade}) - ${getQualityLabel(score.overall)}
 Conversion Potential: ${score.conversionPotential.toUpperCase()}
-Message Stage: ${score.stage}
+Status: ${score.detectedStatus} | Stage: ${score.detectedStage} | Buyer: ${score.detectedBuyerLevel}
 
-Breakdown:
-- Clarity: ${breakdown.clarity}/100
-- Personalization: ${breakdown.personalization}/100
-- Hook Strength: ${breakdown.hookStrength}/100
-- Value Proposition: ${breakdown.valueProposition}/100
-- Actionability: ${breakdown.actionability}/100
-- Brevity: ${breakdown.brevity}/100
-- Relevance: ${breakdown.relevance}/100
-- Professionalism: ${breakdown.professionalism}/100
-- Urgency Balance: ${breakdown.urgencyBalance}/100
+FRAMEWORK (Hook-Story-Offer):
+- Hook (pattern interrupt): ${score.framework.hook}/100
+- Story (transformation): ${score.framework.story}/100  
+- Offer (CTA): ${score.framework.offer}/100
+- StoryBrand: ${score.framework.storyBrand}/100
 
-${score.suggestions.length > 0 ? `Research-Backed Suggestions:\n${score.suggestions.map(s => `• ${s}`).join('\n')}` : '✨ Excellent work - no major improvements needed!'}
+SALES INTELLIGENCE:
+- Buyer Level (ATL/BTL): ${score.salesIntelligence.buyerLevelAlignment}/100
+- Status Alignment: ${score.salesIntelligence.statusAlignment}/100
+- Stage Alignment: ${score.salesIntelligence.stageAlignment}/100
+- Personality Match: ${score.salesIntelligence.personalityMatch}/100
+
+CRAFT:
+- Clarity: ${score.craft.clarity}/100
+- Personalization: ${score.craft.personalization}/100
+- Elegance: ${score.craft.elegance}/100
+- Brevity: ${score.craft.brevity}/100
+- Actionability: ${score.craft.actionability}/100
+- Writing Style Match: ${score.craft.writingStyleMatch}/100
+
+${score.suggestions.length > 0 ? `SUGGESTIONS:\n${score.suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}` : 'No suggestions - this message is well-crafted.'}
 `.trim();
 }
+
