@@ -9,34 +9,51 @@
  * - Skip Miller's ProActive Selling (ATL/BTL buyer awareness)
  * - Chris Voss's Never Split the Difference (tactical empathy)
  * 
- * DATA-DRIVEN RESEARCH:
- * - 30 Minutes to President's Club (Armand Farrokh & Nick Cegelski)
- *   • "Problem + Proof + Push" email framework
- *   • One sentence = one line formatting
- *   • Under 75 words for cold emails
- *   • Interest-based CTAs vs hard asks
+ * ============================================================================
+ * RESEARCH-BACKED DATA (with citations):
+ * ============================================================================
  * 
- * - Gong Labs Research:
- *   • "Reason for the call" opener = 2.1x success rate
- *   • Questions increase reply rates by 50%
- *   • 25-50 word emails = highest response rates
- *   • Specific times in CTAs = 20% higher response
- *   • Binary choices = 25% higher response
+ * GONG LABS + 30MPC (85 MILLION cold emails analyzed):
+ * - "Offer" CTAs = 4x more effective than "interest-based" CTAs
+ * - Asking for meeting in cold email = 44% DECREASE in reply rates
+ * - "Interest" CTAs (no meeting ask) = 2x better than other CTAs
+ * - ROI claims in cold emails = 15% decrease in success
+ * - Single CTA per email = 371% increase in clicks
+ * - First-person CTAs ("my" vs "your") = 90% increase in conversions
  * 
- * - Lavender Email Research:
- *   • Under 100 words = 50%+ response rate
- *   • Mobile-first (single column, short paragraphs)
- *   • Personalization in first line = 2x response
- *   • Grade level 5 reading = optimal
+ * GONG LABS (300,000+ sales emails):
+ * - "Reason for the call" opener = 2.1x success rate
+ * - Questions increase reply rates by 50%
+ * - Binary choices = 25% higher response
+ * - Specific times in CTAs = 20% higher response
+ * - "How have you been?" opener = 40% LOWER success
  * 
- * - Chris Voss Techniques:
- *   • Tactical empathy ("It seems like...")
- *   • Calibrated questions ("How" and "What")
- *   • Mirroring key phrases
- *   • "No"-oriented questions for buy-in
+ * 30 MINUTES TO PRESIDENT'S CLUB:
+ * - Multi-touch (10-14 touches/30 days) = 20%+ reply rates
+ * - One problem per email = higher clarity
+ * - "Problem + Proof + Push" framework
+ * - Under 75 words for cold emails
+ * 
+ * OFFER TYPES (ranked by effectiveness):
+ * - Easy: "Pitch the Blind Date" - intro to relevant expert
+ * - Medium: Industry benchmarks / case study share
+ * - Hard: Personalized analysis / custom report
+ * 
+ * LAVENDER EMAIL RESEARCH:
+ * - Under 100 words = 50%+ response rate
+ * - Personalization in first line = 2x response
+ * - Grade 5 reading level = optimal engagement
+ * - Mobile-first formatting essential
+ * 
+ * CHRIS VOSS (Never Split the Difference):
+ * - Tactical empathy ("It seems like...") builds rapport
+ * - "No"-oriented questions increase buy-in
+ * - Calibrated questions ("How" and "What") open dialogue
+ * 
+ * ============================================================================
  * 
  * The goal: Messages that feel like they were written by the best version
- * of the sender - elegant, specific, and impossible to ignore.
+ * of the sender - elegant, specific, something they'd LOVE to send.
  */
 
 // =============================================================================
@@ -78,6 +95,7 @@ export interface QualityScore {
     brevity: number;
     actionability: number;
     writingStyleMatch: number;     // Sounds like sender's best self
+    sellerAuthenticity: number;    // Would seller LOVE to send this?
   };
   
   suggestions: string[];
@@ -126,6 +144,15 @@ export interface EvaluationContext {
   userWritingSamples?: string[];
   senderName?: string;
   senderCompany?: string;
+  
+  // SELLER CONTEXT - Makes messages authentic to the sender
+  senderTitle?: string;
+  senderExpertise?: string[];           // What the seller knows deeply
+  senderTone?: 'professional' | 'casual' | 'consultative' | 'friendly';
+  senderValueProp?: string;             // The core value they deliver
+  senderCaseStudies?: string[];         // Success stories they can reference
+  senderCredentials?: string[];         // Relevant credentials/experience
+  companyDifferentiators?: string[];    // What makes their company unique
 }
 
 // =============================================================================
@@ -163,7 +190,8 @@ export function evaluateContent(
     elegance: evaluateElegance(content),
     brevity: evaluateBrevity(content, contentType),
     actionability: evaluateActionability(content, detectedStage),
-    writingStyleMatch: evaluateWritingStyleMatch(content, context)
+    writingStyleMatch: evaluateWritingStyleMatch(content, context),
+    sellerAuthenticity: evaluateSellerAuthenticity(content, context)
   };
   
   // Calculate weighted overall score
@@ -374,42 +402,101 @@ function evaluateStory(content: string, context: EvaluationContext): number {
 /**
  * OFFER EVALUATION
  * 
- * Russell Brunson: "Make them an offer they can't refuse"
- * 
- * Gong Research on CTAs:
- * - Interest-based CTAs outperform time-based ("Is this a priority?" > "Let's meet Tuesday")
+ * CRITICAL RESEARCH (Gong + 30MPC - 85 MILLION emails):
+ * - "Offer" CTAs = 4x more effective than "interest-based" CTAs
+ * - Asking for meeting in COLD email = 44% DECREASE in replies
+ * - "Interest" CTAs (no meeting ask) = 2x better for cold
+ * - Single CTA = 371% more clicks
+ * - First-person ("my" vs "your") = 90% more conversions
  * - Questions increase reply rates 50%
- * - Binary choices increase response 25%  
- * - Specific times increase response 20%
- * - Low-friction asks (15 min) increase response 40%
+ * - Binary choices = 25% higher response
+ * - Specific times = 20% higher response
  * 
- * 30MPC "Push" Element:
- * - One clear ask, not multiple
- * - Make it easy to say yes
- * - Give them an out (reduces pressure)
+ * OFFER TYPES (from 30MPC research):
+ * - Easy: "Pitch the Blind Date" - intro to relevant expert
+ * - Medium: Industry benchmarks / case study share  
+ * - Hard: Personalized analysis / custom report
  * 
- * Chris Voss: "No"-oriented questions
- * - "Would it be crazy to..." (invites "no, that's not crazy")
- * - "Is now a bad time?" (invites "no, it's fine")
+ * Chris Voss: "No"-oriented questions for buy-in
  */
 function evaluateOffer(content: string, stage: OpportunityStage, context: EvaluationContext): number {
-  let score = 55; // Higher baseline
+  let score = 55;
   const lower = content.toLowerCase();
+  const isColdOutreach = stage === 'QUALIFICATION' || context.status === 'LEAD';
   
-  // LOW FRICTION CTAs - Gong: 40%+ higher response
-  const lowFriction = [
-    { pattern: '15 minutes', points: 18 },
-    { pattern: '15-minute', points: 18 },
-    { pattern: '15 min', points: 18 },
-    { pattern: 'quick call', points: 15 },
-    { pattern: 'brief chat', points: 15 },
-    { pattern: 'quick question', points: 12 },
-    { pattern: 'short call', points: 12 },
-    { pattern: 'worth connecting', points: 15 },
-    { pattern: 'worth a', points: 10 },
-    { pattern: 'exchange approaches', points: 12 }, // Peer-level ask
+  // =========================================================================
+  // OFFER TYPE DETECTION (30MPC research - 4x more effective than interest)
+  // =========================================================================
+  
+  // HARD OFFER: Personalized analysis/report (most valuable)
+  const hardOffers = [
+    'compiled a report', 'prepared an analysis', 'put together',
+    'customized', 'specific to', 'for your', 'based on your',
+    'personalized', 'tailored'
   ];
+  if (hardOffers.some(o => lower.includes(o))) {
+    score += 20; // 4x effectiveness
+  }
   
+  // MEDIUM OFFER: Case study / benchmark share
+  const mediumOffers = [
+    'case study', 'benchmark', 'how .* compares', 'similar companies',
+    'companies like', 'industry data', 'share how', 'show you how',
+    'helped .* achieve', 'helped .* reduce', 'helped .* save'
+  ];
+  if (mediumOffers.some(o => {
+    if (o.includes('.*')) return new RegExp(o, 'i').test(lower);
+    return lower.includes(o);
+  })) {
+    score += 15;
+  }
+  
+  // EASY OFFER: Intro to expert ("Pitch the Blind Date")
+  const easyOffers = [
+    'introduce you to', 'connect you with', 'intro to',
+    'our .* expert', 'our .* specialist', 'quick intro',
+    'happy to share', 'can share', 'share the technical details'
+  ];
+  if (easyOffers.some(o => {
+    if (o.includes('.*')) return new RegExp(o, 'i').test(lower);
+    return lower.includes(o);
+  })) {
+    score += 12;
+  }
+  
+  // =========================================================================
+  // CTA TYPE SCORING (based on Gong 300K email research)
+  // =========================================================================
+  
+  // COLD OUTREACH: Penalize direct meeting asks (44% lower response!)
+  const directMeetingAsk = ['schedule a call', 'book a meeting', 'set up a time',
+                            'schedule a demo', 'book time', 'get on a call'];
+  if (isColdOutreach && directMeetingAsk.some(d => lower.includes(d))) {
+    score -= 10; // Gong: 44% lower response
+  }
+  
+  // INTEREST-BASED CTAs (2x better for cold - Gong)
+  const interestBased = [
+    'is this a priority', 'is this on your radar', 'does this resonate',
+    'sound interesting', 'worth exploring', 'make sense to explore',
+    'open to exploring', 'worth a conversation', 'worth connecting',
+    'worth a quick', 'make sense to', 'interested in learning',
+    'curious if', 'still open to'
+  ];
+  if (interestBased.some(i => lower.includes(i))) {
+    score += 15;
+  }
+  
+  // LOW FRICTION CTAs (40%+ higher response)
+  const lowFriction = [
+    { pattern: '15 minutes', points: 15 },
+    { pattern: '15-minute', points: 15 },
+    { pattern: '15 min', points: 15 },
+    { pattern: 'quick call', points: 12 },
+    { pattern: 'brief chat', points: 12 },
+    { pattern: 'exchange approaches', points: 12 },
+    { pattern: 'worth connecting', points: 12 },
+  ];
   for (const { pattern, points } of lowFriction) {
     if (lower.includes(pattern)) {
       score += points;
@@ -417,111 +504,50 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
     }
   }
   
-  // INTEREST-BASED CTAs (Gong: outperform time-based)
-  const interestBased = [
-    'is this a priority',
-    'is this on your radar',
-    'does this resonate',
-    'sound interesting',
-    'worth exploring',
-    'make sense to explore',
-    'open to exploring',
-    'worth a conversation',
-    'worth connecting',
-    'worth a quick',
-    'make sense to',
-    'interested in'
-  ];
-  if (interestBased.some(i => lower.includes(i))) {
-    score += 15; // Increased - Gong data is strong on this
-  }
-  
   // CHRIS VOSS: "No"-oriented questions (powerful for buy-in)
   const noOriented = [
-    'would it be crazy',
-    'would it be ridiculous', 
-    'is now a bad time',
-    'would it be wrong',
-    'have you given up on'
+    'would it be crazy', 'would it be ridiculous',
+    'is now a bad time', 'would it be wrong', 'have you given up on'
   ];
   if (noOriented.some(n => lower.includes(n))) {
     score += 10;
   }
   
-  // SOFT CTAs (work better for cold/early stage)
-  const softCTAs = [
-    'would you be open to',
-    'would it make sense',
-    'interested in',
-    'open to learning',
-    'still open to',
-    'would .* work',
-    'curious if'
-  ];
+  // =========================================================================
+  // QUESTION & CHOICE OPTIMIZATION (Gong research)
+  // =========================================================================
   
-  // DIRECT CTAs (good for later stages)
-  const directCTAs = [
-    'schedule a demo',
-    'book a call',
-    'get started',
-    'ready to move forward',
-    'walk through it',
-    'loop in',
-    'should i',
-    'shall i',
-    'can i send',
-    'let me send'
-  ];
-  
-  const hasSoftCTA = softCTAs.some(cta => {
-    if (cta.includes('.*')) return new RegExp(cta, 'i').test(lower);
-    return lower.includes(cta);
-  });
-  const hasDirectCTA = directCTAs.some(cta => lower.includes(cta));
-  
-  // Stage-appropriate CTA scoring
-  if (stage === 'QUALIFICATION' || stage === 'DISCOVERY') {
-    if (hasSoftCTA) score += 15;
-    if (hasDirectCTA) score += 10;
-  } else if (stage === 'PROPOSAL' || stage === 'NEGOTIATION' || stage === 'CLOSING') {
-    if (hasDirectCTA) score += 15;
-    if (hasSoftCTA) score += 12;
+  // QUESTIONS: 50% higher reply rate
+  const questionCount = (content.match(/\?/g) || []).length;
+  if (questionCount === 0) {
+    score -= 15; // Major penalty
+  } else if (questionCount === 1) {
+    score += 15; // Single CTA = 371% more clicks
+  } else if (questionCount === 2) {
+    score += 10;
   }
   
-  // BINARY CHOICE - Gong: 25% higher response
-  const hasBinaryChoice = (lower.includes(' or ') && content.includes('?')) ||
+  // BINARY CHOICE: 25% higher response
+  const hasBinaryChoice = (lower.includes(' or ') && questionCount > 0) ||
     /tuesday.*thursday|thursday.*tuesday|monday.*wednesday/i.test(lower) ||
-    /this week.*next week|next week.*this week/i.test(lower);
+    /this week.*next week|next week.*this week/i.test(lower) ||
+    /2pm.*10am|10am.*2pm|morning.*afternoon/i.test(lower);
   if (hasBinaryChoice) {
     score += 12;
   }
   
-  // SPECIFIC TIME OFFERS - Gong: 20% higher response
-  const dayMentioned = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 
-                        'this week', 'next week', 'tomorrow', 'afternoon', 'morning',
-                        '2pm', '2 pm', 'at 2', '10am', '10 am', '3pm', '3 pm'].some(d => lower.includes(d));
-  if (dayMentioned) score += 10;
+  // SPECIFIC TIME: 20% higher response
+  const timeSpecific = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
+    'this week', 'next week', 'tomorrow', '2pm', '2 pm', '10am', '10 am',
+    'afternoon', 'morning'].some(d => lower.includes(d));
+  if (timeSpecific) score += 10;
   
-  // RISK REVERSAL LANGUAGE (30MPC: give them an out)
-  const riskReversal = [
-    'no commitment', 'no obligation', 'just to explore', 
-    'see if it makes sense', 'to see if', 'explore if',
-    'no pressure', 'either way', 'if not'
-  ];
+  // RISK REVERSAL (30MPC: give them an out)
+  const riskReversal = ['no commitment', 'no obligation', 'just to explore',
+    'see if it makes sense', 'no pressure', 'either way', 'if not'];
   if (riskReversal.some(r => lower.includes(r))) {
-    score += 8;
+    score += 6;
   }
-  
-  // QUESTIONS ARE CRITICAL - Gong: 50% higher reply rate
-  const questionCount = (content.match(/\?/g) || []).length;
-  if (questionCount === 0) {
-    score -= 15; // Major penalty for no question
-  } else if (questionCount === 1) {
-    score += 12; // One clear ask is best (30MPC)
-  } else if (questionCount === 2) {
-    score += 8;
-  }
-  // More than 2 questions can be overwhelming
   
   return Math.max(0, Math.min(100, score));
 }
@@ -1142,6 +1168,123 @@ function extractCommonPhrases(text: string): string[] {
   return phrases;
 }
 
+/**
+ * SELLER AUTHENTICITY SCORING
+ * 
+ * Key question: Would the seller LOVE to send this message?
+ * 
+ * Authentic messages:
+ * - Sound human, not robotic or templated
+ * - Reflect the seller's expertise and value prop
+ * - Are confident but not arrogant
+ * - Feel natural to read aloud
+ * - Don't use corporate buzzwords or filler
+ * - Show genuine curiosity about the buyer
+ * 
+ * This scoring ensures AI-generated content doesn't
+ * feel like "AI slop" - generic, hollow, or fake.
+ */
+function evaluateSellerAuthenticity(content: string, context: EvaluationContext): number {
+  let score = 70; // Start with decent baseline
+  const lower = content.toLowerCase();
+  
+  // =========================================================================
+  // PENALIZE AI-SOUNDING / ROBOTIC PATTERNS
+  // =========================================================================
+  
+  // Generic AI phrases that feel hollow
+  const aiSlop = [
+    'i wanted to reach out', 'i hope this email finds you',
+    'i am writing to', 'please do not hesitate',
+    'at your earliest convenience', 'as per our conversation',
+    'moving forward', 'circle back', 'touch base',
+    'leverage', 'synergy', 'paradigm', 'holistic',
+    'delighted to', 'thrilled to connect', 'excited to announce',
+    'game-changing', 'revolutionary', 'cutting-edge',
+    'best-in-class', 'world-class', 'industry-leading'
+  ];
+  const aiSlopCount = aiSlop.filter(p => lower.includes(p)).length;
+  score -= aiSlopCount * 8;
+  
+  // Over-enthusiastic punctuation (feels fake)
+  const exclamationCount = (content.match(/!/g) || []).length;
+  if (exclamationCount > 2) score -= (exclamationCount - 2) * 5;
+  
+  // =========================================================================
+  // REWARD AUTHENTIC HUMAN PATTERNS
+  // =========================================================================
+  
+  // Conversational tone (sounds real)
+  const conversational = [
+    'noticed', 'saw', 'caught', 'curious',
+    'quick question', 'wondering if',
+    'makes sense', 'here\'s the thing',
+    'between us', 'candidly', 'honestly'
+  ];
+  const conversationalCount = conversational.filter(c => lower.includes(c)).length;
+  score += conversationalCount * 4;
+  
+  // Specificity (shows real research, not template)
+  if (context.recipientCompany && lower.includes(context.recipientCompany.toLowerCase())) {
+    score += 8;
+  }
+  if (context.recipientName) {
+    const firstName = context.recipientName.split(' ')[0].toLowerCase();
+    if (lower.includes(firstName)) score += 5;
+  }
+  if (context.recentNews && lower.includes(context.recentNews.substring(0, 10).toLowerCase())) {
+    score += 8;
+  }
+  
+  // Seller's expertise showing through
+  if (context.senderExpertise?.some(e => lower.includes(e.toLowerCase()))) {
+    score += 10;
+  }
+  if (context.senderValueProp && lower.includes(context.senderValueProp.toLowerCase().substring(0, 15))) {
+    score += 8;
+  }
+  if (context.senderCaseStudies?.some(cs => lower.includes(cs.toLowerCase().substring(0, 10)))) {
+    score += 10;
+  }
+  
+  // =========================================================================
+  // NATURAL FLOW CHECK
+  // =========================================================================
+  
+  // Short sentences feel more natural (12-18 words avg is conversational)
+  const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const avgWordCount = content.split(/\s+/).length / Math.max(sentences.length, 1);
+  if (avgWordCount <= 15) score += 8;
+  else if (avgWordCount <= 20) score += 4;
+  else if (avgWordCount > 25) score -= 8;
+  
+  // Contractions feel more human
+  const contractions = ['i\'m', 'you\'re', 'we\'re', 'don\'t', 'can\'t', 'won\'t', 
+                        'it\'s', 'that\'s', 'here\'s', 'let\'s'];
+  if (contractions.some(c => lower.includes(c))) score += 5;
+  
+  // Questions show genuine curiosity
+  const questionCount = (content.match(/\?/g) || []).length;
+  if (questionCount >= 1 && questionCount <= 2) score += 5;
+  
+  // =========================================================================
+  // CONFIDENCE WITHOUT ARROGANCE
+  // =========================================================================
+  
+  // Confident language (seller would be proud)
+  const confident = ['helped', 'achieved', 'delivered', 'reduced', 'increased',
+                     'saved', 'proven', 'track record', 'results'];
+  const confidentCount = confident.filter(c => lower.includes(c)).length;
+  score += Math.min(confidentCount * 3, 12);
+  
+  // Penalize bragging/over-claiming
+  const bragging = ['#1', 'best in the world', 'guaranteed', 'always', 'never fails',
+                    'everyone', 'nobody else'];
+  if (bragging.some(b => lower.includes(b))) score -= 10;
+  
+  return Math.max(0, Math.min(100, score));
+}
+
 // =============================================================================
 // DETECTION FUNCTIONS
 // =============================================================================
@@ -1241,12 +1384,13 @@ function calculateOverallScore(
   // Craft weights
   const craftWeight = 0.50;
   const craftScore = (
-    craft.clarity * 0.15 +
-    craft.personalization * 0.30 +    // Personalization is key
-    craft.elegance * 0.15 +
-    craft.brevity * 0.15 +
-    craft.actionability * 0.15 +
-    craft.writingStyleMatch * 0.10
+    craft.clarity * 0.12 +
+    craft.personalization * 0.25 +    // Personalization is key
+    craft.elegance * 0.12 +
+    craft.brevity * 0.12 +
+    craft.actionability * 0.12 +
+    craft.writingStyleMatch * 0.10 +
+    craft.sellerAuthenticity * 0.17   // Would seller LOVE to send this?
   );
   
   return Math.round(
@@ -1431,6 +1575,7 @@ CRAFT:
 - Brevity: ${score.craft.brevity}/100
 - Actionability: ${score.craft.actionability}/100
 - Writing Style Match: ${score.craft.writingStyleMatch}/100
+- Seller Authenticity: ${score.craft.sellerAuthenticity}/100
 
 ${score.suggestions.length > 0 ? `SUGGESTIONS:\n${score.suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}` : 'No suggestions - this message is well-crafted.'}
 `.trim();
