@@ -77,6 +77,7 @@ export interface QualityScore {
     story: number;             // Epiphany bridge / transformation narrative
     offer: number;             // Clear, low-friction next step
     storyBrand: number;        // Hero's journey structure
+    wowFactor: number;         // Would seller say "I LOVE this!"?
   };
   
   // Sales Intelligence Scores
@@ -174,7 +175,8 @@ export function evaluateContent(
     hook: evaluateHook(content, contentType, context),
     story: evaluateStory(content, context),
     offer: evaluateOffer(content, detectedStage, context),
-    storyBrand: evaluateStoryBrand(content, context)
+    storyBrand: evaluateStoryBrand(content, context),
+    wowFactor: evaluateWowFactor(content, context, contentType)
   };
   
   const salesIntelligence = {
@@ -612,6 +614,193 @@ function evaluateStoryBrand(content: string, context: EvaluationContext): number
     'reduction', 'deliver', 'similar roi'
   ];
   if (successIndicators.some(s => lower.includes(s))) score += 10;
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+/**
+ * WOW FACTOR EVALUATION
+ * 
+ * The ultimate test: Would the seller say "I LOVE this! I want to send this!"?
+ * 
+ * WOW messages have:
+ * - Unexpected insight (shows they know something special)
+ * - Clever observation (intelligence, not just templates)
+ * - Peer-to-peer tone (not salesy or robotic)
+ * - Irresistible specificity (couldn't be sent to anyone else)
+ * - Natural flow (reads like a text to a friend, but professional)
+ * - Value-first approach (gives before asking)
+ * - Easy "yes" (low friction, high appeal)
+ * - Memorable opening (would stand out in inbox)
+ * 
+ * This is the difference between "good" and "EXCEPTIONAL"
+ */
+function evaluateWowFactor(content: string, context: EvaluationContext, contentType: ContentType): number {
+  let score = 50; // Start neutral
+  const lower = content.toLowerCase();
+  const firstLine = content.split(/[.!?\n]/)[0].toLowerCase().trim();
+  
+  // =========================================================================
+  // UNEXPECTED INSIGHT (Shows seller knows something special)
+  // =========================================================================
+  
+  // Specific observation about them (not generic)
+  if (context.recipientName && context.recipientCompany) {
+    const firstName = context.recipientName.split(' ')[0].toLowerCase();
+    const company = context.recipientCompany.toLowerCase();
+    
+    // Name + company in first 2 sentences = highly personalized
+    const firstTwo = content.split(/[.!?]/).slice(0, 2).join(' ').toLowerCase();
+    if (firstTwo.includes(firstName) && firstTwo.includes(company)) {
+      score += 15;
+    }
+  }
+  
+  // References something specific they did/said
+  const insightSignals = [
+    'your post', 'your article', 'your talk', 'your linkedin',
+    'i noticed', 'i saw', 'caught my eye', 'impressive',
+    'your recent', 'your approach', 'the way you'
+  ];
+  if (insightSignals.some(s => lower.includes(s))) {
+    score += 12;
+  }
+  
+  // References trigger event (funding, hire, launch)
+  const triggerEvents = [
+    'series', 'funding', 'raised', 'hired', 'launched',
+    'announced', 'expanded', 'new role', 'congrats'
+  ];
+  if (triggerEvents.some(t => lower.includes(t))) {
+    score += 10;
+  }
+  
+  // =========================================================================
+  // CLEVER/MEMORABLE (Not generic, shows intelligence)
+  // =========================================================================
+  
+  // Specific numbers/stats (shows real research)
+  if (/\d+%|\d+x|\$[\d,]+k?|[\d,]+ hours|[\d,]+ days/.test(content)) {
+    score += 10;
+  }
+  
+  // Named company reference (social proof with specificity)
+  const namedCompanies = ['notion', 'stripe', 'figma', 'google', 'microsoft', 
+                          'amazon', 'salesforce', 'hubspot', 'slack', 'zoom'];
+  if (namedCompanies.some(c => lower.includes(c)) && context.recipientCompany?.toLowerCase() !== 'notion') {
+    score += 8;
+  }
+  
+  // Transformation with specifics (not vague)
+  if (/went from .* to|reduced .* by|cut .* to|saved .* hours|from .* to under/.test(lower)) {
+    score += 10;
+  }
+  
+  // =========================================================================
+  // PEER-TO-PEER TONE (Not salesy, sounds like a real person)
+  // =========================================================================
+  
+  // Conversational openers (vs corporate)
+  const peerOpeners = [
+    'noticed', 'curious', 'quick thought', 'wondering',
+    'between us', 'off the record', 'real talk'
+  ];
+  if (peerOpeners.some(p => firstLine.includes(p))) {
+    score += 8;
+  }
+  
+  // Uses contractions (human, not robot)
+  const contractions = (content.match(/\b(i'm|you're|we're|don't|can't|it's|that's|here's|let's)\b/gi) || []).length;
+  if (contractions >= 1) score += 5;
+  
+  // Penalize overly formal/corporate language
+  const corporate = [
+    'per my', 'as per', 'pursuant to', 'please be advised',
+    'at your earliest convenience', 'please do not hesitate',
+    'i am writing to inform', 'this email is to'
+  ];
+  if (corporate.some(c => lower.includes(c))) {
+    score -= 15;
+  }
+  
+  // =========================================================================
+  // VALUE-FIRST (Gives before asking)
+  // =========================================================================
+  
+  // Offers to share something valuable
+  const valueOffers = [
+    'happy to share', 'can share', 'share the',
+    'put together', 'compiled', 'show you how',
+    'case study', 'benchmark', 'report', 'analysis'
+  ];
+  if (valueOffers.some(v => lower.includes(v))) {
+    score += 10;
+  }
+  
+  // Makes them look smart if they respond (peer exchange)
+  const peerExchange = [
+    'exchange', 'compare notes', 'share approaches',
+    'curious how you', 'your take on', 'interested in your perspective'
+  ];
+  if (peerExchange.some(p => lower.includes(p))) {
+    score += 8;
+  }
+  
+  // =========================================================================
+  // EASY YES (Low friction, high appeal)
+  // =========================================================================
+  
+  // Soft ask (not demanding)
+  const softAsks = [
+    'worth', 'make sense', 'interested in', 'open to',
+    'curious if', 'worth connecting'
+  ];
+  if (softAsks.some(s => lower.includes(s))) {
+    score += 6;
+  }
+  
+  // Low time commitment
+  if (lower.includes('15 min') || lower.includes('quick') || lower.includes('brief')) {
+    score += 5;
+  }
+  
+  // =========================================================================
+  // PENALTIES (Things that make sellers cringe)
+  // =========================================================================
+  
+  // Generic openers (seller would be embarrassed)
+  const cringeOpeners = [
+    'i hope this finds you well', 'i wanted to reach out',
+    'i am writing to', 'my name is', 'we are a',
+    'our company', 'i\'d like to introduce'
+  ];
+  if (cringeOpeners.some(c => firstLine.includes(c))) {
+    score -= 20;
+  }
+  
+  // Pushy/desperate language
+  const pushy = [
+    'act now', 'limited time', 'don\'t miss', 'last chance',
+    'urgent', 'asap', 'immediately'
+  ];
+  if (pushy.some(p => lower.includes(p))) {
+    score -= 10;
+  }
+  
+  // Over-enthusiastic (feels fake)
+  const exclamationCount = (content.match(/!/g) || []).length;
+  if (exclamationCount > 2) {
+    score -= (exclamationCount - 2) * 5;
+  }
+  
+  // Too long (seller knows short = better)
+  const wordCount = content.split(/\s+/).length;
+  if (contentType === 'email' && wordCount > 100) {
+    score -= Math.min((wordCount - 100) / 10, 15);
+  }
+  if (contentType === 'linkedin' && wordCount > 75) {
+    score -= Math.min((wordCount - 75) / 5, 15);
+  }
   
   return Math.max(0, Math.min(100, score));
 }
@@ -1366,10 +1555,11 @@ function calculateOverallScore(
   // Framework weights (Russell Brunson + StoryBrand)
   const frameworkWeight = 0.30;
   const frameworkScore = (
-    framework.hook * 0.40 +      // Hook is critical for cold
+    framework.hook * 0.25 +      // Hook is critical for cold
     framework.story * 0.15 +
-    framework.offer * 0.30 +     // Offer/CTA matters
-    framework.storyBrand * 0.15
+    framework.offer * 0.25 +     // Offer/CTA matters
+    framework.storyBrand * 0.10 +
+    framework.wowFactor * 0.25   // Would seller LOVE this? (key differentiator)
   );
   
   // Sales intelligence weights (Skip Miller)
@@ -1561,6 +1751,7 @@ FRAMEWORK (Hook-Story-Offer):
 - Story (transformation): ${score.framework.story}/100  
 - Offer (CTA): ${score.framework.offer}/100
 - StoryBrand: ${score.framework.storyBrand}/100
+- WOW Factor: ${score.framework.wowFactor}/100
 
 SALES INTELLIGENCE:
 - Buyer Level (ATL/BTL): ${score.salesIntelligence.buyerLevelAlignment}/100
