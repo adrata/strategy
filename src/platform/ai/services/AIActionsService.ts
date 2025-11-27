@@ -13,6 +13,7 @@ import type { ActionRequest, ActionResult } from './types';
 
 // Import AIActionsServiceExtended after types to prevent circular dependency
 import { AIActionsServiceExtended } from './AIActionsServiceExtended';
+import { MultiThreadEmailService } from './MultiThreadEmailService';
 
 export class AIActionsService {
   
@@ -89,6 +90,9 @@ export class AIActionsService {
         
         case 'generate_email':
           return await this.generateEmail(request);
+        
+        case 'generate_multi_thread_emails':
+          return await this.generateMultiThreadEmails(request);
         
         case 'analyze_pipeline':
           return await this.analyzePipeline(request);
@@ -452,6 +456,100 @@ Would a 15-minute call this week make sense to explore if this fits?
         'Set follow-up reminder'
       ]
     };
+  }
+
+  /**
+   * 🏢 ENTERPRISE: Generate multi-thread emails for ALL stakeholders on a deal
+   * 
+   * Usage: "Write emails for everyone on the TechCorp demo"
+   *        "Multi-thread this opportunity"
+   *        "Send emails to all stakeholders"
+   * 
+   * Research: 30MPC + Gong - multi-threading = 3x higher close rates
+   */
+  private static async generateMultiThreadEmails(request: ActionRequest): Promise<ActionResult> {
+    const { parameters, context, workspaceId, userId } = request;
+    
+    const opportunityId = parameters.opportunityId || context?.opportunityId;
+    const companyId = parameters.companyId || context?.companyId;
+    const accountId = parameters.accountId || context?.accountId;
+    
+    if (!opportunityId && !companyId && !accountId) {
+      return {
+        success: false,
+        error: 'No opportunity or company specified',
+        message: 'Please specify which deal or company to generate emails for',
+        nextSteps: [
+          'Navigate to a specific opportunity/deal',
+          'Or specify the company name in your request'
+        ]
+      };
+    }
+    
+    try {
+      const result = await MultiThreadEmailService.generateMultiThreadEmails({
+        opportunityId,
+        companyId,
+        accountId,
+        workspaceId,
+        userId,
+        emailType: parameters.emailType || 'warm',
+        senderName: parameters.senderName || context?.senderName,
+        senderCompany: parameters.senderCompany || context?.senderCompany,
+        senderTitle: parameters.senderTitle || context?.senderTitle,
+        valueProposition: parameters.valueProposition || context?.valueProposition,
+        caseStudies: parameters.caseStudies || context?.caseStudies
+      });
+      
+      if (result.totalStakeholders === 0) {
+        return {
+          success: false,
+          error: 'No stakeholders found',
+          message: 'No contacts found for this opportunity/company',
+          nextSteps: [
+            'Add contacts to this opportunity',
+            'Import stakeholders from LinkedIn or your CRM'
+          ]
+        };
+      }
+      
+      return {
+        success: true,
+        data: {
+          opportunityName: result.opportunityName,
+          companyName: result.companyName,
+          totalStakeholders: result.totalStakeholders,
+          emails: result.emailsGenerated.map(e => ({
+            to: e.stakeholder.name,
+            email: e.stakeholder.email,
+            role: e.stakeholder.role,
+            title: e.stakeholder.title,
+            subject: e.subject,
+            body: e.body,
+            qualityScore: e.qualityScore,
+            qualityGrade: e.qualityGrade,
+            reasoning: e.reasoning
+          })),
+          strategy: result.strategy,
+          recommendations: result.recommendations
+        },
+        message: `Generated ${result.emailsGenerated.length} personalized emails for ${result.companyName}`,
+        nextSteps: [
+          'Review each email for accuracy',
+          'Send Champion email first (your internal advocate)',
+          'Follow with Economic Buyer within 24-48 hours',
+          'Customize case studies for each stakeholder'
+        ]
+      };
+    } catch (error) {
+      console.error('Multi-thread email generation failed:', error);
+      return {
+        success: false,
+        error: 'Failed to generate multi-thread emails',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        nextSteps: ['Try again', 'Check that stakeholders are associated with this deal']
+      };
+    }
   }
 
   /**
