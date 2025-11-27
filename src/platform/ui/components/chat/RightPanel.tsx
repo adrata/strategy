@@ -831,11 +831,13 @@ export function RightPanel() {
           // CRITICAL FIX: If API has a main-chat, replace local 'main-chat' with API version
           // This prevents duplicate main-chat creation
           if (apiMainChat) {
-            // Remove ANY local main-chat (id='main-chat' OR any conversation with main-chat metadata)
+            // Remove ANY local main-chat (id='main-chat' OR any conversation with main-chat metadata OR title='Main Chat')
+            // The title check is critical to prevent duplicates when conversations have different IDs but same title
             const filteredMerged = merged.filter(c => 
               c.id !== 'main-chat' && 
               !(c.metadata as any)?.isMainChat &&
-              c.id !== apiMainChat.id
+              c.id !== apiMainChat.id &&
+              c.title !== 'Main Chat'  // Also filter by title to catch any edge cases
             );
             // Add API main-chat (which has real API ID) - ensure it's not already there
             if (!filteredMerged.find(c => c.id === apiMainChat.id)) {
