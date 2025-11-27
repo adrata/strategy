@@ -106,6 +106,7 @@ export async function GET(
           ]
         },
         include: {
+          customFields: true, // Include customFields for AI context (intelligence data)
           mainSeller: {
             select: {
               id: true,
@@ -132,6 +133,7 @@ export async function GET(
           createdAt: company.createdAt,
           updatedAt: company.updatedAt,
           deletedAt: company.deletedAt,
+          customFields: company.customFields, // Include customFields for AI context
           company: {
             id: company.id,
             name: company.name,
@@ -222,7 +224,7 @@ export async function GET(
       opportunityAmount: opportunity.amount ? parseFloat(opportunity.amount.toString()) : 0,
       opportunityProbability: opportunity.probability || 0,
       expectedCloseDate: opportunity.expectedCloseDate,
-      customFields: {}
+      customFields: opportunity.customFields || {} // Include actual customFields for AI context
     };
 
     return createSuccessResponse(transformed);
@@ -456,7 +458,7 @@ export async function PATCH(
         opportunityAmount: updatedOpportunity.amount ? parseFloat(updatedOpportunity.amount.toString()) : 0,
         opportunityProbability: updatedOpportunity.probability || 0,
         expectedCloseDate: updatedOpportunity.expectedCloseDate,
-        customFields: {}
+        customFields: updatedOpportunity.customFields || {} // Include actual customFields for AI context
       };
 
       return createSuccessResponse(transformed);
@@ -495,7 +497,7 @@ export async function PATCH(
       opportunityAmount: updated.amount ? parseFloat(updated.amount.toString()) : 0,
       opportunityProbability: updated.probability || 0,
       expectedCloseDate: updated.expectedCloseDate,
-      customFields: {}
+      customFields: updated.customFields || {} // Include actual customFields for AI context
     };
 
     return createSuccessResponse(transformed);

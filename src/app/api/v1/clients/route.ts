@@ -308,6 +308,7 @@ export async function GET(request: NextRequest) {
             dateOfBirth: true,
             linkedinConnections: true,
             linkedinFollowers: true,
+            customFields: true, // Include customFields for AI context (intelligence data)
             company: {
               select: {
                 id: true,

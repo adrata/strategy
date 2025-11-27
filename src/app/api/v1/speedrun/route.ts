@@ -154,6 +154,7 @@ export async function GET(request: NextRequest) {
             workspaceId: true,
             createdAt: true,
             updatedAt: true,
+            customFields: true, // Include customFields for AI context (intelligence data)
             mainSeller: {
               select: {
                 id: true,
@@ -226,6 +227,7 @@ export async function GET(request: NextRequest) {
             createdAt: true,
             updatedAt: true,
             notes: true,
+            customFields: true, // Include customFields for AI context (intelligence data)
             company: {
               select: {
                 id: true,

@@ -68,6 +68,7 @@ export async function GET(
       include: {
         // Relations
         coreCompany: true,
+        customFields: true, // Include customFields for AI context (intelligence data)
         mainSeller: {
           select: {
             id: true,
@@ -188,7 +189,9 @@ export async function GET(
       expectedCloseDate: mergedCompany.expectedCloseDate ?? null,
       actualCloseDate: mergedCompany.actualCloseDate ?? null,
       // Notes
-      notes: mergedCompany.notes ?? null
+      notes: mergedCompany.notes ?? null,
+      // Custom Fields (includes intelligence data like painPoints, goals, strategy, etc.)
+      customFields: mergedCompany.customFields ?? null
     };
 
     return NextResponse.json({
