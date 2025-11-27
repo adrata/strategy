@@ -352,7 +352,9 @@ export function MessageList({
                 {/* Enhanced content rendering with smart links and record references */}
                 {(() => {
                   // Split by smart link patterns first, then handle markdown
-                  return message.content.split(/(\bhttps?:\/\/[^\s]+|\[([^\]]+)\]\(([^)]+)\)|@(\w+)|"([A-Z][a-z]+ [A-Z][a-z]+)"|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g).map((part, index) => {
+                  // Use non-capturing groups (?:...) for inner patterns to prevent duplicate matches in split result
+                  // Only the outer group should capture the full match
+                  return message.content.split(/(\bhttps?:\/\/[^\s]+|\[(?:[^\]]+)\]\((?:[^)]+)\)|@(?:\w+)|"(?:[A-Z][a-z]+ [A-Z][a-z]+)"|(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(?:\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g).map((part, index) => {
                   // CRITICAL: Handle undefined parts from split operation
                   if (!part) {
                     return null;
