@@ -480,31 +480,32 @@ function evaluateBuyerLevelAlignment(
   buyerLevel: BuyerLevel,
   context: EvaluationContext
 ): number {
-  let score = 60; // Higher baseline
+  let score = 70; // Higher baseline
   const lower = content.toLowerCase();
   
   const atlKeywords = [
     'roi', 'revenue', 'growth', 'strategic', 'competitive',
     'market', 'board', 'stakeholder', 'bottom line', 'investment',
     'scale', 'efficiency', 'productivity', 'cost', 'risk',
-    'cfo', 'ceo', 'executive', 'leadership', 'savings', 'impact'
+    'cfo', 'ceo', 'executive', 'leadership', 'savings', 'impact',
+    'time', 'hours', 'resource', 'team', '$', 'annual', 'year'
   ];
   
   const btlKeywords = [
     'feature', 'integration', 'workflow', 'dashboard', 'interface',
     'setup', 'implementation', 'training', 'support', 'documentation',
     'api', 'automation', 'configuration', 'user experience', 'how it works',
-    'technical', 'architecture', 'latency', 'performance'
+    'technical', 'architecture', 'latency', 'performance', 'code'
   ];
   
   const atlMatches = atlKeywords.filter(k => lower.includes(k)).length;
   const btlMatches = btlKeywords.filter(k => lower.includes(k)).length;
   
   if (buyerLevel === 'ATL') {
-    score += atlMatches * 6;
-    if (btlMatches > atlMatches) score -= 8; // Too tactical for execs
+    score += Math.min(atlMatches * 4, 25); // Cap at 25 bonus
+    if (btlMatches > atlMatches + 2) score -= 5; // Too tactical for execs (with buffer)
   } else {
-    score += btlMatches * 6;
+    score += Math.min(btlMatches * 4, 25);
     // BTL folks can appreciate ROI too, don't penalize
   }
   
@@ -513,8 +514,8 @@ function evaluateBuyerLevelAlignment(
     const title = context.recipientTitle.toLowerCase();
     const isExecutive = ['ceo', 'cfo', 'cto', 'coo', 'vp', 'chief', 'president', 'director'].some(t => title.includes(t));
     
-    if (isExecutive && buyerLevel === 'ATL') score += 8;
-    if (!isExecutive && buyerLevel === 'BTL') score += 8;
+    if (isExecutive && buyerLevel === 'ATL') score += 5;
+    if (!isExecutive && buyerLevel === 'BTL') score += 5;
   }
   
   return Math.max(0, Math.min(100, score));
@@ -528,24 +529,26 @@ function evaluateStatusAlignment(
   status: PersonStatus,
   context: EvaluationContext
 ): number {
-  let score = 70; // Higher baseline - most messages are reasonably aligned
+  let score = 75; // Higher baseline
   const lower = content.toLowerCase();
   
   const statusStrategies: Record<PersonStatus, { good: string[], bad: string[] }> = {
     LEAD: {
-      good: ['introduce', 'learn more', 'explore', 'curious', 'initial', 'new', 'noticed', 'saw', 'congrats'],
-      bad: ['renew', 'upgrade', 'existing customer']
+      good: ['introduce', 'learn more', 'explore', 'curious', 'initial', 'new', 'noticed', 'saw', 'congrats', 
+             'make sense', 'worth', 'open to', 'just closed', 'recently', 'hit', 'challenge'],
+      bad: ['renew', 'upgrade', 'existing customer', 'continue our partnership']
     },
     PROSPECT: {
-      good: ['next step', 'demo', 'proposal', 'solution', 'requirements', 'timeline', 'follow', 'since we', 'recap'],
-      bad: ['introduce myself', 'let me tell you about our company']
+      good: ['next step', 'demo', 'proposal', 'solution', 'requirements', 'timeline', 'follow', 'since we', 
+             'recap', 'spoke', 'conversation', 'based on', 'discussed'],
+      bad: ['introduce myself for the first time', 'let me tell you about our company from scratch']
     },
     CUSTOMER: {
-      good: ['thank you', 'appreciate', 'value', 'feedback', 'expand', 'additional', 'continue'],
-      bad: ['cold outreach', 'reaching out for the first time']
+      good: ['thank you', 'appreciate', 'value', 'feedback', 'expand', 'additional', 'continue', 'partnership'],
+      bad: ['cold outreach', 'reaching out for the first time', 'who we are']
     },
     PARTNER: {
-      good: ['collaborate', 'partnership', 'mutual', 'together', 'joint', 'co-', 'exchange'],
+      good: ['collaborate', 'partnership', 'mutual', 'together', 'joint', 'co-', 'exchange', 'both'],
       bad: ['sell you', 'pitch you', 'pricing for you']
     }
   };
@@ -555,8 +558,8 @@ function evaluateStatusAlignment(
     const goodMatches = strategy.good.filter(g => lower.includes(g)).length;
     const badMatches = strategy.bad.filter(b => lower.includes(b)).length;
     
-    score += goodMatches * 8;
-    score -= badMatches * 12;
+    score += Math.min(goodMatches * 5, 20); // Cap bonus at 20
+    score -= badMatches * 10;
   }
   
   return Math.max(0, Math.min(100, score));
@@ -612,39 +615,62 @@ function evaluateStageAlignment(
  */
 function evaluatePersonalityMatch(content: string, context: EvaluationContext): number {
   if (!context.recipientPersonality?.communicationStyle) {
-    return 75; // Higher neutral if unknown
+    return 80; // Higher neutral if unknown
   }
   
-  let score = 60; // Higher baseline
-  const lower = content.toLowerCase();
+  let score = 70; // Higher baseline
   const style = context.recipientPersonality.communicationStyle;
   
   const stylePatterns: Record<CommunicationStyle, { good: RegExp[], bad: RegExp[] }> = {
     direct: {
-      good: [/^[^.]{1,60}\./, /let's|here's|would|make sense/i, /\?$/, /\d+%|\$[\d,]+/i],
-      bad: [/i think maybe|perhaps we could possibly/i]
+      good: [
+        /^[^.]{1,70}\./,           // Short punchy first sentence
+        /would.*make sense/i,      // Direct ask
+        /\?$/,                     // Ends with question
+        /\d+%|\$[\d,]+/i,          // Concrete numbers
+        /\d+\s*(hours|minutes)/i,  // Time specifics
+        /roi|results|savings/i     // Results focus
+      ],
+      bad: [/i think maybe|perhaps we could possibly|not sure if/i]
     },
     analytical: {
-      good: [/\d+%|\$[\d,]+|\d+x/i, /data|metrics|analysis|research|hours|days/i, /specifically|precisely|exactly/i],
-      bad: [/trust me|believe me/i, /gut feeling/i]
+      good: [
+        /\d+%|\$[\d,]+|\d+x/i,
+        /data|metrics|analysis|research/i,
+        /\d+\s*(hours|days|weeks)/i,
+        /specifically|precisely|exactly|technical/i,
+        /architecture|performance|latency/i
+      ],
+      bad: [/trust me|believe me|gut feeling/i]
     },
     expressive: {
-      good: [/excited|thrilled|love|great|congrats|impressive/i, /!/, /imagine|vision|transform/i],
+      good: [
+        /excited|thrilled|love|great|congrats|impressive|amazing/i,
+        /!/,
+        /imagine|vision|transform|incredible/i
+      ],
       bad: [/strictly speaking|merely|simply put/i]
     },
     amiable: {
-      good: [/team|together|partnership|collaborate|exchange/i, /help|support|assist/i, /relationship|connect/i],
+      good: [
+        /team|together|partnership|collaborate|exchange/i,
+        /help|support|assist/i,
+        /relationship|connect|looking forward/i
+      ],
       bad: [/aggressive|push hard|demand immediate/i]
     }
   };
   
   const patterns = stylePatterns[style];
   if (patterns) {
+    let matchCount = 0;
     for (const good of patterns.good) {
-      if (good.test(content)) score += 10;
+      if (good.test(content)) matchCount++;
     }
+    score += Math.min(matchCount * 8, 25); // Cap bonus
+    
     for (const bad of patterns.bad) {
-      if (bad.test(content)) score -= 12;
+      if (bad.test(content)) score -= 10;
     }
   }
   
