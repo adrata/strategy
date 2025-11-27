@@ -131,6 +131,44 @@ interface MessageListProps {
   isVoiceListening?: boolean; // Whether voice is currently listening
 }
 
+// Copyable Email component with copy-to-clipboard functionality
+function CopyableEmail({ email }: { email: string }) {
+  const [copied, setCopied] = React.useState(false);
+  
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy email:', err);
+    }
+  };
+  
+  return (
+    <button
+      onClick={handleCopy}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-medium transition-colors duration-200 cursor-pointer border ${
+        copied 
+          ? 'bg-green-50 text-green-700 border-green-200' 
+          : 'bg-purple-50 text-purple-700 hover:bg-purple-100 hover:text-purple-800 border-purple-200 hover:border-purple-300'
+      }`}
+      title={copied ? 'Copied!' : 'Click to copy email'}
+    >
+      {email}
+      {copied ? (
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      ) : (
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
 // Helper function to render markdown with proper styling
 const renderMarkdown = (content: string): React.ReactNode => {
   // Split content by markdown patterns while preserving the patterns
@@ -259,7 +297,7 @@ export function MessageList({
                   </span>
                 </div>
               )}
-              <span className="text-foreground">{message.content}</span>
+              <span className="text-base text-foreground">{message.content}</span>
             </div>
           ) : message['type'] === 'todos' ? (
             <InChatTodoList 
@@ -310,7 +348,7 @@ export function MessageList({
                 onUpdate={scrollToBottom}
               />
             ) : (
-              <div className="whitespace-pre-line">
+              <div className="whitespace-pre-line text-base">
                 {/* Enhanced content rendering with smart links and record references */}
                 {(() => {
                   // Split by smart link patterns first, then handle markdown
@@ -392,20 +430,12 @@ export function MessageList({
                     );
                   }
                   
-                  // Handle email addresses
+                  // Handle email addresses - click to copy
                   const emailMatch = part.match(/^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/);
                   if (emailMatch) {
                     const [, email] = emailMatch;
                     return (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          handleRecordSearch(email);
-                        }}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-purple-50 text-purple-700 hover:bg-purple-100 hover:text-purple-800 transition-colors duration-200 cursor-pointer border border-purple-200 hover:border-purple-300"
-                      >
-                        {email}
-                      </button>
+                      <CopyableEmail key={index} email={email} />
                     );
                   }
                   

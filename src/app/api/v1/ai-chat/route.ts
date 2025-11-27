@@ -199,6 +199,25 @@ export async function POST(request: NextRequest) {
         // Continue without record - AI can still respond without it
       }
     }
+    
+    // 🆕 SMART LIST CONTEXT FETCHING: Fetch list from DB when on list view
+    let fetchedListContext: any = null;
+    if (isListView && listViewSection && !listViewContext) {
+      try {
+        const { fetchListContext } = await import('@/platform/ai/services/SmartContextFetcher');
+        fetchedListContext = await fetchListContext(listViewSection, context.workspaceId);
+        
+        if (fetchedListContext) {
+          console.log('✅ [AI CHAT] Fetched list context from database:', {
+            section: listViewSection,
+            recordCount: fetchedListContext.records.length,
+            totalCount: fetchedListContext.totalCount
+          });
+        }
+      } catch (error) {
+        console.warn('[AI CHAT] Failed to fetch list context:', error);
+      }
+    }
 
     // Reduced logging for performance (only in development)
     if (process.env.NODE_ENV === 'development') {
@@ -208,6 +227,7 @@ export async function POST(request: NextRequest) {
         recordSource: frontendRecord ? 'frontend' : (currentRecord ? 'database' : 'none'),
         isListView,
         listViewSection,
+        hasFetchedListContext: !!fetchedListContext,
         useOpenRouter
       });
     }
@@ -417,6 +437,13 @@ export async function POST(request: NextRequest) {
       const contextBuildTime = Date.now() - contextStartTime;
       console.log('✅ [AI CHAT] Context build completed:', `${contextBuildTime}ms`);
       
+      // 🆕 ENHANCE: If we fetched list context from DB, add it to workspace context
+      if (fetchedListContext && (!workspaceContext.listViewContext || workspaceContext.listViewContext.includes('No list view context'))) {
+        const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+        workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+        console.log('✅ [AI CHAT] Enhanced context with DB-fetched list data');
+      }
+      
       // Add thinking step after context is built
       if (currentRecord) {
         addThinkingStep(`Analyzing ${recordType || 'record'} data...`);
@@ -441,6 +468,15 @@ export async function POST(request: NextRequest) {
         documentContext: '',
         systemContext: ''
       };
+      
+      // 🆕 Still try to add fetched list context even if main context build failed
+      if (fetchedListContext) {
+        try {
+          const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+          workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+        } catch {}
+      }
+      
       console.warn('⚠️ [AI CHAT] Continuing with minimal context due to build failure');
     }
     

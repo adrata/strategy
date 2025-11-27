@@ -2618,6 +2618,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             isListView,
             listViewSection,
             listViewContext: latestListViewContext,
+            pathname: typeof window !== 'undefined' ? window.location.pathname : '',
             pageContext: currentPageContext || getPageContext(),
             selectedAIModel
           }),
@@ -2850,6 +2851,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             isListView,
             listViewSection,
             listViewContext: latestListViewContext,
+            pathname: window.location.pathname,
             enableVoiceResponse: false,
             selectedVoiceId: 'default',
             useOpenRouter: true,

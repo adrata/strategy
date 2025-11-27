@@ -223,7 +223,10 @@ export async function POST(request: NextRequest) {
       currentRecord: frontendRecord, 
       recordType: frontendRecordType,
       recordIdFromUrl,
-      listViewContext,
+      listViewContext: frontendListViewContext,
+      isListView,
+      listViewSection,
+      pathname,
       pageContext,
       selectedAIModel
     } = body;
@@ -291,7 +294,10 @@ export async function POST(request: NextRequest) {
     // 5. SMART RECORD FETCHING (if not provided)
     let currentRecord = frontendRecord;
     let recordType = frontendRecordType;
+    let listViewContext = frontendListViewContext;
+    let fetchedListContext: any = null;
     
+    // 5a. Fetch record from DB if not provided but we have ID
     if (!currentRecord && recordIdFromUrl) {
       try {
         const { getPrismaClient } = await import('@/platform/database/connection-pool');
@@ -314,6 +320,24 @@ export async function POST(request: NextRequest) {
         }
       } catch (error) {
         console.warn('[STREAM] Failed to fetch record:', error);
+      }
+    }
+    
+    // 5b. 🆕 SMART LIST CONTEXT FETCHING: Fetch list from DB when on list view
+    if (isListView && listViewSection && !listViewContext) {
+      try {
+        const { fetchListContext, buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+        fetchedListContext = await fetchListContext(listViewSection, context.workspaceId);
+        
+        if (fetchedListContext) {
+          console.log('✅ [STREAM] Fetched list context from database:', {
+            section: listViewSection,
+            recordCount: fetchedListContext.records.length,
+            totalCount: fetchedListContext.totalCount
+          });
+        }
+      } catch (error) {
+        console.warn('[STREAM] Failed to fetch list context:', error);
       }
     }
 
@@ -355,6 +379,13 @@ export async function POST(request: NextRequest) {
             });
             
             workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
+            
+            // 🆕 ENHANCE: If we fetched list context from DB, add it to workspace context
+            if (fetchedListContext && (!workspaceContext.listViewContext || workspaceContext.listViewContext.includes('No list view context'))) {
+              const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+              workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+              console.log('✅ [STREAM] Enhanced context with DB-fetched list data');
+            }
           } catch {
             console.warn('[STREAM] Context build failed, using minimal context');
             workspaceContext = {
@@ -366,6 +397,14 @@ export async function POST(request: NextRequest) {
               documentContext: '',
               systemContext: ''
             };
+            
+            // 🆕 Still try to add fetched list context even if main context build failed
+            if (fetchedListContext) {
+              try {
+                const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+                workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+              } catch {}
+            }
           }
 
           // Build system prompt
