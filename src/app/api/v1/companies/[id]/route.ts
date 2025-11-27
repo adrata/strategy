@@ -68,7 +68,6 @@ export async function GET(
       include: {
         // Relations
         coreCompany: true,
-        customFields: true, // Include customFields for AI context (intelligence data)
         mainSeller: {
           select: {
             id: true,

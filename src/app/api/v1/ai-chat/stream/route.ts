@@ -299,7 +299,7 @@ export async function POST(request: NextRequest) {
         
         const personRecord = await prisma.people.findUnique({
           where: { id: recordIdFromUrl },
-          include: { company: true, customFields: true }
+          include: { company: true }
         });
         
         if (personRecord) {

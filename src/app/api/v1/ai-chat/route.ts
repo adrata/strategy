@@ -104,8 +104,7 @@ export async function POST(request: NextRequest) {
           const personRecord = await prisma.people.findUnique({
             where: { id: recordIdFromUrl },
             include: {
-              company: true,
-              customFields: true
+              company: true
             }
           });
           
@@ -148,10 +147,7 @@ export async function POST(request: NextRequest) {
           // 2. Try companies table if not found in people
           if (!currentRecord) {
             const companyRecord = await prisma.companies.findUnique({
-              where: { id: recordIdFromUrl },
-              include: {
-                customFields: true
-              }
+              where: { id: recordIdFromUrl }
             });
             
             if (companyRecord) {
