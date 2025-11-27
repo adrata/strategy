@@ -1269,25 +1269,29 @@ function evaluateBrevity(content: string, contentType: ContentType): number {
   //   - Ultra-direct, one clear point
   //
   const ranges: Record<ContentType, { min: number; ideal: number; max: number }> = {
-    email: { min: 30, ideal: 55, max: 85 },      // Tighter range for cold
-    linkedin: { min: 15, ideal: 35, max: 55 },   // Shorter for LinkedIn
-    text: { min: 8, ideal: 20, max: 35 },        // Very short for texts
+    email: { min: 20, ideal: 50, max: 80 },      // 20 word follow-ups are fine!
+    linkedin: { min: 12, ideal: 30, max: 55 },   // Shorter for LinkedIn
+    text: { min: 8, ideal: 18, max: 32 },        // Very short for texts
     advice: { min: 75, ideal: 150, max: 250 },
-    general: { min: 35, ideal: 70, max: 125 }
+    general: { min: 30, ideal: 60, max: 100 }
   };
   
   const range = ranges[contentType];
   
   // Calculate base score based on word count
+  // RESEARCH: Shorter is almost always better (Lavender, Gong)
   let score: number;
   if (wordCount >= range.min && wordCount <= range.max) {
+    // In optimal range - great!
     const deviation = Math.abs(wordCount - range.ideal);
     const maxDeviation = Math.max(range.ideal - range.min, range.max - range.ideal);
-    score = Math.round(100 - (deviation / maxDeviation) * 25);
+    score = Math.round(100 - (deviation / maxDeviation) * 20); // Reduced penalty
   } else if (wordCount < range.min) {
-    score = Math.max(40, 80 - (range.min - wordCount) * 3);
+    // Under minimum - still pretty good! Short is usually fine
+    score = Math.max(70, 90 - (range.min - wordCount) * 2); // More generous for short
   } else {
-    score = Math.max(25, 80 - (wordCount - range.max) * 1.5);
+    // Over maximum - this is the real problem (Gong: long emails hurt)
+    score = Math.max(25, 80 - (wordCount - range.max) * 2); // Steeper penalty for long
   }
   
   // BONUS: One sentence = one line structure (30MPC)
