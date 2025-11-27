@@ -184,18 +184,28 @@ export const evaluateContentFast = evaluateContent;
  * - Status trigger (peer reference)
  */
 function evaluateHook(content: string, contentType: string, context: EvaluationContext): number {
-  let score = 40; // Baseline - must earn a good hook score
+  let score = 50; // Higher baseline - easier to get a decent hook score
   
   const firstLine = content.split(/[.!?\n]/)[0].toLowerCase().trim();
   const firstTwoSentences = content.split(/[.!?]/).slice(0, 2).join('. ').toLowerCase();
   
+  // NAME-FIRST OPENER - Good for personalization
+  if (context.recipientName) {
+    const firstName = context.recipientName.split(' ')[0].toLowerCase();
+    if (firstLine.startsWith(firstName)) {
+      score += 15; // Starting with name is a soft pattern interrupt
+    }
+  }
+  
   // PATTERN INTERRUPT - Does it break the expected pattern?
   const patternInterrupts = [
-    { pattern: /^(noticed|saw|caught) (your|that|the)/, points: 20 },
-    { pattern: /^(quick question|curious|wondering)/, points: 18 },
-    { pattern: /^(congrats|impressive|loved)/, points: 15 },
-    { pattern: /^\d+%|\$[\d,]+|\d+x/, points: 20 }, // Opens with a stat
-    { pattern: /^"[^"]+"/,  points: 15 }, // Opens with a quote
+    { pattern: /^(noticed|saw|caught) (your|that|the)/i, points: 20 },
+    { pattern: /^(quick question|curious|wondering)/i, points: 18 },
+    { pattern: /^(congrats|impressive|loved|great)/i, points: 15 },
+    { pattern: /^\d+%|\$[\d,]+|\d+x/i, points: 25 }, // Opens with a stat - very strong
+    { pattern: /^"[^"]+"/i, points: 15 }, // Opens with a quote
+    { pattern: /circling back|following up/i, points: 10 }, // Follow-up openers are fine
+    { pattern: /thanks for|great (call|conversation|meeting)/i, points: 12 }, // Post-meeting openers
   ];
   
   for (const { pattern, points } of patternInterrupts) {
@@ -207,28 +217,28 @@ function evaluateHook(content: string, contentType: string, context: EvaluationC
   
   // SPECIFICITY - Concrete details signal research
   if (context.recipientCompany && firstTwoSentences.includes(context.recipientCompany.toLowerCase())) {
-    score += 15;
+    score += 12;
   }
   if (context.recentNews && firstTwoSentences.includes(context.recentNews.substring(0, 15).toLowerCase())) {
-    score += 15;
+    score += 12;
   }
   
-  // WEAK HOOKS - Heavy penalties
+  // WEAK HOOKS - Penalties (but not as harsh)
   const weakHooks = [
     'i hope this', 'i wanted to', 'i am writing', 'my name is',
     'i\'m reaching out', 'i\'d like to', 'our company', 'we are a'
   ];
   if (weakHooks.some(weak => firstLine.includes(weak))) {
-    score -= 35;
+    score -= 25;
   }
   
   // Short, punchy first line is better
   const firstLineWords = firstLine.split(/\s+/).length;
-  if (firstLineWords <= 10) score += 10;
-  else if (firstLineWords > 20) score -= 10;
+  if (firstLineWords <= 12) score += 8;
+  else if (firstLineWords > 20) score -= 8;
   
   // Question hooks are powerful
-  if (firstLine.includes('?')) score += 12;
+  if (firstLine.includes('?')) score += 10;
   
   return Math.max(0, Math.min(100, score));
 }
@@ -310,17 +320,19 @@ function evaluateStory(content: string, context: EvaluationContext): number {
  * - Risk reversal (no commitment language)
  */
 function evaluateOffer(content: string, stage: OpportunityStage, context: EvaluationContext): number {
-  let score = 40;
+  let score = 50; // Higher baseline
   const lower = content.toLowerCase();
   
   // LOW FRICTION CTAs
   const lowFriction = [
-    { pattern: '15 minutes', points: 20 },
-    { pattern: '15-minute', points: 20 },
-    { pattern: 'quick call', points: 18 },
-    { pattern: 'brief chat', points: 18 },
-    { pattern: 'quick question', points: 15 },
-    { pattern: 'short call', points: 15 }
+    { pattern: '15 minutes', points: 18 },
+    { pattern: '15-minute', points: 18 },
+    { pattern: 'quick call', points: 15 },
+    { pattern: 'brief chat', points: 15 },
+    { pattern: 'quick question', points: 12 },
+    { pattern: 'short call', points: 12 },
+    { pattern: 'worth connecting', points: 12 },
+    { pattern: 'worth a', points: 10 }
   ];
   
   for (const { pattern, points } of lowFriction) {
@@ -336,14 +348,18 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
     'would it make sense',
     'worth a conversation',
     'interested in exploring',
-    'open to learning'
+    'open to learning',
+    'make sense to',
+    'worth exploring',
+    'still open to'
   ];
   
   const hardCTAs = [
     'schedule a demo',
     'book a call',
     'sign up',
-    'get started'
+    'get started',
+    'ready to move forward'
   ];
   
   const hasSoftCTA = softCTAs.some(cta => lower.includes(cta));
@@ -351,32 +367,34 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
   
   // Stage-appropriate CTA scoring
   if (stage === 'QUALIFICATION' || stage === 'DISCOVERY') {
-    if (hasSoftCTA) score += 20;
-    if (hasHardCTA) score -= 10; // Too aggressive for early stage
+    if (hasSoftCTA) score += 18;
+    if (hasHardCTA) score -= 5; // Slight penalty for too aggressive
   } else if (stage === 'PROPOSAL' || stage === 'NEGOTIATION' || stage === 'CLOSING') {
     if (hasHardCTA) score += 15;
-    if (hasSoftCTA) score += 10;
+    if (hasSoftCTA) score += 12;
   }
   
   // BINARY CHOICE (easy decision)
   if (lower.includes(' or ') && content.includes('?')) {
-    score += 12;
+    score += 10;
   }
   
   // SPECIFIC TIME OFFERS
   const dayMentioned = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 
-                        'this week', 'next week'].some(d => lower.includes(d));
-  if (dayMentioned) score += 10;
+                        'this week', 'next week', 'tomorrow', 'afternoon'].some(d => lower.includes(d));
+  if (dayMentioned) score += 8;
   
   // RISK REVERSAL LANGUAGE
-  const riskReversal = ['no commitment', 'no obligation', 'just to explore', 'see if it makes sense'];
+  const riskReversal = ['no commitment', 'no obligation', 'just to explore', 'see if it makes sense', 'to see if'];
   if (riskReversal.some(r => lower.includes(r))) {
-    score += 10;
+    score += 8;
   }
   
-  // Must have a question (CTA)
+  // Must have a question (CTA) for emails/linkedin
   if (!content.includes('?')) {
-    score -= 20;
+    score -= 15;
+  } else {
+    score += 5; // Bonus for having a question
   }
   
   return Math.max(0, Math.min(100, score));
@@ -938,17 +956,43 @@ function calculateOverallScore(
   craft: QualityScore['craft'],
   contentType: ContentType
 ): number {
+  // Content type-specific weighting
+  // Text messages and advice have different expectations than sales emails
+  if (contentType === 'text') {
+    // Text messages: clarity, brevity, and actionability matter most
+    return Math.round(
+      craft.clarity * 0.25 +
+      craft.brevity * 0.30 +
+      craft.actionability * 0.25 +
+      craft.personalization * 0.10 +
+      craft.elegance * 0.10
+    );
+  }
+  
+  if (contentType === 'advice') {
+    // Advice: clarity, actionability, and value matter most
+    return Math.round(
+      craft.clarity * 0.25 +
+      craft.actionability * 0.25 +
+      framework.storyBrand * 0.15 +
+      craft.personalization * 0.15 +
+      craft.elegance * 0.10 +
+      craft.brevity * 0.10
+    );
+  }
+  
+  // For email and LinkedIn - full framework evaluation
   // Framework weights (Russell Brunson + StoryBrand)
-  const frameworkWeight = 0.35;
+  const frameworkWeight = 0.30;
   const frameworkScore = (
-    framework.hook * 0.35 +      // Hook is critical
-    framework.story * 0.20 +
+    framework.hook * 0.40 +      // Hook is critical for cold
+    framework.story * 0.15 +
     framework.offer * 0.30 +     // Offer/CTA matters
     framework.storyBrand * 0.15
   );
   
   // Sales intelligence weights (Skip Miller)
-  const salesWeight = 0.25;
+  const salesWeight = 0.20;
   const salesScore = (
     salesIntelligence.buyerLevelAlignment * 0.30 +
     salesIntelligence.statusAlignment * 0.25 +
@@ -957,11 +1001,11 @@ function calculateOverallScore(
   );
   
   // Craft weights
-  const craftWeight = 0.40;
+  const craftWeight = 0.50;
   const craftScore = (
     craft.clarity * 0.15 +
-    craft.personalization * 0.25 +
-    craft.elegance * 0.20 +
+    craft.personalization * 0.30 +    // Personalization is key
+    craft.elegance * 0.15 +
     craft.brevity * 0.15 +
     craft.actionability * 0.15 +
     craft.writingStyleMatch * 0.10
