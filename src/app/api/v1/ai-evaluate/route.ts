@@ -1,11 +1,18 @@
 /**
  * AI Content Quality Evaluation API
  * 
- * Intelligent content evaluation combining:
+ * Research-backed content evaluation combining best practices from:
+ * 
+ * FRAMEWORKS:
  * - Russell Brunson's Hook-Story-Offer (enterprise adapted)
+ * - Donald Miller's StoryBrand (customer as hero)
  * - Skip Miller's ProActive Selling (ATL/BTL buyer awareness)
- * - Personality-aware messaging
- * - User writing style learning
+ * - Chris Voss's Never Split the Difference (tactical empathy)
+ * 
+ * DATA-DRIVEN RESEARCH:
+ * - 30 Minutes to President's Club (Armand Farrokh & Nick Cegelski)
+ * - Gong Labs research (2M+ sales call analysis)
+ * - Lavender Email Intelligence
  * 
  * POST /api/v1/ai-evaluate
  */
@@ -139,14 +146,71 @@ Would a 15-minute call this week make sense to see if we could help TechCorp avo
 
   return NextResponse.json({
     success: true,
-    message: 'Intelligent Content Quality Evaluator API',
+    message: 'Research-Backed Content Quality Evaluator API',
     
-    methodology: {
-      'Russell Brunson (Enterprise)': 'Hook-Story-Offer framework adapted for B2B',
-      'Skip Miller ProActive Selling': 'ATL (executives) vs BTL (evaluators) awareness',
-      'StoryBrand': 'Customer as Hero, Seller as Guide',
-      'Personality Matching': 'Adapts to recipient communication style',
-      'Writing Style Learning': 'Learns from user samples to sound like their best self'
+    researchSources: {
+      '30MPC (Armand Farrokh & Nick Cegelski)': {
+        framework: 'Problem + Proof + Push email structure',
+        insights: [
+          'Under 75 words for cold emails',
+          'One sentence = one line formatting',
+          'Interest-based CTAs over hard asks',
+          'Trigger events as hooks (funding, new hire, news)',
+          'Never apologize for reaching out'
+        ]
+      },
+      'Gong Labs (2M+ sales calls)': {
+        findings: [
+          '"Reason for the call" opener = 2.1x success rate',
+          'Questions in emails = 50% higher reply rate',
+          '25-50 word emails = highest response rates',
+          'Binary choices in CTA = 25% higher response',
+          'Specific times in CTA = 20% higher response',
+          '"How have you been?" opener = 40% LOWER success'
+        ]
+      },
+      'Lavender Email Intelligence': {
+        findings: [
+          'Under 100 words = 50%+ response rate',
+          'Personalization in first line = 2x response',
+          'Grade 5 reading level = optimal',
+          'Mobile-first formatting essential'
+        ]
+      },
+      'Chris Voss (Never Split the Difference)': {
+        techniques: [
+          'Tactical empathy: "It seems like..."',
+          '"No"-oriented questions for buy-in',
+          'Mirroring key phrases',
+          'Calibrated questions ("How" and "What")'
+        ]
+      },
+      'Skip Miller (ProActive Selling)': {
+        concepts: [
+          'ATL (Above The Line): Executives - focus on outcomes/ROI',
+          'BTL (Below The Line): Evaluators - focus on features/implementation',
+          'Match messaging to buyer level',
+          'Stage-appropriate communication'
+        ]
+      },
+      'Russell Brunson (Expert Secrets + Traffic Secrets)': {
+        framework: 'Hook-Story-Offer adapted for enterprise',
+        elements: [
+          'Hook: Pattern interrupt in 3 seconds',
+          'Story: Transformation narrative ("went from X to Y")',
+          'Offer: Low-friction, clear next step'
+        ]
+      },
+      'Donald Miller (StoryBrand)': {
+        framework: 'Customer as Hero, Seller as Guide',
+        elements: [
+          'Hero: Message about them, not you',
+          'Problem: Acknowledge their challenge',
+          'Guide: Show empathy + authority',
+          'Plan: Clear path forward',
+          'Success: Vision of transformation'
+        ]
+      }
     },
     
     scoringDimensions: {

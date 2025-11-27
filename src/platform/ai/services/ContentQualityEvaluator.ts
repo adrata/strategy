@@ -1,12 +1,39 @@
 /**
  * INTELLIGENT CONTENT QUALITY EVALUATOR
  * 
- * Enterprise-grade message evaluation combining:
+ * Enterprise-grade message evaluation combining best practices from:
+ * 
+ * FRAMEWORKS:
  * - Russell Brunson's Hook-Story-Offer (enterprise adapted)
+ * - Donald Miller's StoryBrand (customer as hero)
  * - Skip Miller's ProActive Selling (ATL/BTL buyer awareness)
- * - Personality-aware messaging
- * - User writing style learning
- * - Research-backed conversion optimization
+ * - Chris Voss's Never Split the Difference (tactical empathy)
+ * 
+ * DATA-DRIVEN RESEARCH:
+ * - 30 Minutes to President's Club (Armand Farrokh & Nick Cegelski)
+ *   • "Problem + Proof + Push" email framework
+ *   • One sentence = one line formatting
+ *   • Under 75 words for cold emails
+ *   • Interest-based CTAs vs hard asks
+ * 
+ * - Gong Labs Research:
+ *   • "Reason for the call" opener = 2.1x success rate
+ *   • Questions increase reply rates by 50%
+ *   • 25-50 word emails = highest response rates
+ *   • Specific times in CTAs = 20% higher response
+ *   • Binary choices = 25% higher response
+ * 
+ * - Lavender Email Research:
+ *   • Under 100 words = 50%+ response rate
+ *   • Mobile-first (single column, short paragraphs)
+ *   • Personalization in first line = 2x response
+ *   • Grade level 5 reading = optimal
+ * 
+ * - Chris Voss Techniques:
+ *   • Tactical empathy ("It seems like...")
+ *   • Calibrated questions ("How" and "What")
+ *   • Mirroring key phrases
+ *   • "No"-oriented questions for buy-in
  * 
  * The goal: Messages that feel like they were written by the best version
  * of the sender - elegant, specific, and impossible to ignore.
@@ -175,13 +202,18 @@ export const evaluateContentFast = evaluateContent;
 
 /**
  * HOOK EVALUATION
+ * 
  * Russell Brunson: "You have 3 seconds to stop the scroll"
+ * 30MPC: "Problem in the first line - make them feel understood"
+ * Gong: Opening with the reason for contact = 2.1x success
+ * Lavender: Personalization in first line = 2x response
  * 
  * Enterprise hooks that work:
  * - Pattern interrupt (unexpected insight)
- * - Specificity (concrete detail that proves research)
+ * - Specificity (concrete detail that proves research)  
  * - Curiosity gap (incomplete loop)
  * - Status trigger (peer reference)
+ * - Problem acknowledgment (30MPC: they feel understood)
  */
 function evaluateHook(content: string, contentType: string, context: EvaluationContext): number {
   let score = 50; // Higher baseline - easier to get a decent hook score
@@ -189,56 +221,78 @@ function evaluateHook(content: string, contentType: string, context: EvaluationC
   const firstLine = content.split(/[.!?\n]/)[0].toLowerCase().trim();
   const firstTwoSentences = content.split(/[.!?]/).slice(0, 2).join('. ').toLowerCase();
   
-  // NAME-FIRST OPENER - Good for personalization
+  // NAME-FIRST OPENER - Good for personalization (Lavender: 2x response)
   if (context.recipientName) {
     const firstName = context.recipientName.split(' ')[0].toLowerCase();
     if (firstLine.startsWith(firstName)) {
-      score += 15; // Starting with name is a soft pattern interrupt
+      score += 18; // Starting with name is powerful (Lavender research)
     }
   }
   
   // PATTERN INTERRUPT - Does it break the expected pattern?
   const patternInterrupts = [
-    { pattern: /^(noticed|saw|caught) (your|that|the)/i, points: 20 },
+    // 30MPC: Observation-based openers
+    { pattern: /^(noticed|saw|caught) (your|that|the)/i, points: 22 },
+    { pattern: /your (post|article|talk|linkedin|tweet)/i, points: 20 },
+    
+    // Gong: Direct reason for contact
     { pattern: /^(quick question|curious|wondering)/i, points: 18 },
+    { pattern: /reason (i'm|for)/i, points: 15 }, // Gong: 2.1x success rate
+    
+    // Social proof / congrats opener
     { pattern: /^(congrats|impressive|loved|great)/i, points: 15 },
-    { pattern: /^\d+%|\$[\d,]+|\d+x/i, points: 25 }, // Opens with a stat - very strong
-    { pattern: /^"[^"]+"/i, points: 15 }, // Opens with a quote
-    { pattern: /circling back|following up/i, points: 10 }, // Follow-up openers are fine
-    { pattern: /thanks for|great (call|conversation|meeting)/i, points: 12 }, // Post-meeting openers
+    
+    // Stat-first - very strong
+    { pattern: /^\d+%|\$[\d,]+|\d+x/i, points: 25 },
+    
+    // Quote opener
+    { pattern: /^"[^"]+"/i, points: 15 },
+    
+    // Follow-up openers (appropriate for warm leads)
+    { pattern: /circling back|following up/i, points: 12 },
+    { pattern: /thanks for|great (call|conversation|meeting)/i, points: 15 },
+    
+    // Chris Voss: Tactical empathy opener
+    { pattern: /it (seems|sounds|looks) like/i, points: 18 },
+    
+    // 30MPC: Trigger event openers
+    { pattern: /just (raised|closed|announced|hired|launched)/i, points: 20 },
+    { pattern: /series [a-d]|funding|ipo/i, points: 18 },
   ];
   
   for (const { pattern, points } of patternInterrupts) {
-    if (pattern.test(firstLine)) {
+    if (pattern.test(firstLine) || pattern.test(firstTwoSentences)) {
       score += points;
       break;
     }
   }
   
-  // SPECIFICITY - Concrete details signal research
+  // SPECIFICITY - Concrete details signal research (30MPC: "Prove you did homework")
   if (context.recipientCompany && firstTwoSentences.includes(context.recipientCompany.toLowerCase())) {
-    score += 12;
+    score += 15;
   }
   if (context.recentNews && firstTwoSentences.includes(context.recentNews.substring(0, 15).toLowerCase())) {
-    score += 12;
+    score += 15;
   }
   
-  // WEAK HOOKS - Penalties (but not as harsh)
+  // WEAK HOOKS - Penalties (Gong: "How have you been?" = 40% lower success)
   const weakHooks = [
     'i hope this', 'i wanted to', 'i am writing', 'my name is',
-    'i\'m reaching out', 'i\'d like to', 'our company', 'we are a'
+    'i\'m reaching out', 'i\'d like to', 'our company', 'we are a',
+    'how have you been', 'hope you\'re doing well', 'how are you'
   ];
   if (weakHooks.some(weak => firstLine.includes(weak))) {
     score -= 25;
   }
   
-  // Short, punchy first line is better
+  // Short, punchy first line is better (Lavender: shorter = better)
   const firstLineWords = firstLine.split(/\s+/).length;
-  if (firstLineWords <= 12) score += 8;
+  if (firstLineWords <= 10) score += 10;
+  else if (firstLineWords <= 15) score += 5;
   else if (firstLineWords > 20) score -= 8;
   
-  // Question hooks are powerful
-  if (firstLine.includes('?')) score += 10;
+  // Question hooks are powerful (Gong: 50% higher reply rate)
+  if (firstLine.includes('?')) score += 12;
   
   return Math.max(0, Math.min(100, score));
 }
@@ -319,28 +373,41 @@ function evaluateStory(content: string, context: EvaluationContext): number {
 
 /**
  * OFFER EVALUATION
+ * 
  * Russell Brunson: "Make them an offer they can't refuse"
  * 
- * Enterprise offers that convert:
- * - Low friction (15 min, not 1 hour)
- * - High value perception
- * - Clear next step
- * - Risk reversal (no commitment language)
+ * Gong Research on CTAs:
+ * - Interest-based CTAs outperform time-based ("Is this a priority?" > "Let's meet Tuesday")
+ * - Questions increase reply rates 50%
+ * - Binary choices increase response 25%  
+ * - Specific times increase response 20%
+ * - Low-friction asks (15 min) increase response 40%
+ * 
+ * 30MPC "Push" Element:
+ * - One clear ask, not multiple
+ * - Make it easy to say yes
+ * - Give them an out (reduces pressure)
+ * 
+ * Chris Voss: "No"-oriented questions
+ * - "Would it be crazy to..." (invites "no, that's not crazy")
+ * - "Is now a bad time?" (invites "no, it's fine")
  */
 function evaluateOffer(content: string, stage: OpportunityStage, context: EvaluationContext): number {
   let score = 55; // Higher baseline
   const lower = content.toLowerCase();
   
-  // LOW FRICTION CTAs - Research shows these increase response rates 40%+
+  // LOW FRICTION CTAs - Gong: 40%+ higher response
   const lowFriction = [
-    { pattern: '15 minutes', points: 15 },
-    { pattern: '15-minute', points: 15 },
-    { pattern: 'quick call', points: 12 },
-    { pattern: 'brief chat', points: 12 },
-    { pattern: 'quick question', points: 10 },
-    { pattern: 'short call', points: 10 },
-    { pattern: 'worth connecting', points: 12 },
-    { pattern: 'worth a', points: 8 }
+    { pattern: '15 minutes', points: 18 },
+    { pattern: '15-minute', points: 18 },
+    { pattern: '15 min', points: 18 },
+    { pattern: 'quick call', points: 15 },
+    { pattern: 'brief chat', points: 15 },
+    { pattern: 'quick question', points: 12 },
+    { pattern: 'short call', points: 12 },
+    { pattern: 'worth connecting', points: 15 },
+    { pattern: 'worth a', points: 10 },
+    { pattern: 'exchange approaches', points: 12 }, // Peer-level ask
   ];
   
   for (const { pattern, points } of lowFriction) {
@@ -350,29 +417,57 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
     }
   }
   
+  // INTEREST-BASED CTAs (Gong: outperform time-based)
+  const interestBased = [
+    'is this a priority',
+    'is this on your radar',
+    'does this resonate',
+    'sound interesting',
+    'worth exploring',
+    'make sense to explore',
+    'open to exploring',
+    'worth a conversation',
+    'worth connecting'
+  ];
+  if (interestBased.some(i => lower.includes(i))) {
+    score += 12;
+  }
+  
+  // CHRIS VOSS: "No"-oriented questions (powerful for buy-in)
+  const noOriented = [
+    'would it be crazy',
+    'would it be ridiculous', 
+    'is now a bad time',
+    'would it be wrong',
+    'have you given up on'
+  ];
+  if (noOriented.some(n => lower.includes(n))) {
+    score += 10;
+  }
+  
   // SOFT CTAs (work better for cold/early stage)
   const softCTAs = [
     'would you be open to',
     'would it make sense',
-    'worth a conversation',
-    'interested in exploring',
+    'interested in',
     'open to learning',
-    'make sense to',
-    'worth exploring',
     'still open to',
-    'would .* work'
+    'would .* work',
+    'curious if'
   ];
   
   // DIRECT CTAs (good for later stages)
   const directCTAs = [
     'schedule a demo',
     'book a call',
-    'sign up',
     'get started',
     'ready to move forward',
     'walk through it',
     'loop in',
-    'should i'
+    'should i',
+    'shall i',
+    'can i send',
+    'let me send'
   ];
   
   const hasSoftCTA = softCTAs.some(cta => {
@@ -384,34 +479,46 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
   // Stage-appropriate CTA scoring
   if (stage === 'QUALIFICATION' || stage === 'DISCOVERY') {
     if (hasSoftCTA) score += 15;
-    if (hasDirectCTA) score += 8; // Direct is okay too
+    if (hasDirectCTA) score += 10;
   } else if (stage === 'PROPOSAL' || stage === 'NEGOTIATION' || stage === 'CLOSING') {
     if (hasDirectCTA) score += 15;
     if (hasSoftCTA) score += 12;
   }
   
-  // BINARY CHOICE - Research shows 25% higher response
-  if ((lower.includes(' or ') || lower.includes('tuesday') || lower.includes('thursday')) && content.includes('?')) {
-    score += 10;
+  // BINARY CHOICE - Gong: 25% higher response
+  const hasBinaryChoice = (lower.includes(' or ') && content.includes('?')) ||
+    /tuesday.*thursday|thursday.*tuesday|monday.*wednesday/i.test(lower) ||
+    /this week.*next week|next week.*this week/i.test(lower);
+  if (hasBinaryChoice) {
+    score += 12;
   }
   
-  // SPECIFIC TIME OFFERS - 20% higher response
+  // SPECIFIC TIME OFFERS - Gong: 20% higher response
   const dayMentioned = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 
-                        'this week', 'next week', 'tomorrow', 'afternoon', '2pm', '2 pm', 'at 2'].some(d => lower.includes(d));
-  if (dayMentioned) score += 8;
+                        'this week', 'next week', 'tomorrow', 'afternoon', 'morning',
+                        '2pm', '2 pm', 'at 2', '10am', '10 am', '3pm', '3 pm'].some(d => lower.includes(d));
+  if (dayMentioned) score += 10;
   
-  // RISK REVERSAL LANGUAGE
-  const riskReversal = ['no commitment', 'no obligation', 'just to explore', 'see if it makes sense', 'to see if', 'explore if'];
+  // RISK REVERSAL LANGUAGE (30MPC: give them an out)
+  const riskReversal = [
+    'no commitment', 'no obligation', 'just to explore', 
+    'see if it makes sense', 'to see if', 'explore if',
+    'no pressure', 'either way', 'if not'
+  ];
   if (riskReversal.some(r => lower.includes(r))) {
-    score += 6;
+    score += 8;
   }
   
-  // Must have a question (CTA) for emails/linkedin
-  if (!content.includes('?')) {
-    score -= 10;
-  } else {
-    score += 8; // Bonus for having a question
+  // QUESTIONS ARE CRITICAL - Gong: 50% higher reply rate
+  const questionCount = (content.match(/\?/g) || []).length;
+  if (questionCount === 0) {
+    score -= 15; // Major penalty for no question
+  } else if (questionCount === 1) {
+    score += 12; // One clear ask is best (30MPC)
+  } else if (questionCount === 2) {
+    score += 8;
   }
+  // More than 2 questions can be overwhelming
   
   return Math.max(0, Math.min(100, score));
 }
@@ -773,9 +880,14 @@ function evaluatePersonalization(content: string, context: EvaluationContext): n
 
 /**
  * ELEGANCE SCORING
+ * 
  * Sophisticated without being stuffy
  * Confident without being arrogant
  * Clear without being simplistic
+ * 
+ * Chris Voss: Tactical empathy adds elegance
+ * 30MPC: "Sound like a peer, not a salesperson"
+ * Lavender: Grade 5 reading level = optimal
  */
 function evaluateElegance(content: string): number {
   let score = 70;
@@ -788,33 +900,52 @@ function evaluateElegance(content: string): number {
     const regex = new RegExp(`\\b${f}\\b`, 'gi');
     return regex.test(content);
   }).length;
-  score -= fillerCount * 6;
+  score -= fillerCount * 5;
   
   // WEAK LANGUAGE (penalize)
   const weakPhrases = ['i think', 'i believe', 'i feel', 'maybe', 'perhaps',
                        'sort of', 'kind of', 'a little bit', 'in my opinion'];
   const weakCount = weakPhrases.filter(w => lower.includes(w)).length;
-  score -= weakCount * 8;
+  score -= weakCount * 6;
   
-  // APOLOGETIC LANGUAGE (penalize)
+  // APOLOGETIC LANGUAGE (penalize - 30MPC: "Never apologize for reaching out")
   const apologetic = ['sorry to bother', 'sorry for', 'apologize for', 
-                      'hate to ask', 'don\'t mean to'];
+                      'hate to ask', 'don\'t mean to', 'i know you\'re busy'];
   if (apologetic.some(a => lower.includes(a))) score -= 15;
+  
+  // CHRIS VOSS: Tactical empathy phrases (reward)
+  const tacticalEmpathy = [
+    'it seems like', 'it sounds like', 'it looks like',
+    'i sense that', 'it appears',
+    'what i\'m hearing', 'correct me if i\'m wrong'
+  ];
+  if (tacticalEmpathy.some(t => lower.includes(t))) score += 10;
   
   // STRONG VERBS (reward)
   const strongVerbs = ['transform', 'accelerate', 'eliminate', 'streamline',
-                       'optimize', 'empower', 'enable', 'drive', 'achieve', 'deliver'];
+                       'optimize', 'empower', 'enable', 'drive', 'achieve', 'deliver',
+                       'solve', 'cut', 'reduce', 'increase', 'boost'];
   const strongCount = strongVerbs.filter(v => lower.includes(v)).length;
-  score += strongCount * 5;
+  score += Math.min(strongCount * 4, 15);
   
   // CONFIDENT LANGUAGE (reward)
-  const confident = ['will', 'can', 'proven', 'results', 'demonstrated', 'track record'];
+  const confident = ['will', 'can', 'proven', 'results', 'demonstrated', 'track record', 'confident'];
   const confidentCount = confident.filter(c => lower.includes(c)).length;
-  score += confidentCount * 4;
+  score += Math.min(confidentCount * 3, 12);
+  
+  // PEER LANGUAGE (30MPC: "Sound like a peer") - reward
+  const peerLanguage = ['between us', 'off the record', 'candidly', 'honestly speaking',
+                        'real talk', 'happy to share', 'exchange'];
+  if (peerLanguage.some(p => lower.includes(p))) score += 6;
   
   // CONCISE STRUCTURE (reward)
   const paragraphs = content.split(/\n\n+/);
   if (paragraphs.length >= 2 && paragraphs.length <= 4) score += 8;
+  
+  // Single line paragraphs (good formatting - 30MPC)
+  const lines = content.split('\n').filter(l => l.trim().length > 0);
+  const shortLines = lines.filter(l => l.split(/\s+/).length <= 15).length;
+  if (shortLines / lines.length > 0.7) score += 5;
   
   // No excessive punctuation
   if ((content.match(/!!/g) || []).length > 0) score -= 10;
@@ -823,29 +954,65 @@ function evaluateElegance(content: string): number {
   return Math.max(0, Math.min(100, score));
 }
 
+/**
+ * BREVITY EVALUATION
+ * 
+ * Research-backed optimal word counts:
+ * 
+ * Gong Research:
+ * - 25-50 words = highest cold email response rates
+ * - Sweet spot for B2B: 50-75 words
+ * 
+ * Lavender Research:
+ * - Under 100 words = 50%+ response rate
+ * - 25-50 words for cold = optimal
+ * 
+ * 30MPC:
+ * - Under 75 words for cold outreach
+ * - "If it looks long, it won't get read"
+ * - One sentence = one line formatting
+ */
 function evaluateBrevity(content: string, contentType: ContentType): number {
   const wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
   
-  // Research-backed optimal ranges
+  // Research-backed optimal ranges (Gong + Lavender + 30MPC)
   const ranges: Record<ContentType, { min: number; ideal: number; max: number }> = {
-    email: { min: 50, ideal: 75, max: 125 },
-    linkedin: { min: 25, ideal: 50, max: 90 },
+    email: { min: 40, ideal: 65, max: 100 },     // Lavender: under 100
+    linkedin: { min: 20, ideal: 45, max: 75 },   // Even shorter for LinkedIn
     text: { min: 10, ideal: 20, max: 40 },
     advice: { min: 75, ideal: 150, max: 250 },
-    general: { min: 40, ideal: 80, max: 150 }
+    general: { min: 40, ideal: 75, max: 125 }
   };
   
   const range = ranges[contentType];
   
+  // Calculate base score based on word count
+  let score: number;
   if (wordCount >= range.min && wordCount <= range.max) {
     const deviation = Math.abs(wordCount - range.ideal);
     const maxDeviation = Math.max(range.ideal - range.min, range.max - range.ideal);
-    return Math.round(100 - (deviation / maxDeviation) * 25);
+    score = Math.round(100 - (deviation / maxDeviation) * 25);
   } else if (wordCount < range.min) {
-    return Math.max(30, 75 - (range.min - wordCount) * 3);
+    score = Math.max(40, 80 - (range.min - wordCount) * 3);
   } else {
-    return Math.max(20, 75 - (wordCount - range.max) * 2);
+    score = Math.max(25, 80 - (wordCount - range.max) * 1.5);
   }
+  
+  // BONUS: One sentence = one line structure (30MPC)
+  const lines = content.split('\n').filter(l => l.trim().length > 0);
+  const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  
+  // If roughly one sentence per line (good mobile formatting)
+  if (lines.length >= sentences.length * 0.7 && contentType !== 'advice') {
+    score += 5;
+  }
+  
+  // PENALTY: Wall of text (no paragraph breaks)
+  if (wordCount > 60 && !content.includes('\n\n') && contentType !== 'text') {
+    score -= 10;
+  }
+  
+  return Math.max(0, Math.min(100, score));
 }
 
 function evaluateActionability(content: string, stage: OpportunityStage): number {
@@ -1113,61 +1280,76 @@ function generateSuggestions(
 ): string[] {
   const suggestions: string[] = [];
   const wordCount = content.split(/\s+/).length;
+  const lower = content.toLowerCase();
   
-  // Hook suggestions (most important)
+  // Hook suggestions (30MPC: "The first line determines if they read more")
   if (framework.hook < 70) {
-    suggestions.push('Start with a pattern interrupt: specific insight, surprising stat, or observation about them');
-  }
-  
-  // Personalization
-  if (craft.personalization < 70) {
-    if (context.recipientName && !content.toLowerCase().includes(context.recipientName.split(' ')[0].toLowerCase())) {
-      suggestions.push(`Use ${context.recipientName.split(' ')[0]}'s name - personalization increases response 29%`);
-    }
-    if (context.recipientCompany) {
-      suggestions.push(`Reference ${context.recipientCompany} specifically - shows you did research`);
-    }
-  }
-  
-  // Story/narrative
-  if (framework.story < 60) {
-    suggestions.push('Add a transformation narrative: "We helped [similar company] go from X to Y"');
-  }
-  
-  // Offer/CTA
-  if (framework.offer < 70) {
-    if (stage === 'QUALIFICATION' || stage === 'DISCOVERY') {
-      suggestions.push('Use a soft CTA: "Would you be open to a 15-minute call to explore?"');
+    if (context.recipientName) {
+      suggestions.push(`30MPC tip: Start with "${context.recipientName.split(' ')[0]} - [observation about them]" to pattern interrupt`);
     } else {
-      suggestions.push('Add a clear next step with specific timing');
+      suggestions.push('30MPC: Lead with an observation, trigger event, or stat - not "I hope this finds you well"');
     }
   }
   
-  // Buyer level
+  // Personalization (Lavender: 2x response with first-line personalization)
+  if (craft.personalization < 70) {
+    if (context.recipientName && !lower.includes(context.recipientName.split(' ')[0].toLowerCase())) {
+      suggestions.push(`Lavender data: Using ${context.recipientName.split(' ')[0]}'s name = 2x higher response`);
+    }
+    if (context.recipientCompany && !lower.includes(context.recipientCompany.toLowerCase())) {
+      suggestions.push(`Reference ${context.recipientCompany} - proves you did homework (30MPC)`);
+    }
+  }
+  
+  // Story/narrative (30MPC: "Problem + Proof + Push")
+  if (framework.story < 60) {
+    suggestions.push('30MPC framework: Add "Proof" - "We helped [similar company] achieve [specific result]"');
+  }
+  
+  // Offer/CTA (Gong research-backed)
+  if (framework.offer < 70) {
+    if (!content.includes('?')) {
+      suggestions.push('Gong data: Questions increase reply rates 50% - end with a clear question');
+    }
+    if (stage === 'QUALIFICATION' || stage === 'DISCOVERY') {
+      suggestions.push('Gong: Interest-based CTAs work best - "Is this a priority for you right now?"');
+    } else {
+      suggestions.push('Gong: Specific times + binary choice = 45% higher response - "Thursday at 2pm or Friday at 10am?"');
+    }
+  }
+  
+  // Buyer level (Skip Miller)
   if (salesIntelligence.buyerLevelAlignment < 70) {
     if (buyerLevel === 'ATL') {
-      suggestions.push('Focus on strategic outcomes and ROI for executive audiences');
+      suggestions.push('Skip Miller ATL: Executives care about outcomes, not features - lead with ROI/strategic impact');
     } else {
-      suggestions.push('Include more tactical details and implementation specifics for evaluators');
+      suggestions.push('Skip Miller BTL: Evaluators need details - include implementation specifics and technical proof');
     }
   }
   
-  // Elegance
+  // Elegance (Chris Voss + 30MPC)
   if (craft.elegance < 70) {
-    suggestions.push('Remove filler words (just, really, actually) and weak language (I think, maybe)');
-  }
-  
-  // Brevity
-  if (craft.brevity < 65) {
-    const ideal = contentType === 'email' ? 75 : contentType === 'linkedin' ? 50 : 80;
-    if (wordCount > ideal * 1.5) {
-      suggestions.push(`Shorten to ~${ideal} words (currently ${wordCount}). Concise messages get higher response rates`);
+    if (lower.includes('sorry') || lower.includes('apologize') || lower.includes('bother')) {
+      suggestions.push('30MPC: Never apologize for reaching out - remove "sorry to bother" language');
+    } else {
+      suggestions.push('Chris Voss: Add tactical empathy - "It seems like [their challenge]..." shows you understand');
     }
   }
   
-  // Stage alignment
-  if (salesIntelligence.stageAlignment < 70) {
-    suggestions.push(`Adjust tone for ${stage.toLowerCase()} stage - ${getStageAdvice(stage)}`);
+  // Brevity (Lavender + Gong data)
+  if (craft.brevity < 65) {
+    const ideal = contentType === 'email' ? 65 : contentType === 'linkedin' ? 45 : 75;
+    if (wordCount > ideal * 1.4) {
+      suggestions.push(`Lavender: Under ${ideal} words = 50%+ response (currently ${wordCount}). Cut ruthlessly.`);
+    }
+    if (!content.includes('\n\n') && wordCount > 50) {
+      suggestions.push('30MPC: Break into short paragraphs - walls of text don\'t get read on mobile');
+    }
+  }
+  
+  // No question = major issue
+  if (!content.includes('?')) {
+    suggestions.push('CRITICAL (Gong): Add a question - emails with questions get 50% more replies');
   }
   
   return suggestions.slice(0, 4);
