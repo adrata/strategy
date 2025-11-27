@@ -565,23 +565,37 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           console.error('[STREAM] Error:', error);
           
-          // Send error fallback with record data if available
+          // Send intelligent fallback based on request type
           let fallbackContent = '';
+          const lowerMessage = message.toLowerCase();
+          const isEmailRequest = lowerMessage.includes('email') || lowerMessage.includes('draft') || lowerMessage.includes('write');
+          const isLinkedInRequest = lowerMessage.includes('linkedin') || lowerMessage.includes('message');
+          
           if (currentRecord) {
             const recordName = currentRecord.fullName || currentRecord.name || 'this contact';
+            const firstName = currentRecord.firstName || recordName.split(' ')[0];
             const company = typeof currentRecord.company === 'string' 
               ? currentRecord.company 
               : (currentRecord.company?.name || currentRecord.companyName || '');
+            const title = currentRecord.title || currentRecord.jobTitle || '';
             
-            const fields: string[] = [];
-            if (recordName) fields.push(`**Name:** ${recordName}`);
-            if (currentRecord.title || currentRecord.jobTitle) fields.push(`**Title:** ${currentRecord.title || currentRecord.jobTitle}`);
-            if (company) fields.push(`**Company:** ${company}`);
-            if (currentRecord.email) fields.push(`**Email:** ${currentRecord.email}`);
-            if (currentRecord.phone) fields.push(`**Phone:** ${currentRecord.phone}`);
-            if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
-            
-            fallbackContent = `Here's the data I have for **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\nHow can I help you with this contact?`;
+            // SMART FALLBACK: Generate research-backed email if requested
+            if (isEmailRequest && firstName && company) {
+              fallbackContent = `Here's a cold email draft for ${recordName}:\n\n---\n\n**Subject:** Quick question for ${firstName}\n\n${firstName} - noticed ${company} is growing fast.\n\nCompanies at your stage typically hit bottlenecks we specialize in solving. We helped similar ${title ? title + 's' : 'teams'} cut their timeline significantly.\n\nWorth a quick call to see if this applies to ${company}?\n\n[Your Name]\n\n---\n\n*This follows research-backed best practices: <75 words, name + observation hook, single soft CTA, ends with a question.*`;
+            } else if (isLinkedInRequest && firstName && company) {
+              fallbackContent = `Here's a LinkedIn message for ${recordName}:\n\n---\n\n${firstName} - saw you're ${title ? `a ${title} at` : 'with'} ${company}. Companies scaling like yours often hit challenges we've helped solve.\n\nOpen to connecting?\n\n---\n\n*Short, personal, and easy to say yes to.*`;
+            } else {
+              // Default: show data
+              const fields: string[] = [];
+              if (recordName) fields.push(`**Name:** ${recordName}`);
+              if (title) fields.push(`**Title:** ${title}`);
+              if (company) fields.push(`**Company:** ${company}`);
+              if (currentRecord.email) fields.push(`**Email:** ${currentRecord.email}`);
+              if (currentRecord.phone) fields.push(`**Phone:** ${currentRecord.phone}`);
+              if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
+              
+              fallbackContent = `Here's the data I have for **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\nHow can I help you with this contact? I can:\n- Write a cold email or LinkedIn message\n- Suggest next steps\n- Research their company`;
+            }
           } else {
             fallbackContent = "I'm here to help you with your sales process. What would you like to work on?";
           }
