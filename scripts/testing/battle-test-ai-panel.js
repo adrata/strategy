@@ -468,7 +468,7 @@ class AIRightPanelBattleTester {
 
     // Phase 1: Original battle tests
     console.log('\n========== PHASE 1: GENERAL RESILIENCE TESTS ==========\n');
-    
+
     for (const scenario of BATTLE_TEST_SCENARIOS) {
       console.log(`\n--- Category: ${scenario.category} ---`);
       console.log(`User: ${scenario.user}`);

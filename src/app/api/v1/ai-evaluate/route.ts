@@ -11,6 +11,7 @@ import {
   evaluateContentFast, 
   formatScoreBreakdown,
   getQualityLabel,
+  getConversionDescription,
   type EvaluationContext 
 } from '@/platform/ai/services/ContentQualityEvaluator';
 
@@ -54,12 +55,16 @@ export async function POST(request: NextRequest) {
     const score = evaluateContentFast(content, contentType, context);
     const label = getQualityLabel(score.overall);
     const formatted = formatScoreBreakdown(score);
+    const conversionDesc = getConversionDescription(score.conversionPotential);
 
     return NextResponse.json({
       success: true,
       data: {
         score: score.overall,
         label,
+        conversionPotential: score.conversionPotential,
+        conversionDescription: conversionDesc,
+        stage: score.stage,
         breakdown: score.breakdown,
         suggestions: score.suggestions,
         contentType: score.contentType,
@@ -103,12 +108,21 @@ Ross`;
 
   return NextResponse.json({
     success: true,
-    message: 'AI Content Quality Evaluator API',
+    message: 'AI Content Quality Evaluator API - Research-Backed Scoring',
+    researchInsights: {
+      'Personalized emails': '29% higher open rates, 41% higher click rates',
+      'Optimal email length': '50-125 words = 50%+ response rates',
+      'LinkedIn messages': 'Under 100 words = 50% higher response',
+      'Follow-up timing': '5+ touchpoints increases response by 25%',
+      'Strong hooks': 'Opening line determines if they read more'
+    },
     demo: {
       content: demoContent,
       context: demoContext,
       score: score.overall,
       label: getQualityLabel(score.overall),
+      conversionPotential: score.conversionPotential,
+      stage: score.stage,
       breakdown: score.breakdown,
       suggestions: score.suggestions,
       formatted
@@ -119,11 +133,14 @@ Ross`;
         content: 'Your email/message content here',
         contentType: 'email | linkedin | text | advice | general',
         context: {
-          recipientName: 'optional',
-          recipientCompany: 'optional',
-          recipientTitle: 'optional',
-          senderName: 'optional',
-          purpose: 'cold outreach | follow-up | introduction | meeting request | thank you | proposal'
+          recipientName: 'optional - but increases personalization score',
+          recipientCompany: 'optional - reference for relevance',
+          recipientTitle: 'optional - role-specific messaging',
+          purpose: 'cold outreach | follow-up | introduction | meeting request | thank you | proposal',
+          stage: 'cold | warm | follow-up | closing (auto-detected if not provided)',
+          priorMessages: 'Array of previous messages for context',
+          recipientPainPoints: 'Array of known challenges',
+          recentNews: 'Recent company news to reference'
         }
       }
     }
