@@ -458,9 +458,10 @@ export async function POST(request: NextRequest) {
               documentContext: null
             });
             
-            // 🔧 INCREASED: 5 second timeout for context build to allow intelligence queries
+            // 🔧 OPTIMIZED: 3 second timeout for context build - faster first-token response
+            // Reduced from 5s to improve perceived responsiveness while still allowing most queries
             const timeoutPromise = new Promise((_, reject) => {
-              setTimeout(() => reject(new Error('Context build timeout')), 5000);
+              setTimeout(() => reject(new Error('Context build timeout')), 3000);
             });
             
             workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
@@ -522,13 +523,23 @@ export async function POST(request: NextRequest) {
           let usedModel = modelId;
           let tokensUsed = 0;
           
+          // Create AbortController for timeout handling (30s for initial response)
+          const abortController = new AbortController();
+          const timeoutId = setTimeout(() => {
+            console.warn('[STREAM] Request timeout - aborting after 30s');
+            abortController.abort();
+          }, 30000);
+          
           try {
+            // Reduced maxTokens for faster responses
+            // Complex: 4096 (was 8192), Standard: 2048 (was 4096), Simple: 1024 (was 2048)
             const result = await streamText({
               model: openrouter(modelId),
               system: systemPrompt,
               messages,
-              maxTokens: complexity === 'complex' ? 8192 : complexity === 'simple' ? 2048 : 4096,
+              maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
               temperature: 0.7,
+              abortSignal: abortController.signal,
             });
 
             // Stream tokens to client in our custom format
@@ -548,8 +559,13 @@ export async function POST(request: NextRequest) {
             if (usage) {
               tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
             }
+            
+            // Clear the timeout since we succeeded
+            clearTimeout(timeoutId);
 
           } catch (streamError: any) {
+            // Clear the timeout
+            clearTimeout(timeoutId);
             console.error(`[STREAM] Model ${modelId} failed:`, {
               error: streamError?.message || streamError,
               code: streamError?.code,
@@ -562,13 +578,21 @@ export async function POST(request: NextRequest) {
             usedModel = fallbackModel;
             console.log(`[STREAM] Trying fallback model: ${fallbackModel}`);
             
+            // Create new AbortController for fallback (20s timeout - faster since it's a simpler model)
+            const fallbackAbortController = new AbortController();
+            const fallbackTimeoutId = setTimeout(() => {
+              console.warn('[STREAM] Fallback request timeout - aborting after 20s');
+              fallbackAbortController.abort();
+            }, 20000);
+            
             try {
               const fallbackResult = await streamText({
                 model: openrouter(fallbackModel),
                 system: systemPrompt,
                 messages,
-                maxTokens: 2048,
+                maxTokens: 1024, // Reduced for faster response
                 temperature: 0.7,
+                abortSignal: fallbackAbortController.signal,
               });
 
               for await (const chunk of fallbackResult.textStream) {
@@ -586,8 +610,13 @@ export async function POST(request: NextRequest) {
               if (usage) {
                 tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
               }
+              
+              // Clear the fallback timeout since we succeeded
+              clearTimeout(fallbackTimeoutId);
               console.log(`[STREAM] Fallback model ${fallbackModel} succeeded`);
             } catch (fallbackError: any) {
+              // Clear the fallback timeout
+              clearTimeout(fallbackTimeoutId);
               console.error('[STREAM] Fallback model also failed:', {
                 error: fallbackError?.message || fallbackError,
                 code: fallbackError?.code,

@@ -2447,6 +2447,23 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           : conv
       ));
       
+      // CRITICAL: Save user message to localStorage IMMEDIATELY (sync)
+      // This ensures the message persists even if the API call fails or page refreshes
+      // Don't wait for useEffect - that's async and can be missed on error
+      if (typeof window !== 'undefined' && workspaceId && userId) {
+        try {
+          const storageKey = `adrata-conversations-${workspaceId}-${userId}`;
+          const currentConvs = conversations.map(conv => 
+            conv.isActive 
+              ? { ...conv, messages: [...conv.messages, userMessage], lastActivity: new Date() }
+              : conv
+          );
+          localStorage.setItem(storageKey, JSON.stringify(currentConvs));
+        } catch (e) {
+          console.warn('Failed to immediately save user message to localStorage:', e);
+        }
+      }
+      
       // Scroll to show user message immediately
       setTimeout(() => scrollToBottom(true), 50);
       
@@ -2613,6 +2630,14 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       let streamMetadata: any = null;
       let streamingStarted = false;
       
+      // Client-side timeout with AbortController (45s)
+      // This prevents hanging requests and allows faster fallback to non-streaming
+      const streamAbortController = new AbortController();
+      const streamTimeoutId = setTimeout(() => {
+        console.warn('[CHAT] Client-side timeout after 45s - aborting streaming request');
+        streamAbortController.abort();
+      }, 45000);
+      
       try {
         const response = await fetch(streamingUrl, {
           method: 'POST',
@@ -2639,7 +2664,11 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             pageContext: currentPageContext || getPageContext(),
             selectedAIModel
           }),
+          signal: streamAbortController.signal
         });
+        
+        // Clear timeout since we got a response
+        clearTimeout(streamTimeoutId);
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
