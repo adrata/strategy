@@ -518,6 +518,23 @@ export function RightPanel() {
     return new Set();
   });
   
+  // Reload deleted conversation IDs when workspaceId/userId become available
+  // This fixes the bug where closed tabs reappear after navigation
+  useEffect(() => {
+    if (typeof window !== 'undefined' && workspaceId && userId) {
+      try {
+        const storageKey = `adrata-deleted-conversations-${workspaceId}-${userId}`;
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          const loadedIds = new Set<string>(JSON.parse(stored));
+          setDeletedConversationIds(loadedIds);
+        }
+      } catch (error) {
+        console.warn('Failed to reload deleted conversation IDs:', error);
+      }
+    }
+  }, [workspaceId, userId]);
+  
   // Mock data for AI actions and team wins
   const [aiActions] = useState<AIAction[]>([
     {
