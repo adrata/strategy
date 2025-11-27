@@ -324,6 +324,14 @@ function evaluateHook(content: string, contentType: string, context: EvaluationC
   // Question hooks are powerful (Gong: 50% higher reply rate)
   if (firstLine.includes('?')) score += 12;
   
+  // LINKEDIN BONUS: Connection-style hooks work great
+  if (contentType === 'linkedin') {
+    const linkedInHooks = ['saw', 'noticed', 'your', 'congrats', 'impressive', 'love your'];
+    if (linkedInHooks.some(h => firstLine.includes(h))) {
+      score += 10; // Extra bonus for LinkedIn-appropriate hooks
+    }
+  }
+  
   return Math.max(0, Math.min(100, score));
 }
 
@@ -331,14 +339,21 @@ function evaluateHook(content: string, contentType: string, context: EvaluationC
  * STORY EVALUATION
  * Russell Brunson's "Epiphany Bridge" - enterprise adapted
  * 
+ * IMPORTANT: Not all content needs a full story!
+ * - Cold emails: Short proof/result is enough
+ * - LinkedIn: No story needed at all
+ * - Follow-ups: Reference prior conversation
+ * 
  * Great enterprise stories:
  * - Transformation narrative (before → after)
  * - Social proof through narrative (not just claims)
  * - Emotional resonance with business impact
  */
 function evaluateStory(content: string, context: EvaluationContext): number {
-  let score = 55; // Higher baseline
+  // High baseline - most messages don't NEED a full story
+  let score = 70;
   const lower = content.toLowerCase();
+  const wordCount = content.split(/\s+/).length;
   
   // TRANSFORMATION SIGNALS
   const transformationPairs = [
@@ -397,6 +412,19 @@ function evaluateStory(content: string, context: EvaluationContext): number {
   // Penalize pure feature lists (not story-driven)
   const bulletCount = (content.match(/^[-•*]\s/gm) || []).length;
   if (bulletCount > 3) score -= 8;
+  
+  // SHORT CONTENT BONUS: Under 60 words doesn't need a full story
+  // A quick proof/result mention is perfect for cold outreach
+  if (wordCount < 60) {
+    // For short content, having ANY proof is great
+    const hasAnyProof = storyProofPatterns.some(p => p.test(content)) || 
+                        /\d+%|\$[\d,]+k?|\d+\s*(hours|days)/.test(content);
+    if (hasAnyProof) {
+      score = Math.max(score, 85); // Minimum 85 for short content with proof
+    } else {
+      score = Math.max(score, 70); // Still decent without story
+    }
+  }
   
   return Math.max(0, Math.min(100, score));
 }
@@ -549,6 +577,14 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
     'see if it makes sense', 'no pressure', 'either way', 'if not'];
   if (riskReversal.some(r => lower.includes(r))) {
     score += 6;
+  }
+  
+  // LINKEDIN-SPECIFIC CTAs (different from email)
+  // LinkedIn works best with connection-focused asks, not meeting asks
+  const linkedInCTAs = ['open to connecting', 'worth connecting', 'happy to connect',
+                        'connect with you', 'add you', 'let\'s connect'];
+  if (linkedInCTAs.some(c => lower.includes(c))) {
+    score += 12; // LinkedIn-appropriate CTA
   }
   
   return Math.max(0, Math.min(100, score));
@@ -800,6 +836,26 @@ function evaluateWowFactor(content: string, context: EvaluationContext, contentT
   }
   if (contentType === 'linkedin' && wordCount > 75) {
     score -= Math.min((wordCount - 75) / 5, 15);
+  }
+  if (contentType === 'text' && wordCount > 40) {
+    score -= Math.min((wordCount - 40) / 3, 20);
+  }
+  
+  // CHANNEL-SPECIFIC WOW BONUSES
+  if (contentType === 'linkedin') {
+    // LinkedIn WOW: Connection-worthy, peer-to-peer feel
+    const linkedInWow = ['open to connecting', 'worth connecting', 'exchange approaches',
+                         'curious if', 'noticed your', 'your approach'];
+    if (linkedInWow.some(w => lower.includes(w))) {
+      score += 10;
+    }
+  }
+  
+  if (contentType === 'text') {
+    // Text WOW: Quick, punchy, direct
+    if (wordCount <= 30 && content.includes('?')) {
+      score += 15; // Short text with question = WOW
+    }
   }
   
   return Math.max(0, Math.min(100, score));
@@ -1193,12 +1249,29 @@ function evaluateElegance(content: string): number {
 function evaluateBrevity(content: string, contentType: ContentType): number {
   const wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
   
-  // Research-backed optimal ranges (Gong + Lavender + 30MPC)
-  // Note: These are "optimal" but anything under 100 should score well
+  // ==========================================================================
+  // RESEARCH-BACKED OPTIMAL WORD COUNTS BY CHANNEL
+  // ==========================================================================
+  // 
+  // EMAIL (Gong + Lavender + 30MPC research):
+  //   - 25-50 words = highest cold email response rates (Gong)
+  //   - Under 75 words for cold (30MPC)
+  //   - Under 100 words = 50%+ response rate (Lavender)
+  //
+  // LINKEDIN (Connection request research):
+  //   - Under 50 words = optimal for connection acceptance
+  //   - 20-40 words = sweet spot
+  //   - Keep it conversational, not salesy
+  //
+  // TEXT (SMS/iMessage best practices):
+  //   - Under 160 characters (1 SMS) is ideal
+  //   - ~25-35 words max
+  //   - Ultra-direct, one clear point
+  //
   const ranges: Record<ContentType, { min: number; ideal: number; max: number }> = {
-    email: { min: 35, ideal: 60, max: 100 },     // Lavender: under 100 is great
-    linkedin: { min: 20, ideal: 40, max: 80 },   // LinkedIn can be slightly longer
-    text: { min: 10, ideal: 20, max: 40 },
+    email: { min: 30, ideal: 55, max: 85 },      // Tighter range for cold
+    linkedin: { min: 15, ideal: 35, max: 55 },   // Shorter for LinkedIn
+    text: { min: 8, ideal: 20, max: 35 },        // Very short for texts
     advice: { min: 75, ideal: 150, max: 250 },
     general: { min: 35, ideal: 70, max: 125 }
   };
@@ -1526,44 +1599,65 @@ function calculateOverallScore(
   craft: QualityScore['craft'],
   contentType: ContentType
 ): number {
-  // Content type-specific weighting
-  // Text messages and advice have different expectations than sales emails
+  // ==========================================================================
+  // CHANNEL-SPECIFIC SCORING
+  // Each channel has different requirements and expectations
+  // ==========================================================================
+  
   if (contentType === 'text') {
-    // Text messages: clarity, brevity, and actionability matter most
+    // TEXT MESSAGES: Ultra-short, direct, no story needed
+    // Research: SMS = 160 chars, conversational, immediate value
     return Math.round(
-      craft.clarity * 0.25 +
-      craft.brevity * 0.30 +
-      craft.actionability * 0.25 +
-      craft.personalization * 0.10 +
-      craft.elegance * 0.10
+      framework.hook * 0.15 +          // Quick attention grab
+      craft.clarity * 0.25 +           // Must be instantly clear
+      craft.brevity * 0.30 +           // Under 40 words ideal
+      craft.actionability * 0.20 +     // Clear next step
+      craft.personalization * 0.10     // Name reference helps
+    );
+  }
+  
+  if (contentType === 'linkedin') {
+    // LINKEDIN: Short, peer-to-peer, NO STORY NEEDED
+    // Research: LinkedIn = 50-75 words, connection request feel
+    // Key: Hook + Reason + Soft Ask (no narrative required)
+    return Math.round(
+      framework.hook * 0.30 +           // Opening line is EVERYTHING
+      framework.offer * 0.25 +          // Clear but soft CTA
+      framework.wowFactor * 0.20 +      // Would they accept/reply?
+      craft.personalization * 0.15 +    // Shows you know them
+      craft.brevity * 0.10              // Keep it short
+      // NOTE: No story weight - LinkedIn doesn't need transformation narratives
     );
   }
   
   if (contentType === 'advice') {
-    // Advice: clarity, actionability, and value matter most
+    // ADVICE: Clarity and actionability over everything
     return Math.round(
-      craft.clarity * 0.25 +
+      craft.clarity * 0.30 +
       craft.actionability * 0.25 +
-      framework.storyBrand * 0.15 +
+      framework.storyBrand * 0.15 +     // Guide structure helps
       craft.personalization * 0.15 +
-      craft.elegance * 0.10 +
-      craft.brevity * 0.10
+      craft.elegance * 0.15
     );
   }
   
-  // For email and LinkedIn - full framework evaluation
-  // Framework weights (Russell Brunson + StoryBrand)
+  // ==========================================================================
+  // EMAIL: Full framework evaluation
+  // Cold emails can have short "proof" but don't require full story
+  // ==========================================================================
+  
+  // Framework weights (Russell Brunson adapted for B2B)
   const frameworkWeight = 0.30;
   const frameworkScore = (
-    framework.hook * 0.25 +      // Hook is critical for cold
-    framework.story * 0.15 +
-    framework.offer * 0.25 +     // Offer/CTA matters
-    framework.storyBrand * 0.10 +
-    framework.wowFactor * 0.25   // Would seller LOVE this? (key differentiator)
+    framework.hook * 0.30 +      // Hook is critical for inbox standout
+    framework.story * 0.10 +     // REDUCED - short proof is fine, not full narrative
+    framework.offer * 0.30 +     // CTA is crucial (Gong: single CTA = 371% more clicks)
+    framework.storyBrand * 0.05 + // Light touch - hero focus matters
+    framework.wowFactor * 0.25   // Would seller LOVE this?
   );
   
   // Sales intelligence weights (Skip Miller)
-  const salesWeight = 0.20;
+  const salesWeight = 0.15;       // REDUCED - good messaging matters more than perfect alignment
   const salesScore = (
     salesIntelligence.buyerLevelAlignment * 0.30 +
     salesIntelligence.statusAlignment * 0.25 +
@@ -1571,16 +1665,16 @@ function calculateOverallScore(
     salesIntelligence.personalityMatch * 0.20
   );
   
-  // Craft weights
-  const craftWeight = 0.50;
+  // Craft weights - THE MAIN EVENT
+  const craftWeight = 0.55;       // INCREASED - execution matters most
   const craftScore = (
     craft.clarity * 0.12 +
-    craft.personalization * 0.25 +    // Personalization is key
-    craft.elegance * 0.12 +
-    craft.brevity * 0.12 +
-    craft.actionability * 0.12 +
-    craft.writingStyleMatch * 0.10 +
-    craft.sellerAuthenticity * 0.17   // Would seller LOVE to send this?
+    craft.personalization * 0.25 +    // Personalization is key (Lavender: 2x response)
+    craft.elegance * 0.10 +
+    craft.brevity * 0.15 +            // INCREASED - short = better (Gong data)
+    craft.actionability * 0.15 +      // INCREASED - must have clear CTA
+    craft.writingStyleMatch * 0.08 +
+    craft.sellerAuthenticity * 0.15   // Would seller LOVE to send this?
   );
   
   return Math.round(
