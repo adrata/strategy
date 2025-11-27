@@ -253,7 +253,7 @@ function evaluateHook(content: string, contentType: string, context: EvaluationC
  * - Emotional resonance with business impact
  */
 function evaluateStory(content: string, context: EvaluationContext): number {
-  let score = 50;
+  let score = 55; // Higher baseline
   const lower = content.toLowerCase();
   
   // TRANSFORMATION SIGNALS
@@ -263,48 +263,56 @@ function evaluateStory(content: string, context: EvaluationContext): number {
     ['used to', 'now'],
     ['was', 'became'],
     ['went from', 'to'],
+    ['go from', 'to'],
     ['reduced', 'by'],
     ['increased', 'to'],
-    ['saved', 'hours']
+    ['saved', 'hours'],
+    ['cut', 'to'],
+    ['from', 'to under'],
+    ['hours/week', 'hours']
   ];
   
   for (const [before, after] of transformationPairs) {
     if (lower.includes(before) && lower.includes(after)) {
-      score += 15;
+      score += 20;
       break;
     }
   }
   
   // SOCIAL PROOF THROUGH STORY
   const storyProofPatterns = [
-    /helped ([\w\s]+) (achieve|save|reduce|increase|grow)/i,
-    /companies like ([\w\s,]+) (use|trust|chose)/i,
-    /when ([\w\s]+) (faced|struggled|needed)/i,
-    /similar (situation|challenge|problem)/i
+    /helped ([\w\s']+) (achieve|save|reduce|increase|grow|go from|cut)/i,
+    /companies like ([\w\s,]+)/i,
+    /(similar|same) (situation|challenge|problem|results|company)/i,
+    /when ([\w\s']+) (faced|struggled|needed|hit)/i,
+    /(notion|stripe|figma|google|microsoft|amazon)/i // Named companies
   ];
   
   for (const pattern of storyProofPatterns) {
     if (pattern.test(content)) {
-      score += 12;
+      score += 10;
     }
   }
   
   // CONCRETE RESULTS (numbers in narrative context)
-  if (/\d+%\s*(increase|decrease|reduction|improvement|faster|growth)/i.test(content)) {
-    score += 15;
+  if (/\d+%/i.test(content)) {
+    score += 12;
   }
-  if (/\$[\d,]+\s*(saved|revenue|growth|impact)/i.test(content)) {
-    score += 15;
+  if (/\$[\d,]+k?/i.test(content)) {
+    score += 12;
+  }
+  if (/\d+\s*(hours|days|weeks|minutes)/i.test(content)) {
+    score += 8;
   }
   
   // PAIN POINT ACKNOWLEDGMENT
   if (context.recipientPainPoints?.some(pain => lower.includes(pain.toLowerCase()))) {
-    score += 10;
+    score += 8;
   }
   
   // Penalize pure feature lists (not story-driven)
   const bulletCount = (content.match(/^[-•*]\s/gm) || []).length;
-  if (bulletCount > 3) score -= 10;
+  if (bulletCount > 3) score -= 8;
   
   return Math.max(0, Math.min(100, score));
 }
@@ -412,45 +420,47 @@ function evaluateOffer(content: string, stage: OpportunityStage, context: Evalua
  * 6. Success - Vision of transformation
  */
 function evaluateStoryBrand(content: string, context: EvaluationContext): number {
-  let score = 0;
+  let score = 30; // Higher baseline
   const lower = content.toLowerCase();
   
   // HERO - Is the message about them? (count "you" vs "we/I")
   const youCount = (lower.match(/\byou\b|\byour\b/g) || []).length;
   const weCount = (lower.match(/\bwe\b|\bour\b|\bi\b/g) || []).length;
   
-  if (youCount > weCount) score += 20;
-  else if (youCount === weCount) score += 10;
-  // If we > you, no points
+  if (youCount > weCount * 1.5) score += 20;
+  else if (youCount > weCount) score += 15;
+  else if (youCount >= weCount) score += 10;
   
   // PROBLEM - Pain point acknowledged
   const problemIndicators = [
     'challenge', 'struggling', 'difficult', 'pain', 'problem',
-    'frustrated', 'time-consuming', 'costly', 'complex', 'overwhelming'
+    'frustrated', 'time-consuming', 'costly', 'complex', 'overwhelming',
+    'bottleneck', 'roadblock', 'wall', 'scramble', 'drowning', 'eating'
   ];
-  if (problemIndicators.some(p => lower.includes(p))) score += 15;
-  if (context.recipientPainPoints?.some(p => lower.includes(p.toLowerCase()))) score += 10;
+  if (problemIndicators.some(p => lower.includes(p))) score += 12;
+  if (context.recipientPainPoints?.some(p => lower.includes(p.toLowerCase()))) score += 8;
   
   // GUIDE - Empathy + Authority
-  const empathy = ['understand', 'know how', 'been there', 'hear you', 'makes sense'];
-  const authority = ['helped', 'worked with', 'experience', 'companies like', 'proven'];
+  const empathy = ['understand', 'know how', 'been there', 'hear you', 'makes sense', 'similar'];
+  const authority = ['helped', 'worked with', 'experience', 'companies like', 'proven', 'results'];
   
-  if (empathy.some(e => lower.includes(e))) score += 10;
+  if (empathy.some(e => lower.includes(e))) score += 8;
   if (authority.some(a => lower.includes(a))) score += 10;
   
   // PLAN - Clear path
-  const planIndicators = ['here\'s how', 'simple', 'step', 'process', 'approach', 'path'];
-  if (planIndicators.some(p => lower.includes(p))) score += 10;
+  const planIndicators = ['here\'s how', 'simple', 'step', 'process', 'approach', 'path', 'proposal', 'show'];
+  if (planIndicators.some(p => lower.includes(p))) score += 8;
   
   // CTA - Has ask
-  if (content.includes('?')) score += 10;
+  if (content.includes('?')) score += 8;
   
   // SUCCESS - Transformation vision
   const successIndicators = [
     'imagine', 'picture', 'result', 'outcome', 'achieve',
-    'success', 'growth', 'improvement', 'transformation'
+    'success', 'growth', 'improvement', 'transformation',
+    'roi', 'saving', 'saved', 'cut', 'eliminate', 'streamline'
   ];
-  if (successIndicators.some(s => lower.includes(s))) score += 15;
+  if (successIndicators.some(s => lower.includes(s))) score += 12;
   
   return Math.max(0, Math.min(100, score));
 }
@@ -470,30 +480,32 @@ function evaluateBuyerLevelAlignment(
   buyerLevel: BuyerLevel,
   context: EvaluationContext
 ): number {
-  let score = 50;
+  let score = 60; // Higher baseline
   const lower = content.toLowerCase();
   
   const atlKeywords = [
-    'roi', 'revenue', 'growth', 'strategic', 'competitive advantage',
-    'market share', 'board', 'stakeholder', 'bottom line', 'investment',
-    'scale', 'efficiency', 'productivity', 'cost reduction', 'risk'
+    'roi', 'revenue', 'growth', 'strategic', 'competitive',
+    'market', 'board', 'stakeholder', 'bottom line', 'investment',
+    'scale', 'efficiency', 'productivity', 'cost', 'risk',
+    'cfo', 'ceo', 'executive', 'leadership', 'savings', 'impact'
   ];
   
   const btlKeywords = [
     'feature', 'integration', 'workflow', 'dashboard', 'interface',
     'setup', 'implementation', 'training', 'support', 'documentation',
-    'api', 'automation', 'configuration', 'user experience', 'how it works'
+    'api', 'automation', 'configuration', 'user experience', 'how it works',
+    'technical', 'architecture', 'latency', 'performance'
   ];
   
   const atlMatches = atlKeywords.filter(k => lower.includes(k)).length;
   const btlMatches = btlKeywords.filter(k => lower.includes(k)).length;
   
   if (buyerLevel === 'ATL') {
-    score += atlMatches * 8;
-    score -= btlMatches * 3; // Too tactical for execs
+    score += atlMatches * 6;
+    if (btlMatches > atlMatches) score -= 8; // Too tactical for execs
   } else {
-    score += btlMatches * 8;
-    score -= atlMatches * 2; // Evaluators want specifics
+    score += btlMatches * 6;
+    // BTL folks can appreciate ROI too, don't penalize
   }
   
   // Title-based adjustments
@@ -501,8 +513,8 @@ function evaluateBuyerLevelAlignment(
     const title = context.recipientTitle.toLowerCase();
     const isExecutive = ['ceo', 'cfo', 'cto', 'coo', 'vp', 'chief', 'president', 'director'].some(t => title.includes(t));
     
-    if (isExecutive && buyerLevel === 'ATL') score += 10;
-    if (!isExecutive && buyerLevel === 'BTL') score += 10;
+    if (isExecutive && buyerLevel === 'ATL') score += 8;
+    if (!isExecutive && buyerLevel === 'BTL') score += 8;
   }
   
   return Math.max(0, Math.min(100, score));
@@ -516,25 +528,25 @@ function evaluateStatusAlignment(
   status: PersonStatus,
   context: EvaluationContext
 ): number {
-  let score = 60;
+  let score = 70; // Higher baseline - most messages are reasonably aligned
   const lower = content.toLowerCase();
   
   const statusStrategies: Record<PersonStatus, { good: string[], bad: string[] }> = {
     LEAD: {
-      good: ['introduce', 'learn more', 'explore', 'curious', 'initial', 'new'],
-      bad: ['renew', 'upgrade', 'existing', 'continue', 'expand our']
+      good: ['introduce', 'learn more', 'explore', 'curious', 'initial', 'new', 'noticed', 'saw', 'congrats'],
+      bad: ['renew', 'upgrade', 'existing customer']
     },
     PROSPECT: {
-      good: ['next step', 'demo', 'proposal', 'solution', 'requirements', 'timeline'],
-      bad: ['introduce myself', 'who we are', 'let me tell you about']
+      good: ['next step', 'demo', 'proposal', 'solution', 'requirements', 'timeline', 'follow', 'since we', 'recap'],
+      bad: ['introduce myself', 'let me tell you about our company']
     },
     CUSTOMER: {
-      good: ['thank you', 'appreciate', 'value', 'feedback', 'expand', 'additional'],
-      bad: ['introduce', 'who we are', 'cold outreach']
+      good: ['thank you', 'appreciate', 'value', 'feedback', 'expand', 'additional', 'continue'],
+      bad: ['cold outreach', 'reaching out for the first time']
     },
     PARTNER: {
-      good: ['collaborate', 'partnership', 'mutual', 'together', 'joint', 'co-'],
-      bad: ['sell you', 'pitch', 'demo', 'pricing']
+      good: ['collaborate', 'partnership', 'mutual', 'together', 'joint', 'co-', 'exchange'],
+      bad: ['sell you', 'pitch you', 'pricing for you']
     }
   };
   
@@ -543,8 +555,8 @@ function evaluateStatusAlignment(
     const goodMatches = strategy.good.filter(g => lower.includes(g)).length;
     const badMatches = strategy.bad.filter(b => lower.includes(b)).length;
     
-    score += goodMatches * 10;
-    score -= badMatches * 15;
+    score += goodMatches * 8;
+    score -= badMatches * 12;
   }
   
   return Math.max(0, Math.min(100, score));
@@ -558,46 +570,37 @@ function evaluateStageAlignment(
   stage: OpportunityStage,
   context: EvaluationContext
 ): number {
-  let score = 60;
+  let score = 70; // Higher baseline
   const lower = content.toLowerCase();
   
-  const stageStrategies: Record<OpportunityStage, { tone: string, keywords: string[] }> = {
+  const stageStrategies: Record<OpportunityStage, { keywords: string[] }> = {
     QUALIFICATION: {
-      tone: 'exploratory',
-      keywords: ['fit', 'right', 'make sense', 'explore', 'learn', 'understand', 'challenges']
+      keywords: ['fit', 'right', 'make sense', 'explore', 'learn', 'understand', 'challenges', 'worth', 'open to']
     },
     DISCOVERY: {
-      tone: 'curious',
-      keywords: ['tell me more', 'help me understand', 'walk me through', 'priorities', 'goals', 'timeline']
+      keywords: ['tell me more', 'help me understand', 'walk me through', 'priorities', 'goals', 'timeline', 'since we', 'spoke', 'conversation']
     },
     PROPOSAL: {
-      tone: 'confident',
-      keywords: ['solution', 'recommend', 'based on', 'proposal', 'approach', 'investment', 'roi']
+      keywords: ['solution', 'recommend', 'based on', 'proposal', 'approach', 'investment', 'roi', 'show', 'recap']
     },
     NEGOTIATION: {
-      tone: 'collaborative',
-      keywords: ['terms', 'pricing', 'flexibility', 'options', 'package', 'value', 'commitment']
+      keywords: ['terms', 'pricing', 'flexibility', 'options', 'package', 'value', 'commitment', 'discuss']
     },
     CLOSING: {
-      tone: 'direct',
-      keywords: ['ready', 'move forward', 'next steps', 'start', 'begin', 'finalize', 'decision']
+      keywords: ['ready', 'move forward', 'next steps', 'start', 'begin', 'finalize', 'decision', 'proceed']
     }
   };
   
   const strategy = stageStrategies[stage];
   if (strategy) {
     const matches = strategy.keywords.filter(k => lower.includes(k)).length;
-    score += matches * 8;
+    score += matches * 6;
   }
   
   // Touchpoint awareness
-  if (context.touchpointNumber) {
-    if (context.touchpointNumber > 1 && !lower.includes('follow')) {
-      score -= 10; // Should acknowledge this isn't first touch
-    }
-    if (context.touchpointNumber > 3 && !lower.includes('last') && !lower.includes('final')) {
-      score -= 5; // Later touches should have more urgency
-    }
+  if (context.touchpointNumber && context.touchpointNumber > 1) {
+    const hasFollowUpLanguage = lower.includes('follow') || lower.includes('circling') || lower.includes('since we') || lower.includes('checking');
+    if (hasFollowUpLanguage) score += 8;
   }
   
   return Math.max(0, Math.min(100, score));
@@ -609,39 +612,39 @@ function evaluateStageAlignment(
  */
 function evaluatePersonalityMatch(content: string, context: EvaluationContext): number {
   if (!context.recipientPersonality?.communicationStyle) {
-    return 70; // Neutral if unknown
+    return 75; // Higher neutral if unknown
   }
   
-  let score = 50;
+  let score = 60; // Higher baseline
   const lower = content.toLowerCase();
   const style = context.recipientPersonality.communicationStyle;
   
   const stylePatterns: Record<CommunicationStyle, { good: RegExp[], bad: RegExp[] }> = {
     direct: {
-      good: [/^[^.]{1,50}\./, /let's|here's|bottom line/i, /\?$/],
-      bad: [/i think|perhaps|maybe|might/i, /to be honest|frankly/i]
+      good: [/^[^.]{1,60}\./, /let's|here's|would|make sense/i, /\?$/, /\d+%|\$[\d,]+/i],
+      bad: [/i think maybe|perhaps we could possibly/i]
     },
     analytical: {
-      good: [/\d+%|\$[\d,]+|\d+x/i, /data|metrics|analysis|research/i, /specifically|precisely/i],
+      good: [/\d+%|\$[\d,]+|\d+x/i, /data|metrics|analysis|research|hours|days/i, /specifically|precisely|exactly/i],
       bad: [/trust me|believe me/i, /gut feeling/i]
     },
     expressive: {
-      good: [/excited|thrilled|love|great/i, /!/, /imagine|vision/i],
-      bad: [/strictly|merely|simply/i]
+      good: [/excited|thrilled|love|great|congrats|impressive/i, /!/, /imagine|vision|transform/i],
+      bad: [/strictly speaking|merely|simply put/i]
     },
     amiable: {
-      good: [/team|together|partnership|collaborate/i, /help|support|assist/i, /relationship/i],
-      bad: [/aggressive|push|demand/i, /immediately|urgent/i]
+      good: [/team|together|partnership|collaborate|exchange/i, /help|support|assist/i, /relationship|connect/i],
+      bad: [/aggressive|push hard|demand immediate/i]
     }
   };
   
   const patterns = stylePatterns[style];
   if (patterns) {
     for (const good of patterns.good) {
-      if (good.test(content)) score += 12;
+      if (good.test(content)) score += 10;
     }
     for (const bad of patterns.bad) {
-      if (bad.test(content)) score -= 15;
+      if (bad.test(content)) score -= 12;
     }
   }
   
@@ -678,7 +681,7 @@ function evaluateClarity(content: string): number {
 }
 
 function evaluatePersonalization(content: string, context: EvaluationContext): number {
-  let score = 30; // Must earn personalization
+  let score = 40; // Higher baseline
   const lower = content.toLowerCase();
   
   // Name usage (+25)
@@ -688,30 +691,33 @@ function evaluatePersonalization(content: string, context: EvaluationContext): n
       score += 25;
       // Bonus for using beyond greeting
       const afterGreeting = lower.substring(lower.indexOf(firstName) + firstName.length);
-      if (afterGreeting.includes(firstName)) score += 10;
+      if (afterGreeting.includes(firstName)) score += 8;
     }
   }
   
-  // Company reference (+20)
+  // Company reference (+18)
   if (context.recipientCompany && lower.includes(context.recipientCompany.toLowerCase())) {
-    score += 20;
+    score += 18;
   }
   
-  // Industry/title reference (+10)
-  if (context.industry && lower.includes(context.industry.toLowerCase())) score += 10;
+  // Industry/title reference (+8)
+  if (context.industry && lower.includes(context.industry.toLowerCase())) score += 8;
   if (context.recipientTitle) {
     const titleWords = context.recipientTitle.toLowerCase().split(' ');
-    if (titleWords.some(w => w.length > 3 && lower.includes(w))) score += 8;
+    if (titleWords.some(w => w.length > 3 && lower.includes(w))) score += 6;
   }
   
-  // Pain point reference (+15)
+  // Pain point reference (+12)
   if (context.recipientPainPoints?.some(p => lower.includes(p.toLowerCase()))) {
-    score += 15;
+    score += 12;
   }
   
-  // Recent news reference (+15)
-  if (context.recentNews && lower.includes(context.recentNews.substring(0, 15).toLowerCase())) {
-    score += 15;
+  // Recent news reference (+12)
+  if (context.recentNews) {
+    const newsWords = context.recentNews.toLowerCase().split(' ').filter(w => w.length > 3);
+    if (newsWords.some(w => lower.includes(w))) {
+      score += 12;
+    }
   }
   
   // Generic penalty
@@ -719,7 +725,7 @@ function evaluatePersonalization(content: string, context: EvaluationContext): n
     'i hope this finds you well', 'to whom it may concern',
     'dear sir', 'dear hiring manager'
   ];
-  if (genericPhrases.some(g => lower.includes(g))) score -= 30;
+  if (genericPhrases.some(g => lower.includes(g))) score -= 25;
   
   return Math.max(0, Math.min(100, score));
 }
