@@ -106,7 +106,7 @@ export async function GET(
           ]
         },
         include: {
-          customFields: true, // Include customFields for AI context (intelligence data)
+          // Note: customFields is a JSON field, not a relation - it's automatically included
           mainSeller: {
             select: {
               id: true,

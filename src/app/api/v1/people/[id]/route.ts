@@ -98,7 +98,7 @@ export async function GET(
       },
       include: {
         corePerson: true,
-        customFields: true, // Include customFields for AI context (intelligence data)
+        // Note: customFields is a JSON field, not a relation - it's automatically included
         company: {
           select: {
             id: true,
@@ -164,7 +164,7 @@ export async function GET(
         where: { id },
         include: {
           corePerson: true,
-          customFields: true, // Include customFields for AI context (intelligence data)
+          // Note: customFields is a JSON field, not a relation - it's automatically included
           company: {
             select: {
               id: true,
