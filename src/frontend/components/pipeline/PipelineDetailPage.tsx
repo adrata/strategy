@@ -128,7 +128,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         ...(selectedRecord.customFields?.monacoEnrichment && { 
           monacoEnrichment: selectedRecord.customFields.monacoEnrichment 
         }),
+        // 🔧 CRITICAL FIX: Include full customFields for AI context
+        // This contains all intelligence data: painPoints, goals, strategySummary, challenges, opportunities, etc.
+        // Without this, the AI cannot access the intelligence tabs data
+        ...(selectedRecord.customFields && { 
+          customFields: selectedRecord.customFields 
+        }),
         // Include company object if it exists (for nested company data)
+        // 🔧 CRITICAL: Include company's customFields for AI context (business challenges, competitors, etc.)
         ...(typeof selectedRecord.company === 'object' && selectedRecord.company && {
           company: {
             ...selectedRecord.company,
@@ -137,6 +144,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             size: selectedRecord.company.size || selectedRecord.company.employeeCount || null,
             website: selectedRecord.company.website || null,
             description: selectedRecord.company.description || null,
+            // Include company's intelligence data from customFields
+            customFields: selectedRecord.company.customFields || null,
           }
         }),
         // Add speedrun-specific context if this is a speedrun record
