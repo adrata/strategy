@@ -16,6 +16,61 @@ import { BuyerGroupSyncService } from '@/platform/services/buyer-group-sync-serv
 // Force dynamic rendering for API routes (required for authentication and database queries)
 export const dynamic = 'force-dynamic';
 
+/**
+ * Safe date serialization helper - prevents RangeError on invalid dates
+ */
+function safeToISOString(dateValue: any): string | null {
+  if (dateValue === null || dateValue === undefined) return null;
+  try {
+    const date = new Date(dateValue);
+    // Check if date is valid (Invalid Date returns NaN for getTime())
+    if (isNaN(date.getTime())) {
+      console.warn('⚠️ [PEOPLE API] Invalid date value:', dateValue);
+      return null;
+    }
+    return date.toISOString();
+  } catch (error) {
+    console.warn('⚠️ [PEOPLE API] Error converting date to ISO string:', dateValue, error);
+    return null;
+  }
+}
+
+/**
+ * Sanitize object for JSON serialization - handles BigInt, circular refs, etc.
+ */
+function sanitizeForJSON(obj: any, seen = new WeakSet()): any {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === 'bigint') return obj.toString();
+  if (typeof obj === 'function') return undefined;
+  if (typeof obj !== 'object') return obj;
+  
+  // Handle circular references
+  if (seen.has(obj)) {
+    return '[Circular Reference]';
+  }
+  seen.add(obj);
+  
+  if (Array.isArray(obj)) {
+    return obj.map(item => sanitizeForJSON(item, seen));
+  }
+  
+  // Handle Date objects
+  if (obj instanceof Date) {
+    return isNaN(obj.getTime()) ? null : obj.toISOString();
+  }
+  
+  const result: any = {};
+  for (const [key, value] of Object.entries(obj)) {
+    try {
+      result[key] = sanitizeForJSON(value, seen);
+    } catch (e) {
+      console.warn(`⚠️ [PEOPLE API] Error sanitizing field ${key}:`, e);
+      result[key] = null;
+    }
+  }
+  return result;
+}
+
 // GET /api/v1/people/[id] - Get a specific person
 export async function GET(
   request: NextRequest,
@@ -245,17 +300,13 @@ export async function GET(
       }
     });
 
-    // 🔧 DATE SERIALIZATION FIX: Ensure dates are properly formatted for JSON serialization
+    // 🔧 DATE SERIALIZATION FIX: Use safe helper to prevent RangeError on invalid dates
     const responseData = {
       ...transformedPerson,
-      // Explicitly ensure dates are properly formatted for JSON serialization
-      createdAt: transformedPerson.createdAt ? new Date(transformedPerson.createdAt).toISOString() : null,
+      // Use safe date serialization to prevent crashes on invalid date values
+      createdAt: safeToISOString(transformedPerson.createdAt),
       // Use createdAt as fallback if updatedAt is null/undefined (common for older records)
-      updatedAt: transformedPerson.updatedAt 
-        ? new Date(transformedPerson.updatedAt).toISOString() 
-        : transformedPerson.createdAt 
-          ? new Date(transformedPerson.createdAt).toISOString()
-          : null,
+      updatedAt: safeToISOString(transformedPerson.updatedAt) || safeToISOString(transformedPerson.createdAt),
       // IMPORTANT: Explicitly include all editable fields to ensure they're always in response (even if null)
       // This ensures fields are present on initial load and prevents disappearing
       // Basic Information
@@ -288,8 +339,8 @@ export async function GET(
       nextAction: transformedPerson.nextAction ?? null,
       // Notes
       notes: transformedPerson.notes ?? null,
-      // Custom Fields (includes intelligence data like painPoints, goals, strategy, etc.)
-      customFields: transformedPerson.customFields ?? null
+      // Custom Fields - sanitize to prevent JSON serialization errors (BigInt, circular refs, etc.)
+      customFields: sanitizeForJSON(transformedPerson.customFields) ?? null
     };
 
     console.log(`🔍 [DATE SERIALIZATION] Final response data dates:`, {

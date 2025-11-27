@@ -149,10 +149,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
           break;
         case 'OPPORTUNITY':
-          // For OPPORTUNITY status, navigate to the person's prospect record
-          // (A person with OPPORTUNITY status is still a prospect - they're part of an opportunity)
-          personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
-          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to person's prospect record: ${personName}`);
+          // For OPPORTUNITY status, navigate to the opportunities section
+          // The opportunities route now handles both company deals AND people with OPPORTUNITY status
+          personUrl = `/${workspaceSlug}/opportunities/${personSlug}`;
+          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to opportunities: ${personName}`);
           break;
         default:
           // CLIENT, SUPERFAN, or any other status
@@ -1088,10 +1088,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
           break;
         case 'OPPORTUNITY':
-          // For OPPORTUNITY status, navigate to the person's prospect record
-          // (A person with OPPORTUNITY status is still a prospect - they're part of an opportunity)
-          personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
-          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to person's prospect record: ${personName}`);
+          // For OPPORTUNITY status, navigate to the opportunities section
+          // The opportunities route now handles both company deals AND people with OPPORTUNITY status
+          personUrl = `/${workspaceSlug}/opportunities/${personSlug}`;
+          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to opportunities: ${personName}`);
           break;
         default:
           // CLIENT, SUPERFAN, or any other status

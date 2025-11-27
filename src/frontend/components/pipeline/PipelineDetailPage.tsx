@@ -753,15 +753,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       
       // Use appropriate v1 API based on section
       if (section === 'opportunities') {
-        // Opportunities are now in their own table
-        // 🔧 FIX: Fallback to companies API if opportunities table doesn't exist (local dev)
+        // Opportunities can be either companies (deals) OR people with OPPORTUNITY status
+        // 🔧 FIX: Try opportunities API first, then companies, then people
         response = await fetch(`/api/v1/opportunities/${recordId}`, {
           credentials: 'include'
         });
         
         // If opportunities API fails (500 - table doesn't exist), try companies API
         if (!response.ok && response.status === 500) {
-          // Clone response to read error text without consuming the body
           const responseClone = response.clone();
           const errorText = await responseClone.text().catch(() => '');
           if (errorText.includes('does not exist') || errorText.includes('table') || errorText.includes('opportunities')) {
@@ -770,6 +769,15 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               credentials: 'include'
             });
           }
+        }
+        
+        // If opportunities/companies API returns 404, this might be a PERSON with OPPORTUNITY status
+        // (e.g., a buyer group member associated with an opportunity)
+        if (!response.ok && response.status === 404) {
+          console.log(`🔍 [DIRECT LOAD] Opportunities API returned 404, trying people API for record: ${recordId}`);
+          response = await fetch(`/api/v1/people/${recordId}`, {
+            credentials: 'include'
+          });
         }
       } else if (section === 'companies') {
         response = await fetch(`/api/v1/companies/${recordId}`, {
