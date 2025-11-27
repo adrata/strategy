@@ -9,21 +9,41 @@
 
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 
-// Create the OpenRouter provider instance
-// This is compatible with Vercel AI SDK's streamText, generateText, etc.
-export const openrouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY || '',
-});
+// Create a function that returns the OpenRouter provider with the API key
+// This is necessary because env vars may not be available at module load time on Vercel serverless
+// We create the provider lazily to ensure the API key is available
+let _openrouterInstance: ReturnType<typeof createOpenRouter> | null = null;
+
+function getOpenRouterInstance() {
+  if (!_openrouterInstance) {
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      console.error('[OpenRouter] CRITICAL: OPENROUTER_API_KEY not found in environment');
+    }
+    _openrouterInstance = createOpenRouter({
+      apiKey: apiKey || '',
+    });
+  }
+  return _openrouterInstance;
+}
+
+// Export as a callable that returns the provider with the model
+// Usage: openrouter('model-id') returns the model instance for streamText
+export const openrouter = (modelId: string) => {
+  const instance = getOpenRouterInstance();
+  return instance(modelId);
+};
 
 // Model constants for easy reference
 // Using VERIFIED OpenRouter model IDs - see https://openrouter.ai/models
+// Important: Use base model IDs without version suffixes for best routing
 export const OPENROUTER_MODELS = {
-  // Fast/cheap models for simple queries
+  // Fast/cheap models for simple queries - MOST RELIABLE
   HAIKU: 'anthropic/claude-3-haiku',
   GPT4O_MINI: 'openai/gpt-4o-mini',
   GEMINI_FLASH: 'google/gemini-flash-1.5',
   
-  // Standard models for typical queries (Claude 3.5 Sonnet is excellent for most tasks)
+  // Standard models for typical queries
   SONNET: 'anthropic/claude-3.5-sonnet',
   GPT4O: 'openai/gpt-4o',
   GEMINI_PRO: 'google/gemini-pro-1.5',
