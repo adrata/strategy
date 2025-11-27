@@ -755,29 +755,42 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       if (section === 'opportunities') {
         // Opportunities can be either companies (deals) OR people with OPPORTUNITY status
         // 🔧 FIX: Try opportunities API first, then companies, then people
-        response = await fetch(`/api/v1/opportunities/${recordId}`, {
+        // Always try people API first for person records accessed via /opportunities/
+        // This ensures we get person data, not company data
+        
+        // First, try the people API to check if this is a person record
+        console.log(`🔍 [DIRECT LOAD] Checking if ${recordId} is a person record...`);
+        const peopleResponse = await fetch(`/api/v1/people/${recordId}`, {
           credentials: 'include'
         });
         
-        // If opportunities API fails (500 - table doesn't exist), try companies API
-        if (!response.ok && response.status === 500) {
-          const responseClone = response.clone();
-          const errorText = await responseClone.text().catch(() => '');
-          if (errorText.includes('does not exist') || errorText.includes('table') || errorText.includes('opportunities')) {
-            console.log(`⚠️ [DIRECT LOAD] Opportunities table doesn't exist, falling back to companies API for record: ${recordId}`);
-            response = await fetch(`/api/v1/companies/${recordId}`, {
-              credentials: 'include'
-            });
-          }
-        }
-        
-        // If opportunities/companies API returns 404, this might be a PERSON with OPPORTUNITY status
-        // (e.g., a buyer group member associated with an opportunity)
-        if (!response.ok && response.status === 404) {
-          console.log(`🔍 [DIRECT LOAD] Opportunities API returned 404, trying people API for record: ${recordId}`);
-          response = await fetch(`/api/v1/people/${recordId}`, {
+        if (peopleResponse.ok) {
+          // This is a person record - use the people API response
+          console.log(`✅ [DIRECT LOAD] Found person record via people API: ${recordId}`);
+          response = peopleResponse;
+        } else {
+          // Not a person, try opportunities API
+          console.log(`🔍 [DIRECT LOAD] Not a person record, trying opportunities API for: ${recordId}`);
+          response = await fetch(`/api/v1/opportunities/${recordId}`, {
             credentials: 'include'
           });
+          
+          // If opportunities API fails (500 - table doesn't exist), try companies API
+          if (!response.ok && response.status === 500) {
+            const responseClone = response.clone();
+            const errorText = await responseClone.text().catch(() => '');
+            if (errorText.includes('does not exist') || errorText.includes('table') || errorText.includes('opportunities')) {
+              console.log(`⚠️ [DIRECT LOAD] Opportunities table doesn't exist, falling back to companies API for record: ${recordId}`);
+              response = await fetch(`/api/v1/companies/${recordId}`, {
+                credentials: 'include'
+              });
+            }
+          }
+          
+          // If opportunities/companies API returns 404, record truly doesn't exist
+          if (!response.ok && response.status === 404) {
+            console.log(`❌ [DIRECT LOAD] Record not found in any API: ${recordId}`);
+          }
         }
       } else if (section === 'companies') {
         response = await fetch(`/api/v1/companies/${recordId}`, {
