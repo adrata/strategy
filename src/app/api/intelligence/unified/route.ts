@@ -264,33 +264,31 @@ async function executeChatIntelligence(depth: string, target: any, options: any,
         options.conversationHistory.some((msg: any) => 
           msg['content'] && msg.content.includes("draft an email to Steve Ferro"))) {
       
+      // RESEARCH-BACKED EMAIL (Gong + 30MPC + Lavender): <75 words, name + observation, soft CTA
       const emailDraftResponse = `📧 **Email Draft: Steve Ferro at DataCorp**
 
-**Subject:** Quick question about DataCorp's security infrastructure
+**Subject:** Quick question for Steve
 
-Hi Steve,
+Steve - noticed DataCorp's been scaling fast.
 
-I hope this email finds you well. I came across your profile and was impressed by your role in sales operations at DataCorp.
+Companies growing at your pace typically hit security bottlenecks around this stage. We helped similar ops teams cut their compliance overhead by 40%.
 
-I'm reaching out because I noticed DataCorp has been expanding rapidly, and I wanted to share some insights about how similar companies in your space are optimizing their security infrastructure to support growth.
+Worth a quick call to see if this applies to DataCorp?
 
-Specifically, I've been working with companies like DataCorp on:
-• **Security automation** that reduces manual overhead by 40%
-• **Compliance frameworks** that scale with rapid growth
-• **Integration strategies** that don't slow down sales operations
-
-Would you be open to a brief 15-minute conversation about how DataCorp is currently handling security scalability? I'd love to share some relevant case studies and see if there might be a fit.
-
-I can also connect you with Susan Smith (Director of IT Security) or Jackson Washington (VP of Infrastructure Security) if that would be more appropriate.
-
-Best regards,
 [Your Name]
 
 ---
+**Why this works (research-backed):**
+- Under 75 words (Lavender: 50%+ response rate)
+- Name + observation hook (30MPC: pattern interrupt)
+- Single soft CTA (Gong: 371% more clicks)
+- Ends with question (Gong: 50% more replies)
+- No meeting ask in cold email (Gong: avoids 44% penalty)
+
 **Next Steps:**
-- Send this email within 24 hours for maximum impact
-- Follow up in 3-5 business days if no response
-- Prepare case studies for the discovery call`;
+- Customize with your name
+- Send Tuesday-Thursday, 9-11am
+- Follow up in 3-5 days with different angle`;
 
       return {
         success: true,

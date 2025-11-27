@@ -8,55 +8,54 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { SalesPlaybook, BuyerGroup } from "../types";
 
+// RESEARCH-BACKED TEMPLATES (Gong + 30MPC + Lavender)
+// Rules: <75 words, name + observation hook, single soft CTA, end with question
 const CONFIG = {
   templates: {
     initial: {
-      subject: "Quick thought on {topic}",
-      body: `Hi {name},
+      subject: "Quick question for {name}",
+      body: `{name} - noticed {rapport_hook}.
 
-I noticed {rapport_hook}. Based on recent trends in {industry}, here are a few things you might find valuable:
+Companies in {industry} are seeing big wins with:
 - {value_add_1}
 - {value_add_2}
-- {value_add_3}
 
-If you'd like a deeper dive or want to discuss how these apply to your team, let's connect!
+Worth a quick call to see if this applies to {company}?
 
 Best,
 Your Name`,
     },
     followUp: {
-      subject: "Following up on {topic}",
-      body: `Hi {name},
+      subject: "Re: {topic}",
+      body: `{name} - circling back on this.
 
-I wanted to follow up on my previous message about {topic}. I've been thinking about how {value_add_1} could specifically help {company} achieve {goal}.
+Is {topic} still a priority for {company} right now?
 
-Would you be open to a quick chat about this?
+Either way, happy to share what's working for similar teams.
 
 Best,
 Your Name`,
     },
     valueAdd: {
-      subject: "Quick value-add on {topic}",
-      body: `Hi {name},
+      subject: "{topic} insight for {company}",
+      body: `{name} - thought you'd find this relevant:
 
-I came across this insight about {topic} and thought of you:
 {value_add}
 
-This could be particularly relevant given {context}.
+Given {context}, this could move the needle for {company}.
 
-Let me know if you'd like to explore this further!
+Worth exploring?
 
 Best,
 Your Name`,
     },
     final: {
-      subject: "Last thought on {topic}",
-      body: `Hi {name},
+      subject: "Closing the loop on {topic}",
+      body: `{name} - last note from me on this.
 
-I understand you're busy, so I'll keep this brief. I wanted to share one final thought about {topic}:
 {value_add}
 
-If you're interested in learning more, I'm happy to share additional insights. If not, I'll respect your time and won't follow up again.
+If timing's wrong, no worries. Just let me know either way?
 
 Best,
 Your Name`,

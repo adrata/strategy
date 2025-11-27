@@ -920,8 +920,9 @@ Worth a quick call to see if that applies to ${context.companyName}?
 [Your Name]`;
   }
 
+  // RESEARCH-BACKED: LinkedIn messages should be ultra-short, peer-to-peer
   private async generateLinkedInMessage(role: string, context: DealAccelerationContext): Promise<string> {
-    return `Hi [Name], I noticed your role at ${context.companyName} and thought you might be interested in how we're helping similar companies achieve [specific outcome]. Would you be open to a brief conversation?`;
+    return `[Name] - saw you're a ${role} at ${context.companyName}. We've helped similar companies hit [specific outcome] faster. Open to connecting?`;
   }
 
   private async generateChampionDevelopmentEmail(context: DealAccelerationContext): Promise<string> {
@@ -1040,25 +1041,21 @@ Objection Handling:
 - "What about [competitor]?" → "Here's how we're different..."`;
   }
 
+  // RESEARCH-BACKED: Trigger-event emails with urgency (but not pushy)
   private async generateUrgencyCreationEmail(realTimeIntelligence: RealTimeIntelligenceReport, context: DealAccelerationContext): Promise<string> {
     const urgencyFactors = realTimeIntelligence.newsSignals
       .flatMap(signal => signal.urgencyFactors)
       .slice(0, 3);
 
-    return `Subject: Time-Sensitive Opportunity - ${context.companyName}
+    return `Subject: ${context.companyName} + [recent development]
 
-Dear [Name],
+[Name] - saw the news about ${context.companyName}.
 
-I wanted to reach out because of some recent developments that create a unique opportunity for ${context.companyName}.
-
-Based on recent market trends and your company's situation:
+Companies in similar situations typically see:
 ${urgencyFactors.map(factor => `- ${factor}`).join('\n')}
 
-This creates a compelling case for moving forward quickly. Companies that act now are seeing [specific benefits], while those who wait are facing [specific challenges].
+We've helped teams navigate this exact transition. Worth a quick call to see if there's a fit?
 
-I'd recommend we schedule time this week to discuss how we can help you capitalize on this opportunity.
-
-Best regards,
 [Your Name]`;
   }
 }
