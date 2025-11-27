@@ -43,6 +43,7 @@ export async function GET(
       },
       include: {
         corePerson: true,
+        customFields: true, // Include customFields for AI context (intelligence data)
         company: {
           select: {
             id: true,
@@ -108,6 +109,7 @@ export async function GET(
         where: { id },
         include: {
           corePerson: true,
+          customFields: true, // Include customFields for AI context (intelligence data)
           company: {
             select: {
               id: true,
@@ -285,7 +287,9 @@ export async function GET(
       lastAction: transformedPerson.lastAction ?? null,
       nextAction: transformedPerson.nextAction ?? null,
       // Notes
-      notes: transformedPerson.notes ?? null
+      notes: transformedPerson.notes ?? null,
+      // Custom Fields (includes intelligence data like painPoints, goals, strategy, etc.)
+      customFields: transformedPerson.customFields ?? null
     };
 
     console.log(`🔍 [DATE SERIALIZATION] Final response data dates:`, {
