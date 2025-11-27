@@ -907,18 +907,16 @@ export class AutonomousDealAgent {
   }
 
   // Content generation methods (simplified for brevity)
+  // RESEARCH-BACKED: Gong data shows <75 words, name + observation, soft CTA
   private async generateStakeholderOutreachEmail(role: string, context: DealAccelerationContext): Promise<string> {
-    return `Subject: Strategic Partnership Discussion - ${context.companyName}
+    return `Subject: Quick question about ${context.companyName}
 
-Dear [Name],
+[Name] - noticed ${context.companyName} is growing fast.
 
-I hope this message finds you well. I'm reaching out because I believe there's a significant opportunity for ${context.companyName} to achieve [specific business outcome] through our partnership.
+As a ${role} stakeholder, you're probably seeing [relevant business challenge]. We helped similar companies solve this and cut their timeline by 40%.
 
-Based on my research, I understand that as a ${role} stakeholder, you're likely focused on [relevant business priorities]. Our solution directly addresses these challenges by [specific value proposition].
+Worth a quick call to see if that applies to ${context.companyName}?
 
-I'd love to schedule a brief conversation to discuss how we can help ${context.companyName} achieve its goals.
-
-Best regards,
 [Your Name]`;
   }
 
@@ -986,18 +984,16 @@ Best regards,
    - Approval process`;
   }
 
+  // RESEARCH-BACKED: Executive emails should be even shorter, focus on outcomes
   private async generateExecutiveAlignmentEmail(decisionMaker: BuyerGroupRole, context: DealAccelerationContext): Promise<string> {
-    return `Subject: Strategic Partnership Discussion
+    return `Subject: ${context.companyName} + [Outcome]
 
-Dear ${decisionMaker.name},
+${decisionMaker.name} - your team has been evaluating [solution area].
 
-I hope this message finds you well. Given your leadership role at ${context.companyName}, I wanted to reach out directly to discuss a strategic opportunity.
+Companies at ${context.companyName}'s stage typically see [specific outcome] within 90 days. Happy to share what we're seeing work.
 
-Our partnership could deliver significant value to ${context.companyName} by [specific business outcomes]. I'd appreciate the opportunity to align with you on the strategic vision and timeline.
+Worth 15 minutes this week?
 
-Would you be available for a brief executive briefing next week?
-
-Best regards,
 [Your Name]`;
   }
 

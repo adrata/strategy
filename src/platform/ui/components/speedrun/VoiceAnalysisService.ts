@@ -127,25 +127,25 @@ export class VoiceAnalysisService {
     
     let body = `${greeting}\n\n`;
     
-    // Generate content based on purpose
+    // RESEARCH-BACKED: Gong + 30MPC - Lead with observation, not generic openers
     switch (options.purpose) {
       case 'introduction':
-        body += `I hope this email finds you well. I'm reaching out to introduce myself and explore potential collaboration opportunities.\n\n`;
+        body += `Noticed your team is working on ${context} - companies at your stage typically see big wins by streamlining this.\n\n`;
         break;
       case 'follow-up':
-        body += `I wanted to follow up on our recent conversation about ${context}.\n\n`;
+        body += `Circling back on ${context}. Is this still a priority for your team right now?\n\n`;
         break;
       case 'proposal':
-        body += `I'm excited to share a proposal that I believe could bring significant value to your organization.\n\n`;
+        body += `Based on our conversation, here's how we could help with ${context}:\n\n`;
         break;
       case 'update':
-        body += `I wanted to provide you with an update on ${context}.\n\n`;
+        body += `Quick update on ${context}:\n\n`;
         break;
       case 'closing':
-        body += `As we move forward with ${context}, I wanted to outline the next steps.\n\n`;
+        body += `Next steps for ${context}:\n\n`;
         break;
       default:
-        body += `I'm reaching out regarding ${context}.\n\n`;
+        body += `Quick question about ${context}:\n\n`;
     }
 
     // Add context-specific content

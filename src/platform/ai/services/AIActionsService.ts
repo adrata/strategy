@@ -393,44 +393,37 @@ export class AIActionsService {
       };
     }
     
+    // RESEARCH-BACKED EMAIL TEMPLATES (Gong + 30MPC + Lavender)
+    // Rules: <75 words, name + observation hook, single soft CTA, end with question
     const emailTemplates = {
       introduction: {
-        subject: `Exploring ${topic} opportunities at ${company}`,
-        body: `Hi ${leadName},
+        subject: `Quick question for ${leadName}`,
+        body: `${leadName} - noticed ${company} is scaling fast.
 
-I hope this message finds you well. As ${title} at ${company}, you're likely evaluating solutions that can drive efficiency and growth for your organization.
+Companies in your space typically hit evaluation bottlenecks around this stage. We helped similar ${title}s cut their vendor evaluation time by 40%.
 
-I wanted to reach out because Adrata's buyer group intelligence platform has helped similar companies in your industry accelerate their vendor evaluation process and make more informed purchasing decisions.
+Worth a quick conversation to see if that applies to ${company}?
 
-Would you be open to a brief 15-minute conversation to explore how this might benefit ${company}? I'd be happy to share some relevant case studies and insights.
-
-Best regards,
 [Your Name]`
       },
       follow_up: {
-        subject: `Following up on ${topic} discussion`,
-        body: `Hi ${leadName},
+        subject: `Re: ${company}`,
+        body: `${leadName} - circling back on this.
 
-I wanted to follow up on our previous conversation about ${topic} solutions for ${company}.
+Totally understand if timing isn't right. Just curious - is ${topic} still a priority for ${company} right now?
 
-Based on your role as ${title}, I believe there are some specific opportunities we could explore that align with your current initiatives.
+Either way, happy to share some benchmarks from your industry if helpful.
 
-Would next week work for a brief call to discuss this further?
-
-Best regards,
 [Your Name]`
       },
       value_proposition: {
-        subject: `How ${company} can accelerate vendor evaluation`,
-        body: `Hi ${leadName},
+        subject: `${company} + buyer intelligence`,
+        body: `${leadName} - given your role as ${title}, figured this might resonate.
 
-Given your position as ${title} at ${company}, you're likely involved in evaluating various technology solutions and vendors.
+We've helped companies like ${company} reduce vendor evaluation from months to weeks. The ${title}s I work with typically care most about speed and decision quality.
 
-Our buyer group intelligence platform has helped companies like ${company} reduce their vendor evaluation time by 40% while improving decision quality.
+Would a 15-minute call this week make sense to explore if this fits?
 
-I'd love to show you how this could specifically benefit ${company}'s evaluation processes. Are you available for a 20-minute demo this week?
-
-Best regards,
 [Your Name]`
       }
     };

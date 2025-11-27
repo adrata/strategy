@@ -128,9 +128,10 @@ export class CursorLikeAssistantService {
       const recipientName = context.recipient?.name || context.recipient?.fullName || 'there';
       const company = context.company || context.recipient?.company || 'your company';
       
+      // RESEARCH-BACKED: Skip generic openers, lead with observation
       completions.push({
         trigger: 'hi ',
-        completion: `Hi ${recipientName},\n\nI hope this message finds you well. As someone focused on driving efficiency and growth at ${company}, I wanted to share something that might be valuable for your team.\n\n`,
+        completion: `${recipientName} - noticed ${company} is [specific observation].\n\n[One sentence about how you helped similar companies].\n\nWorth a quick call to explore?\n\n`,
         type: 'email_template',
         context: { recipientName, company },
         confidence: 0.9
