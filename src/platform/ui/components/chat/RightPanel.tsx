@@ -2995,10 +2995,28 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         }
       }
       
+      // Generate user-friendly error message instead of raw HTTP codes
+      const getHelpfulErrorMessage = (err: unknown): string => {
+        const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+        if (msg.includes('504') || msg.includes('timeout') || msg.includes('abort')) {
+          return "I'm taking longer than expected to respond. This is usually temporary - please try again in a moment, or try a shorter question.";
+        }
+        if (msg.includes('500') || msg.includes('server') || msg.includes('internal')) {
+          return "I'm experiencing a temporary issue. Please try again in a few seconds.";
+        }
+        if (msg.includes('rate') || msg.includes('429') || msg.includes('too many')) {
+          return "I'm receiving too many requests right now. Please wait a moment and try again.";
+        }
+        if (msg.includes('network') || msg.includes('fetch') || msg.includes('connection')) {
+          return "I'm having trouble connecting. Please check your internet connection and try again.";
+        }
+        return "Something went wrong. Please try again. If this persists, try refreshing the page.";
+      };
+
       const errorMessage: ChatMessage = {
         id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         type: 'assistant',
-        content: `I encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
+        content: getHelpfulErrorMessage(error),
         timestamp: new Date()
       };
 

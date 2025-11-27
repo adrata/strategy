@@ -18,13 +18,31 @@ export const maxDuration = 300; // 300 seconds (5 min) for AI streaming response
 
 import { NextRequest } from 'next/server';
 import { streamText, CoreMessage } from 'ai';
-import { openrouter, OPENROUTER_MODELS, MODEL_CHAINS } from '@/platform/services/OpenRouterClient';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { openrouter, OPENROUTER_MODELS } from '@/platform/services/OpenRouterClient';
 import { getSecureApiContext } from '@/platform/services/secure-api-helper';
 import { AIContextService } from '@/platform/ai/services/AIContextService';
 import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
 import { rateLimiter } from '@/platform/security/rate-limiter';
 import { securityMonitor } from '@/platform/security/security-monitor';
 import { systemPromptProtector } from '@/platform/security/system-prompt-protector';
+
+// Lazy-initialized Anthropic provider for direct Claude access (faster than OpenRouter)
+let _anthropicInstance: ReturnType<typeof createAnthropic> | null = null;
+function getAnthropicInstance() {
+  if (!_anthropicInstance) {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      console.warn('[STREAM] ANTHROPIC_API_KEY not set - will use OpenRouter fallback');
+      return null;
+    }
+    _anthropicInstance = createAnthropic({ apiKey });
+  }
+  return _anthropicInstance;
+}
+
+// Claude model for direct Anthropic API
+const CLAUDE_MODEL = 'claude-3-5-sonnet-20241022';
 
 /**
  * Build system prompt for the AI with full context
@@ -518,23 +536,32 @@ export async function POST(request: NextRequest) {
             content: sanitizedMessage
           });
 
-          // Stream using Vercel AI SDK with OpenRouter provider
+          // Stream using Vercel AI SDK - PRIMARY: Direct Claude, FALLBACK: OpenRouter
           let fullContent = '';
-          let usedModel = modelId;
+          let usedModel = CLAUDE_MODEL;
+          let usedProvider = 'Anthropic';
           let tokensUsed = 0;
           
-          // Create AbortController for timeout handling (30s for initial response)
+          // Get Anthropic instance (direct connection - faster than OpenRouter)
+          const anthropic = getAnthropicInstance();
+          
+          // Create AbortController for timeout handling (45s for Claude - it's reliable but can be slow for complex queries)
           const abortController = new AbortController();
           const timeoutId = setTimeout(() => {
-            console.warn('[STREAM] Request timeout - aborting after 30s');
+            console.warn('[STREAM] Primary request timeout - aborting after 45s');
             abortController.abort();
-          }, 30000);
+          }, 45000);
           
           try {
-            // Reduced maxTokens for faster responses
-            // Complex: 4096 (was 8192), Standard: 2048 (was 4096), Simple: 1024 (was 2048)
+            if (!anthropic) {
+              throw new Error('Anthropic not available - falling back to OpenRouter');
+            }
+            
+            console.log(`[STREAM] Using PRIMARY: Direct Claude (${CLAUDE_MODEL})`);
+            
+            // Use direct Anthropic Claude - eliminates OpenRouter network hop
             const result = await streamText({
-              model: openrouter(modelId),
+              model: anthropic(CLAUDE_MODEL),
               system: systemPrompt,
               messages,
               maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
@@ -562,35 +589,36 @@ export async function POST(request: NextRequest) {
             
             // Clear the timeout since we succeeded
             clearTimeout(timeoutId);
+            console.log(`[STREAM] Direct Claude succeeded - ${tokensUsed} tokens`);
 
           } catch (streamError: any) {
             // Clear the timeout
             clearTimeout(timeoutId);
-            console.error(`[STREAM] Model ${modelId} failed:`, {
+            console.error(`[STREAM] Primary Claude failed:`, {
               error: streamError?.message || streamError,
               code: streamError?.code,
               status: streamError?.status,
-              stack: streamError?.stack?.slice(0, 500)
             });
             
-            // Try fallback model (GPT-4o-mini is fast and reliable)
+            // FALLBACK: Try OpenRouter GPT-4o-mini (fast and reliable)
             const fallbackModel = OPENROUTER_MODELS.GPT4O_MINI;
             usedModel = fallbackModel;
-            console.log(`[STREAM] Trying fallback model: ${fallbackModel}`);
+            usedProvider = 'OpenRouter';
+            console.log(`[STREAM] Trying FALLBACK: OpenRouter ${fallbackModel}`);
             
-            // Create new AbortController for fallback (20s timeout - faster since it's a simpler model)
+            // Create new AbortController for fallback (30s timeout)
             const fallbackAbortController = new AbortController();
             const fallbackTimeoutId = setTimeout(() => {
-              console.warn('[STREAM] Fallback request timeout - aborting after 20s');
+              console.warn('[STREAM] Fallback request timeout - aborting after 30s');
               fallbackAbortController.abort();
-            }, 20000);
+            }, 30000);
             
             try {
               const fallbackResult = await streamText({
                 model: openrouter(fallbackModel),
                 system: systemPrompt,
                 messages,
-                maxTokens: 1024, // Reduced for faster response
+                maxTokens: 2048,
                 temperature: 0.7,
                 abortSignal: fallbackAbortController.signal,
               });
@@ -613,15 +641,14 @@ export async function POST(request: NextRequest) {
               
               // Clear the fallback timeout since we succeeded
               clearTimeout(fallbackTimeoutId);
-              console.log(`[STREAM] Fallback model ${fallbackModel} succeeded`);
+              console.log(`[STREAM] Fallback OpenRouter succeeded - ${tokensUsed} tokens`);
             } catch (fallbackError: any) {
               // Clear the fallback timeout
               clearTimeout(fallbackTimeoutId);
-              console.error('[STREAM] Fallback model also failed:', {
+              console.error('[STREAM] Fallback OpenRouter also failed:', {
                 error: fallbackError?.message || fallbackError,
                 code: fallbackError?.code,
                 status: fallbackError?.status,
-                stack: fallbackError?.stack?.slice(0, 500)
               });
               throw fallbackError;
             }
@@ -633,13 +660,14 @@ export async function POST(request: NextRequest) {
             type: 'done',
             metadata: {
               model: usedModel,
-              provider: 'OpenRouter',
+              provider: usedProvider,
               tokensUsed,
               processingTime,
               complexity,
               routingInfo: {
                 selectedModel: usedModel,
-                fallbackUsed: usedModel !== modelId,
+                fallbackUsed: usedProvider === 'OpenRouter',
+                primaryModel: CLAUDE_MODEL,
               }
             },
             totalTime: processingTime

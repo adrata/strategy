@@ -122,6 +122,7 @@
     "lint:mobile:fix": "cd mobile && npm run lint:fix"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.50",
     "@ai-sdk/openai": "^0.0.66",
     "@anthropic-ai/sdk": "^0.62.0",
     "@deepgram/sdk": "^4.11.2",
