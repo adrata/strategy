@@ -13,6 +13,7 @@
  * @see https://sdk.vercel.ai/docs/ai-sdk-core/streaming
  */
 
+export const runtime = 'nodejs'; // Explicit runtime for streaming
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 300 seconds (5 min) for AI streaming responses - Pro plan max
 
@@ -479,102 +480,108 @@ export async function POST(request: NextRequest) {
     
     console.log(`[STREAM] Using model: ${modelId} (complexity: ${complexity}, hasApiKey: ${!!openRouterApiKey})`);
 
-    // 7. CREATE STREAMING RESPONSE
+    // 8. BUILD CONTEXT BEFORE STREAM (prevents 500 errors)
+    // All async work that can fail should happen BEFORE creating the stream
+    let workspaceContext: any;
+    try {
+      const contextPromise = AIContextService.buildContext({
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        appType,
+        currentRecord,
+        recordType,
+        listViewContext,
+        conversationHistory: conversationHistory || [],
+        documentContext: null
+      });
+      
+      // Context build timeout - balance between speed and reliability
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Context build timeout')), 3000);
+      });
+      
+      workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
+      
+      // ENHANCE: If we fetched list context from DB, add it to workspace context
+      if (fetchedListContext && (!workspaceContext.listViewContext || workspaceContext.listViewContext.includes('No list view context'))) {
+        const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+        workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+        console.log('[STREAM] Enhanced context with DB-fetched list data');
+      }
+    } catch (contextError) {
+      console.warn('[STREAM] Context build failed, using minimal context:', contextError);
+      workspaceContext = {
+        userContext: '',
+        applicationContext: '',
+        dataContext: '',
+        recordContext: '',
+        listViewContext: '',
+        documentContext: '',
+        systemContext: ''
+      };
+      
+      // Still try to add fetched list context even if main context build failed
+      if (fetchedListContext) {
+        try {
+          const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+          workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+        } catch {}
+      }
+    }
+
+    // 9. BUILD SYSTEM PROMPT BEFORE STREAM
+    let systemPrompt: string;
+    try {
+      systemPrompt = await buildSystemPrompt(
+        workspaceContext,
+        currentRecord,
+        recordType,
+        context.userId
+      );
+    } catch (promptError) {
+      console.error('[STREAM] System prompt build failed:', promptError);
+      // Use a minimal fallback prompt
+      systemPrompt = 'You are Adrata, a helpful sales assistant. Be concise and helpful.';
+    }
+
+    // 10. BUILD MESSAGES BEFORE STREAM
+    const messages: CoreMessage[] = [];
+    
+    if (conversationHistory && Array.isArray(conversationHistory)) {
+      conversationHistory.slice(-5).forEach((msg: { role: string; content: string }) => {
+        messages.push({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content
+        });
+      });
+    }
+    
+    messages.push({
+      role: 'user',
+      content: sanitizedMessage
+    });
+
+    // Check if Anthropic is available (optional - used as fallback)
+    const anthropic = getAnthropicInstance();
+    const hasAnthropicKey = !!anthropic;
+
+    // 11. CREATE STREAMING RESPONSE
+    // All preparation is done - now we can safely create the stream
     const encoder = new TextEncoder();
+    let fullContent = '';
+    let usedModel = OPENROUTER_MODELS.GPT4O_MINI;
+    let usedProvider = 'OpenRouter';
+    let tokensUsed = 0;
     
     const stream = new ReadableStream({
       async start(controller) {
+        // Send start event IMMEDIATELY so user sees activity
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+          type: 'start',
+          timestamp: Date.now()
+        })}\n\n`));
+
         try {
-          // Send start event IMMEDIATELY so user sees activity
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-            type: 'start',
-            timestamp: Date.now()
-          })}\n\n`));
-
-          // Build context (with timeout) in parallel
-          let workspaceContext: any;
-          try {
-            const contextPromise = AIContextService.buildContext({
-              userId: context.userId,
-              workspaceId: context.workspaceId,
-              appType,
-              currentRecord,
-              recordType,
-              listViewContext,
-              conversationHistory: conversationHistory || [],
-              documentContext: null
-            });
-            
-            // Context build timeout - balance between speed and reliability
-            const timeoutPromise = new Promise((_, reject) => {
-              setTimeout(() => reject(new Error('Context build timeout')), 3000);
-            });
-            
-            workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
-            
-            // 🆕 ENHANCE: If we fetched list context from DB, add it to workspace context
-            if (fetchedListContext && (!workspaceContext.listViewContext || workspaceContext.listViewContext.includes('No list view context'))) {
-              const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
-              workspaceContext.listViewContext = buildListContextString(fetchedListContext);
-              console.log('✅ [STREAM] Enhanced context with DB-fetched list data');
-            }
-          } catch {
-            console.warn('[STREAM] Context build failed, using minimal context');
-            workspaceContext = {
-              userContext: '',
-              applicationContext: '',
-              dataContext: '',
-              recordContext: '',
-              listViewContext: '',
-              documentContext: '',
-              systemContext: ''
-            };
-            
-            // 🆕 Still try to add fetched list context even if main context build failed
-            if (fetchedListContext) {
-              try {
-                const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
-                workspaceContext.listViewContext = buildListContextString(fetchedListContext);
-              } catch {}
-            }
-          }
-
-          // Build system prompt
-          const systemPrompt = await buildSystemPrompt(
-            workspaceContext,
-            currentRecord,
-            recordType,
-            context.userId
-          );
-
-          // Build messages
-          const messages: CoreMessage[] = [];
-          
-          if (conversationHistory && Array.isArray(conversationHistory)) {
-            conversationHistory.slice(-5).forEach((msg: { role: string; content: string }) => {
-              messages.push({
-                role: msg.role as 'user' | 'assistant',
-                content: msg.content
-              });
-            });
-          }
-          
-          messages.push({
-            role: 'user',
-            content: sanitizedMessage
-          });
-
-          // Stream using Vercel AI SDK
-          // PRIMARY: OpenRouter (more reliable in serverless)
-          // FALLBACK: Direct Claude if OpenRouter fails
-          let fullContent = '';
-          let usedModel = OPENROUTER_MODELS.GPT4O_MINI;
-          let usedProvider = 'OpenRouter';
-          let tokensUsed = 0;
-          
-          // Check if Anthropic is available (optional - used as fallback)
-          const anthropic = getAnthropicInstance();
-          const hasAnthropicKey = !!anthropic;
           
           // Create AbortController for timeout handling
           const abortController = new AbortController();
@@ -720,10 +727,21 @@ export async function POST(request: NextRequest) {
 
           controller.close();
 
-        } catch (error) {
-          console.error('[STREAM] Error:', error);
+        } catch (error: any) {
+          console.error('[STREAM] AI Error (using fallback):', {
+            message: error?.message || error,
+            code: error?.code,
+            status: error?.status
+          });
           
-          // SMART FALLBACK: Actually generate helpful content based on the user's query
+          // Send error event to notify frontend (but continue with fallback)
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            type: 'error',
+            message: 'AI service temporarily unavailable, using fallback',
+            recoverable: true
+          })}\n\n`));
+          
+          // SMART FALLBACK: Generate helpful content based on the user's query
           let fallbackContent = '';
           
           if (currentRecord) {
