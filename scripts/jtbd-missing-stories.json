@@ -1,0 +1,241 @@
+[
+  {
+    "number": "NEW-1",
+    "title": "AI Meeting Prep Briefs",
+    "priority": "P0",
+    "epic": "Epic 4: Live Coaching and Real-Time Intelligence",
+    "description": "As a seller, I want an AI-generated meeting brief 30 minutes before every call so that I walk in prepared and confident.",
+    "acceptanceCriteria": [
+      "Auto-trigger 30 min before calendar events",
+      "Include: attendee profiles, company news, deal history",
+      "Stakeholder personality insights (analytical vs relational)",
+      "Suggested talking points based on deal stage",
+      "Previous meeting summary and commitments",
+      "Competitive intel if competitor mentioned in deal"
+    ],
+    "jtbd": {
+      "functional": "Prepare for meetings efficiently",
+      "identity": "I'm a professional who does their homework",
+      "emotional": "Confident, not anxious before calls"
+    }
+  },
+  {
+    "number": "NEW-2",
+    "title": "Deal Health Score & Stall Predictor",
+    "priority": "P0",
+    "epic": "Epic 1: AI-Powered Revenue Intelligence",
+    "description": "As a seller, I want to see a real-time deal health score with specific risk factors so that I know which deals need attention before they stall.",
+    "acceptanceCriteria": [
+      "Health score 0-100 for every deal",
+      "Specific risk factors explained (no activity, missing stakeholders, etc.)",
+      "Stall prediction - 'This deal will stall in X days unless...'",
+      "Recommended actions to improve health",
+      "Historical comparison to similar deals",
+      "Notification when health drops below threshold"
+    ],
+    "jtbd": {
+      "functional": "Know which deals need attention",
+      "identity": "I'm in control of my pipeline",
+      "emotional": "Certainty instead of anxiety"
+    }
+  },
+  {
+    "number": "NEW-3",
+    "title": "Auto-Extract Meeting Next Steps",
+    "priority": "P0",
+    "epic": "Epic 3: Communication Hub (Oasis Evolution)",
+    "description": "As a seller, I want meeting next steps automatically extracted and turned into tasks so that I never drop the ball after a call.",
+    "acceptanceCriteria": [
+      "AI extracts commitments from transcripts",
+      "Auto-create tasks with due dates",
+      "Assign to rep or buyer",
+      "Track completion",
+      "Remind before overdue",
+      "Surface in next meeting prep"
+    ],
+    "jtbd": {
+      "functional": "Remember and execute follow-ups",
+      "identity": "I'm reliable and organized",
+      "emotional": "Peace of mind, nothing falls through cracks"
+    }
+  },
+  {
+    "number": "NEW-4",
+    "title": "AI Deal Forecasting Engine",
+    "priority": "P0",
+    "epic": "Epic 9: Chronicle and Intelligence Reports",
+    "description": "As a manager, I want AI-powered deal forecasting so that I can commit to accurate numbers with confidence.",
+    "acceptanceCriteria": [
+      "Predict close probability based on signals (not gut)",
+      "Confidence intervals (70% chance of $X-$Y)",
+      "Commit vs Best Case vs Pipeline view",
+      "Historical accuracy tracking",
+      "Flag deals where rep forecast differs from AI",
+      "Drill down into prediction factors"
+    ],
+    "jtbd": {
+      "functional": "Predict revenue accurately",
+      "identity": "I'm a credible leader",
+      "emotional": "Confidence in forecast calls"
+    }
+  },
+  {
+    "number": "NEW-5",
+    "title": "Manager 1:1 Prep Intelligence",
+    "priority": "P1",
+    "epic": "Epic 9: Chronicle and Intelligence Reports",
+    "description": "As a manager, I want AI-generated 1:1 prep briefs so that I can coach effectively instead of just checking in.",
+    "acceptanceCriteria": [
+      "Rep performance summary (activity, results, trends)",
+      "Skill gaps identified from call analysis",
+      "Specific coaching recommendations",
+      "Deals that need discussion",
+      "Wins to celebrate",
+      "Development goals progress"
+    ],
+    "jtbd": {
+      "functional": "Coach reps effectively",
+      "identity": "I'm a leader who develops people",
+      "emotional": "Valuable, not just checking boxes"
+    }
+  },
+  {
+    "number": "NEW-6",
+    "title": "Win/Loss Analysis AI",
+    "priority": "P1",
+    "epic": "Epic 9: Chronicle and Intelligence Reports",
+    "description": "As a manager, I want automatic win/loss analysis so that I can learn from every deal outcome and improve our process.",
+    "acceptanceCriteria": [
+      "Auto-analyze all closed deals",
+      "Pattern detection (why we win, why we lose)",
+      "Competitor win/loss rates",
+      "Process bottleneck identification",
+      "Rep-level insights",
+      "Actionable recommendations"
+    ],
+    "jtbd": {
+      "functional": "Learn from outcomes",
+      "identity": "I'm a data-driven leader",
+      "emotional": "Learning, not repeating mistakes"
+    }
+  },
+  {
+    "number": "NEW-7",
+    "title": "Smart Channel Recommendation",
+    "priority": "P1",
+    "epic": "Epic 6: Automation and Workflows (Olympus)",
+    "description": "As a seller, I want Adrata to recommend the best channel (email, call, LinkedIn) for each prospect so that I reach them where they're most responsive.",
+    "acceptanceCriteria": [
+      "Analyze historical response rates by channel",
+      "Consider persona (executives prefer X, ICs prefer Y)",
+      "Time-of-day optimization",
+      "Recommend specific channel for next touch",
+      "Learn from outcomes"
+    ],
+    "jtbd": {
+      "functional": "Reach prospects effectively",
+      "identity": "I'm smart about how I engage",
+      "emotional": "Efficient, not wasting time"
+    }
+  },
+  {
+    "number": "NEW-8",
+    "title": "Quota Pacing & Recovery Suggestions",
+    "priority": "P1",
+    "epic": "Epic 9: Chronicle and Intelligence Reports",
+    "description": "As a seller, I want to see my quota pacing with specific suggestions to catch up so that I always know where I stand and what to do.",
+    "acceptanceCriteria": [
+      "Daily/weekly/monthly pacing vs quota",
+      "Visual progress indicator",
+      "If behind: specific deals to accelerate",
+      "If ahead: deals to pull forward",
+      "Historical comparison (better/worse than last month)",
+      "Celebration when hitting milestones"
+    ],
+    "jtbd": {
+      "functional": "Track progress toward goal",
+      "identity": "I'm hitting my numbers",
+      "emotional": "In control, not surprised at month end"
+    }
+  },
+  {
+    "number": "NEW-9",
+    "title": "Competitive Mention Alerts & Battlecards",
+    "priority": "P1",
+    "epic": "Epic 5: Data Enrichment and ICP Discovery",
+    "description": "As a seller, I want instant alerts when a competitor is mentioned in a deal, with battlecard responses, so that I can handle competitive situations confidently.",
+    "acceptanceCriteria": [
+      "Detect competitor mentions in calls/emails",
+      "Instant notification to rep",
+      "Pull up relevant battlecard",
+      "Win themes vs this competitor",
+      "Trap questions to ask",
+      "Track competitive deal outcomes"
+    ],
+    "jtbd": {
+      "functional": "Win competitive deals",
+      "identity": "I know how to beat competitors",
+      "emotional": "Confident in competitive situations"
+    }
+  },
+  {
+    "number": "NEW-10",
+    "title": "Engagement Signal Alerts",
+    "priority": "P1",
+    "epic": "Epic 6: Automation and Workflows (Olympus)",
+    "description": "As a seller, I want real-time alerts when prospects engage (email opens, doc views, website visits) so that I can strike while the iron is hot.",
+    "acceptanceCriteria": [
+      "Email open/click notifications",
+      "Proposal/document view alerts",
+      "Website visit tracking",
+      "Multiple opens = hot signal",
+      "Suggest immediate action",
+      "Integrate with Speedrun priority"
+    ],
+    "jtbd": {
+      "functional": "Act on buyer interest signals",
+      "identity": "I respond when buyers are engaged",
+      "emotional": "Opportunistic, not missing moments"
+    }
+  },
+  {
+    "number": "NEW-11",
+    "title": "Mobile Push Notifications",
+    "priority": "P1",
+    "epic": "Epic 2: Multi-Platform Excellence",
+    "description": "As a field seller, I want push notifications on mobile so that I never miss important deal signals or meeting reminders.",
+    "acceptanceCriteria": [
+      "Deal stage changes",
+      "Email opens/clicks",
+      "Meeting reminders with prep summary",
+      "At-risk deal alerts",
+      "Achievement unlocks",
+      "Customizable notification rules"
+    ],
+    "jtbd": {
+      "functional": "Stay informed on the go",
+      "identity": "I'm always on top of my deals",
+      "emotional": "Connected, not missing things"
+    }
+  },
+  {
+    "number": "NEW-12",
+    "title": "Co-Action (New Product)",
+    "priority": "P1",
+    "epic": "Epic 3: Communication Hub (Oasis Evolution)",
+    "description": "As a seller, I want to use Co-Action to collaborate with buyers on deal milestones so that we're aligned on the path to close.",
+    "acceptanceCriteria": [
+      "Collaborative timeline with buyer",
+      "Tasks for both sides",
+      "Progress tracking visible to all",
+      "Auto-reminders for overdue items",
+      "Integration with deal stages",
+      "Branded, shareable view"
+    ],
+    "jtbd": {
+      "functional": "Align with buyers on next steps",
+      "identity": "I run a professional process",
+      "emotional": "Control, mutual commitment"
+    }
+  }
+]

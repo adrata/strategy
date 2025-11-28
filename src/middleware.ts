@@ -209,7 +209,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - api/v1/ai-chat/stream (streaming endpoint - middleware interferes with SSE)
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/v1/ai-chat/stream).*)',
   ],
 };
