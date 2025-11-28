@@ -561,16 +561,21 @@ export async function POST(request: NextRequest) {
       content: sanitizedMessage
     });
 
-    // Check if Anthropic is available (optional - used as fallback)
+    // Check if Anthropic is available (preferred - direct connection is faster)
     const anthropic = getAnthropicInstance();
     const hasAnthropicKey = !!anthropic;
+    
+    console.log('[STREAM] API key status:', { 
+      hasAnthropicKey, 
+      hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY 
+    });
 
     // 11. CREATE STREAMING RESPONSE
     // All preparation is done - now we can safely create the stream
     const encoder = new TextEncoder();
     let fullContent = '';
-    let usedModel = OPENROUTER_MODELS.GPT4O_MINI;
-    let usedProvider = 'OpenRouter';
+    let usedModel = hasAnthropicKey ? CLAUDE_MODEL : OPENROUTER_MODELS.GPT4O_MINI;
+    let usedProvider = hasAnthropicKey ? 'Anthropic' : 'OpenRouter';
     let tokensUsed = 0;
     
     const stream = new ReadableStream({
@@ -586,22 +591,38 @@ export async function POST(request: NextRequest) {
           // Create AbortController for timeout handling
           const abortController = new AbortController();
           const timeoutId = setTimeout(() => {
-            console.warn('[STREAM] Primary request timeout - aborting after 30s');
+            console.warn('[STREAM] Primary request timeout - aborting after 45s');
             abortController.abort();
-          }, 30000);
+          }, 45000);
           
           try {
-            // PRIMARY: Use OpenRouter (more reliable, no API key issues)
-            console.log(`[STREAM] Using PRIMARY: OpenRouter ${usedModel}`);
+            let result;
             
-            const result = await streamText({
-              model: openrouter(usedModel),
-              system: systemPrompt,
-              messages,
-              maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
-              temperature: 0.7,
-              abortSignal: abortController.signal,
-            });
+            // PRIMARY: Use Direct Claude if ANTHROPIC_API_KEY is set (faster, more reliable)
+            if (hasAnthropicKey && anthropic) {
+              console.log(`[STREAM] Using PRIMARY: Direct Claude (${CLAUDE_MODEL})`);
+              
+              result = await streamText({
+                model: anthropic(CLAUDE_MODEL),
+                system: systemPrompt,
+                messages,
+                maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
+                temperature: 0.7,
+                abortSignal: abortController.signal,
+              });
+            } else {
+              // Fallback to OpenRouter if no Anthropic key
+              console.log(`[STREAM] Using PRIMARY: OpenRouter ${usedModel}`);
+              
+              result = await streamText({
+                model: openrouter(usedModel),
+                system: systemPrompt,
+                messages,
+                maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
+                temperature: 0.7,
+                abortSignal: abortController.signal,
+              });
+            }
 
             // Stream tokens to client in our custom format
             for await (const chunk of result.textStream) {
@@ -623,19 +644,18 @@ export async function POST(request: NextRequest) {
             
             // Clear the timeout since we succeeded
             clearTimeout(timeoutId);
-            console.log(`[STREAM] OpenRouter succeeded - ${tokensUsed} tokens`);
+            console.log(`[STREAM] ${usedProvider} succeeded - ${tokensUsed} tokens`);
 
           } catch (streamError: any) {
             // Clear the timeout
             clearTimeout(timeoutId);
-            console.error(`[STREAM] Primary OpenRouter failed:`, {
+            console.error(`[STREAM] Primary ${usedProvider} failed:`, {
               error: streamError?.message || streamError,
               code: streamError?.code,
               status: streamError?.status,
             });
             
-            // FALLBACK: Try Direct Claude if available
-            // FALLBACK: Try Direct Claude if key available, otherwise OpenRouter Claude
+            // FALLBACK: If Claude failed, try OpenRouter. If OpenRouter failed, try Claude.
             const fallbackAbortController = new AbortController();
             const fallbackTimeoutId = setTimeout(() => {
               console.warn('[STREAM] Fallback request timeout - aborting after 45s');
@@ -645,8 +665,24 @@ export async function POST(request: NextRequest) {
             try {
               let fallbackResult;
               
-              if (hasAnthropicKey && anthropic) {
-                // Use direct Anthropic as fallback
+              // If we were using Claude, fall back to OpenRouter
+              // If we were using OpenRouter, fall back to Claude (if available)
+              if (usedProvider === 'Anthropic') {
+                // Claude failed, try OpenRouter
+                usedModel = OPENROUTER_MODELS.GPT4O_MINI;
+                usedProvider = 'OpenRouter';
+                console.log(`[STREAM] Trying FALLBACK: OpenRouter ${usedModel}`);
+                
+                fallbackResult = await streamText({
+                  model: openrouter(usedModel),
+                  system: systemPrompt,
+                  messages,
+                  maxTokens: 2048,
+                  temperature: 0.7,
+                  abortSignal: fallbackAbortController.signal,
+                });
+              } else if (hasAnthropicKey && anthropic) {
+                // OpenRouter failed, try Claude
                 usedModel = CLAUDE_MODEL;
                 usedProvider = 'Anthropic';
                 console.log(`[STREAM] Trying FALLBACK: Direct Claude (${CLAUDE_MODEL})`);
@@ -660,19 +696,8 @@ export async function POST(request: NextRequest) {
                   abortSignal: fallbackAbortController.signal,
                 });
               } else {
-                // Use OpenRouter Claude as fallback
-                usedModel = OPENROUTER_MODELS.CLAUDE_SONNET;
-                usedProvider = 'OpenRouter';
-                console.log(`[STREAM] Trying FALLBACK: OpenRouter ${usedModel}`);
-                
-                fallbackResult = await streamText({
-                  model: openrouter(usedModel),
-                  system: systemPrompt,
-                  messages,
-                  maxTokens: 2048,
-                  temperature: 0.7,
-                  abortSignal: fallbackAbortController.signal,
-                });
+                // No fallback available
+                throw streamError;
               }
 
               for await (const chunk of fallbackResult.textStream) {
