@@ -30,14 +30,29 @@ import { systemPromptProtector } from '@/platform/security/system-prompt-protect
 
 // Lazy-initialized Anthropic provider for direct Claude access (faster than OpenRouter)
 let _anthropicInstance: ReturnType<typeof createAnthropic> | null = null;
+let _anthropicInitFailed = false;
+
 function getAnthropicInstance() {
+  // If we've already failed to initialize, don't try again
+  if (_anthropicInitFailed) {
+    return null;
+  }
+  
   if (!_anthropicInstance) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       console.warn('[STREAM] ANTHROPIC_API_KEY not set - will use OpenRouter fallback');
       return null;
     }
-    _anthropicInstance = createAnthropic({ apiKey });
+    
+    try {
+      _anthropicInstance = createAnthropic({ apiKey });
+      console.log('[STREAM] Anthropic SDK initialized successfully');
+    } catch (initError) {
+      console.error('[STREAM] Failed to initialize Anthropic SDK:', initError);
+      _anthropicInitFailed = true;
+      return null;
+    }
   }
   return _anthropicInstance;
 }
@@ -290,19 +305,20 @@ export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
   
   // Log request start for debugging
-  console.log('[STREAM] Request started:', {
+  console.log('[STREAM] === REQUEST START ===', {
     timestamp: new Date().toISOString(),
-    url: request.url,
     hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
     hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY
   });
   
   try {
     // 1. AUTHENTICATION CHECK
+    console.log('[STREAM] Step 1: Auth check starting...');
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
     });
+    console.log('[STREAM] Step 1: Auth check complete', { hasContext: !!context, hasResponse: !!response });
 
     if (response) {
       securityMonitor.logAuthenticationFailure(
@@ -462,6 +478,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. VALIDATE API KEY
+    console.log('[STREAM] Step 6: Validating API keys...');
     const openRouterApiKey = process.env.OPENROUTER_API_KEY;
     if (!openRouterApiKey) {
       console.error('[STREAM] CRITICAL: OPENROUTER_API_KEY is not set!');
@@ -473,15 +490,17 @@ export async function POST(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' }
       });
     }
+    console.log('[STREAM] Step 6: API keys validated');
     
     // 7. SELECT MODEL
+    console.log('[STREAM] Step 7: Selecting model...');
     const complexity = analyzeQueryComplexity(sanitizedMessage);
     const modelId = selectedAIModel?.openRouterModelId || MODEL_CHAINS[complexity][0];
-    
-    console.log(`[STREAM] Using model: ${modelId} (complexity: ${complexity}, hasApiKey: ${!!openRouterApiKey})`);
+    console.log(`[STREAM] Step 7: Model selected: ${modelId} (complexity: ${complexity})`);
 
     // 8. BUILD CONTEXT BEFORE STREAM (prevents 500 errors)
     // All async work that can fail should happen BEFORE creating the stream
+    console.log('[STREAM] Step 8: Building context...');
     let workspaceContext: any;
     try {
       const contextPromise = AIContextService.buildContext({
@@ -562,16 +581,19 @@ export async function POST(request: NextRequest) {
     });
 
     // Check if Anthropic is available (preferred - direct connection is faster)
+    console.log('[STREAM] Step 11: Initializing AI providers...');
     const anthropic = getAnthropicInstance();
     const hasAnthropicKey = !!anthropic;
     
-    console.log('[STREAM] API key status:', { 
+    console.log('[STREAM] Step 11: Provider status:', { 
       hasAnthropicKey, 
-      hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY 
+      hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
+      willUse: hasAnthropicKey ? 'Claude (Direct)' : 'OpenRouter'
     });
 
     // 11. CREATE STREAMING RESPONSE
     // All preparation is done - now we can safely create the stream
+    console.log('[STREAM] Step 12: Creating stream response...');
     const encoder = new TextEncoder();
     let fullContent = '';
     let usedModel = hasAnthropicKey ? CLAUDE_MODEL : OPENROUTER_MODELS.GPT4O_MINI;
