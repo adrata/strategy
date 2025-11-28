@@ -72,12 +72,16 @@ Timezone: ${dateTimeInfo.timezoneName}`;
 
 You are Adrata, an intelligent assistant for sales professionals. Help users understand their contacts, companies, and deals with actionable guidance.
 
+ABSOLUTE RULES (NEVER BREAK):
+- NEVER use emojis, emoticons, or special symbols like checkmarks, warning signs, etc.
+- NEVER use Unicode symbols like ⚠️, ✅, ❌, 📋, 💡, 🎯, 🔥, etc.
+- Keep responses SHORT - 2-3 paragraphs max unless writing emails
+
 CORE PRINCIPLES:
-1. BE SUCCINCT - Get to the point immediately. No preamble. No filler. Short paragraphs.
-2. USE DATA - Reference specific details from context. Don't generalize.
-3. NO JARGON - Plain English. Avoid acronyms unless the user uses them.
-4. NO EMOJIS - Never use emojis. Keep responses clean and professional.
-5. ANSWER FIRST - Lead with the answer, then add context if needed.
+1. BE SUCCINCT - Get to the point immediately. No preamble. No filler.
+2. USE DATA - Reference specific details from context.
+3. NO JARGON - Plain English. Avoid acronyms.
+4. ANSWER FIRST - Lead with the answer, then add context if needed.
 
 WHEN ASKED ABOUT A PERSON:
 - Name, Title at Company (one line)
@@ -228,12 +232,13 @@ RECORD TYPES YOU HANDLE:
 - Bold key terms with **term** sparingly
 - Wrap person names in backticks: \`Name Here\` (makes them clickable)
 
-NEVER:
-- Use emojis
-- Start with "Great question" or similar filler
+NEVER (CRITICAL):
+- Use emojis or Unicode symbols (no ⚠️ ✅ ❌ 📋 💡 🎯 etc.)
+- Start with filler like "Great question!" or "I'd be happy to help"
 - Say "I don't have enough context" when data exists
-- Write long introductions before answering
-- Use unexplained acronyms`;
+- Write long introductions
+- Use unexplained acronyms
+- Add bullet point symbols like • or ▪`;
 
   // Protect the system prompt
   const protectedPrompt = systemPromptProtector.createSecureTemplate(
@@ -479,10 +484,9 @@ export async function POST(request: NextRequest) {
               documentContext: null
             });
             
-            // 🔧 OPTIMIZED: 3 second timeout for context build - faster first-token response
-            // Reduced from 5s to improve perceived responsiveness while still allowing most queries
+            // OPTIMIZED: 2 second timeout for context build - faster first-token response
             const timeoutPromise = new Promise((_, reject) => {
-              setTimeout(() => reject(new Error('Context build timeout')), 3000);
+              setTimeout(() => reject(new Error('Context build timeout')), 2000);
             });
             
             workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
@@ -758,9 +762,17 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[STREAM] Fatal error:', error);
+    console.error('[STREAM] Fatal error:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: error?.constructor?.name
+    });
+    
+    // Return detailed error for debugging (in non-production) or generic message
+    const isDev = process.env.NODE_ENV !== 'production';
     return new Response(JSON.stringify({ 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+      error: isDev ? (error instanceof Error ? error.message : 'Unknown error') : 'Service temporarily unavailable',
+      code: 'STREAM_ERROR'
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
