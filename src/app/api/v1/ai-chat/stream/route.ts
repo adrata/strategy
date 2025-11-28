@@ -288,6 +288,14 @@ function analyzeQueryComplexity(message: string): 'simple' | 'standard' | 'compl
 export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
   
+  // Log request start for debugging
+  console.log('[STREAM] Request started:', {
+    timestamp: new Date().toISOString(),
+    url: request.url,
+    hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+    hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY
+  });
+  
   try {
     // 1. AUTHENTICATION CHECK
     const { context, response } = await getSecureApiContext(request, {
@@ -312,7 +320,20 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const body = await request.json();
+    // Parse request body with error handling
+    let body: any;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('[STREAM] Failed to parse request body:', parseError);
+      return new Response(JSON.stringify({ 
+        error: 'Invalid request body',
+        code: 'PARSE_ERROR'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
     
     const { 
       message, 
@@ -484,9 +505,9 @@ export async function POST(request: NextRequest) {
               documentContext: null
             });
             
-            // OPTIMIZED: 2 second timeout for context build - faster first-token response
+            // Context build timeout - balance between speed and reliability
             const timeoutPromise = new Promise((_, reject) => {
-              setTimeout(() => reject(new Error('Context build timeout')), 2000);
+              setTimeout(() => reject(new Error('Context build timeout')), 3000);
             });
             
             workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
@@ -543,32 +564,31 @@ export async function POST(request: NextRequest) {
             content: sanitizedMessage
           });
 
-          // Stream using Vercel AI SDK - PRIMARY: Direct Claude, FALLBACK: OpenRouter
+          // Stream using Vercel AI SDK
+          // PRIMARY: OpenRouter (more reliable in serverless)
+          // FALLBACK: Direct Claude if OpenRouter fails
           let fullContent = '';
-          let usedModel = CLAUDE_MODEL;
-          let usedProvider = 'Anthropic';
+          let usedModel = OPENROUTER_MODELS.GPT4O_MINI;
+          let usedProvider = 'OpenRouter';
           let tokensUsed = 0;
           
-          // Get Anthropic instance (direct connection - faster than OpenRouter)
+          // Check if Anthropic is available (optional - used as fallback)
           const anthropic = getAnthropicInstance();
+          const hasAnthropicKey = !!anthropic;
           
-          // Create AbortController for timeout handling (45s for Claude - it's reliable but can be slow for complex queries)
+          // Create AbortController for timeout handling
           const abortController = new AbortController();
           const timeoutId = setTimeout(() => {
-            console.warn('[STREAM] Primary request timeout - aborting after 45s');
+            console.warn('[STREAM] Primary request timeout - aborting after 30s');
             abortController.abort();
-          }, 45000);
+          }, 30000);
           
           try {
-            if (!anthropic) {
-              throw new Error('Anthropic not available - falling back to OpenRouter');
-            }
+            // PRIMARY: Use OpenRouter (more reliable, no API key issues)
+            console.log(`[STREAM] Using PRIMARY: OpenRouter ${usedModel}`);
             
-            console.log(`[STREAM] Using PRIMARY: Direct Claude (${CLAUDE_MODEL})`);
-            
-            // Use direct Anthropic Claude - eliminates OpenRouter network hop
             const result = await streamText({
-              model: anthropic(CLAUDE_MODEL),
+              model: openrouter(usedModel),
               system: systemPrompt,
               messages,
               maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
@@ -596,39 +616,57 @@ export async function POST(request: NextRequest) {
             
             // Clear the timeout since we succeeded
             clearTimeout(timeoutId);
-            console.log(`[STREAM] Direct Claude succeeded - ${tokensUsed} tokens`);
+            console.log(`[STREAM] OpenRouter succeeded - ${tokensUsed} tokens`);
 
           } catch (streamError: any) {
             // Clear the timeout
             clearTimeout(timeoutId);
-            console.error(`[STREAM] Primary Claude failed:`, {
+            console.error(`[STREAM] Primary OpenRouter failed:`, {
               error: streamError?.message || streamError,
               code: streamError?.code,
               status: streamError?.status,
             });
             
-            // FALLBACK: Try OpenRouter GPT-4o-mini (fast and reliable)
-            const fallbackModel = OPENROUTER_MODELS.GPT4O_MINI;
-            usedModel = fallbackModel;
-            usedProvider = 'OpenRouter';
-            console.log(`[STREAM] Trying FALLBACK: OpenRouter ${fallbackModel}`);
-            
-            // Create new AbortController for fallback (30s timeout)
+            // FALLBACK: Try Direct Claude if available
+            // FALLBACK: Try Direct Claude if key available, otherwise OpenRouter Claude
             const fallbackAbortController = new AbortController();
             const fallbackTimeoutId = setTimeout(() => {
-              console.warn('[STREAM] Fallback request timeout - aborting after 30s');
+              console.warn('[STREAM] Fallback request timeout - aborting after 45s');
               fallbackAbortController.abort();
-            }, 30000);
+            }, 45000);
             
             try {
-              const fallbackResult = await streamText({
-                model: openrouter(fallbackModel),
-                system: systemPrompt,
-                messages,
-                maxTokens: 2048,
-                temperature: 0.7,
-                abortSignal: fallbackAbortController.signal,
-              });
+              let fallbackResult;
+              
+              if (hasAnthropicKey && anthropic) {
+                // Use direct Anthropic as fallback
+                usedModel = CLAUDE_MODEL;
+                usedProvider = 'Anthropic';
+                console.log(`[STREAM] Trying FALLBACK: Direct Claude (${CLAUDE_MODEL})`);
+                
+                fallbackResult = await streamText({
+                  model: anthropic(CLAUDE_MODEL),
+                  system: systemPrompt,
+                  messages,
+                  maxTokens: 2048,
+                  temperature: 0.7,
+                  abortSignal: fallbackAbortController.signal,
+                });
+              } else {
+                // Use OpenRouter Claude as fallback
+                usedModel = OPENROUTER_MODELS.CLAUDE_SONNET;
+                usedProvider = 'OpenRouter';
+                console.log(`[STREAM] Trying FALLBACK: OpenRouter ${usedModel}`);
+                
+                fallbackResult = await streamText({
+                  model: openrouter(usedModel),
+                  system: systemPrompt,
+                  messages,
+                  maxTokens: 2048,
+                  temperature: 0.7,
+                  abortSignal: fallbackAbortController.signal,
+                });
+              }
 
               for await (const chunk of fallbackResult.textStream) {
                 if (chunk) {
@@ -648,11 +686,11 @@ export async function POST(request: NextRequest) {
               
               // Clear the fallback timeout since we succeeded
               clearTimeout(fallbackTimeoutId);
-              console.log(`[STREAM] Fallback OpenRouter succeeded - ${tokensUsed} tokens`);
+              console.log(`[STREAM] Fallback ${usedProvider} succeeded - ${tokensUsed} tokens`);
             } catch (fallbackError: any) {
               // Clear the fallback timeout
               clearTimeout(fallbackTimeoutId);
-              console.error('[STREAM] Fallback OpenRouter also failed:', {
+              console.error('[STREAM] Fallback also failed:', {
                 error: fallbackError?.message || fallbackError,
                 code: fallbackError?.code,
                 status: fallbackError?.status,
