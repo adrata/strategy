@@ -1,0 +1,114 @@
+[
+  {
+    "title": "AI Deal Forecasting Engine",
+    "priority": "P0",
+    "epic": "Chronicle and Intelligence Reports",
+    "description": "As a sales leader, I want AI-powered deal forecasting so that I can predict revenue with high accuracy.",
+    "rationale": "Clari's core value prop. 87% of enterprises now require AI forecasting.",
+    "acceptanceCriteria": [
+      "ML model predicts deal close probability",
+      "Commit vs best case vs pipeline view",
+      "Automated forecast roll-ups by team/region",
+      "Historical accuracy tracking",
+      "Risk-adjusted forecasting"
+    ]
+  },
+  {
+    "title": "Win/Loss Analysis AI",
+    "priority": "P1",
+    "epic": "Chronicle and Intelligence Reports",
+    "description": "As a sales leader, I want automatic win/loss analysis so that I can learn from every deal outcome.",
+    "rationale": "Gong does this well. Critical for sales enablement.",
+    "acceptanceCriteria": [
+      "Auto-analyze all closed deals",
+      "Identify patterns in wins vs losses",
+      "Competitor mentions correlation",
+      "Timeline pattern analysis",
+      "Actionable recommendations"
+    ]
+  },
+  {
+    "title": "Mutual Action Plans",
+    "priority": "P1",
+    "epic": "Communication Hub (Oasis Evolution)",
+    "description": "As a sales rep, I want to create shared action plans with buyers so that we're aligned on next steps.",
+    "rationale": "Modern buyers expect collaborative selling. Reduces deal slippage.",
+    "acceptanceCriteria": [
+      "Shared timeline with buyer",
+      "Task assignments for both sides",
+      "Progress tracking",
+      "Auto-reminders for overdue items",
+      "Integration with calendar"
+    ]
+  },
+  {
+    "title": "AI Meeting Prep Briefs",
+    "priority": "P1",
+    "epic": "Live Coaching and Real-Time Intelligence",
+    "description": "As a sales rep, I want AI-generated meeting prep briefs so that I walk into every meeting prepared.",
+    "rationale": "High-value, low-effort feature. Huge time saver.",
+    "acceptanceCriteria": [
+      "Auto-generate before calendar meetings",
+      "Include attendee insights",
+      "Recent news/signals about company",
+      "Suggested talking points",
+      "Previous interaction summary"
+    ]
+  },
+  {
+    "title": "Competitive Battlecards",
+    "priority": "P1",
+    "epic": "Data Enrichment and ICP Discovery",
+    "description": "As a sales rep, I want real-time competitive battlecards so that I can handle objections effectively.",
+    "rationale": "Klue/Crayon feature. Critical for competitive deals.",
+    "acceptanceCriteria": [
+      "Auto-generated from web intelligence",
+      "Win themes by competitor",
+      "Objection handling scripts",
+      "Feature comparison matrix",
+      "Real-time updates on competitor changes"
+    ]
+  },
+  {
+    "title": "Deal Rooms (Digital Sales Room)",
+    "priority": "P2",
+    "epic": "Communication Hub (Oasis Evolution)",
+    "description": "As a sales rep, I want digital deal rooms so that I can centralize all deal content and communication.",
+    "rationale": "Growing trend - Aligned, Consensus, GetAccept. Improves buyer experience.",
+    "acceptanceCriteria": [
+      "Branded microsites per deal",
+      "Document sharing with analytics",
+      "Stakeholder engagement tracking",
+      "Video messaging",
+      "Content recommendations"
+    ]
+  },
+  {
+    "title": "Revenue Operations Dashboard",
+    "priority": "P1",
+    "epic": "Chronicle and Intelligence Reports",
+    "description": "As a RevOps leader, I want a unified dashboard so that I can see the full revenue picture.",
+    "rationale": "RevOps is fastest growing sales function. They need their own view.",
+    "acceptanceCriteria": [
+      "Pipeline health metrics",
+      "Conversion funnel analysis",
+      "Rep productivity metrics",
+      "Forecast vs actual tracking",
+      "Data quality scores"
+    ]
+  },
+  {
+    "title": "Mobile Push Notifications",
+    "priority": "P1",
+    "epic": "Multi-Platform Excellence",
+    "description": "As a field sales rep, I want push notifications so that I never miss important deal signals.",
+    "rationale": "Critical for mobile users. Table stakes for modern sales tools.",
+    "acceptanceCriteria": [
+      "Deal stage changes",
+      "Email opens/clicks",
+      "Meeting reminders with prep",
+      "At-risk deal alerts",
+      "Customizable notification rules"
+    ]
+  }
+]

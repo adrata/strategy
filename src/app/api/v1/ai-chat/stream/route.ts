@@ -591,65 +591,47 @@ export async function POST(request: NextRequest) {
       willUse: hasAnthropicKey ? 'Claude (Direct)' : 'OpenRouter'
     });
 
-    // 11. CREATE STREAMING RESPONSE
-    // All preparation is done - now we can safely create the stream
+    // 11. CREATE STREAMING RESPONSE - Use streamText directly and convert to SSE
     console.log('[STREAM] Step 12: Creating stream response...');
-    const encoder = new TextEncoder();
-    let fullContent = '';
-    let usedModel = hasAnthropicKey ? CLAUDE_MODEL : OPENROUTER_MODELS.GPT4O_MINI;
-    let usedProvider = hasAnthropicKey ? 'Anthropic' : 'OpenRouter';
-    let tokensUsed = 0;
     
-    const stream = new ReadableStream({
-      async start(controller) {
-        // Send start event IMMEDIATELY so user sees activity
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-          type: 'start',
-          timestamp: Date.now()
-        })}\n\n`));
+    const usedModel = hasAnthropicKey ? CLAUDE_MODEL : OPENROUTER_MODELS.GPT4O_MINI;
+    const usedProvider = hasAnthropicKey ? 'Anthropic' : 'OpenRouter';
+    console.log(`[STREAM] Using: ${usedProvider} (${usedModel})`);
+    
+    try {
+      // Call streamText and get the result
+      const result = hasAnthropicKey && anthropic 
+        ? await streamText({
+            model: anthropic(CLAUDE_MODEL),
+            system: systemPrompt,
+            messages,
+            maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
+            temperature: 0.7,
+          })
+        : await streamText({
+            model: openrouter(usedModel),
+            system: systemPrompt,
+            messages,
+            maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
+            temperature: 0.7,
+          });
 
-        try {
-          
-          // Create AbortController for timeout handling
-          const abortController = new AbortController();
-          const timeoutId = setTimeout(() => {
-            console.warn('[STREAM] Primary request timeout - aborting after 45s');
-            abortController.abort();
-          }, 45000);
-          
+      // Convert to our SSE format
+      const encoder = new TextEncoder();
+      let tokensUsed = 0;
+      
+      const stream = new ReadableStream({
+        async start(controller) {
+          // Send start event
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            type: 'start',
+            timestamp: Date.now()
+          })}\n\n`));
+
           try {
-            let result;
-            
-            // PRIMARY: Use Direct Claude if ANTHROPIC_API_KEY is set (faster, more reliable)
-            if (hasAnthropicKey && anthropic) {
-              console.log(`[STREAM] Using PRIMARY: Direct Claude (${CLAUDE_MODEL})`);
-              
-              result = await streamText({
-                model: anthropic(CLAUDE_MODEL),
-                system: systemPrompt,
-                messages,
-                maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
-                temperature: 0.7,
-                abortSignal: abortController.signal,
-              });
-            } else {
-              // Fallback to OpenRouter if no Anthropic key
-              console.log(`[STREAM] Using PRIMARY: OpenRouter ${usedModel}`);
-              
-              result = await streamText({
-                model: openrouter(usedModel),
-                system: systemPrompt,
-                messages,
-                maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
-                temperature: 0.7,
-                abortSignal: abortController.signal,
-              });
-            }
-
-            // Stream tokens to client in our custom format
+            // Stream tokens
             for await (const chunk of result.textStream) {
               if (chunk) {
-                fullContent += chunk;
                 tokensUsed++;
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify({
                   type: 'token',
@@ -658,211 +640,57 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            // Get final usage info if available
+            // Get usage
             const usage = await result.usage;
             if (usage) {
               tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
             }
             
-            // Clear the timeout since we succeeded
-            clearTimeout(timeoutId);
             console.log(`[STREAM] ${usedProvider} succeeded - ${tokensUsed} tokens`);
 
+            // Send done event
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+              type: 'done',
+              metadata: { model: usedModel, tokensUsed, provider: usedProvider },
+              totalTime: Date.now() - requestStartTime
+            })}\n\n`));
+            
+            controller.close();
           } catch (streamError: any) {
-            // Clear the timeout
-            clearTimeout(timeoutId);
-            console.error(`[STREAM] Primary ${usedProvider} failed:`, {
-              error: streamError?.message || streamError,
-              code: streamError?.code,
-              status: streamError?.status,
-            });
+            console.error(`[STREAM] Stream error:`, streamError?.message || streamError);
             
-            // FALLBACK: If Claude failed, try OpenRouter. If OpenRouter failed, try Claude.
-            const fallbackAbortController = new AbortController();
-            const fallbackTimeoutId = setTimeout(() => {
-              console.warn('[STREAM] Fallback request timeout - aborting after 45s');
-              fallbackAbortController.abort();
-            }, 45000);
-            
-            try {
-              let fallbackResult;
-              
-              // If we were using Claude, fall back to OpenRouter
-              // If we were using OpenRouter, fall back to Claude (if available)
-              if (usedProvider === 'Anthropic') {
-                // Claude failed, try OpenRouter
-                usedModel = OPENROUTER_MODELS.GPT4O_MINI;
-                usedProvider = 'OpenRouter';
-                console.log(`[STREAM] Trying FALLBACK: OpenRouter ${usedModel}`);
-                
-                fallbackResult = await streamText({
-                  model: openrouter(usedModel),
-                  system: systemPrompt,
-                  messages,
-                  maxTokens: 2048,
-                  temperature: 0.7,
-                  abortSignal: fallbackAbortController.signal,
-                });
-              } else if (hasAnthropicKey && anthropic) {
-                // OpenRouter failed, try Claude
-                usedModel = CLAUDE_MODEL;
-                usedProvider = 'Anthropic';
-                console.log(`[STREAM] Trying FALLBACK: Direct Claude (${CLAUDE_MODEL})`);
-                
-                fallbackResult = await streamText({
-                  model: anthropic(CLAUDE_MODEL),
-                  system: systemPrompt,
-                  messages,
-                  maxTokens: 2048,
-                  temperature: 0.7,
-                  abortSignal: fallbackAbortController.signal,
-                });
-              } else {
-                // No fallback available
-                throw streamError;
-              }
-
-              for await (const chunk of fallbackResult.textStream) {
-                if (chunk) {
-                  fullContent += chunk;
-                  tokensUsed++;
-                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-                    type: 'token',
-                    content: chunk
-                  })}\n\n`));
-                }
-              }
-
-              const usage = await fallbackResult.usage;
-              if (usage) {
-                tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
-              }
-              
-              // Clear the fallback timeout since we succeeded
-              clearTimeout(fallbackTimeoutId);
-              console.log(`[STREAM] Fallback ${usedProvider} succeeded - ${tokensUsed} tokens`);
-            } catch (fallbackError: any) {
-              // Clear the fallback timeout
-              clearTimeout(fallbackTimeoutId);
-              console.error('[STREAM] Fallback also failed:', {
-                error: fallbackError?.message || fallbackError,
-                code: fallbackError?.code,
-                status: fallbackError?.status,
-              });
-              throw fallbackError;
-            }
+            // Send error event but still close gracefully
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+              type: 'error',
+              message: 'Stream interrupted',
+              recoverable: false
+            })}\n\n`));
+            controller.close();
           }
-
-          // Send done event with metadata
-          const processingTime = Date.now() - requestStartTime;
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-            type: 'done',
-            metadata: {
-              model: usedModel,
-              provider: usedProvider,
-              tokensUsed,
-              processingTime,
-              complexity,
-              routingInfo: {
-                selectedModel: usedModel,
-                fallbackUsed: usedProvider === 'OpenRouter',
-                primaryModel: CLAUDE_MODEL,
-              }
-            },
-            totalTime: processingTime
-          })}\n\n`));
-
-          controller.close();
-
-        } catch (error: any) {
-          console.error('[STREAM] AI Error (using fallback):', {
-            message: error?.message || error,
-            code: error?.code,
-            status: error?.status
-          });
-          
-          // Send error event to notify frontend (but continue with fallback)
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-            type: 'error',
-            message: 'AI service temporarily unavailable, using fallback',
-            recoverable: true
-          })}\n\n`));
-          
-          // SMART FALLBACK: Generate helpful content based on the user's query
-          let fallbackContent = '';
-          
-          if (currentRecord) {
-            const recordName = currentRecord.fullName || currentRecord.name || 'this contact';
-            const firstName = currentRecord.firstName || recordName.split(' ')[0] || recordName;
-            const company = typeof currentRecord.company === 'string' 
-              ? currentRecord.company 
-              : (currentRecord.company?.name || currentRecord.companyName || '');
-            const title = currentRecord.title || currentRecord.jobTitle || '';
-            const email = currentRecord.email || '';
-            
-            // Detect what the user is asking for
-            const lowerMessage = sanitizedMessage.toLowerCase();
-            const isEmailRequest = lowerMessage.includes('email') || lowerMessage.includes('write') || lowerMessage.includes('draft');
-            const isLinkedInRequest = lowerMessage.includes('linkedin') || lowerMessage.includes('message');
-            const isInfoRequest = lowerMessage.includes('tell me') || lowerMessage.includes('about') || lowerMessage.includes('who is') || lowerMessage.includes('what');
-            
-            if (isEmailRequest && !isLinkedInRequest) {
-              // Generate a helpful cold email
-              fallbackContent = `Here's a cold email draft for ${firstName}:\n\n---\n\n**Subject:** Quick question for ${firstName}\n\n${firstName} - noticed ${company || 'your company'} is doing interesting work${title ? ` in the ${title.toLowerCase().includes('director') || title.toLowerCase().includes('manager') || title.toLowerCase().includes('vp') ? 'leadership' : ''} space` : ''}.\n\nCompanies at your stage typically hit bottlenecks we specialize in solving. Happy to share how we've helped similar teams cut their timeline significantly.\n\nWorth a quick chat to see if this applies to ${company || 'your situation'}?\n\n---\n\n${email ? `**Send to:** ${email}\n\n` : ''}This follows best practices: under 75 words, personalized hook, single soft CTA.`;
-            } else if (isLinkedInRequest) {
-              // Generate a LinkedIn message
-              fallbackContent = `Here's a LinkedIn connection request for ${firstName}:\n\n---\n\n${firstName} - saw your work${company ? ` at ${company}` : ''}${title ? ` as ${title}` : ''}. Always looking to connect with folks tackling similar challenges.\n\nWould love to exchange ideas sometime.\n\n---\n\nKeep it short (under 300 characters) for connection requests.`;
-            } else if (isInfoRequest) {
-              // Provide info about the person
-              const fields: string[] = [];
-              if (recordName) fields.push(`**Name:** ${recordName}`);
-              if (title) fields.push(`**Title:** ${title}`);
-              if (company) fields.push(`**Company:** ${company}`);
-              if (email) fields.push(`**Email:** ${email}`);
-              if (currentRecord.phone) fields.push(`**Phone:** ${currentRecord.phone}`);
-              if (currentRecord.linkedIn || currentRecord.linkedInUrl) fields.push(`**LinkedIn:** ${currentRecord.linkedIn || currentRecord.linkedInUrl}`);
-              if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
-              
-              fallbackContent = `Here's what I know about **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\n${title ? `As a ${title}, they likely focus on ${title.toLowerCase().includes('engineer') ? 'technical implementation and architecture' : title.toLowerCase().includes('director') || title.toLowerCase().includes('vp') ? 'strategic initiatives and team leadership' : 'their functional area'}.` : ''}\n\nWant me to draft an email or provide more specific guidance?`;
-            } else {
-              // Default helpful response
-              const fields: string[] = [];
-              if (recordName) fields.push(`**Name:** ${recordName}`);
-              if (title) fields.push(`**Title:** ${title}`);
-              if (company) fields.push(`**Company:** ${company}`);
-              if (email) fields.push(`**Email:** ${email}`);
-              if (currentRecord.status) fields.push(`**Status:** ${currentRecord.status}`);
-              
-              fallbackContent = `I have context for **${recordName}**${company ? ` at **${company}**` : ''}:\n\n${fields.join('\n')}\n\nI can help you:\n- Write a cold email\n- Draft a LinkedIn message\n- Create a call script\n- Analyze the opportunity\n\nWhat would be most helpful?`;
-            }
-          } else {
-            fallbackContent = "I'm ready to help! Select a lead, prospect, or company to get personalized guidance, or ask me anything about sales strategy.";
-          }
-          
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-            type: 'token',
-            content: fallbackContent
-          })}\n\n`));
-          
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-            type: 'done',
-            metadata: { model: 'fallback', fallbackUsed: true },
-            totalTime: Date.now() - requestStartTime
-          })}\n\n`));
-          
-          controller.close();
         }
-      }
-    });
+      });
 
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache, no-transform',
-        'Connection': 'keep-alive',
-        'X-Accel-Buffering': 'no'
-      }
-    });
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache, no-transform',
+          'Connection': 'keep-alive',
+          'X-Accel-Buffering': 'no'
+        }
+      });
+    } catch (aiError: any) {
+      console.error('[STREAM] AI call failed:', aiError?.message || aiError);
+      
+      // Return a proper error response instead of 500
+      return new Response(JSON.stringify({
+        error: 'AI service temporarily unavailable',
+        code: 'AI_ERROR',
+        fallback: true
+      }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
   } catch (error) {
     console.error('[STREAM] Fatal error:', {
