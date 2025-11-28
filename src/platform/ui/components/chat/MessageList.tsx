@@ -352,9 +352,14 @@ export function MessageList({
                 {/* Enhanced content rendering with smart links and record references */}
                 {(() => {
                   // Split by smart link patterns first, then handle markdown
-                  // Use non-capturing groups (?:...) for inner patterns to prevent duplicate matches in split result
-                  // Only the outer group should capture the full match
-                  return message.content.split(/(\bhttps?:\/\/[^\s]+|\[(?:[^\]]+)\]\((?:[^)]+)\)|@(?:\w+)|"(?:[A-Z][a-z]+ [A-Z][a-z]+)"|(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(?:\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g).map((part, index) => {
+                  // Improved patterns to catch more name formats:
+                  // - "Name Name" (double quotes, 2-4 words)
+                  // - `Name Name` (backticks)
+                  // - **Name Name** (bold)
+                  // - [[Name Name]] (wiki-style links)
+                  const splitPattern = /(\bhttps?:\/\/[^\s]+|\[(?:[^\]]+)\]\((?:[^)]+)\)|@(?:\w+(?:\s+\w+)?)|"(?:[A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})"|`(?:[A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})`|\*\*(?:[A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\*\*|\[\[(?:[A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\]\]|(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(?:\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g;
+                  
+                  return message.content.split(splitPattern).map((part, index) => {
                   // CRITICAL: Handle undefined parts from split operation
                   if (!part) {
                     return null;
@@ -397,28 +402,78 @@ export function MessageList({
                     );
                   }
                   
-                  // Handle @mentions (record references)
-                  const mentionMatch = part.match(/^@(\w+)$/);
+                  // Handle @mentions (record references) - now supports "@ Name Name" format
+                  const mentionMatch = part.match(/^@\s*(.+)$/);
                   if (mentionMatch) {
                     const [, recordName] = mentionMatch;
                     return (
                       <button
                         key={index}
                         onClick={() => {
-                          // Search for and navigate to the record
-                          handleRecordSearch(recordName);
+                          handleRecordSearch(recordName.trim());
                         }}
                         className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200 cursor-pointer border border-blue-200 hover:border-blue-300"
                       >
-                        @{recordName}
+                        @{recordName.trim()}
                       </button>
                     );
                   }
                   
-                  // Handle quoted person names "John Smith"
-                  const quotedPersonMatch = part.match(/^"([A-Z][a-z]+ [A-Z][a-z]+)"$/);
+                  // Handle quoted person names "John Smith" (2-4 word names)
+                  const quotedPersonMatch = part.match(/^"([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})"$/);
                   if (quotedPersonMatch) {
                     const [, personName] = quotedPersonMatch;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          handleRecordSearch(personName);
+                        }}
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
+                      >
+                        {personName}
+                      </button>
+                    );
+                  }
+                  
+                  // Handle backtick-quoted person names `John Smith`
+                  const backtickPersonMatch = part.match(/^`([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})`$/);
+                  if (backtickPersonMatch) {
+                    const [, personName] = backtickPersonMatch;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          handleRecordSearch(personName);
+                        }}
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
+                      >
+                        {personName}
+                      </button>
+                    );
+                  }
+                  
+                  // Handle bold person names **John Smith**
+                  const boldPersonMatch = part.match(/^\*\*([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\*\*$/);
+                  if (boldPersonMatch) {
+                    const [, personName] = boldPersonMatch;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          handleRecordSearch(personName);
+                        }}
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
+                      >
+                        {personName}
+                      </button>
+                    );
+                  }
+                  
+                  // Handle wiki-style links [[John Smith]]
+                  const wikiLinkMatch = part.match(/^\[\[([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\]\]$/);
+                  if (wikiLinkMatch) {
+                    const [, personName] = wikiLinkMatch;
                     return (
                       <button
                         key={index}

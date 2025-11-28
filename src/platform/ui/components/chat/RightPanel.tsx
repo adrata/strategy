@@ -2632,6 +2632,10 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       let streamMetadata: any = null;
       let streamingStarted = false;
       
+      // 🚀 PERFORMANCE: Batch token updates to reduce re-renders
+      let lastUIUpdateTime = 0;
+      const UI_UPDATE_INTERVAL_MS = 50; // Update UI max every 50ms during streaming
+      
       // Client-side timeout with AbortController (45s)
       // This prevents hanging requests and allows faster fallback to non-streaming
       const streamAbortController = new AbortController();
@@ -2724,19 +2728,53 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                 // Append token to streamed content
                 streamedContent += data.content;
                 
-                // Update the streaming message with new content
-                setConversations(prev => prev.map(conv => 
-                  conv.isActive 
-                    ? { 
-                        ...conv, 
-                        messages: conv.messages.map(msg => 
-                          msg.id === streamingMessageId 
-                            ? { ...msg, content: streamedContent }
-                            : msg
-                        )
-                      }
-                    : conv
-                ));
+                // 🚀 PERFORMANCE: Only update UI if enough time has passed (batching)
+                const now = Date.now();
+                if (now - lastUIUpdateTime < UI_UPDATE_INTERVAL_MS) {
+                  // Skip this UI update, content will be included in next batch
+                  continue;
+                }
+                lastUIUpdateTime = now;
+                
+                // 🔧 FIX: Ensure streaming message exists before updating
+                // This handles race conditions where 'start' event was missed
+                setConversations(prev => prev.map(conv => {
+                  if (!conv.isActive) return conv;
+                  
+                  // Check if streaming message already exists
+                  const hasStreamingMsg = conv.messages.some(msg => msg.id === streamingMessageId);
+                  
+                  if (hasStreamingMsg) {
+                    // Update existing streaming message
+                    return {
+                      ...conv,
+                      messages: conv.messages.map(msg => 
+                        msg.id === streamingMessageId 
+                          ? { ...msg, content: streamedContent }
+                          : msg
+                      )
+                    };
+                  } else {
+                    // Streaming message doesn't exist yet - create it (start event was missed)
+                    console.warn('⚠️ [STREAMING] Start event missed, creating streaming message');
+                    return {
+                      ...conv,
+                      messages: [
+                        ...conv.messages.filter(msg => 
+                          msg.content !== 'typing' && 
+                          msg.content !== 'browsing'
+                        ),
+                        {
+                          id: streamingMessageId,
+                          type: 'assistant' as const,
+                          content: streamedContent,
+                          timestamp: new Date(),
+                          isTypewriter: false
+                        }
+                      ]
+                    };
+                  }
+                }));
                 
                 // Auto-scroll as content streams in
                 scrollToBottom(false);
@@ -2839,34 +2877,53 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             isPartial: true
           };
           
-          // Update UI with partial content
-          setConversations(prev => prev.map(conv => 
-            conv.isActive 
-              ? { 
-                  ...conv, 
-                  messages: conv.messages.map(msg => 
-                    msg.id === streamingMessageId 
-                      ? partialMessage
-                      : msg
-                  ).filter(msg => 
-                    msg.content !== 'typing' && 
-                    msg.content !== 'browsing'
-                  ),
-                  lastActivity: new Date()
-                }
-              : conv
-          ));
+          // 🔧 FIX: Update UI with partial content, ensuring message exists
+          setConversations(prev => prev.map(conv => {
+            if (!conv.isActive) return conv;
+            
+            // Filter out typing/browsing indicators
+            const filteredMessages = conv.messages.filter(msg => 
+              msg.content !== 'typing' && msg.content !== 'browsing'
+            );
+            
+            // Check if streaming message exists
+            const hasStreamingMsg = filteredMessages.some(msg => msg.id === streamingMessageId);
+            
+            if (hasStreamingMsg) {
+              // Update existing streaming message with partial content
+              return {
+                ...conv,
+                messages: filteredMessages.map(msg => 
+                  msg.id === streamingMessageId ? partialMessage : msg
+                ),
+                lastActivity: new Date()
+              };
+            } else {
+              // Streaming message doesn't exist - add it as new message
+              return {
+                ...conv,
+                messages: [...filteredMessages, partialMessage],
+                lastActivity: new Date()
+              };
+            }
+          }));
           
-          // Save partial to API
-          const activeConv = conversations.find(c => c.isActive);
-          if (activeConv) {
-            if (activeConv.id === 'main-chat') {
+          // 🔧 FIX: Use functional update pattern to get latest conversation state
+          let activeConvId: string | null = null;
+          setConversations(prev => {
+            const activeConv = prev.find(c => c.isActive);
+            if (activeConv) activeConvId = activeConv.id;
+            return prev;
+          });
+          
+          if (activeConvId) {
+            if (activeConvId === 'main-chat') {
               const apiId = await ensureMainChatInAPI();
               if (apiId) {
                 await saveMessageToAPI(apiId, partialMessage);
               }
             } else {
-              await saveMessageToAPI(activeConv.id, partialMessage);
+              await saveMessageToAPI(activeConvId, partialMessage);
             }
           }
           
@@ -3086,60 +3143,44 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       return;
     }
     
-    // Create a URL-friendly slug from the record name
-    const nameSlug = recordName.toLowerCase().replace(/\s+/g, '-');
+    // Detect current section from URL to search in the same section first
+    const sectionMatch = pathname?.match(/\/(speedrun|leads|prospects|people|companies|opportunities|clients|partners)/);
+    const currentSection = sectionMatch ? sectionMatch[1] : 'people';
     
-    // Try to find in speedrun section first (since user is often looking at speedrun)
-    // This navigates to speedrun with a search query that will highlight/filter to this record
-    const targetUrl = `/${workspace}/speedrun?search=${encodeURIComponent(recordName)}`;
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Navigating to: ${targetUrl}`);
+    // Try to find the actual record via API first for direct navigation
+    try {
+      const searchResponse = await fetch(`/api/v1/people/search?q=${encodeURIComponent(recordName)}&limit=1`);
+      if (searchResponse.ok) {
+        const searchResult = await searchResponse.json();
+        if (searchResult.success && searchResult.data?.length > 0) {
+          const foundRecord = searchResult.data[0];
+          // Create URL-friendly slug and navigate directly to the record
+          const nameSlug = (foundRecord.fullName || foundRecord.name || recordName)
+            .toLowerCase()
+            .replace(/\s+/g, '-');
+          const directUrl = `/${workspace}/${currentSection}/${nameSlug}-${foundRecord.id}`;
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`🎯 Direct navigation to: ${directUrl}`);
+          }
+          
+          window.location.href = directUrl;
+          return;
+        }
+      }
+    } catch (error) {
+      // Fallback to search if direct lookup fails
+      console.warn('Direct record lookup failed, falling back to search:', error);
     }
     
-    // Navigate to the search/filtered view
+    // Fallback: Navigate to the current section with search query
+    const targetUrl = `/${workspace}/${currentSection}?search=${encodeURIComponent(recordName)}`;
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔍 Navigating to search: ${targetUrl}`);
+    }
+    
     window.location.href = targetUrl;
-  };
-
-  // Smart link generation for records and actions
-  const generateSmartLinks = (content: string): string => {
-    // Pattern matching for different types of links
-    const patterns = {
-      // Person records: "John Smith" -> link to person profile
-      person: /"([A-Z][a-z]+ [A-Z][a-z]+)"/g,
-      // Company records: "Acme Corp" -> link to company profile  
-      company: /"([A-Z][a-z]+(?: [A-Z][a-z]+)*)"/g,
-      // Email addresses: "john@company.com" -> link to person
-      email: /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,
-      // Phone numbers: "(555) 123-4567" -> link to contact
-      phone: /(\([0-9]{3}\) [0-9]{3}-[0-9]{4})/g,
-      // URLs: "https://company.com" -> external link
-      url: /(https?:\/\/[^\s]+)/g
-    };
-
-    let enhancedContent = content;
-
-    // Replace person names with clickable links
-    enhancedContent = enhancedContent.replace(patterns.person, (match, name) => {
-      return `[${name}](/people?search=${encodeURIComponent(name)})`;
-    });
-
-    // Replace company names with clickable links
-    enhancedContent = enhancedContent.replace(patterns.company, (match, name) => {
-      return `[${name}](/companies?search=${encodeURIComponent(name)})`;
-    });
-
-    // Replace email addresses with clickable links
-    enhancedContent = enhancedContent.replace(patterns.email, (match, email) => {
-      return `[${email}](/people?search=${encodeURIComponent(email)})`;
-    });
-
-    // Replace phone numbers with clickable links
-    enhancedContent = enhancedContent.replace(patterns.phone, (match, phone) => {
-      return `[${phone}](/people?search=${encodeURIComponent(phone)})`;
-    });
-
-    return enhancedContent;
   };
 
   // Render based on view mode

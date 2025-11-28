@@ -198,6 +198,11 @@ RECORD TYPES YOU HANDLE:
     if (workspaceContext.applicationContext) {
       basePrompt += `\n\nAPPLICATION CONTEXT:\n${workspaceContext.applicationContext}`;
     }
+    // 🔧 FIX: Include list view context so AI can search for people by name in the current list
+    if (workspaceContext.listViewContext && !workspaceContext.listViewContext.includes('No list view context')) {
+      basePrompt += `\n\n=== LIST VIEW CONTEXT ===\n${workspaceContext.listViewContext}`;
+      basePrompt += `\n\nIMPORTANT: When the user asks about a specific person by name (e.g., "tell me about Terry Torok"), FIRST search the LIST VIEW CONTEXT above for that person. If found, provide information about them from the list. Only say you cannot find someone if they are NOT in the list above.`;
+    }
   }
 
   // Add direct record context if available and not already in workspaceContext
@@ -224,6 +229,12 @@ RECORD TYPES YOU HANDLE:
 - Structure longer responses with clear sections using markdown headers
 - Keep responses concise and actionable
 - If suggesting next steps, be specific about what to do
+
+NAME FORMATTING (IMPORTANT - Makes names clickable):
+- When mentioning a person's name, wrap it in backticks like \`Terry Torok\` 
+- This makes the name clickable so users can navigate to that person's record
+- Always use the full name (first + last) when available
+- Example: "I found \`Terry Torok\` in your Speedrun list. They work at Creative Intelligence Agency."
 
 NEVER DO THESE:
 - Say "I don't have enough context" or "limited data available" when data exists
