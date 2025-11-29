@@ -38,14 +38,24 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
         const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
-          const restoredConversations = parsed.map((conv: any) => ({
-            ...conv,
-            lastActivity: new Date(conv.lastActivity),
-            messages: conv.messages.map((msg: any) => ({
-              ...msg,
-              timestamp: new Date(msg.timestamp),
-            }))
-          }));
+          const restoredConversations = parsed.map((conv: any) => {
+            // Safely parse dates, falling back to current date if invalid
+            const parsedLastActivity = conv.lastActivity ? new Date(conv.lastActivity) : new Date();
+            const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
+            
+            return {
+              ...conv,
+              lastActivity: safeLastActivity,
+              messages: (conv.messages || []).map((msg: any) => {
+                const parsedTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+                const safeTimestamp = isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp;
+                return {
+                  ...msg,
+                  timestamp: safeTimestamp,
+                };
+              })
+            };
+          });
           const sorted = restoredConversations.sort((a: Conversation, b: Conversation) => {
             const aTime = a.lastActivity instanceof Date && !isNaN(a.lastActivity.getTime()) 
               ? a.lastActivity.getTime() 

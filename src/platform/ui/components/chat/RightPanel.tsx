@@ -458,17 +458,28 @@ export function RightPanel() {
         const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
-          // Convert date strings back to Date objects
-          return parsed.map((conv: any) => ({
-            ...conv,
-            lastActivity: new Date(conv.lastActivity),
-            messages: conv.messages.map((msg: any) => ({
-              ...msg,
-              timestamp: new Date(msg.timestamp),
-              // Ensure typewriter state is properly handled on load
-              isTypewriter: msg['isTypewriter'] === true ? false : undefined
-            }))
-          }));
+          // Convert date strings back to Date objects with safety checks
+          return parsed.map((conv: any) => {
+            // Safely parse lastActivity
+            const parsedLastActivity = conv.lastActivity ? new Date(conv.lastActivity) : new Date();
+            const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
+            
+            return {
+              ...conv,
+              lastActivity: safeLastActivity,
+              messages: (conv.messages || []).map((msg: any) => {
+                // Safely parse timestamp
+                const parsedTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+                const safeTimestamp = isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp;
+                return {
+                  ...msg,
+                  timestamp: safeTimestamp,
+                  // Ensure typewriter state is properly handled on load
+                  isTypewriter: msg['isTypewriter'] === true ? false : undefined
+                };
+              })
+            };
+          });
         }
       } catch (error) {
         console.warn('Failed to load stored conversations:', error);
@@ -680,19 +691,28 @@ export function RightPanel() {
                 }
                 return true;
               })
-              .map((msg: any) => ({
-                ...msg,
-                timestamp: new Date(msg.timestamp),
-                // CRITICAL FIX: Don't preserve isTypewriter for completed messages
-                // Always set to false when loading - typewriter should only run once
-                isTypewriter: false, // Always false when loading - prevents re-triggering
-                // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
-                typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
-              }));
+              .map((msg: any) => {
+                // Safely parse timestamp
+                const parsedTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+                const safeTimestamp = isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp;
+                return {
+                  ...msg,
+                  timestamp: safeTimestamp,
+                  // CRITICAL FIX: Don't preserve isTypewriter for completed messages
+                  // Always set to false when loading - typewriter should only run once
+                  isTypewriter: false, // Always false when loading - prevents re-triggering
+                  // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
+                  typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
+                };
+              });
+            
+            // Safely parse lastActivity
+            const parsedLastActivity = conv.lastActivity ? new Date(conv.lastActivity) : new Date();
+            const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
             
             return {
               ...conv,
-              lastActivity: new Date(conv.lastActivity),
+              lastActivity: safeLastActivity,
               messages: filteredMessages
             };
           });
@@ -817,13 +837,17 @@ export function RightPanel() {
             return isNaN(time) ? 0 : time;
           };
           
+          // Safely parse lastActivity
+          const parsedLastActivity = conv.lastActivity ? new Date(conv.lastActivity) : new Date();
+          const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
+          
           return {
             id: conv.id,
             title: conv.title,
             messages: apiMessages.sort((a, b) => 
               safeGetTime(a.timestamp) - safeGetTime(b.timestamp)
             ),
-            lastActivity: conv.lastActivity ? new Date(conv.lastActivity) : new Date(),
+            lastActivity: safeLastActivity,
             isActive: conv.isActive,
             welcomeMessage: conv.welcomeMessage
           };
@@ -1283,15 +1307,28 @@ export function RightPanel() {
       const result = await response.json();
       
       if (result.success && result.data.conversations) {
-        const historyConvs = result.data.conversations.map((conv: any) => ({
-          id: conv.id,
-          title: conv.title,
-          messages: [], // History doesn't need full messages
-          lastActivity: new Date(conv.lastActivity),
-          isActive: conv.isActive || false,
-          welcomeMessage: conv.welcomeMessage,
-          deletedAt: conv.deletedAt ? new Date(conv.deletedAt) : undefined
-        }));
+        const historyConvs = result.data.conversations.map((conv: any) => {
+          // Safely parse lastActivity
+          const parsedLastActivity = conv.lastActivity ? new Date(conv.lastActivity) : new Date();
+          const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
+          
+          // Safely parse deletedAt if present
+          let safeDeletedAt: Date | undefined = undefined;
+          if (conv.deletedAt) {
+            const parsedDeletedAt = new Date(conv.deletedAt);
+            safeDeletedAt = isNaN(parsedDeletedAt.getTime()) ? undefined : parsedDeletedAt;
+          }
+          
+          return {
+            id: conv.id,
+            title: conv.title,
+            messages: [], // History doesn't need full messages
+            lastActivity: safeLastActivity,
+            isActive: conv.isActive || false,
+            welcomeMessage: conv.welcomeMessage,
+            deletedAt: safeDeletedAt
+          };
+        });
         
         setHistoryConversations(historyConvs);
         
