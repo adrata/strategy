@@ -597,52 +597,76 @@ export async function POST(request: NextRequest) {
     const usedModel = hasAnthropicKey ? CLAUDE_MODEL : OPENROUTER_MODELS.GPT4O_MINI;
     const usedProvider = hasAnthropicKey ? 'Anthropic' : 'OpenRouter';
     console.log(`[STREAM] Using: ${usedProvider} (${usedModel})`);
+    console.log(`[STREAM] System prompt length: ${systemPrompt.length}, Messages count: ${messages.length}`);
+    
+    // Create the model instance first to catch any configuration errors
+    const modelInstance = hasAnthropicKey && anthropic 
+      ? anthropic(CLAUDE_MODEL)
+      : openrouter(usedModel);
+    
+    console.log(`[STREAM] Model instance created, calling streamText...`);
     
     // Create the stream FIRST, then return response immediately
-    // This is the key fix - we create a TransformStream and start streaming
     const encoder = new TextEncoder();
-    
-    // Use TransformStream for better streaming control
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();
     
-    // Start the AI streaming in the background (don't await)
+    // Track stream state for error handling
+    let hasStartedStreaming = false;
+    let streamError: Error | null = null;
+    let fullContent = '';
+    let tokensUsed = 0;
+    
+    // Call streamText with proper error handling using onError callback
+    // This is the recommended pattern from Vercel AI SDK 5.0
+    const result = streamText({
+      model: modelInstance,
+      system: systemPrompt,
+      messages,
+      maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
+      temperature: 0.7,
+      // CRITICAL: Use onError to capture streaming errors before they're lost
+      onError: async (error) => {
+        console.error(`[STREAM] onError callback triggered:`, error);
+        streamError = error.error instanceof Error ? error.error : new Error(String(error.error));
+      },
+      // Log chunk events for debugging
+      onChunk: async ({ chunk }) => {
+        if (chunk.type === 'text') {
+          hasStartedStreaming = true;
+        }
+      },
+      // Log when stream finishes
+      onFinish: async ({ text, usage: finalUsage, finishReason }) => {
+        console.log(`[STREAM] onFinish: finishReason=${finishReason}, textLength=${text?.length || 0}`);
+        if (finalUsage) {
+          tokensUsed = (finalUsage.promptTokens || 0) + (finalUsage.completionTokens || 0);
+        }
+      }
+    });
+    
+    // Start streaming in the background
     (async () => {
       try {
-        // Send start event immediately
+        // Send start event immediately so frontend shows activity
         await writer.write(encoder.encode(`data: ${JSON.stringify({
           type: 'start',
           timestamp: Date.now()
         })}\n\n`));
         
-        // Call streamText - returns a StreamTextResult
-        console.log(`[STREAM] Calling streamText with ${usedProvider} (${usedModel})...`);
-        console.log(`[STREAM] System prompt length: ${systemPrompt.length}, Messages count: ${messages.length}`);
-        
-        // Create the model instance first to catch any configuration errors
-        const modelInstance = hasAnthropicKey && anthropic 
-          ? anthropic(CLAUDE_MODEL)
-          : openrouter(usedModel);
-        
-        console.log(`[STREAM] Model instance created, calling streamText...`);
-        
-        const result = streamText({
-          model: modelInstance,
-          system: systemPrompt,
-          messages,
-          maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
-          temperature: 0.7,
-        });
-        
-        let tokensUsed = 0;
-        let fullContent = '';
-        
-        // Stream tokens as they arrive using the async iterator
         console.log('[STREAM] Starting to iterate textStream...');
+        
+        // Iterate over the textStream with a timeout to detect hangs
+        const streamTimeout = setTimeout(() => {
+          if (!hasStartedStreaming) {
+            console.error('[STREAM] Timeout: No content received within 30 seconds');
+          }
+        }, 30000);
         
         try {
           for await (const chunk of result.textStream) {
             if (chunk) {
+              hasStartedStreaming = true;
               tokensUsed++;
               fullContent += chunk;
               await writer.write(encoder.encode(`data: ${JSON.stringify({
@@ -651,33 +675,46 @@ export async function POST(request: NextRequest) {
               })}\n\n`));
             }
           }
+          clearTimeout(streamTimeout);
         } catch (iteratorError: any) {
+          clearTimeout(streamTimeout);
           console.error('[STREAM] Error iterating textStream:', iteratorError?.message || iteratorError);
-          // Re-throw to be caught by outer catch
-          throw new Error(`Stream iteration failed: ${iteratorError?.message || 'Unknown error'}`);
+          
+          // Check if this is an API error we can surface
+          const errorMessage = iteratorError?.message || streamError?.message || 'Stream iteration failed';
+          throw new Error(errorMessage);
         }
         
         console.log(`[STREAM] textStream iteration complete. Tokens: ${tokensUsed}, Length: ${fullContent.length}`);
         
         // Check if we got any content
         if (fullContent.length === 0) {
-          console.error('[STREAM] No content received from AI! Checking for response errors...');
+          console.error('[STREAM] No content received from AI!');
           
-          // Try to get the response to see if there's an error
-          try {
-            const response = await result.response;
-            console.error('[STREAM] Response object:', JSON.stringify(response, null, 2).substring(0, 500));
-          } catch (respError) {
-            console.error('[STREAM] Could not get response:', respError);
+          // Check if there was an error captured by onError
+          if (streamError) {
+            console.error('[STREAM] Error from onError callback:', streamError.message);
+            throw streamError;
           }
           
-          throw new Error('No content received from AI provider');
-        }
-        
-        // Get final usage stats
-        const usage = await result.usage;
-        if (usage) {
-          tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
+          // Try to get more diagnostic info from the response
+          try {
+            const response = await result.response;
+            console.error('[STREAM] Response metadata:', {
+              id: response?.id,
+              model: response?.modelId,
+              finishReason: response?.finishReason
+            });
+            
+            // Check if there was a content filter or policy issue
+            if (response?.finishReason === 'content-filter') {
+              throw new Error('Content was filtered by the AI provider');
+            }
+          } catch (respError: any) {
+            console.error('[STREAM] Could not get response:', respError?.message);
+          }
+          
+          throw new Error('No content received from AI provider - check API key and model availability');
         }
         
         console.log(`[STREAM] ${usedProvider} succeeded - ${tokensUsed} tokens, ${Date.now() - requestStartTime}ms`);
@@ -689,14 +726,14 @@ export async function POST(request: NextRequest) {
           totalTime: Date.now() - requestStartTime
         })}\n\n`));
         
-      } catch (streamError: any) {
-        console.error(`[STREAM] Stream error:`, streamError?.message || streamError);
+      } catch (error: any) {
+        console.error(`[STREAM] Stream error:`, error?.message || error);
         
-        // Send error event
+        // Send error event to frontend
         try {
           await writer.write(encoder.encode(`data: ${JSON.stringify({
             type: 'error',
-            message: streamError?.message || 'Stream failed',
+            message: error?.message || 'Stream failed',
             recoverable: false
           })}\n\n`));
         } catch (e) {
@@ -712,7 +749,6 @@ export async function POST(request: NextRequest) {
     })();
     
     // Return the readable stream IMMEDIATELY
-    // The background task will write to it
     return new Response(readable, {
       headers: {
         'Content-Type': 'text/event-stream',
