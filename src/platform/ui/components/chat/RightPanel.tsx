@@ -2690,13 +2690,29 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         // Buffer for incomplete SSE lines that span chunks
         let lineBuffer = '';
+        let chunkCount = 0;
+        let totalBytesReceived = 0;
+        
+        console.log('🚀 [STREAMING] Starting to read response stream...');
 
         // Process streaming response
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          
+          if (done) {
+            console.log(`✅ [STREAMING] Stream complete. Chunks: ${chunkCount}, Bytes: ${totalBytesReceived}, Tokens: ${tokenCount}`);
+            break;
+          }
+          
+          chunkCount++;
+          if (value) totalBytesReceived += value.length;
 
           const chunk = decoder.decode(value, { stream: true });
+          
+          // Log first few chunks for debugging
+          if (chunkCount <= 3) {
+            console.log(`📦 [STREAMING] Chunk ${chunkCount}:`, chunk.substring(0, 200) + (chunk.length > 200 ? '...' : ''));
+          }
           
           // Prepend any buffered content from previous chunk
           const fullChunk = lineBuffer + chunk;
@@ -3199,41 +3215,70 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
     await processMessageWithQueue(action);
   };
 
-  // Enhanced record search with smart navigation
+  // Enhanced record search with smart navigation - FIXED: Uses correct API endpoint
   const handleRecordSearch = async (recordName: string) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Smart search for record: ${recordName}`);
-    }
+    console.log(`🔍 [RECORD SEARCH] Starting search for: "${recordName}"`);
     
     // Extract workspace from current pathname
     const workspaceMatch = pathname?.match(/^\/([^\/]+)/);
     const workspace = workspaceMatch ? workspaceMatch[1] : '';
     
     if (!workspace) {
-      console.error('Could not determine workspace from pathname');
+      console.error('[RECORD SEARCH] Could not determine workspace from pathname');
       return;
     }
     
-    // Detect current section from URL to search in the same section first
+    // Detect current section from URL - determines where to navigate
     const sectionMatch = pathname?.match(/\/(speedrun|leads|prospects|people|companies|opportunities|clients|partners)/);
     const currentSection = sectionMatch ? sectionMatch[1] : 'people';
     
+    console.log(`🔍 [RECORD SEARCH] Context: workspace=${workspace}, section=${currentSection}`);
+    
     // Try to find the actual record via API first for direct navigation
+    // FIXED: Use correct API endpoint /api/v1/people with search param (not /api/v1/people/search)
     try {
-      const searchResponse = await fetch(`/api/v1/people/search?q=${encodeURIComponent(recordName)}&limit=1`);
+      const searchUrl = `/api/v1/people?search=${encodeURIComponent(recordName)}&limit=5`;
+      console.log(`🔍 [RECORD SEARCH] Calling API: ${searchUrl}`);
+      
+      const searchResponse = await fetch(searchUrl);
+      console.log(`🔍 [RECORD SEARCH] API response status: ${searchResponse.status}`);
+      
       if (searchResponse.ok) {
         const searchResult = await searchResponse.json();
+        console.log(`🔍 [RECORD SEARCH] API result:`, {
+          success: searchResult.success,
+          count: searchResult.data?.length || 0
+        });
+        
         if (searchResult.success && searchResult.data?.length > 0) {
-          const foundRecord = searchResult.data[0];
+          // Find best match - exact name match preferred
+          const exactMatch = searchResult.data.find((r: any) => 
+            (r.fullName || '').toLowerCase() === recordName.toLowerCase() ||
+            (`${r.firstName || ''} ${r.lastName || ''}`.trim().toLowerCase()) === recordName.toLowerCase()
+          );
+          const foundRecord = exactMatch || searchResult.data[0];
+          
           // Create URL-friendly slug and navigate directly to the record
           const nameSlug = (foundRecord.fullName || foundRecord.name || recordName)
             .toLowerCase()
-            .replace(/\s+/g, '-');
-          const directUrl = `/${workspace}/${currentSection}/${nameSlug}-${foundRecord.id}`;
+            .replace(/[^a-z0-9]+/g, '-') // More robust slug generation
+            .replace(/^-+|-+$/g, ''); // Trim leading/trailing dashes
           
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`🎯 Direct navigation to: ${directUrl}`);
+          // Determine best section for this record based on status
+          let targetSection = currentSection;
+          if (foundRecord.status) {
+            const statusLower = foundRecord.status.toLowerCase();
+            if (statusLower === 'prospect') targetSection = 'prospects';
+            else if (statusLower === 'lead') targetSection = 'leads';
+            else if (statusLower === 'client') targetSection = 'clients';
+            // Speedrun contains prospects, so keep it if we're there
+            if (currentSection === 'speedrun' && statusLower === 'prospect') {
+              targetSection = 'speedrun';
+            }
           }
+          
+          const directUrl = `/${workspace}/${targetSection}/${nameSlug}-${foundRecord.id}`;
+          console.log(`🎯 [RECORD SEARCH] Direct navigation to: ${directUrl}`);
           
           window.location.href = directUrl;
           return;
@@ -3241,15 +3286,12 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
     } catch (error) {
       // Fallback to search if direct lookup fails
-      console.warn('Direct record lookup failed, falling back to search:', error);
+      console.warn('[RECORD SEARCH] Direct record lookup failed, falling back to search:', error);
     }
     
-    // Fallback: Navigate to the current section with search query
-    const targetUrl = `/${workspace}/${currentSection}?search=${encodeURIComponent(recordName)}`;
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Navigating to search: ${targetUrl}`);
-    }
+    // Fallback: Navigate to the people section with search query
+    const targetUrl = `/${workspace}/people?search=${encodeURIComponent(recordName)}`;
+    console.log(`🔍 [RECORD SEARCH] Fallback navigation to: ${targetUrl}`);
     
     window.location.href = targetUrl;
   };
