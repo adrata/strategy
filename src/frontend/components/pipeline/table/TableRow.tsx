@@ -3,7 +3,7 @@
  * Handles individual row rendering and cell content formatting.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, startTransition } from 'react';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { getStatusColor, getPriorityColor, getStageColor, getStateColor } from '@/platform/utils/statusUtils';
 import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAction, getSmartLastActionDescription, formatLastActionTime } from '@/platform/utils/actionUtils';
@@ -102,7 +102,9 @@ function getCleanPersonName(record: PipelineRecord): string {
 }
 
 // -------- Main Component --------
-export function TableRow({
+// PERFORMANCE: Wrap with React.memo to prevent unnecessary re-renders
+// This significantly improves INP (Interaction to Next Paint) for large tables
+export const TableRow = React.memo(function TableRow({
   record,
   headers,
   section,
@@ -149,20 +151,27 @@ export function TableRow({
     return false;
   }, [section, record.id, record['lastActionDate']]);
 
-  const handleRowClick = () => {
+  // PERFORMANCE: Use startTransition for non-urgent navigation updates
+  // This improves INP (Interaction to Next Paint) by not blocking the main thread
+  const handleRowClick = useCallback(() => {
     // For company leads, navigate to company detail page instead of person detail page
     if (record['isCompanyLead']) {
-      // Navigate to company detail page
-      window.location.href = `/workspace/companies/${record.id}`;
+      // Navigate to company detail page - use startTransition for smoother UX
+      startTransition(() => {
+        window.location.href = `/workspace/companies/${record.id}`;
+      });
     } else {
-      onRecordClick(record);
+      // Wrap in startTransition for better perceived performance
+      startTransition(() => {
+        onRecordClick(record);
+      });
     }
-  };
+  }, [record, onRecordClick]);
 
-  const handleContextMenu = (e: React.MouseEvent) => {
+  // PERFORMANCE: Memoize context menu handler to prevent recreation on every render
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🖱️ Context menu triggered for record:', record.id);
     
     // For speedrun section, use SpeedrunContextMenu
     if (section === 'speedrun') {
@@ -175,7 +184,7 @@ export function TableRow({
       // For other sections, use regular ContextMenu
       setContextMenu({ x: e.clientX, y: e.clientY });
     }
-  };
+  }, [section, record.id]);
 
   const handleCloseContextMenu = () => {
     setContextMenu(null);
@@ -1342,4 +1351,4 @@ export function TableRow({
         )}
       </>
     );
-}
+});
