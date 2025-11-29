@@ -2631,6 +2631,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       let streamedContent = '';
       let streamMetadata: any = null;
       let streamingStarted = false;
+      let tokenCount = 0; // Track if any tokens were received
       
       // 🚀 PERFORMANCE: Batch token updates to reduce re-renders
       let lastUIUpdateTime = 0;
@@ -2686,6 +2687,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
+        
+        // Buffer for incomplete SSE lines that span chunks
+        let lineBuffer = '';
 
         // Process streaming response
         while (true) {
@@ -2693,7 +2697,21 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           if (done) break;
 
           const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
+          
+          // Prepend any buffered content from previous chunk
+          const fullChunk = lineBuffer + chunk;
+          lineBuffer = '';
+          
+          // Split by newlines, keeping track of incomplete lines
+          const parts = fullChunk.split('\n');
+          
+          // If the chunk doesn't end with newline, the last part is incomplete
+          if (!fullChunk.endsWith('\n')) {
+            lineBuffer = parts.pop() || '';
+          }
+          
+          // Process complete lines
+          const lines = parts.filter(line => line.startsWith('data: '));
 
           for (const line of lines) {
             try {
@@ -2727,6 +2745,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
               } else if (data.type === 'token' && data.content) {
                 // Append token to streamed content
                 streamedContent += data.content;
+                tokenCount++;
                 
                 // 🚀 PERFORMANCE: Only update UI if enough time has passed (batching)
                 const now = Date.now();
@@ -2801,11 +2820,32 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             }
           }
         }
+        
+        // Process any remaining buffered line (in case stream ended without final newline)
+        if (lineBuffer && lineBuffer.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(lineBuffer.slice(6));
+            if (data.type === 'token' && data.content) {
+              streamedContent += data.content;
+            } else if (data.type === 'done') {
+              streamMetadata = data.metadata;
+            }
+          } catch (e) {
+            // Ignore incomplete final line
+          }
+        }
 
-        // Ensure we have content
+        // Check if we have content
         if (!streamedContent || streamedContent.trim() === '') {
+          // If we received tokens but content is empty, there's a parsing issue
+          if (tokenCount > 0) {
+            console.warn(`⚠️ [STREAMING] Received ${tokenCount} tokens but content is empty - parsing issue`);
+          }
+          console.warn('⚠️ [STREAMING] No content accumulated');
           throw new Error('Empty response from AI');
         }
+        
+        console.log(`✅ [STREAMING] Success: ${streamedContent.length} chars, ${tokenCount} tokens`);
 
         // Create final message with metadata
         const assistantMessage: ChatMessage = {
@@ -2862,11 +2902,11 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
       } catch (streamError) {
         // Streaming failed - check if we have partial content to save
-        console.warn('⚠️ [STREAMING] Failed:', streamError);
+        console.warn('⚠️ [STREAMING] Failed:', streamError, `(${tokenCount} tokens, ${streamedContent.length} chars)`);
         
         // If we have partial content, save it with an interrupted indicator
         if (streamedContent && streamedContent.trim().length > 0) {
-          console.log('💾 [STREAMING] Saving partial content:', streamedContent.length, 'chars');
+          console.log('💾 [STREAMING] Saving partial content:', streamedContent.length, 'chars, ', tokenCount, 'tokens');
           
           const partialMessage: ChatMessage = {
             id: streamingMessageId,
@@ -3007,21 +3047,37 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           }
         }
         
-        setConversations(prev => prev.map(conv => 
-          conv.isActive 
-            ? { 
-                ...conv, 
-                messages: [
-                  ...conv.messages.filter(msg => 
-                    msg.content !== 'typing' && 
-                    msg.content !== 'browsing'
-                  ),
-                  assistantMessage
-                ],
-                lastActivity: new Date()
-              }
-            : conv
-        ));
+        // Update UI - replace streaming message if it exists, otherwise add new
+        setConversations(prev => prev.map(conv => {
+          if (!conv.isActive) return conv;
+          
+          // Filter out typing/browsing indicators
+          const filteredMessages = conv.messages.filter(msg => 
+            msg.content !== 'typing' && 
+            msg.content !== 'browsing'
+          );
+          
+          // Check if there's a streaming message to replace (from failed stream attempt)
+          const hasStreamingMsg = filteredMessages.some(msg => msg.id === streamingMessageId);
+          
+          if (hasStreamingMsg) {
+            // Replace the streaming message with fallback content
+            return {
+              ...conv,
+              messages: filteredMessages.map(msg => 
+                msg.id === streamingMessageId ? assistantMessage : msg
+              ),
+              lastActivity: new Date()
+            };
+          } else {
+            // No streaming message - just add the new one
+            return {
+              ...conv,
+              messages: [...filteredMessages, assistantMessage],
+              lastActivity: new Date()
+            };
+          }
+        }));
         
         chat.setChatSessions(prev => {
           const currentMessages = prev[activeSubApp] || [];
