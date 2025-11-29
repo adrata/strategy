@@ -1,22 +1,14 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { Kbd, formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import { useRouter } from 'next/navigation';
 import { PipelineTable } from './PipelineTableRefactored';
 import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
-import { OpportunitiesKanban } from './OpportunitiesKanban';
-import { MetricsDashboard } from './MetricsDashboard';
-import { MetricsWall } from './MetricsWall';
-import { MetricsEnhanced } from './MetricsEnhanced';
-import { ChronicleList } from './ChronicleList';
-import { ChronicleReport } from './ChronicleReport';
-import { ChronicleListEnhanced } from './ChronicleListEnhanced';
-import { ChronicleReportEnhanced } from './ChronicleReportEnhanced';
 import { Dashboard } from './Dashboard';
 import { EmptyStateDashboard } from './EmptyStateDashboard';
-import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
 import { StandardHeader } from '@/platform/ui/components/layout/StandardHeader';
 import { useUnifiedAuth } from '@/platform/auth';
@@ -33,13 +25,63 @@ import { ProfileBox } from '@/platform/ui/components/ProfileBox';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
 import { ThemePickerModal } from '@/platform/ui/components/ThemePickerModal';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
-import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModal';
 import { useSpeedrunSignals } from "@/platform/hooks/useSpeedrunSignals";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { PipelineHydrationFix } from './PipelineHydrationFix';
 import { List } from '@/platform/hooks/useLists';
 import { useLists } from '@/platform/hooks/useLists';
 import { prefetchAllSections } from '@/platform/services/section-prefetch';
+
+// PERFORMANCE: Dynamic imports for heavy, section-specific components
+// These are only loaded when actually needed, reducing initial bundle size
+const OpportunitiesKanban = dynamic(() => import('./OpportunitiesKanban').then(mod => ({ default: mod.OpportunitiesKanban })), {
+  loading: () => <KanbanSkeleton />,
+  ssr: false
+});
+
+const MetricsDashboard = dynamic(() => import('./MetricsDashboard').then(mod => ({ default: mod.MetricsDashboard })), {
+  loading: () => <DashboardSkeleton />,
+  ssr: false
+});
+
+const MetricsWall = dynamic(() => import('./MetricsWall').then(mod => ({ default: mod.MetricsWall })), {
+  loading: () => <DashboardSkeleton />,
+  ssr: false
+});
+
+const MetricsEnhanced = dynamic(() => import('./MetricsEnhanced').then(mod => ({ default: mod.MetricsEnhanced })), {
+  loading: () => <DashboardSkeleton />,
+  ssr: false
+});
+
+const ChronicleList = dynamic(() => import('./ChronicleList').then(mod => ({ default: mod.ChronicleList })), {
+  loading: () => <ListSkeleton />,
+  ssr: false
+});
+
+const ChronicleReport = dynamic(() => import('./ChronicleReport').then(mod => ({ default: mod.ChronicleReport })), {
+  loading: () => <ListSkeleton />,
+  ssr: false
+});
+
+const ChronicleListEnhanced = dynamic(() => import('./ChronicleListEnhanced').then(mod => ({ default: mod.ChronicleListEnhanced })), {
+  loading: () => <ListSkeleton />,
+  ssr: false
+});
+
+const ChronicleReportEnhanced = dynamic(() => import('./ChronicleReportEnhanced').then(mod => ({ default: mod.ChronicleReportEnhanced })), {
+  loading: () => <ListSkeleton />,
+  ssr: false
+});
+
+const SpeedrunMiddlePanel = dynamic(() => import('@/platform/ui/panels/speedrun-middle-panel').then(mod => ({ default: mod.SpeedrunMiddlePanel })), {
+  loading: () => <ListSkeleton />,
+  ssr: false
+});
+
+const SpeedrunEngineModal = dynamic(() => import('@/platform/ui/components/SpeedrunEngineModal').then(mod => ({ default: mod.SpeedrunEngineModal })), {
+  ssr: false
+});
 
 interface PipelineContentProps {
   section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun' | 'metrics' | 'dashboard';

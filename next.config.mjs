@@ -28,19 +28,62 @@ const nextConfig = {
   // Asset prefix for desktop - must start with slash
   assetPrefix: isDesktop ? '/' : undefined,
   
-  // Disable server-side features
+  // Performance optimizations
   experimental: {
     optimizeCss: true,
     cssChunking: 'strict',
+    // Tree-shake and optimize these packages for smaller bundles
     optimizePackageImports: [
       '@heroicons/react',
       '@radix-ui/react-progress',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-select',
+      '@radix-ui/react-tooltip',
       'lucide-react',
       'react-hook-form',
       'date-fns',
       'clsx',
-      'swr'
+      'swr',
+      'framer-motion',
+      'zod',
+      '@tanstack/react-table',
     ],
+    // Enable partial prerendering for better TTFB
+    ppr: false, // Keep false until ready for experimental feature
+  },
+  
+  // Compiler optimizations
+  compiler: {
+    // Remove console.log in production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
+  
+  // Headers for better caching
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+        ],
+      },
+      {
+        source: '/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
   },
   
   // Webpack configuration for desktop
