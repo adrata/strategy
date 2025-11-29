@@ -152,7 +152,7 @@ export class TabErrorBoundary extends Component<Props, State> {
                   </button>
                   <button
                     onClick={() => window.location.reload()}
-                    className="bg-hover text-gray-800 px-3 py-1 text-xs rounded hover:bg-loading-bg transition-colors"
+                    className="bg-hover text-foreground px-3 py-1 text-xs rounded hover:bg-loading-bg transition-colors"
                   >
                     Reload Page
                   </button>

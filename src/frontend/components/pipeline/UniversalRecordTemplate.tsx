@@ -638,6 +638,34 @@ export function UniversalRecordTemplate({
     };
   }, [record?.id, recordType]);
 
+  // Listen for record-deleted event from UpdateModal to handle navigation
+  useEffect(() => {
+    const handleRecordDeleted = (event: CustomEvent) => {
+      const { recordId, recordType: deletedRecordType, message } = event.detail;
+      
+      // Only handle if this is the record currently being viewed
+      if (recordId === record?.id && deletedRecordType === recordType) {
+        console.log(`🗑️ [UNIVERSAL] Received record-deleted event, navigating back to list`);
+        
+        // Show success message if provided
+        if (message) {
+          showMessage(message, 'success');
+        }
+        
+        // Navigate back to the list after a brief delay
+        setTimeout(() => {
+          onBack();
+        }, 100);
+      }
+    };
+
+    window.addEventListener('record-deleted', handleRecordDeleted as EventListener);
+    
+    return () => {
+      window.removeEventListener('record-deleted', handleRecordDeleted as EventListener);
+    };
+  }, [record?.id, recordType, onBack, showMessage]);
+
   // Keyboard shortcut for Add Action (⌘⏎) and Start Speedrun (⌘⏎)
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

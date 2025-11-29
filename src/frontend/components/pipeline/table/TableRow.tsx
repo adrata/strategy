@@ -469,7 +469,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-hover text-gray-800' 
+                            color: 'bg-hover text-foreground' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)
@@ -770,7 +770,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-hover text-gray-800' 
+                            color: 'bg-hover text-foreground' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)
@@ -997,7 +997,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-hover text-gray-800' 
+                            color: 'bg-hover text-foreground' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)
@@ -1189,7 +1189,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-hover text-gray-800' 
+                            color: 'bg-hover text-foreground' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)

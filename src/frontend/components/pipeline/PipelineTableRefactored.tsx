@@ -81,7 +81,7 @@ function getLastActionTiming(record: PipelineRecord) {
   // Fallback: Calculate timing from date
   const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
   const timing = getRealtimeActionTiming(lastActionDate);
-  return { ...timing, color: 'bg-hover text-gray-800' };
+  return { ...timing, color: 'bg-hover text-foreground' };
 }
 
 function getNextActionTiming(record: PipelineRecord) {
@@ -118,7 +118,7 @@ function getNextActionTiming(record: PipelineRecord) {
   // Fallback: For next actions, we need to calculate timing based on when the next action should happen
   const nextActionDate = record['nextActionDate'] || record['nextContactDate'];
   if (!nextActionDate) {
-    return { text: 'No date set', color: 'bg-hover text-gray-800' };
+    return { text: 'No date set', color: 'bg-hover text-foreground' };
   }
   
   const now = new Date();
@@ -128,19 +128,19 @@ function getNextActionTiming(record: PipelineRecord) {
   
   let result;
   if (diffDays < 0) {
-    result = { text: 'Overdue', color: 'bg-hover text-gray-800' };
+    result = { text: 'Overdue', color: 'bg-hover text-foreground' };
   } else if (diffDays === 0) {
-    result = { text: 'Today', color: 'bg-hover text-gray-800' };
+    result = { text: 'Today', color: 'bg-hover text-foreground' };
   } else if (diffDays === 1) {
-    result = { text: 'Tomorrow', color: 'bg-hover text-gray-800' };
+    result = { text: 'Tomorrow', color: 'bg-hover text-foreground' };
   } else if (diffDays <= 7) {
-    result = { text: 'This week', color: 'bg-hover text-gray-800' };
+    result = { text: 'This week', color: 'bg-hover text-foreground' };
   } else if (diffDays <= 14) {
-    result = { text: 'Next week', color: 'bg-hover text-gray-800' };
+    result = { text: 'Next week', color: 'bg-hover text-foreground' };
   } else if (diffDays <= 30) {
-    result = { text: 'This month', color: 'bg-hover text-gray-800' };
+    result = { text: 'This month', color: 'bg-hover text-foreground' };
   } else {
-    result = { text: 'Future', color: 'bg-hover text-gray-800' };
+    result = { text: 'Future', color: 'bg-hover text-foreground' };
   }
   
   return result;
@@ -865,15 +865,15 @@ export function PipelineTable({
                             if (isLastAction) {
                               // Use pre-formatted timing from API
                               const timingText = record['lastActionTime'] || 'Never';
-                              pillData = { text: timingText, color: 'bg-hover text-gray-800' };
+                              pillData = { text: timingText, color: 'bg-hover text-foreground' };
                             } else if (isNextAction) {
                               // Use pre-formatted timing from API
                               const timingText = record['nextActionTiming'] || 'No date set';
-                              pillData = { text: timingText, color: 'bg-hover text-gray-800' };
+                              pillData = { text: timingText, color: 'bg-hover text-foreground' };
                             } else if (isStatus) {
                               // Status pill styling - reverted to previous implementation
                               const personStatus = record['status'];
-                              let statusColor = 'bg-hover text-gray-800';
+                              let statusColor = 'bg-hover text-foreground';
                               let statusIcon = '●';
                               
                               if (personStatus && typeof personStatus === 'string' && 
@@ -915,11 +915,11 @@ export function PipelineTable({
                                     statusColor = 'bg-yellow-100 text-yellow-800';
                                     statusIcon = '●';
                                   } else {
-                                    statusColor = 'bg-hover text-gray-800';
+                                    statusColor = 'bg-hover text-foreground';
                                     statusIcon = '●';
                                   }
                                 } else {
-                                  statusColor = 'bg-hover text-gray-800';
+                                  statusColor = 'bg-hover text-foreground';
                                   statusIcon = '●';
                                 }
                               }
@@ -927,7 +927,7 @@ export function PipelineTable({
                               pillData = { text: cellContent, color: statusColor, icon: statusIcon };
                             } else {
                               // Fallback - should never happen but satisfies TypeScript
-                              pillData = { text: cellContent, color: 'bg-hover text-gray-800', icon: '●' };
+                              pillData = { text: cellContent, color: 'bg-hover text-foreground', icon: '●' };
                             }
                             
                             return (

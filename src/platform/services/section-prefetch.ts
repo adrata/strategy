@@ -17,6 +17,48 @@ const MIN_PREFETCH_INTERVAL = 5000; // Minimum 5 seconds between prefetches for 
 const INITIAL_PAGE_SIZE = 100; // First page size for instant loading
 const BACKGROUND_PAGE_SIZE = 100; // Subsequent pages loaded in background
 
+/**
+ * Clear old record caches to free up localStorage space
+ * Called when QuotaExceeded error occurs
+ */
+function clearOldRecordCaches(): void {
+  if (typeof window === 'undefined') return;
+  
+  const RECORD_CACHE_PREFIX = 'adrata-record-';
+  const MAX_CACHE_AGE = 10 * 60 * 1000; // 10 minutes
+  const keysToRemove: string[] = [];
+  
+  // Find all record cache entries
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(RECORD_CACHE_PREFIX)) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const cacheAge = Date.now() - (parsed.ts || 0);
+          // Remove caches older than MAX_CACHE_AGE
+          if (cacheAge > MAX_CACHE_AGE) {
+            keysToRemove.push(key);
+          }
+        }
+      } catch {
+        // Invalid cache entry, remove it
+        keysToRemove.push(key);
+      }
+    }
+  }
+  
+  // Remove old caches
+  keysToRemove.forEach(key => {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+  });
+  
+  console.log(`🧹 [PREFETCH] Cleared ${keysToRemove.length} old record caches`);
+}
+
 interface PrefetchOptions {
   workspaceId: string;
   userId: string;
@@ -462,8 +504,10 @@ async function prefetchRecordDetails(
     try {
       // Determine API endpoint based on section
       let apiUrl = '';
-      if (section === 'companies' || section === 'opportunities') {
+      if (section === 'companies') {
         apiUrl = `/api/v1/companies/${recordId}`;
+      } else if (section === 'opportunities') {
+        apiUrl = `/api/v1/opportunities/${recordId}`;
       } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun') {
         apiUrl = `/api/v1/people/${recordId}`;
       } else {
@@ -497,12 +541,29 @@ async function prefetchRecordDetails(
       if (response.ok) {
         const result = await response.json();
         if (result.success && result.data) {
-          // Cache record details
-          localStorage.setItem(cacheKey, JSON.stringify({
-            data: result.data,
-            ts: Date.now(),
-            version: 1
-          }));
+          // Cache record details with quota handling
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify({
+              data: result.data,
+              ts: Date.now(),
+              version: 1
+            }));
+          } catch (storageError) {
+            // Handle QuotaExceeded - clear old record caches and retry
+            if (storageError instanceof DOMException && storageError.name === 'QuotaExceededError') {
+              console.warn(`⚠️ [RECORD PREFETCH] localStorage quota exceeded, clearing old caches`);
+              clearOldRecordCaches();
+              try {
+                localStorage.setItem(cacheKey, JSON.stringify({
+                  data: result.data,
+                  ts: Date.now(),
+                  version: 1
+                }));
+              } catch {
+                // Still failed, skip caching
+              }
+            }
+          }
         }
       }
     } catch (error) {

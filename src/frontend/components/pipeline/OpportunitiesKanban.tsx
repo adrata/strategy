@@ -1041,7 +1041,7 @@ function getTimingFromDate(nextActionDate?: string): string {
 
 // Helper function to get timing color based on nextActionDate
 function getTimingColor(nextActionDate?: string): string {
-  if (!nextActionDate) return 'bg-hover text-gray-800';
+  if (!nextActionDate) return 'bg-hover text-foreground';
   
   const actionDate = new Date(nextActionDate);
   const now = new Date();
@@ -1052,7 +1052,7 @@ function getTimingColor(nextActionDate?: string): string {
   if (daysDiff <= 1) return 'bg-yellow-100 text-yellow-800'; // Tomorrow
   if (daysDiff <= 7) return 'bg-blue-100 text-blue-800'; // This Week
   if (daysDiff <= 14) return 'bg-purple-100 text-purple-800'; // Next Week
-  return 'bg-hover text-gray-800'; // Default
+  return 'bg-hover text-foreground'; // Default
 }
 
 // Get Next Action for opportunities with proper pill formatting
@@ -1112,7 +1112,7 @@ function getOpportunityNextAction(opportunity: any): { timing: string; timingCol
         
       case 'closed-lost':
       case 'closed-lost-to-competition':
-        return { timing: 'Next Month', color: 'bg-hover text-gray-800' };
+        return { timing: 'Next Month', color: 'bg-hover text-foreground' };
         
       default:
         if (isHighValue) {

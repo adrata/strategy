@@ -1,6 +1,44 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 
+/**
+ * Clear old section caches to free up localStorage space
+ * Called when QuotaExceeded error occurs
+ */
+function clearOldSectionCaches(): void {
+  if (typeof window === 'undefined') return;
+  
+  const SECTION_PREFIXES = ['adrata-companies-', 'adrata-leads-', 'adrata-prospects-', 'adrata-people-', 'adrata-record-'];
+  const MAX_CACHE_AGE = 30 * 60 * 1000; // 30 minutes
+  const keysToRemove: string[] = [];
+  
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && SECTION_PREFIXES.some(prefix => key.startsWith(prefix))) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const cacheAge = Date.now() - (parsed.ts || 0);
+          if (cacheAge > MAX_CACHE_AGE) {
+            keysToRemove.push(key);
+          }
+        }
+      } catch {
+        keysToRemove.push(key);
+      }
+    }
+  }
+  
+  keysToRemove.forEach(key => {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+  });
+  
+  console.log(`🧹 [useCompaniesData] Cleared ${keysToRemove.length} old section caches`);
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -75,7 +113,19 @@ export function useCompaniesData(): UseCompaniesDataReturn {
       try {
         const storageKey = `adrata-companies-${workspaceId}`;
         localStorage.setItem(storageKey, JSON.stringify({ companies: transformedCompanies, ts: Date.now() }));
-      } catch {}
+      } catch (storageError) {
+        // Handle QuotaExceeded - clear old caches and retry
+        if (storageError instanceof DOMException && storageError.name === 'QuotaExceededError') {
+          console.warn('⚠️ [useCompaniesData] localStorage quota exceeded, clearing old caches');
+          clearOldSectionCaches();
+          try {
+            const storageKey = `adrata-companies-${workspaceId}`;
+            localStorage.setItem(storageKey, JSON.stringify({ companies: transformedCompanies, ts: Date.now() }));
+          } catch {
+            // Still failed, skip caching silently
+          }
+        }
+      }
     } catch (err) {
       console.error('❌ [useCompaniesData] Error fetching companies:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch companies');

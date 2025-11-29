@@ -349,7 +349,7 @@ export function ListsDropdown({
                   onClick={() => handleListSelect(list)}
                   className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
                     selectedListId === list.id
-                      ? 'bg-hover text-gray-800 border border-border'
+                      ? 'bg-hover text-foreground border border-border'
                       : 'hover:bg-panel-background focus:outline-none focus:bg-panel-background'
                   }`}
                   role="menuitem"
@@ -374,7 +374,7 @@ export function ListsDropdown({
                         onClick={() => handleListSelect(list)}
                         className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
                           selectedListId === list.id
-                            ? 'bg-hover text-gray-800 border border-border'
+                            ? 'bg-hover text-foreground border border-border'
                             : 'hover:bg-panel-background focus:outline-none focus:bg-panel-background'
                         }`}
                         role="menuitem"

@@ -337,7 +337,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             event.metadata.status === 'completed' ? 'bg-green-100 text-green-800' :
                             event.metadata.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
-                            'bg-hover text-gray-800'
+                            'bg-hover text-foreground'
                           }`}>
                             {event.metadata.status}
                           </span>

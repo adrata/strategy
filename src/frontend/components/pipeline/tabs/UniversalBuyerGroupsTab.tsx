@@ -1240,7 +1240,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       member.influence === 'high' ? 'bg-purple-100 text-purple-800' :
                       member.influence === 'medium' ? 'bg-orange-100 text-orange-800' :
-                      'bg-hover text-gray-800'
+                      'bg-hover text-foreground'
                     }`}>
                       {member.influence} influence
                     </span>

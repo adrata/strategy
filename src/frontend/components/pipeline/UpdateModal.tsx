@@ -146,24 +146,50 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
       console.log(`✅ [UpdateModal] Deletion successful:`, responseData);
 
-      // Close the modal first
-      onClose();
-      
-      // Call the onDelete callback if provided (this should handle navigation and success message)
-      if (onDelete) {
-        await onDelete(record.id);
-      } else {
-        // Fallback: dispatch cache invalidation event for other components
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('cache-invalidate', {
-            detail: { 
-              pattern: `${recordType}-*`, 
-              reason: 'record_deleted',
-              recordId: record.id
+      // Dispatch cache invalidation event for other components
+      if (typeof window !== 'undefined') {
+        // Invalidate all relevant caches
+        window.dispatchEvent(new CustomEvent('cache-invalidate', {
+          detail: { 
+            pattern: `${recordType}-*`, 
+            reason: 'record_deleted',
+            recordId: record.id
+          }
+        }));
+        
+        // Clear localStorage caches for this section
+        try {
+          const keysToRemove: string[] = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (
+              key.includes(`adrata-${recordType}`) ||
+              key.includes(`adrata-record-`) ||
+              key.includes(`cached-${recordType}`)
+            )) {
+              keysToRemove.push(key);
             }
-          }));
+          }
+          keysToRemove.forEach(key => {
+            console.log(`🗑️ [UpdateModal] Clearing cache: ${key}`);
+            localStorage.removeItem(key);
+          });
+        } catch (e) {
+          console.warn('⚠️ [UpdateModal] Failed to clear localStorage caches:', e);
         }
+        
+        // Dispatch navigation event to go back to list
+        window.dispatchEvent(new CustomEvent('record-deleted', {
+          detail: { 
+            recordId: record.id,
+            recordType,
+            message: 'Record deleted successfully!'
+          }
+        }));
       }
+
+      // Close the modal
+      onClose();
     } catch (error) {
       console.error('❌ [UpdateModal] Error deleting record:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete record. Please try again.';

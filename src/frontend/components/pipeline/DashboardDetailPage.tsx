@@ -447,7 +447,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
                       <CalendarIcon className="w-4 h-4" />
                       <span>{formatDate(deal.createdAt)}</span>
                     </span>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-hover text-gray-800`}>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-hover text-foreground`}>
                       {deal.stage}
                     </span>
                   </div>
@@ -499,7 +499,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                     act['status'] === 'completed' ? 'bg-green-100 text-green-800' :
                     act['status'] === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-hover text-gray-800'
+                    'bg-hover text-foreground'
                   }`}>
                     {act.status}
                   </span>

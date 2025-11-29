@@ -190,7 +190,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         Yes
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-foreground">
                         No
                       </span>
                     )}
@@ -212,7 +212,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                         Yes
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-foreground">
                         No
                       </span>
                     )}

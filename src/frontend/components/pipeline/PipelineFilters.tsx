@@ -990,7 +990,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                           onClick={() => handleSortSelect(option.value)}
                           className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
                             option.value === sortBy 
-                              ? 'bg-hover text-gray-800 border border-border' 
+                              ? 'bg-hover text-foreground border border-border' 
                               : 'hover:bg-panel-background focus:outline-none focus:bg-panel-background'
                           }`}
                         >
@@ -1085,7 +1085,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                               onClick={() => handleColumnToggle(option.value)}
                               className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
                                 isChecked 
-                                  ? 'bg-hover text-gray-800 border border-border' 
+                                  ? 'bg-hover text-foreground border border-border' 
                                   : 'hover:bg-panel-background focus:outline-none focus:bg-panel-background'
                               }`}
                             >
