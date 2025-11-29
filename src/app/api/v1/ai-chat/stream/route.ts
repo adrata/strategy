@@ -617,33 +617,35 @@ export async function POST(request: NextRequest) {
     let fullContent = '';
     let tokensUsed = 0;
     
-    // Call streamText with proper error handling using onError callback
-    // This is the recommended pattern from Vercel AI SDK 5.0
-    const result = streamText({
-      model: modelInstance,
-      system: systemPrompt,
-      messages,
-      maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
-      temperature: 0.7,
-      // CRITICAL: Use onError to capture streaming errors before they're lost
-      onError: async (error) => {
-        console.error(`[STREAM] onError callback triggered:`, error);
-        streamError = error.error instanceof Error ? error.error : new Error(String(error.error));
-      },
-      // Log chunk events for debugging
-      onChunk: async ({ chunk }) => {
-        if (chunk.type === 'text') {
-          hasStartedStreaming = true;
+    // Helper function to create streamText with callbacks
+    const createStreamWithCallbacks = (model: any, provider: string) => {
+      return streamText({
+        model,
+        system: systemPrompt,
+        messages,
+        maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
+        temperature: 0.7,
+        // CRITICAL: Use onError to capture streaming errors
+        onError: async (error) => {
+          console.error(`[STREAM] ${provider} onError callback:`, error);
+          streamError = error.error instanceof Error ? error.error : new Error(String(error.error));
+        },
+        onChunk: async ({ chunk }) => {
+          if (chunk.type === 'text') {
+            hasStartedStreaming = true;
+          }
+        },
+        onFinish: async ({ text, usage: finalUsage, finishReason }) => {
+          console.log(`[STREAM] ${provider} onFinish: reason=${finishReason}, len=${text?.length || 0}`);
+          if (finalUsage) {
+            tokensUsed = (finalUsage.promptTokens || 0) + (finalUsage.completionTokens || 0);
+          }
         }
-      },
-      // Log when stream finishes
-      onFinish: async ({ text, usage: finalUsage, finishReason }) => {
-        console.log(`[STREAM] onFinish: finishReason=${finishReason}, textLength=${text?.length || 0}`);
-        if (finalUsage) {
-          tokensUsed = (finalUsage.promptTokens || 0) + (finalUsage.completionTokens || 0);
-        }
-      }
-    });
+      });
+    };
+    
+    // Create initial stream with primary provider
+    let result = createStreamWithCallbacks(modelInstance, usedProvider);
     
     // Start streaming in the background
     (async () => {
@@ -689,32 +691,68 @@ export async function POST(request: NextRequest) {
         
         // Check if we got any content
         if (fullContent.length === 0) {
-          console.error('[STREAM] No content received from AI!');
+          console.error('[STREAM] No content received from primary provider!');
           
-          // Check if there was an error captured by onError
-          if (streamError) {
-            console.error('[STREAM] Error from onError callback:', streamError.message);
-            throw streamError;
-          }
-          
-          // Try to get more diagnostic info from the response
-          try {
-            const response = await result.response;
-            console.error('[STREAM] Response metadata:', {
-              id: response?.id,
-              model: response?.modelId,
-              finishReason: response?.finishReason
-            });
+          // FALLBACK: If primary provider (Anthropic) failed, try OpenRouter
+          if (hasAnthropicKey && usedProvider === 'Anthropic') {
+            console.log('[STREAM] Attempting fallback to OpenRouter...');
             
-            // Check if there was a content filter or policy issue
-            if (response?.finishReason === 'content-filter') {
-              throw new Error('Content was filtered by the AI provider');
+            // Reset state for retry
+            hasStartedStreaming = false;
+            streamError = null;
+            
+            // Create fallback stream with OpenRouter
+            const fallbackModel = openrouter(OPENROUTER_MODELS.GPT4O_MINI);
+            result = createStreamWithCallbacks(fallbackModel, 'OpenRouter (fallback)');
+            
+            // Iterate the fallback stream
+            try {
+              for await (const chunk of result.textStream) {
+                if (chunk) {
+                  hasStartedStreaming = true;
+                  tokensUsed++;
+                  fullContent += chunk;
+                  await writer.write(encoder.encode(`data: ${JSON.stringify({
+                    type: 'token',
+                    content: chunk
+                  })}\n\n`));
+                }
+              }
+              console.log(`[STREAM] OpenRouter fallback succeeded: ${fullContent.length} chars`);
+            } catch (fallbackError: any) {
+              console.error('[STREAM] OpenRouter fallback also failed:', fallbackError?.message);
+              throw new Error(`Both providers failed. Anthropic: silent failure, OpenRouter: ${fallbackError?.message}`);
             }
-          } catch (respError: any) {
-            console.error('[STREAM] Could not get response:', respError?.message);
+            
+            // If fallback also returned nothing, throw error
+            if (fullContent.length === 0) {
+              throw new Error('Both Anthropic and OpenRouter returned no content');
+            }
+          } else {
+            // No fallback available or already using OpenRouter
+            if (streamError) {
+              console.error('[STREAM] Error from onError callback:', streamError.message);
+              throw streamError;
+            }
+            
+            // Try to get diagnostic info
+            try {
+              const response = await result.response;
+              console.error('[STREAM] Response metadata:', {
+                id: response?.id,
+                model: response?.modelId,
+                finishReason: response?.finishReason
+              });
+              
+              if (response?.finishReason === 'content-filter') {
+                throw new Error('Content was filtered by the AI provider');
+              }
+            } catch (respError: any) {
+              console.error('[STREAM] Could not get response:', respError?.message);
+            }
+            
+            throw new Error('No content received from AI provider - check API key and model availability');
           }
-          
-          throw new Error('No content received from AI provider - check API key and model availability');
         }
         
         console.log(`[STREAM] ${usedProvider} succeeded - ${tokensUsed} tokens, ${Date.now() - requestStartTime}ms`);
