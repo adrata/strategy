@@ -12,10 +12,95 @@
 
 let prefetchTimeouts: Map<string, NodeJS.Timeout> = new Map();
 let lastPrefetchTimes: Map<string, number> = new Map();
+let failedRecordIds: Set<string> = new Set(); // Track records that returned 404 to avoid retrying
 const DEBOUNCE_DELAY = 1000; // Wait 1s after navigation before prefetching
 const MIN_PREFETCH_INTERVAL = 5000; // Minimum 5 seconds between prefetches for same section
 const INITIAL_PAGE_SIZE = 100; // First page size for instant loading
 const BACKGROUND_PAGE_SIZE = 100; // Subsequent pages loaded in background
+const MAX_CACHE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB max cache size per section
+
+/**
+ * Estimate the size of data in bytes
+ * Used to check if data exceeds cache size threshold
+ */
+function estimateDataSize(data: any): number {
+  try {
+    return JSON.stringify(data).length * 2; // UTF-16 uses 2 bytes per character
+  } catch {
+    return Infinity; // If we can't stringify, assume too large
+  }
+}
+
+/**
+ * Safely store data in localStorage with size check
+ * Returns true if stored successfully, false if skipped due to size
+ */
+function safeLocalStorageSet(key: string, data: any, maxSize: number = MAX_CACHE_SIZE_BYTES): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  const dataSize = estimateDataSize(data);
+  
+  // Skip caching if data exceeds threshold
+  if (dataSize > maxSize) {
+    // Don't log warning - this is expected for large datasets
+    return false;
+  }
+  
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return true;
+  } catch (error) {
+    // Handle QuotaExceeded silently - clear old caches and retry once
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      clearOldRecordCaches();
+      clearOldSectionCaches();
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+      } catch {
+        // Still failed - skip caching silently
+        return false;
+      }
+    }
+    return false;
+  }
+}
+
+/**
+ * Clear old section caches to free up localStorage space
+ */
+function clearOldSectionCaches(): void {
+  if (typeof window === 'undefined') return;
+  
+  const SECTION_CACHE_PREFIX = 'adrata-';
+  const MAX_CACHE_AGE = 10 * 60 * 1000; // 10 minutes
+  const keysToRemove: string[] = [];
+  
+  // Find all section cache entries (but not record caches)
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(SECTION_CACHE_PREFIX) && !key.includes('-record-')) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const cacheAge = Date.now() - (parsed.ts || 0);
+          if (cacheAge > MAX_CACHE_AGE) {
+            keysToRemove.push(key);
+          }
+        }
+      } catch {
+        keysToRemove.push(key);
+      }
+    }
+  }
+  
+  keysToRemove.forEach(key => {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+  });
+}
 
 /**
  * Clear old record caches to free up localStorage space
@@ -198,16 +283,21 @@ async function prefetchSectionData(options: PrefetchOptions): Promise<void> {
         console.warn(`⚠️ [SECTION PREFETCH] Failed to check existing cache for ${section}, proceeding with write:`, e);
       }
       
-      localStorage.setItem(storageKey, JSON.stringify(cacheData));
+      const cached = safeLocalStorageSet(storageKey, cacheData);
       
-      console.log(`✅ [SECTION PREFETCH] Successfully cached ${result.data.length} ${section} records:`, {
-        workspaceId,
-        count: result.data.length,
-        cacheKey: storageKey,
-        trigger,
-        initialOnly,
-        responseTime: Date.now() - lastPrefetch
-      });
+      if (cached) {
+        console.log(`✅ [SECTION PREFETCH] Successfully cached ${result.data.length} ${section} records:`, {
+          workspaceId,
+          count: result.data.length,
+          cacheKey: storageKey,
+          trigger,
+          initialOnly,
+          responseTime: Date.now() - lastPrefetch
+        });
+      } else {
+        // Data too large or quota exceeded - use in-memory only (no warning needed)
+        console.log(`📦 [SECTION PREFETCH] ${section} data too large for cache (${result.data.length} records), using in-memory only`);
+      }
       
       // 🚀 PERFORMANCE: Pre-fetch individual record details for first 10 records
       // This ensures instant loading when user clicks on a record
@@ -484,6 +574,8 @@ export function prefetchSection(workspaceId: string, userId: string, section: st
 /**
  * Pre-fetch individual record details for instant loading when user clicks
  * Pre-fetches first 10 records' full details and caches them
+ * 
+ * Note: Skips speedrun section as rankings change frequently and records may be deleted
  */
 async function prefetchRecordDetails(
   section: string,
@@ -492,14 +584,28 @@ async function prefetchRecordDetails(
 ): Promise<void> {
   if (typeof window === 'undefined' || !records || records.length === 0) return;
   
+  // Skip prefetching for speedrun section - rankings change frequently and records may be stale/deleted
+  if (section === 'speedrun') {
+    return;
+  }
+  
   console.log(`🚀 [RECORD PREFETCH] Pre-fetching details for ${records.length} ${section} records`);
   
   const RECORD_CACHE_TTL = 5 * 60 * 1000; // 5 minutes TTL
+  let successCount = 0;
+  let skippedCount = 0;
   
   // Pre-fetch all records in parallel
   const prefetchPromises = records.map(async (record) => {
     const recordId = record.id;
     if (!recordId) return;
+    
+    // Skip records that previously returned 404
+    const failedKey = `${section}-${recordId}`;
+    if (failedRecordIds.has(failedKey)) {
+      skippedCount++;
+      return;
+    }
     
     try {
       // Determine API endpoint based on section
@@ -508,7 +614,7 @@ async function prefetchRecordDetails(
         apiUrl = `/api/v1/companies/${recordId}`;
       } else if (section === 'opportunities') {
         apiUrl = `/api/v1/opportunities/${recordId}`;
-      } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun') {
+      } else if (section === 'people' || section === 'leads' || section === 'prospects') {
         apiUrl = `/api/v1/people/${recordId}`;
       } else {
         return; // Unknown section type
@@ -523,6 +629,7 @@ async function prefetchRecordDetails(
           const cacheAge = Date.now() - (parsed.ts || 0);
           if (parsed.ts && cacheAge < RECORD_CACHE_TTL) {
             // Cache is still valid, skip
+            skippedCount++;
             return;
           }
         } catch (e) {
@@ -538,42 +645,42 @@ async function prefetchRecordDetails(
         }
       });
       
+      // Handle 404 - record no longer exists, track to avoid retrying
+      if (response.status === 404) {
+        failedRecordIds.add(failedKey);
+        // Don't log 404s - they're expected for deleted records
+        return;
+      }
+      
       if (response.ok) {
         const result = await response.json();
         if (result.success && result.data) {
-          // Cache record details with quota handling
-          try {
-            localStorage.setItem(cacheKey, JSON.stringify({
-              data: result.data,
-              ts: Date.now(),
-              version: 1
-            }));
-          } catch (storageError) {
-            // Handle QuotaExceeded - clear old record caches and retry
-            if (storageError instanceof DOMException && storageError.name === 'QuotaExceededError') {
-              console.warn(`⚠️ [RECORD PREFETCH] localStorage quota exceeded, clearing old caches`);
-              clearOldRecordCaches();
-              try {
-                localStorage.setItem(cacheKey, JSON.stringify({
-                  data: result.data,
-                  ts: Date.now(),
-                  version: 1
-                }));
-              } catch {
-                // Still failed, skip caching
-              }
-            }
+          // Cache record details using safe storage
+          const cacheData = {
+            data: result.data,
+            ts: Date.now(),
+            version: 1
+          };
+          
+          if (safeLocalStorageSet(cacheKey, cacheData)) {
+            successCount++;
           }
         }
       }
     } catch (error) {
-      // Non-blocking error - just log it
-      console.warn(`⚠️ [RECORD PREFETCH] Failed to pre-fetch ${section} record ${recordId}:`, error);
+      // Non-blocking error - suppress to avoid console spam
+      // Only log non-network errors in development
+      if (process.env.NODE_ENV === 'development' && !(error instanceof TypeError)) {
+        console.warn(`⚠️ [RECORD PREFETCH] Failed to pre-fetch ${section} record ${recordId}:`, error);
+      }
     }
   });
   
   await Promise.all(prefetchPromises);
-  console.log(`✅ [RECORD PREFETCH] Pre-fetched ${records.length} ${section} record details`);
+  
+  if (successCount > 0 || skippedCount > 0) {
+    console.log(`✅ [RECORD PREFETCH] Pre-fetched ${successCount} ${section} records (${skippedCount} skipped/cached)`);
+  }
 }
 
 /**

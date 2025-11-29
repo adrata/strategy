@@ -1,5 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
+
+// Maximum size for localStorage caching (4MB)
+const MAX_CACHE_SIZE_BYTES = 4 * 1024 * 1024;
+
+/**
+ * Estimate the size of data in bytes
+ */
+function estimateDataSize(data: any): number {
+  try {
+    return JSON.stringify(data).length * 2; // UTF-16 uses 2 bytes per character
+  } catch {
+    return Infinity;
+  }
+}
 
 /**
  * Clear old section caches to free up localStorage space
@@ -35,8 +49,39 @@ function clearOldSectionCaches(): void {
       localStorage.removeItem(key);
     } catch {}
   });
+}
+
+/**
+ * Safely store data in localStorage with size check
+ * Returns true if stored successfully, false if skipped
+ */
+function safeLocalStorageSet(key: string, data: any): boolean {
+  if (typeof window === 'undefined') return false;
   
-  console.log(`🧹 [useCompaniesData] Cleared ${keysToRemove.length} old section caches`);
+  const dataSize = estimateDataSize(data);
+  
+  // Skip caching if data exceeds threshold - this is expected for large datasets
+  if (dataSize > MAX_CACHE_SIZE_BYTES) {
+    return false;
+  }
+  
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return true;
+  } catch (error) {
+    // Handle QuotaExceeded silently - clear old caches and retry once
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      clearOldSectionCaches();
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+      } catch {
+        // Still failed - skip caching silently (expected for large datasets)
+        return false;
+      }
+    }
+    return false;
+  }
 }
 
 export interface Company {
@@ -64,6 +109,9 @@ interface UseCompaniesDataReturn {
   count: number;
   refresh: () => Promise<void>;
 }
+
+// In-memory cache for large datasets that exceed localStorage limits
+const inMemoryCache = new Map<string, { companies: Company[]; ts: number }>();
 
 export function useCompaniesData(): UseCompaniesDataReturn {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
@@ -110,21 +158,16 @@ export function useCompaniesData(): UseCompaniesDataReturn {
 
       setCompanies(transformedCompanies);
       setCount(transformedCompanies.length);
-      try {
-        const storageKey = `adrata-companies-${workspaceId}`;
-        localStorage.setItem(storageKey, JSON.stringify({ companies: transformedCompanies, ts: Date.now() }));
-      } catch (storageError) {
-        // Handle QuotaExceeded - clear old caches and retry
-        if (storageError instanceof DOMException && storageError.name === 'QuotaExceededError') {
-          console.warn('⚠️ [useCompaniesData] localStorage quota exceeded, clearing old caches');
-          clearOldSectionCaches();
-          try {
-            const storageKey = `adrata-companies-${workspaceId}`;
-            localStorage.setItem(storageKey, JSON.stringify({ companies: transformedCompanies, ts: Date.now() }));
-          } catch {
-            // Still failed, skip caching silently
-          }
-        }
+      
+      // Try localStorage first, fall back to in-memory cache silently
+      const storageKey = `adrata-companies-${workspaceId}`;
+      const cacheData = { companies: transformedCompanies, ts: Date.now() };
+      
+      const cachedInLocalStorage = safeLocalStorageSet(storageKey, cacheData);
+      
+      if (!cachedInLocalStorage) {
+        // Use in-memory fallback for large datasets (no warning needed - expected behavior)
+        inMemoryCache.set(storageKey, cacheData);
       }
     } catch (err) {
       console.error('❌ [useCompaniesData] Error fetching companies:', err);
@@ -138,9 +181,13 @@ export function useCompaniesData(): UseCompaniesDataReturn {
 
   useEffect(() => {
     if (authLoading) return;
-    // Instant hydration from cache
+    
+    const storageKey = `adrata-companies-${workspaceId}`;
+    
+    // Instant hydration from cache (localStorage first, then in-memory)
+    let hydratedFromCache = false;
+    
     try {
-      const storageKey = `adrata-companies-${workspaceId}`;
       const cached = localStorage.getItem(storageKey);
       if (cached) {
         const parsed = JSON.parse(cached);
@@ -148,9 +195,22 @@ export function useCompaniesData(): UseCompaniesDataReturn {
           setCompanies(parsed.companies as Company[]);
           setCount((parsed.companies as Company[]).length);
           setLoading(false);
+          hydratedFromCache = true;
         }
       }
     } catch {}
+    
+    // Try in-memory cache if localStorage didn't have data
+    if (!hydratedFromCache) {
+      const inMemoryCached = inMemoryCache.get(storageKey);
+      if (inMemoryCached && Array.isArray(inMemoryCached.companies)) {
+        setCompanies(inMemoryCached.companies);
+        setCount(inMemoryCached.companies.length);
+        setLoading(false);
+        hydratedFromCache = true;
+      }
+    }
+    
     // Revalidate in background
     fetchCompanies();
   }, [authLoading, workspaceId, fetchCompanies]);

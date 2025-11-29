@@ -2930,14 +2930,18 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           }
         }
 
-        // Check if we have content
+        // Check if we have content - if empty, gracefully fall back to non-streaming
         if (!streamedContent || streamedContent.trim() === '') {
-          // If we received tokens but content is empty, there's a parsing issue
-          if (tokenCount > 0) {
-            console.warn(`⚠️ [STREAMING] Received ${tokenCount} tokens but content is empty - parsing issue`);
+          // Log only in development - this is expected behavior, not an error
+          if (process.env.NODE_ENV === 'development') {
+            if (tokenCount > 0) {
+              console.log(`ℹ️ [STREAMING] Received ${tokenCount} tokens but content is empty - falling back to non-streaming`);
+            } else {
+              console.log('ℹ️ [STREAMING] Empty response - falling back to non-streaming');
+            }
           }
-          console.warn('⚠️ [STREAMING] No content accumulated');
-          throw new Error('Empty response from AI');
+          // Gracefully trigger fallback by throwing a special error that indicates retry
+          throw { isEmptyResponse: true, message: 'Empty streaming response - retrying with non-streaming' };
         }
         
         console.log(`✅ [STREAMING] Success: ${streamedContent.length} chars, ${tokenCount} tokens`);
@@ -2995,9 +2999,14 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           };
         });
 
-      } catch (streamError) {
-        // Streaming failed - check if we have partial content to save
-        console.warn('⚠️ [STREAMING] Failed:', streamError, `(${tokenCount} tokens, ${streamedContent.length} chars)`);
+      } catch (streamError: any) {
+        // Check if this is a graceful empty response fallback (not a real error)
+        const isGracefulFallback = streamError?.isEmptyResponse === true;
+        
+        // Only log as warning if it's a real error, not a graceful fallback
+        if (!isGracefulFallback) {
+          console.warn('⚠️ [STREAMING] Failed:', streamError, `(${tokenCount} tokens, ${streamedContent.length} chars)`);
+        }
         
         // If we have partial content, save it with an interrupted indicator
         if (streamedContent && streamedContent.trim().length > 0) {
@@ -3077,8 +3086,12 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           return;
         }
         
-        // No partial content - fall back to non-streaming endpoint
-        console.log('🔄 [STREAMING] No partial content, falling back to non-streaming');
+        // No partial content - fall back to non-streaming endpoint (this is expected behavior, not an error)
+        if (isGracefulFallback) {
+          console.log('🔄 [STREAMING] Using non-streaming fallback');
+        } else {
+          console.log('🔄 [STREAMING] No partial content, falling back to non-streaming');
+        }
         const fallbackUrl = '/api/v1/ai-chat/';
         const fallbackResponse = await fetch(fallbackUrl, {
           method: 'POST',

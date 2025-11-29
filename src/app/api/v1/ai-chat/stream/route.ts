@@ -821,9 +821,10 @@ export async function POST(request: NextRequest) {
         
         console.log(`[STREAM] textStream iteration complete. Tokens: ${tokensUsed}, Length: ${fullContent.length}`);
         
-        // Check if we got any content
+        // Check if we got any content - graceful handling for empty responses
         if (fullContent.length === 0) {
-          console.error('[STREAM] No content received from primary provider!');
+          // Log as info, not error - empty responses are expected occasionally and we handle them gracefully
+          console.log('[STREAM] No content from primary provider - initiating fallback...');
             
           // INSTANT FALLBACK: No retries - fall back immediately for better UX
           // OpenRouter Claude is primary, so if it fails, try GPT
@@ -900,14 +901,24 @@ export async function POST(request: NextRequest) {
           })}\n\n`));
           
       } catch (error: any) {
-        console.error(`[STREAM] Stream error:`, error?.message || error);
+        // Log level based on error type - some errors are expected and recoverable
+        const errorMessage = error?.message || 'Stream failed';
+        const isExpectedError = errorMessage.includes('All AI providers') || 
+                               errorMessage.includes('No content received') ||
+                               errorMessage.includes('returned no content');
         
-        // Send error event to frontend
+        if (isExpectedError) {
+          console.log(`[STREAM] Recoverable stream issue: ${errorMessage}`);
+        } else {
+          console.error(`[STREAM] Stream error:`, errorMessage);
+        }
+        
+        // Send error event to frontend with recoverable flag
         try {
           await writer.write(encoder.encode(`data: ${JSON.stringify({
             type: 'error',
-            message: error?.message || 'Stream failed',
-            recoverable: false
+            message: errorMessage,
+            recoverable: isExpectedError // Frontend can retry non-streaming if recoverable
           })}\n\n`));
         } catch (e) {
           // Writer might be closed
