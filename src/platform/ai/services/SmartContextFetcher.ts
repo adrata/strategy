@@ -89,7 +89,10 @@ export async function fetchSpeedrunContext(
       whereClause.mainSellerId = userId;
       console.log('✅ [SmartContextFetcher] Added mainSellerId filter:', userId);
     } else {
-      console.warn('⚠️ [SmartContextFetcher] NO userId provided - will fetch ALL workspace Speedrun records!');
+      // CRITICAL: For Speedrun, userId is REQUIRED - without it we return wrong data
+      console.error('❌ [SmartContextFetcher] CRITICAL: NO userId provided for Speedrun! This will return wrong data.');
+      console.error('❌ [SmartContextFetcher] Returning null to prevent showing wrong user data.');
+      return null; // Return null instead of fetching ALL records (which would be incorrect)
     }
 
     // Fetch Speedrun data matching the UI's exact logic
