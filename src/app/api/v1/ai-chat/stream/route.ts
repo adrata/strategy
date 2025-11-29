@@ -20,7 +20,7 @@ export const maxDuration = 300; // 300 seconds (5 min) for AI streaming response
 import { NextRequest } from 'next/server';
 import { streamText, CoreMessage } from 'ai';
 import { createAnthropic } from '@ai-sdk/anthropic';
-import { openrouter, OPENROUTER_MODELS } from '@/platform/services/OpenRouterClient';
+import { openrouter, OPENROUTER_MODELS, MODEL_CHAINS } from '@/platform/services/OpenRouterClient';
 import { getSecureApiContext } from '@/platform/services/secure-api-helper';
 import { AIContextService } from '@/platform/ai/services/AIContextService';
 import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
