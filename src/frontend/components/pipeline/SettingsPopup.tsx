@@ -17,8 +17,11 @@ import {
   ExclamationTriangleIcon,
   SparklesIcon,
   BellIcon,
-  PaintBrushIcon
+  PaintBrushIcon,
+  BoltIcon
 } from '@heroicons/react/24/outline';
+import { SpeedrunEngineSettingsService } from '@/platform/services/speedrun-engine-settings-service';
+import type { SpeedrunOptimizationSettings } from '@/platform/ui/components/SpeedrunEngineOptimizer';
 
 interface SettingsPopupProps {
   isOpen: boolean;
@@ -53,7 +56,7 @@ interface WorkspaceContext {
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   const { user } = useUnifiedAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme' | 'daily100' | 'ai-context'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme' | 'daily100' | 'ai-context' | 'speedrun'>('profile');
   const [loading, setLoading] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   
@@ -96,6 +99,25 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   
   // Daily 100 settings
   const [daily100Preset, setDaily100Preset] = useState<PresetTemplateId>('elite-seller');
+  
+  // Speedrun settings
+  const [speedrunSettings, setSpeedrunSettings] = useState<SpeedrunOptimizationSettings>({
+    dealValueFocus: 60,
+    warmLeadPriority: 70,
+    decisionMakerFocus: 75,
+    timeSensitivity: 50,
+    economicBuyerPriority: 80,
+    championInfluence: 65,
+    competitionMode: 60,
+    timeHorizon: 'week',
+    methodology: 'adaptive',
+    dailyTarget: 30,
+    weeklyTarget: 250,
+    autoProgressToNextBatch: true,
+    batchSize: 30,
+  });
+  const [speedrunHasChanges, setSpeedrunHasChanges] = useState(false);
+  
   const [passwordMessage, setPasswordMessage] = useState<{
     type: 'success' | 'error' | null;
     text: string;
@@ -193,6 +215,13 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
       }
 
       // Buyer group configuration loading removed - UI hidden from users
+      
+      // Load Speedrun settings
+      const savedSpeedrunSettings = SpeedrunEngineSettingsService.getOptimizationSettings();
+      if (savedSpeedrunSettings) {
+        console.log('✅ SettingsPopup: Loaded speedrun settings:', savedSpeedrunSettings);
+        setSpeedrunSettings(savedSpeedrunSettings);
+      }
     } catch (error) {
       console.error('❌ SettingsPopup: Error loading settings:', error);
     } finally {
@@ -443,6 +472,17 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               >
                 AI Context
               </button>
+              <button
+                onClick={() => setActiveTab('speedrun')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${
+                  activeTab === 'speedrun'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
+                }`}
+              >
+                <BoltIcon className="w-4 h-4" />
+                Speedrun
+              </button>
             </nav>
           </div>
 
@@ -472,6 +512,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                   {activeTab === 'theme' && 'Theme'}
                   {activeTab === 'daily100' && 'Daily 100'}
                   {activeTab === 'ai-context' && 'AI Context'}
+                  {activeTab === 'speedrun' && 'Speedrun'}
                 </span>
               </div>
               <button
@@ -1180,6 +1221,307 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                   className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? 'Saving...' : 'Save AI Context'}
+                </button>
+              </div>
+            </div>
+          ) : activeTab === 'speedrun' ? (
+            <div className="space-y-6">
+              {/* Speedrun Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <BoltIcon className="w-5 h-5" />
+                  Speedrun Settings
+                </h3>
+                <p className="text-sm text-muted mb-6">
+                  Fine-tune how the Speedrun engine prioritizes and ranks your leads. These settings affect which prospects appear first in your daily workflow.
+                </p>
+                
+                {/* Sales Methodology */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-foreground mb-3">
+                    Sales Methodology
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { id: 'adaptive', name: 'Adaptive', desc: 'Smart approach that adapts to your market' },
+                      { id: 'meddpicc', name: 'MEDDPICC', desc: 'Economic buyer & decision criteria focus' },
+                      { id: 'sandler', name: 'Sandler', desc: 'Champion-driven with qualification focus' },
+                      { id: 'proactive', name: 'Proactive', desc: 'Aggressive, time-sensitive approach' },
+                    ].map((method) => (
+                      <button
+                        key={method.id}
+                        onClick={() => {
+                          setSpeedrunSettings(prev => ({ ...prev, methodology: method.id as any }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className={`p-3 rounded-lg border text-left transition-colors ${
+                          speedrunSettings.methodology === method.id
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:bg-hover'
+                        }`}
+                      >
+                        <div className="font-medium text-foreground text-sm">{method.name}</div>
+                        <div className="text-xs text-muted mt-1">{method.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Core Algorithm Weights */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-foreground mb-4">
+                    Prioritization Settings
+                  </label>
+                  <div className="space-y-5">
+                    {/* Deal Value Focus */}
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm text-foreground">Revenue Strategy</span>
+                        <span className="text-sm text-muted">
+                          {speedrunSettings.dealValueFocus}% - {speedrunSettings.dealValueFocus < 50 ? 'Volume Play' : 'Enterprise Focus'}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={speedrunSettings.dealValueFocus}
+                        onChange={(e) => {
+                          setSpeedrunSettings(prev => ({ ...prev, dealValueFocus: parseInt(e.target.value) }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className="w-full h-2 bg-border rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-muted mt-1">
+                        <span>High Volume, Quick Wins</span>
+                        <span>Enterprise Deals, Higher ACVs</span>
+                      </div>
+                    </div>
+
+                    {/* Warm Lead Priority */}
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm text-foreground">Prospecting vs. Nurturing</span>
+                        <span className="text-sm text-muted">
+                          {speedrunSettings.warmLeadPriority}% - {speedrunSettings.warmLeadPriority < 50 ? 'Prospecting Mode' : 'Nurturing Mode'}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={speedrunSettings.warmLeadPriority}
+                        onChange={(e) => {
+                          setSpeedrunSettings(prev => ({ ...prev, warmLeadPriority: parseInt(e.target.value) }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className="w-full h-2 bg-border rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-muted mt-1">
+                        <span>New prospects, cold outbound</span>
+                        <span>Engaged leads, warm follow-ups</span>
+                      </div>
+                    </div>
+
+                    {/* Decision Maker Focus */}
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm text-foreground">Buyer Engagement Strategy</span>
+                        <span className="text-sm text-muted">
+                          {speedrunSettings.decisionMakerFocus}% - {speedrunSettings.decisionMakerFocus < 50 ? 'Champion Building' : 'Executive Access'}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={speedrunSettings.decisionMakerFocus}
+                        onChange={(e) => {
+                          setSpeedrunSettings(prev => ({ ...prev, decisionMakerFocus: parseInt(e.target.value) }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className="w-full h-2 bg-border rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-muted mt-1">
+                        <span>Build internal champions first</span>
+                        <span>Go straight to economic buyer</span>
+                      </div>
+                    </div>
+
+                    {/* Economic Buyer Priority */}
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm text-foreground">Budget Authority Focus</span>
+                        <span className="text-sm text-muted">
+                          {speedrunSettings.economicBuyerPriority}% - {speedrunSettings.economicBuyerPriority > 75 ? 'C-Suite Only' : speedrunSettings.economicBuyerPriority > 50 ? 'Budget Holders' : 'All Stakeholders'}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={speedrunSettings.economicBuyerPriority}
+                        onChange={(e) => {
+                          setSpeedrunSettings(prev => ({ ...prev, economicBuyerPriority: parseInt(e.target.value) }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className="w-full h-2 bg-border rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-muted mt-1">
+                        <span>Any stakeholder, cast wide net</span>
+                        <span>Only people who can sign checks</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Daily & Weekly Targets */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-foreground mb-3">
+                    Daily & Weekly Targets
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-muted mb-2">Daily Target</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="200"
+                        value={speedrunSettings.dailyTarget}
+                        onChange={(e) => {
+                          setSpeedrunSettings(prev => ({ ...prev, dailyTarget: parseInt(e.target.value) || 30 }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className="w-full p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                      />
+                      <p className="text-xs text-muted mt-1">Leads to contact each day</p>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted mb-2">Weekly Target</label>
+                      <input
+                        type="number"
+                        min="5"
+                        max="1000"
+                        value={speedrunSettings.weeklyTarget}
+                        onChange={(e) => {
+                          setSpeedrunSettings(prev => ({ ...prev, weeklyTarget: parseInt(e.target.value) || 250 }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className="w-full p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                      />
+                      <p className="text-xs text-muted mt-1">Leads to contact each week</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Auto-Progression */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-foreground mb-3">
+                    Auto-Progression
+                  </label>
+                  <div className="p-4 bg-panel-background rounded-lg border border-border">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-foreground text-sm">Auto-pull Next Batch</div>
+                        <div className="text-xs text-muted">
+                          Automatically load next {speedrunSettings.batchSize} leads when daily target is hit
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setSpeedrunSettings(prev => ({ ...prev, autoProgressToNextBatch: !prev.autoProgressToNextBatch }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                          speedrunSettings.autoProgressToNextBatch ? 'bg-primary' : 'bg-border'
+                        }`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            speedrunSettings.autoProgressToNextBatch ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                    <div className="mt-3">
+                      <label className="block text-xs text-muted mb-2">Batch Size</label>
+                      <select
+                        value={speedrunSettings.batchSize}
+                        onChange={(e) => {
+                          setSpeedrunSettings(prev => ({ ...prev, batchSize: parseInt(e.target.value) }));
+                          setSpeedrunHasChanges(true);
+                        }}
+                        className="w-full p-2 border border-border rounded-md bg-background text-foreground text-sm"
+                      >
+                        <option value={25}>25 leads per batch</option>
+                        <option value={30}>30 leads per batch</option>
+                        <option value={50}>50 leads per batch</option>
+                        <option value={75}>75 leads per batch</option>
+                        <option value={100}>100 leads per batch</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Info Box */}
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <BoltIcon className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground mb-1">How Speedrun works</h4>
+                      <p className="text-xs text-muted">
+                        Speedrun uses these settings to calculate a priority score for each prospect. 
+                        Higher scores mean the prospect appears earlier in your daily workflow. Adjust these settings 
+                        to match your sales strategy and target the right prospects first.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Save & Reset Buttons */}
+              <div className="flex justify-between pt-4 border-t border-border">
+                <button
+                  onClick={() => {
+                    setSpeedrunSettings({
+                      dealValueFocus: 60,
+                      warmLeadPriority: 70,
+                      decisionMakerFocus: 75,
+                      timeSensitivity: 50,
+                      economicBuyerPriority: 80,
+                      championInfluence: 65,
+                      competitionMode: 60,
+                      timeHorizon: 'week',
+                      methodology: 'adaptive',
+                      dailyTarget: 30,
+                      weeklyTarget: 250,
+                      autoProgressToNextBatch: true,
+                      batchSize: 30,
+                    });
+                    setSpeedrunHasChanges(true);
+                  }}
+                  className="px-4 py-2 border border-border text-foreground rounded-lg hover:bg-hover transition-colors"
+                >
+                  Reset to Default
+                </button>
+                <button
+                  onClick={async () => {
+                    setLoading(true);
+                    try {
+                      await SpeedrunEngineSettingsService.applyOptimizationSettings(speedrunSettings);
+                      setSpeedrunHasChanges(false);
+                      alert('Speedrun settings saved! Your lead rankings will update shortly.');
+                    } catch (error) {
+                      console.error('Failed to save speedrun settings:', error);
+                      alert('Failed to save settings. Please try again.');
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading || !speedrunHasChanges}
+                  className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {loading ? 'Saving...' : 'Apply Changes'}
                 </button>
               </div>
             </div>

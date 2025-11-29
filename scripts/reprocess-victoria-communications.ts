@@ -604,7 +604,6 @@ async function updateLastActionDates(workspaceId: string): Promise<ReprocessStat
   // (either direct company action or via person)
   const companiesWithPeople = await prisma.companies.findMany({
     where: { workspaceId, deletedAt: null },
-    select: { id: true, lastActionDate: true },
     include: {
       people: {
         where: { deletedAt: null },
