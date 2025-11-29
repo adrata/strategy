@@ -1344,7 +1344,7 @@ export function PipelineHeader({
                         setShowAddActionModal(true);
                       }}
                       disabled={loading}
-                      className="bg-navy-50 text-navy-900 border border-navy-200 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2"
+                      className="bg-info-bg text-info-text border border-info-border px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2"
                     >
                       <span className="hidden xs:inline">{(sectionInfo as any).secondaryActionButton} ({getCommonShortcut('SUBMIT')})</span>
                       <span className="xs:hidden">Add</span>

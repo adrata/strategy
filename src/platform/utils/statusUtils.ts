@@ -122,9 +122,9 @@ export function getStandardizedActionTimingColor(timing: string, isLastAction: b
     return 'bg-info-bg text-info-text border border-info-border';
   }
   
-  // Next week timing - use navy colors
+  // Next week timing - use info colors (theme-aware)
   if (timingLower.includes('next week') || timingLower.includes('following week')) {
-    return 'bg-navy-100 text-navy-800 border border-navy-200';
+    return 'bg-info-bg text-info-text border border-info-border';
   }
   
   // Default timing
@@ -155,9 +155,9 @@ export function getRealtimeActionTiming(lastActionDate?: string | Date): { text:
     return { text: `${diffMinutes}m ago`, color: 'bg-success-bg text-success-text' };
   }
   
-  // Today (within 24 hours) - Navy
+  // Today (within 24 hours) - use info colors (theme-aware)
   if (diffHours < 24) {
-    return { text: `${diffHours}h ago`, color: 'bg-navy-100 text-navy-800' };
+    return { text: `${diffHours}h ago`, color: 'bg-info-bg text-info-text' };
   }
   
   // This week (within 7 days) - Warning/Yellow

@@ -138,7 +138,7 @@ export function Pagination({
               ${page === '...'
                 ? 'text-muted cursor-default'
                 : page === currentPage
-                ? 'bg-navy-50 text-navy-900 border border-navy-200'
+                ? 'bg-info-bg text-info-text border border-info-border'
                 : 'text-gray-700 hover:bg-hover'
               }
             `}

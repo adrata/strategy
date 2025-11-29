@@ -3669,14 +3669,14 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           height: 8px;
         }
         .ai-panel-scroll::-webkit-scrollbar-track {
-          background: #f9fafb;
+          background: var(--background);
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb {
-          background: #9ca3af;
+          background: var(--scrollbar-thumb, #9ca3af);
           border-radius: 4px;
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb:hover {
-          background: #6b7280;
+          background: var(--muted, #6b7280);
         }
         
         /* Middle panel scrollbar styling */
@@ -3685,14 +3685,14 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           height: 8px;
         }
         .middle-panel-scroll::-webkit-scrollbar-track {
-          background: #f9fafb;
+          background: var(--background);
         }
         .middle-panel-scroll::-webkit-scrollbar-thumb {
-          background: #e5e7eb;
+          background: var(--scrollbar-thumb, #e5e7eb);
           border-radius: 4px;
         }
         .middle-panel-scroll::-webkit-scrollbar-thumb:hover {
-          background: #d1d5db;
+          background: var(--muted, #d1d5db);
         }
       `}</style>
       <div className="bg-background flex flex-col relative" style={{ 

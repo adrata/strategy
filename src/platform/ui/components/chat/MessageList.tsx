@@ -429,7 +429,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(personName);
                         }}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/50 hover:text-green-800 dark:hover:text-green-200 transition-colors duration-200 cursor-pointer border border-green-200 dark:border-green-700 hover:border-green-300 dark:hover:border-green-600"
                       >
                         {personName}
                       </button>
@@ -446,7 +446,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(personName);
                         }}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/50 hover:text-green-800 dark:hover:text-green-200 transition-colors duration-200 cursor-pointer border border-green-200 dark:border-green-700 hover:border-green-300 dark:hover:border-green-600"
                       >
                         {personName}
                       </button>
@@ -463,7 +463,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(personName);
                         }}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/50 hover:text-green-800 dark:hover:text-green-200 transition-colors duration-200 cursor-pointer border border-green-200 dark:border-green-700 hover:border-green-300 dark:hover:border-green-600"
                       >
                         {personName}
                       </button>
@@ -480,7 +480,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(personName);
                         }}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/50 hover:text-green-800 dark:hover:text-green-200 transition-colors duration-200 cursor-pointer border border-green-200 dark:border-green-700 hover:border-green-300 dark:hover:border-green-600"
                       >
                         {personName}
                       </button>
@@ -506,7 +506,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(phone);
                         }}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-orange-50 text-orange-700 hover:bg-orange-100 hover:text-orange-800 transition-colors duration-200 cursor-pointer border border-orange-200 hover:border-orange-300"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/50 hover:text-orange-800 dark:hover:text-orange-200 transition-colors duration-200 cursor-pointer border border-orange-200 dark:border-orange-700 hover:border-orange-300 dark:hover:border-orange-600"
                       >
                         {phone}
                       </button>
@@ -523,14 +523,14 @@ export function MessageList({
           
           {/* Display web sources if available */}
           {message.sources && message.sources.length > 0 && (
-            <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-4 h-4 text-blue-600">
+                <div className="w-4 h-4 text-blue-600 dark:text-blue-400">
                   <svg fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-sm font-medium text-blue-800">Web Sources</span>
+                <span className="text-sm font-medium text-blue-800 dark:text-blue-300">Web Sources</span>
               </div>
               <div className="space-y-2">
                 {message.sources.slice(0, 3).map((source, index) => (
