@@ -32,6 +32,7 @@ export interface FetchedListContext {
     title: string | null;
     status: string | null;
     email: string | null;
+    rank?: number; // Speedrun rank (1 = highest priority)
   }>;
   isListView: true;
 }
@@ -45,6 +46,86 @@ export interface FetchedRecordContext {
 export type FetchedContext = FetchedListContext | FetchedRecordContext | null;
 
 /**
+ * Fetch Speedrun list with actual ranks
+ * Speedrun data includes globalRank which is the priority order (1 = highest priority)
+ * 
+ * IMPORTANT: globalRank defaults to 0 (not null), so we filter by > 0 to get ranked records
+ */
+export async function fetchSpeedrunContext(
+  workspaceId: string
+): Promise<FetchedListContext | null> {
+  try {
+    const prisma = getPrismaClient();
+    
+    // Create timeout promise
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Query timeout')), QUERY_TIMEOUT_MS)
+    );
+
+    // Fetch Speedrun prospects - ranked people with globalRank > 0
+    // Rank 1 = highest priority, higher numbers = lower priority
+    // Use 'desc' ordering because Speedrun displays highest rank numbers first
+    const [countResult, recordsResult] = await Promise.race([
+      Promise.all([
+        prisma.people.count({ 
+          where: { 
+            workspaceId,
+            deletedAt: null,
+            globalRank: { gt: 0 } // globalRank > 0 means in Speedrun
+          } 
+        }),
+        prisma.people.findMany({
+          where: { 
+            workspaceId,
+            deletedAt: null,
+            globalRank: { gt: 0 } // globalRank > 0 means in Speedrun
+          },
+          take: MAX_LIST_RECORDS,
+          orderBy: { globalRank: 'desc' }, // Higher rank number first (matches UI)
+          select: {
+            id: true,
+            fullName: true,
+            firstName: true,
+            lastName: true,
+            jobTitle: true,
+            title: true,
+            status: true,
+            email: true,
+            globalRank: true, // The actual Speedrun rank
+            currentCompany: true,
+            company: {
+              select: { name: true }
+            }
+          }
+        })
+      ]),
+      timeoutPromise
+    ]) as [number, any[]];
+
+    console.log(`✅ [SmartContextFetcher] Fetched ${recordsResult.length} Speedrun records (total: ${countResult})`);
+
+    return {
+      section: 'speedrun',
+      sectionDisplayName: 'Speedrun',
+      totalCount: countResult,
+      records: recordsResult.map(r => ({
+        id: r.id,
+        name: r.fullName || `${r.firstName || ''} ${r.lastName || ''}`.trim() || 'Unknown',
+        company: r.company?.name || r.currentCompany || null,
+        title: r.jobTitle || r.title || null,
+        status: r.status || null,
+        email: r.email || null,
+        rank: r.globalRank || undefined
+      })),
+      isListView: true
+    };
+  } catch (error) {
+    console.warn('⚠️ [SmartContextFetcher] Failed to fetch Speedrun context:', error);
+    return null;
+  }
+}
+
+/**
  * Fetch list records for a section from the database
  * Used when user is on a list view and React context is unavailable
  */
@@ -52,6 +133,11 @@ export async function fetchListContext(
   section: string,
   workspaceId: string
 ): Promise<FetchedListContext | null> {
+  // Special handling for Speedrun - needs rank data
+  if (section === 'speedrun') {
+    return fetchSpeedrunContext(workspaceId);
+  }
+  
   const table = getSectionTable(section);
   if (!table) return null;
 
@@ -276,16 +362,22 @@ export async function fetchWorkspaceSummary(workspaceId: string): Promise<{
  */
 export function buildListContextString(listContext: FetchedListContext): string {
   const { section, sectionDisplayName, totalCount, records } = listContext;
+  const isSpeedrun = section === 'speedrun';
   
-  let context = `=== LIST VIEW CONTEXT ===
+  let context = `=== ${isSpeedrun ? 'SPEEDRUN' : 'LIST VIEW'} CONTEXT ===
 You are viewing the ${sectionDisplayName} list.
 Total ${sectionDisplayName}: ${totalCount}
-Showing top ${records.length} records:
+${isSpeedrun ? 'Speedrun is the daily prioritized prospect list. Rank 1 = highest priority.\n' : ''}
+Showing ${isSpeedrun ? 'all' : 'top'} ${records.length} records:
 
 `;
 
   records.forEach((record, index) => {
-    context += `${index + 1}. ${record.name}`;
+    // For Speedrun, show actual rank; otherwise show index
+    const displayNum = record.rank || (index + 1);
+    const prefix = isSpeedrun ? `Rank ${displayNum}:` : `${displayNum}.`;
+    
+    context += `${prefix} ${record.name}`;
     if (record.company) context += ` at ${record.company}`;
     if (record.title) context += ` (${record.title})`;
     if (record.status) context += ` - ${record.status}`;
@@ -298,12 +390,24 @@ Showing top ${records.length} records:
     context += `\n... and ${totalCount - records.length} more ${sectionDisplayName.toLowerCase()} in this list.\n`;
   }
 
-  context += `
+  // Speedrun-specific instructions
+  if (isSpeedrun) {
+    context += `
+SPEEDRUN INSTRUCTIONS:
+- Rank 1 is the HIGHEST priority (user should contact them first)
+- Higher rank numbers = lower priority
+- When asked "who is rank X?" return the person at that exact rank
+- When asked about a person BY NAME, find them in the list above and provide their details
+- You CAN write emails for anyone in this Speedrun list using their data
+- If asked to write an email for someone in the list, use their name, company, and email from above`;
+  } else {
+    context += `
 IMPORTANT: The user is on the ${sectionDisplayName} LIST VIEW, not viewing a specific record.
 - If they ask "who is this person?" explain they're viewing a list and ask which person
 - If they ask about the list, provide information about the records above
 - If they want to see a specific record, they should click on one from the list
 - You CAN tell them about any of the ${records.length} records shown above`;
+  }
 
   return context;
 }

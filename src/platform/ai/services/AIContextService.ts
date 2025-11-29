@@ -1063,6 +1063,7 @@ ${JSON.stringify(currentRecord, null, 2).substring(0, 3000)}${JSON.stringify(cur
   /**
    * Build list view context for when user is viewing a list of records
    * Enhanced to handle pagination and current page information
+   * UPDATED: Now properly handles Speedrun ranks
    */
   private static buildListViewContext(listViewContext: ListViewContext | undefined): string {
     if (!listViewContext) {
@@ -1071,6 +1072,10 @@ ${JSON.stringify(currentRecord, null, 2).substring(0, 3000)}${JSON.stringify(cur
 
     const { visibleRecords, activeSection, appliedFilters, totalCount, lastUpdated, currentPage: explicitCurrentPage, totalPages: explicitTotalPages } = listViewContext;
     
+    // Check if this is Speedrun (has rank data)
+    const isSpeedrun = activeSection?.toLowerCase() === 'speedrun' || 
+                       activeSection?.toLowerCase()?.includes('speedrun');
+    
     // Calculate pagination info if available
     const currentPage = explicitCurrentPage || appliedFilters.page || 1;
     const pageSize = appliedFilters.pageSize || visibleRecords.length || 50;
@@ -1078,10 +1083,18 @@ ${JSON.stringify(currentRecord, null, 2).substring(0, 3000)}${JSON.stringify(cur
     const startRecord = (currentPage - 1) * pageSize + 1;
     const endRecord = Math.min(startRecord + visibleRecords.length - 1, totalCount);
     
-    // Limit to top 15 records for context (increased from 10 for better context)
-    const topRecords = visibleRecords.slice(0, 15);
+    // For Speedrun, include all records (they're prioritized). Otherwise limit to 15.
+    const topRecords = isSpeedrun ? visibleRecords.slice(0, 50) : visibleRecords.slice(0, 15);
     
-    let context = `LIST VIEW CONTEXT:
+    let context = isSpeedrun 
+      ? `=== SPEEDRUN LIST CONTEXT ===
+Speedrun is the daily prioritized prospect list. Rank 1 = HIGHEST priority.
+- Total Speedrun Prospects: ${totalCount}
+- Showing: ${topRecords.length} prospects
+- Last Updated: ${lastUpdated.toLocaleString()}
+
+SPEEDRUN PROSPECTS (by priority rank):`
+      : `LIST VIEW CONTEXT:
 - Active Section: ${activeSection}
 - Total Records: ${totalCount}
 - Visible Records: ${visibleRecords.length} (showing records ${startRecord}-${endRecord} of ${totalCount})
@@ -1103,29 +1116,54 @@ CURRENT PAGE VISIBLE RECORDS:`;
       const company = record.company || record.companyName || 'Unknown Company';
       const title = record.title || record.jobTitle || 'Unknown Title';
       const status = record.status || 'Unknown';
-      const priority = record.priority || 'Unknown';
       const recordId = record.id || 'Unknown ID';
+      const email = record.email || '';
       
-      context += `\n${index + 1}. ${name} at ${company}
+      // For Speedrun, use actual rank if available; otherwise use index
+      // Records may have globalRank, rank, or speedrunRank property
+      const actualRank = (record as any).globalRank || (record as any).rank || (record as any).speedrunRank;
+      const displayNumber = isSpeedrun && actualRank ? `Rank ${actualRank}` : `${index + 1}.`;
+      
+      if (isSpeedrun) {
+        // Concise Speedrun format for better AI context
+        context += `\n${displayNumber}: ${name} at ${company} - ${status}`;
+        if (email) context += ` | Email: ${email}`;
+        context += ` [ID: ${recordId}]`;
+      } else {
+        const priority = record.priority || 'Unknown';
+        context += `\n${displayNumber} ${name} at ${company}
    - Title: ${title}
    - Status: ${status}
    - Priority: ${priority}
    - ID: ${recordId}
    - Complete Record Data: ${JSON.stringify(record).substring(0, 500)}${JSON.stringify(record).length > 500 ? '...' : ''}`;
+      }
     });
 
-    if (visibleRecords.length > 15) {
+    if (!isSpeedrun && visibleRecords.length > 15) {
       context += `\n... and ${visibleRecords.length - 15} more records on this page`;
     }
     
-    if (totalPages > 1) {
+    if (totalPages > 1 && !isSpeedrun) {
       context += `\n\nPAGINATION INFO:
 - This is page ${currentPage} of ${totalPages} total pages
 - There are ${totalCount - visibleRecords.length} more records on other pages
 - User can navigate to other pages to see more records`;
     }
 
-    context += `\n\nIMPORTANT: The user is currently viewing a list of ${activeSection}${totalPages > 1 ? ` (page ${currentPage} of ${totalPages})` : ''}. You can reference these specific records by name when providing advice. The list shows ${visibleRecords.length} records out of ${totalCount} total.`;
+    // Speedrun-specific instructions for the AI
+    if (isSpeedrun) {
+      context += `
+
+SPEEDRUN AI INSTRUCTIONS:
+- When asked "who is rank X?" find the person at that exact rank number above
+- When asked about a person BY NAME, find them in the list and provide their details
+- You CAN write cold emails for anyone in this Speedrun list - use their name, company, and email
+- Rank 1 = highest priority (they should contact this person first)
+- If asked "write an email for [name]" and they're in the list, draft a personalized email`;
+    } else {
+      context += `\n\nIMPORTANT: The user is currently viewing a list of ${activeSection}${totalPages > 1 ? ` (page ${currentPage} of ${totalPages})` : ''}. You can reference these specific records by name when providing advice. The list shows ${visibleRecords.length} records out of ${totalCount} total.`;
+    }
 
     return context;
   }
