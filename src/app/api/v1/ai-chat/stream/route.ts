@@ -48,15 +48,15 @@ function getAnthropicInstance() {
     try {
       // CRITICAL FIX: Configure Anthropic with explicit headers for streaming reliability
       // Per Anthropic docs: https://docs.anthropic.com/en/docs/build-with-claude/streaming
+      // Updated November 2025 for Claude 4.x models
       _anthropicInstance = createAnthropic({ 
         apiKey,
         // Explicit headers to ensure proper API versioning and streaming
         headers: {
-          'anthropic-version': '2023-06-01', // Required API version header
-          'anthropic-beta': 'messages-2023-12-15', // Enable latest message features
+          'anthropic-version': '2024-10-22', // Latest API version for Claude 4.x models
         }
       });
-      console.log('[STREAM] Anthropic SDK initialized with explicit headers');
+      console.log('[STREAM] Anthropic SDK initialized for Claude 4.x models');
     } catch (initError) {
       console.error('[STREAM] Failed to initialize Anthropic SDK:', initError);
       _anthropicInitFailed = true;
@@ -67,16 +67,21 @@ function getAnthropicInstance() {
 }
 
 // Claude model for direct Anthropic API
-// Models in order of preference (fallback through if one fails)
+// Models updated November 2025 - Claude 3.5 Sonnet is RETIRED
 // Per Anthropic docs: https://docs.anthropic.com/en/about-claude/models/overview
 const CLAUDE_MODELS = {
-  // Claude 3.5 Sonnet - the recommended model for most use cases
-  PRIMARY: 'claude-3-5-sonnet-20241022',
-  // Claude 3 Sonnet - fallback if Claude 3.5 has issues
-  FALLBACK: 'claude-3-sonnet-20240229',
+  // Claude Sonnet 4.5 - Best balance of speed, quality, cost for chat (Sept 2025)
+  // $3/M input, $15/M output - excellent for complex agents and coding
+  PRIMARY: 'claude-sonnet-4-5-20250929',
+  // Claude Opus 4.5 - Maximum capability (Nov 24, 2025)
+  // $5/M input, $25/M output - best for complex reasoning and enterprise tasks
+  OPUS: 'claude-opus-4-5-20251101',
+  // Claude Haiku 4.5 - Fast and cost-effective (Oct 2025)
+  // For high-volume, real-time applications
+  HAIKU: 'claude-haiku-4-5-20251015',
 } as const;
 
-// Default to primary model
+// Use Sonnet 4.5 as default - best balance of speed/quality/cost for chat
 const CLAUDE_MODEL = CLAUDE_MODELS.PRIMARY;
 
 /**
@@ -771,13 +776,60 @@ export async function POST(request: NextRequest) {
         if (fullContent.length === 0) {
           console.error('[STREAM] No content received from primary provider!');
             
-          // FALLBACK: If primary provider (Anthropic) failed, try OpenRouter
+          // RETRY WITH EXPONENTIAL BACKOFF: If Anthropic failed, retry up to 2 times before fallback
+          // Per Anthropic best practices: https://docs.anthropic.com/en/api/errors
           if (hasAnthropicKey && usedProvider === 'Anthropic') {
-            console.log('[STREAM] Attempting fallback to OpenRouter...');
+            let retrySuccess = false;
+            const maxRetries = 2;
             
-            // Reset state for retry
-            hasStartedStreaming = false;
-            streamError = null;
+            for (let retry = 1; retry <= maxRetries && !retrySuccess; retry++) {
+              // Exponential backoff: 1s, 2s
+              const backoffMs = retry * 1000;
+              console.log(`[STREAM] Anthropic retry ${retry}/${maxRetries} after ${backoffMs}ms backoff...`);
+              
+              await new Promise(resolve => setTimeout(resolve, backoffMs));
+              
+              // Reset state for retry
+              hasStartedStreaming = false;
+              streamError = null;
+              fullContent = '';
+              tokensUsed = 0;
+              
+              // Recreate stream with Anthropic
+              const retryModel = anthropic(CLAUDE_MODELS.PRIMARY);
+              result = createStreamWithCallbacks(retryModel, `Anthropic (retry ${retry})`);
+              
+              try {
+                for await (const chunk of result.textStream) {
+                  if (chunk) {
+                    hasStartedStreaming = true;
+                    tokensUsed++;
+                    fullContent += chunk;
+                    await writer.write(encoder.encode(`data: ${JSON.stringify({
+                      type: 'token',
+                      content: chunk
+                    })}\n\n`));
+                  }
+                }
+                
+                if (fullContent.length > 0) {
+                  console.log(`[STREAM] Anthropic retry ${retry} succeeded: ${fullContent.length} chars`);
+                  retrySuccess = true;
+                }
+              } catch (retryError: any) {
+                console.error(`[STREAM] Anthropic retry ${retry} failed:`, retryError?.message);
+              }
+            }
+            
+            // If retries failed, fall back to OpenRouter
+            if (!retrySuccess) {
+              console.log('[STREAM] Anthropic retries exhausted, falling back to OpenRouter...');
+              
+              // Reset state for fallback
+              hasStartedStreaming = false;
+              streamError = null;
+              fullContent = '';
+              tokensUsed = 0;
             
             // Create fallback stream with OpenRouter
             const fallbackModel = openrouter(OPENROUTER_MODELS.GPT4O_MINI);
@@ -799,12 +851,13 @@ export async function POST(request: NextRequest) {
               console.log(`[STREAM] OpenRouter fallback succeeded: ${fullContent.length} chars`);
             } catch (fallbackError: any) {
               console.error('[STREAM] OpenRouter fallback also failed:', fallbackError?.message);
-              throw new Error(`Both providers failed. Anthropic: silent failure, OpenRouter: ${fallbackError?.message}`);
+              throw new Error(`Both providers failed. Anthropic: ${maxRetries} retries failed, OpenRouter: ${fallbackError?.message}`);
             }
             
             // If fallback also returned nothing, throw error
             if (fullContent.length === 0) {
               throw new Error('Both Anthropic and OpenRouter returned no content');
+            }
             }
           } else {
             // No fallback available or already using OpenRouter
