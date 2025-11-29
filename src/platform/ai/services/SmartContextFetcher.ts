@@ -424,7 +424,6 @@ SPEEDRUN INSTRUCTIONS (CRITICAL - READ CAREFULLY):
 - You CAN and SHOULD write personalized cold emails for anyone in this Speedrun list using their name, company, title, and email
 - The email address shown for each person is their actual email - use it!
 - If someone asks about a person not in this list, say "I don't see [name] in your current Speedrun list"`;
-  }
   } else {
     context += `
 IMPORTANT: The user is on the ${sectionDisplayName} LIST VIEW, not viewing a specific record.
