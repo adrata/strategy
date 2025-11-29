@@ -67,13 +67,13 @@ export async function fetchSpeedrunContext(
       setTimeout(() => reject(new Error('Query timeout')), QUERY_TIMEOUT_MS)
     );
 
-    // Build where clause matching Speedrun API logic EXACTLY
-    // CRITICAL: The Speedrun API only shows records with globalRank 1-50
+    // Build where clause matching Speedrun UI logic EXACTLY
+    // The Speedrun UI shows records assigned to the current user with a company
+    // NO globalRank range filter - the UI shows ALL user's assigned records
     const whereClause: any = { 
       workspaceId,
       deletedAt: null,
-      companyId: { not: null }, // Must have company (Speedrun requirement)
-      globalRank: { not: null, gte: 1, lte: 50 } // MUST match Speedrun API: only ranks 1-50
+      companyId: { not: null } // Must have company (Speedrun requirement)
     };
     
     // CRITICAL: Filter by mainSellerId to match what the user sees in UI
