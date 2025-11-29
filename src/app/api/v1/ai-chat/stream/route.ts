@@ -494,7 +494,14 @@ export async function POST(request: NextRequest) {
     }
     
     // 5b. 🆕 SMART LIST CONTEXT FETCHING: Fetch list from DB when on list view
-    if (isListView && listViewSection && !listViewContext) {
+    // CRITICAL FIX: ALWAYS fetch Speedrun from DB to get accurate rank data
+    // Frontend context may have stale/incomplete data without proper globalRank values
+    const shouldFetchFromDB = isListView && listViewSection && (
+      !listViewContext || // No frontend context
+      listViewSection === 'speedrun' // ALWAYS fetch Speedrun fresh for accurate ranks
+    );
+    
+    if (shouldFetchFromDB) {
       try {
         const { fetchListContext, buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
         fetchedListContext = await fetchListContext(listViewSection, context.workspaceId);
@@ -503,7 +510,9 @@ export async function POST(request: NextRequest) {
           console.log('✅ [STREAM] Fetched list context from database:', {
             section: listViewSection,
             recordCount: fetchedListContext.records.length,
-            totalCount: fetchedListContext.totalCount
+            totalCount: fetchedListContext.totalCount,
+            forcedDBFetch: listViewSection === 'speedrun',
+            sampleRanks: fetchedListContext.records.slice(0, 3).map(r => ({ name: r.name, rank: r.rank }))
           });
         }
       } catch (error) {
@@ -555,12 +564,23 @@ export async function POST(request: NextRequest) {
             
             workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
             
-      // ENHANCE: If we fetched list context from DB, add it to workspace context
-            if (fetchedListContext && (!workspaceContext.listViewContext || workspaceContext.listViewContext.includes('No list view context'))) {
-              const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
-              workspaceContext.listViewContext = buildListContextString(fetchedListContext);
-        console.log('[STREAM] Enhanced context with DB-fetched list data');
-            }
+      // ENHANCE: Use DB-fetched list context for better accuracy
+      // CRITICAL: For Speedrun, ALWAYS use DB context (has accurate globalRank)
+      const shouldUseDBContext = fetchedListContext && (
+        !workspaceContext.listViewContext || 
+        workspaceContext.listViewContext.includes('No list view context') ||
+        listViewSection === 'speedrun' // Always prefer DB for Speedrun
+      );
+      
+      if (shouldUseDBContext) {
+        const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+        workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+        console.log('[STREAM] Enhanced context with DB-fetched list data:', {
+          section: listViewSection,
+          recordCount: fetchedListContext.records.length,
+          hasRanks: fetchedListContext.records.some(r => r.rank !== undefined)
+        });
+      }
     } catch (contextError) {
       console.warn('[STREAM] Context build failed, using minimal context:', contextError);
             workspaceContext = {

@@ -63,8 +63,9 @@ export async function fetchSpeedrunContext(
     );
 
     // Fetch Speedrun prospects - ranked people with globalRank > 0
-    // Rank 1 = highest priority, higher numbers = lower priority
-    // Use 'desc' ordering because Speedrun displays highest rank numbers first
+    // Rank 1 = highest priority (contact first), higher numbers = lower priority
+    // Use 'asc' ordering so rank 1 (highest priority) is FIRST in context
+    // This makes it easy for AI to answer "who is rank 1?" - it's the first person!
     const [countResult, recordsResult] = await Promise.race([
       Promise.all([
         prisma.people.count({ 
@@ -81,7 +82,7 @@ export async function fetchSpeedrunContext(
             globalRank: { gt: 0 } // globalRank > 0 means in Speedrun
           },
           take: MAX_LIST_RECORDS,
-          orderBy: { globalRank: 'desc' }, // Higher rank number first (matches UI)
+          orderBy: { globalRank: 'asc' }, // Rank 1 first, then 2, 3... (priority order)
           select: {
             id: true,
             fullName: true,
@@ -393,13 +394,15 @@ Showing ${isSpeedrun ? 'all' : 'top'} ${records.length} records:
   // Speedrun-specific instructions
   if (isSpeedrun) {
     context += `
-SPEEDRUN INSTRUCTIONS:
-- Rank 1 is the HIGHEST priority (user should contact them first)
-- Higher rank numbers = lower priority
-- When asked "who is rank X?" return the person at that exact rank
-- When asked about a person BY NAME, find them in the list above and provide their details
-- You CAN write emails for anyone in this Speedrun list using their data
-- If asked to write an email for someone in the list, use their name, company, and email from above`;
+SPEEDRUN INSTRUCTIONS (CRITICAL - READ CAREFULLY):
+- The list above shows people in PRIORITY ORDER: Rank 1 = highest priority, Rank ${totalCount} = lowest priority
+- When asked "who is rank 1?" or "who should I contact first?" - return the FIRST person in the list (Rank 1)
+- When asked "who is rank X?" - find the person whose rank number matches X exactly
+- When asked about a person BY NAME (e.g., "tell me about Randy Bailey"), search the entire list for that exact name
+- You CAN and SHOULD write personalized cold emails for anyone in this Speedrun list using their name, company, title, and email
+- The email address shown for each person is their actual email - use it!
+- If someone asks about a person not in this list, say "I don't see [name] in your current Speedrun list"`;
+  }
   } else {
     context += `
 IMPORTANT: The user is on the ${sectionDisplayName} LIST VIEW, not viewing a specific record.
