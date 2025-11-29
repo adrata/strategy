@@ -327,9 +327,9 @@ export default function SignInPage() {
         </h1>
 
         {error && (
-          <Alert className="mb-4 bg-white border-l-4 border-l-red-500 shadow-sm">
-            <AlertCircle className="h-4 w-4 text-red-500" />
-            <AlertDescription className="text-gray-800">
+          <Alert className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-l-red-500 shadow-sm">
+            <AlertCircle className="h-4 w-4 text-red-500 dark:text-red-400" />
+            <AlertDescription className="text-gray-800 dark:text-gray-200">
               {error}
             </AlertDescription>
           </Alert>
@@ -337,7 +337,7 @@ export default function SignInPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate suppressHydrationWarning>
           <div>
-            <label className="block font-medium mb-1" htmlFor="username">
+            <label className="block font-medium mb-1 text-foreground" htmlFor="username">
               Username or Email
             </label>
             <div className="relative">
@@ -348,7 +348,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={handleEmailBlur}
-                className={`w-full border rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors ${
+                className={`w-full border rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors bg-background text-foreground placeholder:text-muted ${
                   usernameValidationError 
                     ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20' 
                     : usernameExists === true
@@ -363,7 +363,7 @@ export default function SignInPage() {
               />
               {isValidatingUsername && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <div className="h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                  <div className="h-4 w-4 border-2 border-muted border-t-blue-500 rounded-full animate-spin"></div>
                 </div>
               )}
             </div>
@@ -373,7 +373,7 @@ export default function SignInPage() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1" htmlFor="password">
+            <label className="block font-medium mb-1 text-foreground" htmlFor="password">
               Password
             </label>
             <input
@@ -382,7 +382,7 @@ export default function SignInPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-border rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-border"
+              className="w-full border border-border rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-border bg-background text-foreground placeholder:text-muted"
               placeholder="Enter your password"
               required
               disabled={isLoading}
@@ -399,17 +399,17 @@ export default function SignInPage() {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-black focus:ring-black border-border rounded"
+                className="h-4 w-4 text-foreground focus:ring-accent border-border rounded bg-background"
                 disabled={isLoading}
                 suppressHydrationWarning
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-muted">
                 Remember me
               </label>
             </div>
             <Link
               href="/reset-password"
-              className="text-sm text-muted hover:text-black transition-colors"
+              className="text-sm text-muted hover:text-foreground transition-colors"
             >
               Forgot password?
             </Link>
@@ -418,7 +418,7 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={isLoading || (usernameExists === false && !isValidatingUsername)}
-            className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-60"
+            className="w-full bg-foreground text-background py-2 rounded font-semibold hover:opacity-80 transition disabled:cursor-not-allowed disabled:opacity-40"
             suppressHydrationWarning
           >
             {isLoading ? "Starting..." : "Start"}
@@ -431,7 +431,7 @@ export default function SignInPage() {
             Don&apos;t have an account yet?{" "}
             <Link
               href="/demo"
-              className="text-black font-medium hover:text-gray-800 transition-colors"
+              className="text-foreground font-medium hover:opacity-80 transition-colors"
             >
               Get a demo
             </Link>
