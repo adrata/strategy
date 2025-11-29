@@ -71,18 +71,28 @@ function getAnthropicInstance() {
 // Per Anthropic docs: https://docs.anthropic.com/en/about-claude/models/overview
 const CLAUDE_MODELS = {
   // Claude Sonnet 4.5 - Best balance of speed, quality, cost for chat (Sept 2025)
-  // $3/M input, $15/M output - excellent for complex agents and coding
   PRIMARY: 'claude-sonnet-4-5-20250929',
   // Claude Opus 4.5 - Maximum capability (Nov 24, 2025)
-  // $5/M input, $25/M output - best for complex reasoning and enterprise tasks
   OPUS: 'claude-opus-4-5-20251101',
   // Claude Haiku 4.5 - Fast and cost-effective (Oct 2025)
-  // For high-volume, real-time applications
   HAIKU: 'claude-haiku-4-5-20251015',
 } as const;
 
-// Use Sonnet 4.5 as default - best balance of speed/quality/cost for chat
+// OpenRouter Claude models - more reliable than direct Anthropic in serverless
+// These route through OpenRouter but use Claude models
+const OPENROUTER_CLAUDE_MODELS = {
+  // Claude Sonnet 4.5 via OpenRouter - same quality, better reliability
+  SONNET: 'anthropic/claude-sonnet-4.5',
+  // Claude Haiku for faster responses
+  HAIKU: 'anthropic/claude-haiku',
+} as const;
+
+// Use Sonnet 4.5 as default
 const CLAUDE_MODEL = CLAUDE_MODELS.PRIMARY;
+
+// OPTIMIZATION: Use OpenRouter Claude as primary for better reliability
+// Direct Anthropic has issues with serverless cold starts
+const USE_OPENROUTER_CLAUDE = true;
 
 /**
  * Build system prompt for the AI with full context
@@ -604,31 +614,43 @@ export async function POST(request: NextRequest) {
             content: sanitizedMessage
           });
 
-    // Check if Anthropic is available (preferred - direct connection is faster)
-    console.log('[STREAM] Step 11: Initializing AI providers...');
+    // OPTIMIZED: Use OpenRouter Claude as primary for reliability in serverless
+    // Direct Anthropic has issues with cold starts and silent failures
+    console.log('[STREAM] Step 11: Selecting AI provider...');
+    
+    const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
     const anthropic = getAnthropicInstance();
     const hasAnthropicKey = !!anthropic;
     
-    console.log('[STREAM] Step 11: Provider status:', { 
-      hasAnthropicKey, 
-      hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
-      willUse: hasAnthropicKey ? 'Claude (Direct)' : 'OpenRouter'
-    });
+    // Priority: OpenRouter Claude > Direct Anthropic > OpenRouter GPT
+    let usedModel: string;
+    let usedProvider: string;
+    let modelInstance: any;
+    
+    if (USE_OPENROUTER_CLAUDE && hasOpenRouterKey) {
+      // BEST: Claude via OpenRouter - same quality, better reliability
+      usedModel = OPENROUTER_CLAUDE_MODELS.SONNET;
+      usedProvider = 'OpenRouter (Claude)';
+      modelInstance = openrouter(usedModel);
+    } else if (hasAnthropicKey && anthropic) {
+      // FALLBACK: Direct Anthropic - may have cold start issues
+      usedModel = CLAUDE_MODEL;
+      usedProvider = 'Anthropic (Direct)';
+      modelInstance = anthropic(CLAUDE_MODEL);
+    } else if (hasOpenRouterKey) {
+      // LAST RESORT: GPT via OpenRouter
+      usedModel = OPENROUTER_MODELS.GPT4O_MINI;
+      usedProvider = 'OpenRouter (GPT)';
+      modelInstance = openrouter(usedModel);
+    } else {
+      throw new Error('No AI provider available - check API keys');
+    }
+    
+    console.log(`[STREAM] Using: ${usedProvider} (${usedModel})`);
 
     // 11. CREATE STREAMING RESPONSE - Custom SSE format for frontend compatibility
-    console.log('[STREAM] Step 12: Creating stream response...');
     
-    const usedModel = hasAnthropicKey ? CLAUDE_MODEL : OPENROUTER_MODELS.GPT4O_MINI;
-    const usedProvider = hasAnthropicKey ? 'Anthropic' : 'OpenRouter';
-    console.log(`[STREAM] Using: ${usedProvider} (${usedModel})`);
-    console.log(`[STREAM] System prompt length: ${systemPrompt.length}, Messages count: ${messages.length}`);
-          
-    // Create the model instance first to catch any configuration errors
-    const modelInstance = hasAnthropicKey && anthropic 
-      ? anthropic(CLAUDE_MODEL)
-      : openrouter(usedModel);
-    
-    console.log(`[STREAM] Model instance created, calling streamText...`);
+    // Model instance ready
     
     // Create the stream FIRST, then return response immediately
     const encoder = new TextEncoder();
@@ -776,64 +798,20 @@ export async function POST(request: NextRequest) {
         if (fullContent.length === 0) {
           console.error('[STREAM] No content received from primary provider!');
             
-          // RETRY WITH EXPONENTIAL BACKOFF: If Anthropic failed, retry up to 2 times before fallback
-          // Per Anthropic best practices: https://docs.anthropic.com/en/api/errors
-          if (hasAnthropicKey && usedProvider === 'Anthropic') {
-            let retrySuccess = false;
-            const maxRetries = 2;
+          // INSTANT FALLBACK: No retries - fall back immediately for better UX
+          // OpenRouter Claude is primary, so if it fails, try GPT
+          if (usedProvider.includes('Claude') || usedProvider.includes('Anthropic')) {
+            console.log('[STREAM] Instant fallback to OpenRouter GPT...');
             
-            for (let retry = 1; retry <= maxRetries && !retrySuccess; retry++) {
-              // Exponential backoff: 1s, 2s
-              const backoffMs = retry * 1000;
-              console.log(`[STREAM] Anthropic retry ${retry}/${maxRetries} after ${backoffMs}ms backoff...`);
-              
-              await new Promise(resolve => setTimeout(resolve, backoffMs));
-              
-              // Reset state for retry
-              hasStartedStreaming = false;
-              streamError = null;
-              fullContent = '';
-              tokensUsed = 0;
-              
-              // Recreate stream with Anthropic
-              const retryModel = anthropic(CLAUDE_MODELS.PRIMARY);
-              result = createStreamWithCallbacks(retryModel, `Anthropic (retry ${retry})`);
-              
-              try {
-                for await (const chunk of result.textStream) {
-                  if (chunk) {
-                    hasStartedStreaming = true;
-                    tokensUsed++;
-                    fullContent += chunk;
-                    await writer.write(encoder.encode(`data: ${JSON.stringify({
-                      type: 'token',
-                      content: chunk
-                    })}\n\n`));
-                  }
-                }
-                
-                if (fullContent.length > 0) {
-                  console.log(`[STREAM] Anthropic retry ${retry} succeeded: ${fullContent.length} chars`);
-                  retrySuccess = true;
-                }
-              } catch (retryError: any) {
-                console.error(`[STREAM] Anthropic retry ${retry} failed:`, retryError?.message);
-              }
-            }
+            // Reset state for fallback
+            hasStartedStreaming = false;
+            streamError = null;
+            fullContent = '';
+            tokensUsed = 0;
             
-            // If retries failed, fall back to OpenRouter
-            if (!retrySuccess) {
-              console.log('[STREAM] Anthropic retries exhausted, falling back to OpenRouter...');
-              
-              // Reset state for fallback
-              hasStartedStreaming = false;
-              streamError = null;
-              fullContent = '';
-              tokensUsed = 0;
-            
-            // Create fallback stream with OpenRouter
+            // Create fallback stream with OpenRouter GPT (most reliable)
             const fallbackModel = openrouter(OPENROUTER_MODELS.GPT4O_MINI);
-            result = createStreamWithCallbacks(fallbackModel, 'OpenRouter (fallback)');
+            result = createStreamWithCallbacks(fallbackModel, 'OpenRouter GPT (fallback)');
             
             // Iterate the fallback stream
             try {
@@ -848,16 +826,15 @@ export async function POST(request: NextRequest) {
                   })}\n\n`));
                 }
               }
-              console.log(`[STREAM] OpenRouter fallback succeeded: ${fullContent.length} chars`);
+              console.log(`[STREAM] OpenRouter GPT fallback succeeded: ${fullContent.length} chars`);
             } catch (fallbackError: any) {
-              console.error('[STREAM] OpenRouter fallback also failed:', fallbackError?.message);
-              throw new Error(`Both providers failed. Anthropic: ${maxRetries} retries failed, OpenRouter: ${fallbackError?.message}`);
+              console.error('[STREAM] OpenRouter GPT fallback also failed:', fallbackError?.message);
+              throw new Error(`Both providers failed: ${fallbackError?.message}`);
             }
             
             // If fallback also returned nothing, throw error
             if (fullContent.length === 0) {
-              throw new Error('Both Anthropic and OpenRouter returned no content');
-            }
+              throw new Error('All AI providers returned no content');
             }
           } else {
             // No fallback available or already using OpenRouter
