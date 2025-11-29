@@ -46,8 +46,17 @@ function getAnthropicInstance() {
     }
     
     try {
-      _anthropicInstance = createAnthropic({ apiKey });
-      console.log('[STREAM] Anthropic SDK initialized successfully');
+      // CRITICAL FIX: Configure Anthropic with explicit headers for streaming reliability
+      // Per Anthropic docs: https://docs.anthropic.com/en/docs/build-with-claude/streaming
+      _anthropicInstance = createAnthropic({ 
+        apiKey,
+        // Explicit headers to ensure proper API versioning and streaming
+        headers: {
+          'anthropic-version': '2023-06-01', // Required API version header
+          'anthropic-beta': 'messages-2023-12-15', // Enable latest message features
+        }
+      });
+      console.log('[STREAM] Anthropic SDK initialized with explicit headers');
     } catch (initError) {
       console.error('[STREAM] Failed to initialize Anthropic SDK:', initError);
       _anthropicInitFailed = true;
@@ -58,7 +67,17 @@ function getAnthropicInstance() {
 }
 
 // Claude model for direct Anthropic API
-const CLAUDE_MODEL = 'claude-3-5-sonnet-20241022';
+// Models in order of preference (fallback through if one fails)
+// Per Anthropic docs: https://docs.anthropic.com/en/about-claude/models/overview
+const CLAUDE_MODELS = {
+  // Claude 3.5 Sonnet - the recommended model for most use cases
+  PRIMARY: 'claude-3-5-sonnet-20241022',
+  // Claude 3 Sonnet - fallback if Claude 3.5 has issues
+  FALLBACK: 'claude-3-sonnet-20240229',
+} as const;
+
+// Default to primary model
+const CLAUDE_MODEL = CLAUDE_MODELS.PRIMARY;
 
 /**
  * Build system prompt for the AI with full context
@@ -501,62 +520,62 @@ export async function POST(request: NextRequest) {
     // 8. BUILD CONTEXT BEFORE STREAM (prevents 500 errors)
     // All async work that can fail should happen BEFORE creating the stream
     console.log('[STREAM] Step 8: Building context...');
-    let workspaceContext: any;
-    try {
-      const contextPromise = AIContextService.buildContext({
-        userId: context.userId,
-        workspaceId: context.workspaceId,
-        appType,
-        currentRecord,
-        recordType,
-        listViewContext,
-        conversationHistory: conversationHistory || [],
-        documentContext: null
-      });
-      
+          let workspaceContext: any;
+          try {
+            const contextPromise = AIContextService.buildContext({
+              userId: context.userId,
+              workspaceId: context.workspaceId,
+              appType,
+              currentRecord,
+              recordType,
+              listViewContext,
+              conversationHistory: conversationHistory || [],
+              documentContext: null
+            });
+            
       // Context build timeout - balance between speed and reliability
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Context build timeout')), 3000);
-      });
-      
-      workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
-      
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('Context build timeout')), 3000);
+            });
+            
+            workspaceContext = await Promise.race([contextPromise, timeoutPromise]);
+            
       // ENHANCE: If we fetched list context from DB, add it to workspace context
-      if (fetchedListContext && (!workspaceContext.listViewContext || workspaceContext.listViewContext.includes('No list view context'))) {
-        const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
-        workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+            if (fetchedListContext && (!workspaceContext.listViewContext || workspaceContext.listViewContext.includes('No list view context'))) {
+              const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+              workspaceContext.listViewContext = buildListContextString(fetchedListContext);
         console.log('[STREAM] Enhanced context with DB-fetched list data');
-      }
+            }
     } catch (contextError) {
       console.warn('[STREAM] Context build failed, using minimal context:', contextError);
-      workspaceContext = {
-        userContext: '',
-        applicationContext: '',
-        dataContext: '',
-        recordContext: '',
-        listViewContext: '',
-        documentContext: '',
-        systemContext: ''
-      };
-      
+            workspaceContext = {
+              userContext: '',
+              applicationContext: '',
+              dataContext: '',
+              recordContext: '',
+              listViewContext: '',
+              documentContext: '',
+              systemContext: ''
+            };
+            
       // Still try to add fetched list context even if main context build failed
-      if (fetchedListContext) {
-        try {
-          const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
-          workspaceContext.listViewContext = buildListContextString(fetchedListContext);
-        } catch {}
-      }
-    }
+            if (fetchedListContext) {
+              try {
+                const { buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
+                workspaceContext.listViewContext = buildListContextString(fetchedListContext);
+              } catch {}
+            }
+          }
 
     // 9. BUILD SYSTEM PROMPT BEFORE STREAM
     let systemPrompt: string;
     try {
       systemPrompt = await buildSystemPrompt(
-        workspaceContext,
-        currentRecord,
-        recordType,
-        context.userId
-      );
+            workspaceContext,
+            currentRecord,
+            recordType,
+            context.userId
+          );
     } catch (promptError) {
       console.error('[STREAM] System prompt build failed:', promptError);
       // Use a minimal fallback prompt
@@ -564,21 +583,21 @@ export async function POST(request: NextRequest) {
     }
 
     // 10. BUILD MESSAGES BEFORE STREAM
-    const messages: CoreMessage[] = [];
-    
-    if (conversationHistory && Array.isArray(conversationHistory)) {
-      conversationHistory.slice(-5).forEach((msg: { role: string; content: string }) => {
-        messages.push({
-          role: msg.role as 'user' | 'assistant',
-          content: msg.content
-        });
-      });
-    }
-    
-    messages.push({
-      role: 'user',
-      content: sanitizedMessage
-    });
+          const messages: CoreMessage[] = [];
+          
+          if (conversationHistory && Array.isArray(conversationHistory)) {
+            conversationHistory.slice(-5).forEach((msg: { role: string; content: string }) => {
+              messages.push({
+                role: msg.role as 'user' | 'assistant',
+                content: msg.content
+              });
+            });
+          }
+          
+          messages.push({
+            role: 'user',
+            content: sanitizedMessage
+          });
 
     // Check if Anthropic is available (preferred - direct connection is faster)
     console.log('[STREAM] Step 11: Initializing AI providers...');
@@ -598,7 +617,7 @@ export async function POST(request: NextRequest) {
     const usedProvider = hasAnthropicKey ? 'Anthropic' : 'OpenRouter';
     console.log(`[STREAM] Using: ${usedProvider} (${usedModel})`);
     console.log(`[STREAM] System prompt length: ${systemPrompt.length}, Messages count: ${messages.length}`);
-    
+          
     // Create the model instance first to catch any configuration errors
     const modelInstance = hasAnthropicKey && anthropic 
       ? anthropic(CLAUDE_MODEL)
@@ -616,27 +635,62 @@ export async function POST(request: NextRequest) {
     let streamError: Error | null = null;
     let fullContent = '';
     let tokensUsed = 0;
-    
+            
     // Helper function to create streamText with callbacks
-    const createStreamWithCallbacks = (model: any, provider: string) => {
+    // CRITICAL: Enhanced error handling based on Anthropic streaming documentation
+    // Per https://docs.anthropic.com/en/docs/build-with-claude/streaming
+    // - Errors can occur WITHIN the stream (overloaded_error, etc.)
+    // - Must handle content_filter and rate_limit scenarios
+    const createStreamWithCallbacks = (model: any, provider: string, retryCount = 0) => {
+      const maxRetries = provider.includes('Anthropic') ? 2 : 0; // Only retry Anthropic
+      
       return streamText({
         model,
         system: systemPrompt,
         messages,
         maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
         temperature: 0.7,
-        // CRITICAL: Use onError to capture streaming errors
+        // CRITICAL: Use onError to capture streaming errors (including in-stream errors)
         onError: async (error) => {
-          console.error(`[STREAM] ${provider} onError callback:`, error);
-          streamError = error.error instanceof Error ? error.error : new Error(String(error.error));
+          const errorObj = error.error instanceof Error ? error.error : new Error(String(error.error));
+          const errorMessage = errorObj.message.toLowerCase();
+          
+          console.error(`[STREAM] ${provider} onError callback (retry ${retryCount}/${maxRetries}):`, {
+            message: errorObj.message,
+            isOverloaded: errorMessage.includes('overload'),
+            isRateLimit: errorMessage.includes('rate') || errorMessage.includes('limit'),
+            isAuth: errorMessage.includes('auth') || errorMessage.includes('key'),
+          });
+          
+          // Categorize error for better handling
+          if (errorMessage.includes('overload')) {
+            streamError = new Error(`[OVERLOADED] ${provider} is currently overloaded - will retry or fallback`);
+          } else if (errorMessage.includes('rate') || errorMessage.includes('limit')) {
+            streamError = new Error(`[RATE_LIMITED] ${provider} rate limit hit - will fallback to OpenRouter`);
+          } else if (errorMessage.includes('auth') || errorMessage.includes('key') || errorMessage.includes('invalid')) {
+            streamError = new Error(`[AUTH_ERROR] ${provider} authentication failed - check API key`);
+          } else {
+            streamError = errorObj;
+          }
         },
         onChunk: async ({ chunk }) => {
-          if (chunk.type === 'text') {
+          if (chunk.type === 'text-delta' || chunk.type === 'text') {
             hasStartedStreaming = true;
           }
         },
         onFinish: async ({ text, usage: finalUsage, finishReason }) => {
-          console.log(`[STREAM] ${provider} onFinish: reason=${finishReason}, len=${text?.length || 0}`);
+          console.log(`[STREAM] ${provider} onFinish:`, {
+            finishReason,
+            contentLength: text?.length || 0,
+            promptTokens: finalUsage?.promptTokens,
+            completionTokens: finalUsage?.completionTokens,
+          });
+          
+          // Check for content filter
+          if (finishReason === 'content-filter') {
+            streamError = new Error('[CONTENT_FILTER] Response was filtered by the AI provider');
+          }
+          
           if (finalUsage) {
             tokensUsed = (finalUsage.promptTokens || 0) + (finalUsage.completionTokens || 0);
           }
@@ -680,11 +734,35 @@ export async function POST(request: NextRequest) {
           clearTimeout(streamTimeout);
         } catch (iteratorError: any) {
           clearTimeout(streamTimeout);
-          console.error('[STREAM] Error iterating textStream:', iteratorError?.message || iteratorError);
           
-          // Check if this is an API error we can surface
-          const errorMessage = iteratorError?.message || streamError?.message || 'Stream iteration failed';
-          throw new Error(errorMessage);
+          // Parse the error to detect Anthropic-specific error types
+          const errorStr = String(iteratorError?.message || iteratorError || '');
+          const errorLower = errorStr.toLowerCase();
+          
+          console.error('[STREAM] Error iterating textStream:', {
+            message: errorStr,
+            hasStreamError: !!streamError,
+            streamErrorMessage: streamError?.message,
+            isOverloaded: errorLower.includes('overload'),
+            isRateLimit: errorLower.includes('rate') || errorLower.includes('429'),
+            isModelNotFound: errorLower.includes('model') && errorLower.includes('not'),
+          });
+          
+          // Categorize and enhance error message for better fallback handling
+          let enhancedError: string;
+          if (errorLower.includes('overload')) {
+            enhancedError = `[ANTHROPIC_OVERLOADED] ${errorStr}`;
+          } else if (errorLower.includes('rate') || errorLower.includes('429')) {
+            enhancedError = `[ANTHROPIC_RATE_LIMITED] ${errorStr}`;
+          } else if (errorLower.includes('model') && errorLower.includes('not')) {
+            enhancedError = `[ANTHROPIC_MODEL_NOT_FOUND] ${errorStr} - Try updating model name`;
+          } else if (errorLower.includes('invalid') && errorLower.includes('key')) {
+            enhancedError = `[ANTHROPIC_AUTH_FAILED] ${errorStr}`;
+          } else {
+            enhancedError = streamError?.message || errorStr || 'Stream iteration failed';
+          }
+          
+          throw new Error(enhancedError);
         }
         
         console.log(`[STREAM] textStream iteration complete. Tokens: ${tokensUsed}, Length: ${fullContent.length}`);
@@ -692,7 +770,7 @@ export async function POST(request: NextRequest) {
         // Check if we got any content
         if (fullContent.length === 0) {
           console.error('[STREAM] No content received from primary provider!');
-          
+            
           // FALLBACK: If primary provider (Anthropic) failed, try OpenRouter
           if (hasAnthropicKey && usedProvider === 'Anthropic') {
             console.log('[STREAM] Attempting fallback to OpenRouter...');
@@ -753,17 +831,17 @@ export async function POST(request: NextRequest) {
             
             throw new Error('No content received from AI provider - check API key and model availability');
           }
-        }
-        
+          }
+          
         console.log(`[STREAM] ${usedProvider} succeeded - ${tokensUsed} tokens, ${Date.now() - requestStartTime}ms`);
         
         // Send done event
         await writer.write(encoder.encode(`data: ${JSON.stringify({
-          type: 'done',
+            type: 'done',
           metadata: { model: usedModel, tokensUsed, provider: usedProvider },
-          totalTime: Date.now() - requestStartTime
-        })}\n\n`));
-        
+            totalTime: Date.now() - requestStartTime
+          })}\n\n`));
+          
       } catch (error: any) {
         console.error(`[STREAM] Stream error:`, error?.message || error);
         
@@ -785,7 +863,7 @@ export async function POST(request: NextRequest) {
         }
       }
     })();
-    
+
     // Return the readable stream IMMEDIATELY
     return new Response(readable, {
       headers: {

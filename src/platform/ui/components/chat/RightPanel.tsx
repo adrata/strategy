@@ -465,17 +465,17 @@ export function RightPanel() {
             const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
             
             return {
-              ...conv,
+            ...conv,
               lastActivity: safeLastActivity,
               messages: (conv.messages || []).map((msg: any) => {
                 // Safely parse timestamp
                 const parsedTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
                 const safeTimestamp = isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp;
                 return {
-                  ...msg,
+              ...msg,
                   timestamp: safeTimestamp,
-                  // Ensure typewriter state is properly handled on load
-                  isTypewriter: msg['isTypewriter'] === true ? false : undefined
+              // Ensure typewriter state is properly handled on load
+              isTypewriter: msg['isTypewriter'] === true ? false : undefined
                 };
               })
             };
@@ -696,13 +696,13 @@ export function RightPanel() {
                 const parsedTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
                 const safeTimestamp = isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp;
                 return {
-                  ...msg,
+                ...msg,
                   timestamp: safeTimestamp,
-                  // CRITICAL FIX: Don't preserve isTypewriter for completed messages
-                  // Always set to false when loading - typewriter should only run once
-                  isTypewriter: false, // Always false when loading - prevents re-triggering
-                  // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
-                  typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
+                // CRITICAL FIX: Don't preserve isTypewriter for completed messages
+                // Always set to false when loading - typewriter should only run once
+                isTypewriter: false, // Always false when loading - prevents re-triggering
+                // Restore typewriterSpeed from metadata if it exists (for reference, but won't be used)
+                typewriterSpeed: msg['metadata']?.typewriterSpeed || msg['typewriterSpeed']
                 };
               });
             
@@ -1320,12 +1320,12 @@ export function RightPanel() {
           }
           
           return {
-            id: conv.id,
-            title: conv.title,
-            messages: [], // History doesn't need full messages
+          id: conv.id,
+          title: conv.title,
+          messages: [], // History doesn't need full messages
             lastActivity: safeLastActivity,
-            isActive: conv.isActive || false,
-            welcomeMessage: conv.welcomeMessage,
+          isActive: conv.isActive || false,
+          welcomeMessage: conv.welcomeMessage,
             deletedAt: safeDeletedAt
           };
         });
@@ -2839,12 +2839,12 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                   if (hasStreamingMsg) {
                     // Update existing streaming message
                     return {
-                      ...conv,
-                      messages: conv.messages.map(msg => 
-                        msg.id === streamingMessageId 
-                          ? { ...msg, content: streamedContent }
-                          : msg
-                      )
+                        ...conv, 
+                        messages: conv.messages.map(msg => 
+                          msg.id === streamingMessageId 
+                            ? { ...msg, content: streamedContent }
+                            : msg
+                        )
                     };
                   } else {
                     // Streaming message doesn't exist yet - create it (start event was missed)
@@ -2893,7 +2893,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             }
           }
         }
-        
+
         // Process any remaining buffered line (in case stream ended without final newline)
         if (lineBuffer && lineBuffer.startsWith('data: ')) {
           try {
@@ -3016,11 +3016,11 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             if (hasStreamingMsg) {
               // Update existing streaming message with partial content
               return {
-                ...conv,
+                  ...conv, 
                 messages: messagesWithUser.map(msg => 
                   msg.id === streamingMessageId ? partialMessage : msg
-                ),
-                lastActivity: new Date()
+                  ),
+                  lastActivity: new Date()
               };
             } else {
               // Streaming message doesn't exist - add it as new message
@@ -3144,8 +3144,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           
           // Filter out typing/browsing indicators
           const filteredMessages = conv.messages.filter(msg => 
-            msg.content !== 'typing' && 
-            msg.content !== 'browsing'
+                    msg.content !== 'typing' && 
+                    msg.content !== 'browsing'
           );
           
           // DEFENSIVE: Check if this assistant message already exists (prevent duplicates)
@@ -3173,7 +3173,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
               messages: messagesWithUser.map(msg => 
                 msg.id === streamingMessageId ? assistantMessage : msg
               ),
-              lastActivity: new Date()
+                lastActivity: new Date()
             };
           } else {
             // No streaming message - just add the new one
@@ -3328,8 +3328,8 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       const directUrl = `/${workspace}/${section}/${nameSlug}-${foundRecord.id}`;
       console.log(`🎯 [RECORD SEARCH] Direct navigation to: ${directUrl}`);
       window.location.href = directUrl;
-    };
-    
+  };
+
     // Try speedrun endpoint first if we're on speedrun
     if (currentSection === 'speedrun') {
       try {
@@ -3370,7 +3370,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         if (searchResult.success && searchResult.data?.length > 0) {
           const foundRecord = findRecord(searchResult.data);
-          
+
           // Determine best section based on status
           let targetSection = currentSection;
           if (foundRecord.status) {

@@ -44,13 +44,13 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
             const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
             
             return {
-              ...conv,
+            ...conv,
               lastActivity: safeLastActivity,
               messages: (conv.messages || []).map((msg: any) => {
                 const parsedTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
                 const safeTimestamp = isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp;
                 return {
-                  ...msg,
+              ...msg,
                   timestamp: safeTimestamp,
                 };
               })
