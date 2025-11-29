@@ -2917,7 +2917,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             isPartial: true
           };
           
-          // 🔧 FIX: Update UI with partial content, ensuring message exists
+          // 🔧 FIX: Update UI with partial content, ensuring message and user message exist
           setConversations(prev => prev.map(conv => {
             if (!conv.isActive) return conv;
             
@@ -2926,14 +2926,20 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
               msg.content !== 'typing' && msg.content !== 'browsing'
             );
             
+            // Check if user message is present (might be missing due to state batching)
+            const hasUserMessage = filteredMessages.some(msg => msg.id === userMessage.id);
+            let messagesWithUser = hasUserMessage 
+              ? filteredMessages 
+              : [...filteredMessages, userMessage];
+            
             // Check if streaming message exists
-            const hasStreamingMsg = filteredMessages.some(msg => msg.id === streamingMessageId);
+            const hasStreamingMsg = messagesWithUser.some(msg => msg.id === streamingMessageId);
             
             if (hasStreamingMsg) {
               // Update existing streaming message with partial content
               return {
                 ...conv,
-                messages: filteredMessages.map(msg => 
+                messages: messagesWithUser.map(msg => 
                   msg.id === streamingMessageId ? partialMessage : msg
                 ),
                 lastActivity: new Date()
@@ -2942,7 +2948,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
               // Streaming message doesn't exist - add it as new message
               return {
                 ...conv,
-                messages: [...filteredMessages, partialMessage],
+                messages: [...messagesWithUser, partialMessage],
                 lastActivity: new Date()
               };
             }
@@ -3048,6 +3054,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         }
         
         // Update UI - replace streaming message if it exists, otherwise add new
+        // CRITICAL: Ensure user message is preserved (might be missing due to React state batching)
         setConversations(prev => prev.map(conv => {
           if (!conv.isActive) return conv;
           
@@ -3057,14 +3064,22 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             msg.content !== 'browsing'
           );
           
+          // Check if user message is present (might be missing due to state batching)
+          const hasUserMessage = filteredMessages.some(msg => msg.id === userMessage.id);
+          
+          // If user message is missing, add it first
+          let messagesWithUser = hasUserMessage 
+            ? filteredMessages 
+            : [...filteredMessages, userMessage];
+          
           // Check if there's a streaming message to replace (from failed stream attempt)
-          const hasStreamingMsg = filteredMessages.some(msg => msg.id === streamingMessageId);
+          const hasStreamingMsg = messagesWithUser.some(msg => msg.id === streamingMessageId);
           
           if (hasStreamingMsg) {
             // Replace the streaming message with fallback content
             return {
               ...conv,
-              messages: filteredMessages.map(msg => 
+              messages: messagesWithUser.map(msg => 
                 msg.id === streamingMessageId ? assistantMessage : msg
               ),
               lastActivity: new Date()
@@ -3073,7 +3088,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             // No streaming message - just add the new one
             return {
               ...conv,
-              messages: [...filteredMessages, assistantMessage],
+              messages: [...messagesWithUser, assistantMessage],
               lastActivity: new Date()
             };
           }
