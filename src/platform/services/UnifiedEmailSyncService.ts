@@ -1214,12 +1214,50 @@ export class UnifiedEmailSyncService {
    * Auto-link emails to people and companies
    * Enhanced to link company emails even when person isn't found
    */
+
+  /**
+   * Extract clean email address from potentially formatted string
+   * Handles formats like:
+   * - "John Doe <john@example.com>" -> "john@example.com"
+   * - "john@example.com" -> "john@example.com"
+   * - "<john@example.com>" -> "john@example.com"
+   * Also handles case normalization and trimming
+   */
+  private static extractCleanEmailAddress(emailStr: string | null | undefined): string | null {
+    if (!emailStr || typeof emailStr !== 'string') return null;
+    
+    // Check for format: "Name <email@domain.com>" or "<email@domain.com>"
+    const angleMatch = emailStr.match(/<([^>]+@[^>]+)>/);
+    if (angleMatch) {
+      return angleMatch[1].toLowerCase().trim();
+    }
+    
+    // Check if it looks like an email address directly
+    const directEmail = emailStr.toLowerCase().trim();
+    if (directEmail.includes('@')) {
+      return directEmail;
+    }
+    
+    return null;
+  }
+
+  /**
+   * Extract all clean email addresses from an array of potentially formatted strings
+   */
+  private static extractAllCleanEmailAddresses(emails: (string | null | undefined)[]): string[] {
+    return emails
+      .filter(Boolean)
+      .map(e => this.extractCleanEmailAddress(e))
+      .filter((e): e is string => e !== null);
+  }
+
   /**
    * Extract domain from email address
    */
   private static extractDomain(email: string | null | undefined): string | null {
-    if (!email || typeof email !== 'string') return null;
-    const match = email.toLowerCase().trim().match(/@([^@]+)$/);
+    const cleanEmail = this.extractCleanEmailAddress(email);
+    if (!cleanEmail) return null;
+    const match = cleanEmail.match(/@([^@]+)$/);
     return match ? match[1] : null;
   }
 
@@ -1259,6 +1297,85 @@ export class UnifiedEmailSyncService {
     let linkedToCompany = 0;
     let hasMore = true;
 
+    // Pre-fetch all people and companies for this workspace for efficient matching
+    const allPeople = await prisma.people.findMany({
+      where: { workspaceId, deletedAt: null },
+      select: {
+        id: true,
+        email: true,
+        workEmail: true,
+        personalEmail: true,
+        companyId: true
+      }
+    });
+
+    // Build a map of lowercase email -> person for fast lookup
+    const emailToPersonMap = new Map<string, { id: string; companyId: string | null }>();
+    for (const person of allPeople) {
+      const emails = [person.email, person.workEmail, person.personalEmail]
+        .filter(Boolean)
+        .map(e => this.extractCleanEmailAddress(e))
+        .filter((e): e is string => e !== null);
+      
+      for (const email of emails) {
+        emailToPersonMap.set(email, { id: person.id, companyId: person.companyId });
+      }
+    }
+
+    // Pre-fetch all companies with their domains
+    const allCompanies = await prisma.companies.findMany({
+      where: { workspaceId, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        domain: true,
+        email: true,
+        website: true
+      }
+    });
+
+    // Build domain -> company map
+    const domainToCompanyMap = new Map<string, string>();
+    for (const company of allCompanies) {
+      // Add domain
+      if (company.domain) {
+        const normalized = this.normalizeDomain(company.domain);
+        if (normalized) {
+          domainToCompanyMap.set(normalized, company.id);
+          const base = this.extractBaseDomain(normalized);
+          if (base && base !== normalized) {
+            domainToCompanyMap.set(base, company.id);
+          }
+        }
+      }
+      
+      // Add domain from email
+      if (company.email) {
+        const domain = this.extractDomain(company.email);
+        if (domain) {
+          domainToCompanyMap.set(domain, company.id);
+          const base = this.extractBaseDomain(domain);
+          if (base && base !== domain) {
+            domainToCompanyMap.set(base, company.id);
+          }
+        }
+      }
+      
+      // Add domain from website
+      if (company.website) {
+        const normalized = this.normalizeDomain(company.website);
+        if (normalized) {
+          domainToCompanyMap.set(normalized, company.id);
+          const base = this.extractBaseDomain(normalized);
+          if (base && base !== normalized) {
+            domainToCompanyMap.set(base, company.id);
+          }
+        }
+      }
+    }
+
+    console.log(`📧 [EMAIL LINKING] Pre-loaded ${emailToPersonMap.size} person emails and ${domainToCompanyMap.size} company domains`);
+
     while (hasMore) {
       const unlinkedEmails = await prisma.email_messages.findMany({
         where: {
@@ -1280,114 +1397,52 @@ export class UnifiedEmailSyncService {
       console.log(`📧 [EMAIL LINKING] Processing batch: ${unlinkedEmails.length} emails (skip: ${skip})`);
 
       for (const email of unlinkedEmails) {
-        // Extract email addresses
-        const emailAddresses = [
+        // Extract and clean email addresses (handles "Name <email@domain.com>" format)
+        const rawAddresses = [
           email.from,
           ...(email.to || []),
           ...(email.cc || []),
           ...(email.bcc || [])
-        ].filter(Boolean).map(e => e.toLowerCase().trim());
+        ];
+        const emailAddresses = this.extractAllCleanEmailAddresses(rawAddresses);
         
         let personId = email.personId;
         let companyId = email.companyId;
         
-        // Find matching person
+        // Find matching person using pre-loaded map (fast O(1) lookup)
         if (!personId && emailAddresses.length > 0) {
-          const person = await prisma.people.findFirst({
-            where: {
-              workspaceId,
-              deletedAt: null,
-              OR: [
-                { email: { in: emailAddresses } },
-                { workEmail: { in: emailAddresses } },
-                { personalEmail: { in: emailAddresses } }
-              ]
-            },
-            include: {
-              company: {
-                select: {
-                  id: true
-                }
+          for (const addr of emailAddresses) {
+            const match = emailToPersonMap.get(addr);
+            if (match) {
+              personId = match.id;
+              if (!companyId && match.companyId) {
+                companyId = match.companyId;
               }
-            }
-          });
-          
-          if (person) {
-            personId = person.id;
-            if (!companyId && person.companyId) {
-              companyId = person.companyId;
+              break; // Found a match, stop looking
             }
           }
         }
         
-        // If no person found, try to link to company by email domain
+        // If no person found, try to link to company by email domain using pre-loaded map
         if (!companyId && emailAddresses.length > 0) {
-          // Extract domains from email addresses
-          const domains = emailAddresses
-            .map(e => this.extractDomain(e))
-            .filter(Boolean) as string[];
-          
-          if (domains.length > 0) {
-            // Normalize domains
-            const normalizedDomains = domains
-              .map(d => this.normalizeDomain(d))
-              .filter(Boolean) as string[];
-
-            const baseDomains = normalizedDomains
-              .map(d => this.extractBaseDomain(d))
-              .filter(Boolean) as string[];
-
-            // Get all unique domains to search
-            const allDomains = [...new Set([...normalizedDomains, ...baseDomains])];
-
-            // First, try exact domain match
-            let company = await prisma.companies.findFirst({
-              where: {
-                workspaceId,
-                deletedAt: null,
-                OR: [
-                  { domain: { in: allDomains } },
-                  { email: { in: emailAddresses } }
-                ]
-              }
-            });
-
-            // If no exact match, try website contains domain
-            if (!company && allDomains.length > 0) {
-              const companies = await prisma.companies.findMany({
-                where: {
-                  workspaceId,
-                  deletedAt: null,
-                  website: { not: null }
-                },
-                select: {
-                  id: true,
-                  name: true,
-                  domain: true,
-                  website: true
-                }
-              });
-
-              for (const domain of allDomains) {
-                const matchingCompany = companies.find(c => {
-                  if (!c.website) return false;
-                  const normalizedWebsite = this.normalizeDomain(c.website);
-                  return normalizedWebsite === domain || 
-                         (normalizedWebsite && domain && (
-                           normalizedWebsite.includes(domain) ||
-                           domain.includes(normalizedWebsite)
-                         ));
-                });
-
-                if (matchingCompany) {
-                  company = matchingCompany;
-                  break;
+          for (const addr of emailAddresses) {
+            const domain = this.extractDomain(addr);
+            if (domain) {
+              // Try exact domain
+              let match = domainToCompanyMap.get(domain);
+              
+              // Try base domain if no exact match
+              if (!match) {
+                const baseDomain = this.extractBaseDomain(domain);
+                if (baseDomain) {
+                  match = domainToCompanyMap.get(baseDomain);
                 }
               }
-            }
-            
-            if (company) {
-              companyId = company.id;
+              
+              if (match) {
+                companyId = match;
+                break; // Found a match, stop looking
+              }
             }
           }
         }
@@ -1447,27 +1502,32 @@ export class UnifiedEmailSyncService {
 
     console.log(`🔗 [EMAIL LINKING] Linking existing emails to person ${personId} with emails:`, personEmails);
 
-    // Normalize email addresses (lowercase, trim)
-    const normalizedEmails = personEmails
-      .filter(Boolean)
-      .map(email => email.toLowerCase().trim());
+    // Extract and normalize email addresses (handles "Name <email>" format)
+    const normalizedEmails = this.extractAllCleanEmailAddresses(personEmails);
 
     if (normalizedEmails.length === 0) {
       return { linked: 0, actionsCreated: 0 };
     }
 
     // Find unlinked emails matching any of the person's email addresses
-    const matchingEmails = await prisma.email_messages.findMany({
+    // We need to fetch all unlinked emails and filter manually because the stored
+    // emails might have display names like "John <john@example.com>"
+    const allUnlinkedEmails = await prisma.email_messages.findMany({
       where: {
         workspaceId,
-        personId: null,
-        OR: [
-          { from: { in: normalizedEmails } },
-          { to: { hasSome: normalizedEmails } },
-          { cc: { hasSome: normalizedEmails } }
-        ]
+        personId: null
       },
-      take: 1000 // Limit to prevent performance issues
+      take: 5000 // Increased limit to catch more potential matches
+    });
+
+    // Filter to find matching emails (handling display name format)
+    const matchingEmails = allUnlinkedEmails.filter(email => {
+      const allAddresses = this.extractAllCleanEmailAddresses([
+        email.from,
+        ...(email.to || []),
+        ...(email.cc || [])
+      ]);
+      return allAddresses.some(addr => normalizedEmails.includes(addr));
     });
 
     if (matchingEmails.length === 0) {

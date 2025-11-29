@@ -816,7 +816,51 @@ export class CalendarSyncService {
   }
 
   /**
+   * Extract clean email address from potentially formatted string
+   * Handles formats like "John Doe <john@example.com>"
+   */
+  private extractCleanEmailAddress(emailStr: string | null | undefined): string | null {
+    if (!emailStr || typeof emailStr !== 'string') return null;
+    
+    const angleMatch = emailStr.match(/<([^>]+@[^>]+)>/);
+    if (angleMatch) {
+      return angleMatch[1].toLowerCase().trim();
+    }
+    
+    const directEmail = emailStr.toLowerCase().trim();
+    if (directEmail.includes('@')) {
+      return directEmail;
+    }
+    
+    return null;
+  }
+
+  /**
+   * Extract domain from email address
+   */
+  private extractDomainFromEmail(email: string | null | undefined): string | null {
+    const cleanEmail = this.extractCleanEmailAddress(email);
+    if (!cleanEmail) return null;
+    const match = cleanEmail.match(/@([^@]+)$/);
+    return match ? match[1] : null;
+  }
+
+  /**
+   * Normalize domain (remove www, http, etc.)
+   */
+  private normalizeDomain(domain: string | null | undefined): string | null {
+    if (!domain) return null;
+    return domain
+      .toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .replace(/\/$/, '')
+      .trim();
+  }
+
+  /**
    * Link calendar event to people and companies (using direct fields on events table)
+   * Enhanced with domain-based company matching
    */
   private async linkEventToEntities(
     eventId: string,
@@ -826,19 +870,32 @@ export class CalendarSyncService {
   ): Promise<{ personId: string | null; companyId: string | null }> {
     console.log(`🔗 [CALENDAR SYNC] Linking event ${eventId} to entities`);
 
-    // Extract email addresses from attendees and organizer
+    // Extract and clean email addresses from attendees and organizer
     const emailAddresses = new Set<string>();
+    const emailDomains = new Set<string>();
     
     if (platformEvent.attendees) {
       platformEvent.attendees.forEach(attendee => {
-        if (attendee.email) {
-          emailAddresses.add(attendee.email.toLowerCase());
+        const cleanEmail = this.extractCleanEmailAddress(attendee.email);
+        if (cleanEmail) {
+          emailAddresses.add(cleanEmail);
+          const domain = this.extractDomainFromEmail(cleanEmail);
+          if (domain) {
+            emailDomains.add(domain);
+          }
         }
       });
     }
     
     if (platformEvent.organizer?.email) {
-      emailAddresses.add(platformEvent.organizer.email.toLowerCase());
+      const cleanEmail = this.extractCleanEmailAddress(platformEvent.organizer.email);
+      if (cleanEmail) {
+        emailAddresses.add(cleanEmail);
+        const domain = this.extractDomainFromEmail(cleanEmail);
+        if (domain) {
+          emailDomains.add(domain);
+        }
+      }
     }
 
     let personId: string | null = null;
@@ -846,13 +903,15 @@ export class CalendarSyncService {
 
     // Link to people by email addresses
     if (emailAddresses.size > 0) {
+      const emailArray = Array.from(emailAddresses);
       const person = await prisma.people.findFirst({
         where: {
           workspaceId,
+          deletedAt: null,
           OR: [
-            { email: { in: Array.from(emailAddresses) } },
-            { workEmail: { in: Array.from(emailAddresses) } },
-            { personalEmail: { in: Array.from(emailAddresses) } }
+            { email: { in: emailArray, mode: 'insensitive' } },
+            { workEmail: { in: emailArray, mode: 'insensitive' } },
+            { personalEmail: { in: emailArray, mode: 'insensitive' } }
           ]
         },
         select: {
@@ -868,13 +927,62 @@ export class CalendarSyncService {
       }
     }
 
-    // If no person found, try to link to company by keywords in title/description
+    // If no company found via person, try domain-based matching
+    if (!companyId && emailDomains.size > 0) {
+      const domainArray = Array.from(emailDomains);
+      
+      // Try exact domain match
+      const companyByDomain = await prisma.companies.findFirst({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          domain: { in: domainArray, mode: 'insensitive' }
+        },
+        select: { id: true }
+      });
+
+      if (companyByDomain) {
+        companyId = companyByDomain.id;
+        console.log(`🔗 [CALENDAR SYNC] Linked event to company by domain: ${companyId}`);
+      } else {
+        // Try matching company website to domain
+        const companies = await prisma.companies.findMany({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            website: { not: null }
+          },
+          select: { id: true, website: true }
+        });
+
+        for (const domain of domainArray) {
+          const match = companies.find(c => {
+            if (!c.website) return false;
+            const normalizedWebsite = this.normalizeDomain(c.website);
+            return normalizedWebsite === domain || 
+                   (normalizedWebsite && domain && (
+                     normalizedWebsite.includes(domain) ||
+                     domain.includes(normalizedWebsite)
+                   ));
+          });
+
+          if (match) {
+            companyId = match.id;
+            console.log(`🔗 [CALENDAR SYNC] Linked event to company by website: ${companyId}`);
+            break;
+          }
+        }
+      }
+    }
+
+    // If still no company, try keywords in title/description
     if (!companyId) {
       const companyKeywords = this.extractCompanyKeywords(platformEvent.title, platformEvent.description);
       if (companyKeywords.length > 0) {
         const company = await prisma.companies.findFirst({
           where: {
             workspaceId,
+            deletedAt: null,
             OR: companyKeywords.map(keyword => ({
               name: { contains: keyword, mode: 'insensitive' }
             }))
@@ -886,7 +994,7 @@ export class CalendarSyncService {
 
         if (company) {
           companyId = company.id;
-          console.log(`🔗 [CALENDAR SYNC] Linked event to company: ${companyId}`);
+          console.log(`🔗 [CALENDAR SYNC] Linked event to company by keyword: ${companyId}`);
         }
       }
     }
@@ -976,6 +1084,7 @@ export class CalendarSyncService {
 
   /**
    * Extract company keywords from event title and description
+   * Enhanced to find more potential company name patterns
    */
   private extractCompanyKeywords(title: string, description?: string): string[] {
     const text = `${title} ${description || ''}`.toLowerCase();
@@ -984,15 +1093,38 @@ export class CalendarSyncService {
     // Common company indicators
     const companyIndicators = [
       'meeting with', 'call with', 'demo with', 'presentation to',
-      'discussion with', 'interview with', 'sales call', 'client meeting'
+      'discussion with', 'interview with', 'sales call', 'client meeting',
+      'sync with', 'review with', 'check-in with', 'follow up with',
+      'intro with', 'introduction to', 'discovery call', 'kickoff with',
+      'onboarding', 'quarterly review', 'monthly review', 'weekly sync'
     ];
 
     for (const indicator of companyIndicators) {
       const index = text.indexOf(indicator);
       if (index !== -1) {
         const afterIndicator = text.substring(index + indicator.length).trim();
-        const words = afterIndicator.split(/\s+/).slice(0, 3); // Take up to 3 words after indicator
-        keywords.push(...words.filter(word => word.length > 2));
+        // Take up to 4 words after indicator, filter out common words
+        const words = afterIndicator.split(/\s+/).slice(0, 4);
+        const filteredWords = words.filter(word => 
+          word.length > 2 && 
+          !['the', 'and', 'for', 'team', 'about', 'our', 'their'].includes(word)
+        );
+        keywords.push(...filteredWords);
+      }
+    }
+
+    // Also try to extract capitalized words from title (potential company names)
+    const titleWords = title.split(/\s+/);
+    for (const word of titleWords) {
+      // Check if word starts with capital letter and is substantial
+      if (word.length > 2 && /^[A-Z]/.test(word)) {
+        const cleanWord = word.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        if (cleanWord.length > 2 && 
+            !['meeting', 'call', 'sync', 'review', 'monday', 'tuesday', 'wednesday', 
+              'thursday', 'friday', 'saturday', 'sunday', 'weekly', 'monthly', 'daily',
+              'quarterly', 'annual', 'internal', 'external', 'team'].includes(cleanWord)) {
+          keywords.push(cleanWord);
+        }
       }
     }
 

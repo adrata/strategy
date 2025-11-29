@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { UnifiedEmailSyncService } from '@/platform/services/UnifiedEmailSyncService';
+import { CalendarSyncService } from '@/platform/services/calendar-sync-service';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 
@@ -308,10 +309,7 @@ async function handleSyncWebhook(payload: any) {
       return Response.json({ success: true, message: 'Connection not active' });
     }
     
-    // Only process email-related syncs
-    // Nango syncs: "emails", "calendars", "events", "folders"
-    // We only want to trigger email sync for "emails" syncs
-    // Calendar syncs ("calendars", "events") are TEMPORARILY DISABLED to focus on email sync
+    // Determine sync type: email or calendar
     const isEmailSync = syncName && (
       syncName.toLowerCase().includes('email') || 
       syncName.toLowerCase() === 'emails' ||
@@ -320,14 +318,29 @@ async function handleSyncWebhook(payload: any) {
       model === 'GmailEmail'
     );
     
-    if (syncName && !isEmailSync) {
-      console.log(`⏭️ Sync ${syncName} (model: ${model}) is not email-related, skipping. Calendar syncs are temporarily disabled to focus on email sync.`);
-      return Response.json({ success: true, message: 'Not an email sync - calendar syncs are temporarily disabled' });
+    const isCalendarSync = syncName && (
+      syncName.toLowerCase().includes('calendar') || 
+      syncName.toLowerCase().includes('event') ||
+      syncName.toLowerCase() === 'calendars' ||
+      syncName.toLowerCase() === 'events' ||
+      model?.toLowerCase()?.includes('calendar') ||
+      model?.toLowerCase()?.includes('event') ||
+      model === 'OutlookEvent' ||
+      model === 'GoogleCalendarEvent'
+    );
+    
+    // Skip unrecognized sync types
+    if (syncName && !isEmailSync && !isCalendarSync) {
+      console.log(`⏭️ Sync ${syncName} (model: ${model}) is not email or calendar-related, skipping.`);
+      return Response.json({ success: true, message: 'Unrecognized sync type' });
     }
     
-    // Log if this is an email sync
+    // Log sync type
     if (isEmailSync) {
       console.log(`✅ Email sync detected: syncName=${syncName}, model=${model}`);
+    }
+    if (isCalendarSync) {
+      console.log(`✅ Calendar sync detected: syncName=${syncName}, model=${model}`);
     }
     
     // If sync failed, log the error but don't trigger another sync
@@ -340,8 +353,7 @@ async function handleSyncWebhook(payload: any) {
       });
     }
     
-    // If sync succeeded, trigger our custom email sync to process the new data
-    console.log(`✅ Sync completed successfully, triggering email sync for connection: ${connectionId}`);
+    console.log(`✅ Sync completed successfully for connection: ${connectionId}`);
     console.log(`📧 [WEBHOOK] Sync details:`, {
       model,
       syncName,
@@ -350,35 +362,68 @@ async function handleSyncWebhook(payload: any) {
       responseResults: responseResults ? JSON.stringify(responseResults).substring(0, 500) : null
     });
     
-    // IMPORTANT: Don't update lastSyncAt here - let the sync service handle it
-    // Updating it here with modifiedAfter might cause date filter issues
-    // The sync service will update lastSyncAt after successfully syncing emails
+    let emailResult: any[] = [];
+    let calendarResult: any = null;
     
-    console.log(`📧 [WEBHOOK] Triggering custom email sync with:`, {
-      workspaceId: connection.workspaceId,
-      userId: connection.userId,
-      connectionId: connection.id,
-      nangoConnectionId: connection.nangoConnectionId,
-      provider: connection.provider
-    });
+    // Handle email sync
+    if (isEmailSync || !syncName) {
+      console.log(`📧 [WEBHOOK] Triggering email sync with:`, {
+        workspaceId: connection.workspaceId,
+        userId: connection.userId,
+        connectionId: connection.id,
+        nangoConnectionId: connection.nangoConnectionId,
+        provider: connection.provider
+      });
+      
+      emailResult = await UnifiedEmailSyncService.syncWorkspaceEmails(
+        connection.workspaceId,
+        connection.userId
+      );
+      
+      console.log(`📧 [WEBHOOK] Email sync result:`, {
+        totalConnections: emailResult.length,
+        results: emailResult.map((r: any) => ({
+          provider: r.provider,
+          success: r.success,
+          count: r.count,
+          fetched: r.fetched,
+          failed: r.failed
+        }))
+      });
+    }
     
-    const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
-      connection.workspaceId,
-      connection.userId
-    );
+    // Handle calendar sync
+    if (isCalendarSync) {
+      console.log(`📅 [WEBHOOK] Triggering calendar sync with:`, {
+        workspaceId: connection.workspaceId,
+        userId: connection.userId,
+        provider: connection.provider
+      });
+      
+      try {
+        const calendarService = CalendarSyncService.getInstance();
+        const platform = connection.provider === 'outlook' ? 'microsoft' : 'google';
+        
+        calendarResult = await calendarService.syncCalendarEvents(
+          connection.userId,
+          connection.workspaceId,
+          platform
+        );
+        
+        console.log(`📅 [WEBHOOK] Calendar sync result:`, {
+          success: calendarResult.success,
+          eventsProcessed: calendarResult.eventsProcessed,
+          eventsCreated: calendarResult.eventsCreated,
+          eventsUpdated: calendarResult.eventsUpdated,
+          errors: calendarResult.errors?.length || 0
+        });
+      } catch (calendarError) {
+        console.error(`❌ [WEBHOOK] Calendar sync failed:`, calendarError);
+        // Don't fail the webhook - just log the error
+      }
+    }
     
-    console.log(`📧 [WEBHOOK] Email sync result:`, {
-      totalConnections: result.length,
-      results: result.map((r: any) => ({
-        provider: r.provider,
-        success: r.success,
-        count: r.count,
-        fetched: r.fetched,
-        failed: r.failed
-      }))
-    });
-    
-    // Store sync metadata (but don't update lastSyncAt - let sync service do it)
+    // Store sync metadata
     if (modifiedAfter || responseResults) {
       await prisma.grand_central_connections.update({
         where: { id: connection.id },
@@ -394,15 +439,16 @@ async function handleSyncWebhook(payload: any) {
       });
     }
     
-    console.log(`✅ Email sync triggered successfully from Nango sync webhook`);
+    console.log(`✅ Sync webhook processed successfully`);
     
     return Response.json({ 
       success: true, 
-      message: 'Sync webhook processed and email sync triggered',
+      message: 'Sync webhook processed',
       syncName,
       syncType,
       responseResults,
-      results: result
+      emailResults: emailResult,
+      calendarResult: calendarResult
     });
   } catch (error) {
     console.error('❌ Error handling sync webhook:', error);
@@ -433,38 +479,68 @@ async function handleExternalWebhook(payload: any) {
       return Response.json({ success: true, message: 'Connection not active' });
     }
     
-    // For Microsoft Graph change notifications, trigger email sync
+    // For Microsoft Graph change notifications, trigger both email and calendar sync
     if (from === 'microsoft' || from === 'outlook' || providerConfigKey === 'outlook') {
-      console.log(`📧 Microsoft Graph change notification received, triggering email sync`);
+      console.log(`📧 Microsoft Graph change notification received, triggering email and calendar sync`);
       
-      const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
+      const emailResult = await UnifiedEmailSyncService.syncWorkspaceEmails(
         connection.workspaceId,
         connection.userId
       );
       
+      // Also trigger calendar sync
+      let calendarResult = null;
+      try {
+        const calendarService = CalendarSyncService.getInstance();
+        calendarResult = await calendarService.syncCalendarEvents(
+          connection.userId,
+          connection.workspaceId,
+          'microsoft'
+        );
+        console.log(`📅 [WEBHOOK] Calendar sync completed: ${calendarResult.eventsProcessed} events processed`);
+      } catch (calendarError) {
+        console.error(`⚠️ [WEBHOOK] Calendar sync failed (non-blocking):`, calendarError);
+      }
+      
       return Response.json({ 
         success: true, 
-        message: 'External webhook processed and email sync triggered',
+        message: 'External webhook processed and syncs triggered',
         from,
-        results: result
+        emailResults: emailResult,
+        calendarResult
       });
     }
     
-    // For Gmail push notifications
+    // For Gmail/Google push notifications
     // Support both 'gmail' and 'google-mail' providerConfigKey values
     if (from === 'google' || from === 'gmail' || providerConfigKey === 'gmail' || providerConfigKey === 'google-mail') {
-      console.log(`📧 Gmail push notification received, triggering email sync`);
+      console.log(`📧 Gmail push notification received, triggering email and calendar sync`);
       
-      const result = await UnifiedEmailSyncService.syncWorkspaceEmails(
+      const emailResult = await UnifiedEmailSyncService.syncWorkspaceEmails(
         connection.workspaceId,
         connection.userId
       );
       
+      // Also trigger calendar sync for Google
+      let calendarResult = null;
+      try {
+        const calendarService = CalendarSyncService.getInstance();
+        calendarResult = await calendarService.syncCalendarEvents(
+          connection.userId,
+          connection.workspaceId,
+          'google'
+        );
+        console.log(`📅 [WEBHOOK] Calendar sync completed: ${calendarResult.eventsProcessed} events processed`);
+      } catch (calendarError) {
+        console.error(`⚠️ [WEBHOOK] Calendar sync failed (non-blocking):`, calendarError);
+      }
+      
       return Response.json({ 
         success: true, 
-        message: 'External webhook processed and email sync triggered',
+        message: 'External webhook processed and syncs triggered',
         from,
-        results: result
+        emailResults: emailResult,
+        calendarResult
       });
     }
     
