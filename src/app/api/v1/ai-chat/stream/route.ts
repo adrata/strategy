@@ -616,6 +616,7 @@ export async function POST(request: NextRequest) {
         })}\n\n`));
         
         // Call streamText - returns a StreamTextResult
+        console.log(`[STREAM] Calling streamText with ${usedProvider} (${usedModel})...`);
         const result = streamText({
           model: hasAnthropicKey && anthropic 
             ? anthropic(CLAUDE_MODEL)
@@ -627,16 +628,27 @@ export async function POST(request: NextRequest) {
         });
         
         let tokensUsed = 0;
+        let fullContent = '';
         
         // Stream tokens as they arrive
+        console.log('[STREAM] Starting to iterate textStream...');
         for await (const chunk of result.textStream) {
           if (chunk) {
             tokensUsed++;
+            fullContent += chunk;
             await writer.write(encoder.encode(`data: ${JSON.stringify({
               type: 'token',
               content: chunk
             })}\n\n`));
           }
+        }
+        
+        console.log(`[STREAM] textStream iteration complete. Tokens: ${tokensUsed}, Length: ${fullContent.length}`);
+        
+        // Check if we got any content
+        if (fullContent.length === 0) {
+          console.error('[STREAM] No content received from AI!');
+          throw new Error('No content received from AI provider');
         }
         
         // Get final usage stats
