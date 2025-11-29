@@ -41,6 +41,11 @@ const nextConfig = {
       '@radix-ui/react-popover',
       '@radix-ui/react-select',
       '@radix-ui/react-tooltip',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-checkbox',
+      '@radix-ui/react-switch',
+      '@radix-ui/react-slider',
+      '@radix-ui/react-accordion',
       'lucide-react',
       'react-hook-form',
       'date-fns',
@@ -49,10 +54,17 @@ const nextConfig = {
       'framer-motion',
       'zod',
       '@tanstack/react-table',
+      'recharts',
+      'lodash',
     ],
+    // Enable Web Vitals attribution for better debugging
+    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'INP', 'TTFB'],
     // Enable partial prerendering for better TTFB
     ppr: false, // Keep false until ready for experimental feature
   },
+  
+  // Server external packages - these won't be bundled client-side
+  serverExternalPackages: ['bcryptjs', 'jsonwebtoken'],
   
   // Compiler optimizations
   compiler: {
@@ -80,6 +92,35 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Cache JavaScript and CSS chunks
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Stale-while-revalidate for API responses (read-only)
+      {
+        source: '/api/v1/speedrun',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/api/v1/fast-counts',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
           },
         ],
       },
