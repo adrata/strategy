@@ -591,106 +591,103 @@ export async function POST(request: NextRequest) {
       willUse: hasAnthropicKey ? 'Claude (Direct)' : 'OpenRouter'
     });
 
-    // 11. CREATE STREAMING RESPONSE - Use streamText directly and convert to SSE
+    // 11. CREATE STREAMING RESPONSE - Custom SSE format for frontend compatibility
     console.log('[STREAM] Step 12: Creating stream response...');
     
     const usedModel = hasAnthropicKey ? CLAUDE_MODEL : OPENROUTER_MODELS.GPT4O_MINI;
     const usedProvider = hasAnthropicKey ? 'Anthropic' : 'OpenRouter';
     console.log(`[STREAM] Using: ${usedProvider} (${usedModel})`);
     
-    try {
-      // Call streamText and get the result
-      const result = hasAnthropicKey && anthropic 
-        ? await streamText({
-            model: anthropic(CLAUDE_MODEL),
-            system: systemPrompt,
-            messages,
-            maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
-            temperature: 0.7,
-          })
-        : await streamText({
-            model: openrouter(usedModel),
-            system: systemPrompt,
-            messages,
-            maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
-            temperature: 0.7,
-          });
-
-      // Convert to our SSE format
-      const encoder = new TextEncoder();
-      let tokensUsed = 0;
-      
-      const stream = new ReadableStream({
-        async start(controller) {
-          // Send start event
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-            type: 'start',
-            timestamp: Date.now()
-          })}\n\n`));
-
-          try {
-            // Stream tokens
-            for await (const chunk of result.textStream) {
-              if (chunk) {
-                tokensUsed++;
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-                  type: 'token',
-                  content: chunk
-                })}\n\n`));
-              }
-            }
-
-            // Get usage
-            const usage = await result.usage;
-            if (usage) {
-              tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
-            }
-            
-            console.log(`[STREAM] ${usedProvider} succeeded - ${tokensUsed} tokens`);
-
-            // Send done event
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-              type: 'done',
-              metadata: { model: usedModel, tokensUsed, provider: usedProvider },
-              totalTime: Date.now() - requestStartTime
+    // Create the stream FIRST, then return response immediately
+    // This is the key fix - we create a TransformStream and start streaming
+    const encoder = new TextEncoder();
+    
+    // Use TransformStream for better streaming control
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter();
+    
+    // Start the AI streaming in the background (don't await)
+    (async () => {
+      try {
+        // Send start event immediately
+        await writer.write(encoder.encode(`data: ${JSON.stringify({
+          type: 'start',
+          timestamp: Date.now()
+        })}\n\n`));
+        
+        // Call streamText - returns a StreamTextResult
+        const result = streamText({
+          model: hasAnthropicKey && anthropic 
+            ? anthropic(CLAUDE_MODEL)
+            : openrouter(usedModel),
+          system: systemPrompt,
+          messages,
+          maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
+          temperature: 0.7,
+        });
+        
+        let tokensUsed = 0;
+        
+        // Stream tokens as they arrive
+        for await (const chunk of result.textStream) {
+          if (chunk) {
+            tokensUsed++;
+            await writer.write(encoder.encode(`data: ${JSON.stringify({
+              type: 'token',
+              content: chunk
             })}\n\n`));
-            
-            controller.close();
-          } catch (streamError: any) {
-            console.error(`[STREAM] Stream error:`, streamError?.message || streamError);
-            
-            // Send error event but still close gracefully
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-              type: 'error',
-              message: 'Stream interrupted',
-              recoverable: false
-            })}\n\n`));
-            controller.close();
           }
         }
-      });
-
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache, no-transform',
-          'Connection': 'keep-alive',
-          'X-Accel-Buffering': 'no'
+        
+        // Get final usage stats
+        const usage = await result.usage;
+        if (usage) {
+          tokensUsed = (usage.promptTokens || 0) + (usage.completionTokens || 0);
         }
-      });
-    } catch (aiError: any) {
-      console.error('[STREAM] AI call failed:', aiError?.message || aiError);
-      
-      // Return a proper error response instead of 500
-      return new Response(JSON.stringify({
-        error: 'AI service temporarily unavailable',
-        code: 'AI_ERROR',
-        fallback: true
-      }), {
-        status: 503,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+        
+        console.log(`[STREAM] ${usedProvider} succeeded - ${tokensUsed} tokens, ${Date.now() - requestStartTime}ms`);
+        
+        // Send done event
+        await writer.write(encoder.encode(`data: ${JSON.stringify({
+          type: 'done',
+          metadata: { model: usedModel, tokensUsed, provider: usedProvider },
+          totalTime: Date.now() - requestStartTime
+        })}\n\n`));
+        
+      } catch (streamError: any) {
+        console.error(`[STREAM] Stream error:`, streamError?.message || streamError);
+        
+        // Send error event
+        try {
+          await writer.write(encoder.encode(`data: ${JSON.stringify({
+            type: 'error',
+            message: streamError?.message || 'Stream failed',
+            recoverable: false
+          })}\n\n`));
+        } catch (e) {
+          // Writer might be closed
+        }
+      } finally {
+        try {
+          await writer.close();
+        } catch (e) {
+          // Writer might already be closed
+        }
+      }
+    })();
+    
+    // Return the readable stream IMMEDIATELY
+    // The background task will write to it
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no',
+        'X-Provider': usedProvider,
+        'X-Model': usedModel,
+      }
+    });
 
   } catch (error) {
     console.error('[STREAM] Fatal error:', {
