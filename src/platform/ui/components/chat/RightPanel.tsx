@@ -1412,6 +1412,8 @@ export function RightPanel() {
   const menuPopupRef = useRef<HTMLDivElement>(null);
   const conversationHistoryRef = useRef<HTMLDivElement>(null);
   const addFilesPopupRef = useRef<HTMLDivElement>(null);
+  // Track the latest request to prevent race conditions during fallback
+  const latestRequestIdRef = useRef<string | null>(null);
   
   // Generate contextual quick actions based on current record
   const generateContextualActions = (record: any, recordType: string): string[] => {
@@ -2433,6 +2435,10 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       });
     
     try {
+      // Generate unique request ID to prevent race conditions during fallback
+      const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      latestRequestIdRef.current = requestId;
+      
       // Add user message
       const userMessage: ChatMessage = {
         id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -2934,6 +2940,11 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           };
           
           // 🔧 FIX: Update UI with partial content, ensuring message and user message exist
+          // Also check request ID to avoid race conditions
+          if (latestRequestIdRef.current !== requestId) {
+            console.log(`⚠️ [PARTIAL] Skipping partial update - newer request in progress`);
+          }
+          
           setConversations(prev => prev.map(conv => {
             if (!conv.isActive) return conv;
             
@@ -3070,6 +3081,12 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         }
         
         // Update UI - replace streaming message if it exists, otherwise add new
+        // CRITICAL: Check if this is still the latest request to avoid race conditions
+        if (latestRequestIdRef.current !== requestId) {
+          console.log(`⚠️ [FALLBACK] Skipping update - newer request in progress (${requestId} vs ${latestRequestIdRef.current})`);
+          // Still add the message but don't overwrite newer messages
+        }
+        
         // CRITICAL: Ensure user message is preserved (might be missing due to React state batching)
         setConversations(prev => prev.map(conv => {
           if (!conv.isActive) return conv;
@@ -3079,6 +3096,13 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             msg.content !== 'typing' && 
             msg.content !== 'browsing'
           );
+          
+          // DEFENSIVE: Check if this assistant message already exists (prevent duplicates)
+          const hasAssistantMsg = filteredMessages.some(msg => msg.id === assistantMessage.id);
+          if (hasAssistantMsg) {
+            console.log('⚠️ [FALLBACK] Assistant message already exists, skipping duplicate');
+            return conv;
+          }
           
           // Check if user message is present (might be missing due to state batching)
           const hasUserMessage = filteredMessages.some(msg => msg.id === userMessage.id);

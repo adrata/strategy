@@ -617,10 +617,17 @@ export async function POST(request: NextRequest) {
         
         // Call streamText - returns a StreamTextResult
         console.log(`[STREAM] Calling streamText with ${usedProvider} (${usedModel})...`);
+        console.log(`[STREAM] System prompt length: ${systemPrompt.length}, Messages count: ${messages.length}`);
+        
+        // Create the model instance first to catch any configuration errors
+        const modelInstance = hasAnthropicKey && anthropic 
+          ? anthropic(CLAUDE_MODEL)
+          : openrouter(usedModel);
+        
+        console.log(`[STREAM] Model instance created, calling streamText...`);
+        
         const result = streamText({
-          model: hasAnthropicKey && anthropic 
-            ? anthropic(CLAUDE_MODEL)
-            : openrouter(usedModel),
+          model: modelInstance,
           system: systemPrompt,
           messages,
           maxTokens: complexity === 'complex' ? 4096 : complexity === 'simple' ? 1024 : 2048,
@@ -630,24 +637,40 @@ export async function POST(request: NextRequest) {
         let tokensUsed = 0;
         let fullContent = '';
         
-        // Stream tokens as they arrive
+        // Stream tokens as they arrive using the async iterator
         console.log('[STREAM] Starting to iterate textStream...');
-        for await (const chunk of result.textStream) {
-          if (chunk) {
-            tokensUsed++;
-            fullContent += chunk;
-            await writer.write(encoder.encode(`data: ${JSON.stringify({
-              type: 'token',
-              content: chunk
-            })}\n\n`));
+        
+        try {
+          for await (const chunk of result.textStream) {
+            if (chunk) {
+              tokensUsed++;
+              fullContent += chunk;
+              await writer.write(encoder.encode(`data: ${JSON.stringify({
+                type: 'token',
+                content: chunk
+              })}\n\n`));
+            }
           }
+        } catch (iteratorError: any) {
+          console.error('[STREAM] Error iterating textStream:', iteratorError?.message || iteratorError);
+          // Re-throw to be caught by outer catch
+          throw new Error(`Stream iteration failed: ${iteratorError?.message || 'Unknown error'}`);
         }
         
         console.log(`[STREAM] textStream iteration complete. Tokens: ${tokensUsed}, Length: ${fullContent.length}`);
         
         // Check if we got any content
         if (fullContent.length === 0) {
-          console.error('[STREAM] No content received from AI!');
+          console.error('[STREAM] No content received from AI! Checking for response errors...');
+          
+          // Try to get the response to see if there's an error
+          try {
+            const response = await result.response;
+            console.error('[STREAM] Response object:', JSON.stringify(response, null, 2).substring(0, 500));
+          } catch (respError) {
+            console.error('[STREAM] Could not get response:', respError);
+          }
+          
           throw new Error('No content received from AI provider');
         }
         
