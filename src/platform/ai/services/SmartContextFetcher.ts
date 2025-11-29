@@ -62,6 +62,13 @@ export async function fetchSpeedrunContext(
   try {
     const prisma = getPrismaClient();
     
+    // 🔍 DEBUG: Log incoming parameters
+    console.log('🔍 [SmartContextFetcher] fetchSpeedrunContext called:', {
+      workspaceId,
+      userId,
+      hasUserId: !!userId
+    });
+    
     // Create timeout promise
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Query timeout')), QUERY_TIMEOUT_MS)
@@ -80,6 +87,9 @@ export async function fetchSpeedrunContext(
     // Without this, we get ALL workspace records instead of the user's assigned ones
     if (userId) {
       whereClause.mainSellerId = userId;
+      console.log('✅ [SmartContextFetcher] Added mainSellerId filter:', userId);
+    } else {
+      console.warn('⚠️ [SmartContextFetcher] NO userId provided - will fetch ALL workspace Speedrun records!');
     }
 
     // Fetch Speedrun data matching the UI's exact logic
@@ -112,9 +122,16 @@ export async function fetchSpeedrunContext(
       timeoutPromise
     ]) as [number, any[]];
 
-    console.log(`✅ [SmartContextFetcher] Fetched ${recordsResult.length} Speedrun records (total: ${countResult})`, {
+    console.log(`✅ [SmartContextFetcher] Fetched Speedrun data:`, {
+      recordCount: recordsResult.length,
+      totalCount: countResult,
+      whereClause: JSON.stringify(whereClause),
       firstRecord: recordsResult[0]?.fullName,
-      lastRecord: recordsResult[recordsResult.length - 1]?.fullName
+      firstGlobalRank: recordsResult[0]?.globalRank,
+      lastRecord: recordsResult[recordsResult.length - 1]?.fullName,
+      lastGlobalRank: recordsResult[recordsResult.length - 1]?.globalRank,
+      // Show calculated ranks for verification
+      calculatedRanks: `First=${countResult - 0}, Last=${countResult - (recordsResult.length - 1)}`
     });
 
     // CRITICAL: Calculate DISPLAYED rank as countdown from total

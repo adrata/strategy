@@ -505,6 +505,12 @@ export async function POST(request: NextRequest) {
       try {
         const { fetchListContext, buildListContextString } = await import('@/platform/ai/services/SmartContextFetcher');
         // CRITICAL: Pass userId for Speedrun to match user's assigned records
+        console.log('[STREAM] 🔍 Calling fetchListContext with:', {
+          section: listViewSection,
+          workspaceId: context.workspaceId,
+          userId: context.userId,
+          hasUserId: !!context.userId
+        });
         fetchedListContext = await fetchListContext(listViewSection, context.workspaceId, context.userId);
         
         if (fetchedListContext) {
