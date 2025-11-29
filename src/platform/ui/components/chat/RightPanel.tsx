@@ -809,13 +809,21 @@ export function RightPanel() {
             typewriterSpeed: msg.metadata?.typewriterSpeed
           }));
           
+          // Helper to safely get timestamp
+          const safeGetTime = (date: Date | string | undefined | null): number => {
+            if (!date) return 0;
+            const dateObj = date instanceof Date ? date : new Date(date);
+            const time = dateObj.getTime();
+            return isNaN(time) ? 0 : time;
+          };
+          
           return {
             id: conv.id,
             title: conv.title,
             messages: apiMessages.sort((a, b) => 
-              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+              safeGetTime(a.timestamp) - safeGetTime(b.timestamp)
             ),
-            lastActivity: new Date(conv.lastActivity),
+            lastActivity: conv.lastActivity ? new Date(conv.lastActivity) : new Date(),
             isActive: conv.isActive,
             welcomeMessage: conv.welcomeMessage
           };
@@ -1011,7 +1019,13 @@ export function RightPanel() {
                            (b.metadata as any)?.isMainChat === true;
             if (aIsMain && !bIsMain) return -1;
             if (!aIsMain && bIsMain) return 1;
-            return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
+            // Safe date comparison
+            const getTime = (date: Date | string | undefined | null): number => {
+              if (!date) return 0;
+              const d = date instanceof Date ? date : new Date(date);
+              return isNaN(d.getTime()) ? 0 : d.getTime();
+            };
+            return getTime(b.lastActivity) - getTime(a.lastActivity);
           });
           
           return sorted;

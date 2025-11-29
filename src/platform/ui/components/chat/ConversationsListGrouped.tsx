@@ -46,9 +46,15 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
               timestamp: new Date(msg.timestamp),
             }))
           }));
-          const sorted = restoredConversations.sort((a: Conversation, b: Conversation) => 
-            new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
-          );
+          const sorted = restoredConversations.sort((a: Conversation, b: Conversation) => {
+            const aTime = a.lastActivity instanceof Date && !isNaN(a.lastActivity.getTime()) 
+              ? a.lastActivity.getTime() 
+              : 0;
+            const bTime = b.lastActivity instanceof Date && !isNaN(b.lastActivity.getTime()) 
+              ? b.lastActivity.getTime() 
+              : 0;
+            return bTime - aTime;
+          });
           setConversations(sorted);
           
           // Update selected conversation based on active state
@@ -90,6 +96,14 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
     };
   }, [workspaceId]);
 
+  // Safely get timestamp from a date value
+  const safeGetTime = (date: Date | string | undefined | null): number => {
+    if (!date) return 0;
+    const dateObj = date instanceof Date ? date : new Date(date);
+    const time = dateObj.getTime();
+    return isNaN(time) ? 0 : time;
+  };
+
   // Group conversations by Today and Yesterday
   const groupConversationsByDate = (convs: Conversation[]) => {
     const now = new Date();
@@ -108,7 +122,13 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
     };
 
     convs.forEach(conv => {
-      const convDate = new Date(conv.lastActivity);
+      const convTime = safeGetTime(conv.lastActivity);
+      if (convTime === 0) {
+        groups['Earlier'].push(conv);
+        return;
+      }
+      
+      const convDate = new Date(convTime);
       const convDay = new Date(convDate.getFullYear(), convDate.getMonth(), convDate.getDate());
 
       if (convDay.getTime() === today.getTime()) {
@@ -121,25 +141,29 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
     });
 
     // Sort conversations within each group by lastActivity (most recent first)
-    groups['Today'].sort((a, b) => 
-      new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
-    );
-    groups['Yesterday'].sort((a, b) => 
-      new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
-    );
-    groups['Earlier'].sort((a, b) => 
-      new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
-    );
+    const sortByTime = (a: Conversation, b: Conversation) => 
+      safeGetTime(b.lastActivity) - safeGetTime(a.lastActivity);
+    
+    groups['Today'].sort(sortByTime);
+    groups['Yesterday'].sort(sortByTime);
+    groups['Earlier'].sort(sortByTime);
 
     return groups;
   };
 
   const groupedConversations = groupConversationsByDate(conversations);
 
-  const formatTime = (date: Date) => {
-    const now = new Date();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+  const formatTime = (date: Date | string | undefined | null) => {
+    // Safely convert to Date if needed
+    const dateObj = date instanceof Date ? date : date ? new Date(date) : null;
+    
+    // Check if date is valid
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return 'Unknown';
+    }
+    
+    const hours = dateObj.getHours();
+    const minutes = dateObj.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
     const displayHours = hours % 12 || 12;
     const displayMinutes = minutes.toString().padStart(2, '0');
