@@ -91,6 +91,7 @@ export async function fetchListContext(
               title: true,
               status: true,
               email: true,
+              currentCompany: true, // Direct string fallback
               company: {
                 select: { name: true }
               }
@@ -107,7 +108,7 @@ export async function fetchListContext(
         records: recordsResult.map(r => ({
           id: r.id,
           name: r.fullName || `${r.firstName || ''} ${r.lastName || ''}`.trim() || 'Unknown',
-          company: r.company?.name || null,
+          company: r.company?.name || r.currentCompany || null,
           title: r.jobTitle || r.title || null,
           status: r.status || null,
           email: r.email || null
@@ -198,7 +199,7 @@ export async function fetchRecordContext(
           ...personResult,
           name: personResult.fullName || `${personResult.firstName || ''} ${personResult.lastName || ''}`.trim(),
           fullName: personResult.fullName || `${personResult.firstName || ''} ${personResult.lastName || ''}`.trim(),
-          companyName: personResult.company?.name || null,
+          companyName: personResult.company?.name || personResult.currentCompany || null,
           title: personResult.jobTitle || personResult.title
         },
         recordType: personResult.status?.toLowerCase() || 'person',
