@@ -817,7 +817,11 @@ export function RightPanel() {
         
         const apiConversations = result.data.conversations.map((conv: any) => {
           // Get local conversation to merge messages
-          // NOTE: We no longer preserve temporary messages from local state - they should only exist if saved to API
+          // CRITICAL FIX: Preserve local messages that haven't been saved to API yet
+          // This prevents messages from disappearing during the race between save and sync
+          const localConv = currentConversationsSnapshot.find(c => c.id === conv.id);
+          const localMessageIds = new Set((localConv?.messages || []).map(m => m.id));
+          
           // Merge API messages
           const apiMessages = (conv.messages || []).map((msg: any) => ({
             ...msg,
@@ -841,12 +845,30 @@ export function RightPanel() {
           const parsedLastActivity = conv.lastActivity ? new Date(conv.lastActivity) : new Date();
           const safeLastActivity = isNaN(parsedLastActivity.getTime()) ? new Date() : parsedLastActivity;
           
+          // CRITICAL FIX: Preserve local messages that haven't been saved to API yet
+          // This prevents the race condition where sync overwrites messages still being saved
+          const apiMessageIds = new Set(apiMessages.map((m: any) => m.id));
+          const unsavedLocalMessages = (localConv?.messages || [])
+            .filter(msg => 
+              !apiMessageIds.has(msg.id) && 
+              msg.content !== 'typing' && 
+              msg.content !== 'browsing' &&
+              msg.content !== 'thinking'
+            )
+            .map(msg => ({
+              ...msg,
+              isTypewriter: false // Don't re-trigger typewriter
+            }));
+          
+          // Merge API messages with unsaved local messages
+          const mergedMessages = [...apiMessages, ...unsavedLocalMessages].sort((a, b) => 
+            safeGetTime(a.timestamp) - safeGetTime(b.timestamp)
+          );
+          
           return {
             id: conv.id,
             title: conv.title,
-            messages: apiMessages.sort((a, b) => 
-              safeGetTime(a.timestamp) - safeGetTime(b.timestamp)
-            ),
+            messages: mergedMessages,
             lastActivity: safeLastActivity,
             isActive: conv.isActive,
             welcomeMessage: conv.welcomeMessage

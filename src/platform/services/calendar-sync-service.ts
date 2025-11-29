@@ -1056,7 +1056,7 @@ export class CalendarSyncService {
       // Determine if meeting is completed (past) or scheduled (future)
       const now = new Date();
       const isCompleted = event.startTime < now;
-      const status = isCompleted ? 'COMPLETED' : 'PENDING';
+      const status = isCompleted ? 'COMPLETED' : 'PLANNED';
 
       // Create action record
       await prisma.actions.create({

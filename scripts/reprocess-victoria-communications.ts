@@ -533,7 +533,7 @@ async function reprocessCalendarEvents(workspaceId: string, userId: string): Pro
               type: 'MEETING',
               subject: event.title,
               description: event.description?.substring(0, 500) || undefined,
-              status: isCompleted ? 'COMPLETED' : 'PENDING',
+              status: isCompleted ? 'COMPLETED' : 'PLANNED',
               completedAt: isCompleted ? event.startTime : undefined,
               scheduledAt: !isCompleted ? event.startTime : undefined,
               createdAt: event.startTime,
