@@ -2644,7 +2644,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       
       // 🚀 STREAMING: Use streaming endpoint for faster perceived response
       const streamingUrl = '/api/v1/ai-chat/stream/';
-      const requestId = `ai-chat-stream-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const streamRequestId = `ai-chat-stream-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       // Create streaming message ID upfront
       const streamingMessageId = `ai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
