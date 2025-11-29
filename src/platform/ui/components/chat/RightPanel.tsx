@@ -3215,7 +3215,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
     await processMessageWithQueue(action);
   };
 
-  // Enhanced record search with smart navigation - FIXED: Uses correct API endpoint
+  // Enhanced record search with smart navigation - Searches multiple endpoints
   const handleRecordSearch = async (recordName: string) => {
     console.log(`🔍 [RECORD SEARCH] Starting search for: "${recordName}"`);
     
@@ -3234,65 +3234,94 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
     
     console.log(`🔍 [RECORD SEARCH] Context: workspace=${workspace}, section=${currentSection}`);
     
-    // Try to find the actual record via API first for direct navigation
-    // FIXED: Use correct API endpoint /api/v1/people with search param (not /api/v1/people/search)
+    // Helper to find record in results
+    const findRecord = (data: any[]) => {
+      const exactMatch = data.find((r: any) => {
+        const name = (r.fullName || r.name || `${r.firstName || ''} ${r.lastName || ''}`.trim()).toLowerCase();
+        return name === recordName.toLowerCase();
+      });
+      return exactMatch || data[0];
+    };
+    
+    // Helper to navigate to record
+    const navigateToRecord = (foundRecord: any, section: string) => {
+      const nameSlug = (foundRecord.fullName || foundRecord.name || recordName)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      
+      const directUrl = `/${workspace}/${section}/${nameSlug}-${foundRecord.id}`;
+      console.log(`🎯 [RECORD SEARCH] Direct navigation to: ${directUrl}`);
+      window.location.href = directUrl;
+    };
+    
+    // Try speedrun endpoint first if we're on speedrun
+    if (currentSection === 'speedrun') {
+      try {
+        const speedrunUrl = `/api/v1/speedrun?limit=50`;
+        console.log(`🔍 [RECORD SEARCH] Searching speedrun: ${speedrunUrl}`);
+        const speedrunResponse = await fetch(speedrunUrl);
+        
+        if (speedrunResponse.ok) {
+          const speedrunResult = await speedrunResponse.json();
+          if (speedrunResult.success && speedrunResult.data?.length > 0) {
+            const found = speedrunResult.data.find((r: any) => {
+              const name = (r.fullName || r.name || `${r.firstName || ''} ${r.lastName || ''}`.trim()).toLowerCase();
+              return name === recordName.toLowerCase() || name.includes(recordName.toLowerCase());
+            });
+            
+            if (found) {
+              console.log(`🎯 [RECORD SEARCH] Found in speedrun:`, found.fullName || found.name);
+              navigateToRecord(found, 'speedrun');
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('[RECORD SEARCH] Speedrun search failed:', error);
+      }
+    }
+    
+    // Try people API
     try {
-      const searchUrl = `/api/v1/people?search=${encodeURIComponent(recordName)}&limit=5`;
-      console.log(`🔍 [RECORD SEARCH] Calling API: ${searchUrl}`);
+      const searchUrl = `/api/v1/people?search=${encodeURIComponent(recordName)}&limit=10`;
+      console.log(`🔍 [RECORD SEARCH] Searching people: ${searchUrl}`);
       
       const searchResponse = await fetch(searchUrl);
-      console.log(`🔍 [RECORD SEARCH] API response status: ${searchResponse.status}`);
       
       if (searchResponse.ok) {
         const searchResult = await searchResponse.json();
-        console.log(`🔍 [RECORD SEARCH] API result:`, {
-          success: searchResult.success,
-          count: searchResult.data?.length || 0
-        });
+        console.log(`🔍 [RECORD SEARCH] People result: ${searchResult.data?.length || 0} records`);
         
         if (searchResult.success && searchResult.data?.length > 0) {
-          // Find best match - exact name match preferred
-          const exactMatch = searchResult.data.find((r: any) => 
-            (r.fullName || '').toLowerCase() === recordName.toLowerCase() ||
-            (`${r.firstName || ''} ${r.lastName || ''}`.trim().toLowerCase()) === recordName.toLowerCase()
-          );
-          const foundRecord = exactMatch || searchResult.data[0];
+          const foundRecord = findRecord(searchResult.data);
           
-          // Create URL-friendly slug and navigate directly to the record
-          const nameSlug = (foundRecord.fullName || foundRecord.name || recordName)
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-') // More robust slug generation
-            .replace(/^-+|-+$/g, ''); // Trim leading/trailing dashes
-          
-          // Determine best section for this record based on status
+          // Determine best section based on status
           let targetSection = currentSection;
           if (foundRecord.status) {
             const statusLower = foundRecord.status.toLowerCase();
-            if (statusLower === 'prospect') targetSection = 'prospects';
-            else if (statusLower === 'lead') targetSection = 'leads';
-            else if (statusLower === 'client') targetSection = 'clients';
-            // Speedrun contains prospects, so keep it if we're there
-            if (currentSection === 'speedrun' && statusLower === 'prospect') {
+            if (statusLower === 'prospect' && currentSection === 'speedrun') {
               targetSection = 'speedrun';
+            } else if (statusLower === 'prospect') {
+              targetSection = 'prospects';
+            } else if (statusLower === 'lead') {
+              targetSection = 'leads';
+            } else if (statusLower === 'client') {
+              targetSection = 'clients';
             }
           }
           
-          const directUrl = `/${workspace}/${targetSection}/${nameSlug}-${foundRecord.id}`;
-          console.log(`🎯 [RECORD SEARCH] Direct navigation to: ${directUrl}`);
-          
-          window.location.href = directUrl;
+          navigateToRecord(foundRecord, targetSection);
           return;
         }
       }
     } catch (error) {
-      // Fallback to search if direct lookup fails
-      console.warn('[RECORD SEARCH] Direct record lookup failed, falling back to search:', error);
+      console.warn('[RECORD SEARCH] People search failed:', error);
     }
     
-    // Fallback: Navigate to the people section with search query
+    // Final fallback: Navigate to people section with search query
     const targetUrl = `/${workspace}/people?search=${encodeURIComponent(recordName)}`;
     console.log(`🔍 [RECORD SEARCH] Fallback navigation to: ${targetUrl}`);
-    
     window.location.href = targetUrl;
   };
 
