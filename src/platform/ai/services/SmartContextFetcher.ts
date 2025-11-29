@@ -47,12 +47,17 @@ export type FetchedContext = FetchedListContext | FetchedRecordContext | null;
 
 /**
  * Fetch Speedrun list with actual ranks
- * Speedrun data includes globalRank which is the priority order (1 = highest priority)
  * 
- * IMPORTANT: globalRank defaults to 0 (not null), so we filter by > 0 to get ranked records
+ * CRITICAL: This must match the Speedrun API logic EXACTLY:
+ * 1. Filter by mainSellerId to get user's assigned records
+ * 2. Filter by companyId (must have company)
+ * 3. Sort by globalRank descending (highest rank number first)
+ * 4. The DISPLAYED rank is a countdown: totalCount - index
+ *    So if we have 44 people, first person shown = rank 44, last person = rank 1
  */
 export async function fetchSpeedrunContext(
-  workspaceId: string
+  workspaceId: string,
+  userId?: string
 ): Promise<FetchedListContext | null> {
   try {
     const prisma = getPrismaClient();
@@ -62,27 +67,29 @@ export async function fetchSpeedrunContext(
       setTimeout(() => reject(new Error('Query timeout')), QUERY_TIMEOUT_MS)
     );
 
-    // Fetch Speedrun prospects - ranked people with globalRank > 0
-    // Rank 1 = highest priority (contact first), higher numbers = lower priority
-    // Use 'asc' ordering so rank 1 (highest priority) is FIRST in context
-    // This makes it easy for AI to answer "who is rank 1?" - it's the first person!
+    // Build where clause matching Speedrun API logic
+    const whereClause: any = { 
+      workspaceId,
+      deletedAt: null,
+      companyId: { not: null }, // Must have company (Speedrun requirement)
+      globalRank: { not: null } // Must have rank
+    };
+    
+    // CRITICAL: Filter by mainSellerId to match what the user sees in UI
+    if (userId) {
+      whereClause.mainSellerId = userId;
+    }
+
+    // Fetch Speedrun data matching the UI's exact logic
+    // The UI sorts by globalRank DESCENDING (highest number first)
+    // Then displays rank as countdown: totalCount down to 1
     const [countResult, recordsResult] = await Promise.race([
       Promise.all([
-        prisma.people.count({ 
-          where: { 
-            workspaceId,
-            deletedAt: null,
-            globalRank: { gt: 0 } // globalRank > 0 means in Speedrun
-          } 
-        }),
+        prisma.people.count({ where: whereClause }),
         prisma.people.findMany({
-          where: { 
-            workspaceId,
-            deletedAt: null,
-            globalRank: { gt: 0 } // globalRank > 0 means in Speedrun
-          },
+          where: whereClause,
           take: MAX_LIST_RECORDS,
-          orderBy: { globalRank: 'asc' }, // Rank 1 first, then 2, 3... (priority order)
+          orderBy: { globalRank: 'desc' }, // Highest globalRank first (matches UI)
           select: {
             id: true,
             fullName: true,
@@ -92,7 +99,7 @@ export async function fetchSpeedrunContext(
             title: true,
             status: true,
             email: true,
-            globalRank: true, // The actual Speedrun rank
+            globalRank: true,
             currentCompany: true,
             company: {
               select: { name: true }
@@ -103,20 +110,28 @@ export async function fetchSpeedrunContext(
       timeoutPromise
     ]) as [number, any[]];
 
-    console.log(`✅ [SmartContextFetcher] Fetched ${recordsResult.length} Speedrun records (total: ${countResult})`);
+    console.log(`✅ [SmartContextFetcher] Fetched ${recordsResult.length} Speedrun records (total: ${countResult})`, {
+      firstRecord: recordsResult[0]?.fullName,
+      lastRecord: recordsResult[recordsResult.length - 1]?.fullName
+    });
 
+    // CRITICAL: Calculate DISPLAYED rank as countdown from total
+    // The UI shows: totalCount (first row), totalCount-1, ... 1 (last row)
+    // So first record = rank totalCount, last record = rank 1
     return {
       section: 'speedrun',
       sectionDisplayName: 'Speedrun',
       totalCount: countResult,
-      records: recordsResult.map(r => ({
+      records: recordsResult.map((r, index) => ({
         id: r.id,
         name: r.fullName || `${r.firstName || ''} ${r.lastName || ''}`.trim() || 'Unknown',
         company: r.company?.name || r.currentCompany || null,
         title: r.jobTitle || r.title || null,
         status: r.status || null,
         email: r.email || null,
-        rank: r.globalRank || undefined
+        // COUNTDOWN RANK: matches what the UI shows
+        // First record (index 0) = totalCount, Last record = 1
+        rank: countResult - index
       })),
       isListView: true
     };
@@ -129,14 +144,19 @@ export async function fetchSpeedrunContext(
 /**
  * Fetch list records for a section from the database
  * Used when user is on a list view and React context is unavailable
+ * 
+ * @param section - The section identifier (e.g., 'speedrun', 'prospects')
+ * @param workspaceId - The workspace to fetch from
+ * @param userId - Optional user ID (required for Speedrun to match user's assigned records)
  */
 export async function fetchListContext(
   section: string,
-  workspaceId: string
+  workspaceId: string,
+  userId?: string
 ): Promise<FetchedListContext | null> {
-  // Special handling for Speedrun - needs rank data
+  // Special handling for Speedrun - needs rank data and user filtering
   if (section === 'speedrun') {
-    return fetchSpeedrunContext(workspaceId);
+    return fetchSpeedrunContext(workspaceId, userId);
   }
   
   const table = getSectionTable(section);
