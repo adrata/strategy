@@ -31,9 +31,17 @@ export function ConversationsList({
   onConversationSelect,
   markConversationAsRead,
 }: ConversationsListProps) {
-  const formatTime = (date: Date) => {
+  const formatTime = (date: Date | string | undefined | null) => {
+    // Safely convert to Date if needed
+    const dateObj = date instanceof Date ? date : date ? new Date(date) : null;
+    
+    // Check if date is valid
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return 'Unknown';
+    }
+    
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const diff = now.getTime() - dateObj.getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
@@ -42,7 +50,7 @@ export function ConversationsList({
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString();
+    return dateObj.toLocaleDateString();
   };
 
   const getLastMessagePreview = (conversation: Conversation) => {

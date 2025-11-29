@@ -15,9 +15,17 @@ interface TeamWinsViewProps {
   onBack: () => void;
 }
 
-function formatTimeAgo(date: Date): string {
+function formatTimeAgo(date: Date | string | undefined | null): string {
+  // Safely convert to Date if needed
+  const dateObj = date instanceof Date ? date : date ? new Date(date) : null;
+  
+  // Check if date is valid
+  if (!dateObj || isNaN(dateObj.getTime())) {
+    return 'Unknown';
+  }
+  
   const now = new Date();
-  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+  const diffInMinutes = Math.floor((now.getTime() - dateObj.getTime()) / (1000 * 60));
   
   if (diffInMinutes < 1) return 'Just now';
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
