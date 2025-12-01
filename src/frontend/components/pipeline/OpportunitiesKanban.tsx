@@ -908,7 +908,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                           ) : null;
                         })()}
                         <span className="text-xs text-muted">
-                          Last: {opportunity.lastActionDate 
+                          Last Action: {opportunity.lastActionDate 
                             ? formatDate(opportunity.lastActionDate) 
                             : opportunity.createdAt 
                               ? formatDate(opportunity.createdAt) 
