@@ -376,7 +376,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               </div>
             )}
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Intelligence Profile */}
