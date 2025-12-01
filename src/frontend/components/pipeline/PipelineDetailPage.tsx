@@ -84,24 +84,50 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         recordType = 'speedrun-prospect';
       } else if (section === 'people') {
         recordType = 'person';
+      } else if (section === 'companies') {
+        recordType = 'company';
       }
+      
+      // 🔧 FIX: Normalize record data differently for company vs person records
+      const isCompanyRecord = section === 'companies';
       
       // 🔧 FIX: Normalize record data to ensure all fields expected by buildRecordContext are present
       const normalizedRecord = {
         ...selectedRecord,
         // Ensure name fields are present
-        name: selectedRecord.name || selectedRecord.fullName || 'Unknown',
-        fullName: selectedRecord.fullName || selectedRecord.name || 'Unknown',
-        // Ensure company fields are present (handle both string and object company types)
-        company: typeof selectedRecord.company === 'string' 
-          ? selectedRecord.company 
-          : selectedRecord.company?.name || selectedRecord.companyName || 'Unknown Company',
-        companyName: typeof selectedRecord.company === 'string'
-          ? selectedRecord.company
-          : selectedRecord.company?.name || selectedRecord.companyName || 'Unknown Company',
-        // Ensure title fields are present
-        title: selectedRecord.title || selectedRecord.jobTitle || 'Unknown Title',
-        jobTitle: selectedRecord.jobTitle || selectedRecord.title || 'Unknown Title',
+        name: selectedRecord.name || selectedRecord.fullName || (isCompanyRecord ? 'Unknown Company' : 'Unknown'),
+        fullName: selectedRecord.fullName || selectedRecord.name || (isCompanyRecord ? 'Unknown Company' : 'Unknown'),
+        // For company records: the record IS the company, so map company fields from the record itself
+        // For person records: get company from nested company object or companyName field
+        company: isCompanyRecord 
+          ? selectedRecord.name // Company name is the company
+          : (typeof selectedRecord.company === 'string' 
+              ? selectedRecord.company 
+              : selectedRecord.company?.name || selectedRecord.companyName || null),
+        companyName: isCompanyRecord
+          ? selectedRecord.name // Company name is the company
+          : (typeof selectedRecord.company === 'string'
+              ? selectedRecord.company
+              : selectedRecord.company?.name || selectedRecord.companyName || null),
+        // For company records: map relevant company fields
+        // For person records: use title/jobTitle
+        title: isCompanyRecord ? null : (selectedRecord.title || selectedRecord.jobTitle || null),
+        jobTitle: isCompanyRecord ? null : (selectedRecord.jobTitle || selectedRecord.title || null),
+        // Company-specific fields for AI context
+        ...(isCompanyRecord && {
+          industry: selectedRecord.industry || null,
+          employeeCount: selectedRecord.employees || selectedRecord.employeeCount || selectedRecord.totalEmployees || selectedRecord.size || null,
+          employees: selectedRecord.employees || selectedRecord.employeeCount || selectedRecord.totalEmployees || selectedRecord.size || null,
+          revenue: selectedRecord.revenue || null,
+          website: selectedRecord.website || null,
+          description: selectedRecord.description || selectedRecord.summary || null,
+          hqCity: selectedRecord.hqCity || selectedRecord.city || null,
+          hqState: selectedRecord.hqState || selectedRecord.state || null,
+          hqCountry: selectedRecord.hqCountry || selectedRecord.country || null,
+          founded: selectedRecord.founded || selectedRecord.foundedYear || null,
+          linkedinUrl: selectedRecord.linkedinUrl || selectedRecord.linkedin || null,
+          isCompanyRecord: true,
+        }),
         // Ensure contact fields are present
         email: selectedRecord.email || selectedRecord.workEmail || null,
         workEmail: selectedRecord.workEmail || selectedRecord.email || null,
