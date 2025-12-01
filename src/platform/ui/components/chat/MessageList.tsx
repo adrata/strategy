@@ -454,9 +454,32 @@ export function MessageList({
                   }
                   
                   // Handle bold person names **John Smith**
+                  // BUT exclude common descriptive phrases that aren't entity names
                   const boldPersonMatch = part.match(/^\*\*([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\*\*$/);
                   if (boldPersonMatch) {
                     const [, personName] = boldPersonMatch;
+                    
+                    // List of phrases that should NOT be converted to clickable buttons
+                    // These are common headings/labels used in AI responses, not entity names
+                    const excludedPhrases = [
+                      'Industry Expertise', 'Integrated Approach', 'Proven Results', 'Customer Focus',
+                      'Immediate Action Items', 'Critical Data Quality Issue', 'Clear CTA', 'Next Action',
+                      'Quick Question', 'Key Intelligence', 'What We Know', 'Research Needed',
+                      'Major EPC Competitors', 'Your Competitive Advantages', 'Core Advantages',
+                      'Speed Agility', 'Technology Flexibility', 'Senior Talent Access', 'Process Simplification',
+                      'Relationship Depth', 'Pipeline Snapshot', 'Total People', 'Opportunities',
+                      'What This Tells Me', 'Key Pipeline Composition', 'Critical Gaps', 'Stage Distribution',
+                      'Pipeline Value', 'Lead Status', 'Heavy Utility Sector', 'Geographic Spread',
+                      'Quick Tip', 'Quick Win', 'Before You Reach Out', 'Current Status',
+                      'Why This Works', 'Timing', 'Strategic Pattern', 'Top Opportunities',
+                      'Build Justify', 'AFM Principles', 'Healthy Contact Database'
+                    ];
+                    
+                    // Check if this is a descriptive phrase (should be rendered as bold text, not a button)
+                    if (excludedPhrases.some(phrase => personName.toLowerCase() === phrase.toLowerCase())) {
+                      return <strong key={index}>{personName}</strong>;
+                    }
+                    
                     return (
                       <button
                         key={index}

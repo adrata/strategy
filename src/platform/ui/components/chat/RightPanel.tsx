@@ -3392,6 +3392,34 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
     }
     
+    // Try companies API FIRST for names that look like company names
+    // Company names often have: Corporation, Company, Energy, Electric, Power, Inc, LLC, etc.
+    const companyKeywords = ['corporation', 'company', 'energy', 'electric', 'power', 'inc', 'llc', 'group', 'utilities', 'utility', 'administration', 'project', 'cooperative'];
+    const looksLikeCompany = companyKeywords.some(keyword => recordName.toLowerCase().includes(keyword));
+    
+    if (looksLikeCompany) {
+      try {
+        const companySearchUrl = `/api/v1/companies?search=${encodeURIComponent(recordName)}&limit=10`;
+        console.log(`🔍 [RECORD SEARCH] Searching companies: ${companySearchUrl}`);
+        
+        const companyResponse = await fetch(companySearchUrl);
+        
+        if (companyResponse.ok) {
+          const companyResult = await companyResponse.json();
+          console.log(`🔍 [RECORD SEARCH] Companies result: ${companyResult.data?.length || 0} records`);
+          
+          if (companyResult.success && companyResult.data?.length > 0) {
+            const foundCompany = findRecord(companyResult.data);
+            console.log(`🎯 [RECORD SEARCH] Found company: ${foundCompany.name}`);
+            navigateToRecord(foundCompany, 'companies');
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('[RECORD SEARCH] Companies search failed:', error);
+      }
+    }
+    
     // Try people API
     try {
       const searchUrl = `/api/v1/people?search=${encodeURIComponent(recordName)}&limit=10`;
@@ -3427,6 +3455,34 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
       }
     } catch (error) {
       console.warn('[RECORD SEARCH] People search failed:', error);
+    }
+    
+    // Try companies API as secondary fallback (for names that don't have keywords but might still be companies)
+    if (!looksLikeCompany) {
+      try {
+        const companySearchUrl = `/api/v1/companies?search=${encodeURIComponent(recordName)}&limit=5`;
+        console.log(`🔍 [RECORD SEARCH] Secondary companies search: ${companySearchUrl}`);
+        
+        const companyResponse = await fetch(companySearchUrl);
+        
+        if (companyResponse.ok) {
+          const companyResult = await companyResponse.json();
+          
+          if (companyResult.success && companyResult.data?.length > 0) {
+            const foundCompany = companyResult.data.find((c: any) => 
+              c.name?.toLowerCase() === recordName.toLowerCase()
+            );
+            
+            if (foundCompany) {
+              console.log(`🎯 [RECORD SEARCH] Found company in secondary search: ${foundCompany.name}`);
+              navigateToRecord(foundCompany, 'companies');
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('[RECORD SEARCH] Secondary companies search failed:', error);
+      }
     }
     
     // Final fallback: Navigate to people section with search query
