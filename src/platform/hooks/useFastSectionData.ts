@@ -851,13 +851,32 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
   // 🚀 CACHE INVALIDATION: Listen for cache invalidation events
   useEffect(() => {
     const handleCacheInvalidate = (event: CustomEvent) => {
-      const { pattern, reason } = event.detail;
-      console.log(`🗑️ [FAST SECTION DATA] Cache invalidation event received:`, { pattern, reason, section });
+      const { pattern, reason, recordId } = event.detail;
+      console.log(`🗑️ [FAST SECTION DATA] Cache invalidation event received:`, { pattern, reason, section, recordId });
       
       // Check if this invalidation affects our section
       if (pattern.includes(section) || pattern.includes('*')) {
-        console.log(`🔄 [FAST SECTION DATA] Refreshing ${section} data due to cache invalidation`);
-        fetchSectionData();
+        console.log(`🔄 [FAST SECTION DATA] Refreshing ${section} data due to cache invalidation (${reason})`);
+        
+        // 🔧 CRITICAL FIX: Clear localStorage cache to prevent stale data from being rehydrated
+        if (typeof window !== 'undefined' && workspaceId) {
+          const storageKey = `adrata-${section}-${workspaceId}`;
+          localStorage.removeItem(storageKey);
+          console.log(`🗑️ [FAST SECTION DATA] Cleared localStorage cache: ${storageKey}`);
+        }
+        
+        // Clear loaded sections to allow refetch
+        loadedSectionsRef.current.delete(section);
+        
+        // 🔧 CRITICAL FIX: Also update local state immediately if a record was deleted
+        if (reason === 'record_deleted' && recordId) {
+          setData((prevData: any[]) => prevData.filter((item: any) => item.id !== recordId));
+          setCount((prevCount: number) => Math.max(0, prevCount - 1));
+          console.log(`🗑️ [FAST SECTION DATA] Removed record ${recordId} from local state`);
+        }
+        
+        // Force refresh to get fresh data from server
+        fetchSectionData(true);
       }
     };
 
@@ -923,6 +942,14 @@ export function useFastSectionData(section: string, limit: number = 30, osType?:
       // Critical: Remove section from loaded sections Set to allow refetch
       loadedSectionsRef.current.delete(section);
       console.log(`🧹 [FAST SECTION DATA] Removed ${section} from loaded sections. Remaining:`, Array.from(loadedSectionsRef.current));
+      
+      // 🔧 CRITICAL FIX: Also clear localStorage cache to prevent stale data from being rehydrated
+      if (typeof window !== 'undefined' && workspaceId) {
+        const storageKey = `adrata-${section}-${workspaceId}`;
+        localStorage.removeItem(storageKey);
+        console.log(`🗑️ [FAST SECTION DATA] Cleared localStorage cache: ${storageKey}`);
+      }
+      
       setData([]);
       setCount(0);
       setError(null);

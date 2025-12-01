@@ -3306,6 +3306,34 @@ export function UniversalRecordTemplate({
               newSection: targetSection
             }
           }));
+          
+          // 🔧 CRITICAL FIX: Dispatch cache-invalidate for BOTH sections to ensure list data is fresh
+          // This prevents deleted/moved records from appearing in old section and ensures they appear in new section
+          window.dispatchEvent(new CustomEvent('cache-invalidate', {
+            detail: { 
+              pattern: `${currentSection}-*`,
+              reason: 'status_change_from',
+              recordId
+            }
+          }));
+          
+          window.dispatchEvent(new CustomEvent('cache-invalidate', {
+            detail: { 
+              pattern: `${targetSection}-*`,
+              reason: 'status_change_to',
+              recordId
+            }
+          }));
+          
+          // 🔧 CRITICAL FIX: Clear localStorage record caches for both sections
+          // This prevents stale record data from being served after navigation
+          if (typeof window !== 'undefined') {
+            const oldCacheKey = `adrata-record-${currentSection}-${recordId}`;
+            const newCacheKey = `adrata-record-${targetSection}-${recordId}`;
+            localStorage.removeItem(oldCacheKey);
+            localStorage.removeItem(newCacheKey);
+            console.log(`🗑️ [STATUS CHANGE] Cleared record caches: ${oldCacheKey}, ${newCacheKey}`);
+          }
         }
         
         // CRITICAL FIX: Navigate to the correct section when status changes
