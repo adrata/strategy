@@ -536,6 +536,103 @@ export async function GET(request: NextRequest) {
         }
       }
       
+      // 🚀 PERFORMANCE: Batch count actions for all companies (similar to People API)
+      // Count both direct company actions AND actions on people in each company
+      const companyIds = companies.map(c => c.id);
+      const actionCountsMap = new Map<string, number>();
+      
+      if (companyIds.length > 0) {
+        try {
+          // Get all people IDs for these companies first
+          const peopleInCompanies = await prisma.people.findMany({
+            where: {
+              companyId: { in: companyIds },
+              deletedAt: null
+            },
+            select: {
+              id: true,
+              companyId: true
+            }
+          });
+          
+          // Create a map of company -> person IDs
+          const companyPeopleMap = new Map<string, string[]>();
+          for (const person of peopleInCompanies) {
+            if (person.companyId) {
+              const existing = companyPeopleMap.get(person.companyId) || [];
+              existing.push(person.id);
+              companyPeopleMap.set(person.companyId, existing);
+            }
+          }
+          
+          const allPersonIds = peopleInCompanies.map(p => p.id);
+          
+          // Batch query: Count actions on people grouped by personId
+          const [directCompanyActions, personActions] = await Promise.all([
+            // Count actions directly on companies
+            prisma.actions.groupBy({
+              by: ['companyId'],
+              where: {
+                companyId: { in: companyIds },
+                personId: null, // Only direct company actions
+                deletedAt: null,
+                status: 'COMPLETED'
+              },
+              _count: { id: true }
+            }),
+            // Count actions on people (to aggregate by company)
+            allPersonIds.length > 0 ? prisma.actions.groupBy({
+              by: ['personId'],
+              where: {
+                personId: { in: allPersonIds },
+                deletedAt: null,
+                status: 'COMPLETED'
+              },
+              _count: { id: true }
+            }) : []
+          ]);
+          
+          // Initialize counts for all companies
+          for (const companyId of companyIds) {
+            actionCountsMap.set(companyId, 0);
+          }
+          
+          // Add direct company actions
+          for (const action of directCompanyActions) {
+            if (action.companyId) {
+              const existing = actionCountsMap.get(action.companyId) || 0;
+              actionCountsMap.set(action.companyId, existing + action._count.id);
+            }
+          }
+          
+          // Add person actions (aggregate by their company)
+          const personActionMap = new Map<string, number>();
+          for (const action of personActions) {
+            if (action.personId) {
+              personActionMap.set(action.personId, action._count.id);
+            }
+          }
+          
+          // Sum up person actions by company
+          for (const [companyId, personIds] of companyPeopleMap) {
+            let personActionsCount = 0;
+            for (const personId of personIds) {
+              personActionsCount += personActionMap.get(personId) || 0;
+            }
+            const existing = actionCountsMap.get(companyId) || 0;
+            actionCountsMap.set(companyId, existing + personActionsCount);
+          }
+          
+          if (process.env.NODE_ENV === 'development') {
+            const totalActions = Array.from(actionCountsMap.values()).reduce((sum, count) => sum + count, 0);
+            console.log(`✅ [COMPANIES API] Computed action counts for ${companyIds.length} companies: ${totalActions} total actions`);
+          }
+        } catch (error) {
+          console.warn(`⚠️ [COMPANIES API] Error computing action counts:`, error);
+          // Continue with 0 counts if computation fails
+        }
+      }
+      
       const enrichedCompanies = await Promise.all(companies.map(async (company) => {
         try {
           // Use computed lastAction if available, otherwise use stored values from database
@@ -792,7 +889,12 @@ export async function GET(request: NextRequest) {
             nextActionTiming: nextActionTiming, // NEW: Timing text
             lastActionType: lastActionResult?.lastActionType || null,
             // Use estimated deal value if original was null/0
-            opportunityAmount: finalOpportunityAmount || company.opportunityAmount || null
+            opportunityAmount: finalOpportunityAmount || company.opportunityAmount || null,
+            // 🚀 PERFORMANCE: Add action count from batched query (like People API)
+            _count: {
+              actions: actionCountsMap.get(company.id) || (company as any)._count?.actions || 0,
+              people: (company as any)._count?.people || 0
+            }
           };
         } catch (error) {
           console.error(`❌ [COMPANIES API] Error computing lastAction for company ${company.id}:`, error);
@@ -802,7 +904,12 @@ export async function GET(request: NextRequest) {
             state: company.hqState || company.state || null,
             hqState: company.hqState || null,
             lastAction: company.lastAction || null,
-            lastActionDate: company.lastActionDate || null
+            lastActionDate: company.lastActionDate || null,
+            // 🚀 PERFORMANCE: Include action count even on error
+            _count: {
+              actions: actionCountsMap.get(company.id) || (company as any)._count?.actions || 0,
+              people: (company as any)._count?.people || 0
+            }
           };
         }
       }));
