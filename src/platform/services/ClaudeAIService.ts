@@ -498,11 +498,25 @@ export class ClaudeAIService {
       
       // Get key metrics and data for context
       // Note: prospects table may not exist in all schemas, handle gracefully
-      const [peopleCount, companiesCount, leadsCount, opportunitiesCount] = await Promise.all([
+      // 🔧 FIX: Count only OPEN opportunities (exclude closed-won, closed-lost) to match sidebar
+      const [peopleCount, companiesCount, leadsCount, openOpportunitiesCount] = await Promise.all([
         prisma.people.count({ where: { workspaceId, deletedAt: null } }),
         prisma.companies.count({ where: { workspaceId, deletedAt: null } }),
         prisma.people.count({ where: { workspaceId, status: 'LEAD', deletedAt: null } }),
-        prisma.opportunities.count({ where: { workspaceId, deletedAt: null } })
+        prisma.opportunities.count({ 
+          where: { 
+            workspaceId, 
+            deletedAt: null,
+            // Exclude closed opportunities to match what sidebar displays
+            NOT: {
+              OR: [
+                { stage: { contains: 'closed', mode: 'insensitive' } },
+                { stage: { contains: 'won', mode: 'insensitive' } },
+                { stage: { contains: 'lost', mode: 'insensitive' } }
+              ]
+            }
+          } 
+        })
       ]);
       
       // Try to get prospects count if the table exists, otherwise default to 0
@@ -627,7 +641,7 @@ export class ClaudeAIService {
           companies: companiesCount,
           prospects: prospectsCount,
           leads: leadsCount,
-          opportunities: opportunitiesCount
+          opportunities: openOpportunitiesCount
         },
         recentActivities: recentActions.map(action => ({
           type: action.type,
