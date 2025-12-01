@@ -2290,8 +2290,23 @@ export function UniversalRecordTemplate({
           targetId = recordId;
           console.log(`🎯 [MODEL TARGETING] Personal field ${field} -> ${recordType} model (no personId)`);
         }
+      } else if (leadFields.includes(field)) {
+        // 🔧 FIX: Lead/prospect/person fields like 'status' should stay on the person record
+        // Even if the person has a companyId, their status is about the person, not the company
+        // Route to people model for person-type records
+        if (recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'speedrun') {
+          targetModel = 'people';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Lead field ${field} -> people model (${targetId}) - person record`);
+        } else {
+          // For other record types, keep on current model
+          targetModel = recordType;
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Lead field ${field} -> ${recordType} model`);
+        }
       } else if (companyFields.includes(field)) {
         // Company fields should go to the companies model when companyId exists
+        // BUT only if the field is NOT also a lead field (handled above)
         if (record?.companyId) {
           targetModel = 'companies';
           targetId = record.companyId;
