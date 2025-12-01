@@ -5254,6 +5254,25 @@ export function UniversalRecordTemplate({
                       if (recordType === 'speedrun' && recordIndex !== undefined) {
                         return recordIndex; // Use the recordIndex directly (countdown format: N-1)
                       }
+                      // 🎯 FIX: For opportunities, show stage-based display (Q, D, B, P, N, C)
+                      // This matches the Kanban column indicator
+                      if (recordType === 'opportunities' && record) {
+                        const OPPORTUNITY_STAGES: Record<string, string> = {
+                          'qualification': 'Q',
+                          'discovery': 'D',
+                          'build-justify': 'B',
+                          'proposal-neg': 'P',
+                          'negotiate': 'N',
+                          'closed-won': 'W',
+                          'closed-lost': 'L',
+                          'closed-lost-to-competition': 'L'
+                        };
+                        const stageKey = (record.stage || record.opportunityStage || 'qualification')
+                          .toLowerCase()
+                          .replace(/\s+/g, '-')
+                          .replace(/_/g, '-');
+                        return OPPORTUNITY_STAGES[stageKey] || stageKey.charAt(0).toUpperCase();
+                      }
                       return record?.rank !== undefined ? record.rank : (recordIndex !== undefined ? recordIndex : getFirstInitial());
                     })()}
                   </span>

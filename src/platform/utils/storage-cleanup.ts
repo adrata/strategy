@@ -287,6 +287,55 @@ export function proactiveStorageCleanup(): boolean {
 }
 
 /**
+ * Clear stale opportunity caches - opportunities change frequently
+ * and stale IDs cause 404 errors during prefetch
+ */
+export function clearStaleOpportunityCaches(): number {
+  if (typeof window === 'undefined') return 0;
+  
+  const OPPORTUNITY_CACHE_MAX_AGE = 2 * 60 * 1000; // 2 minutes for opportunities (they change frequently)
+  const keysToRemove: string[] = [];
+  
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+    
+    // Target opportunity-related caches
+    const isOpportunityCache = key.includes('-opportunities-') || 
+                               key.includes('-opportunities') ||
+                               (key.startsWith('adrata-record-') && key.includes('opportunities'));
+    
+    if (isOpportunityCache) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const cacheAge = Date.now() - (parsed.ts || parsed.timestamp || 0);
+          if (cacheAge > OPPORTUNITY_CACHE_MAX_AGE || (!parsed.ts && !parsed.timestamp)) {
+            keysToRemove.push(key);
+          }
+        }
+      } catch {
+        // Invalid cache, remove it
+        keysToRemove.push(key);
+      }
+    }
+  }
+  
+  keysToRemove.forEach(key => {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+  });
+  
+  if (keysToRemove.length > 0) {
+    console.log(`🧹 [STORAGE CLEANUP] Cleared ${keysToRemove.length} stale opportunity caches`);
+  }
+  
+  return keysToRemove.length;
+}
+
+/**
  * Initialize storage cleanup - call this when the app starts
  */
 export function initStorageCleanup(): void {
@@ -295,10 +344,18 @@ export function initStorageCleanup(): void {
   // Run proactive cleanup on initialization
   proactiveStorageCleanup();
   
+  // Clear stale opportunity caches on startup to prevent 404s
+  clearStaleOpportunityCaches();
+  
   // Set up periodic cleanup every 5 minutes
   setInterval(() => {
     proactiveStorageCleanup();
   }, 5 * 60 * 1000);
+  
+  // Set up more frequent opportunity cache cleanup (every 2 minutes)
+  setInterval(() => {
+    clearStaleOpportunityCaches();
+  }, 2 * 60 * 1000);
   
   // Listen for storage quota errors
   window.addEventListener('error', (event) => {
