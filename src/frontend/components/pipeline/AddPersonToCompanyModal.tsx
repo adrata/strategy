@@ -105,7 +105,7 @@ export function AddPersonToCompanyModal({
     if (!isOpen) {
       setSearchQuery('');
       setSearchResults([]);
-      setShowCreateForm(false);
+      setShowSearchSection(false);
       setSelectedPerson(null);
       setSuccessMessage(null);
       setFormData({
@@ -125,7 +125,7 @@ export function AddPersonToCompanyModal({
       // Reset all state when switching to a different company
       setSearchQuery('');
       setSearchResults([]);
-      setShowCreateForm(false);
+      setShowSearchSection(false);
       setSelectedPerson(null);
       setSuccessMessage(null);
       setFormData({
