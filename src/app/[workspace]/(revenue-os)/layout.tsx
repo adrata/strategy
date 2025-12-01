@@ -29,6 +29,7 @@ import { useSettingsPopup } from "@/platform/ui/components/SettingsPopupContext"
 import { NovaBrowser } from "@/products/pipeline/components/NovaBrowser";
 import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
+import { initStorageCleanup } from "@/platform/utils/storage-cleanup";
 import { FeatureAccessProvider } from "@/platform/ui/context/FeatureAccessProvider";
 import { OasisProvider } from "@/products/oasis/context/OasisProvider";
 import { OasisLayoutContext, useOasisLayout, type OasisLayoutContextType } from "@/products/oasis/context/OasisLayoutContext";
@@ -194,6 +195,11 @@ function PipelineLayoutInner({
       return <RightPanel />;
     }
   }, [pathname, threadData, isBaseAdrataRoute, isTestDriveRoute, stacksContext?.selectedItem]);
+  
+  // Initialize storage cleanup on mount to prevent localStorage quota issues
+  useEffect(() => {
+    initStorageCleanup();
+  }, []);
   
   // Initialize profile panel state from sessionStorage on mount if needed
   useEffect(() => {
