@@ -3646,6 +3646,23 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log(`🗑️ [UniversalRecordTemplate] Soft deleting ${recordType} record: ${record.id}`);
       
+      // 🎯 FIX: Detect if speedrun record is actually a company
+      // Companies in speedrun have: id contains 'company', or name equals company field, or has company-specific fields
+      const getEntityType = () => {
+        if (recordType === 'companies') return 'companies';
+        if (recordType === 'people') return 'people';
+        // For speedrun: check if it's a company record
+        if (record?.id?.toLowerCase().includes('company') || 
+            (record?.name && record?.company && record.name === record.company) ||
+            (record?.hqState !== undefined) ||
+            (record?.industry !== undefined && !record?.title && !record?.firstName)) {
+          return 'companies';
+        }
+        return 'people';
+      };
+      const entityType = getEntityType();
+      console.log(`🔍 [UniversalRecordTemplate] Determined entityType: ${entityType} for recordType: ${recordType}`);
+      
       // Perform soft delete via new v1 deletion API
       const response = await fetch('/api/v1/deletion', {
         method: 'POST',
@@ -3654,9 +3671,7 @@ export function UniversalRecordTemplate({
         },
         body: JSON.stringify({
           action: 'soft_delete',
-          entityType: recordType === 'companies' ? 'companies' : 
-                     recordType === 'people' ? 'people' : 
-                     'people',
+          entityType,
           entityId: record.id,
         }),
       });
@@ -4319,6 +4334,23 @@ export function UniversalRecordTemplate({
       
       console.log(`🗑️ [UniversalRecordTemplate] Deleting ${recordType} record: ${record.id}`);
       
+      // 🎯 FIX: Detect if speedrun record is actually a company
+      // Companies in speedrun have: id contains 'company', or name equals company field, or has company-specific fields
+      const getEntityType = () => {
+        if (recordType === 'companies') return 'companies';
+        if (recordType === 'people') return 'people';
+        // For speedrun: check if it's a company record
+        if (record?.id?.toLowerCase().includes('company') || 
+            (record?.name && record?.company && record.name === record.company) ||
+            (record?.hqState !== undefined) ||
+            (record?.industry !== undefined && !record?.title && !record?.firstName)) {
+          return 'companies';
+        }
+        return 'people';
+      };
+      const entityType = getEntityType();
+      console.log(`🔍 [UniversalRecordTemplate] Determined entityType: ${entityType} for recordType: ${recordType}`);
+      
       // Perform soft delete via new v1 deletion API
       const response = await fetch('/api/v1/deletion', {
         method: 'POST',
@@ -4327,9 +4359,7 @@ export function UniversalRecordTemplate({
         },
         body: JSON.stringify({
           action: 'soft_delete',
-          entityType: recordType === 'companies' ? 'companies' : 
-                     recordType === 'people' ? 'people' : 
-                     'people',
+          entityType,
           entityId: record.id,
         }),
       });
