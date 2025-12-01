@@ -336,16 +336,133 @@ export function clearStaleOpportunityCaches(): number {
 }
 
 /**
+ * AGGRESSIVE: Clear ALL opportunity caches immediately (use on page load)
+ * This prevents 404 errors from stale opportunity IDs during prefetch
+ */
+export function clearAllOpportunityCaches(): number {
+  if (typeof window === 'undefined') return 0;
+  
+  const keysToRemove: string[] = [];
+  
+  // Clear localStorage opportunity caches
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+    
+    // Target ALL opportunity-related caches
+    const isOpportunityCache = key.includes('-opportunities') || 
+                               key.includes('opportunity') ||
+                               (key.startsWith('adrata-record-') && key.toLowerCase().includes('opportunit'));
+    
+    if (isOpportunityCache) {
+      keysToRemove.push(key);
+    }
+  }
+  
+  keysToRemove.forEach(key => {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+  });
+  
+  // Also clear sessionStorage opportunity caches (these cause the 404s during prefetch)
+  const sessionKeysToRemove: string[] = [];
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
+    if (!key) continue;
+    
+    const isOpportunityCache = key.includes('opportunities') || 
+                               key.includes('opportunity');
+    
+    if (isOpportunityCache) {
+      sessionKeysToRemove.push(key);
+    }
+  }
+  
+  sessionKeysToRemove.forEach(key => {
+    try {
+      sessionStorage.removeItem(key);
+    } catch {}
+  });
+  
+  const totalCleared = keysToRemove.length + sessionKeysToRemove.length;
+  if (totalCleared > 0) {
+    console.log(`🧹 [STORAGE CLEANUP] Cleared ALL ${totalCleared} opportunity caches (localStorage: ${keysToRemove.length}, sessionStorage: ${sessionKeysToRemove.length})`);
+  }
+  
+  return totalCleared;
+}
+
+/**
+ * Clear all prefetch/record caches to prevent 404 errors
+ * Call this when navigating to a new page or on app init
+ */
+export function clearStalePrefetchCaches(): number {
+  if (typeof window === 'undefined') return 0;
+  
+  const PREFETCH_CACHE_MAX_AGE = 60 * 1000; // 1 minute for prefetch caches
+  let cleared = 0;
+  
+  // Clear stale sessionStorage caches (these are used for prefetch)
+  const sessionKeysToRemove: string[] = [];
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
+    if (!key) continue;
+    
+    // Target prefetch/cached record keys
+    if (key.startsWith('cached-') || key.includes('-prefetch-') || key.includes('-record-')) {
+      try {
+        const cached = sessionStorage.getItem(key);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const timestamp = parsed.ts || parsed.timestamp || parsed.updatedAt;
+          if (timestamp) {
+            const cacheAge = Date.now() - new Date(timestamp).getTime();
+            if (cacheAge > PREFETCH_CACHE_MAX_AGE) {
+              sessionKeysToRemove.push(key);
+            }
+          } else {
+            // No timestamp, consider stale
+            sessionKeysToRemove.push(key);
+          }
+        }
+      } catch {
+        sessionKeysToRemove.push(key);
+      }
+    }
+  }
+  
+  sessionKeysToRemove.forEach(key => {
+    try {
+      sessionStorage.removeItem(key);
+      cleared++;
+    } catch {}
+  });
+  
+  if (cleared > 0) {
+    console.log(`🧹 [STORAGE CLEANUP] Cleared ${cleared} stale prefetch caches`);
+  }
+  
+  return cleared;
+}
+
+/**
  * Initialize storage cleanup - call this when the app starts
  */
 export function initStorageCleanup(): void {
   if (typeof window === 'undefined') return;
   
+  console.log('🚀 [STORAGE CLEANUP] Initializing storage cleanup on app start...');
+  
+  // AGGRESSIVE: Clear ALL opportunity caches on startup to prevent 404 errors
+  // This is the main fix for "stale opportunity prefetch cache" 404s
+  clearAllOpportunityCaches();
+  
+  // Clear stale prefetch caches to prevent 404 errors from old record IDs
+  clearStalePrefetchCaches();
+  
   // Run proactive cleanup on initialization
   proactiveStorageCleanup();
-  
-  // Clear stale opportunity caches on startup to prevent 404s
-  clearStaleOpportunityCaches();
   
   // Set up periodic cleanup every 5 minutes
   setInterval(() => {
@@ -355,6 +472,7 @@ export function initStorageCleanup(): void {
   // Set up more frequent opportunity cache cleanup (every 2 minutes)
   setInterval(() => {
     clearStaleOpportunityCaches();
+    clearStalePrefetchCaches();
   }, 2 * 60 * 1000);
   
   // Listen for storage quota errors
@@ -365,5 +483,16 @@ export function initStorageCleanup(): void {
       emergencyCleanup();
     }
   });
+  
+  // Listen for 404 errors and clear related caches
+  window.addEventListener('error', (event) => {
+    if (event.message?.includes('404') || event.message?.includes('not found')) {
+      console.warn('🚨 [STORAGE] 404 error detected, clearing opportunity caches');
+      clearAllOpportunityCaches();
+      clearStalePrefetchCaches();
+    }
+  });
+  
+  console.log('✅ [STORAGE CLEANUP] Initialization complete');
 }
 

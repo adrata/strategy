@@ -102,12 +102,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         company: isCompanyRecord 
           ? selectedRecord.name // Company name is the company
           : (typeof selectedRecord.company === 'string' 
-              ? selectedRecord.company 
+          ? selectedRecord.company 
               : selectedRecord.company?.name || selectedRecord.companyName || null),
         companyName: isCompanyRecord
           ? selectedRecord.name // Company name is the company
           : (typeof selectedRecord.company === 'string'
-              ? selectedRecord.company
+          ? selectedRecord.company
               : selectedRecord.company?.name || selectedRecord.companyName || null),
         // For company records: map relevant company fields
         // For person records: use title/jobTitle
