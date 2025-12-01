@@ -5254,24 +5254,27 @@ export function UniversalRecordTemplate({
                       if (recordType === 'speedrun' && recordIndex !== undefined) {
                         return recordIndex; // Use the recordIndex directly (countdown format: N-1)
                       }
-                      // 🎯 FIX: For opportunities, show stage-based display (Q, D, B, P, N, C)
-                      // This matches the Kanban column indicator
+                      // 🎯 FIX: For opportunities, show column number + stage letter (1Q, 2D, etc.)
+                      // This matches the Kanban display format
                       if (recordType === 'opportunities' && record) {
-                        const OPPORTUNITY_STAGES: Record<string, string> = {
-                          'qualification': 'Q',
-                          'discovery': 'D',
-                          'build-justify': 'B',
-                          'proposal-neg': 'P',
-                          'negotiate': 'N',
-                          'closed-won': 'W',
-                          'closed-lost': 'L',
-                          'closed-lost-to-competition': 'L'
+                        const OPPORTUNITY_STAGE_INFO: Record<string, { column: number; letter: string }> = {
+                          'qualification': { column: 1, letter: 'Q' },
+                          'discovery': { column: 2, letter: 'D' },
+                          'build-justify': { column: 3, letter: 'B' },
+                          'proposal': { column: 3, letter: 'P' },
+                          'proposal-neg': { column: 3, letter: 'P' },
+                          'negotiate': { column: 4, letter: 'N' },
+                          'negotiation': { column: 4, letter: 'N' },
+                          'closed-won': { column: 5, letter: 'W' },
+                          'closed-lost': { column: 6, letter: 'L' },
+                          'closed-lost-to-competition': { column: 6, letter: 'L' }
                         };
                         const stageKey = (record.stage || record.opportunityStage || 'qualification')
                           .toLowerCase()
                           .replace(/\s+/g, '-')
                           .replace(/_/g, '-');
-                        return OPPORTUNITY_STAGES[stageKey] || stageKey.charAt(0).toUpperCase();
+                        const stageInfo = OPPORTUNITY_STAGE_INFO[stageKey] || { column: 1, letter: stageKey.charAt(0).toUpperCase() };
+                        return `${stageInfo.column}${stageInfo.letter}`;
                       }
                       return record?.rank !== undefined ? record.rank : (recordIndex !== undefined ? recordIndex : getFirstInitial());
                     })()}

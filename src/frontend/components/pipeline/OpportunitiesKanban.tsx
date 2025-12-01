@@ -263,9 +263,15 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
     };
   };
   
-  // Helper function to convert index to letter (0 -> A, 1 -> B, etc.) - matching Stacks format
+  // Helper function to convert index to letter (0 -> A, 1 -> B, ... 25 -> Z, 26 -> AA, 27 -> AB, etc.)
   const getLetterSuffix = (index: number): string => {
-    return String.fromCharCode(65 + index); // 65 is ASCII for 'A'
+    if (index < 26) {
+      return String.fromCharCode(65 + index); // A-Z
+    }
+    // For items 26+, use AA, AB, AC... format
+    const firstLetter = String.fromCharCode(65 + Math.floor((index - 26) / 26)); // A, B, C...
+    const secondLetter = String.fromCharCode(65 + ((index - 26) % 26)); // A-Z cycling
+    return firstLetter + secondLetter;
   };
 
   const handleDragStart = (e: React.DragEvent, opportunity: Opportunity) => {
