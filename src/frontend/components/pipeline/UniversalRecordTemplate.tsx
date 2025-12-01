@@ -3656,8 +3656,8 @@ export function UniversalRecordTemplate({
           }
         }));
         
-        // Also dispatch a refresh event for the sidebar counts
-        window.dispatchEvent(new CustomEvent('refresh-sidebar-counts', {
+        // Also dispatch a refresh event for the sidebar counts (useFastCounts listens for 'refresh-counts')
+        window.dispatchEvent(new CustomEvent('refresh-counts', {
           detail: { 
             section: recordType,
             action: 'delete'
@@ -4329,8 +4329,8 @@ export function UniversalRecordTemplate({
           }
         }));
         
-        // Also dispatch a refresh event for the sidebar counts
-        window.dispatchEvent(new CustomEvent('refresh-sidebar-counts', {
+        // Also dispatch a refresh event for the sidebar counts (useFastCounts listens for 'refresh-counts')
+        window.dispatchEvent(new CustomEvent('refresh-counts', {
           detail: { 
             section: recordType,
             action: 'delete'
@@ -5508,7 +5508,7 @@ export function UniversalRecordTemplate({
         onClose={() => setIsAddActionModalOpen(false)}
         onSubmit={handleActionSubmit}
         personName={record?.fullName || record?.name || 'Unknown'}
-        companyName={record?.company?.name || record?.company || ''}
+        companyName={typeof record?.company === 'object' ? record?.company?.name || '' : record?.company || ''}
         personId={['leads', 'people', 'prospects', 'speedrun'].includes(recordType) ? record?.id : undefined}
         companyId={(() => {
           // Only include companyId if it's a valid company ID (not just a string name)
@@ -5543,7 +5543,7 @@ export function UniversalRecordTemplate({
               isOpen={isAddPersonModalOpen}
               onClose={() => setIsAddPersonModalOpen(false)}
               companyId={record?.id}
-              companyName={record?.name || record?.companyName || record?.company || ''}
+              companyName={record?.name || record?.companyName || (typeof record?.company === 'object' ? record?.company?.name : record?.company) || ''}
               onPersonAdded={handlePersonAdded}
             />
           );
@@ -5869,7 +5869,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
                             <CompanySelector
-                              value={record?.company || record?.companyName || ''}
+                              value={typeof record?.company === 'object' ? record?.company?.name : (record?.company || record?.companyName || '')}
                               onChange={(company) => {
                                 // Handle company selection - this would need to be connected to form state
                                 console.log('Company selected:', company);
@@ -6109,7 +6109,7 @@ export function UniversalRecordTemplate({
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
                         <CompanySelector
-                          value={record?.company || record?.companyName || ''}
+                          value={typeof record?.company === 'object' ? record?.company?.name : (record?.company || record?.companyName || '')}
                           onChange={(company) => {
                             // Handle company selection - this would need to be connected to form state
                             console.log('Company selected:', company);
@@ -6899,7 +6899,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
             <div>
               <label className="text-xs text-muted uppercase tracking-wide">Company</label>
               <InlineEditField
-                value={record?.name || record?.company || record?.companyName || ''}
+                value={record?.name || (typeof record?.company === 'object' ? record?.company?.name : record?.company) || record?.companyName || ''}
                 field="name"
                 recordId={record?.id || ''}
                 recordType={recordType}
