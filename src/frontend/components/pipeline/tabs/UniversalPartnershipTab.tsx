@@ -46,7 +46,7 @@ export function UniversalPartnershipTab({ record, recordType, onSave }: Universa
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted">Company:</span>
-                <span className="font-medium text-foreground">{record?.company || record?.name || '-'}</span>
+                <span className="font-medium text-foreground">{typeof record?.company === 'object' ? record?.company?.name : (record?.company || record?.name || '-')}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted">Industry:</span>

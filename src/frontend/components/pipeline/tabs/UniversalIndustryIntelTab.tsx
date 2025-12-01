@@ -107,7 +107,7 @@ export function UniversalIndustryIntelTab({ record, recordType, onSave }: Univer
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
           <h4 className="font-medium text-foreground mb-3">Intelligent Talking Points</h4>
           <div className="space-y-2 text-sm text-gray-700">
-            <p>• "How is {record?.company || 'your company'} handling the recent changes in {record?.industry || 'your industry'} regulations?"</p>
+            <p>• "How is {typeof record?.company === 'object' ? record?.company?.name : (record?.company || 'your company')} handling the recent changes in {record?.industry || 'your industry'} regulations?"</p>
             <p>• "What's your biggest challenge with {record?.industry || 'industry'}-specific compliance requirements?"</p>
             <p>• "How are you managing data integration across your {record?.industry || 'industry'} systems?"</p>
             <p>• "What's driving digital transformation initiatives in your {record?.department || 'department'}?"</p>

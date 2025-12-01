@@ -63,7 +63,7 @@ export function UniversalOutreachTab({ record, recordType, onSave }: UniversalOu
             <div className="bg-background rounded border p-3 text-sm text-gray-700">
               <p className="mb-2"><strong>Subject:</strong> Quick question about {record?.industry || 'your industry'} operations</p>
               <p className="mb-2">Hi {record?.firstName || '[First Name]'},</p>
-              <p className="mb-2">I noticed {record?.company || '[Company]'} is in the {record?.industry || '[Industry]'} space. Many {record?.industry || 'industry'} leaders I work with are facing challenges with operational efficiency and data management.</p>
+              <p className="mb-2">I noticed {typeof record?.company === 'object' ? record?.company?.name : (record?.company || '[Company]')} is in the {record?.industry || '[Industry]'} space. Many {record?.industry || 'industry'} leaders I work with are facing challenges with operational efficiency and data management.</p>
               <p className="mb-2">I'd love to share how companies like yours are solving these challenges. Would you be open to a brief 15-minute conversation?</p>
               <p>Best regards,<br/>[Your Name]</p>
             </div>
@@ -72,14 +72,14 @@ export function UniversalOutreachTab({ record, recordType, onSave }: UniversalOu
           <div className="bg-panel-background border border-border rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">LinkedIn Message</h4>
             <div className="bg-background rounded border p-3 text-sm text-gray-700">
-              <p>Hi {record?.firstName || '[First Name]'}, I see you're leading {record?.department || 'operations'} at {record?.company || '[Company]'}. I work with {record?.industry || 'industry'} leaders on operational efficiency challenges. Would love to connect and share some insights that might be relevant to your role.</p>
+              <p>Hi {record?.firstName || '[First Name]'}, I see you're leading {record?.department || 'operations'} at {typeof record?.company === 'object' ? record?.company?.name : (record?.company || '[Company]')}. I work with {record?.industry || 'industry'} leaders on operational efficiency challenges. Would love to connect and share some insights that might be relevant to your role.</p>
             </div>
           </div>
 
           <div className="bg-panel-background border border-border rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Phone Script</h4>
             <div className="bg-background rounded border p-3 text-sm text-gray-700">
-              <p className="mb-2"><strong>Opening:</strong> "Hi {record?.firstName || '[First Name]'}, this is [Your Name] from [Company]. I work specifically with {record?.industry || 'industry'} companies like {record?.company || '[Company]'}."</p>
+              <p className="mb-2"><strong>Opening:</strong> "Hi {record?.firstName || '[First Name]'}, this is [Your Name] from [Company]. I work specifically with {record?.industry || 'industry'} companies like {typeof record?.company === 'object' ? record?.company?.name : (record?.company || '[Company]')}."</p>
               <p className="mb-2"><strong>Reason:</strong> "I'm calling because many {record?.jobTitle || 'professionals'} in your industry are dealing with [specific challenge]. I have some insights that might be valuable."</p>
               <p><strong>Ask:</strong> "Would you have 2 minutes for me to share what I'm seeing in the market?"</p>
             </div>
@@ -126,7 +126,7 @@ export function UniversalOutreachTab({ record, recordType, onSave }: UniversalOu
         <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
           <h4 className="font-medium text-foreground mb-3">Recommended Next Steps</h4>
           <div className="space-y-2 text-sm text-gray-700">
-            <p>1. <strong>Research:</strong> Review {record?.company || 'company'} website and recent news</p>
+            <p>1. <strong>Research:</strong> Review {typeof record?.company === 'object' ? record?.company?.name : (record?.company || 'company')} website and recent news</p>
             <p>2. <strong>LinkedIn:</strong> Connect with {record?.firstName || 'contact'} and engage with their content</p>
             <p>3. <strong>Email:</strong> Send personalized {record?.industry || 'industry'}-specific message</p>
             <p>4. <strong>Follow-up:</strong> Schedule follow-up based on response pattern</p>

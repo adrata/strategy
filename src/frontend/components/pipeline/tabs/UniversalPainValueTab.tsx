@@ -103,7 +103,7 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
           <h4 className="font-medium text-foreground mb-3">Tailored Value Proposition</h4>
           <div className="space-y-2 text-sm text-gray-700">
             <p>• <strong>Role Impact:</strong> Help {record?.jobTitle || 'this role'} streamline operations and reduce manual work</p>
-            <p>• <strong>Company Value:</strong> Enable {record?.company || 'the company'} to improve {record?.industry || 'industry'} competitiveness</p>
+            <p>• <strong>Company Value:</strong> Enable {typeof record?.company === 'object' ? record?.company?.name : (record?.company || 'the company')} to improve {record?.industry || 'industry'} competitiveness</p>
             <p>• <strong>Department Win:</strong> Position {record?.department || 'the team'} as efficiency leaders</p>
             <p>• <strong>Personal Success:</strong> Drive measurable results and career advancement</p>
           </div>
