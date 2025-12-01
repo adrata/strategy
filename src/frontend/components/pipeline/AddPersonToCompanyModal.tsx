@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { XMarkIcon, UserPlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, UserPlusIcon, MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { authFetch } from "@/platform/api-fetch";
 import { getCategoryColors } from "@/platform/config/color-palette";
 import { getCommonShortcut } from "@/platform/utils/keyboard-shortcuts";
@@ -41,7 +41,7 @@ export function AddPersonToCompanyModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Person[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showSearchSection, setShowSearchSection] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -68,23 +68,23 @@ export function AddPersonToCompanyModal({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const firstNameInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-focus search input when modal opens
+  // Auto-focus first name input when modal opens (create form is default now)
   useEffect(() => {
-    if (isOpen && searchInputRef.current) {
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
-    }
-  }, [isOpen]);
-
-  // Auto-focus first name input when creating new person
-  useEffect(() => {
-    if (showCreateForm && firstNameInputRef.current) {
+    if (isOpen && firstNameInputRef.current) {
       setTimeout(() => {
         firstNameInputRef.current?.focus();
       }, 100);
     }
-  }, [showCreateForm]);
+  }, [isOpen]);
+
+  // Auto-focus search input when search section is expanded
+  useEffect(() => {
+    if (showSearchSection && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [showSearchSection]);
 
   // Search people as user types with debouncing
   useEffect(() => {
@@ -139,10 +139,10 @@ export function AddPersonToCompanyModal({
       setIsCreating(false);
       setIsSearching(false);
       
-      // Refocus search input when company changes
+      // Focus first name input when company changes (create form is default)
       setTimeout(() => {
-        if (searchInputRef.current) {
-          searchInputRef.current.focus();
+        if (firstNameInputRef.current) {
+          firstNameInputRef.current.focus();
         }
       }, 100);
     }
@@ -361,14 +361,17 @@ export function AddPersonToCompanyModal({
       )}
 
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-background rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border">
+        <div className="flex items-center justify-between p-5 border-b border-border">
           <div className="flex items-center gap-3">
             <UserPlusIcon className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              Add Person to Company
-            </h2>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Add Person
+              </h2>
+              <p className="text-sm text-muted">to {companyName}</p>
+            </div>
           </div>
           <button
             onClick={onClose}
@@ -378,284 +381,211 @@ export function AddPersonToCompanyModal({
           </button>
         </div>
 
-        {/* Company Info */}
-        <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Company:</span>
-            <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-              {companyName}
-            </span>
-          </div>
-        </div>
-
-        <div className="p-6">
-          {!showCreateForm ? (
-            <>
-              {/* Search Section */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Search for existing person
-                </label>
-                <div className="relative">
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Type name or email to search..."
-                    className="w-full pl-4 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-              </div>
-
-              {/* Search Results */}
-              {isSearching && (
-                <div className="text-center py-4">
-                  <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <p className="mt-2 text-sm text-gray-500">Searching...</p>
-                </div>
+        <div className="p-5">
+          {/* Optional: Search for existing person (collapsed by default) */}
+          <div className="mb-5">
+            <button
+              onClick={() => setShowSearchSection(!showSearchSection)}
+              className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors w-full"
+            >
+              <MagnifyingGlassIcon className="w-4 h-4" />
+              <span>Search existing people</span>
+              {showSearchSection ? (
+                <ChevronUpIcon className="w-4 h-4 ml-auto" />
+              ) : (
+                <ChevronDownIcon className="w-4 h-4 ml-auto" />
               )}
+            </button>
+            
+            {showSearchSection && (
+              <div className="mt-3 p-4 bg-panel-background rounded-lg border border-border">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Type name or email to search..."
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
+                />
+                
+                {/* Search Results */}
+                {isSearching && (
+                  <div className="text-center py-3">
+                    <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+                    <p className="mt-1 text-xs text-muted">Searching...</p>
+                  </div>
+                )}
 
-              {searchResults.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Search Results
-                  </h3>
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                {searchResults.length > 0 && (
+                  <div className="mt-3 space-y-2 max-h-40 overflow-y-auto">
                     {searchResults.map((person) => (
                       <div
                         key={person.id}
-                        className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                        className={`p-2 border rounded-lg cursor-pointer transition-colors text-sm ${
                           selectedPerson?.id === person.id
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border hover:bg-hover'
                         }`}
                         onClick={() => handlePersonSelect(person)}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <p className="font-medium text-gray-900 dark:text-white">
-                                {person.fullName}
-                              </p>
-                              {person.company && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-                                  At {person.company.name}
-                                </span>
-                              )}
-                            </div>
+                          <div>
+                            <p className="font-medium text-foreground">{person.fullName}</p>
                             {person.email && (
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {person.email}
-                              </p>
-                            )}
-                            {person.jobTitle && (
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {person.jobTitle}
-                              </p>
-                            )}
-                            {person.company?.industry && (
-                              <p className="text-xs text-gray-400 dark:text-gray-500">
-                                {person.company.industry}
-                              </p>
+                              <p className="text-xs text-muted">{person.email}</p>
                             )}
                           </div>
                           {selectedPerson?.id === person.id && (
-                            <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
+                            <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
                               <div className="w-2 h-2 bg-white rounded-full"></div>
                             </div>
                           )}
                         </div>
                       </div>
                     ))}
+                    
+                    {selectedPerson && (
+                      <button
+                        onClick={handleLinkExistingPerson}
+                        disabled={isCreating}
+                        className="w-full mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {isCreating ? 'Linking...' : `Link ${selectedPerson.fullName}`}
+                      </button>
+                    )}
                   </div>
-                </div>
-              )}
+                )}
 
-              {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && !showCreateForm && (
-                <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
+                  <p className="mt-2 text-xs text-muted text-center">
                     No people found matching "{searchQuery}"
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 text-center mt-1">
-                    People already linked to {companyName} are not shown
-                  </p>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => {
-                    setShowCreateForm(true);
-                    setSearchQuery('');
-                    setSearchResults([]);
-                  }}
-                  className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                >
-                  Create New Person
-                </button>
-
-                {selectedPerson && (
-                  <button
-                    onClick={handleLinkExistingPerson}
-                    disabled={isCreating}
-                    className="px-6 py-2 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      backgroundColor: !isCreating ? colors.bgHover : colors.bg,
-                      color: colors.primary,
-                      borderColor: colors.border
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isCreating) {
-                        e.currentTarget.style.backgroundColor = colors.bgHover;
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isCreating) {
-                        e.currentTarget.style.backgroundColor = colors.bgHover;
-                      }
-                    }}
-                  >
-                    {isCreating ? 'Saving...' : `Complete (${getCommonShortcut('SUBMIT')})`}
-                  </button>
                 )}
               </div>
-            </>
-          ) : (
-            <>
-              {/* Create New Person Form */}
-              <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  Create New Person
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  This person will be automatically associated with {companyName}.
-                </p>
-              </div>
+            )}
+          </div>
 
-              <form onSubmit={handleCreateNewPerson} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      First Name *
-                    </label>
-                    <input
-                      ref={firstNameInputRef}
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Job Title
-                  </label>
-                  <input
-                    type="text"
-                    name="jobTitle"
-                    value={formData.jobTitle}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-
-                {/* State field - only for Notary Everyday workspace */}
-                {isNotaryEveryday && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      State
-                    </label>
-                    <input
-                      type="text"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      placeholder="e.g., California, TX"
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    />
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateForm(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-700 font-medium transition-colors"
-                  >
-                    Back to Search
-                  </button>
-
-                  <button
-                    type="submit"
-                    disabled={isCreating}
-                    className="px-6 py-2 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      backgroundColor: !isCreating ? colors.bgHover : colors.bg,
-                      color: colors.primary,
-                      borderColor: colors.border
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isCreating) {
-                        e.currentTarget.style.backgroundColor = colors.bgHover;
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isCreating) {
-                        e.currentTarget.style.backgroundColor = colors.bgHover;
-                      }
-                    }}
-                  >
-                    {isCreating ? 'Saving...' : `Complete (${getCommonShortcut('SUBMIT')})`}
-                  </button>
-                </div>
-              </form>
-            </>
+          {/* Divider */}
+          {showSearchSection && (
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex-1 h-px bg-border"></div>
+              <span className="text-xs text-muted">OR CREATE NEW</span>
+              <div className="flex-1 h-px bg-border"></div>
+            </div>
           )}
+
+          {/* Create New Person Form (shown by default) */}
+          <form onSubmit={handleCreateNewPerson} className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  First Name <span className="text-error">*</span>
+                </label>
+                <input
+                  ref={firstNameInputRef}
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="John"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground placeholder:text-muted"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Last Name <span className="text-error">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Doe"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground placeholder:text-muted"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Job Title
+              </label>
+              <input
+                type="text"
+                name="jobTitle"
+                value={formData.jobTitle}
+                onChange={handleInputChange}
+                placeholder="VP of Sales"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground placeholder:text-muted"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="john.doe@company.com"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground placeholder:text-muted"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Phone
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="+1 (555) 123-4567"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground placeholder:text-muted"
+              />
+            </div>
+
+            {/* State field - only for Notary Everyday workspace */}
+            {isNotaryEveryday && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  placeholder="e.g., California, TX"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground placeholder:text-muted"
+                />
+              </div>
+            )}
+
+            {/* Form Actions */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-muted hover:text-foreground font-medium transition-colors"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                disabled={isCreating || !formData.firstName.trim() || !formData.lastName.trim()}
+                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isCreating ? 'Creating...' : 'Add Person'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
