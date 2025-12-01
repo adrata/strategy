@@ -575,7 +575,7 @@ export function prefetchSection(workspaceId: string, userId: string, section: st
  * Pre-fetch individual record details for instant loading when user clicks
  * Pre-fetches first 10 records' full details and caches them
  * 
- * Note: Skips speedrun section as rankings change frequently and records may be deleted
+ * Note: Skips speedrun and opportunities sections as records may be stale/deleted
  */
 async function prefetchRecordDetails(
   section: string,
@@ -584,8 +584,11 @@ async function prefetchRecordDetails(
 ): Promise<void> {
   if (typeof window === 'undefined' || !records || records.length === 0) return;
   
-  // Skip prefetching for speedrun section - rankings change frequently and records may be stale/deleted
-  if (section === 'speedrun') {
+  // Skip prefetching for sections where records change frequently and may be stale/deleted
+  // - speedrun: rankings change frequently  
+  // - opportunities: opportunities are often deleted/modified, causing 404s
+  if (section === 'speedrun' || section === 'opportunities') {
+    console.log(`⏭️ [RECORD PREFETCH] Skipping prefetch for ${section} section (records change frequently)`);
     return;
   }
   
