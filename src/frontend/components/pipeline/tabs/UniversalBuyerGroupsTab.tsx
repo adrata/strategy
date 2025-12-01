@@ -1164,13 +1164,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             <p className="text-sm text-muted mb-4">
               {error}
             </p>
-            <div className="text-xs text-muted text-left bg-background p-3 rounded">
-              <strong>Debug Info:</strong><br/>
-              Record Type: {recordType}<br/>
-              Record ID: {record?.id || 'N/A'}<br/>
-              Company ID: {companyId || 'N/A'}<br/>
-              Company Name: {companyName || 'N/A'}
-            </div>
+            {process.env.NODE_ENV === 'development' && (
+              <div className="text-xs text-muted text-left bg-background p-3 rounded">
+                <strong>Debug Info:</strong><br/>
+                Record Type: {recordType}<br/>
+                Record ID: {record?.id || 'N/A'}<br/>
+                Company ID: {companyId || 'N/A'}<br/>
+                Company Name: {companyName || 'N/A'}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1185,12 +1187,14 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           <p className="text-muted mb-4">
             No people have been assigned buyer group roles for this company yet.
           </p>
-          <div className="text-xs text-muted bg-background border border-border p-3 rounded inline-block">
-            <strong>Debug Info:</strong><br/>
-            Company ID: {companyId || 'N/A'}<br/>
-            Company Name: {companyName || 'N/A'}<br/>
-            Check browser console for detailed logs
-          </div>
+          {process.env.NODE_ENV === 'development' && (
+            <div className="text-xs text-muted bg-background border border-border p-3 rounded inline-block">
+              <strong>Debug Info:</strong><br/>
+              Company ID: {companyId || 'N/A'}<br/>
+              Company Name: {companyName || 'N/A'}<br/>
+              Check browser console for detailed logs
+            </div>
+          )}
         </div>
       )}
 

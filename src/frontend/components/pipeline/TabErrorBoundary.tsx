@@ -97,16 +97,18 @@ export class TabErrorBoundary extends Component<Props, State> {
                   </p>
                 </div>
                 
-                {/* Debug Information */}
-                <div className="mt-4 p-3 bg-panel-background rounded-md">
-                  <h4 className="text-xs font-medium text-gray-700 mb-2">Debug Information:</h4>
-                  <div className="text-xs text-muted space-y-1">
-                    <div><strong>Tab:</strong> {this.props.tabName}</div>
-                    <div><strong>Record Type:</strong> {this.props.recordType || 'Unknown'}</div>
-                    <div><strong>Record ID:</strong> {this.props.recordId || 'Unknown'}</div>
-                    <div><strong>Error:</strong> {this.state.error?.message || 'Unknown error'}</div>
+                {/* Debug Information - Only shown in development */}
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="mt-4 p-3 bg-panel-background rounded-md">
+                    <h4 className="text-xs font-medium text-gray-700 mb-2">Debug Information:</h4>
+                    <div className="text-xs text-muted space-y-1">
+                      <div><strong>Tab:</strong> {this.props.tabName}</div>
+                      <div><strong>Record Type:</strong> {this.props.recordType || 'Unknown'}</div>
+                      <div><strong>Record ID:</strong> {this.props.recordId || 'Unknown'}</div>
+                      <div><strong>Error:</strong> {this.state.error?.message || 'Unknown error'}</div>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Technical Details (Collapsible) */}
                 {process['env']['NODE_ENV'] === 'development' && this['state']['error'] && (

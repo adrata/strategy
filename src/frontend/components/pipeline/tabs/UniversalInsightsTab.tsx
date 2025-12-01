@@ -33,7 +33,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
   };
 
   // Check if this is a company record (strategy API only works for person records)
-  const isCompanyRecord = record?.isCompanyLead || record?.recordType === 'company';
+  // Also detect company records that were incorrectly displayed as prospects/people
+  const isCompanyRecord = record?.isCompanyLead || 
+                          record?.recordType === 'company' ||
+                          record?.recordType === 'companies' ||
+                          // Detect company-like records without person fields
+                          (!record?.firstName && !record?.lastName && !record?.fullName && !record?.email && record?.name);
 
   // Load existing strategy data on component mount (only for person records)
   useEffect(() => {
@@ -330,10 +335,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
           </div>
         )}
         
-        {/* Strategy Summary Content */}
-        {isGeneratingStrategy ? (
+        {/* Strategy Summary Content - Only show for person records */}
+        {!isCompanyRecord && isGeneratingStrategy ? (
           <StrategySkeleton />
-        ) : (
+        ) : !isCompanyRecord ? (
           <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
             {/* Three Column Layout with Intelligence Boxes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
