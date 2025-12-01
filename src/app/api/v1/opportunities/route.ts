@@ -216,6 +216,24 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Company not found', 'NOT_FOUND', 404);
     }
 
+    // Validate ownerId - ensure the user exists in the database
+    // This prevents foreign key constraint violations
+    let validatedOwnerId: string | null = null;
+    const targetOwnerId = ownerId || context.userId;
+    
+    if (targetOwnerId) {
+      const ownerExists = await prisma.users.findUnique({
+        where: { id: targetOwnerId },
+        select: { id: true }
+      });
+      
+      if (ownerExists) {
+        validatedOwnerId = targetOwnerId;
+      } else {
+        console.warn(`[OPPORTUNITIES API] Owner not found in users table: ${targetOwnerId}, setting ownerId to null`);
+      }
+    }
+
     // Create opportunity
     const opportunity = await prisma.opportunities.create({
       data: {
@@ -227,7 +245,7 @@ export async function POST(request: NextRequest) {
         stage,
         probability: probability || 0.1,
         expectedCloseDate: expectedCloseDate ? new Date(expectedCloseDate) : null,
-        ownerId: ownerId || context.userId
+        ownerId: validatedOwnerId
       },
       include: {
         company: {
