@@ -135,6 +135,9 @@ export function CompanySelector({
     }, 300); // 300ms debounce
   }, [searchCompanies]);
 
+  // Track if user is actively searching (to avoid race condition with initial load)
+  const isActivelySearchingRef = useRef(false);
+
   // Load initial companies when dropdown opens
   const loadInitialCompanies = async () => {
     console.log('🔍 [CompanySelector] Loading initial companies');
@@ -146,10 +149,18 @@ export function CompanySelector({
         resultCount: data.data?.length || 0,
         results: data.data?.map((c: any) => ({ id: c.id, name: c.name })) || []
       });
-      setSearchResults(data.data || []);
+      // RACE CONDITION FIX: Only set initial results if user hasn't started typing
+      // This prevents the initial load from overwriting search results
+      if (!isActivelySearchingRef.current) {
+        setSearchResults(data.data || []);
+      } else {
+        console.log('🔍 [CompanySelector] Skipping initial companies - user is actively searching');
+      }
     } catch (error) {
       console.error('❌ [CompanySelector] Error loading initial companies:', error);
-      setSearchResults([]);
+      if (!isActivelySearchingRef.current) {
+        setSearchResults([]);
+      }
     } finally {
       setIsSearching(false);
     }
@@ -168,9 +179,13 @@ export function CompanySelector({
     
     // Clear results immediately when query becomes empty
     if (!query.trim()) {
+      isActivelySearchingRef.current = false; // Reset search flag
       setSearchResults([]);
       return;
     }
+    
+    // Mark that user is actively searching (prevents race condition with initial load)
+    isActivelySearchingRef.current = true;
     
     // Use debounced search
     debouncedSearch(query);
@@ -185,6 +200,7 @@ export function CompanySelector({
     setShowAddForm(false);
     setCreateError('');
     setSelectedIndex(-1);
+    isActivelySearchingRef.current = false; // Reset search flag
   };
 
   // Enhanced highlighting function with better visual hierarchy
@@ -309,6 +325,7 @@ export function CompanySelector({
     onChange(null);
     setSearchQuery('');
     setSearchResults([]);
+    isActivelySearchingRef.current = false; // Reset search flag
   };
 
   // Handle input focus
