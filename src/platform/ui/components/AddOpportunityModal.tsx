@@ -98,7 +98,8 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
           },
           body: JSON.stringify({
             name: formData.selectedCompany.name
-          })
+          }),
+          timeout: 30000 // 30 second timeout for company creation
         }, { success: false, error: 'Failed to create company' });
         
         if (!companyResult.success || !companyResult.data?.id) {
@@ -126,7 +127,8 @@ export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, secti
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(opportunityData)
+        body: JSON.stringify(opportunityData),
+        timeout: 30000 // 30 second timeout for creation (updates company and people status)
       }, { success: false, error: 'Failed to create opportunity' });
 
       console.log('Opportunity creation response:', result);
