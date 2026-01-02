@@ -92,6 +92,7 @@ function getFileSize(filePath) {
 
 /**
  * Extract text content from HTML
+ * Only extracts MAIN CONTENT after the audio player (skips header, title, subtitle)
  */
 function extractTextFromHtml(htmlPath) {
   const fullPath = path.join(STRATEGY_PATH, htmlPath);
@@ -103,8 +104,24 @@ function extractTextFromHtml(htmlPath) {
   
   const htmlContent = fs.readFileSync(fullPath, 'utf-8');
   
-  // Remove script, style, audio player, share section, newsletter
-  let text = htmlContent
+  // Try to extract content AFTER the audio player (skip header/title/subtitle)
+  // Look for readable-content div or content after audio-player
+  let text = htmlContent;
+  
+  // Method 1: Extract from readable-content or content div
+  const contentMatch = text.match(/<div[^>]*(?:class="readable-content"|id="content")[^>]*>([\s\S]*?)<\/div>\s*(?:<audio|<script|<div class="share|<div class="newsletter|$)/i);
+  if (contentMatch) {
+    text = contentMatch[1];
+  } else {
+    // Method 2: Remove everything up to and including the audio player
+    text = text.replace(/[\s\S]*?<\/div>\s*<\/div>\s*<\/div>\s*(?=<div class="(?:context|intro|content))/i, '');
+    
+    // Also try removing page-header
+    text = text.replace(/<div class="page-header[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi, '');
+  }
+  
+  // Remove remaining unwanted elements
+  text = text
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .replace(/<audio[\s\S]*?<\/audio>/gi, '')
@@ -117,10 +134,12 @@ function extractTextFromHtml(htmlPath) {
     .replace(/<header[\s\S]*?<\/header>/gi, '')
     .replace(/<a class="back-link[\s\S]*?<\/a>/gi, '');
   
-  // Extract body content
+  // If we still have full HTML, extract body content
   const bodyMatch = text.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   if (bodyMatch) {
     text = bodyMatch[1];
+    // Remove page-header from body content
+    text = text.replace(/<div class="page-header[\s\S]*?<div class="audio-player[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi, '');
   }
   
   // Clean HTML tags and entities
