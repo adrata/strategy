@@ -64,6 +64,7 @@ const DOCS = [
   'docs/articles/external/10x-revenue-club.html',
   'docs/articles/external/building-effective-agents.html',
   'docs/articles/external/claude-agent-sdk.html',
+  'docs/articles/external/competition-is-for-losers.html',
   'docs/articles/external/deep-research.html',
   'docs/articles/external/long-running-agents.html',
   'docs/articles/external/multi-agent-research.html',
