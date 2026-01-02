@@ -14,13 +14,13 @@ const path = require('path');
 const ELEVENLABS_API_KEY = '6cd0b1a66c70e335ae812cdc6e9ff5c23211f6e373de9dc5602fecb3e0842946';
 const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1';
 
-// Voice IDs - Using high-quality ElevenLabs voices from our codebase
+// Voice IDs - Using high-quality ElevenLabs voices
 const VOICES = {
-  // Niko (Narrator) - Male American, deep confident storyteller
+  // Niko (Narrator) - Warm captivating storyteller, perfect for audiobooks
   narrator: {
-    id: 'pNInz6obpgDQGcFmaJgB', // "American Confident" - Deep, confident American voice
+    id: 'JBFqnCBsd6RMkjVDRZzb', // "George" - Warm, Captivating Storyteller (British, narrative_story)
     name: 'Niko (Narrator)',
-    description: 'First-person narrator, VP of Sales'
+    description: 'First-person narrator, VP of Sales - warm storytelling voice'
   },
   
   // Marco Valenti - CEO, authoritative commanding
