@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PULL is Everywhere | The Framework That Explains Everything</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="PULL is Everywhere | The Framework That Explains Everything">
+    <meta property="og:description" content="The hidden load-bearing wall that explains why some products take off but others don't, why customers really buy things, and what 'shape' of a new thing is needed in the market.">
+    <meta property="og:image" content="../og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 64px 0 16px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h2:first-of-type { margin-top: 32px; }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--accent); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro { font-size: 20px; line-height: 1.7; margin-bottom: 32px; font-style: italic; color: var(--text-muted); }
+        
+        .pull-quote { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px 32px; margin: 32px 0; font-size: 20px; font-style: italic; color: var(--text); }
+        
+        .framework-box { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; }
+        .framework-box h3 { color: #fff; margin-top: 0; }
+        .framework-box p { color: rgba(255,255,255,0.9); }
+        .framework-box ol { margin: 16px 0 0 24px; }
+        .framework-box li { padding: 8px 0; font-weight: 500; }
+        
+        .example-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .example-card h4 { color: var(--accent); margin: 0 0 12px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+        .example-card p { margin-bottom: 0; }
+        
+        .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+        @media (max-width: 700px) { .section-grid { grid-template-columns: 1fr; } }
+        
+        .applies-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+        .applies-card h4 { color: var(--text); margin: 0 0 8px; font-size: 18px; }
+        .applies-card p { color: var(--text-muted); font-size: 15px; margin: 0; }
+        .applies-card .check { color: #16a34a; font-weight: 700; margin-bottom: 8px; }
+        
+        .faq-list { list-style: none; margin: 24px 0; }
+        .faq-list li { padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; color: var(--text-secondary); font-size: 16px; }
+        
+        ul.story-list { margin: 16px 0 24px 24px; }
+        ul.story-list li { margin-bottom: 12px; color: var(--text-secondary); }
+        
+        .share-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 32px; margin: 48px 0; text-align: center; }
+        .share-section h3 { font-size: 18px; margin-bottom: 16px; color: var(--text); }
+        .share-form { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+        .share-form input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); }
+        .share-form button { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .share-form button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">The Framework</div>
+            <h1>PULL is Everywhere</h1>
+            <div class="subtitle">The hidden load-bearing wall that explains why some products take off</div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this document</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">1.5x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
+
+    <p class="intro">"PULL is, I believe, the most important concept in startups and business. It is the hidden load-bearing wall that explains why some products take off but others don't, why customers really buy things, and what 'shape' of a new thing is needed in the market."</p>
+
+    <h2>The Questions Everyone Asks</h2>
+    
+    <p>When people are trying to understand the PULL framework, they often ask very similar questions:</p>
+    
+    <ul class="faq-list">
+        <li>Does the PULL framework apply to enterprise? B2C? Deep tech? Hardware?</li>
+        <li>Do you need PULL in order to succeed?</li>
+        <li>Does the PULL framework assume buyers are rational, logical, premeditated?</li>
+        <li>Does the PULL framework explain the emergence of new categories—like Steve Jobs and the iPhone? Henry Ford and the automobile?</li>
+        <li>What does PULL feel like in a sales call?</li>
+    </ul>
+    
+    <p>The question that matters most: <strong>"Where does the PULL framework apply and where does it not apply?"</strong></p>
+    
+    <p>This question comes up for two reasons:</p>
+    
+    <ul class="story-list">
+        <li>The primary canvas is B2B AI startups. It's reasonable to wonder if the framework applies elsewhere.</li>
+        <li>Everybody secretly hopes it does <em>not</em> apply to them. (We all wish we could just build magical products without selling and the world would shower us with adulation and money.)</li>
+    </ul>
+
+    <h2>The Framework</h2>
+    
+    <div class="framework-box">
+        <h3>The Four Conditions of PULL</h3>
+        <p>A buyer will rip your product out of your hands if these four things are true—while everybody else would be weird to buy your product:</p>
+        <ol>
+            <li><strong>The Project:</strong> There is a project on the potential customer's to-do list, which is being prioritized right now.</li>
+            <li><strong>The Urgency:</strong> There is a reason the project is urgent or unavoidable now, versus all the other projects on their infinite backlog. They would be weird if they didn't prioritize this project.</li>
+            <li><strong>The Options:</strong> They consider a list of options for accomplishing this project. These options are not just direct competitors—they might be other technologies, hiring, or a variety of other things.</li>
+            <li><strong>The Limitations:</strong> The options they consider have severe limitations that prevent them from making the kind of progress they're trying to make.</li>
+        </ol>
+    </div>
+    
+    <div class="pull-quote">
+        The whole point of a startup is to find repeatable PULL, which causes fast growth. PULL defines a buyer's unmet need—which pulls companies into existence and makes products relevant.
+    </div>
+
+    <h2>PULL Applies in Enterprise</h2>
+    
+    <p>Big enterprise deals can't be governed by something so simple as PULL, can they?</p>
+    
+    <div class="example-card">
+        <h4>The Healthcare AI Story</h4>
+        <p>A founder spent two years hitting his head against the wall trying to sell an AI executive coach. He tried selling into HR departments, coaching firms, and to individual execs with basically no traction.</p>
+        <p style="margin-top: 12px;">One day, he had a random interaction with an exec at a big healthcare company. He had no healthcare experience, but he asked a very open-ended question: <em>"What's at the top of your priority list that you need help with?"</em></p>
+        <p style="margin-top: 12px;">The exec responded that she wanted to understand what people were saying on social media about certain diseases. The founder said, "Oh, we may be able to help you with that." They scheduled a second call. He pulled together a sample PDF report. The exec liked it. They crafted a contract.</p>
+        <p style="margin-top: 12px;">Each of his early contracts—all enterprise, all healthcare, all pre-product—closed in <strong>4-6 weeks</strong>.</p>
+    </div>
+    
+    <p>This might sound like a lucky break, but almost every startup story (enterprise or not) goes like this.</p>
+    
+    <p>More examples:</p>
+    <ul class="story-list">
+        <li>A university team got their first customer—a Fortune 100 entertainment company—from random outbound pre-product. They turned around a vibe-coded demo in a few days. Good enough "fit" for the buyer's demand. Contract done in weeks.</li>
+        <li>A conference organizer sold AI governance solutions (a mix of product + service) into the biggest automotive companies to bootstrap her startup.</li>
+    </ul>
+    
+    <div class="pull-quote">
+        PULL is extremely important in enterprise. Because it's so difficult to buy things in enterprise, your champion MUST have something they REALLY NEED to accomplish. The project on their to-do list is what's going to cause them to suffer through procurement and 47 group demos.
+    </div>
+    
+    <h3>The Enterprise Nuance</h3>
+    
+    <p>In enterprise, the project on the champion's to-do list might be somewhat idiosyncratic per customer:</p>
+    
+    <ul class="story-list">
+        <li><strong>John</strong> wants to demonstrate he's using AI to get promoted, and thinks your AI tool will help him do that.</li>
+        <li><strong>Jenny</strong> has been given the unfortunate mandate to shrink her team by 30% while doing the same amount of work, and can only accomplish that with AI automation.</li>
+    </ul>
+    
+    <p>John and Jenny both buy—from slightly different roles at similar companies with somewhat different projects. This is still "repeatable PULL." It's just not perfectly identical like you might get in SMB.</p>
+    
+    <div class="example-card">
+        <h4>The McKinsey Model</h4>
+        <p>Consulting firms like McKinsey offer extremely variable services—from strategy to transformations—for different buyers in different industries. Each project fits each buyer's idiosyncratic PULL.</p>
+        <p style="margin-top: 12px;">But the reason McKinsey can consistently deliver bespoke services at scale is because they've built a "factory" that standardizes everything <em>other than</em> the idiosyncratic project content. Recruiting. Training. Scoping. Kickoffs. Slide formatting. All standardized—so they can consistently deliver on the specific thing the buyer needs.</p>
+    </div>
+
+    <h2>PULL Applies in Consumer</h2>
+    
+    <p>Using the PULL framework to identify an ICP and a need in consumer is pretty uncontroversial. The controversial part is 1:1 sales in consumer.</p>
+    
+    <p>It still applies.</p>
+    
+    <div class="section-grid">
+        <div class="applies-card">
+            <div class="check">Example</div>
+            <h4>Sarah Blakeley / Spanx</h4>
+            <p>She went and sold Spanx in malls herself in the early days. 1:1 consumer sales.</p>
+        </div>
+        <div class="applies-card">
+            <div class="check">Example</div>
+            <h4>Howard Schulz / Starbucks</h4>
+            <p>He spent all his time in the first Starbucks store unfolding it from a fancy Italian espresso bar to something that fit the American yuppie's PULL. He did this by watching where people got stuck.</p>
+        </div>
+    </div>
+    
+    <div class="example-card">
+        <h4>The Oak Room</h4>
+        <p>A small American Oak distillery just opened a tasting room. The owner sat out on the front porch listening to people walking by who were considering coming in.</p>
+        <p style="margin-top: 12px;">He heard people turn away after realizing it was just whiskey—so he changed the name from "American Oak Whiskey Tasting Room" to "The Oak Room" and started offering other drinks. Others wanted food—so he started offering small plates.</p>
+        <p style="margin-top: 12px;">Four years later: still rocking <strong>4.9 stars on Google</strong> as the top-rated spot in town.</p>
+    </div>
+    
+    <div class="pull-quote">
+        In all these cases, 1:1 sales and customer interactions do not scale. But they help you learn what actually works—what fits PULL. You can only scale something after it actually works.
+    </div>
+
+    <h2>PULL Applies in Hardware</h2>
+    
+    <p>Surely you can't sell-then-build in hardware?</p>
+    
+    <p>Kickstarter suggests otherwise. That's B2C hardware.</p>
+    
+    <p>What about B2B? Nonexistent hardware has been pre-purchased for delivery 6+ months out by serious businesses off a 1-page overview from a hardware startup team.</p>
+    
+    <p>Moving on.</p>
+
+    <h2>PULL Applies in Deep Tech (Sometimes)</h2>
+    
+    <p>There are two kinds of deep tech projects:</p>
+    
+    <div class="section-grid">
+        <div class="applies-card">
+            <h4>Fundamental Research</h4>
+            <p>A specific research goal, not yet a company. May become a company through some happy accident—they invent something in a lab that happens to fit PULL. PULL does not directly apply here.</p>
+        </div>
+        <div class="applies-card">
+            <h4>Research for Commercialization</h4>
+            <p>Common, and PULL applies. We need to find a need, and we should try to pre-sell because of the long lead time of research.</p>
+        </div>
+    </div>
+    
+    <p>Unfortunately, researchers doing commercialization-oriented work tend to go through university accelerators where they are told to <em>interview</em> customers, not to <em>sell</em>. Why waste your life as a postdoc making $0.75 per hour while building something you think is validated but actually isn't.</p>
+
+    <h2>PULL Applies in Every Moment</h2>
+    
+    <p>The concept of the "to-do list" is a foundational model for understanding human action.</p>
+    
+    <p>In each moment, you take action (or no action), and your action reflects the to-do list in your soul.</p>
+    
+    <div class="pull-quote">
+        The generality of the framework is by design: We need to understand the source code of human action in order to truly know how to make our cool little B2B AI companies take off.
+    </div>
+
+    <h2>Summary: Where PULL Applies</h2>
+    
+    <div class="section-grid">
+        <div class="applies-card">
+            <div class="check">Applies</div>
+            <h4>Enterprise</h4>
+            <p>Champions need PULL to fight through procurement. Slightly idiosyncratic projects, but repeatable patterns.</p>
+        </div>
+        <div class="applies-card">
+            <div class="check">Applies</div>
+            <h4>Consumer</h4>
+            <p>1:1 sales teaches what fits PULL. Scale comes after learning what actually works.</p>
+        </div>
+        <div class="applies-card">
+            <div class="check">Applies</div>
+            <h4>Hardware</h4>
+            <p>Pre-sell before you build. Kickstarter proved this. B2B hardware follows the same pattern.</p>
+        </div>
+        <div class="applies-card">
+            <div class="check">Applies (Sometimes)</div>
+            <h4>Deep Tech</h4>
+            <p>Commercialization-oriented research needs PULL. Fundamental research may stumble into it.</p>
+        </div>
+    </div>
+    
+    <div class="framework-box" style="margin-top: 48px;">
+        <h3>The Core Truth</h3>
+        <p>Everybody secretly hopes PULL doesn't apply to them. They wish they could just build magical products without selling.</p>
+        <p style="margin-top: 12px;">But PULL is everywhere. It's the source code of human action. It's why some products take off and others don't. It's why customers really buy things.</p>
+        <p style="margin-top: 12px; font-weight: 600;">Find the PULL. Then build.</p>
+    </div>
+
+    <div class="share-section">
+        <h3>Share</h3>
+        <form class="share-form" onsubmit="handleShare(event)">
+            <input type="email" placeholder="Their email" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Audio functionality using Web Speech API
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        let isPlaying = false;
+        let isPaused = false;
+        let currentRate = 1.5;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+
+        function getDocumentText() {
+            const content = document.body.cloneNode(true);
+            content.querySelectorAll('.audio-player, .share-section, .theme-toggle, script, style').forEach(el => el.remove());
+            let text = content.textContent || '';
+            text = text.replace(/\s+/g, ' ').trim();
+            return text.substring(0, 10000);
+        }
+
+        function toggleAudio() {
+            if (!synth) {
+                document.getElementById('audioStatus').textContent = 'Speech not supported';
+                return;
+            }
+
+            if (isPlaying && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Paused';
+                return;
+            }
+
+            if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+                return;
+            }
+
+            synth.cancel();
+            const text = getDocumentText();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentRate;
+
+            if (voices.length > 0) {
+                const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.lang.startsWith('en'));
+                if (preferred) utterance.voice = preferred;
+            }
+
+            utterance.onstart = () => {
+                isPlaying = true;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+            };
+
+            utterance.onend = () => {
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Click play to start';
+            };
+
+            utterance.onerror = (e) => {
+                if (e.error !== 'interrupted') {
+                    document.getElementById('audioStatus').textContent = 'Error: ' + e.error;
+                }
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+            };
+
+            synth.speak(utterance);
+
+            // Chrome workaround
+            setTimeout(() => {
+                if (synth.speaking && !synth.paused) {
+                    synth.pause();
+                    synth.resume();
+                }
+            }, 100);
+        }
+
+        function toggleSpeedMenu(e) {
+            e.stopPropagation();
+            document.getElementById('speedMenu').classList.toggle('open');
+        }
+
+        function setSpeed(rate) {
+            currentRate = rate;
+            document.getElementById('speedLabel').textContent = rate + 'x';
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('speedMenu').classList.remove('open');
+            
+            if (utterance) {
+                utterance.rate = rate;
+            }
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('speedMenu').classList.remove('open');
+        });
+
+        function handleShare(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input').value;
+            const subject = encodeURIComponent('PULL is Everywhere | The Framework');
+            const body = encodeURIComponent('Check out this document on the PULL framework: ' + window.location.href);
+            window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+            e.target.innerHTML = '<p style="color: var(--accent); font-weight: 600;">Sent!</p>';
+        }
+    </script>
+</body>
+</html>
+

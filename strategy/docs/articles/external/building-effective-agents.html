@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Effective Agents | Anthropic Engineering</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Building Effective Agents">
+    <meta property="og:description" content="Simple, composable patterns for LLM agents. The most successful implementations use simple patterns rather than complex frameworks.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+            --workflow-bg: #f0f4f8;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+            --workflow-bg: #151a1f;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .date { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .intro-box p { margin-bottom: 0; }
+        
+        .definition-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        @media (max-width: 600px) { .definition-grid { grid-template-columns: 1fr; } }
+        .definition-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .definition-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .definition-card p { font-size: 14px; margin-bottom: 0; }
+        
+        .workflow-diagram { background: var(--workflow-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center; }
+        .workflow-diagram h4 { font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        .workflow-flow { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .workflow-node { background: var(--accent); color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+        .workflow-node.secondary { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); }
+        .workflow-arrow { color: var(--text-muted); font-size: 20px; }
+        
+        .section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .section-card h3 { margin-top: 0; color: var(--accent); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .framework-list { display: grid; gap: 12px; margin: 24px 0; }
+        .framework-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+        .framework-item strong { color: var(--accent); }
+        
+        .workflow-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .workflow-section h3 { margin-top: 0; color: var(--text); font-size: 20px; }
+        .workflow-section h4 { font-size: 15px; font-weight: 700; color: var(--accent); margin: 20px 0 8px; }
+        
+        .example-list { background: var(--highlight-bg); border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .example-list h5 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 12px; }
+        .example-list ul { margin-bottom: 0; }
+        
+        .principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+        .principle-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .principle-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .principle-card p { font-size: 14px; margin-bottom: 0; }
+        
+        .appendix { background: var(--highlight-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .appendix h3 { color: var(--accent); margin-top: 0; }
+        
+        .credits { background: var(--card-bg); padding: 20px; border-radius: 8px; margin: 32px 0; font-size: 14px; }
+        .credits strong { color: var(--text); }
+        
+        /* Newsletter Section */
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+        .newsletter-disclaimer { font-size: 12px; color: var(--text-muted); margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Anthropic Engineering</div>
+        <h1>Building Effective Agents</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">We've worked with dozens of teams building LLM agents across industries. Consistently, the most successful implementations use simple, composable patterns rather than complex frameworks.</div>
+<div class="date">Published Dec 19, 2024</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this article</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="intro-box">
+    <p>Over the past year, we've worked with dozens of teams building large language model (LLM) agents across industries. Consistently, the most successful implementations weren't using complex frameworks or specialized libraries. Instead, they were building with simple, composable patterns.</p>
+</div>
+
+<h2>What are Agents?</h2>
+
+<p>"Agent" can be defined in several ways. Some customers define agents as fully autonomous systems that operate independently over extended periods, using various tools to accomplish complex tasks. Others use the term to describe more prescriptive implementations that follow predefined workflows. At Anthropic, we categorize all these variations as <strong>agentic systems</strong>, but draw an important architectural distinction:</p>
+
+<div class="definition-grid">
+    <div class="definition-card">
+        <h4>Workflows</h4>
+        <p>Systems where LLMs and tools are orchestrated through predefined code paths.</p>
+    </div>
+    <div class="definition-card">
+        <h4>Agents</h4>
+        <p>Systems where LLMs dynamically direct their own processes and tool usage, maintaining control over how they accomplish tasks.</p>
+    </div>
+</div>
+
+<h2>When (and When Not) to Use Agents</h2>
+
+<p>When building applications with LLMs, we recommend finding the simplest solution possible, and only increasing complexity when needed. This might mean not building agentic systems at all.</p>
+
+<div class="insight">
+    Agentic systems often trade latency and cost for better task performance. Consider when this tradeoff makes sense. For many applications, optimizing single LLM calls with retrieval and in-context examples is usually enough.
+</div>
+
+<p>When more complexity is warranted:</p>
+<ul>
+    <li><strong>Workflows</strong> offer predictability and consistency for well-defined tasks</li>
+    <li><strong>Agents</strong> are better when flexibility and model-driven decision-making are needed at scale</li>
+</ul>
+
+<h2>When and How to Use Frameworks</h2>
+
+<p>There are many frameworks that make agentic systems easier to implement:</p>
+
+<div class="framework-list">
+    <div class="framework-item"><strong>Claude Agent SDK</strong> — Official Anthropic SDK for building agents</div>
+    <div class="framework-item"><strong>Strands Agents SDK</strong> — By AWS</div>
+    <div class="framework-item"><strong>Rivet</strong> — Drag and drop GUI LLM workflow builder</div>
+    <div class="framework-item"><strong>Vellum</strong> — GUI tool for building and testing complex workflows</div>
+</div>
+
+<p>These frameworks make it easy to get started by simplifying standard low-level tasks like calling LLMs, defining and parsing tools, and chaining calls together. However, they often create extra layers of abstraction that can obscure the underlying prompts and responses, making them harder to debug.</p>
+
+<div class="insight">
+    We suggest that developers start by using LLM APIs directly: many patterns can be implemented in a few lines of code. If you do use a framework, ensure you understand the underlying code.
+</div>
+
+<h2>Building Blocks, Workflows, and Agents</h2>
+
+<h3>Building Block: The Augmented LLM</h3>
+
+<p>The basic building block of agentic systems is an LLM enhanced with augmentations such as retrieval, tools, and memory. Our current models can actively use these capabilities—generating their own search queries, selecting appropriate tools, and determining what information to retain.</p>
+
+<div class="workflow-diagram">
+    <h4>The Augmented LLM</h4>
+    <div class="workflow-flow">
+        <div class="workflow-node secondary">Retrieval</div>
+        <div class="workflow-arrow">+</div>
+        <div class="workflow-node">LLM</div>
+        <div class="workflow-arrow">+</div>
+        <div class="workflow-node secondary">Tools</div>
+        <div class="workflow-arrow">+</div>
+        <div class="workflow-node secondary">Memory</div>
+    </div>
+</div>
+
+<div class="workflow-section">
+    <h3>Workflow 1: Prompt Chaining</h3>
+    <p>Prompt chaining decomposes a task into a sequence of steps, where each LLM call processes the output of the previous one. You can add programmatic checks ("gates") on any intermediate steps to ensure that the process is still on track.</p>
+    
+    <div class="workflow-diagram">
+        <h4>Prompt Chaining Flow</h4>
+        <div class="workflow-flow">
+            <div class="workflow-node">LLM Call 1</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node secondary">Gate</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node">LLM Call 2</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node secondary">Output</div>
+        </div>
+    </div>
+    
+    <h4>When to Use</h4>
+    <p>Ideal for situations where the task can be easily and cleanly decomposed into fixed subtasks. The main goal is to trade off latency for higher accuracy.</p>
+    
+    <div class="example-list">
+        <h5>Examples</h5>
+        <ul>
+            <li>Generating marketing copy, then translating it into a different language</li>
+            <li>Writing an outline of a document, checking that it meets criteria, then writing the document</li>
+        </ul>
+    </div>
+</div>
+
+<div class="workflow-section">
+    <h3>Workflow 2: Routing</h3>
+    <p>Routing classifies an input and directs it to a specialized followup task. This workflow allows for separation of concerns, and building more specialized prompts.</p>
+    
+    <div class="workflow-diagram">
+        <h4>Routing Flow</h4>
+        <div class="workflow-flow">
+            <div class="workflow-node">Classifier</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node secondary">Route A</div>
+            <div class="workflow-node secondary">Route B</div>
+            <div class="workflow-node secondary">Route C</div>
+        </div>
+    </div>
+    
+    <h4>When to Use</h4>
+    <p>Routing works well for complex tasks where there are distinct categories that are better handled separately, and where classification can be handled accurately.</p>
+    
+    <div class="example-list">
+        <h5>Examples</h5>
+        <ul>
+            <li>Directing different types of customer service queries (general questions, refund requests, technical support) into different downstream processes</li>
+            <li>Routing easy questions to smaller, cost-efficient models like Claude Haiku 4.5 and hard questions to more capable models like Claude Sonnet 4.5</li>
+        </ul>
+    </div>
+</div>
+
+<div class="workflow-section">
+    <h3>Workflow 3: Parallelization</h3>
+    <p>LLMs can sometimes work simultaneously on a task and have their outputs aggregated programmatically. This manifests in two key variations:</p>
+    <ul>
+        <li><strong>Sectioning:</strong> Breaking a task into independent subtasks run in parallel</li>
+        <li><strong>Voting:</strong> Running the same task multiple times to get diverse outputs</li>
+    </ul>
+    
+    <div class="workflow-diagram">
+        <h4>Parallelization Flow</h4>
+        <div class="workflow-flow">
+            <div class="workflow-node secondary">Input</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node">LLM 1</div>
+            <div class="workflow-node">LLM 2</div>
+            <div class="workflow-node">LLM 3</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node secondary">Aggregate</div>
+        </div>
+    </div>
+    
+    <div class="example-list">
+        <h5>Sectioning Examples</h5>
+        <ul>
+            <li>Implementing guardrails where one model processes user queries while another screens for inappropriate content</li>
+            <li>Automating evals where each LLM evaluates a different aspect of model performance</li>
+        </ul>
+    </div>
+    
+    <div class="example-list">
+        <h5>Voting Examples</h5>
+        <ul>
+            <li>Reviewing code for vulnerabilities with several different prompts</li>
+            <li>Evaluating whether content is inappropriate with multiple prompts and vote thresholds</li>
+        </ul>
+    </div>
+</div>
+
+<div class="workflow-section">
+    <h3>Workflow 4: Orchestrator-Workers</h3>
+    <p>A central LLM dynamically breaks down tasks, delegates them to worker LLMs, and synthesizes their results.</p>
+    
+    <div class="workflow-diagram">
+        <h4>Orchestrator-Workers Flow</h4>
+        <div class="workflow-flow">
+            <div class="workflow-node">Orchestrator</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node secondary">Worker 1</div>
+            <div class="workflow-node secondary">Worker 2</div>
+            <div class="workflow-node secondary">Worker N</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node">Synthesize</div>
+        </div>
+    </div>
+    
+    <h4>When to Use</h4>
+    <p>Well-suited for complex tasks where you can't predict the subtasks needed. The key difference from parallelization is its flexibility—subtasks aren't pre-defined, but determined by the orchestrator based on the specific input.</p>
+    
+    <div class="example-list">
+        <h5>Examples</h5>
+        <ul>
+            <li>Coding products that make complex changes to multiple files each time</li>
+            <li>Search tasks that involve gathering and analyzing information from multiple sources</li>
+        </ul>
+    </div>
+</div>
+
+<div class="workflow-section">
+    <h3>Workflow 5: Evaluator-Optimizer</h3>
+    <p>One LLM call generates a response while another provides evaluation and feedback in a loop.</p>
+    
+    <div class="workflow-diagram">
+        <h4>Evaluator-Optimizer Loop</h4>
+        <div class="workflow-flow">
+            <div class="workflow-node">Generator</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node secondary">Evaluator</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-node secondary">Feedback</div>
+            <div class="workflow-arrow">↻</div>
+        </div>
+    </div>
+    
+    <h4>When to Use</h4>
+    <p>Particularly effective when we have clear evaluation criteria, and when iterative refinement provides measurable value. The two signs of good fit are: (1) LLM responses can be demonstrably improved when a human articulates feedback, and (2) the LLM can provide such feedback.</p>
+    
+    <div class="example-list">
+        <h5>Examples</h5>
+        <ul>
+            <li>Literary translation where an evaluator LLM can provide useful critiques on nuances</li>
+            <li>Complex search tasks requiring multiple rounds of searching and analysis</li>
+        </ul>
+    </div>
+</div>
+
+<h2>Autonomous Agents</h2>
+
+<p>Agents are emerging in production as LLMs mature in key capabilities—understanding complex inputs, engaging in reasoning and planning, using tools reliably, and recovering from errors.</p>
+
+<div class="workflow-diagram">
+    <h4>Autonomous Agent Loop</h4>
+    <div class="workflow-flow">
+        <div class="workflow-node secondary">Task</div>
+        <div class="workflow-arrow">→</div>
+        <div class="workflow-node">Plan</div>
+        <div class="workflow-arrow">→</div>
+        <div class="workflow-node">Execute</div>
+        <div class="workflow-arrow">→</div>
+        <div class="workflow-node secondary">Environment</div>
+        <div class="workflow-arrow">→</div>
+        <div class="workflow-node">Assess</div>
+        <div class="workflow-arrow">↻</div>
+    </div>
+</div>
+
+<p>Agents begin their work with either a command from, or interactive discussion with, the human user. Once the task is clear, agents plan and operate independently, potentially returning to the human for further information or judgement.</p>
+
+<div class="insight">
+    During execution, it's crucial for agents to gain "ground truth" from the environment at each step (such as tool call results or code execution) to assess progress. Agents can then pause for human feedback at checkpoints or when encountering blockers.
+</div>
+
+<h3>When to Use Agents</h3>
+
+<p>Agents can be used for open-ended problems where it's difficult or impossible to predict the required number of steps, and where you can't hardcode a fixed path. Agents' autonomy makes them ideal for scaling tasks in trusted environments.</p>
+
+<div class="section-card">
+    <h3>Examples from Anthropic</h3>
+    <ul>
+        <li><strong>Coding Agent:</strong> Resolves SWE-bench tasks involving edits to many files based on a task description</li>
+        <li><strong>Computer Use:</strong> Reference implementation where Claude uses a computer to accomplish tasks</li>
+    </ul>
+</div>
+
+<h2>Summary: Three Core Principles</h2>
+
+<div class="principles-grid">
+    <div class="principle-card">
+        <h4>Maintain Simplicity</h4>
+        <p>Keep your agent's design simple. Start with simple prompts and add multi-step agentic systems only when simpler solutions fall short.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Prioritize Transparency</h4>
+        <p>Explicitly show the agent's planning steps. This makes agents more reliable, maintainable, and trusted by users.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Craft Your ACI</h4>
+        <p>Carefully craft your agent-computer interface through thorough tool documentation and testing—like investing in good HCI.</p>
+    </div>
+</div>
+
+<div class="appendix">
+    <h3>Appendix 1: Agents in Practice</h3>
+    
+    <h4>A. Customer Support</h4>
+    <p>Customer support combines familiar chatbot interfaces with enhanced capabilities through tool integration:</p>
+    <ul>
+        <li>Support interactions naturally follow a conversation flow while requiring access to external information and actions</li>
+        <li>Tools can be integrated to pull customer data, order history, and knowledge base articles</li>
+        <li>Actions such as issuing refunds or updating tickets can be handled programmatically</li>
+        <li>Success can be clearly measured through user-defined resolutions</li>
+    </ul>
+    
+    <h4>B. Coding Agents</h4>
+    <p>The software development space has shown remarkable potential for LLM features:</p>
+    <ul>
+        <li>Code solutions are verifiable through automated tests</li>
+        <li>Agents can iterate on solutions using test results as feedback</li>
+        <li>The problem space is well-defined and structured</li>
+        <li>Output quality can be measured objectively</li>
+    </ul>
+</div>
+
+<div class="appendix">
+    <h3>Appendix 2: Prompt Engineering Your Tools</h3>
+    
+    <p>Tools enable Claude to interact with external services and APIs. Tool definitions should be given just as much prompt engineering attention as your overall prompts.</p>
+    
+    <h4>Suggestions for Tool Formats</h4>
+    <ul>
+        <li>Give the model enough tokens to "think" before it writes itself into a corner</li>
+        <li>Keep the format close to what the model has seen naturally occurring in text on the internet</li>
+        <li>Make sure there's no formatting "overhead" such as having to keep an accurate count of thousands of lines of code</li>
+    </ul>
+    
+    <h4>Creating Good Agent-Computer Interfaces (ACI)</h4>
+    <ul>
+        <li><strong>Put yourself in the model's shoes:</strong> Is it obvious how to use this tool based on the description and parameters?</li>
+        <li><strong>Improve parameter names:</strong> Think of this as writing a great docstring for a junior developer</li>
+        <li><strong>Test extensively:</strong> Run many example inputs to see what mistakes the model makes</li>
+        <li><strong>Poka-yoke your tools:</strong> Change the arguments so that it is harder to make mistakes</li>
+    </ul>
+    
+    <div class="insight">
+        While building our agent for SWE-bench, we actually spent more time optimizing our tools than the overall prompt. For example, we found that the model would make mistakes with tools using relative filepaths after the agent had moved out of the root directory. To fix this, we changed the tool to always require absolute filepaths—and found that the model used this method flawlessly.
+    </div>
+</div>
+
+<div class="credits">
+    <p><strong>Written by:</strong> Erik Schluntz and Barry Zhang at Anthropic</p>
+    <p>This work draws upon our experiences building agents at Anthropic and the valuable insights shared by our customers.</p>
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the latest research</h3>
+        <p class="desc">AI engineering insights, agent patterns, and practical frameworks. Delivered when they matter.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+        <p class="newsletter-disclaimer">We'll only send you the good stuff. Unsubscribe anytime.</p>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="building-effective-agents.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100); }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the next article when it\'s ready.</p>'; } }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>

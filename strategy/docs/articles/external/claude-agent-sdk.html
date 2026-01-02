@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Agents with the Claude Agent SDK | Anthropic Engineering</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Building Agents with the Claude Agent SDK">
+    <meta property="og:description" content="The Claude Agent SDK is a collection of tools that helps developers build powerful agents on top of Claude Code. Learn how to get started and best practices.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .date { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .intro-box p { margin-bottom: 0; }
+        
+        .principle-box { background: var(--highlight-bg); padding: 20px; border-radius: 8px; margin: 24px 0; }
+        .principle-box strong { color: var(--accent); }
+        
+        .agent-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 24px 0; }
+        .agent-type { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .agent-type h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .agent-type p { font-size: 14px; margin-bottom: 0; }
+        
+        .loop-diagram { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; text-align: center; }
+        .loop-steps { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
+        .loop-step { background: var(--accent); color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+        .loop-arrow { color: var(--text-muted); font-size: 20px; }
+        
+        .section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .section-card h3 { margin-top: 0; color: var(--accent); }
+        
+        pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; overflow-x: auto; margin: 16px 0; font-size: 14px; line-height: 1.6; }
+        code { font-family: 'SF Mono', Monaco, 'Consolas', monospace; color: var(--text-secondary); }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        .verification-methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+        .verification-method { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .verification-method h4 { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .verification-method p { font-size: 14px; margin-bottom: 0; }
+        
+        .questions-box { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .questions-box h3 { margin-top: 0; color: var(--accent); }
+        .questions-box ul { margin-bottom: 0; }
+        
+        .credits { background: var(--card-bg); padding: 20px; border-radius: 8px; margin: 32px 0; font-size: 14px; }
+        .credits strong { color: var(--text); }
+        
+        /* Newsletter Section */
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+        .newsletter-disclaimer { font-size: 12px; color: var(--text-muted); margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Anthropic Engineering</div>
+        <h1>Building Agents with the Claude Agent SDK</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">A collection of tools that helps developers build powerful agents on top of Claude Code. How to get started and best practices.</div>
+<div class="date">Published Sep 29, 2025</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this article</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="intro-box">
+    <p>Last year, we shared lessons in building effective agents alongside our customers. Since then, we've released Claude Code, an agentic coding solution that we originally built to support developer productivity at Anthropic. Over the past several months, Claude Code has become far more than a coding tool—it powers almost all of our major agent loops.</p>
+</div>
+
+<p>At Anthropic, we've been using Claude Code for deep research, video creation, and note-taking, among countless other non-coding applications. The agent harness that powers Claude Code can power many other types of agents, too. To reflect this broader vision, we're renaming the Claude Code SDK to the <strong>Claude Agent SDK</strong>.</p>
+
+<h2>Giving Claude a Computer</h2>
+
+<div class="principle-box">
+    <p><strong>Key Design Principle:</strong> Claude needs the same tools that programmers use every day. It needs to be able to find appropriate files in a codebase, write and edit files, lint the code, run it, debug, edit, and sometimes take these actions iteratively until the code succeeds.</p>
+</div>
+
+<p>We found that by giving Claude access to the user's computer (via the terminal), it had what it needed to write code like programmers do.</p>
+
+<p>But this has also made Claude effective at non-coding tasks. By giving it tools to run bash commands, edit files, create files and search files, Claude can read CSV files, search the web, build visualizations, interpret metrics, and do all sorts of other digital work.</p>
+
+<div class="insight">
+    <strong>The key design principle behind the Claude Agent SDK:</strong> Give your agents a computer, allowing them to work like humans do.
+</div>
+
+<h2>Creating New Types of Agents</h2>
+
+<p>We believe giving Claude a computer unlocks the ability to build agents that are more effective than before. With our SDK, developers can build:</p>
+
+<div class="agent-types">
+    <div class="agent-type">
+        <h4>Finance Agents</h4>
+        <p>Understand your portfolio and goals, help evaluate investments by accessing external APIs, storing data and running code to make calculations.</p>
+    </div>
+    <div class="agent-type">
+        <h4>Personal Assistant Agents</h4>
+        <p>Book travel, manage your calendar, schedule appointments, put together briefs by connecting to internal data sources and tracking context across applications.</p>
+    </div>
+    <div class="agent-type">
+        <h4>Customer Support Agents</h4>
+        <p>Handle high ambiguity user requests like customer service tickets, by collecting and reviewing user data, connecting to external APIs, messaging users back and escalating to humans.</p>
+    </div>
+    <div class="agent-type">
+        <h4>Deep Research Agents</h4>
+        <p>Conduct comprehensive research across large document collections by searching through file systems, analyzing and synthesizing information from multiple sources.</p>
+    </div>
+</div>
+
+<p>At its core, the SDK gives you the primitives to build agents for whatever workflow you're trying to automate.</p>
+
+<h2>Building Your Agent Loop</h2>
+
+<p>In Claude Code, Claude often operates in a specific feedback loop:</p>
+
+<div class="loop-diagram">
+    <div class="loop-steps">
+        <div class="loop-step">Gather Context</div>
+        <span class="loop-arrow">→</span>
+        <div class="loop-step">Take Action</div>
+        <span class="loop-arrow">→</span>
+        <div class="loop-step">Verify Work</div>
+        <span class="loop-arrow">→</span>
+        <div class="loop-step">Repeat</div>
+    </div>
+    <p style="margin-top: 16px; margin-bottom: 0; font-size: 14px; color: var(--text-muted);">This offers a useful way to think about other agents, and the capabilities they should be given.</p>
+</div>
+
+<h2>1. Gather Context</h2>
+
+<p>When developing an agent, you want to give it more than just a prompt: it needs to be able to fetch and update its own context.</p>
+
+<div class="section-card">
+    <h3>Agentic Search and the File System</h3>
+    <p>The file system represents information that could be pulled into the model's context. When Claude encounters large files, like logs or user-uploaded files, it will decide which way to load these into its context by using bash scripts like <code>grep</code> and <code>tail</code>.</p>
+    <p style="margin-bottom: 0;">In essence, the folder and file structure of an agent becomes a form of context engineering.</p>
+</div>
+
+<div class="section-card">
+    <h3>Semantic Search</h3>
+    <p>Semantic search is usually faster than agentic search, but less accurate, more difficult to maintain, and less transparent. It involves 'chunking' the relevant context, embedding these chunks as vectors, and then searching for concepts by querying those vectors.</p>
+    <p style="margin-bottom: 0;"><strong>Recommendation:</strong> Start with agentic search, and only add semantic search if you need faster results or more variations.</p>
+</div>
+
+<div class="section-card">
+    <h3>Subagents</h3>
+    <p>Claude Agent SDK supports subagents by default. Subagents are useful for two main reasons:</p>
+    <ul>
+        <li><strong>Parallelization:</strong> Spin up multiple subagents to work on different tasks simultaneously</li>
+        <li><strong>Context management:</strong> Subagents use their own isolated context windows, and only send relevant information back to the orchestrator</li>
+    </ul>
+    <p style="margin-bottom: 0;">This makes them ideal for tasks that require sifting through large amounts of information where most of it won't be useful.</p>
+</div>
+
+<div class="section-card">
+    <h3>Compaction</h3>
+    <p style="margin-bottom: 0;">When agents are running for long periods of time, context maintenance becomes critical. The Claude Agent SDK's compact feature automatically summarizes previous messages when the context limit approaches, so your agent won't run out of context.</p>
+</div>
+
+<h2>2. Take Action</h2>
+
+<p>Once you've gathered context, you'll want to give your agent flexible ways of taking action.</p>
+
+<div class="section-card">
+    <h3>Tools</h3>
+    <p>Tools are the primary building blocks of execution for your agent. Tools are prominent in Claude's context window, making them the primary actions Claude will consider when deciding how to complete a task.</p>
+    <div class="insight">
+        <strong>Important:</strong> Be conscious about how you design your tools to maximize context efficiency. Your tools should be primary actions you want your agent to take.
+    </div>
+</div>
+
+<div class="section-card">
+    <h3>Bash & Scripts</h3>
+    <p>Bash is useful as a general-purpose tool to allow the agent to do flexible work using a computer.</p>
+    <p>For example, Claude could write code to download a PDF, convert it to text, and search across it to find useful information:</p>
+    <pre><code>curl -o attachment.pdf "$url"
+pdftotext attachment.pdf attachment.txt
+grep -i "search term" attachment.txt</code></pre>
+</div>
+
+<div class="section-card">
+    <h3>Code Generation</h3>
+    <p>The Claude Agent SDK excels at code generation—and for good reason. Code is precise, composable, and infinitely reusable, making it an ideal output for agents that need to perform complex operations reliably.</p>
+    <p><strong>Key question:</strong> Which tasks would benefit from being expressed as code? Often, the answer unlocks significant capabilities.</p>
+    <p style="margin-bottom: 0;">For example, our recent launch of file creation in Claude.AI relies entirely on code generation. Claude writes Python scripts to create Excel spreadsheets, PowerPoint presentations, and Word documents.</p>
+</div>
+
+<div class="section-card">
+    <h3>MCPs (Model Context Protocol)</h3>
+    <p>The Model Context Protocol provides standardized integrations to external services, handling authentication and API calls automatically. You can connect your agent to tools like Slack, GitHub, Google Drive, or Asana without writing custom integration code or managing OAuth flows yourself.</p>
+    <p style="margin-bottom: 0;">The growing MCP ecosystem means you can quickly add new capabilities to your agents as pre-built integrations become available, letting you focus on agent behavior.</p>
+</div>
+
+<h2>3. Verify Your Work</h2>
+
+<p>The Claude Agent SDK finishes the agentic loop by evaluating its work. Agents that can check and improve their own output are fundamentally more reliable—they catch mistakes before they compound, self-correct when they drift, and get better as they iterate.</p>
+
+<div class="insight">
+    The key is giving Claude concrete ways to evaluate its work.
+</div>
+
+<div class="verification-methods">
+    <div class="verification-method">
+        <h4>Defining Rules</h4>
+        <p>The best form of feedback is providing clearly defined rules for an output, then explaining which rules failed and why. Code linting is an excellent form of rules-based feedback.</p>
+    </div>
+    <div class="verification-method">
+        <h4>Visual Feedback</h4>
+        <p>When using an agent for visual tasks like UI generation, visual feedback (screenshots or renders) can be helpful. Use MCP servers like Playwright to automate this.</p>
+    </div>
+    <div class="verification-method">
+        <h4>LLM as a Judge</h4>
+        <p>Have another language model "judge" the output based on fuzzy rules. This is generally less robust and has latency tradeoffs, but can help when any boost in performance is worth the cost.</p>
+    </div>
+</div>
+
+<h2>Testing and Improving Your Agent</h2>
+
+<p>After you've gone through the agent loop a few times, we recommend testing your agent and ensuring that it's well-equipped for its tasks. The best way to improve an agent is to look carefully at its output, especially the cases where it fails, and to put yourself in its shoes: <strong>does it have the right tools for the job?</strong></p>
+
+<div class="questions-box">
+    <h3>Questions to Ask When Evaluating</h3>
+    <ul>
+        <li><strong>If your agent misunderstands the task,</strong> it might be missing key information. Can you alter the structure of your search APIs to make it easier to find what it needs to know?</li>
+        <li><strong>If your agent fails at a task repeatedly,</strong> can you add a formal rule in your tool calls to identify and fix the failure?</li>
+        <li><strong>If your agent can't fix its errors,</strong> can you give it more useful or creative tools to approach the problem differently?</li>
+        <li><strong>If your agent's performance varies as you add features,</strong> build a representative test set for programmatic evaluations (or evals) based on customer usage.</li>
+    </ul>
+</div>
+
+<h2>Getting Started</h2>
+
+<p>The Claude Agent SDK makes it easier to build autonomous agents by giving Claude access to a computer where it can write files, run commands, and iterate on its work.</p>
+
+<p>With the agent loop in mind (gathering context, taking action, and verifying work), you can build reliable agents that are easy to deploy and iterate on.</p>
+
+<div class="credits">
+    <p><strong>Written by:</strong> Thariq Shihipar at Anthropic</p>
+    <p><strong>With notes and editing from:</strong> Molly Vorwerck, Suzanne Wang, Alex Isken, Cat Wu, Keir Bradwell, Alexander Bricken & Ashwin Bhat.</p>
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the latest research</h3>
+        <p class="desc">AI engineering insights, agent patterns, and practical frameworks. Delivered when they matter.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+        <p class="newsletter-disclaimer">We'll only send you the good stuff. Unsubscribe anytime.</p>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="claude-agent-sdk.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100); }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the next article when it\'s ready.</p>'; } }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>
+
+

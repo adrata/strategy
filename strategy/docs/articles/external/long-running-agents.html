@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effective Harnesses for Long-Running Agents | Anthropic Engineering</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Effective Harnesses for Long-Running Agents">
+    <meta property="og:description" content="Agents still face challenges working across many context windows. We looked to human engineers for inspiration in creating a more effective harness for long-running agents.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .date { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .intro-box p { margin-bottom: 0; }
+        
+        .analogy { background: var(--highlight-bg); padding: 20px; border-radius: 8px; margin: 24px 0; font-style: italic; }
+        
+        .solution-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .solution-box h3 { margin-top: 0; color: var(--accent); }
+        
+        pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; overflow-x: auto; margin: 24px 0; font-size: 14px; line-height: 1.6; }
+        code { font-family: 'SF Mono', Monaco, 'Consolas', monospace; color: var(--text-secondary); }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        .failure-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        .failure-table th { background: var(--card-bg); color: var(--text-secondary); padding: 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+        .failure-table td { padding: 12px; border: 1px solid var(--border); vertical-align: top; background: var(--bg); color: var(--text-secondary); }
+        
+        .agent-flow { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 24px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.8; }
+        .agent-flow .label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block; }
+        
+        .screenshot-note { background: var(--card-bg); padding: 16px; border-radius: 8px; margin: 24px 0; font-size: 14px; font-style: italic; color: var(--text-muted); text-align: center; }
+        
+        .future-box { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .future-box h2 { margin-top: 0; padding-top: 0; border-top: none; }
+        
+        .credits { background: var(--card-bg); padding: 20px; border-radius: 8px; margin: 32px 0; font-size: 14px; }
+        .credits strong { color: var(--text); }
+        
+        /* Newsletter Section */
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+        .newsletter-disclaimer { font-size: 12px; color: var(--text-muted); margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Anthropic Engineering</div>
+        <h1>Effective Harnesses for Long-Running Agents</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">Agents still face challenges working across many context windows. We looked to human engineers for inspiration.</div>
+<div class="date">Published Nov 26, 2025</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this article</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="intro-box">
+    <p>As AI agents become more capable, developers are increasingly asking them to take on complex tasks requiring work that spans hours, or even days. However, getting agents to make consistent progress across multiple context windows remains an open problem.</p>
+</div>
+
+<div class="analogy">
+    <p>The core challenge: agents must work in discrete sessions, and each new session begins with no memory of what came before. Imagine a software project staffed by engineers working in shifts, where each new engineer arrives with no memory of what happened on the previous shift.</p>
+</div>
+
+<p>Because context windows are limited, and because most complex projects cannot be completed within a single window, agents need a way to bridge the gap between coding sessions.</p>
+
+<div class="solution-box">
+    <h3>The Two-Fold Solution</h3>
+    <p>We developed a two-fold solution to enable the Claude Agent SDK to work effectively across many context windows:</p>
+    <ol>
+        <li><strong>Initializer Agent:</strong> Sets up the environment on the first run</li>
+        <li><strong>Coding Agent:</strong> Makes incremental progress in every session, while leaving clear artifacts for the next session</li>
+    </ol>
+</div>
+
+<h2>The Long-Running Agent Problem</h2>
+
+<p>The Claude Agent SDK is a powerful, general-purpose agent harness adept at coding, as well as other tasks that require the model to use tools to gather context, plan, and execute. It has context management capabilities such as compaction, which enables an agent to work on a task without exhausting the context window.</p>
+
+<p>However, compaction isn't sufficient. Out of the box, even a frontier coding model like Opus 4.5 running on the Claude Agent SDK in a loop across multiple context windows will fall short of building a production-quality web app if it's only given a high-level prompt, such as "build a clone of claude.ai."</p>
+
+<h3>Failure Pattern 1: One-Shotting</h3>
+<p>The agent tended to try to do too much at once, essentially attempting to one-shot the app. Often, this led to the model running out of context in the middle of its implementation, leaving the next session to start with a feature half-implemented and undocumented. The agent would then have to guess at what had happened, and spend substantial time trying to get the basic app working again.</p>
+
+<h3>Failure Pattern 2: Premature Completion</h3>
+<p>A second failure mode would often occur later in a project. After some features had already been built, a later agent instance would look around, see that progress had been made, and declare the job done.</p>
+
+<div class="insight">
+    <strong>The Key Insight:</strong> Finding a way for agents to quickly understand the state of work when starting with a fresh context window. Inspiration came from knowing what effective software engineers do every day.
+</div>
+
+<h2>Environment Management</h2>
+
+<p>The solution uses a different prompt for the very first context window. This "different prompt" requests that the initializer agent set up the environment with all the necessary context that future coding agents will need to work effectively.</p>
+
+<h3>Feature List</h3>
+
+<p>To address the problem of the agent one-shotting an app or prematurely considering the project complete, we prompted the initializer agent to write a comprehensive file of feature requirements expanding on the user's initial prompt. In the claude.ai clone example, this meant over 200 features:</p>
+
+<pre><code>{
+    "category": "functional",
+    "description": "New chat button creates a fresh conversation",
+    "steps": [
+      "Navigate to main interface",
+      "Click the 'New Chat' button",
+      "Verify a new conversation is created",
+      "Check that chat area shows welcome state",
+      "Verify conversation appears in sidebar"
+    ],
+    "passes": false
+}</code></pre>
+
+<p>We prompt coding agents to edit this file only by changing the status of a <code>passes</code> field, and we use strongly-worded instructions like "It is unacceptable to remove or edit tests because this could lead to missing or buggy functionality."</p>
+
+<div class="insight">
+    After some experimentation, we landed on using JSON for this, as the model is less likely to inappropriately change or overwrite JSON files compared to Markdown files.
+</div>
+
+<h3>Incremental Progress</h3>
+
+<p>Given this initial environment scaffolding, the next iteration of the coding agent was then asked to work on only one feature at a time. This incremental approach turned out to be critical to addressing the agent's tendency to do too much at once.</p>
+
+<p>Once working incrementally, it's still essential that the model leaves the environment in a clean state after making a code change. The best way to elicit this behavior was to ask the model to commit its progress to git with descriptive commit messages and to write summaries of its progress in a progress file.</p>
+
+<h3>Testing</h3>
+
+<p>One final major failure mode: Claude's tendency to mark a feature as complete without proper testing. Absent explicit prompting, Claude tended to make code changes, and even do testing with unit tests or curl commands, but would fail to recognize that the feature didn't work end-to-end.</p>
+
+<div class="screenshot-note">
+    Screenshots taken by Claude through the Puppeteer MCP server as it tested the claude.ai clone show the agent verifying features visually.
+</div>
+
+<p>Providing Claude with browser automation tools dramatically improved performance, as the agent was able to identify and fix bugs that weren't obvious from the code alone.</p>
+
+<h2>Getting Up to Speed</h2>
+
+<p>Every coding agent is prompted to run through a series of steps to get its bearings:</p>
+
+<ol>
+    <li>Run <code>pwd</code> to see the directory you're working in</li>
+    <li>Read the git logs and progress files to get up to speed on what was recently worked on</li>
+    <li>Read the features list file and choose the highest-priority feature that's not yet done</li>
+</ol>
+
+<p>This approach saves Claude some tokens in every session since it doesn't have to figure out how to test the code. It also helps to ask the initializer agent to write an <code>init.sh</code> script that can run the development server.</p>
+
+<div class="agent-flow">
+    <span class="label">Typical Session Start</span>
+    [Assistant] I'll start by getting my bearings and understanding the current state of the project.<br>
+    [Tool Use] &lt;bash - pwd&gt;<br>
+    [Tool Use] &lt;read - claude-progress.txt&gt;<br>
+    [Tool Use] &lt;read - feature_list.json&gt;<br>
+    [Assistant] Let me check the git log to see recent work.<br>
+    [Tool Use] &lt;bash - git log --oneline -20&gt;<br>
+    [Assistant] Now let me check if there's an init.sh script to restart the servers.<br>
+    &lt;Starts the development server&gt;<br>
+    [Assistant] Excellent! Now let me navigate to the application and verify fundamental features are still working.<br>
+    &lt;Tests basic functionality&gt;<br>
+    [Assistant] The core chat features are all functioning correctly. Now let me review what needs to be implemented next.<br>
+    &lt;Starts work on a new feature&gt;
+</div>
+
+<h2>Agent Failure Modes and Solutions</h2>
+
+<table class="failure-table">
+    <tr>
+        <th>Problem</th>
+        <th>Initializer Agent Behavior</th>
+        <th>Coding Agent Behavior</th>
+    </tr>
+    <tr>
+        <td><strong>Claude declares victory too early</strong></td>
+        <td>Set up a feature list file with structured JSON descriptions</td>
+        <td>Read the feature list at session start. Choose a single feature to work on.</td>
+    </tr>
+    <tr>
+        <td><strong>Leaves environment with bugs or undocumented progress</strong></td>
+        <td>Initialize git repo and progress notes file</td>
+        <td>Start by reading progress notes and git logs. End by committing and updating progress.</td>
+    </tr>
+    <tr>
+        <td><strong>Marks features as done prematurely</strong></td>
+        <td>Set up a feature list file with pass/fail status</td>
+        <td>Self-verify all features. Only mark as "passing" after careful testing.</td>
+    </tr>
+    <tr>
+        <td><strong>Has to figure out how to run the app</strong></td>
+        <td>Write an init.sh script for the development server</td>
+        <td>Start the session by reading init.sh.</td>
+    </tr>
+</table>
+
+<div class="future-box">
+    <h2>Future Work</h2>
+    <p>This research demonstrates one possible set of solutions for enabling agents to make incremental progress across many context windows. However, there remain open questions.</p>
+    <ul>
+        <li><strong>Multi-agent architecture:</strong> It's unclear whether a single, general-purpose coding agent performs best, or if specialized agents (testing agent, QA agent, code cleanup agent) could do better at sub-tasks.</li>
+        <li><strong>Generalization:</strong> This demo is optimized for full-stack web app development. A future direction is to generalize these findings to other fields like scientific research or financial modeling.</li>
+    </ul>
+</div>
+
+<div class="credits">
+    <p><strong>Written by:</strong> Justin Young at Anthropic</p>
+    <p><strong>Thanks to:</strong> David Hershey, Prithvi Rajasakeran, Jeremy Hadfield, Naia Bouscal, Michael Tingley, Jesse Mu, Jake Eaton, Marius Buleandara, Maggie Vo, Pedram Navid, Nadine Yasser, and Alex Notov.</p>
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the latest research</h3>
+        <p class="desc">AI engineering insights, agent patterns, and practical frameworks. Delivered when they matter.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+        <p class="newsletter-disclaimer">We'll only send you the good stuff. Unsubscribe anytime.</p>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="long-running-agents.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100); }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the next article when it\'s ready.</p>'; } }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>
+
+

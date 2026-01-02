@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Framework Library | 40+ Actionable Frameworks for 2026</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <meta property="og:title" content="Framework Library | 40+ Actionable Frameworks">
+    <meta property="og:description" content="LinkedIn Hook → Story → Offer → Framework. Complete playbook of frameworks VP Sales can use today.">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --table-header: #f5f5f5;
+            --table-even: #f9f9f9;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --table-header: #1a1a1a;
+            --table-even: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        /* Custom Speed Dropdown */
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 64px 0 16px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--accent); }
+        h4 { font-size: 16px; font-weight: 700; margin: 24px 0 8px; color: var(--text-muted); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .distribution-model { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); color: #fff; padding: 24px; border-radius: 8px; margin: 24px 0; }
+        .distribution-model h3 { color: #ff6b35; margin-top: 0; }
+        
+        .jtbd-section { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px; margin: 24px 0; }
+        .jtbd-section h3 { color: var(--accent); margin-top: 0; }
+        .jtbd-list { list-style: none; margin-left: 0; }
+        .jtbd-list li { padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+        .jtbd-list li:last-child { border-bottom: none; }
+        
+        .category-intro { background: var(--card-bg); padding: 16px 20px; border-radius: 8px; margin: 24px 0; font-size: 15px; }
+        .category-intro strong { color: var(--accent); }
+        
+        .framework-card { background: var(--bg); border: 2px solid var(--accent); border-radius: 8px; padding: 24px; margin: 32px 0; }
+        .framework-name { font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+        .framework-solves { font-size: 15px; color: var(--text-muted); margin-bottom: 20px; font-style: italic; }
+        
+        .linkedin-hook { background: var(--card-bg); border-left: 4px solid #0077b5; padding: 16px 20px; margin: 20px 0; font-size: 15px; line-height: 1.7; color: var(--text-secondary); }
+        .linkedin-label { font-size: 11px; font-weight: 700; color: #0077b5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        
+        .framework-content { background: var(--card-bg); padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .framework-content h4 { color: var(--accent); margin-top: 0; margin-bottom: 16px; }
+        
+        .cta-tease { background: var(--highlight-bg); padding: 16px 20px; border-radius: 8px; margin-top: 20px; font-size: 14px; }
+        .cta-tease strong { color: var(--accent); }
+        
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        th { background: var(--table-header); color: var(--text-secondary); padding: 12px 16px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+        td { padding: 12px 16px; border: 1px solid var(--border); vertical-align: top; background: var(--bg); color: var(--text-secondary); }
+        tr:nth-child(even) td { background: var(--table-even); }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .scoring { background: var(--card-bg); padding: 16px 20px; border-radius: 6px; margin: 16px 0; }
+        .scoring strong { color: var(--accent); }
+        
+        .matrix-box { background: var(--bg); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin: 16px 0; }
+        .matrix-box h4 { margin-top: 0; color: var(--accent); }
+        
+        .quadrant { background: var(--card-bg); padding: 12px 16px; border-radius: 6px; margin: 8px 0; border-left: 3px solid var(--accent); }
+        .quadrant strong { color: var(--text-secondary); }
+        
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 16px 20px; margin: 16px 0; color: #333; }
+        body.dark-mode .warning { background: #332b00; color: #ffc107; }
+        
+        .strategy-section { background: var(--highlight-bg); border: 2px solid var(--accent); padding: 32px; border-radius: 12px; margin: 48px 0; }
+        .strategy-section h3 { color: var(--accent); margin-top: 0; }
+        
+        .end-section { text-align: center; padding: 48px 0; border-top: 1px solid var(--border); margin-top: 48px; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">VP Sales</div>
+        <h1>Framework Library</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">40+ Actionable Frameworks for 2026</div>
+<p style="font-size: 18px; color: var(--text-muted);">LinkedIn Hook → Story → Offer → Framework</p>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this document</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="distribution-model">
+    <h3>THE DISTRIBUTION MODEL</h3>
+    <p style="margin-bottom: 0;">
+        <strong>LINKEDIN POST:</strong> Hook that creates curiosity about the framework<br>
+        → <strong>STORY:</strong> Brief context about why this matters<br>
+        → <strong>OFFER:</strong> "Get the framework" (link to website)<br>
+        → <strong>FRAMEWORK:</strong> Lives on website, gives 80% value, creates PULL for deeper help
+    </p>
+</div>
+
+<div class="jtbd-section">
+    <h3>VP SALES JOBS-TO-BE-DONE: 2026</h3>
+    <p>Based on the PULL framework: AI is unblocking demand, not creating it. Here's what VP Sales are actually trying to accomplish:</p>
+    <ul class="jtbd-list">
+        <li><strong>Hit number with smaller teams</strong> (AI SDRs replacing headcount)</li>
+        <li><strong>Compete against "we'll build it with AI"</strong> (buyers think they don't need vendors)</li>
+        <li><strong>Forecast accurately in chaos</strong> (AI changing buyer behavior)</li>
+        <li><strong>Manage AI-augmented teams</strong> (some reps thriving, some struggling)</li>
+        <li><strong>Prove value of human sales</strong> (boards asking: do we need salespeople?)</li>
+        <li><strong>See pipeline reality</strong> (still the core issue)</li>
+        <li><strong>Move faster</strong> (if AI companies go 0-$20M in months, boards expect speed)</li>
+        <li><strong>Cut through AI SDR noise</strong> (everyone's inbox flooded with AI spam)</li>
+    </ul>
+</div>
+
+<h2>Category 1: Pipeline & Forecasting</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "I need to see what's real vs. what's reported so I can forecast accurately and focus resources."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 1: The 72-Hour Slip Test</div>
+    <div class="framework-solves">Identify which deals will slip before they do</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "I can tell within 72 hours whether your 'committed' deal will slip.<br><br>
+        Not because I'm psychic.<br><br>
+        Because there are 3 signals that predict slippage with 87% accuracy—and most VP Sales don't know to look for them.<br><br>
+        I've put the 3 signals into a simple test you can run on any deal in 5 minutes.<br><br>
+        [Link: Get the 72-Hour Slip Test]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 3 SIGNALS</h4>
+        <p><strong>Signal 1: Champion Availability</strong></p>
+        <ul>
+            <li>Can you get a meeting with your champion in the next 72 hours?</li>
+            <li>If NO → 73% slip rate. Champions who are "too busy" are often avoiding.</li>
+            <li>Action: Request a 15-minute check-in. Silence = signal.</li>
+        </ul>
+        
+        <p><strong>Signal 2: Next Step Specificity</strong></p>
+        <ul>
+            <li>Is the next step a specific action with a specific person on a specific date?</li>
+            <li>If VAGUE → 68% slip rate. "We'll reconnect next week" = no next step.</li>
+            <li>Action: Get calendar invite for specific next action or it's not real.</li>
+        </ul>
+        
+        <p><strong>Signal 3: Decision Maker Engagement</strong></p>
+        <ul>
+            <li>Has the economic buyer participated in the last 14 days?</li>
+            <li>If NO → 81% slip rate. Deals close when decision-makers are engaged.</li>
+            <li>Action: If you can't get to the EB, your champion can't either.</li>
+        </ul>
+        
+        <div class="scoring">
+            <strong>SCORING:</strong> 3/3 = Committed • 2/3 = At Risk • 1/3 = Will Slip • 0/3 = Already Dead
+        </div>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "Want to run this test across your entire pipeline in 10 minutes? We built a diagnostic that scores every deal automatically. [Book a walkthrough]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 2: The Zombie Deal Detector</div>
+    <div class="framework-solves">Clear dead weight from pipeline so forecasts are real</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "43% of your pipeline is already dead.<br><br>
+        You just don't know it yet.<br><br>
+        I call them 'zombie deals'—they look alive in Salesforce, but they'll never close.<br><br>
+        Here are 5 questions that kill zombies instantly:<br><br>
+        [Link: Get the Zombie Deal Detector]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5 ZOMBIE-KILLING QUESTIONS</h4>
+        <ol>
+            <li><strong>When was your last 2-way communication?</strong> (Not your email TO them—their response back)<br>→ 21+ days = Zombie</li>
+            <li><strong>Has the deal stage changed in 30 days?</strong><br>→ Same stage 30+ days = Zombie</li>
+            <li><strong>Do you have the decision-maker's mobile number?</strong><br>→ No = You don't have a real relationship = Likely Zombie</li>
+            <li><strong>Can you explain WHY they would buy NOW vs. next quarter?</strong><br>→ If you can't articulate urgency = Zombie</li>
+            <li><strong>If you called your champion right now, would they answer?</strong><br>→ If you hesitated = You know the answer = Zombie</li>
+        </ol>
+        <p><strong>ACTION:</strong> Run these 5 questions on every deal in your pipeline. Kill every zombie. Watch your forecast accuracy jump 20+ points.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We built an automated zombie detector that scores every deal daily. See your pipeline's true health in 60 seconds. [Get your score]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 3: The Forecast Confidence Grid</div>
+    <div class="framework-solves">Present forecasts to board with confidence, not hope</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Your forecast has two problems:<br>
+        1. Some deals are probable but risky<br>
+        2. Some deals are improbable but safe<br><br>
+        You're treating them the same.<br><br>
+        Here's a 2x2 grid that changed how I present forecasts to boards—and why they stopped second-guessing me.<br><br>
+        [Link: Get the Forecast Confidence Grid]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 2x2 GRID</h4>
+        <p><strong>AXIS 1: PROBABILITY</strong> (Will it close?)<br>Based on: Stage, champion strength, buyer signals</p>
+        <p><strong>AXIS 2: PREDICTABILITY</strong> (Do we know when?)<br>Based on: Decision timeline clarity, mutual action plan, stakeholder alignment</p>
+        
+        <div class="quadrant"><strong>[HIGH PROB + HIGH PREDICT] = "BANKABLE"</strong><br>→ Include 100% in forecast. These are real.</div>
+        <div class="quadrant"><strong>[HIGH PROB + LOW PREDICT] = "WILDCARDS"</strong><br>→ Include 50% in forecast. Good deals, unclear timing.</div>
+        <div class="quadrant"><strong>[LOW PROB + HIGH PREDICT] = "LONG SHOTS"</strong><br>→ Include 25% in forecast. Know when, but might not happen.</div>
+        <div class="quadrant"><strong>[LOW PROB + LOW PREDICT] = "PIPE DREAMS"</strong><br>→ Include 0% in forecast. Be honest.</div>
+        
+        <p><strong>BOARD LANGUAGE:</strong> "We have $2.4M bankable, $800K in wildcards that could land Q2 or Q3, and $1.2M in long shots we're working but not counting on."</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can auto-categorize every deal into this grid based on buyer signals you're not seeing in Salesforce. [See how]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 4: The Pipeline Exposure Score</div>
+    <div class="framework-solves">Single number that shows pipeline health</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "What's your Pipeline Exposure Score?<br><br>
+        Most VP Sales: 'My what?'<br><br>
+        It's the single number that tells you how much of your pipeline is at risk of slipping—before it slips.<br><br>
+        I've seen scores range from 12% (healthy) to 67% (oh no).<br><br>
+        Here's how to calculate yours in 10 minutes:<br><br>
+        [Link: Calculate Your Pipeline Exposure Score]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE CALCULATION</h4>
+        <p><strong>PIPELINE EXPOSURE SCORE</strong> = % of pipeline with 2+ risk factors</p>
+        
+        <p><strong>RISK FACTORS</strong> (each deal can have multiple):</p>
+        <ul>
+            <li>□ Single-threaded (only 1 contact engaged)</li>
+            <li>□ No next step scheduled in next 14 days</li>
+            <li>□ Champion hasn't responded in 10+ days</li>
+            <li>□ No economic buyer engagement ever</li>
+            <li>□ Close date pushed more than once</li>
+            <li>□ Competitor actively engaged</li>
+            <li>□ Budget not confirmed</li>
+            <li>□ Timeline driven by seller, not buyer</li>
+        </ul>
+        
+        <div class="scoring">
+            <strong>BENCHMARKS:</strong> 0-20% = Healthy • 21-35% = Caution • 36-50% = Trouble • 51%+ = Emergency
+        </div>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "Want to know your exact exposure score with AI-detected risk factors you can't see manually? [Get your free score]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 5: The Stakeholder Shadow Map</div>
+    <div class="framework-solves">Find hidden decision-makers blocking deals</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "The person blocking your deal is someone you've never met.<br><br>
+        I call them 'Shadow Stakeholders'—people with influence who never show up in meetings.<br><br>
+        They kill 47% of late-stage deals.<br><br>
+        Here's how to find them before they find you:<br><br>
+        [Link: Get the Shadow Stakeholder Map]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 6 SHADOW STAKEHOLDER ARCHETYPES</h4>
+        <ol>
+            <li><strong>THE BUDGET GUARDIAN</strong><br>Who: Finance/Procurement person you haven't met<br>Find them: Ask "Who signs off on purchases of this size?"</li>
+            <li><strong>THE TECHNICAL GATEKEEPER</strong><br>Who: IT Security, Compliance, or Architect<br>Find them: Ask "Who needs to approve the technical implementation?"</li>
+            <li><strong>THE PREVIOUS VICTIM</strong><br>Who: Person who got burned by similar solution before<br>Find them: Ask "Has your team tried something like this before? Who led that?"</li>
+            <li><strong>THE SILENT EXEC</strong><br>Who: Executive sponsor of competing priority<br>Find them: Ask "What other initiatives are competing for the same resources?"</li>
+            <li><strong>THE END USER INFLUENCER</strong><br>Who: Person whose team will actually use it<br>Find them: Ask "Who would complain loudest if this doesn't work?"</li>
+            <li><strong>THE POLITICAL RIVAL</strong><br>Who: Peer of your champion who wants them to fail<br>Find them: Ask (carefully) "Who else has opinions about this project?"</li>
+        </ol>
+        <p><strong>ACTION:</strong> For every deal >$50K, identify all 6 before you get to proposal stage.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We use AI to detect shadow stakeholders from email patterns and meeting data—people you've never met but who are influencing your deal. [See who's hiding]"
+    </div>
+</div>
+
+<h2>Category 2: AI Strategy for Sales</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "I need to figure out how AI changes my sales org—what to adopt, what to avoid, and how to compete."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 6: The AI SDR Decision Matrix</div>
+    <div class="framework-solves">Decide whether to use AI SDRs, human SDRs, or hybrid</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Everyone's asking: Should I replace my SDRs with AI?<br><br>
+        Wrong question.<br><br>
+        The right question: What kind of outbound motion does my market actually respond to?<br><br>
+        Here's a decision matrix I built after studying 12 companies who tried AI SDRs—6 succeeded, 6 failed.<br><br>
+        The difference wasn't the AI. It was the market.<br><br>
+        [Link: Get the AI SDR Decision Matrix]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE MATRIX</h4>
+        <p><strong>AXIS 1: DEAL COMPLEXITY</strong><br>Low: &lt;$10K ACV, &lt;30 day cycle, 1-2 stakeholders<br>High: &gt;$50K ACV, 90+ day cycle, 3+ stakeholders</p>
+        <p><strong>AXIS 2: BUYER SOPHISTICATION</strong><br>Low: Not technical, limited vendor experience<br>High: Experts in their domain, evaluate many vendors</p>
+        
+        <div class="quadrant"><strong>[LOW COMPLEXITY + LOW SOPHISTICATION] = FULL AI SDR</strong><br>→ AI can handle the entire outbound motion. Humans for closing only.<br>→ Example: SMB SaaS, simple tools</div>
+        <div class="quadrant"><strong>[LOW COMPLEXITY + HIGH SOPHISTICATION] = AI + HUMAN HYBRID</strong><br>→ AI for volume, humans for personalization layer.<br>→ Example: Developer tools, martech</div>
+        <div class="quadrant"><strong>[HIGH COMPLEXITY + LOW SOPHISTICATION] = HUMAN-FIRST WITH AI ASSIST</strong><br>→ Humans lead, AI helps with research and follow-up.<br>→ Example: Healthcare, traditional industries going digital</div>
+        <div class="quadrant"><strong>[HIGH COMPLEXITY + HIGH SOPHISTICATION] = HUMAN ONLY</strong><br>→ AI outbound will actively hurt you. These buyers hate spam.<br>→ Example: Enterprise software to tech companies</div>
+        
+        <div class="warning">
+            <strong>WARNING:</strong> High-sophistication buyers can detect AI outbound instantly. It damages your brand.
+        </div>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "Not sure where you fall? We analyze your win data to place you on the matrix and recommend the right motion. [Get your analysis]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 7: The "We'll Just Use ChatGPT" Objection Script</div>
+    <div class="framework-solves">Handle buyers who think they can build it themselves with AI</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Heard this objection yet?<br><br>
+        'We're just going to build this internally with ChatGPT.'<br><br>
+        I'm hearing it 3x more than last year.<br><br>
+        Most sales reps panic. The good ones use it as an opportunity.<br><br>
+        Here's the exact script that turns this objection into a close:<br><br>
+        [Link: Get the ChatGPT Objection Script]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE RESPONSE STRUCTURE</h4>
+        <ol>
+            <li><strong>VALIDATE</strong> (Don't fight it)<br>"That makes total sense. A lot of our customers explored that first."</li>
+            <li><strong>AGREE ON THE GOAL</strong><br>"Just so I understand—what you really want is [outcome], right? Not specifically to use ChatGPT?"</li>
+            <li><strong>SHARE THE PATTERN</strong><br>"What we've seen is teams spend 2-3 months trying to build it, get 60% of the way there, then hit a wall. The last 40% is where the real value is—and it requires [specific expertise/data/integrations]."</li>
+            <li><strong>QUANTIFY THE HIDDEN COST</strong><br>"If your team spends 3 months building this, that's roughly $X in loaded cost, plus opportunity cost of what they're not doing. We've calculated most build-it-yourself attempts cost 4-5x what a solution costs—and take 6x longer."</li>
+            <li><strong>OFFER THE MIDDLE GROUND</strong><br>"Here's what some companies do: they try it for 30 days, and if they can get to 80% of the value, they don't need us. But if they hit the wall, we can get them live in 2 weeks. Want me to share what that wall typically looks like so you can watch for it?"</li>
+        </ol>
+        <p><strong>THE KEY:</strong> Don't argue. Help them see the pattern before they experience it.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We have a 'Build vs. Buy' calculator that shows the true cost of DIY. Your prospects can run their own numbers. [Get the calculator]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 8: The AI Tool ROI Stack Rank</div>
+    <div class="framework-solves">Know which AI tools to adopt first for maximum impact</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "I've tested 47 AI sales tools in the last 18 months.<br><br>
+        Most are useless.<br><br>
+        7 changed everything.<br><br>
+        Here's my stack-ranked list of AI tools by actual ROI—not vendor promises:<br><br>
+        [Link: Get the AI Tool ROI Stack Rank]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>AI TOOLS BY ROI (Highest to Lowest)</h4>
+        <ol>
+            <li><strong>CONVERSATION INTELLIGENCE</strong> (Gong, Chorus)<br>ROI: 15-20% improvement in win rates from coaching<br>Time to value: 30 days | Adoption difficulty: Low</li>
+            <li><strong>AI NOTE-TAKER + CRM UPDATE</strong><br>ROI: 5-7 hours/week saved per rep<br>Time to value: 1 day | Adoption difficulty: Very low</li>
+            <li><strong>EMAIL SEQUENCE OPTIMIZATION</strong><br>ROI: 20-40% improvement in reply rates<br>Time to value: 14 days | Adoption difficulty: Low</li>
+            <li><strong>PIPELINE RISK SCORING</strong><br>ROI: 10-15 point improvement in forecast accuracy<br>Time to value: 30-60 days | Adoption difficulty: Medium</li>
+            <li><strong>AI RESEARCH ASSISTANT</strong><br>ROI: 30 min saved per account researched<br>Time to value: 7 days | Adoption difficulty: Low</li>
+            <li><strong>AI SDR (OUTBOUND)</strong><br>ROI: Highly variable (see Matrix above)<br>Time to value: 60-90 days | Adoption difficulty: High</li>
+            <li><strong>AI COACHING</strong><br>ROI: Early stage, promising but unproven<br>Time to value: 90+ days | Adoption difficulty: High</li>
+        </ol>
+        <div class="scoring">
+            <strong>START WITH:</strong> #1, #2, #3 (highest ROI, lowest effort)<br>
+            <strong>AVOID FIRST:</strong> #6 (high effort, variable results)
+        </div>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We specialize in #4—Pipeline Risk Scoring. Most tools give you #1-3. We give you visibility into what's actually going to close. [See how it works]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 9: The Human Advantage Framework</div>
+    <div class="framework-solves">Know where humans still beat AI in sales</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "AI can do 80% of what SDRs do.<br><br>
+        But the 20% it can't do?<br><br>
+        That's where all the money is.<br><br>
+        Here's the framework for knowing exactly where to deploy humans vs. AI in your sales motion:<br><br>
+        [Link: Get the Human Advantage Framework]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>WHERE HUMANS WIN (Don't automate these)</h4>
+        <ol>
+            <li><strong>COMPLEX DISCOVERY</strong><br>Understanding unstated problems, reading political dynamics, detecting buyer anxiety</li>
+            <li><strong>MULTI-STAKEHOLDER ORCHESTRATION</strong><br>Navigating competing priorities, building coalitions, managing internal champions</li>
+            <li><strong>CREATIVE PROBLEM-SOLVING</strong><br>Unusual deal structures, custom implementation plans, edge case handling</li>
+            <li><strong>RELATIONSHIP DEPTH</strong><br>Trust in high-stakes decisions, long-term account relationships, executive relationships</li>
+            <li><strong>REAL-TIME ADAPTATION</strong><br>Pivoting mid-conversation, handling unexpected objections, emotional intelligence</li>
+        </ol>
+        
+        <h4>WHERE AI WINS (Automate these)</h4>
+        <ul>
+            <li>Initial outreach at scale</li>
+            <li>Meeting scheduling</li>
+            <li>CRM data entry</li>
+            <li>Follow-up reminders</li>
+            <li>Research and prep</li>
+            <li>Note-taking</li>
+            <li>Template emails</li>
+            <li>Lead scoring</li>
+        </ul>
+        <p><strong>THE RULE:</strong> AI handles volume. Humans handle complexity. The mistake is using humans for volume or AI for complexity.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We help you see where your human advantage is being wasted on AI-able tasks. Free up your best people for what only they can do. [Learn more]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 10: The AI Rep Readiness Score</div>
+    <div class="framework-solves">Assess which reps will thrive vs. struggle with AI tools</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Some of your reps will 10x with AI.<br><br>
+        Others will resist it until they're replaced by it.<br><br>
+        I've identified 5 traits that predict which is which.<br><br>
+        Here's how to score your team:<br><br>
+        [Link: Get the AI Rep Readiness Score]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5 READINESS TRAITS (Score each rep 1-5)</h4>
+        <ol>
+            <li><strong>CURIOSITY</strong> (Are they already experimenting?)<br>1 = Resistant to new tools | 5 = Already using AI tools on their own</li>
+            <li><strong>PROCESS ORIENTATION</strong> (Can they build systems?)<br>1 = Works in chaos | 5 = Documents and systematizes everything</li>
+            <li><strong>DATA COMFORT</strong> (Do they trust data?)<br>1 = "I know my deals better than any system" | 5 = Makes decisions based on data</li>
+            <li><strong>GROWTH MINDSET</strong> (Can they adapt?)<br>1 = "My approach works, why change?" | 5 = Constantly trying new techniques</li>
+            <li><strong>STRATEGIC THINKING</strong> (Can they focus on high-value work?)<br>1 = Values activity over outcome | 5 = Prioritizes ruthlessly</li>
+        </ol>
+        <div class="scoring">
+            <strong>SCORING:</strong><br>
+            21-25: AI Accelerator (will 10x)<br>
+            16-20: Adaptable (will thrive with support)<br>
+            11-15: Trainable (needs intentional development)<br>
+            5-10: Resistant (may not make the transition)
+        </div>
+        <p><strong>ACTION:</strong> Start AI adoption with your 21+ scorers. Let them prove value. Others will follow.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can help you build an AI adoption plan for your team based on readiness levels. [Book a strategy session]"
+    </div>
+</div>
+
+<h2>Category 3: Team Performance</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "I need to maximize output from a smaller team while keeping my best people from burning out or leaving."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 11: The 5-Rep Team Model</div>
+    <div class="framework-solves">Structure a smaller team for maximum output</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "In 2024, the average sales team had 8 AEs.<br><br>
+        In 2026, the winning teams have 5.<br><br>
+        But they're producing more.<br><br>
+        Here's the 5-Rep Team Model I've seen work at companies hitting $30M+ with teams half the size:<br><br>
+        [Link: Get the 5-Rep Team Model]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5 ROLES</h4>
+        <ol>
+            <li><strong>THE CLOSER</strong> (1 rep)<br>Profile: Top performer, highest ACV deals<br>Focus: $100K+ opportunities only<br>AI assist: Research, prep, follow-up</li>
+            <li><strong>THE MACHINE</strong> (2 reps)<br>Profile: Consistent, process-driven<br>Focus: Mid-market deals ($25-100K)<br>AI assist: Prospecting, admin, scheduling</li>
+            <li><strong>THE HUNTER</strong> (1 rep)<br>Profile: Loves outbound, high energy<br>Focus: New logo acquisition<br>AI assist: Lead gen, personalization at scale</li>
+            <li><strong>THE FARMER</strong> (1 rep)<br>Profile: Relationship-builder, patient<br>Focus: Expansion, renewals, advocacy<br>AI assist: Account monitoring, trigger alerts</li>
+        </ol>
+        <p><strong>KEY PRINCIPLES:</strong> No rep does everything. Specialize based on strengths. AI handles what AI does better. Humans handle what humans do better.</p>
+        <p><strong>OUTPUT EXPECTATION:</strong> 5-rep team should produce what 8-rep team did pre-AI—but with higher close rates (specialization) and lower burnout (right work for right person).</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can help you analyze your current team and design the optimal structure for your market. [Book a team design session]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 12: The Burnout Early Warning System</div>
+    <div class="framework-solves">Detect which reps are about to quit before they do</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Your best rep is updating their LinkedIn right now.<br><br>
+        You just don't know it.<br><br>
+        Here are 7 early warning signals that predict rep departure—usually 60 days before they give notice.<br><br>
+        Catch them early enough, and you can fix it.<br><br>
+        [Link: Get the Burnout Early Warning System]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 7 WARNING SIGNALS</h4>
+        <ol>
+            <li><strong>ACTIVITY DROP</strong><br>20%+ decline in outreach volume over 3 weeks. They're mentally checked out.</li>
+            <li><strong>1:1 AVOIDANCE</strong><br>Rescheduling 1:1s, coming unprepared. Avoiding performance conversations.</li>
+            <li><strong>TEAM WITHDRAWAL</strong><br>Less participation in team channels/meetings. No longer mentoring others.</li>
+            <li><strong>CUSTOMER RELATIONSHIP HOARDING</strong><br>Not introducing colleagues to accounts. Protecting relationships (taking them with them).</li>
+            <li><strong>COMP QUESTIONS</strong><br>Unusual focus on commission calculations. Comparing to market rates.</li>
+            <li><strong>CALENDAR GAPS</strong><br>"Doctor's appointments" increasing. Mysterious blocks during work hours (interviews).</li>
+            <li><strong>MILESTONE TIMING</strong><br>Approaching 1-year cliff on equity. Just closed a big deal (leaving on a high).</li>
+        </ol>
+        <div class="scoring">
+            <strong>ACTION:</strong><br>
+            1-2 signals: Have a genuine conversation<br>
+            3-4 signals: Urgent retention discussion<br>
+            5+ signals: Prepare for transition
+        </div>
+        <p><strong>The conversation:</strong> "I've noticed [specific observation]. I care about you and want to make sure you're in a good place here. What's going on?"</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can help you build systems that detect these signals automatically—before it's too late. [Learn how]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 13: The 90-Day Proof Plan</div>
+    <div class="framework-solves">Template for new VP Sales to prove themselves fast</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "The average VP Sales tenure is 19 months.<br><br>
+        The first 90 days determine everything.<br><br>
+        Do it wrong, and you're already losing.<br><br>
+        Do it right, and you're untouchable.<br><br>
+        Here's the 90-Day Proof Plan I give every new VP Sales I work with:<br><br>
+        [Link: Get the 90-Day Proof Plan]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>DAYS 1-30: LISTEN & LEARN</h4>
+        <p><strong>Goal:</strong> Understand reality before changing anything</p>
+        <ul>
+            <li>Week 1: Sit in on 10+ sales calls (don't speak)</li>
+            <li>Week 2: 1:1s with every rep (ask, don't tell)</li>
+            <li>Week 3: Meet every cross-functional partner</li>
+            <li>Week 4: Analyze last 20 won deals + last 20 lost deals</li>
+        </ul>
+        <p><strong>Deliverable:</strong> "State of Sales" deck for leadership</p>
+        
+        <h4>DAYS 31-60: QUICK WINS</h4>
+        <p><strong>Goal:</strong> Build credibility through action</p>
+        <ul>
+            <li>Pick 2-3 deals to personally help close</li>
+            <li>Fix 1 process that everyone hates</li>
+            <li>Implement 1 tool that saves time</li>
+            <li>Make 1 unpopular decision that's obviously right</li>
+        </ul>
+        <p><strong>Deliverable:</strong> Visible progress the team can feel</p>
+        
+        <h4>DAYS 61-90: SET THE AGENDA</h4>
+        <p><strong>Goal:</strong> Establish your vision and plan</p>
+        <ul>
+            <li>Present "Next 12 Months" plan to leadership</li>
+            <li>Launch 1 major initiative (hiring, process, tool)</li>
+            <li>Build your operating cadence</li>
+            <li>Set clear expectations for team</li>
+        </ul>
+        <p><strong>Deliverable:</strong> Everyone knows what you stand for</p>
+        
+        <div class="scoring">
+            <strong>THE PROOF:</strong> At least one deal you personally influenced to close • One process improvement with measurable impact • Team morale stable or improved • Leadership confident in your direction
+        </div>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We help new VP Sales get visibility into their pipeline fast—so Day 1 looks like Day 60. [See how]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 14: The Activity-to-Outcome Ratio</div>
+    <div class="framework-solves">Find which activities actually drive results</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Your team is busy.<br><br>
+        Are they effective?<br><br>
+        Most VP Sales can't answer this because they track activity, not activity-to-outcome ratios.<br><br>
+        Here's the simple math that reveals which activities actually matter:<br><br>
+        [Link: Get the Activity-to-Outcome Ratio Calculator]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE CALCULATION</h4>
+        <p><strong>Activity-to-Outcome Ratio</strong> = (Closed Won Revenue) / (Total Activity Count) × 100</p>
+        <p>Calculate this BY ACTIVITY TYPE:</p>
+        <ol>
+            <li>Cold calls → Won revenue</li>
+            <li>Cold emails → Won revenue</li>
+            <li>LinkedIn outreach → Won revenue</li>
+            <li>Demos delivered → Won revenue</li>
+            <li>Proposals sent → Won revenue</li>
+            <li>Discovery calls → Won revenue</li>
+        </ol>
+        
+        <h4>WHAT YOU'LL FIND</h4>
+        <ul>
+            <li>Some activities have 10x the conversion of others</li>
+            <li>Some reps excel at one activity, struggle at others</li>
+            <li>Some activities are pure busywork with no outcome</li>
+        </ul>
+        
+        <p><strong>EXAMPLE:</strong><br>
+        Rep A: 500 cold calls → $200K won = $400/call<br>
+        Rep A: 100 LinkedIn messages → $300K won = $3,000/message<br>
+        <strong>Conclusion:</strong> Rep A should 10x LinkedIn, reduce calls.</p>
+        
+        <p><strong>ACTION:</strong> Calculate ratio for each activity. Double down on high-ratio activities. Reduce or eliminate low-ratio activities. Match reps to activities where they have best ratio.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can calculate this automatically by connecting to your CRM and email. See exactly where your team's time should go. [Get your analysis]"
+    </div>
+</div>
+
+<h2>Category 4: Deal Acceleration</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "I need to close deals faster without discounting or pushing too hard."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 15: The Champion Test</div>
+    <div class="framework-solves">Know if you have a real champion or just a friendly contact</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "You think you have a champion.<br><br>
+        You probably have a friendly contact.<br><br>
+        The difference? Champions close deals. Contacts waste your time.<br><br>
+        Here are 5 questions that instantly reveal which you have:<br><br>
+        [Link: Get the Champion Test]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5 CHAMPION TEST QUESTIONS</h4>
+        <ol>
+            <li><strong>WILL THEY GIVE YOU ACCESS?</strong><br>Ask: "Can you introduce me to [decision-maker]?"<br>Champion: Gets you the meeting<br>Contact: "They're really busy right now"</li>
+            <li><strong>WILL THEY SHARE INTEL?</strong><br>Ask: "What's the real timeline and who else is evaluating?"<br>Champion: Tells you the truth (even uncomfortable truth)<br>Contact: Gives you the party line</li>
+            <li><strong>WILL THEY SELL FOR YOU?</strong><br>Ask: "When we're not in the room, how do you explain what we do?"<br>Champion: Has a clear pitch they've practiced<br>Contact: "I'll forward your materials"</li>
+            <li><strong>WILL THEY FIGHT FOR YOU?</strong><br>Ask: "What happens if someone pushes back on this?"<br>Champion: "I'll handle it, here's how"<br>Contact: "That could be a problem"</li>
+            <li><strong>WILL THEY COMMIT THEIR OWN REPUTATION?</strong><br>Ask: "Are you personally sponsoring this internally?"<br>Champion: "Yes, this is my project"<br>Contact: "I'm supporting it but [someone else] is leading"</li>
+        </ol>
+        <div class="scoring">
+            <strong>SCORING:</strong> 5/5 = Real Champion • 3-4/5 = Potential Champion (coach them) • 1-2/5 = Friendly Contact (find the real champion) • 0/5 = You have nothing
+        </div>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can identify champions and contacts automatically from email sentiment and meeting behavior. Know who's real before you find out the hard way. [See how]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 16: The 3-Meeting Close</div>
+    <div class="framework-solves">Structure deals to close faster without rushing</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Most deals take 7+ meetings to close.<br><br>
+        They should take 3.<br><br>
+        Not because you're rushing—because you're being clear.<br><br>
+        Here's the 3-Meeting Close framework that cut my average sales cycle by 40%:<br><br>
+        [Link: Get the 3-Meeting Close Framework]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>MEETING 1: DISCOVERY + QUALIFICATION</h4>
+        <p><strong>Goal:</strong> Determine if there's a real opportunity</p>
+        <ul>
+            <li>Understand their problem deeply</li>
+            <li>Quantify the cost of the problem</li>
+            <li>Identify decision-makers and process</li>
+            <li>Determine budget and timeline</li>
+            <li>End with: "Based on what you've shared, I think we can help. Next step is showing you exactly how. Who else needs to be in that meeting?"</li>
+        </ul>
+        
+        <h4>MEETING 2: DEMO + SOLUTION</h4>
+        <p><strong>Goal:</strong> Show them exactly how you solve their problem</p>
+        <ul>
+            <li>Tailor demo to their specific use case</li>
+            <li>Address objections as they arise</li>
+            <li>Get verbal agreement that this solves the problem</li>
+            <li>End with: "Does this solve what we discussed? Great. Next step is getting you a proposal with pricing. What do you need to see to make a decision?"</li>
+        </ul>
+        
+        <h4>MEETING 3: PROPOSAL + CLOSE</h4>
+        <p><strong>Goal:</strong> Get to yes (or clear no)</p>
+        <ul>
+            <li>Present proposal (already aligned on scope)</li>
+            <li>Walk through pricing</li>
+            <li>Handle final objections</li>
+            <li>Close or get clear next steps</li>
+            <li>End with: "What would stop us from moving forward today?"</li>
+        </ul>
+        
+        <p><strong>WHY IT WORKS:</strong> Each meeting has a clear purpose. No repeat conversations. Buyer respects your time (and theirs). Unqualified deals die early.</p>
+        
+        <p><strong>COMMON MISTAKES:</strong> Adding meetings "just to touch base." Demoing before discovery. Proposal meeting without decision-maker.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can analyze your current sales process and show you where meetings are getting added unnecessarily. [Get your process audit]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 17: The Stalled Deal Reactivation Sequence</div>
+    <div class="framework-solves">Bring ghosted deals back to life</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "That deal that ghosted you 3 months ago?<br><br>
+        It might not be dead.<br><br>
+        It might just be waiting for the right trigger.<br><br>
+        Here's a 4-step reactivation sequence that's brought back $2.3M in 'dead' pipeline this year:<br><br>
+        [Link: Get the Stalled Deal Reactivation Sequence]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 4-STEP SEQUENCE</h4>
+        
+        <p><strong>STEP 1: THE VALUE BOMB (Day 1)</strong><br>
+        Send something genuinely valuable—not about your product<br>
+        "Hi [Name], saw this research on [their specific challenge] and thought of your situation. Key finding: [insight]. No ask—just thought you'd find it useful."</p>
+        
+        <p><strong>STEP 2: THE PATTERN INTERRUPT (Day 7)</strong><br>
+        Break the expected sales pattern<br>
+        "[Name], I'm going through my pipeline and noticed we never closed the loop. I have two theories: (1) timing wasn't right, or (2) we weren't the right fit. Either way, I'd rather know than wonder. Which is it?"</p>
+        
+        <p><strong>STEP 3: THE TRIGGER EVENT (Day 14)</strong><br>
+        Reference something that changes the equation<br>
+        "Hey [Name], noticed [their company news/trigger event]. When we talked, [original problem] was a priority. Is that still true, or has [trigger event] changed things?"</p>
+        
+        <p><strong>STEP 4: THE BREAKUP (Day 30)</strong><br>
+        Create closure (which often creates urgency)<br>
+        "[Name], I'm going to assume the timing isn't right and close this out on my end. If things change, you know where to find me. Quick question before I go: What would need to change for this to become a priority again?"</p>
+        
+        <p><strong>WHY IT WORKS:</strong> Each step provides value or insight. Not pushy—gives them an out. The breakup often triggers response. You learn something even if they don't reply.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can identify which stalled deals have the highest reactivation potential—so you don't waste time on truly dead opportunities. [See your revival list]"
+    </div>
+</div>
+
+<h2>Category 5: Board & Exec Communication</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "I need to communicate sales performance to the board without losing credibility when things are uncertain."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 18: The 3-Slide Sales Update</div>
+    <div class="framework-solves">Give executives what they need, nothing they don't</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Most VP Sales use 15+ slides for board updates.<br><br>
+        The best use 3.<br><br>
+        More slides = more questions = more chances to look uncertain.<br><br>
+        Here's the 3-Slide Sales Update that makes boards say 'Got it, moving on':<br><br>
+        [Link: Get the 3-Slide Template]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>SLIDE 1: THE NUMBER</h4>
+        <p><strong>What to show:</strong></p>
+        <ul>
+            <li>Target vs. Actual (big and clear)</li>
+            <li>Attainment %</li>
+            <li>Trend line (are we accelerating or decelerating?)</li>
+            <li>One sentence: why</li>
+        </ul>
+        <p><strong>What NOT to show:</strong> Every deal in the pipeline. Activity metrics. Excuses.</p>
+        
+        <h4>SLIDE 2: THE PIPELINE</h4>
+        <p><strong>What to show:</strong></p>
+        <ul>
+            <li>Coverage ratio (4x? 3x?)</li>
+            <li>Weighted vs. unweighted</li>
+            <li>Quality indicator (your Exposure Score)</li>
+            <li>One sentence: What's real</li>
+        </ul>
+        <p><strong>What NOT to show:</strong> Every deal. Stage-by-stage breakdown (save for appendix). Optimistic projections.</p>
+        
+        <h4>SLIDE 3: THE PLAN</h4>
+        <p><strong>What to show:</strong></p>
+        <ul>
+            <li>Top 3 priorities this quarter</li>
+            <li>One risk you're watching</li>
+            <li>One ask if you need something</li>
+        </ul>
+        <p><strong>What NOT to show:</strong> 10 initiatives that dilute focus. Problems without solutions. Anything you're not 100% committed to.</p>
+        
+        <p><strong>THE RULE:</strong> If it generates more questions than it answers, cut it. Appendix is for detail they can ask for. Less is more. Confidence is clarity.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can auto-generate Slide 2 with real pipeline quality data—so you're never guessing about what's real. [See how]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 19: The "Bad News, Good News" Framework</div>
+    <div class="framework-solves">Deliver misses without losing trust</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "You're going to miss your number.<br><br>
+        How you communicate it determines whether you survive.<br><br>
+        I've seen VP Sales deliver the same miss two different ways—one got fired, one got promoted.<br><br>
+        Here's the framework for delivering bad news without losing credibility:<br><br>
+        [Link: Get the Bad News Framework]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5-PART STRUCTURE</h4>
+        <ol>
+            <li><strong>THE NUMBER</strong> (No preamble)<br>"We're going to come in at $2.1M against a $2.5M target. 84% attainment."<br>(Don't: Bury the number in context. Say it first.)</li>
+            <li><strong>THE WHY</strong> (Honest, specific, not excuse-making)<br>"Three things happened: [Deal X] pushed to Q2 due to their reorg. [Deal Y] went to a competitor on price. And our pipeline generation in month 1 was 30% below plan."<br>(Don't: Blame external factors only. Own what you can.)</li>
+            <li><strong>THE LEARNING</strong> (What you now know)<br>"What we learned: Our Q1 pipeline was too dependent on 3 large deals. We didn't have enough at-bats."<br>(Don't: Pretend everything is fine. Show you understand.)</li>
+            <li><strong>THE PLAN</strong> (Specific actions)<br>"Here's what we're doing: Increasing pipeline generation targets by 25%. Adding a second outbound channel. And I'm personally involved in the top 5 deals next quarter."<br>(Don't: Vague promises. Specific commitments.)</li>
+            <li><strong>THE ASK</strong> (If you need something)<br>"To execute this, I need [specific ask]. Without it, we're at risk of repeating this pattern."<br>(Don't: Ask for things that aren't essential.)</li>
+        </ol>
+        <p><strong>THE KEY:</strong> Own it. Explain it. Fix it. Move on.</p>
+        <p><strong>DO NOT:</strong> Make excuses, hide, or over-promise next quarter.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We help you see misses coming 60+ days early—so 'bad news' becomes 'early warning.' [Learn how]"
+    </div>
+</div>
+
+<h2>Category 6: Cutting Through Noise</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "Buyers are drowning in AI-generated outreach. I need my team to break through."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 20: The Human Signal Stack</div>
+    <div class="framework-solves">Make your outreach obviously human in an AI-flooded inbox</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Your prospect got 47 AI-generated emails today.<br><br>
+        How do they know yours was from a human?<br><br>
+        They don't. And they delete it.<br><br>
+        Here's the 'Human Signal Stack'—5 things AI can't fake (yet):<br><br>
+        [Link: Get the Human Signal Stack]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5 HUMAN SIGNALS</h4>
+        <ol>
+            <li><strong>SPECIFIC RECENT CONTEXT</strong><br>Reference something from last 7 days<br>"Saw your comment on [specific post] about [specific point]"<br>Why it works: AI can't access real-time context well</li>
+            <li><strong>IMPERFECT FORMATTING</strong><br>Skip the perfect structure<br>Use fragments. Short sentences. Casual tone.<br>Why it works: AI writes too perfectly</li>
+            <li><strong>GENUINE OPINION</strong><br>Share a perspective that could be wrong<br>"I might be off base, but it seems like..."<br>Why it works: AI hedges. Humans commit.</li>
+            <li><strong>SPECIFIC NUMBERS</strong><br>Use oddly specific data<br>Not "save 30%" but "our customers save 31.4%"<br>Why it works: AI rounds. Humans are specific.</li>
+            <li><strong>THE ADMISSION</strong><br>Acknowledge the awkwardness<br>"I know you're getting hammered with cold emails..."<br>Why it works: Meta-awareness signals humanity</li>
+        </ol>
+        <p><strong>BONUS: VOICE</strong><br>Send voice notes on LinkedIn. 4.2x higher response rate. Can't be faked (yet).</p>
+        <p><strong>THE RULE:</strong> If your email could have been written by ChatGPT, rewrite it.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can analyze your outreach and score how 'human' it reads—before you send it. [Get your score]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 21: The PULL Qualification Framework</div>
+    <div class="framework-solves">Only pursue deals where buyer has real urgency</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Stop trying to create urgency.<br><br>
+        Start finding it.<br><br>
+        The best deals aren't pushed—they're pulled.<br><br>
+        Here's the PULL Qualification Framework that helped me 3x my win rate by only chasing deals that wanted to close:<br><br>
+        [Link: Get the PULL Framework]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>P.U.L.L. = Project + Urgency + Limitations + Leap</h4>
+        
+        <p><strong>P - PROJECT</strong><br>
+        "Is solving this problem an active project on their to-do list?"<br>
+        Not "would this be nice" • Not "we should do this someday" • It's being actively worked on NOW<br>
+        <em>Question to ask:</em> "What's driving you to look at this now vs. 6 months ago?"</p>
+        
+        <p><strong>U - URGENCY</strong><br>
+        "Is there a reason they need to solve this NOW?"<br>
+        Deadline, pain event, executive mandate • If it can wait, it will wait<br>
+        <em>Question to ask:</em> "What happens if you don't solve this by [date]?"</p>
+        
+        <p><strong>L - LIMITATIONS</strong><br>
+        "Are their current options inadequate?"<br>
+        Status quo isn't working • Competitors have gaps • DIY isn't viable<br>
+        <em>Question to ask:</em> "What have you tried so far and why didn't it work?"</p>
+        
+        <p><strong>L - LEAP</strong><br>
+        "Can they actually buy?"<br>
+        Budget exists or can be found • Decision-maker engaged • No political blockers<br>
+        <em>Question to ask:</em> "If we're a fit, what's the process to move forward?"</p>
+        
+        <div class="scoring">
+            <strong>SCORING:</strong><br>
+            4/4: High PULL - pursue aggressively<br>
+            3/4: Medium PULL - qualify harder on missing element<br>
+            2/4: Low PULL - nurture but don't invest heavily<br>
+            0-1/4: No PULL - disqualify or wait
+    </div>
+        <p><strong>THE TRUTH:</strong> You can't create PULL. You can only find it or wait for it.</p>
+</div>
+
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We use AI to detect PULL signals from buyer behavior—so you know which deals have urgency before you even ask. [See it in action]"
+    </div>
+</div>
+
+<h2>Category 7: Personal Effectiveness</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "I need to be more effective without working more hours. I'm already maxed out."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 22: The VP Sales Weekly Rhythm</div>
+    <div class="framework-solves">Optimal calendar structure for sanity and impact</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Most VP Sales let their calendar control them.<br><br>
+        The best control their calendar.<br><br>
+        Here's the Weekly Rhythm that top-performing VP Sales use—and it's counterintuitive:<br><br>
+        [Link: Get the VP Sales Weekly Rhythm]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE WEEKLY STRUCTURE</h4>
+        
+        <p><strong>MONDAY: STRATEGY DAY</strong></p>
+        <ul>
+            <li>Morning: Pipeline review (2 hours, protected)</li>
+            <li>Midday: Leadership team sync</li>
+            <li>Afternoon: Deal strategy sessions on at-risk deals</li>
+            <li>NO: Random 1:1s, internal meetings</li>
+        </ul>
+        
+        <p><strong>TUESDAY-WEDNESDAY: IMPACT DAYS</strong></p>
+        <ul>
+            <li>1:1s with reps (batched)</li>
+            <li>Customer calls (your top 5-10 deals)</li>
+            <li>Cross-functional meetings (marketing, product)</li>
+            <li>This is where you ADD VALUE to deals</li>
+        </ul>
+        
+        <p><strong>THURSDAY: ADMIN DAY</strong></p>
+        <ul>
+            <li>Catch-up on email, Slack</li>
+            <li>Reporting and forecasting</li>
+            <li>Interview candidates</li>
+            <li>Internal presentations</li>
+            <li>Bundle all admin here so other days are protected</li>
+        </ul>
+        
+        <p><strong>FRIDAY: DEVELOPMENT DAY</strong></p>
+        <ul>
+            <li>Coaching (observe calls, give feedback)</li>
+            <li>Learning (read, take courses, stay current)</li>
+            <li>Planning for next week</li>
+            <li>Leave early if possible (model sustainability)</li>
+        </ul>
+        
+        <p><strong>KEY PRINCIPLES:</strong> Never put 1:1s on Monday (you need data first). Batch similar activities together. Protect "maker" time for strategy. Your calendar should reflect your priorities.</p>
+        <p><strong>THE TEST:</strong> If your calendar is random, your results will be random.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can audit your calendar against this rhythm and show you where your time is going vs. where it should go. [Get your calendar audit]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 23: The 5-Question Monday</div>
+    <div class="framework-solves">Start every week with clarity</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "I start every Monday with 5 questions.<br><br>
+        They take 10 minutes.<br><br>
+        They save me 10 hours of misdirected effort.<br><br>
+        Here's my Monday Clarity Ritual:<br><br>
+        [Link: Get the 5-Question Monday]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5 QUESTIONS</h4>
+        <ol>
+            <li><strong>WHAT MUST CLOSE THIS WEEK?</strong><br>Not "what could close"<br>Which 2-3 deals are scheduled to close?<br>What do they need from you to close?</li>
+            <li><strong>WHAT'S AT RISK THAT I DON'T KNOW ABOUT?</strong><br>Quick pipeline scan for warning signs<br>Any deals gone quiet?<br>Any customers unhappy?</li>
+            <li><strong>WHICH REP NEEDS ME MOST?</strong><br>Not who's loudest<br>Who's struggling but not asking for help?<br>One rep focus for the week</li>
+            <li><strong>WHAT'S THE ONE THING THAT MOVES THE NUMBER?</strong><br>If you could only do one thing, what would it be?<br>That's your priority. Everything else is secondary.</li>
+            <li><strong>WHAT AM I GOING TO SAY NO TO?</strong><br>Look at calendar. What can you cancel, delegate, or decline?<br>Create space for the one thing.</li>
+        </ol>
+        <p><strong>RITUAL:</strong> Monday 8am, 10 minutes. Write answers down (paper or notes app). Reference throughout week. Review Friday: Did you focus on what mattered?</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can auto-generate answers to Q1 and Q2 based on your pipeline data—so you start every week with truth, not guesses. [See how]"
+    </div>
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 24: The "Stop Doing" List</div>
+    <div class="framework-solves">Free up time by eliminating low-value activities</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "Most productivity advice tells you what to DO.<br><br>
+        The biggest gains come from what you STOP doing.<br><br>
+        Here are 10 things high-performing VP Sales stopped doing—and why their results improved:<br><br>
+        [Link: Get the Stop Doing List]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>STOP DOING THESE</h4>
+        <ol>
+            <li><strong>ATTENDING EVERY SALES CALL</strong><br>→ Instead: Pick 3-5 strategic calls per week</li>
+            <li><strong>WEEKLY 1:1s WITH EVERYONE</strong><br>→ Instead: Bi-weekly for A-players, weekly for those who need it</li>
+            <li><strong>REFORECASTING MID-WEEK</strong><br>→ Instead: Forecast once, on Monday. Trust it.</li>
+            <li><strong>BUILDING YOUR OWN REPORTS</strong><br>→ Instead: Have ops build them. Your job isn't Salesforce.</li>
+            <li><strong>RESPONDING TO EVERY SLACK MESSAGE</strong><br>→ Instead: Batch Slack 3x/day. Emergency = call.</li>
+            <li><strong>RUNNING EVERY DEAL REVIEW</strong><br>→ Instead: Manager runs it. You attend only escalations.</li>
+            <li><strong>WRITING EVERY PROPOSAL</strong><br>→ Instead: Template + rep customization + your review</li>
+            <li><strong>INTERVIEWING EVERY CANDIDATE</strong><br>→ Instead: Final round only after team filter</li>
+            <li><strong>JOINING "STRATEGIC" INTERNAL MEETINGS</strong><br>→ Instead: Ask "What decision are we making?" No decision = no attendance.</li>
+            <li><strong>CHECKING EMAIL FIRST THING</strong><br>→ Instead: Strategy work first. Email at 10am.</li>
+        </ol>
+        <p><strong>THE EXERCISE:</strong> Audit last week's calendar. Mark each item: Created value? Or just activity? Eliminate or delegate bottom 20%. Repeat monthly.</p>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We can show you where your time is going vs. where top-performing VP Sales spend theirs. [Get your time audit]"
+    </div>
+</div>
+
+<h2>Category 8: Hiring & Retention</h2>
+
+<div class="category-intro">
+    <strong>JTBD:</strong> "I need to hire people who will thrive and keep my best people from leaving."
+</div>
+
+<div class="framework-card">
+    <div class="framework-name">Framework 25: The 5-Question Interview Stack</div>
+    <div class="framework-solves">Predict which candidates will actually perform</div>
+    
+    <div class="linkedin-hook">
+        <div class="linkedin-label">LinkedIn Hook</div>
+        "I've hired 100+ salespeople.<br><br>
+        Made every mistake possible.<br><br>
+        Now I use 5 questions. They predict success better than any assessment.<br><br>
+        Here's my 5-Question Interview Stack:<br><br>
+        [Link: Get the 5-Question Interview Stack]"
+    </div>
+    
+    <div class="framework-content">
+        <h4>THE 5 QUESTIONS</h4>
+        <ol>
+            <li><strong>"TELL ME ABOUT A DEAL YOU LOST THAT YOU SHOULD HAVE WON."</strong><br>Looking for: Honest self-reflection, not blame<br>Red flag: "I didn't lose it, [excuse]"<br>Great answer: Specific mistake + what they learned</li>
+            <li><strong>"WALK ME THROUGH YOUR LAST QUARTER. WHAT WORKED AND WHAT DIDN'T?"</strong><br>Looking for: Data fluency, cause-and-effect thinking<br>Red flag: Vague answers, can't cite numbers<br>Great answer: Specific metrics + analysis + adjustment</li>
+            <li><strong>"DESCRIBE A TIME YOU HAD TO FIGURE SOMETHING OUT WITH NO PLAYBOOK."</strong><br>Looking for: Problem-solving, resourcefulness<br>Red flag: "I always had training and support"<br>Great answer: Specific example of self-directed learning</li>
+            <li><strong>"WHAT'S YOUR PROCESS FOR QUALIFYING A DEAL?"</strong><br>Looking for: Systematic thinking vs. gut feel<br>Red flag: "I trust my instincts"<br>Great answer: Clear framework they can articulate</li>
+            <li><strong>"WHY ARE YOU LEAVING? REALLY."</strong><br>Looking for: Honesty about what they want<br>Red flag: Only talks about what they're running from<br>Great answer: Knows what they want and why you have it</li>
+        </ol>
+        <div class="scoring">
+            <strong>SCORING:</strong><br>
+            Each question: 1-5 score<br>
+            20+: Strong hire<br>
+            15-19: Hire with reservations<br>
+            &lt;15: Pass
+        </div>
+    </div>
+    
+    <div class="cta-tease">
+        <strong>CTA TEASE:</strong> "We help you build a hiring rubric based on what actually predicts success at YOUR company. [Build your rubric]"
+    </div>
+</div>
+
+<h2>Quick Reference: All 25 Frameworks</h2>
+
+<table>
+    <tr><th>#</th><th>Framework</th><th>Job It Solves</th></tr>
+    <tr><td>1</td><td>72-Hour Slip Test</td><td>Predict which deals will slip</td></tr>
+    <tr><td>2</td><td>Zombie Deal Detector</td><td>Clear dead deals from pipeline</td></tr>
+    <tr><td>3</td><td>Forecast Confidence Grid</td><td>Present to board with confidence</td></tr>
+    <tr><td>4</td><td>Pipeline Exposure Score</td><td>Single number for pipeline health</td></tr>
+    <tr><td>5</td><td>Stakeholder Shadow Map</td><td>Find hidden decision-makers</td></tr>
+    <tr><td>6</td><td>AI SDR Decision Matrix</td><td>Decide AI vs human SDRs</td></tr>
+    <tr><td>7</td><td>ChatGPT Objection Script</td><td>Handle 'we'll build it ourselves'</td></tr>
+    <tr><td>8</td><td>AI Tool ROI Stack Rank</td><td>Know which AI tools to adopt first</td></tr>
+    <tr><td>9</td><td>Human Advantage Framework</td><td>Where humans beat AI</td></tr>
+    <tr><td>10</td><td>AI Rep Readiness Score</td><td>Assess which reps thrive with AI</td></tr>
+    <tr><td>11</td><td>5-Rep Team Model</td><td>Structure smaller team for output</td></tr>
+    <tr><td>12</td><td>Burnout Early Warning System</td><td>Detect reps about to quit</td></tr>
+    <tr><td>13</td><td>90-Day Proof Plan</td><td>New VP Sales template</td></tr>
+    <tr><td>14</td><td>Activity-to-Outcome Ratio</td><td>Find which activities drive results</td></tr>
+    <tr><td>15</td><td>Champion Test</td><td>Know if you have a real champion</td></tr>
+    <tr><td>16</td><td>3-Meeting Close</td><td>Close faster without rushing</td></tr>
+    <tr><td>17</td><td>Stalled Deal Reactivation</td><td>Bring ghosted deals back</td></tr>
+    <tr><td>18</td><td>3-Slide Sales Update</td><td>Give execs what they need only</td></tr>
+    <tr><td>19</td><td>Bad News Framework</td><td>Deliver misses without losing trust</td></tr>
+    <tr><td>20</td><td>Human Signal Stack</td><td>Make outreach obviously human</td></tr>
+    <tr><td>21</td><td>PULL Qualification Framework</td><td>Only pursue real urgency</td></tr>
+    <tr><td>22</td><td>VP Sales Weekly Rhythm</td><td>Optimal calendar structure</td></tr>
+    <tr><td>23</td><td>5-Question Monday</td><td>Start every week with clarity</td></tr>
+    <tr><td>24</td><td>Stop Doing List</td><td>Eliminate low-value activities</td></tr>
+    <tr><td>25</td><td>5-Question Interview Stack</td><td>Predict which candidates perform</td></tr>
+</table>
+
+<div class="strategy-section">
+    <h3>THE STRATEGY</h3>
+    <p>Each framework gives 80% of the value—enough to be genuinely useful today. The remaining 20% (automation, personalization, deeper analysis) is what creates PULL for your product.</p>
+    <p>They implement the framework → see it works → want the faster/better version.</p>
+    <p style="margin-bottom: 0;">This is the PULL framework applied to your own marketing: give them a project (the framework), show the limitations of DIY (takes time, misses things), and offer supply (your product) that fits their demand better.</p>
+</div>
+
+<div class="end-section">
+    <p style="font-size: 14px; color: #999;">— END OF DOCUMENT —</p>
+</div>
+
+</div><!-- end readable-content -->
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="frameworks.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100); }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>

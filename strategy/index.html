@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <title>Adrata | Find Buyers First</title>
+  <meta name="description" content="Stop letting competitors find the economic buyer before you. See how top sales teams map decision-makers in 48 hours.">
+  <meta property="og:title" content="Adrata | Find Buyers First">
+  <meta property="og:description" content="Your competitors find the economic buyer in 48 hours. Your team takes 3 weeks. See how to fix this.">
+  <meta property="og:image" content="https://adrata.github.io/strategy/og-main.png">
+  <meta property="og:url" content="https://adrata.github.io/strategy/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    @font-face {
+      font-family: 'MiSans';
+      src: url('https://cdn.jsdelivr.net/gh/nickyam/fonts@main/MiSans-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MiSans';
+      src: url('https://cdn.jsdelivr.net/gh/nickyam/fonts@main/MiSans-Medium.woff2') format('woff2');
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MiSans';
+      src: url('https://cdn.jsdelivr.net/gh/nickyam/fonts@main/MiSans-Semibold.woff2') format('woff2');
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MiSans';
+      src: url('https://cdn.jsdelivr.net/gh/nickyam/fonts@main/MiSans-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+    
+    :root {
+      --bg: #F4F2EE;
+      --card-bg: #ffffff;
+      --border: #e0dfdc;
+      --text: #191919;
+      --text-muted: #666666;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'MiSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .container {
+      max-width: 555px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 40px 20px 24px;
+    }
+    
+    .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.02em; color: var(--text); }
+    .header > p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    
+    .picker-section {
+      margin-bottom: 16px;
+    }
+    
+    .picker-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .color-picker {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .color-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .color-btn:hover { transform: scale(1.12); }
+    .color-btn.active { border-color: var(--text); transform: scale(1.1); }
+    
+    /* Fixed Customization Widget */
+    .customize-widget {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      z-index: 100;
+      width: 260px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .widget-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .widget-title svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; }
+    .widget-section { margin-bottom: 16px; }
+    .widget-section:last-child { margin-bottom: 0; }
+    .widget-label { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .widget-colors { display: flex; flex-wrap: wrap; gap: 6px; }
+    .widget-colors .color-btn { width: 24px; height: 24px; border-width: 2px; }
+    .widget-styles { display: flex; flex-wrap: wrap; gap: 6px; }
+    .style-btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .style-btn:hover { border-color: var(--text-muted); color: var(--text); }
+    .style-btn.active { border-color: var(--text); color: var(--text); background: var(--bg); }
+    @media (max-width: 900px) {
+      .customize-widget { display: none; }
+    }
+    
+    /* Core colors */
+    .color-btn.orange { background: linear-gradient(135deg, #ea580c, #fb923c); }
+    .color-btn.red { background: linear-gradient(135deg, #e53935, #ff5252); }
+    .color-btn.blue { background: linear-gradient(135deg, #2655FF, #5b7fff); }
+    .color-btn.emerald { background: linear-gradient(135deg, #059669, #34d399); }
+    .color-btn.violet { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .color-btn.pink { background: linear-gradient(135deg, #db2777, #f472b6); }
+    .color-btn.cyan { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+    /* Additional professional colors */
+    .color-btn.navy { background: linear-gradient(135deg, #1e3a5f, #2c5282); }
+    .color-btn.teal { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .color-btn.indigo { background: linear-gradient(135deg, #4338ca, #6366f1); }
+    .color-btn.slate { background: linear-gradient(145deg, #334155, #475569); }
+    .color-btn.charcoal { background: linear-gradient(145deg, #1f1f1f, #333333); }
+    .color-btn.bronze { background: linear-gradient(145deg, #8b5a2b, #cd853f); }
+    .color-btn.steel { background: linear-gradient(145deg, #71797E, #9BA4B4); }
+    .color-btn.forest { background: linear-gradient(135deg, #1b4332, #2d6a4f); }
+    /* Monaco / Luxury / MIUI Inspired */
+    .color-btn.monaco { background: linear-gradient(145deg, #1a2d5a, #2a4a8a); }
+    .color-btn.riviera { background: linear-gradient(145deg, #1a6b6b, #2a9090); }
+    .color-btn.burgundy { background: linear-gradient(145deg, #800020, #a01030); }
+    .color-btn.champagne-rose { background: linear-gradient(145deg, #d4a574, #e8c49a); }
+    .color-btn.miui-purple { background: linear-gradient(145deg, #6b5ce7, #8a7df0); }
+    .color-btn.aurora { background: linear-gradient(145deg, #00d68f, #20f0b0); }
+    .color-btn.onyx { background: linear-gradient(145deg, #353839, #4a4c4d); }
+    .color-btn.platinum { background: linear-gradient(145deg, #e5e4e2, #f5f4f2); }
+    /* MIUI Design Inspired - from Behance portfolio */
+    .color-btn.crystal { background: linear-gradient(145deg, #1e3c72, #2a5298, #4a90d9); }
+    .color-btn.citrine { background: linear-gradient(145deg, #f7971e, #ffd200); }
+    .color-btn.rosewood { background: linear-gradient(145deg, #8e2de2, #ff6b9d); }
+    .color-btn.coral-pink { background: linear-gradient(145deg, #ff9a9e, #fecfef); }
+    .color-btn.arctic { background: linear-gradient(145deg, #e0eafc, #cfdef3); }
+    .color-btn.deep-ocean { background: linear-gradient(145deg, #000428, #004e92); }
+    .color-btn.sunset-glow { background: linear-gradient(145deg, #ff5f6d, #ffc371); }
+    .color-btn.emerald-dark { background: linear-gradient(145deg, #004d40, #00796b); }
+    /* More MIUI-inspired from 10 Behance projects */
+    .color-btn.hyper-blue { background: linear-gradient(145deg, #0066ff, #00aaff); }
+    .color-btn.neon-gaming { background: linear-gradient(145deg, #00ff00, #00cc44); }
+    .color-btn.poco-yellow { background: linear-gradient(145deg, #ffcc00, #ff9900); }
+    .color-btn.neumorphic { background: linear-gradient(145deg, #e0e5ec, #d0d5dc); }
+    .color-btn.nature-earth { background: linear-gradient(145deg, #5d4e37, #8b7355); }
+    .color-btn.abstract-art { background: linear-gradient(145deg, #e63946, #1d3557); }
+    .color-btn { position: relative; display: flex; align-items: center; justify-content: center; }
+    /* Liquid metal / gradient styles - Steve Jobs inspired */
+    .color-btn.silver { background: linear-gradient(145deg, #e8e8e8 0%, #a8a8a8 25%, #d4d4d4 50%, #909090 75%, #c0c0c0 100%); }
+    .color-btn.space-gray { background: linear-gradient(145deg, #4a4a4a 0%, #2d2d2d 25%, #5a5a5a 50%, #1a1a1a 75%, #3d3d3d 100%); }
+    .color-btn.midnight { background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 25%, #2a2a4e 50%, #05050a 75%, #1a1a2e 100%); }
+    .color-btn.starlight { background: linear-gradient(145deg, #f5f5f0 0%, #e5e5dc 25%, #faf9f6 50%, #d5d5cc 75%, #f0efe8 100%); }
+    /* Premium / Luxury gradients */
+    .color-btn.gold { background: linear-gradient(145deg, #d4af37 0%, #f4d03f 25%, #c9a227 50%, #e6c200 75%, #b8860b 100%); }
+    .color-btn.rose-gold { background: linear-gradient(145deg, #b76e79 0%, #e8a9b0 25%, #c78f97 50%, #dba8af 75%, #b76e79 100%); }
+    .color-btn.copper { background: linear-gradient(145deg, #b87333 0%, #da8a47 25%, #a66628 50%, #cd7f32 75%, #b87333 100%); }
+    .color-btn.titanium { background: linear-gradient(145deg, #878681 0%, #a8a7a3 25%, #6e6d6a 50%, #9c9b97 75%, #878681 100%); }
+    .color-btn.obsidian { background: linear-gradient(145deg, #0b0b0d 0%, #1a1a1f 25%, #070709 50%, #141418 75%, #0b0b0d 100%); }
+    .color-btn.pearl { background: linear-gradient(145deg, #f0ebe3 0%, #faf7f2 25%, #e8e2d9 50%, #f5f1ea 75%, #ede7de 100%); }
+    .color-btn.champagne { background: linear-gradient(145deg, #f7e7ce 0%, #faf3e3 25%, #f0dfc0 50%, #f5ebd7 75%, #eddbb0 100%); }
+    /* Modern Converting Colors */
+    .color-btn.electric { background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #ff00ff 100%); }
+    .color-btn.sunset { background: linear-gradient(135deg, #ff512f 0%, #f09819 50%, #ff0844 100%); }
+    .color-btn.ocean { background: linear-gradient(135deg, #0077b6 0%, #00b4d8 50%, #90e0ef 100%); }
+    .color-btn.neon { background: linear-gradient(135deg, #00ff87 0%, #60efff 100%); }
+    .color-btn.coral { background: linear-gradient(135deg, #ff6b6b 0%, #ffa07a 50%, #ffb347 100%); }
+    .color-btn.indigo { background: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #818cf8 100%); }
+    .color-btn.teal { background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%); }
+    .color-btn.lime { background: linear-gradient(135deg, #84cc16 0%, #a3e635 50%, #bef264 100%); }
+    .color-btn.amber { background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%); }
+    .color-btn.fuchsia { background: linear-gradient(135deg, #c026d3 0%, #d946ef 50%, #e879f9 100%); }
+    .color-btn.slate { background: linear-gradient(145deg, #334155 0%, #475569 25%, #1e293b 50%, #64748b 75%, #334155 100%); }
+    .color-btn.zinc { background: linear-gradient(145deg, #3f3f46 0%, #52525b 25%, #27272a 50%, #71717a 75%, #3f3f46 100%); }
+    
+    .linkedin-post {
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    
+    .post-header {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .company-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    
+    .company-logo.orange { background: linear-gradient(135deg, #ea580c, #fb923c); }
+    .company-logo.red { background: linear-gradient(135deg, #e53935, #ff5252); }
+    .company-logo.blue { background: linear-gradient(135deg, #2655FF, #5b7fff); }
+    .company-logo.emerald { background: linear-gradient(135deg, #059669, #34d399); }
+    .company-logo.violet { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .company-logo.pink { background: linear-gradient(135deg, #db2777, #f472b6); }
+    .company-logo.cyan { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+    /* Additional professional logo styles */
+    .company-logo.navy { background: linear-gradient(135deg, #1e3a5f, #2c5282); }
+    .company-logo.navy svg { stroke: #fff; }
+    .company-logo.teal { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .company-logo.teal svg { stroke: #fff; }
+    .company-logo.indigo { background: linear-gradient(135deg, #4338ca, #6366f1); }
+    .company-logo.indigo svg { stroke: #fff; }
+    .company-logo.slate { background: linear-gradient(145deg, #334155, #475569); }
+    .company-logo.slate svg { stroke: #fff; }
+    .company-logo.charcoal { background: linear-gradient(145deg, #1f1f1f, #333333); }
+    .company-logo.charcoal svg { stroke: #fff; }
+    .company-logo.bronze { background: linear-gradient(145deg, #8b5a2b, #cd853f); }
+    .company-logo.bronze svg { stroke: #fff; }
+    .company-logo.steel { background: linear-gradient(145deg, #71797E, #9BA4B4); }
+    .company-logo.steel svg { stroke: #fff; }
+    .company-logo.forest { background: linear-gradient(135deg, #1b4332, #2d6a4f); }
+    .company-logo.forest svg { stroke: #fff; }
+    /* Monaco / Luxury / MIUI logo styles */
+    .company-logo.monaco { background: linear-gradient(145deg, #1a2d5a, #2a4a8a); }
+    .company-logo.monaco svg { stroke: #fff; }
+    .company-logo.riviera { background: linear-gradient(145deg, #1a6b6b, #2a9090); }
+    .company-logo.riviera svg { stroke: #fff; }
+    .company-logo.burgundy { background: linear-gradient(145deg, #800020, #a01030); }
+    .company-logo.burgundy svg { stroke: #fff; }
+    .company-logo.champagne-rose { background: linear-gradient(145deg, #d4a574, #e8c49a); }
+    .company-logo.champagne-rose svg { stroke: #333; }
+    .company-logo.miui-purple { background: linear-gradient(145deg, #6b5ce7, #8a7df0); }
+    .company-logo.miui-purple svg { stroke: #fff; }
+    .company-logo.aurora { background: linear-gradient(145deg, #00d68f, #20f0b0); }
+    .company-logo.aurora svg { stroke: #fff; }
+    .company-logo.onyx { background: linear-gradient(145deg, #353839, #4a4c4d); }
+    .company-logo.onyx svg { stroke: #fff; }
+    .company-logo.platinum { background: linear-gradient(145deg, #e5e4e2, #f5f4f2); }
+    .company-logo.platinum svg { stroke: #333; }
+    /* MIUI Design Inspired logo styles */
+    .company-logo.crystal { background: linear-gradient(145deg, #1e3c72, #2a5298); }
+    .company-logo.crystal svg { stroke: #fff; }
+    .company-logo.citrine { background: linear-gradient(145deg, #f7971e, #ffd200); }
+    .company-logo.citrine svg { stroke: #333; }
+    .company-logo.rosewood { background: linear-gradient(145deg, #8e2de2, #ff6b9d); }
+    .company-logo.rosewood svg { stroke: #fff; }
+    .company-logo.coral-pink { background: linear-gradient(145deg, #ff9a9e, #fecfef); }
+    .company-logo.coral-pink svg { stroke: #333; }
+    .company-logo.arctic { background: linear-gradient(145deg, #e0eafc, #cfdef3); }
+    .company-logo.arctic svg { stroke: #333; }
+    .company-logo.deep-ocean { background: linear-gradient(145deg, #000428, #004e92); }
+    .company-logo.deep-ocean svg { stroke: #fff; }
+    .company-logo.sunset-glow { background: linear-gradient(145deg, #ff5f6d, #ffc371); }
+    .company-logo.sunset-glow svg { stroke: #fff; }
+    .company-logo.emerald-dark { background: linear-gradient(145deg, #004d40, #00796b); }
+    .company-logo.emerald-dark svg { stroke: #fff; }
+    /* More MIUI-inspired logo styles */
+    .company-logo.hyper-blue { background: linear-gradient(145deg, #0066ff, #00aaff); }
+    .company-logo.hyper-blue svg { stroke: #fff; }
+    .company-logo.neon-gaming { background: linear-gradient(145deg, #00ff00, #00cc44); }
+    .company-logo.neon-gaming svg { stroke: #111; }
+    .company-logo.poco-yellow { background: linear-gradient(145deg, #ffcc00, #ff9900); }
+    .company-logo.poco-yellow svg { stroke: #111; }
+    .company-logo.neumorphic { background: linear-gradient(145deg, #e0e5ec, #d0d5dc); }
+    .company-logo.neumorphic svg { stroke: #333; }
+    .company-logo.nature-earth { background: linear-gradient(145deg, #5d4e37, #8b7355); }
+    .company-logo.nature-earth svg { stroke: #fff; }
+    .company-logo.abstract-art { background: linear-gradient(145deg, #e63946, #1d3557); }
+    .company-logo.abstract-art svg { stroke: #fff; }
+    /* Liquid metal logo styles */
+    .company-logo.silver { background: linear-gradient(145deg, #e8e8e8 0%, #a8a8a8 25%, #d4d4d4 50%, #909090 75%, #c0c0c0 100%); }
+    .company-logo.silver svg { stroke: #333; }
+    .company-logo.space-gray { background: linear-gradient(145deg, #4a4a4a 0%, #2d2d2d 25%, #5a5a5a 50%, #1a1a1a 75%, #3d3d3d 100%); }
+    .company-logo.space-gray svg { stroke: #fff; }
+    .company-logo.midnight { background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 25%, #2a2a4e 50%, #05050a 75%, #1a1a2e 100%); }
+    .company-logo.midnight svg { stroke: #fff; }
+    .company-logo.starlight { background: linear-gradient(145deg, #f5f5f0 0%, #e5e5dc 25%, #faf9f6 50%, #d5d5cc 75%, #f0efe8 100%); }
+    .company-logo.starlight svg { stroke: #333; }
+    /* Premium / Luxury logo styles */
+    .company-logo.gold { background: linear-gradient(145deg, #d4af37 0%, #f4d03f 25%, #c9a227 50%, #e6c200 75%, #b8860b 100%); }
+    .company-logo.gold svg { stroke: #1a1500; }
+    .company-logo.rose-gold { background: linear-gradient(145deg, #b76e79 0%, #e8a9b0 25%, #c78f97 50%, #dba8af 75%, #b76e79 100%); }
+    .company-logo.rose-gold svg { stroke: #fff; }
+    .company-logo.copper { background: linear-gradient(145deg, #b87333 0%, #da8a47 25%, #a66628 50%, #cd7f32 75%, #b87333 100%); }
+    .company-logo.copper svg { stroke: #fff; }
+    .company-logo.titanium { background: linear-gradient(145deg, #878681 0%, #a8a7a3 25%, #6e6d6a 50%, #9c9b97 75%, #878681 100%); }
+    .company-logo.titanium svg { stroke: #fff; }
+    .company-logo.obsidian { background: linear-gradient(145deg, #0b0b0d 0%, #1a1a1f 25%, #070709 50%, #141418 75%, #0b0b0d 100%); }
+    .company-logo.obsidian svg { stroke: #fff; }
+    .company-logo.pearl { background: linear-gradient(145deg, #f0ebe3 0%, #faf7f2 25%, #e8e2d9 50%, #f5f1ea 75%, #ede7de 100%); }
+    .company-logo.pearl svg { stroke: #333; }
+    .company-logo.champagne { background: linear-gradient(145deg, #f7e7ce 0%, #faf3e3 25%, #f0dfc0 50%, #f5ebd7 75%, #eddbb0 100%); }
+    .company-logo.champagne svg { stroke: #8b6914; }
+    /* Modern Converting Logo Styles */
+    .company-logo.electric { background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #ff00ff 100%); }
+    .company-logo.electric svg { stroke: #fff; }
+    .company-logo.sunset { background: linear-gradient(135deg, #ff512f 0%, #f09819 50%, #ff0844 100%); }
+    .company-logo.sunset svg { stroke: #fff; }
+    .company-logo.ocean { background: linear-gradient(135deg, #0077b6 0%, #00b4d8 50%, #90e0ef 100%); }
+    .company-logo.ocean svg { stroke: #fff; }
+    .company-logo.neon { background: linear-gradient(135deg, #00ff87 0%, #60efff 100%); }
+    .company-logo.neon svg { stroke: #0a0a0a; }
+    .company-logo.coral { background: linear-gradient(135deg, #ff6b6b 0%, #ffa07a 50%, #ffb347 100%); }
+    .company-logo.coral svg { stroke: #fff; }
+    .company-logo.indigo { background: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #818cf8 100%); }
+    .company-logo.indigo svg { stroke: #fff; }
+    .company-logo.teal { background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%); }
+    .company-logo.teal svg { stroke: #fff; }
+    .company-logo.lime { background: linear-gradient(135deg, #84cc16 0%, #a3e635 50%, #bef264 100%); }
+    .company-logo.lime svg { stroke: #1a2e05; }
+    .company-logo.amber { background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%); }
+    .company-logo.amber svg { stroke: #fff; }
+    .company-logo.fuchsia { background: linear-gradient(135deg, #c026d3 0%, #d946ef 50%, #e879f9 100%); }
+    .company-logo.fuchsia svg { stroke: #fff; }
+    .company-logo.slate { background: linear-gradient(145deg, #334155 0%, #475569 25%, #1e293b 50%, #64748b 75%, #334155 100%); }
+    .company-logo.slate svg { stroke: #fff; }
+    .company-logo.zinc { background: linear-gradient(145deg, #3f3f46 0%, #52525b 25%, #27272a 50%, #71717a 75%, #3f3f46 100%); }
+    .company-logo.zinc svg { stroke: #fff; }
+    
+    .company-logo svg {
+      width: 26px;
+      height: 26px;
+      stroke: white;
+      stroke-width: 2.5;
+      fill: none;
+    }
+    
+    .company-info { flex: 1; }
+    .company-name { font-weight: 600; font-size: 14px; color: var(--text); }
+    .promoted { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    
+    .post-text {
+      padding: 0 16px 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+    
+    .ad-creative {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1.91 / 1;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    .ad-creative:hover { opacity: 0.98; }
+    
+    .ad-bg {
+      position: absolute;
+      inset: 0;
+    }
+    
+    .ad-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+    }
+    
+    .ad-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 7% 6%;
+    }
+    
+    .ad-logo {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.02em;
+    }
+    
+    .ad-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .ad-headline {
+      font-size: clamp(1.1rem, 4vw, 1.625rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      max-width: 92%;
+      color: white;
+    }
+    
+    .ad-accent {
+      color: inherit;
+    }
+    
+    .ad-hook {
+      font-size: clamp(0.75rem, 2vw, 0.9rem);
+      font-weight: 400;
+      max-width: 70%;
+      line-height: 1.4;
+      opacity: 0.8;
+      color: white;
+    }
+    
+    /* Liquid Glass CTA */
+    .ad-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 13px;
+      color: white;
+      width: fit-content;
+      transition: all 0.2s;
+      box-shadow: 
+        0 4px 16px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.25),
+        inset 0 -1px 0 rgba(255,255,255,0.1);
+    }
+    
+    .ad-creative:hover .ad-cta {
+      background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 100%);
+      transform: translateY(-1px);
+      box-shadow: 
+        0 6px 20px rgba(0,0,0,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.3),
+        inset 0 -1px 0 rgba(255,255,255,0.1);
+    }
+    
+    .ad-cta svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      fill: none;
+    }
+    
+    .post-actions {
+      padding: 4px 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      background: var(--card-bg);
+    }
+    
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px 8px;
+    }
+    
+    .action-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      fill: none;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Adrata LinkedIn Ads</h1>
+      <p>January 2026 Campaign</p>
+      </div>
+    
+    <!-- Ad 1: Product (Competitor) -->
+    <div class="linkedin-post">
+      <div class="post-header">
+        <div class="company-logo orange">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+        <div class="company-info">
+          <div class="company-name">Adrata</div>
+          <div class="promoted">Promoted</div>
+        </div>
+      </div>
+      <div class="post-text">Your competitor closed 3 deals last month that should've been yours. Same product. Different speed.</div>
+      <a href="landing-product.html" class="ad-creative">
+        <div class="ad-bg" style="background: linear-gradient(145deg, #0a0a0a 0%, #171717 100%);"></div>
+        <div class="ad-glow" style="top: -40%; right: -20%; width: 80%; height: 120%; background: #7c3aed;"></div>
+        <div class="ad-content">
+          <div class="ad-logo">Adrata</div>
+          <div class="ad-main">
+            <h2 class="ad-headline">Their Product Is Worse. Their Win Rate Is Better.</h2>
+            <p class="ad-hook">Same market. Same buyers. Different intelligence.</p>
+          </div>
+          <div class="ad-cta" style="border-radius: 50px;">See Today <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        </div>
+      </a>
+      <div class="post-actions">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg> Like</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comment</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Repost</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send</div>
+      </div>
+    </div>
+    
+    <!-- Ad 2: Hidden Buyer -->
+    <div class="linkedin-post">
+      <div class="post-header">
+        <div class="company-logo orange">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+        <div class="company-info">
+          <div class="company-name">Adrata</div>
+          <div class="promoted">Promoted</div>
+        </div>
+      </div>
+      <div class="post-text">There's someone at your target account deciding right now. Your rep doesn't know their name.</div>
+      <a href="landing-karen.html" class="ad-creative">
+        <div class="ad-bg" style="background: linear-gradient(145deg, #0a0a0a 0%, #171717 100%);"></div>
+        <div class="ad-glow" style="top: -40%; right: -20%; width: 80%; height: 120%; background: #ec4899;"></div>
+        <div class="ad-content">
+          <div class="ad-logo">Adrata</div>
+          <div class="ad-main">
+            <h2 class="ad-headline">Someone Named Lisa Just Killed Your Deal. You Never Knew She Existed.</h2>
+            <p class="ad-hook">Your competitors already know who she is.</p>
+          </div>
+          <div class="ad-cta" style="border-radius: 12px;">Find Them <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        </div>
+      </a>
+      <div class="post-actions">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg> Like</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comment</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Repost</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send</div>
+      </div>
+    </div>
+    
+    <!-- Ad 3: Killers -->
+    <div class="linkedin-post">
+      <div class="post-header">
+        <div class="company-logo orange">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+        <div class="company-info">
+          <div class="company-name">Adrata</div>
+          <div class="promoted">Promoted</div>
+        </div>
+      </div>
+      <div class="post-text">Your $200K closers are doing $15/hr research. Every hour they research is an hour they don't close.</div>
+      <a href="landing-killers.html" class="ad-creative">
+        <div class="ad-bg" style="background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);"></div>
+        <div class="ad-glow" style="top: -50%; right: -30%; width: 100%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 50%, transparent 70%);"></div>
+        <div class="ad-content">
+          <div class="ad-logo">Adrata</div>
+          <div class="ad-main">
+            <h2 class="ad-headline">You Hired Killers and Made Them Play Researcher.</h2>
+            <p class="ad-hook">There's a faster way to find who actually buys.</p>
+          </div>
+          <div class="ad-cta" style="border-radius: 8px;">See How <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        </div>
+      </a>
+      <div class="post-actions">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg> Like</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comment</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Repost</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send</div>
+      </div>
+    </div>
+    
+    <!-- Ad 4: Closing -->
+    <div class="linkedin-post">
+      <div class="post-header">
+        <div class="company-logo orange">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+        <div class="company-info">
+          <div class="company-name">Adrata</div>
+          <div class="promoted">Promoted</div>
+        </div>
+      </div>
+      <div class="post-text">Your reps ran 47 demos last quarter. 12 were to actual decision-makers. The rest were practice.</div>
+      <a href="landing-closing.html" class="ad-creative">
+        <div class="ad-bg" style="background: linear-gradient(145deg, #0a0a0a 0%, #171717 100%);"></div>
+        <div class="ad-glow" style="top: -40%; right: -20%; width: 80%; height: 120%; background: #0891b2;"></div>
+        <div class="ad-content">
+          <div class="ad-logo">Adrata</div>
+          <div class="ad-main">
+            <h2 class="ad-headline">Your Reps Aren't Bad at Closing. They're Pitching the Wrong People.</h2>
+            <p class="ad-hook">The problem isn't your pitch. It's your target.</p>
+          </div>
+          <div class="ad-cta" style="border-radius: 20px;">Fix It <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        </div>
+      </a>
+      <div class="post-actions">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg> Like</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comment</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Repost</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send</div>
+      </div>
+    </div>
+    
+    <!-- Ad 5: Q4 -->
+    <div class="linkedin-post">
+      <div class="post-header">
+        <div class="company-logo orange">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+        <div class="company-info">
+          <div class="company-name">Adrata</div>
+          <div class="promoted">Promoted</div>
+        </div>
+      </div>
+      <div class="post-text">Q4 miss wasn't effort. It was timing. Your reps found buyers in December they needed in October.</div>
+      <a href="landing-q4.html" class="ad-creative">
+        <div class="ad-bg" style="background: linear-gradient(145deg, #0a0a0a 0%, #171717 100%);"></div>
+        <div class="ad-glow" style="top: -40%; right: -20%; width: 80%; height: 120%; background: #059669;"></div>
+        <div class="ad-content">
+          <div class="ad-logo">Adrata</div>
+          <div class="ad-main">
+            <h2 class="ad-headline">Q4 Slipped Because December Was Finding Buyers You Needed in October.</h2>
+            <p class="ad-hook">Q1 doesn't have to repeat history.</p>
+          </div>
+          <div class="ad-cta" style="border-radius: 6px;">Start Now <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        </div>
+      </a>
+      <div class="post-actions">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg> Like</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comment</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Repost</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send</div>
+      </div>
+    </div>
+    
+    <!-- Ad 6: Funnel -->
+    <div class="linkedin-post">
+      <div class="post-header">
+        <div class="company-logo orange">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+        <div class="company-info">
+          <div class="company-name">Adrata</div>
+          <div class="promoted">Promoted</div>
+        </div>
+      </div>
+      <div class="post-text">Great discovery. Perfect demo. Champion loved it. Then someone you never met killed the deal. That's not bad luck—that's a blind spot.</div>
+      <a href="landing-funnel.html" class="ad-creative">
+        <div class="ad-bg" style="background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);"></div>
+        <div class="ad-glow" style="top: -40%; right: -20%; width: 80%; height: 120%; background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 50%, transparent 70%);"></div>
+        <div class="ad-content">
+          <div class="ad-logo">Adrata</div>
+          <div class="ad-main">
+            <h2 class="ad-headline">Your Enterprise Funnel Is Broken.</h2>
+            <p class="ad-hook">The leak isn't leads. It's people you never met.</p>
+          </div>
+          <div class="ad-cta" style="border-radius: 8px;">Find the Leak <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        </div>
+      </a>
+      <div class="post-actions">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg> Like</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comment</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Repost</div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send</div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Adrata · January 2026</p>
+    </div>
+  </div>
+  
+  <!-- Fixed Customization Widget -->
+  <div class="customize-widget">
+    <div class="widget-title">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Customize
+    </div>
+    
+    <div class="widget-section">
+      <div class="widget-label">Color <span id="color-name" style="text-transform: capitalize; opacity: 0.7;">Red</span></div>
+      <div class="widget-colors">
+        <button class="color-btn orange" onclick="setColor('orange')" title="Orange"></button>
+        <button class="color-btn red active" onclick="setColor('red')" title="Red"></button>
+        <button class="color-btn blue" onclick="setColor('blue')" title="Blue"></button>
+        <button class="color-btn navy" onclick="setColor('navy')" title="Navy"></button>
+        <button class="color-btn indigo" onclick="setColor('indigo')" title="Indigo"></button>
+        <button class="color-btn emerald" onclick="setColor('emerald')" title="Green"></button>
+        <button class="color-btn teal" onclick="setColor('teal')" title="Teal"></button>
+        <button class="color-btn forest" onclick="setColor('forest')" title="Forest"></button>
+        <button class="color-btn violet" onclick="setColor('violet')" title="Violet"></button>
+        <button class="color-btn pink" onclick="setColor('pink')" title="Pink"></button>
+        <button class="color-btn cyan" onclick="setColor('cyan')" title="Cyan"></button>
+        <button class="color-btn gold" onclick="setColor('gold')" title="Gold"></button>
+        <button class="color-btn bronze" onclick="setColor('bronze')" title="Bronze"></button>
+        <button class="color-btn silver" onclick="setColor('silver')" title="Silver"></button>
+        <button class="color-btn steel" onclick="setColor('steel')" title="Steel"></button>
+        <button class="color-btn space-gray" onclick="setColor('space-gray')" title="Space Gray"></button>
+        <button class="color-btn slate" onclick="setColor('slate')" title="Slate"></button>
+        <button class="color-btn charcoal" onclick="setColor('charcoal')" title="Charcoal"></button>
+        <button class="color-btn midnight" onclick="setColor('midnight')" title="Midnight"></button>
+        <button class="color-btn obsidian" onclick="setColor('obsidian')" title="Obsidian"></button>
+        <button class="color-btn onyx" onclick="setColor('onyx')" title="Onyx"></button>
+        <button class="color-btn monaco" onclick="setColor('monaco')" title="Monaco"></button>
+        <button class="color-btn riviera" onclick="setColor('riviera')" title="Riviera"></button>
+        <button class="color-btn burgundy" onclick="setColor('burgundy')" title="Burgundy"></button>
+        <button class="color-btn champagne-rose" onclick="setColor('champagne-rose')" title="Champagne Rose"></button>
+        <button class="color-btn miui-purple" onclick="setColor('miui-purple')" title="MIUI Purple"></button>
+        <button class="color-btn aurora" onclick="setColor('aurora')" title="Aurora"></button>
+        <button class="color-btn platinum" onclick="setColor('platinum')" title="Platinum"></button>
+        <button class="color-btn crystal" onclick="setColor('crystal')" title="Crystal"></button>
+        <button class="color-btn citrine" onclick="setColor('citrine')" title="Citrine"></button>
+        <button class="color-btn rosewood" onclick="setColor('rosewood')" title="Rosewood"></button>
+        <button class="color-btn coral-pink" onclick="setColor('coral-pink')" title="Coral Pink"></button>
+        <button class="color-btn arctic" onclick="setColor('arctic')" title="Arctic"></button>
+        <button class="color-btn deep-ocean" onclick="setColor('deep-ocean')" title="Deep Ocean"></button>
+        <button class="color-btn sunset-glow" onclick="setColor('sunset-glow')" title="Sunset Glow"></button>
+        <button class="color-btn emerald-dark" onclick="setColor('emerald-dark')" title="Emerald Dark"></button>
+        <button class="color-btn hyper-blue" onclick="setColor('hyper-blue')" title="Hyper Blue"></button>
+        <button class="color-btn neon-gaming" onclick="setColor('neon-gaming')" title="Neon Gaming"></button>
+        <button class="color-btn poco-yellow" onclick="setColor('poco-yellow')" title="POCO Yellow"></button>
+        <button class="color-btn neumorphic" onclick="setColor('neumorphic')" title="Neumorphic"></button>
+        <button class="color-btn nature-earth" onclick="setColor('nature-earth')" title="Nature Earth"></button>
+        <button class="color-btn abstract-art" onclick="setColor('abstract-art')" title="Abstract Art"></button>
+      </div>
+    </div>
+    
+    <div class="widget-section">
+      <div class="widget-label">Style</div>
+      <div class="widget-styles">
+        <button class="style-btn active" onclick="setAdStyle('minimal')">Minimal</button>
+        <button class="style-btn" onclick="setAdStyle('glow')">Glow</button>
+        <button class="style-btn" onclick="setAdStyle('gradient')">Gradient</button>
+        <button class="style-btn" onclick="setAdStyle('dark')">Dark</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Color-specific ad background gradients (all dark for white text)
+    var colorBackgrounds = {
+      'silver': 'linear-gradient(145deg, #2a2a2a 0%, #3a3a3a 30%, #1a1a1a 70%, #2d2d2d 100%)',
+      'space-gray': 'linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 30%, #0a0a0a 70%, #1f1f1f 100%)',
+      'midnight': 'linear-gradient(145deg, #0a0a1a 0%, #1a1a3a 30%, #050510 70%, #15152a 100%)',
+      'starlight': 'linear-gradient(145deg, #1a1915 0%, #2a2820 30%, #100f0a 70%, #1f1d15 100%)',
+      'orange': 'linear-gradient(145deg, #1a0a00 0%, #2a1508 30%, #0f0500 70%, #1f0f05 100%)',
+      'red': 'linear-gradient(145deg, #1a0505 0%, #2a0a0a 30%, #0f0202 70%, #1f0808 100%)',
+      'blue': 'linear-gradient(145deg, #050a1a 0%, #0a142a 30%, #020510 70%, #080f1f 100%)',
+      'emerald': 'linear-gradient(145deg, #051a0f 0%, #0a2a18 30%, #021008 70%, #081f12 100%)',
+      'violet': 'linear-gradient(145deg, #0f051a 0%, #180a2a 30%, #080210 70%, #12081f 100%)',
+      'pink': 'linear-gradient(145deg, #1a0510 0%, #2a0a18 30%, #100208 70%, #1f0812 100%)',
+      'rose-gold': 'linear-gradient(145deg, #1a100f 0%, #2a1a18 30%, #100a08 70%, #1f1412 100%)',
+      'gold': 'linear-gradient(145deg, #1a1505 0%, #2a200a 30%, #100c02 70%, #1f1808 100%)',
+      'copper': 'linear-gradient(145deg, #1a0f05 0%, #2a180a 30%, #100802 70%, #1f1208 100%)',
+      'obsidian': 'linear-gradient(145deg, #050505 0%, #0a0a0a 30%, #020202 70%, #080808 100%)',
+      'pearl': 'linear-gradient(145deg, #1a1918 0%, #2a2825 30%, #100f0e 70%, #1f1d1a 100%)',
+      'champagne': 'linear-gradient(145deg, #1a1810 0%, #2a2518 30%, #100e08 70%, #1f1c12 100%)',
+      'titanium': 'linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 30%, #101010 70%, #1f1f1f 100%)',
+      'electric': 'linear-gradient(145deg, #0a0515 0%, #150a20 30%, #05020a 70%, #100815 100%)',
+      'sunset': 'linear-gradient(145deg, #1a0a05 0%, #2a1508 30%, #0f0502 70%, #1f0f08 100%)',
+      'ocean': 'linear-gradient(145deg, #051015 0%, #0a1520 30%, #020810 70%, #081018 100%)',
+      'neon': 'linear-gradient(145deg, #051a10 0%, #0a2a18 30%, #021008 70%, #081f12 100%)',
+      'coral': 'linear-gradient(145deg, #1a0808 0%, #2a1010 30%, #0f0505 70%, #1f0a0a 100%)',
+      'indigo': 'linear-gradient(145deg, #0a0a1a 0%, #15152a 30%, #050510 70%, #0f0f1f 100%)',
+      'teal': 'linear-gradient(145deg, #051515 0%, #0a2020 30%, #020a0a 70%, #081515 100%)',
+      'lime': 'linear-gradient(145deg, #0a1a05 0%, #152a0a 30%, #051002 70%, #0f1f08 100%)',
+      'amber': 'linear-gradient(145deg, #1a1005 0%, #2a180a 30%, #100a02 70%, #1f1208 100%)',
+      'fuchsia': 'linear-gradient(145deg, #150510 0%, #200a18 30%, #0a0208 70%, #180812 100%)',
+      'slate': 'linear-gradient(145deg, #0f1520 0%, #1a2530 30%, #080a10 70%, #121a25 100%)',
+      'zinc': 'linear-gradient(145deg, #151515 0%, #202020 30%, #0a0a0a 70%, #181818 100%)',
+      'navy': 'linear-gradient(145deg, #0a1520 0%, #152535 30%, #050a10 70%, #101a28 100%)',
+      'charcoal': 'linear-gradient(145deg, #0a0a0a 0%, #151515 30%, #050505 70%, #101010 100%)',
+      'bronze': 'linear-gradient(145deg, #1a1005 0%, #2a1a0a 30%, #100802 70%, #1f1408 100%)',
+      'steel': 'linear-gradient(145deg, #15181a 0%, #202528 30%, #0a0c0e 70%, #181a1c 100%)',
+      'forest': 'linear-gradient(145deg, #051510 0%, #0a251a 30%, #020a08 70%, #081a12 100%)',
+      'cyan': 'linear-gradient(145deg, #051518 0%, #0a2028 30%, #020a0c 70%, #081518 100%)',
+      'monaco': 'linear-gradient(145deg, #080f20 0%, #101a35 30%, #040810 70%, #0c1528 100%)',
+      'riviera': 'linear-gradient(145deg, #081a1a 0%, #102828 30%, #040c0c 70%, #0c1e1e 100%)',
+      'burgundy': 'linear-gradient(145deg, #1a0508 0%, #280a10 30%, #100204 70%, #1e080c 100%)',
+      'champagne-rose': 'linear-gradient(145deg, #1a1510 0%, #2a2218 30%, #100c08 70%, #1e1812 100%)',
+      'miui-purple': 'linear-gradient(145deg, #0f0a1a 0%, #181230 30%, #08050f 70%, #120e22 100%)',
+      'aurora': 'linear-gradient(145deg, #051a12 0%, #0a2a1e 30%, #020f0a 70%, #081f16 100%)',
+      'onyx': 'linear-gradient(145deg, #0a0a0b 0%, #151516 30%, #050506 70%, #0f0f10 100%)',
+      'platinum': 'linear-gradient(145deg, #1a1a19 0%, #2a2a28 30%, #101010 70%, #1e1e1c 100%)',
+      'crystal': 'linear-gradient(145deg, #0a1525 0%, #102040 30%, #050a15 70%, #0c1830 100%)',
+      'citrine': 'linear-gradient(145deg, #1a1205 0%, #2a1e08 30%, #100a02 70%, #1e1608 100%)',
+      'rosewood': 'linear-gradient(145deg, #150818 0%, #200c25 30%, #0a040c 70%, #18081a 100%)',
+      'coral-pink': 'linear-gradient(145deg, #1a1012 0%, #2a181c 30%, #100808 70%, #1e1215 100%)',
+      'arctic': 'linear-gradient(145deg, #151820 0%, #1e2530 30%, #0a0c10 70%, #181c25 100%)',
+      'deep-ocean': 'linear-gradient(145deg, #000210 0%, #00081a 30%, #000108 70%, #000612 100%)',
+      'sunset-glow': 'linear-gradient(145deg, #1a0a08 0%, #2a1510 30%, #100502 70%, #1e0f0a 100%)',
+      'emerald-dark': 'linear-gradient(145deg, #001510 0%, #00201a 30%, #000a08 70%, #001815 100%)',
+      'hyper-blue': 'linear-gradient(145deg, #000a1a 0%, #001530 30%, #00050a 70%, #001020 100%)',
+      'neon-gaming': 'linear-gradient(145deg, #001a05 0%, #002a0a 30%, #000a02 70%, #002008 100%)',
+      'poco-yellow': 'linear-gradient(145deg, #1a1505 0%, #2a2008 30%, #100a02 70%, #1e1808 100%)',
+      'neumorphic': 'linear-gradient(145deg, #151618 0%, #1e2022 30%, #0a0b0c 70%, #18191a 100%)',
+      'nature-earth': 'linear-gradient(145deg, #0a0805 0%, #151008 30%, #050402 70%, #100c08 100%)',
+      'abstract-art': 'linear-gradient(145deg, #150808 0%, #200a12 30%, #0a0406 70%, #180810 100%)'
+    };
+    
+    var colorGlows = {
+      'silver': 'radial-gradient(circle, rgba(200,200,200,0.4) 0%, rgba(180,180,180,0.2) 50%, transparent 70%)',
+      'space-gray': 'radial-gradient(circle, rgba(100,100,100,0.4) 0%, rgba(80,80,80,0.2) 50%, transparent 70%)',
+      'midnight': 'radial-gradient(circle, rgba(60,60,120,0.5) 0%, rgba(40,40,80,0.2) 50%, transparent 70%)',
+      'starlight': 'radial-gradient(circle, rgba(255,250,240,0.6) 0%, rgba(240,235,220,0.3) 50%, transparent 70%)',
+      'orange': 'radial-gradient(circle, #ea580c 0%, rgba(234,88,12,0.4) 50%, transparent 70%)',
+      'red': 'radial-gradient(circle, #e53935 0%, rgba(229,57,53,0.4) 50%, transparent 70%)',
+      'blue': 'radial-gradient(circle, #2655FF 0%, rgba(38,85,255,0.4) 50%, transparent 70%)',
+      'emerald': 'radial-gradient(circle, #059669 0%, rgba(5,150,105,0.4) 50%, transparent 70%)',
+      'violet': 'radial-gradient(circle, #7c3aed 0%, rgba(124,58,237,0.4) 50%, transparent 70%)',
+      'pink': 'radial-gradient(circle, #ec4899 0%, rgba(236,72,153,0.4) 50%, transparent 70%)',
+      'rose-gold': 'radial-gradient(circle, #b76e79 0%, rgba(183,110,121,0.4) 50%, transparent 70%)',
+      'gold': 'radial-gradient(circle, #d4af37 0%, rgba(212,175,55,0.5) 50%, transparent 70%)',
+      'copper': 'radial-gradient(circle, #b87333 0%, rgba(184,115,51,0.4) 50%, transparent 70%)',
+      'obsidian': 'radial-gradient(circle, rgba(40,40,50,0.6) 0%, rgba(20,20,25,0.3) 50%, transparent 70%)',
+      'pearl': 'radial-gradient(circle, rgba(255,255,250,0.8) 0%, rgba(240,235,225,0.4) 50%, transparent 70%)',
+      'champagne': 'radial-gradient(circle, #f7e7ce 0%, rgba(247,231,206,0.4) 50%, transparent 70%)',
+      'titanium': 'radial-gradient(circle, rgba(140,140,140,0.5) 0%, rgba(100,100,100,0.2) 50%, transparent 70%)',
+      'electric': 'radial-gradient(circle, #00d4ff 0%, rgba(124,58,237,0.5) 50%, transparent 70%)',
+      'sunset': 'radial-gradient(circle, #ff512f 0%, rgba(240,152,25,0.5) 50%, transparent 70%)',
+      'ocean': 'radial-gradient(circle, #00b4d8 0%, rgba(0,119,182,0.5) 50%, transparent 70%)',
+      'neon': 'radial-gradient(circle, #00ff87 0%, rgba(96,239,255,0.5) 50%, transparent 70%)',
+      'coral': 'radial-gradient(circle, #ff6b6b 0%, rgba(255,160,122,0.5) 50%, transparent 70%)',
+      'indigo': 'radial-gradient(circle, #6366f1 0%, rgba(67,56,202,0.5) 50%, transparent 70%)',
+      'teal': 'radial-gradient(circle, #14b8a6 0%, rgba(13,148,136,0.5) 50%, transparent 70%)',
+      'lime': 'radial-gradient(circle, #a3e635 0%, rgba(132,204,22,0.5) 50%, transparent 70%)',
+      'amber': 'radial-gradient(circle, #f59e0b 0%, rgba(217,119,6,0.5) 50%, transparent 70%)',
+      'fuchsia': 'radial-gradient(circle, #d946ef 0%, rgba(192,38,211,0.5) 50%, transparent 70%)',
+      'slate': 'radial-gradient(circle, rgba(100,116,139,0.6) 0%, rgba(51,65,85,0.3) 50%, transparent 70%)',
+      'zinc': 'radial-gradient(circle, rgba(113,113,122,0.6) 0%, rgba(63,63,70,0.3) 50%, transparent 70%)',
+      'navy': 'radial-gradient(circle, rgba(44,82,130,0.6) 0%, rgba(30,58,95,0.3) 50%, transparent 70%)',
+      'charcoal': 'radial-gradient(circle, rgba(51,51,51,0.6) 0%, rgba(31,31,31,0.3) 50%, transparent 70%)',
+      'bronze': 'radial-gradient(circle, rgba(205,133,63,0.6) 0%, rgba(139,90,43,0.3) 50%, transparent 70%)',
+      'steel': 'radial-gradient(circle, rgba(155,164,180,0.6) 0%, rgba(113,121,126,0.3) 50%, transparent 70%)',
+      'forest': 'radial-gradient(circle, rgba(45,106,79,0.6) 0%, rgba(27,67,50,0.3) 50%, transparent 70%)',
+      'cyan': 'radial-gradient(circle, rgba(34,211,238,0.6) 0%, rgba(8,145,178,0.3) 50%, transparent 70%)',
+      'monaco': 'radial-gradient(circle, rgba(42,74,138,0.6) 0%, rgba(26,45,90,0.3) 50%, transparent 70%)',
+      'riviera': 'radial-gradient(circle, rgba(42,144,144,0.6) 0%, rgba(26,107,107,0.3) 50%, transparent 70%)',
+      'burgundy': 'radial-gradient(circle, rgba(160,16,48,0.6) 0%, rgba(128,0,32,0.3) 50%, transparent 70%)',
+      'champagne-rose': 'radial-gradient(circle, rgba(232,196,154,0.6) 0%, rgba(212,165,116,0.3) 50%, transparent 70%)',
+      'miui-purple': 'radial-gradient(circle, rgba(138,125,240,0.6) 0%, rgba(107,92,231,0.3) 50%, transparent 70%)',
+      'aurora': 'radial-gradient(circle, rgba(32,240,176,0.6) 0%, rgba(0,214,143,0.3) 50%, transparent 70%)',
+      'onyx': 'radial-gradient(circle, rgba(74,76,77,0.6) 0%, rgba(53,56,57,0.3) 50%, transparent 70%)',
+      'platinum': 'radial-gradient(circle, rgba(245,244,242,0.6) 0%, rgba(229,228,226,0.3) 50%, transparent 70%)',
+      'crystal': 'radial-gradient(circle, rgba(74,144,217,0.6) 0%, rgba(30,60,114,0.3) 50%, transparent 70%)',
+      'citrine': 'radial-gradient(circle, rgba(255,210,0,0.6) 0%, rgba(247,151,30,0.3) 50%, transparent 70%)',
+      'rosewood': 'radial-gradient(circle, rgba(255,107,157,0.6) 0%, rgba(142,45,226,0.3) 50%, transparent 70%)',
+      'coral-pink': 'radial-gradient(circle, rgba(254,207,239,0.6) 0%, rgba(255,154,158,0.3) 50%, transparent 70%)',
+      'arctic': 'radial-gradient(circle, rgba(207,222,243,0.6) 0%, rgba(224,234,252,0.3) 50%, transparent 70%)',
+      'deep-ocean': 'radial-gradient(circle, rgba(0,78,146,0.6) 0%, rgba(0,4,40,0.3) 50%, transparent 70%)',
+      'sunset-glow': 'radial-gradient(circle, rgba(255,195,113,0.6) 0%, rgba(255,95,109,0.3) 50%, transparent 70%)',
+      'emerald-dark': 'radial-gradient(circle, rgba(0,121,107,0.6) 0%, rgba(0,77,64,0.3) 50%, transparent 70%)',
+      'hyper-blue': 'radial-gradient(circle, rgba(0,170,255,0.6) 0%, rgba(0,102,255,0.3) 50%, transparent 70%)',
+      'neon-gaming': 'radial-gradient(circle, rgba(0,255,0,0.6) 0%, rgba(0,204,68,0.3) 50%, transparent 70%)',
+      'poco-yellow': 'radial-gradient(circle, rgba(255,204,0,0.6) 0%, rgba(255,153,0,0.3) 50%, transparent 70%)',
+      'neumorphic': 'radial-gradient(circle, rgba(224,229,236,0.4) 0%, rgba(208,213,220,0.2) 50%, transparent 70%)',
+      'nature-earth': 'radial-gradient(circle, rgba(139,115,85,0.6) 0%, rgba(93,78,55,0.3) 50%, transparent 70%)',
+      'abstract-art': 'radial-gradient(circle, rgba(230,57,70,0.5) 0%, rgba(29,53,87,0.3) 50%, transparent 70%)'
+    };
+    
+    var accentColors = {
+      'orange': '#fb923c', 'red': '#ff5252', 'blue': '#5b7fff', 'emerald': '#34d399',
+      'violet': '#a78bfa', 'pink': '#f472b6', 'cyan': '#22d3ee', 'gold': '#f4d03f',
+      'silver': '#d4d4d4', 'space-gray': '#8a8a8a', 'midnight': '#6366f1', 'obsidian': '#888',
+      'navy': '#4a7eb8', 'teal': '#2dd4bf', 'indigo': '#818cf8', 'slate': '#94a3b8',
+      'charcoal': '#888', 'bronze': '#cd853f', 'steel': '#9BA4B4', 'forest': '#4ade80',
+      'monaco': '#4a7fc0', 'riviera': '#40b8b8', 'burgundy': '#c83050', 'champagne-rose': '#e8c49a',
+      'miui-purple': '#a090f8', 'aurora': '#40f0c0', 'onyx': '#7a7c7d', 'platinum': '#e8e8e6',
+      'crystal': '#4a90d9', 'citrine': '#ffd200', 'rosewood': '#ff6b9d', 'coral-pink': '#ff9a9e',
+      'arctic': '#cfdef3', 'deep-ocean': '#4080c0', 'sunset-glow': '#ffc371', 'emerald-dark': '#00c0a0',
+      'hyper-blue': '#00aaff', 'neon-gaming': '#00ff00', 'poco-yellow': '#ffcc00', 'neumorphic': '#a0a8b0',
+      'nature-earth': '#a08060', 'abstract-art': '#e63946'
+    };
+    
+    function setColor(color) {
+      // Update logos
+      document.querySelectorAll('.company-logo').forEach(logo => {
+        logo.className = 'company-logo ' + color;
+      });
+      // Update active button
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      var btn = document.querySelector('.color-btn.' + color);
+      if (btn) btn.classList.add('active');
+      // Update ad backgrounds
+      document.querySelectorAll('.ad-bg').forEach(bg => {
+        bg.style.background = colorBackgrounds[color] || colorBackgrounds['silver'];
+      });
+      document.querySelectorAll('.ad-glow').forEach(glow => {
+        glow.style.background = colorGlows[color] || colorGlows['silver'];
+      });
+      // Update accent text color
+      document.querySelectorAll('.ad-accent').forEach(el => {
+        el.style.color = accentColors[color] || accentColors['orange'];
+      });
+      // Update color name display
+      var colorName = color.replace('-', ' ');
+      document.getElementById('color-name').textContent = colorName;
+      // Save preference
+      localStorage.setItem('brandColor', color);
+    }
+    
+    var adStyles = {
+      'minimal': { glowOpacity: 0.15, glowSize: 60, blur: 0 },
+      'glow': { glowOpacity: 0.35, glowSize: 80, blur: 8 },
+      'gradient': { glowOpacity: 0.25, glowSize: 70, blur: 4 },
+      'dark': { glowOpacity: 0, glowSize: 0, blur: 0 }
+    };
+    
+    function setAdStyle(style) {
+      var settings = adStyles[style] || adStyles['minimal'];
+      document.querySelectorAll('.ad-glow').forEach(glow => {
+        glow.style.opacity = settings.glowOpacity;
+        glow.style.width = settings.glowSize + '%';
+        glow.style.height = (settings.glowSize * 1.5) + '%';
+        glow.style.filter = 'blur(' + settings.blur + 'px)';
+      });
+      // Update icon style to match - no blur, just clean shadows
+      document.querySelectorAll('.company-logo').forEach(logo => {
+        logo.style.boxShadow = style === 'dark' ? 'none' : '';
+        logo.style.filter = 'none';
+      });
+      document.querySelectorAll('.widget-styles .style-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      var activeBtn = document.querySelector('[onclick="setAdStyle(\'' + style + '\')"]');
+      if (activeBtn) activeBtn.classList.add('active');
+      localStorage.setItem('adStyle', style);
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      var savedColor = localStorage.getItem('brandColor') || 'red';
+      var savedAdStyle = localStorage.getItem('adStyle') || 'minimal';
+      setColor(savedColor);
+      setAdStyle(savedAdStyle);
+    });
+  </script>
+</body>
+</html>

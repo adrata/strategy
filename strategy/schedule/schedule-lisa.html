@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Hidden Buyers | Adrata</title>
+  <meta name="description" content="Discover the stakeholders killing your deals before you even know they exist. Free 15-minute strategy session.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    @font-face {
+      font-family: 'MiSans';
+      src: url('https://cdn.jsdelivr.net/gh/nickyam/fonts@main/MiSans-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MiSans';
+      src: url('https://cdn.jsdelivr.net/gh/nickyam/fonts@main/MiSans-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+    
+    :root {
+      --bg: #000000;
+      --card: #0a0a0a;
+      --border: #1f1f1f;
+      --text: #ffffff;
+      --text-secondary: #888888;
+      --accent: #ec4899;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'MiSans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .container { max-width: 480px; width: 100%; text-align: center; }
+    .logo { font-size: 16px; font-weight: 600; color: var(--text-secondary); margin-bottom: 40px; }
+    
+    .progress { display: flex; gap: 8px; justify-content: center; margin-bottom: 40px; }
+    .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+    .progress-dot.active { background: var(--accent); }
+    .progress-dot.done { background: var(--text); }
+    
+    .step { display: none; animation: fadeIn 0.3s ease; }
+    .step.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .step h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 8px; line-height: 1.2; }
+    .step h2 span { color: var(--accent); }
+    .step > p { color: var(--text-secondary); font-size: 15px; margin-bottom: 32px; }
+    
+    .options { display: flex; flex-direction: column; gap: 12px; }
+    .option { display: flex; align-items: center; gap: 14px; padding: 18px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s; text-align: left; }
+    .option:hover { border-color: rgba(255,255,255,0.2); background: #111; }
+    .option-icon { width: 44px; height: 44px; background: rgba(236,72,153,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .option-icon svg { width: 22px; height: 22px; stroke: var(--accent); stroke-width: 1.5; fill: none; }
+    .option-content { flex: 1; }
+    .option-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+    .option-desc { font-size: 13px; color: var(--text-secondary); }
+    
+    .value-reminder { margin-top: 24px; padding: 16px; background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.25); border-radius: 10px; font-size: 13px; color: var(--text-secondary); }
+    .value-reminder strong { color: var(--text); }
+    
+    /* Dark Mode Calendar */
+    .calendar-widget { margin-top: 24px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .calendar-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); }
+    .cal-nav { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .cal-nav:hover { background: rgba(255,255,255,0.05); color: white; }
+    .cal-nav svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
+    .cal-month { font-weight: 600; font-size: 15px; }
+    .calendar-days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 16px; border-bottom: 1px solid var(--border); }
+    .cal-day { text-align: center; padding: 12px 8px; border-radius: 10px; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+    .cal-day:hover { background: rgba(255,255,255,0.05); }
+    .cal-day.selected { background: var(--accent); border-color: var(--accent); }
+    .cal-day-name { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .cal-day-num { font-size: 18px; font-weight: 600; }
+    .cal-day.selected .cal-day-name { color: rgba(255,255,255,0.7); }
+    .calendar-times { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 16px; }
+    .time-slot { padding: 14px; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.15s; }
+    .time-slot:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+    .time-slot.selected { background: var(--accent); border-color: var(--accent); }
+    .btn { width: 100%; padding: 16px 24px; background: var(--accent); border: none; border-radius: 50px; color: white; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(236,72,153,0.35); }
+    .btn:disabled { background: var(--border); cursor: not-allowed; opacity: 0.5; }
+    .cal-confirm { margin: 0 16px 16px; width: calc(100% - 32px); }
+    
+    .success { padding: 60px 20px; }
+    .success-icon { width: 72px; height: 72px; background: rgba(76,175,80,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+    .success-icon svg { width: 36px; height: 36px; stroke: #4caf50; stroke-width: 2; fill: none; }
+    .success h2 { font-size: 1.5rem; margin-bottom: 12px; }
+    .success p { color: var(--text-secondary); font-size: 15px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Adrata</div>
+    
+    <div class="progress">
+      <div class="progress-dot active" id="dot1"></div>
+      <div class="progress-dot" id="dot2"></div>
+      <div class="progress-dot" id="dot3"></div>
+    </div>
+    
+    <!-- Step 1 -->
+    <div class="step active" id="step1">
+      <h2>How often do <span>surprise stakeholders</span> kill your deals?</h2>
+      <p>The ones you didn't know existed until it was too late.</p>
+      <div class="options">
+        <div class="option" onclick="selectOption(1, 'Rarely')">
+          <div class="option-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          </div>
+          <div class="option-content">
+            <div class="option-title">Rarely—we know most stakeholders</div>
+            <div class="option-desc">But occasionally someone appears late</div>
+          </div>
+        </div>
+        <div class="option" onclick="selectOption(1, 'Sometimes')">
+          <div class="option-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+          </div>
+          <div class="option-content">
+            <div class="option-title">Sometimes—it's frustrating</div>
+            <div class="option-desc">Hidden stakeholders kill ~20% of deals</div>
+          </div>
+        </div>
+        <div class="option" onclick="selectOption(1, 'Too often')">
+          <div class="option-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <div class="option-content">
+            <div class="option-title">Too often—it's our biggest blocker</div>
+            <div class="option-desc">"Karen in procurement" is too real</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Step 2 -->
+    <div class="step" id="step2">
+      <h2>What's a typical <span>deal size</span> for your team?</h2>
+      <p>Helps us prioritize which accounts to map first.</p>
+      <div class="options">
+        <div class="option" onclick="selectOption(2, '<$50K')">
+          <div class="option-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="option-content">
+            <div class="option-title">Under $50K</div>
+            <div class="option-desc">SMB / mid-market deals</div>
+          </div>
+        </div>
+        <div class="option" onclick="selectOption(2, '$50K-$200K')">
+          <div class="option-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="option-content">
+            <div class="option-title">$50K - $200K</div>
+            <div class="option-desc">Enterprise / strategic accounts</div>
+          </div>
+        </div>
+        <div class="option" onclick="selectOption(2, '>$200K')">
+          <div class="option-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="option-content">
+            <div class="option-title">$200K+</div>
+            <div class="option-desc">Large enterprise / major accounts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Step 3: Calendar -->
+    <div class="step" id="step3">
+      <h2>Find every hidden buyer</h2>
+      <p>15 minutes to map stakeholders you didn't know existed.</p>
+      
+      <div class="calendar-widget">
+        <div class="calendar-header">
+          <button class="cal-nav" onclick="prevWeek()"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="cal-month" id="calMonth">January 2026</span>
+          <button class="cal-nav" onclick="nextWeek()"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+        <div class="calendar-days" id="calDays"></div>
+        <div class="calendar-times">
+          <div class="time-slot" onclick="selectTime(this)">9:00 AM</div>
+          <div class="time-slot" onclick="selectTime(this)">10:00 AM</div>
+          <div class="time-slot" onclick="selectTime(this)">11:00 AM</div>
+          <div class="time-slot" onclick="selectTime(this)">2:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this)">3:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this)">4:00 PM</div>
+        </div>
+        <button class="btn cal-confirm" id="confirmBtn" onclick="confirmBooking()" disabled>Confirm Time</button>
+      </div>
+      
+      <div class="value-reminder">
+        <strong>What you'll get:</strong> Every stakeholder who can influence or kill your deal—mapped before you start selling.
+      </div>
+    </div>
+    
+    <!-- Success -->
+    <div class="step" id="step4">
+      <div class="success">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+        </div>
+        <h2>You're all set!</h2>
+        <p>Check your email for the invite. No more surprise stakeholders.</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentStep = 1;
+    let selectedDay = null;
+    let selectedTime = null;
+    let weekOffset = 0;
+    
+    function selectOption(step, value) { goToStep(step + 1); }
+    
+    function goToStep(step) {
+      for (let i = 1; i <= 3; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.classList.remove('active', 'done');
+        if (i < step) dot.classList.add('done');
+        if (i === step) dot.classList.add('active');
+      }
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+      currentStep = step;
+      if (step === 3) renderCalendar();
+    }
+    
+    function renderCalendar() {
+      const today = new Date();
+      today.setDate(today.getDate() + (weekOffset * 7));
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const start = new Date(today);
+      const dayOfWeek = start.getDay();
+      if (weekOffset === 0) start.setDate(start.getDate() + (dayOfWeek <= 1 ? (1 - dayOfWeek) : (8 - dayOfWeek)));
+      else start.setDate(start.getDate() + 1);
+      document.getElementById('calMonth').textContent = months[start.getMonth()] + ' ' + start.getFullYear();
+      const container = document.getElementById('calDays');
+      container.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        const div = document.createElement('div');
+        div.className = 'cal-day' + (i === 0 && !selectedDay ? ' selected' : '');
+        div.innerHTML = '<div class="cal-day-name">' + days[d.getDay()] + '</div><div class="cal-day-num">' + d.getDate() + '</div>';
+        div.onclick = function() { selectDay(this); };
+        container.appendChild(div);
+        if (i === 0 && !selectedDay) selectedDay = div;
+      }
+    }
+    
+    function selectDay(el) { document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('selected')); el.classList.add('selected'); selectedDay = el; updateConfirm(); }
+    function selectTime(el) { document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected')); el.classList.add('selected'); selectedTime = el; updateConfirm(); }
+    function updateConfirm() { document.getElementById('confirmBtn').disabled = !(selectedDay && selectedTime); }
+    function prevWeek() { if (weekOffset > 0) { weekOffset--; renderCalendar(); } }
+    function nextWeek() { weekOffset++; renderCalendar(); }
+    function confirmBooking() { goToStep(4); }
+  </script>
+</body>
+</html>
+

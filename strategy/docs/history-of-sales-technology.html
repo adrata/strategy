@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The History of Sales Technology</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <meta property="og:title" content="The History of Sales Technology">
+    <meta property="og:description" content="From handshakes to AI: How technology transformed the art of selling.">
+    <meta property="og:image" content="../og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 64px 0 8px; color: var(--text); }
+        h2 span { color: var(--text-muted); font-weight: 400; }
+        .era-desc { color: var(--text-muted); margin-bottom: 24px; font-size: 15px; }
+        
+        .timeline { border-left: 2px solid var(--border); padding-left: 24px; margin-left: 8px; }
+        
+        .invention { padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .invention:last-child { border-bottom: none; }
+        .year { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+        .name { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+        .creator { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .desc { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+        .impact { font-size: 13px; color: var(--accent); margin-top: 8px; font-weight: 500; }
+        
+        .quote { background: var(--highlight-bg); padding: 24px; margin: 32px 0; border-left: 3px solid var(--accent); font-style: italic; color: var(--text); }
+        .quote cite { display: block; margin-top: 8px; font-style: normal; font-weight: 600; font-size: 14px; color: var(--text-muted); }
+        
+        .insight { background: var(--highlight-bg); padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 3px solid var(--accent); }
+        .insight strong { display: block; margin-bottom: 8px; color: var(--accent); }
+        .insight p { color: var(--text-secondary); margin: 0; font-size: 15px; }
+        
+        .share-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 32px; margin: 48px 0; text-align: center; }
+        .share-section h3 { font-size: 18px; margin-bottom: 16px; color: var(--text); }
+        .share-form { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+        .share-form input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); }
+        .share-form button { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .share-form button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Timeline</div>
+            <h1>The History of Sales Technology</h1>
+            <div class="subtitle">From handshakes to AI: How technology transformed the art of selling</div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this document</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">1.5x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quote">
+        "The tools change, but the fundamentals remain: find people with problems, and help them solve those problems."
+    </div>
+
+    <p style="margin-bottom: 48px; color: var(--text-secondary);">This document traces the evolution of sales technology from ancient commerce through the AI revolution. Each invention built on the last, progressively enabling salespeople to reach more prospects, manage more relationships, and close more deals.</p>
+
+    <h2>The Communication Revolution <span>1840-1920</span></h2>
+    <p class="era-desc">Electricity transformed sales by enabling instant remote communication. For the first time, you could sell to someone without being in the same room.</p>
+
+    <div class="timeline">
+        <div class="invention">
+            <div class="year">1844</div>
+            <div class="name">Telegraph</div>
+            <div class="creator">Samuel Morse, USA</div>
+            <div class="desc">Instant communication over distance. Businesses could transmit orders, confirm prices, and coordinate across locations in minutes instead of weeks.</div>
+            <div class="impact">Impact: Real-time business communication. Markets could respond to information instantly.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">1876</div>
+            <div class="name">Telephone</div>
+            <div class="creator">Alexander Graham Bell, USA</div>
+            <div class="desc">Voice communication at distance. For the first time, salespeople could have real conversations with prospects anywhere connected by wire. The foundation of all modern inside sales.</div>
+            <div class="impact">Impact: The birth of inside sales. Selling no longer required physical presence.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">1879</div>
+            <div class="name">Cash Register</div>
+            <div class="creator">James Ritty, Dayton, Ohio</div>
+            <div class="desc">Ritty, a saloon owner, invented "Ritty's Incorruptible Cashier" to prevent employee theft. It recorded every transaction, creating the first automated sales data.</div>
+            <div class="impact">Impact: Sales became measurable. Data could track performance.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">1898</div>
+            <div class="name">AIDA Model</div>
+            <div class="creator">E. St. Elmo Lewis, USA</div>
+            <div class="desc">The first formalized sales methodology: Attention, Interest, Desire, Action. Lewis codified what successful salespeople did intuitively. Still taught today, 125+ years later.</div>
+            <div class="impact">Impact: Sales became teachable. Methodology could be replicated.</div>
+        </div>
+    </div>
+
+    <h2>The Personal Computer Era <span>1980-1995</span></h2>
+    <p class="era-desc">Computers moved from data centers to desktops. For the first time, individual salespeople had digital tools at their fingertips.</p>
+
+    <div class="timeline">
+        <div class="invention">
+            <div class="year">1986</div>
+            <div class="name">ACT! Contact Manager</div>
+            <div class="creator">Pat Sullivan & Mike Muhney, Dallas</div>
+            <div class="desc">The first popular contact management software. Digital Rolodex with notes, history, and follow-up reminders. Over 3 million users by the 1990s.</div>
+            <div class="impact">Impact: Digital contact management. The Rolodex became software.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">1988</div>
+            <div class="name">SPIN Selling</div>
+            <div class="creator">Neil Rackham</div>
+            <div class="desc">Based on analysis of 35,000 sales calls, Rackham proved that asking questions (Situation, Problem, Implication, Need-Payoff) outsold traditional pitching. The first data-driven sales methodology.</div>
+            <div class="impact">Impact: Research-based selling. Methodology backed by data.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">1993</div>
+            <div class="name">Siebel Systems</div>
+            <div class="creator">Tom Siebel, Palo Alto</div>
+            <div class="desc">The first enterprise CRM. Siebel integrated sales, marketing, and service on one platform. Implementations cost millions, but Fortune 500 companies lined up.</div>
+            <div class="impact">Impact: Enterprise CRM. Sales, marketing, and service unified (at enormous cost).</div>
+        </div>
+    </div>
+
+    <h2>The Internet Era <span>1995-2005</span></h2>
+    <p class="era-desc">The web transformed everything. Buyers gained access to information. Sellers gained access to the world.</p>
+
+    <div class="timeline">
+        <div class="invention">
+            <div class="year">1999</div>
+            <div class="name">Salesforce.com</div>
+            <div class="creator">Marc Benioff, San Francisco</div>
+            <div class="desc">The big bang of modern sales technology. CRM should be software-as-a-service, accessible via browser, with no installation. "No Software" was the tagline. Democratized CRM—small companies could afford enterprise-grade tools.</div>
+            <div class="impact">Impact: SaaS revolution. CRM for everyone. The modern sales tech stack was born.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">2003</div>
+            <div class="name">LinkedIn</div>
+            <div class="creator">Reid Hoffman, Mountain View</div>
+            <div class="desc">Professional networking online. For salespeople: a searchable database of every professional, their job history, connections, and content. Social selling was born.</div>
+            <div class="impact">Impact: Research at scale. Every prospect's background became visible.</div>
+        </div>
+    </div>
+
+    <div class="insight">
+        <strong>Pattern: Communication speed = sales velocity</strong>
+        <p>Every major leap in sales came from faster communication. Telegraph (minutes vs weeks), telephone (real-time vs days), email (instant vs days). The pattern continues today with real-time chat and AI.</p>
+    </div>
+
+    <h2>The AI Era <span>2015-Present</span></h2>
+    <p class="era-desc">Artificial intelligence transforms sales from manual research to automated intelligence. We're in the early innings.</p>
+
+    <div class="timeline">
+        <div class="invention">
+            <div class="year">2022</div>
+            <div class="name">ChatGPT / GPT-4</div>
+            <div class="creator">OpenAI</div>
+            <div class="desc">Large language models demonstrated human-level writing, summarization, and reasoning. Sales teams immediately applied it: email drafting, research summarization, objection handling, call prep.</div>
+            <div class="impact">Impact: AI copilot. Writing, research, and preparation accelerated 10x.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">2023</div>
+            <div class="name">AI SDRs / Autonomous Agents</div>
+            <div class="creator">11x, Artisan, Regie.ai, and others</div>
+            <div class="desc">AI that doesn't just assist but acts. Researches prospects, writes personalized emails, responds to replies, books meetings autonomously.</div>
+            <div class="impact">Impact: Autonomous outreach. AI as an independent actor, not just a tool.</div>
+        </div>
+
+        <div class="invention">
+            <div class="year">2025</div>
+            <div class="name">Buyer Group Intelligence</div>
+            <div class="creator">Emerging category (Adrata and others)</div>
+            <div class="desc">AI identifies the full buying committee across the entire deal lifecycle: decision makers, influencers, blockers, champions, economic buyers, end users. Maps relationships, predicts influence patterns.</div>
+            <div class="impact">Impact: Multi-threaded selling. AI maps the entire buyer group dynamics.</div>
+        </div>
+    </div>
+
+    <div class="quote" style="margin-top: 48px;">
+        "The fundamentals haven't changed in 5,000 years: find people with problems, help them solve those problems. The tools are just getting better."
+    </div>
+
+    <div class="share-section">
+        <h3>Share</h3>
+        <form class="share-form" onsubmit="handleShare(event)">
+            <input type="email" placeholder="Their email" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); }
+
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        let isPlaying = false;
+        let isPaused = false;
+        let currentRate = 1.5;
+        let voices = [];
+
+        function loadVoices() { voices = synth.getVoices(); }
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) { synth.onvoiceschanged = loadVoices; }
+
+        function getDocumentText() {
+            const content = document.body.cloneNode(true);
+            content.querySelectorAll('.audio-player, .share-section, .theme-toggle, script, style').forEach(el => el.remove());
+            let text = content.textContent || '';
+            text = text.replace(/\s+/g, ' ').trim();
+            return text.substring(0, 10000);
+        }
+
+        function toggleAudio() {
+            if (!synth) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+            if (isPlaying && !isPaused) { synth.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; return; }
+            if (isPaused) { synth.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; return; }
+            synth.cancel();
+            const text = getDocumentText();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentRate;
+            if (voices.length > 0) { const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.lang.startsWith('en')); if (preferred) utterance.voice = preferred; }
+            utterance.onstart = () => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; };
+            utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+            utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error: ' + e.error; isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; };
+            synth.speak(utterance);
+            setTimeout(() => { if (synth.speaking && !synth.paused) { synth.pause(); synth.resume(); } }, 100);
+        }
+
+        function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+        function setSpeed(rate) { currentRate = rate; document.getElementById('speedLabel').textContent = rate + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active')); event.target.classList.add('active'); document.getElementById('speedMenu').classList.remove('open'); if (utterance) utterance.rate = rate; }
+        document.addEventListener('click', () => { document.getElementById('speedMenu').classList.remove('open'); });
+
+        function handleShare(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input').value;
+            const subject = encodeURIComponent('The History of Sales Technology');
+            const body = encodeURIComponent('Check out this timeline: ' + window.location.href);
+            window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+            e.target.innerHTML = '<p style="color: var(--accent); font-weight: 600;">Sent!</p>';
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents for RevOps | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="AI Agents for RevOps">
+    <meta property="og:description" content="Transform RevOps from a service desk to a strategic function. AI agents for data quality, automation, forecasting, and decision support.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+            --revops: #6366f1;
+            --revops-light: #818cf8;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .pain-reality { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .pain-reality h3 { margin-top: 0; color: var(--revops); }
+        .pain-list { display: grid; gap: 12px; margin-top: 16px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+        .pain-item::before { content: "⚡"; font-size: 16px; }
+        .pain-item p { margin-bottom: 0; font-size: 15px; }
+        
+        .time-breakdown { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .time-breakdown h3 { margin-top: 0; color: var(--accent); margin-bottom: 16px; }
+        .time-bars { display: flex; flex-direction: column; gap: 12px; }
+        .time-bar { display: grid; grid-template-columns: 140px 1fr 60px; gap: 12px; align-items: center; }
+        .time-bar-label { font-size: 14px; font-weight: 600; color: var(--text); }
+        .time-bar-track { height: 24px; background: var(--card-bg); border-radius: 12px; overflow: hidden; }
+        .time-bar-fill { height: 100%; border-radius: 12px; display: flex; align-items: center; padding-left: 12px; font-size: 11px; font-weight: 700; color: #fff; }
+        .time-bar-fill.manual { background: #dc2626; }
+        .time-bar-fill.reactive { background: #f59e0b; }
+        .time-bar-fill.strategic { background: #10b981; }
+        .time-bar-pct { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+        
+        .agent-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; margin: 24px 0; overflow: hidden; }
+        .agent-header { background: var(--revops); padding: 20px; color: #fff; }
+        .agent-header h4 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .agent-header p { font-size: 14px; opacity: 0.9; margin-bottom: 0; }
+        .agent-body { padding: 24px; }
+        .agent-features { display: grid; gap: 16px; }
+        .agent-feature { display: flex; gap: 12px; }
+        .agent-feature-icon { width: 32px; height: 32px; background: var(--revops); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .agent-feature-icon svg { width: 16px; height: 16px; stroke: #fff; fill: none; }
+        .agent-feature-content h5 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .agent-feature-content p { font-size: 14px; margin-bottom: 0; }
+        
+        .example-box { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; }
+        .example-box .prompt { color: var(--text-muted); margin-bottom: 8px; }
+        .example-box .response { color: var(--text); white-space: pre-wrap; }
+        
+        .transformation { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; margin: 24px 0; align-items: center; }
+        .transform-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .transform-box.before { border-left: 4px solid #dc2626; }
+        .transform-box.after { border-left: 4px solid #10b981; }
+        .transform-box h4 { font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; }
+        .transform-box ul { margin: 0; padding-left: 16px; }
+        .transform-box li { font-size: 14px; margin-bottom: 6px; }
+        .transform-arrow { font-size: 32px; color: var(--accent); }
+        
+        .integration-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 24px 0; }
+        .integration-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+        .integration-item span { font-size: 13px; font-weight: 600; color: var(--text); }
+        
+        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin: 24px 0; }
+        .metric-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+        .metric-card .number { font-size: 36px; font-weight: 800; color: var(--revops); }
+        .metric-card .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+        
+        @media (max-width: 640px) {
+            .transformation { grid-template-columns: 1fr; }
+            .transform-arrow { transform: rotate(90deg); text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Adrata Agent Guide</div>
+        <h1>AI Agents for RevOps</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">Transform RevOps from a service desk to a strategic function. AI agents for data quality, automation, forecasting infrastructure, and decision support.</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this guide</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<h2>The RevOps Reality</h2>
+
+<p>RevOps is supposed to be a strategic function. You're supposed to be optimizing processes, building scalable systems, and enabling the entire revenue organization to perform at its peak.</p>
+
+<p>Instead, you're answering Slack messages about why someone's dashboard broke, manually fixing CRM data that reps entered wrong, and building yet another forecast spreadsheet because the leadership team doesn't trust the numbers in Salesforce.</p>
+
+<div class="pain-reality">
+    <h3>Sound Familiar?</h3>
+    <div class="pain-list">
+        <div class="pain-item">
+            <p><strong>"Can you pull me the data on..."</strong> — You're the human API for every data request. Sales wants pipeline by rep, marketing wants attribution by channel, finance wants revenue by segment. Same data, different slices, all manual.</p>
+        </div>
+        <div class="pain-item">
+            <p><strong>"The forecast doesn't match"</strong> — The CRM says one thing, the spreadsheet says another, and nobody trusts either. You spend hours reconciling numbers that should just match automatically.</p>
+        </div>
+        <div class="pain-item">
+            <p><strong>"We need a new process for..."</strong> — Every workflow change requires manual documentation, training, and enforcement. Two weeks later, reps have already stopped following it.</p>
+        </div>
+        <div class="pain-item">
+            <p><strong>"Why is our data so bad?"</strong> — Because you're drowning in reactive work and don't have time to build the automations that would prevent bad data from entering in the first place.</p>
+        </div>
+    </div>
+</div>
+
+<div class="time-breakdown">
+    <h3>Where RevOps Time Actually Goes</h3>
+    <div class="time-bars">
+        <div class="time-bar">
+            <span class="time-bar-label">Manual Data Work</span>
+            <div class="time-bar-track"><div class="time-bar-fill manual" style="width: 40%;">40%</div></div>
+            <span class="time-bar-pct">40%</span>
+        </div>
+        <div class="time-bar">
+            <span class="time-bar-label">Reactive Requests</span>
+            <div class="time-bar-track"><div class="time-bar-fill reactive" style="width: 35%;">35%</div></div>
+            <span class="time-bar-pct">35%</span>
+        </div>
+        <div class="time-bar">
+            <span class="time-bar-label">Strategic Projects</span>
+            <div class="time-bar-track"><div class="time-bar-fill strategic" style="width: 25%;">25%</div></div>
+            <span class="time-bar-pct">25%</span>
+        </div>
+    </div>
+</div>
+
+<div class="insight">
+    <strong>The problem:</strong> You were hired to be strategic. You're stuck being tactical. AI agents flip this ratio—handling the manual and reactive work so you can focus on what actually moves the business.
+</div>
+
+<h2>The 6 Essential RevOps Agents</h2>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <h4>Data Quality Agent</h4>
+        <p>The 24/7 data hygiene enforcer you've always needed</p>
+    </div>
+    <div class="agent-body">
+        <div class="agent-features">
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Real-Time Validation</h5>
+                    <p>Catches bad data at the point of entry. Duplicate accounts, missing fields, invalid values—flagged immediately, not discovered months later.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Automatic Enrichment</h5>
+                    <p>Missing company data? The agent enriches from external sources. Missing contact info? It finds and fills. No more incomplete records.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Duplicate Detection & Merge</h5>
+                    <p>Fuzzy matching across accounts, contacts, and opportunities. Suggests merges, handles consolidation, and prevents new duplicates from forming.</p>
+                </div>
+            </div>
+        </div>
+        <div class="example-box">
+            <div class="prompt">▶ Typical request the agent handles:</div>
+            <div class="response">"Audit our Salesforce accounts for data quality issues"
+
+Agent scans 12,847 accounts:
+- 234 duplicates identified (47 require review)
+- 892 accounts missing industry classification
+- 156 accounts with invalid website URLs
+- Automatic fix applied to 1,203 records
+- Report generated with priority actions</div>
+        </div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <h4>Report Generation Agent</h4>
+        <p>Instant answers to any data question—no more being the human API</p>
+    </div>
+    <div class="agent-body">
+        <div class="agent-features">
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Natural Language Queries</h5>
+                    <p>"Show me win rate by segment for Q3" becomes an instant chart. No SQL, no dashboard building, no waiting for RevOps to have time.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Scheduled Reports</h5>
+                    <p>Weekly pipeline summary for sales leadership. Daily activity digest for managers. Monthly board metrics for executives. All automated.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Cross-System Analysis</h5>
+                    <p>Combine CRM data with marketing automation, product usage, and finance. One unified view instead of 7 different tools.</p>
+                </div>
+            </div>
+        </div>
+        <div class="example-box">
+            <div class="prompt">▶ Slack message from VP Sales:</div>
+            <div class="response">"What's our average deal cycle by segment this quarter vs last?"
+
+Agent responds in 30 seconds:
+Enterprise: 87 days (↓12% from 99 days in Q2)
+Mid-Market: 45 days (↑8% from 42 days in Q2)  
+SMB: 21 days (→ flat)
+
+Key insight: Enterprise improvement driven by 
+new discovery process. Mid-Market regression 
+may indicate pricing objections—see 23% 
+increase in "budget" objection mentions.</div>
+        </div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <h4>Forecast Reconciliation Agent</h4>
+        <p>One number. Every time. Automatically.</p>
+    </div>
+    <div class="agent-body">
+        <div class="agent-features">
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Real-Time Pipeline Monitoring</h5>
+                    <p>Watches every deal movement, every close date change, every stage progression. The forecast updates continuously, not weekly.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Anomaly Detection</h5>
+                    <p>"Deal X was just pushed from March to June"—flagged immediately. "Rep Y just moved 8 deals to Commit"—surfaced for review.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Single Source of Truth</h5>
+                    <p>Eliminates the spreadsheet vs. CRM vs. manager call mismatch. One number derived from objective deal data, not gut feel.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <h4>Process Compliance Agent</h4>
+        <p>Enforce process without being the process police</p>
+    </div>
+    <div class="agent-body">
+        <div class="agent-features">
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Automated Stage Gating</h5>
+                    <p>Can't move to Stage 3 without discovery notes. Can't create a proposal without multi-threading documentation. Rules enforced automatically.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Gentle Nudges</h5>
+                    <p>Not nagging—helping. "This deal has been in Stage 2 for 21 days. Deals that advance typically do so within 14. Here's what usually helps..."</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Compliance Reporting</h5>
+                    <p>Weekly digest: which reps follow the process, which don't, and the correlation with results. Data-driven coaching, not subjective feedback.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <h4>Territory & Quota Agent</h4>
+        <p>Model, optimize, and manage territory and quota changes automatically</p>
+    </div>
+    <div class="agent-body">
+        <div class="agent-features">
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Territory Modeling</h5>
+                    <p>"What happens if we split West Coast?" Run scenarios instantly. See projected impact on coverage, capacity, and quota distribution.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Quota Health Monitoring</h5>
+                    <p>Real-time alerts when a rep's territory is over/under-resourced. Flag imbalances before they become complaints.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Account Routing</h5>
+                    <p>Automatic assignment based on rules, capacity, and history. No more manual spreadsheet routing that creates gaps and overlaps.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <h4>Tech Stack Health Agent</h4>
+        <p>Monitor your 15+ tools and keep them working together</p>
+    </div>
+    <div class="agent-body">
+        <div class="agent-features">
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"/><path d="M2 20h20"/><path d="M14 12v.01"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Integration Monitoring</h5>
+                    <p>Sync failed between Salesforce and Outreach? Know immediately, not when a rep complains. Automatic retry and escalation.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>Usage Analytics</h5>
+                    <p>That $50K/year tool only 3 reps use? That feature nobody's touched in 6 months? Get the data to optimize your stack.</p>
+                </div>
+            </div>
+            <div class="agent-feature">
+                <div class="agent-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg></div>
+                <div class="agent-feature-content">
+                    <h5>License Optimization</h5>
+                    <p>Track utilization by seat. Identify unused licenses. Model cost savings from consolidation.</p>
+                </div>
+            </div>
+        </div>
+        <div class="integration-grid">
+            <div class="integration-item"><span>Salesforce</span></div>
+            <div class="integration-item"><span>HubSpot</span></div>
+            <div class="integration-item"><span>Outreach</span></div>
+            <div class="integration-item"><span>Gong</span></div>
+            <div class="integration-item"><span>Clari</span></div>
+            <div class="integration-item"><span>ZoomInfo</span></div>
+            <div class="integration-item"><span>Slack</span></div>
+            <div class="integration-item"><span>+ 50 more</span></div>
+        </div>
+    </div>
+</div>
+
+<h2>The Transformation</h2>
+
+<div class="transformation">
+    <div class="transform-box before">
+        <h4>RevOps Today</h4>
+        <ul>
+            <li>Service desk for data requests</li>
+            <li>Manual data cleanup weekly</li>
+            <li>Reactive fire-fighting</li>
+            <li>Spreadsheet reconciliation</li>
+            <li>Process enforcement by nagging</li>
+            <li>Strategic projects "when there's time"</li>
+        </ul>
+    </div>
+    <div class="transform-arrow">→</div>
+    <div class="transform-box after">
+        <h4>RevOps with Agents</h4>
+        <ul>
+            <li>Self-service analytics for stakeholders</li>
+            <li>Continuous data quality automation</li>
+            <li>Proactive issue prevention</li>
+            <li>Single source of truth, always</li>
+            <li>Process enforced by system design</li>
+            <li>Strategic focus as the default</li>
+        </ul>
+    </div>
+</div>
+
+<h2>Impact Metrics</h2>
+
+<div class="metric-grid">
+    <div class="metric-card">
+        <div class="number">70%</div>
+        <div class="label">Less time on data requests</div>
+    </div>
+    <div class="metric-card">
+        <div class="number">95%</div>
+        <div class="label">Data accuracy</div>
+    </div>
+    <div class="metric-card">
+        <div class="number">4x</div>
+        <div class="label">Faster report generation</div>
+    </div>
+    <div class="metric-card">
+        <div class="number">50%</div>
+        <div class="label">More strategic time</div>
+    </div>
+</div>
+
+<div class="insight">
+    <strong>The real win:</strong> You become the strategic partner you were hired to be. Instead of pulling reports, you're designing the systems that pull themselves. Instead of cleaning data, you're building the architecture that keeps it clean. Instead of answering questions, you're creating the intelligence layer that answers them automatically.
+</div>
+
+<h2>Getting Started</h2>
+
+<p>Most RevOps teams start with the highest-pain agents first:</p>
+
+<ul>
+    <li><strong>Week 1:</strong> Deploy Report Generation Agent → Immediately reduce ad-hoc data request load</li>
+    <li><strong>Week 2:</strong> Deploy Data Quality Agent → Start catching issues before they compound</li>
+    <li><strong>Week 3:</strong> Deploy Forecast Reconciliation Agent → Eliminate the weekly reconciliation ritual</li>
+    <li><strong>Week 4+:</strong> Process Compliance, Territory, Tech Stack agents based on priority</li>
+</ul>
+
+<div class="insight">
+    <strong>The pattern:</strong> Start with agents that give you time back. Use that time to deploy more agents. The flywheel compounds—each agent you add gives you more capacity to add the next one.
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the RevOps playbook</h3>
+        <p class="desc">Implementation guides, automation templates, and success metrics for building an agent-powered RevOps function.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="ai-agents-for-revops.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+function toggleMp3Audio() { if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; } else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; } else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); } }
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+function toggleSpeechAudio() { if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; } if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; } else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; } else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; } }
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the playbook.</p>'; } }
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>
+
+

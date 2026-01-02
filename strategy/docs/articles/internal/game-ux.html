@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 6 Game UX Lenses | How Video Games Inspire Great UX</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="The 6 Game UX Lenses | How Video Games Inspire Great UX">
+    <meta property="og:description" content="Six lenses from video games that change how you think about user experience. Story vs Narrative. Fractal Design. Learning Loops. Affordances. Hintiness. Pacing.">
+    <meta property="og:image" content="../og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; --highlight-bg: #fff5f0; --apps-bg: #fef2f2; --apps-border: #fecaca; --apps-text: #991b1b; --games-bg: #f0fdf4; --games-border: #bbf7d0; --games-text: #166534; }
+        body.dark-mode { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; --highlight-bg: #1a1008; --apps-bg: #1a0a0a; --apps-border: #4a1515; --apps-text: #fca5a5; --games-bg: #0a1a0f; --games-border: #166534; --games-text: #86efac; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
+        h2 { font-size: 28px; font-weight: 700; margin: 64px 0 16px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h2:first-of-type { margin-top: 32px; border-top: none; padding-top: 0; }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--accent); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        .intro { font-size: 20px; line-height: 1.7; margin-bottom: 32px; }
+        .pull-quote { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px 32px; margin: 32px 0; font-size: 20px; font-style: italic; color: var(--text); }
+        .lens-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 32px 0; }
+        .lens-number { display: inline-block; background: var(--accent); color: #fff; width: 36px; height: 36px; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 700; font-size: 16px; margin-bottom: 16px; }
+        .lens-card h3 { color: var(--text); margin: 0 0 16px; font-size: 24px; }
+        .lens-card p { margin-bottom: 12px; }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        @media (max-width: 600px) { .comparison-grid { grid-template-columns: 1fr; } }
+        .apps-box { background: var(--apps-bg); border: 1px solid var(--apps-border); border-radius: 8px; padding: 20px; }
+        .apps-box h4 { color: var(--apps-text); margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .apps-box p { color: var(--text-secondary); margin: 0; font-size: 15px; }
+        .games-box { background: var(--games-bg); border: 1px solid var(--games-border); border-radius: 8px; padding: 20px; }
+        .games-box h4 { color: var(--games-text); margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .games-box p { color: var(--text-secondary); margin: 0; font-size: 15px; }
+        .example-box { background: var(--highlight-bg); padding: 20px 24px; border-radius: 8px; margin: 20px 0; }
+        .example-box h4 { color: var(--accent); margin: 0 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .example-box p { margin-bottom: 8px; font-size: 15px; }
+        .example-box p:last-child { margin-bottom: 0; }
+        .framework-box { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; }
+        .framework-box h3 { color: #fff; margin-top: 0; font-size: 24px; }
+        .framework-box p { color: rgba(255,255,255,0.9); }
+        .framework-box ol, .framework-box ul { margin: 16px 0 0 24px; }
+        .framework-box li { padding: 6px 0; }
+        .loop-visual { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 24px; background: var(--card-bg); border-radius: 8px; margin: 24px 0; flex-wrap: wrap; }
+        .loop-step { background: var(--accent); color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+        .loop-arrow { color: var(--text-muted); font-size: 24px; }
+        .synthesis-box { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; }
+        .synthesis-box h3 { color: #fff; margin-top: 0; }
+        .synthesis-box p { color: rgba(255,255,255,0.9); }
+        body.dark-mode .synthesis-box { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 1px solid #333; }
+        .share-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 32px; margin: 48px 0; text-align: center; }
+        .share-section h3 { font-size: 18px; margin-bottom: 16px; color: var(--text); }
+        .share-form { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+        .share-form input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); }
+        .share-form button { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .share-form button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">UX Framework</div>
+            <h1>The 6 Game UX Lenses</h1>
+            <div class="subtitle">How video games inspire great user experience design</div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this document</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">1.5x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pull-quote">"Perspective is worth 80 IQ points." — Alan Kay</div>
+
+    <p class="intro">Games felt more visceral. They seemed edgier, playing with deeper and more experimental UX techniques. This wasn't about "gamification"—achievements and badges to make apps sticky. This was about understanding how games are built, from the bottom up.</p>
+
+    <h2>The 6 Lenses</h2>
+    
+    <div class="framework-box">
+        <h3>Breaking Down and Building Up</h3>
+        <p>The first three lenses break down your product into concrete chunks:</p>
+        <ol>
+            <li><strong>Story vs Narrative</strong> — Think in terms of story arcs</li>
+            <li><strong>Fractal Design</strong> — Break up the journey from big to small to tiny</li>
+            <li><strong>Learning Loop</strong> — Figure out your core mechanic</li>
+        </ol>
+        <p style="margin-top: 20px;">The next three lenses build things back up:</p>
+        <ol start="4">
+            <li><strong>Affordances</strong> — Prompt for known loops</li>
+            <li><strong>Hintiness</strong> — Move to new loops</li>
+            <li><strong>Pacing</strong> — Be sure to start here</li>
+        </ol>
+    </div>
+
+    <div class="lens-card">
+        <div class="lens-number">1</div>
+        <h3>Story vs Narrative</h3>
+        <p><strong>Story</strong> is author generated. <strong>Narrative</strong> is user generated.</p>
+        <p>Users will always create narrative. It's human nature. If your story has gaps, users will fill them—often with mythologies that would frighten you.</p>
+        <div class="comparison-grid">
+            <div class="apps-box"><h4>Apps</h4><p>Throw features into a pot and hope users figure it out.</p></div>
+            <div class="games-box"><h4>Games</h4><p>Understand everything is a journey. Work hard to make a closely connected arc of events.</p></div>
+        </div>
+    </div>
+
+    <div class="lens-card">
+        <div class="lens-number">2</div>
+        <h3>Games Are Fractal</h3>
+        <p>Games rigorously unpack each action. Everything you do is multi-layered and must be unpacked, improved, and taught to the user.</p>
+        <div class="comparison-grid">
+            <div class="apps-box"><h4>Apps</h4><p>Follow your guidelines, be consistent, don't rock the boat.</p></div>
+            <div class="games-box"><h4>Games</h4><p>Rigorously unpack everything, don't worry if you sink the boat.</p></div>
+        </div>
+    </div>
+
+    <div class="lens-card">
+        <div class="lens-number">3</div>
+        <h3>Learning Loop</h3>
+        <div class="loop-visual">
+            <div class="loop-step">Intent</div><div class="loop-arrow">→</div>
+            <div class="loop-step">Action</div><div class="loop-arrow">→</div>
+            <div class="loop-step">Feedback</div><div class="loop-arrow">→</div>
+            <div class="loop-step">Updated Model</div>
+        </div>
+        <div class="pull-quote">"Fun is just another word for learning." — Raph Koster</div>
+        <div class="comparison-grid">
+            <div class="apps-box"><h4>Apps</h4><p>Each feature is in isolation.</p></div>
+            <div class="games-box"><h4>Games</h4><p>Build through a single mechanic that grows in expressive power.</p></div>
+        </div>
+    </div>
+
+    <div class="lens-card">
+        <div class="lens-number">4</div>
+        <h3>Affordances</h3>
+        <p>Games have a subtle spin: they prompt the things you already know. Five types: Multi-variant, Reality, Multiples, Mixed Styles, Grace-notes.</p>
+        <div class="comparison-grid">
+            <div class="apps-box"><h4>Apps</h4><p>Prompt as little as possible.</p></div>
+            <div class="games-box"><h4>Games</h4><p>Prompt all the damn time (they're just really subtle about it).</p></div>
+        </div>
+    </div>
+
+    <div class="lens-card">
+        <div class="lens-number">5</div>
+        <h3>Hintiness</h3>
+        <p>Hintiness moves you to new loops. Prevent "Bottom Feeding"—taking the easy route and never progressing.</p>
+        <div class="comparison-grid">
+            <div class="apps-box"><h4>Apps</h4><p>Assume users are at a constant skill level.</p></div>
+            <div class="games-box"><h4>Games</h4><p>Use hints constantly and patiently to move users to the next level.</p></div>
+        </div>
+    </div>
+
+    <div class="lens-card">
+        <div class="lens-number">6</div>
+        <h3>Pacing</h3>
+        <p>A journey of 1000 miles begins with the first step. Users must know how to get going before they understand everything.</p>
+        <div class="comparison-grid">
+            <div class="apps-box"><h4>Apps</h4><p>Offer users a large toolbox and let them figure out how to get started.</p></div>
+            <div class="games-box"><h4>Games</h4><p>Have a clear understanding of the journey and say "Start here first."</p></div>
+        </div>
+    </div>
+
+    <div class="synthesis-box">
+        <h3>Two Directions</h3>
+        <p style="margin-bottom: 16px;"><strong>Breaking Down (Lenses 1-3):</strong></p>
+        <p>Story vs Narrative → Fractal Design → Learning Loop</p>
+        <p style="margin: 20px 0 16px;"><strong>Building Up (Lenses 4-6):</strong></p>
+        <p>Affordances → Hintiness → Pacing</p>
+    </div>
+    
+    <div class="pull-quote">We're not building games, but we're being inspired by them.</div>
+
+    <div class="share-section">
+        <h3>Share</h3>
+        <form class="share-form" onsubmit="handleShare(event)">
+            <input type="email" placeholder="Their email" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+        if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); }
+        let synth = window.speechSynthesis; let utterance = null; let isPlaying = false; let isPaused = false; let currentRate = 1.5; let voices = [];
+        function loadVoices() { voices = synth.getVoices(); } loadVoices(); if (synth.onvoiceschanged !== undefined) { synth.onvoiceschanged = loadVoices; }
+        function getDocumentText() { const content = document.body.cloneNode(true); content.querySelectorAll('.audio-player, .share-section, .theme-toggle, script, style').forEach(el => el.remove()); let text = content.textContent || ''; text = text.replace(/\s+/g, ' ').trim(); return text.substring(0, 10000); }
+        function toggleAudio() { if (!synth) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; } if (isPlaying && !isPaused) { synth.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; return; } if (isPaused) { synth.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; return; } synth.cancel(); const text = getDocumentText(); utterance = new SpeechSynthesisUtterance(text); utterance.rate = currentRate; if (voices.length > 0) { const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.lang.startsWith('en')); if (preferred) utterance.voice = preferred; } utterance.onstart = () => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') { document.getElementById('audioStatus').textContent = 'Error: ' + e.error; } isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; }; synth.speak(utterance); setTimeout(() => { if (synth.speaking && !synth.paused) { synth.pause(); synth.resume(); } }, 100); }
+        function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+        function setSpeed(rate) { currentRate = rate; document.getElementById('speedLabel').textContent = rate + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active')); event.target.classList.add('active'); document.getElementById('speedMenu').classList.remove('open'); if (utterance) { utterance.rate = rate; } }
+        document.addEventListener('click', () => { document.getElementById('speedMenu').classList.remove('open'); });
+        function handleShare(e) { e.preventDefault(); const email = e.target.querySelector('input').value; const subject = encodeURIComponent('The 6 Game UX Lenses'); const body = encodeURIComponent('Check out this UX framework: ' + window.location.href); window.open(`mailto:${email}?subject=${subject}&body=${body}`); e.target.innerHTML = '<p style="color: var(--accent); font-weight: 600;">Sent!</p>'; }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents for Account Executives | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="AI Agents for Account Executives">
+    <meta property="og:description" content="How AEs can deploy AI agents to close bigger deals faster—with better discovery, sharper proposals, and fewer administrative black holes.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .role-context { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .role-context h3 { margin-top: 0; color: var(--accent); }
+        
+        .agent-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .agent-icon { width: 48px; height: 48px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .agent-icon svg { width: 24px; height: 24px; stroke: #fff; fill: none; }
+        .agent-title { font-size: 20px; font-weight: 700; color: var(--text); }
+        .agent-subtitle { font-size: 14px; color: var(--text-muted); }
+        .agent-description { margin-bottom: 16px; }
+        .agent-capabilities { display: grid; gap: 8px; }
+        .capability { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-size: 14px; }
+        .capability strong { color: var(--accent); }
+        
+        .use-case { background: var(--highlight-bg); border-radius: 8px; padding: 20px; margin: 16px 0; }
+        .use-case h4 { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .use-case p { font-size: 14px; margin-bottom: 0; }
+        
+        .meddic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin: 16px 0; overflow: hidden; }
+        .meddic-header { background: var(--accent); padding: 12px 16px; font-size: 14px; font-weight: 700; color: #fff; }
+        .meddic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+        .meddic-item { padding: 16px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .meddic-item:last-child { border-right: none; }
+        .meddic-label { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .meddic-value { font-size: 14px; margin-top: 4px; }
+        .meddic-status { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 3px; display: inline-block; margin-top: 4px; }
+        .meddic-status.complete { background: #dcfce7; color: #166534; }
+        .meddic-status.partial { background: #fef9c3; color: #854d0e; }
+        .meddic-status.missing { background: #fee2e2; color: #991b1b; }
+        body.dark-mode .meddic-status.complete { background: #166534; color: #dcfce7; }
+        body.dark-mode .meddic-status.partial { background: #854d0e; color: #fef9c3; }
+        body.dark-mode .meddic-status.missing { background: #991b1b; color: #fee2e2; }
+        
+        .deal-stages { display: grid; gap: 16px; margin: 24px 0; }
+        .stage-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .stage-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .stage-card p { font-size: 14px; margin-bottom: 0; }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin: 24px 0; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-card .number { font-size: 32px; font-weight: 800; color: var(--accent); }
+        .stat-card .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Adrata Agent Guide</div>
+        <h1>AI Agents for Account Executives</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">How AEs can deploy AI agents to close bigger deals faster—with better discovery, sharper proposals, and fewer administrative black holes eating your selling time.</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this guide</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="role-context">
+    <h3>The Closer's Challenge</h3>
+    <p>You're measured on revenue, but half your week disappears into CRM updates, proposal drafting, meeting prep, and post-call admin. Every hour spent on paperwork is an hour not spent advancing deals.</p>
+    <p style="margin-top: 12px; margin-bottom: 0;"><strong>AI agents handle the work around the work</strong>—so you can focus on what only you can do: building relationships and closing deals.</p>
+</div>
+
+<h2>The Six Essential Agents for Account Executives</h2>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Pre-Call Intelligence Agent</div>
+            <div class="agent-subtitle">Complete account briefings in 60 seconds</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent prepares comprehensive briefings before every customer meeting. Company context, attendee backgrounds, relationship history, competitive landscape, and strategic opportunities—everything you need to walk in prepared and walk out with next steps.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Company Research:</strong> Recent news, earnings, leadership changes, strategic initiatives, and market position</div>
+        <div class="capability"><strong>Attendee Profiles:</strong> Background, priorities, communication style, and past interactions with your team</div>
+        <div class="capability"><strong>Deal Context:</strong> Where you are in the process, what's been discussed, what's outstanding</div>
+        <div class="capability"><strong>Recommended Questions:</strong> Discovery questions tailored to this specific meeting and attendee mix</div>
+    </div>
+    
+    <div class="use-case">
+        <h4>Example: Pre-Call Brief for Globex QBR</h4>
+        <p><strong>Company:</strong> Q3 earnings beat expectations. New CRO started 45 days ago (from Oracle). Expanding APAC team by 40%.<br>
+        <strong>Attendees:</strong> Sarah (champion, mentions "board pressure on efficiency"), Mike (new CRO, first meeting with him), Jennifer (procurement, historically asks about security).<br>
+        <strong>Recommended:</strong> Ask Mike about his 90-day priorities. Prepare ROI summary—Sarah flagged she needs executive justification. Have SOC 2 report ready for Jennifer.</p>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Deal Qualification Agent</div>
+            <div class="agent-subtitle">MEDDIC/SPICED scoring from your conversations</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent analyzes your discovery calls, emails, and notes to automatically score deals against your qualification methodology. It identifies gaps before your manager does—so you can address them in your next conversation.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Methodology Scoring:</strong> Automatic MEDDIC, SPICED, or BANT scoring based on actual conversations</div>
+        <div class="capability"><strong>Gap Identification:</strong> "No access to economic buyer" or "Compelling event undefined" flagged with specific remediation suggestions</div>
+        <div class="capability"><strong>Question Suggestions:</strong> Specific discovery questions to fill gaps in your next meeting</div>
+        <div class="capability"><strong>Win Probability:</strong> Data-driven close probability based on qualification strength and historical patterns</div>
+    </div>
+    
+    <div class="meddic-card">
+        <div class="meddic-header">Deal: Acme Corp ($125K) — MEDDIC Score: 72%</div>
+        <div class="meddic-grid">
+            <div class="meddic-item">
+                <div class="meddic-label">Metrics</div>
+                <div class="meddic-value">"30% reduction in manual work"</div>
+                <div class="meddic-status complete">Complete</div>
+            </div>
+            <div class="meddic-item">
+                <div class="meddic-label">Economic Buyer</div>
+                <div class="meddic-value">CFO (identified but not met)</div>
+                <div class="meddic-status partial">Partial</div>
+            </div>
+            <div class="meddic-item">
+                <div class="meddic-label">Decision Criteria</div>
+                <div class="meddic-value">Integration, security, price</div>
+                <div class="meddic-status complete">Complete</div>
+            </div>
+            <div class="meddic-item">
+                <div class="meddic-label">Decision Process</div>
+                <div class="meddic-value">Not documented</div>
+                <div class="meddic-status missing">Missing</div>
+            </div>
+            <div class="meddic-item">
+                <div class="meddic-label">Identify Pain</div>
+                <div class="meddic-value">"Spending 3 hrs/day on manual entry"</div>
+                <div class="meddic-status complete">Complete</div>
+            </div>
+            <div class="meddic-item">
+                <div class="meddic-label">Champion</div>
+                <div class="meddic-value">Sarah (strong)</div>
+                <div class="meddic-status complete">Complete</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Proposal Generation Agent</div>
+            <div class="agent-subtitle">Custom proposals in minutes, not hours</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent drafts proposals and business cases using your discovery data. It pulls in the right case studies, customizes value propositions to their stated pains, and generates ROI calculations based on the metrics they shared.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Discovery-Driven Content:</strong> Pulls value propositions directly from what the customer said they care about</div>
+        <div class="capability"><strong>Case Study Matching:</strong> Selects the most relevant customer stories based on industry, size, and use case</div>
+        <div class="capability"><strong>ROI Calculation:</strong> Builds custom ROI models using the metrics discovered in your conversations</div>
+        <div class="capability"><strong>Competitive Positioning:</strong> Includes appropriate competitive differentiation if a competitor is involved</div>
+    </div>
+    
+    <div class="use-case">
+        <h4>Generated Proposal: Acme Corp</h4>
+        <p><strong>Based on Discovery:</strong> "Your team spends 3 hours/day on manual data entry (Sarah, Oct 15). At 5 team members × $75/hr fully-loaded cost, that's $281K/year in wasted productivity. Our customers typically see 85% reduction in manual work, suggesting $239K in annual savings—a 191% ROI on your $125K investment."</p>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Post-Call Summary Agent</div>
+            <div class="agent-subtitle">Automatic meeting notes and CRM updates</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent listens to your calls, generates structured notes, and updates your CRM automatically. No more spending 20 minutes after every call typing up what happened. The notes are there before your next meeting starts.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Structured Notes:</strong> Key discussion points, decisions made, objections raised, and action items—formatted consistently</div>
+        <div class="capability"><strong>CRM Auto-Update:</strong> Updates opportunity fields, next steps, and close date based on what was discussed</div>
+        <div class="capability"><strong>Follow-Up Draft:</strong> Generates a thank-you email with meeting recap and next steps, ready for your review</div>
+        <div class="capability"><strong>Stakeholder Updates:</strong> Adds new contacts to the opportunity and updates stakeholder information</div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Stakeholder Intelligence Agent</div>
+            <div class="agent-subtitle">Multi-threading and champion development</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent maps the buying committee, identifies influence patterns, and suggests multi-threading strategies. It tracks every stakeholder's engagement level and alerts you when someone goes cold.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Buying Committee Map:</strong> Decision makers, influencers, users, and potential blockers with engagement scores</div>
+        <div class="capability"><strong>Champion Health:</strong> Is your champion engaged? Have they gone quiet? Are they forwarding your emails internally?</div>
+        <div class="capability"><strong>Multi-Thread Suggestions:</strong> Who else should you be talking to? Who might block this deal?</div>
+        <div class="capability"><strong>Relationship Alerts:</strong> "No contact with CFO in 21 days" or "Legal hasn't responded to MSA redlines"</div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Deal Velocity Agent</div>
+            <div class="agent-subtitle">Pipeline momentum and risk monitoring</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent monitors the health of every deal in your pipeline. It detects stalls before they become losses, identifies deals that need attention, and suggests actions to get stuck opportunities moving again.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Stall Detection:</strong> Flags deals that haven't progressed according to stage-appropriate velocity</div>
+        <div class="capability"><strong>Risk Scoring:</strong> Combines qualification gaps, stakeholder engagement, and competitive signals into a risk score</div>
+        <div class="capability"><strong>Rescue Suggestions:</strong> Specific actions to revive stalled deals based on similar situations that worked</div>
+        <div class="capability"><strong>Commit Confidence:</strong> Should this deal be in commit? Based on data, not gut feel</div>
+    </div>
+</div>
+
+<h2>How Agents Support the Deal Cycle</h2>
+
+<div class="deal-stages">
+    <div class="stage-card">
+        <h4>Discovery → Qualification</h4>
+        <p><strong>Pre-Call Intelligence</strong> ensures you walk into discovery prepared. <strong>Deal Qualification Agent</strong> scores what you learned against MEDDIC and identifies gaps for your next call.</p>
+    </div>
+    <div class="stage-card">
+        <h4>Qualification → Solution Design</h4>
+        <p><strong>Post-Call Summary Agent</strong> captures everything discussed. <strong>Proposal Generation Agent</strong> starts building the business case with actual customer quotes and metrics.</p>
+    </div>
+    <div class="stage-card">
+        <h4>Solution Design → Negotiation</h4>
+        <p><strong>Stakeholder Intelligence Agent</strong> ensures you're multi-threaded before the deal gets serious. <strong>Deal Velocity Agent</strong> tracks momentum and alerts you if engagement drops.</p>
+    </div>
+    <div class="stage-card">
+        <h4>Negotiation → Close</h4>
+        <p><strong>Pre-Call Intelligence</strong> prepares you for exec meetings. <strong>Proposal Generation Agent</strong> updates ROI models for final business case. <strong>Post-Call Summary</strong> tracks every commitment made.</p>
+    </div>
+</div>
+
+<h2>Impact: What AEs Report</h2>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="number">5+</div>
+        <div class="label">Hours saved per week on admin</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">2x</div>
+        <div class="label">Faster proposal turnaround</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">30%</div>
+        <div class="label">Higher win rates</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">15%</div>
+        <div class="label">Larger average deal size</div>
+    </div>
+</div>
+
+<div class="insight">
+    <strong>The compounding effect:</strong> Better prep leads to better discovery. Better discovery leads to stronger qualification. Stronger qualification leads to tighter proposals. Tighter proposals lead to faster closes. Each agent makes the next step easier.
+</div>
+
+<h2>Start Here</h2>
+
+<div class="insight">
+    <strong>Week 1:</strong> Start with the <strong>Post-Call Summary Agent</strong>. The immediate time savings are obvious—no more 20-minute post-call admin sessions. Your CRM hygiene will improve overnight.
+</div>
+
+<div class="insight">
+    <strong>Week 2:</strong> Add the <strong>Pre-Call Intelligence Agent</strong>. You'll walk into every meeting prepared, and your discovery quality will improve immediately.
+</div>
+
+<div class="insight">
+    <strong>Week 3:</strong> Activate the <strong>Deal Qualification Agent</strong>. Start seeing which deals are truly qualified and which have hidden gaps. Your forecast accuracy will improve.
+</div>
+
+<div class="insight">
+    <strong>Week 4:</strong> Roll out the full suite. <strong>Proposal Generation</strong>, <strong>Stakeholder Intelligence</strong>, and <strong>Deal Velocity</strong> complete the system. You're now running deals with an AI co-pilot.
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the AE playbook</h3>
+        <p class="desc">Deal execution strategies, discovery frameworks, and AI-powered selling techniques that actually close.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="ai-agents-for-account-executives.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the playbook.</p>'; } }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Effective Tools for Agents | Anthropic Engineering</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Writing Effective Tools for Agents — with Agents">
+    <meta property="og:description" content="Agents are only as effective as the tools we give them. Learn how to write high-quality tools and evaluations, and how to use Claude to optimize its tools for itself.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .date { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .intro-box p { margin-bottom: 0; }
+        
+        .key-points { display: grid; gap: 12px; margin: 24px 0; }
+        .key-point { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; align-items: flex-start; gap: 12px; }
+        .key-point-icon { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+        .key-point-icon svg { width: 14px; height: 14px; stroke: #fff; fill: none; }
+        .key-point-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+        .key-point-content p { font-size: 14px; margin-bottom: 0; }
+        
+        .definition-box { background: var(--highlight-bg); padding: 24px; border-radius: 8px; margin: 24px 0; }
+        .definition-box h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .definition-box p { margin-bottom: 0; }
+        
+        .process-steps { display: grid; gap: 16px; margin: 24px 0; }
+        .process-step { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; display: flex; gap: 16px; }
+        .step-number { width: 32px; height: 32px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .step-content h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+        .step-content p { font-size: 14px; margin-bottom: 0; }
+        
+        .example-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        @media (max-width: 600px) { .example-comparison { grid-template-columns: 1fr; } }
+        .example-card { border-radius: 8px; padding: 20px; }
+        .example-card.bad { background: #fef2f2; border: 1px solid #fecaca; }
+        .example-card.good { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        body.dark-mode .example-card.bad { background: #2a1a1a; border-color: #5c2020; }
+        body.dark-mode .example-card.good { background: #1a2a1a; border-color: #205c20; }
+        .example-card h5 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .example-card.bad h5 { color: #ef4444; }
+        .example-card.good h5 { color: #10b981; }
+        .example-card ul { margin: 0; padding-left: 20px; font-size: 14px; }
+        .example-card li { margin-bottom: 6px; }
+        
+        .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 10px 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .code-block pre { margin: 0; padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+        code { font-family: 'SF Mono', Monaco, 'Consolas', monospace; color: var(--text-secondary); }
+        
+        .section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .section-card h3 { margin-top: 0; color: var(--accent); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .principle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 24px 0; }
+        .principle-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .principle-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .principle-card p { font-size: 14px; margin-bottom: 0; }
+        
+        .token-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        @media (max-width: 600px) { .token-comparison { grid-template-columns: 1fr; } }
+        .token-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .token-card h5 { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .token-badge { background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+        .token-card pre { font-size: 12px; margin: 0; white-space: pre-wrap; }
+        
+        .credits { background: var(--card-bg); padding: 20px; border-radius: 8px; margin: 32px 0; font-size: 14px; }
+        .credits strong { color: var(--text); }
+        
+        /* Newsletter Section */
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+        .newsletter-disclaimer { font-size: 12px; color: var(--text-muted); margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Anthropic Engineering</div>
+        <h1>Writing Effective Tools for Agents — with Agents</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">Agents are only as effective as the tools we give them. Learn how to write high-quality tools and evaluations, and how you can boost performance by using Claude to optimize its tools for itself.</div>
+<div class="date">Published Sep 11, 2025</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this article</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="intro-box">
+    <p>The Model Context Protocol (MCP) can empower LLM agents with potentially hundreds of tools to solve real-world tasks. But how do we make those tools maximally effective? In this post, we describe our most effective techniques for improving performance in a variety of agentic AI systems.</p>
+</div>
+
+<h3>What You'll Learn</h3>
+<div class="key-points">
+    <div class="key-point">
+        <div class="key-point-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="key-point-content">
+            <h4>Build and test prototypes</h4>
+            <p>Stand up quick prototypes of your tools and test them locally with Claude Code or Desktop</p>
+        </div>
+    </div>
+    <div class="key-point">
+        <div class="key-point-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="key-point-content">
+            <h4>Create comprehensive evaluations</h4>
+            <p>Run evaluations to measure how well Claude uses your tools with real-world tasks</p>
+        </div>
+    </div>
+    <div class="key-point">
+        <div class="key-point-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="key-point-content">
+            <h4>Collaborate with agents</h4>
+            <p>Use Claude Code to automatically increase the performance of your tools</p>
+        </div>
+    </div>
+</div>
+
+<h2>What is a Tool?</h2>
+
+<div class="definition-box">
+    <h4>Tools: A New Kind of Software</h4>
+    <p>Tools are software that reflects a contract between <strong>deterministic systems</strong> and <strong>non-deterministic agents</strong>. When a user asks "Should I bring an umbrella today?," an agent might call the weather tool, answer from general knowledge, or even ask a clarifying question about location first.</p>
+</div>
+
+<p>In computing, deterministic systems produce the same output every time given identical inputs, while non-deterministic systems—like agents—can generate varied responses even with the same starting conditions.</p>
+
+<p>This means fundamentally rethinking our approach when writing software for agents: instead of writing tools and MCP servers the way we'd write functions and APIs for other developers or systems, we need to <strong>design them for agents</strong>.</p>
+
+<div class="insight">
+    Our goal is to increase the surface area over which agents can be effective in solving a wide range of tasks by using tools to pursue a variety of successful strategies. The tools that are most "ergonomic" for agents also end up being surprisingly intuitive to grasp as humans.
+</div>
+
+<h2>How to Write Tools</h2>
+
+<div class="process-steps">
+    <div class="process-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+            <h4>Building a Prototype</h4>
+            <p>Stand up a quick prototype of your tools. If you're using Claude Code, give Claude documentation for any software libraries, APIs, or SDKs your tools will rely on. LLM-friendly documentation can commonly be found in flat llms.txt files on official documentation sites.</p>
+        </div>
+    </div>
+    <div class="process-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+            <h4>Running an Evaluation</h4>
+            <p>Measure how well Claude uses your tools by running an evaluation. Generate lots of evaluation tasks grounded in real-world uses. Collaborate with an agent to help analyze your results and determine how to improve your tools.</p>
+        </div>
+    </div>
+    <div class="process-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+            <h4>Collaborating with Agents</h4>
+            <p>Let agents analyze your results and improve your tools for you. Concatenate the transcripts from your evaluation agents and paste them into Claude Code. Claude is expert at analyzing transcripts and refactoring lots of tools at once.</p>
+        </div>
+    </div>
+</div>
+
+<h3>Generating Strong Evaluation Tasks</h3>
+
+<p>Prompts should be inspired by real-world uses and be based on realistic data sources and services. Avoid overly simplistic "sandbox" environments. Strong evaluation tasks might require multiple tool calls—potentially dozens.</p>
+
+<div class="example-comparison">
+    <div class="example-card good">
+        <h5>Strong Tasks</h5>
+        <ul>
+            <li>Schedule a meeting with Jane next week to discuss our latest Acme Corp project. Attach the notes from our last project planning meeting and reserve a conference room.</li>
+            <li>Customer ID 9182 reported three charges for a single purchase. Find all relevant log entries and determine if other customers were affected.</li>
+            <li>Customer Sarah Chen submitted a cancellation request. Prepare a retention offer with: (1) why they're leaving, (2) compelling offer, (3) risk factors.</li>
+        </ul>
+    </div>
+    <div class="example-card bad">
+        <h5>Weak Tasks</h5>
+        <ul>
+            <li>Schedule a meeting with jane@acme.corp next week.</li>
+            <li>Search the payment logs for purchase_complete and customer_id=9182.</li>
+            <li>Find the cancellation request by Customer ID 45892.</li>
+        </ul>
+    </div>
+</div>
+
+<h2>Principles for Writing Effective Tools</h2>
+
+<div class="principle-grid">
+    <div class="principle-card">
+        <h4>Choose the Right Tools</h4>
+        <p>More tools don't always lead to better outcomes. Avoid tools that merely wrap existing API endpoints. Build thoughtful tools targeting specific high-impact workflows.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Namespace Your Tools</h4>
+        <p>Group related tools under common prefixes (e.g., asana_search, jira_search). This helps agents select the right tools at the right time when handling dozens of options.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Return Meaningful Context</h4>
+        <p>Prioritize contextual relevance over flexibility. Eschew low-level identifiers like uuid, 256px_image_url in favor of name, image_url, file_type.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Optimize for Tokens</h4>
+        <p>Implement pagination, range selection, filtering, and truncation. For Claude Code, we restrict tool responses to 25,000 tokens by default.</p>
+    </div>
+</div>
+
+<h3>Tools Should Consolidate Functionality</h3>
+
+<div class="section-card">
+    <h3>Examples of Good Tool Consolidation</h3>
+    <ul>
+        <li><strong>Instead of</strong> list_users, list_events, and create_event tools, <strong>consider</strong> a schedule_event tool which finds availability and schedules an event.</li>
+        <li><strong>Instead of</strong> a read_logs tool, <strong>consider</strong> a search_logs tool which only returns relevant log lines and some surrounding context.</li>
+        <li><strong>Instead of</strong> get_customer_by_id, list_transactions, and list_notes tools, <strong>implement</strong> a get_customer_context tool which compiles all relevant information at once.</li>
+    </ul>
+</div>
+
+<div class="insight">
+    LLM agents have limited "context" (limits to how much information they can process at once), whereas computer memory is cheap and abundant. Consider implementing a search_contacts tool instead of a list_contacts tool—the better approach for agents and humans alike is to skip to the relevant page first, rather than reading through each one.
+</div>
+
+<h3>Response Format Flexibility</h3>
+
+<p>Agents may require flexibility to interact with both natural language and technical identifiers. You can enable both by exposing a simple response_format enum parameter:</p>
+
+<div class="code-block">
+    <div class="code-header">ResponseFormat enum</div>
+    <pre><code>enum ResponseFormat {
+   DETAILED = "detailed",
+   CONCISE = "concise"
+}</code></pre>
+</div>
+
+<div class="token-comparison">
+    <div class="token-card">
+        <h5>Detailed Response <span class="token-badge">206 tokens</span></h5>
+        <pre><code>{
+  "thread_ts": "1234567890.123456",
+  "channel_id": "C0123456789",
+  "user_id": "U0123456789",
+  "content": "Let's discuss the Q4 planning...",
+  "replies": [...],
+  "metadata": {...}
+}</code></pre>
+    </div>
+    <div class="token-card">
+        <h5>Concise Response <span class="token-badge">72 tokens</span></h5>
+        <pre><code>{
+  "content": "Let's discuss the Q4 planning...",
+  "summary": "Thread about Q4 planning with 3 replies"
+}</code></pre>
+    </div>
+</div>
+
+<p>Using concise responses uses ~⅓ of the tokens. IDs can be retrieved from a "detailed" response when needed for further tool calls.</p>
+
+<h3>Helpful Error Responses</h3>
+
+<div class="example-comparison">
+    <div class="example-card bad">
+        <h5>Unhelpful Error</h5>
+        <pre style="font-size: 13px; margin: 0;"><code>Error: Invalid parameter
+Code: ERR_422
+Stack: at validate() line 42...</code></pre>
+    </div>
+    <div class="example-card good">
+        <h5>Helpful Error</h5>
+        <pre style="font-size: 13px; margin: 0;"><code>Error: date_range exceeds 90 days.
+Try: Use pagination with 
+start_date and end_date params
+to fetch in smaller chunks.</code></pre>
+    </div>
+</div>
+
+<h2>Prompt-Engineering Tool Descriptions</h2>
+
+<p>One of the most effective methods for improving tools is prompt-engineering your tool descriptions and specs. These are loaded into your agents' context and can collectively steer agents toward effective tool-calling behaviors.</p>
+
+<div class="section-card">
+    <h3>Best Practices for Tool Descriptions</h3>
+    <ul>
+        <li><strong>Think like onboarding a new hire:</strong> Consider the context you might implicitly bring and make it explicit</li>
+        <li><strong>Define specialized terms:</strong> Query formats, niche terminology, relationships between resources</li>
+        <li><strong>Avoid ambiguity:</strong> Clearly describe expected inputs and outputs with strict data models</li>
+        <li><strong>Name parameters unambiguously:</strong> Instead of user, use user_id</li>
+        <li><strong>Measure with evaluations:</strong> Even small refinements can yield dramatic improvements</li>
+    </ul>
+</div>
+
+<div class="insight">
+    Claude Sonnet 3.5 achieved state-of-the-art performance on the SWE-bench Verified evaluation after we made precise refinements to tool descriptions, dramatically reducing error rates and improving task completion.
+</div>
+
+<h2>Looking Ahead</h2>
+
+<p>To build effective tools for agents, we need to re-orient our software development practices from predictable, deterministic patterns to non-deterministic ones.</p>
+
+<p>Through the iterative, evaluation-driven process we've described in this post, we've identified consistent patterns in what makes tools successful:</p>
+
+<ul>
+    <li>Effective tools are intentionally and clearly defined</li>
+    <li>They use agent context judiciously</li>
+    <li>They can be combined together in diverse workflows</li>
+    <li>They enable agents to intuitively solve real-world tasks</li>
+</ul>
+
+<p>In the future, we expect the specific mechanisms through which agents interact with the world to evolve—from updates to the MCP protocol to upgrades to the underlying LLMs themselves. With a systematic, evaluation-driven approach to improving tools for agents, we can ensure that as agents become more capable, the tools they use will evolve alongside them.</p>
+
+<div class="credits">
+    <p><strong>Written by:</strong> Ken Aizawa at Anthropic</p>
+    <p><strong>With contributions from:</strong> Barry Zhang, Zachary Witten, Daniel Jiang, Sami Al-Sheikh, Matt Bell, Maggie Vo (Research), Theodora Chu, John Welsh, David Soria Parra, Adam Jones (MCP), Santiago Seira (Product Engineering), Molly Vorwerck (Marketing), Drew Roper (Design), and Christian Ryan, Alexander Bricken (Applied AI).</p>
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the latest research</h3>
+        <p class="desc">AI engineering insights, agent patterns, and tool design best practices. Delivered when they matter.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+        <p class="newsletter-disclaimer">We'll only send you the good stuff. Unsubscribe anytime.</p>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="writing-effective-tools.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100); }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the next article when it\'s ready.</p>'; } }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>
+
+

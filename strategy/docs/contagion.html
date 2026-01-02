@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagion | 150+ Psychological Growth Tactics</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <meta property="og:title" content="Contagion | User Growth Hacking">
+    <meta property="og:description" content="Turn One User Into Many — With Science. 150+ psychological growth tactics for viral growth.">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --table-header: #f5f5f5;
+            --table-even: #f9f9f9;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --table-header: #1a1a1a;
+            --table-even: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        /* Custom Speed Dropdown */
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        .hero-quote { background: var(--card-bg); color: var(--text-secondary); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 3px solid var(--accent); }
+        .hero-quote blockquote { font-size: 18px; font-style: italic; margin-bottom: 8px; }
+        .hero-quote cite { font-style: normal; font-size: 14px; color: var(--text-muted); }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--accent); }
+        h4 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .viral-equation { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 20px; margin: 24px 0; font-size: 15px; }
+        .viral-equation strong { color: var(--accent); }
+        
+        .crisis-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid var(--border); }
+        .crisis-box h3 { margin-top: 0; }
+        
+        .tactic { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 12px 0; }
+        .tactic-name { font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+        .tactic-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        th { background: var(--table-header); color: var(--text-secondary); padding: 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+        td { padding: 12px; border: 1px solid var(--border); vertical-align: top; background: var(--bg); color: var(--text-secondary); }
+        tr:nth-child(even) td { background: var(--table-even); }
+        
+        .section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+        .section-card { background: var(--card-bg); padding: 16px; border-radius: 8px; }
+        .section-card h4 { margin-top: 0; color: var(--accent); }
+        
+        .priority-tier { background: var(--accent); color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 8px; }
+        
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 6px; color: var(--text-secondary); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        .psychology-note { background: var(--card-bg); padding: 16px; border-radius: 8px; margin: 16px 0; font-size: 14px; color: var(--text-muted); }
+        .psychology-note strong { color: var(--accent); }
+        
+        .final-box { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .final-box h2 { margin-top: 0; padding-top: 0; border-top: none; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">VP Sales</div>
+        <h1>User Growth Hacking</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">150+ Psychological Growth Tactics — Turn One User Into Many</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this document</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="hero-quote">
+    <blockquote>"The end goal of every growth hacker is to build a self-perpetuating marketing machine that reaches millions by itself."</blockquote>
+    <cite>— Ryan Holiday</cite>
+</div>
+
+<div class="viral-equation">
+    <strong>THE VIRAL EQUATION</strong><br><br>
+    K &gt; 1.0 = Viral (each user brings more than one new user)<br>
+    Target: <strong>25%</strong> invite rate (1 in 4 users sends an invite)<br>
+    Target: <strong>40%</strong> accept rate (invitees who become users)<br><br>
+    <strong>K = invite rate × accept rate × users per invite</strong>
+</div>
+
+<div class="crisis-box">
+    <h3>Why VP Sales Is Different</h3>
+    <p><strong>THE CRISIS:</strong> Average VP Sales tenure is 17-19 months. Only 43% of reps hit quota. 70% experience burnout. First 90 days determine survival.</p>
+    <p style="margin-bottom: 0;"><strong>THE OPPORTUNITY:</strong> VP Sales are in survival mode. They share what helps them survive. Growth tactics must feel like GAINING insight, not being marketed to.</p>
+</div>
+
+<h2>The 10 VP Sales Archetypes (Quick Reference)</h2>
+
+<table>
+    <tr><th>Archetype</th><th>Who They Are</th><th>Enemy</th><th>Why They Share</th></tr>
+    <tr><td><strong>Anxious Elite</strong></td><td>$250K+, Series C+</td><td>Pipeline Exposure</td><td>Validates suspicion</td></tr>
+    <tr><td><strong>Worried Darling</strong></td><td>$180-220K, Series B-C</td><td>Golden Trap</td><td>Private solutions</td></tr>
+    <tr><td><strong>Stressed Performer</strong></td><td>$160-200K, Mid-market</td><td>Silent Slip</td><td>Gives them ammunition</td></tr>
+    <tr><td><strong>Panicking Star</strong></td><td>$150-180K, High-growth</td><td>Glory Hangover</td><td>Speed is everything</td></tr>
+    <tr><td><strong>Desperate Hitter</strong></td><td>$140-170K, PE-backed</td><td>Stakeholder Shadow</td><td>Will try anything</td></tr>
+    <tr><td><strong>Rebuilding Leader</strong></td><td>$150-190K, New role</td><td>Miss Pattern</td><td>Prove they're different</td></tr>
+    <tr><td><strong>Stretched Striver</strong></td><td>$120-150K, SMB</td><td>Tool Sprawl</td><td>Efficiency not more</td></tr>
+    <tr><td><strong>Frustrated Fighter</strong></td><td>$140-170K, Marketing-dom</td><td>Marketing Ghost</td><td>Prove it's not them</td></tr>
+    <tr><td><strong>Hungry Underdog</strong></td><td>$100-130K, Early-stage</td><td>Resource Gap</td><td>Unfair advantages</td></tr>
+    <tr><td><strong>Sweating Target</strong></td><td>$110-140K, Turnaround</td><td>The Clock</td><td>Highest urgency</td></tr>
+</table>
+
+<h2>Section 1: Viral Loops</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Viral loops exploit Reciprocity (people return favors), Social Proof (others doing it validates action), and Loss Aversion (don't lose what you could have).
+</div>
+
+<h3>1A. Referral Mechanics</h3>
+
+<div class="tactic"><div class="tactic-name">Personal Referral Links</div><div class="tactic-desc">Every user gets unique URL. Track who brings whom. Show count on dashboard. Use Goal Gradient—show 'X referrals to next reward' to accelerate invites.</div></div>
+
+<div class="tactic"><div class="tactic-name">Two-Sided Rewards</div><div class="tactic-desc">Both referrer and referee get something. 'Your colleague gets 20% off, you get Pipeline Score unlock.' Exploits Reciprocity—they're GIVING something.</div></div>
+
+<div class="tactic"><div class="tactic-name">Invite-to-Unlock Features</div><div class="tactic-desc">Free tier gets 3 diagnostics. Invite 2 colleagues = unlock 5 more. Creates Partial Unlock psychology—they've started, need to finish.</div></div>
+
+<div class="tactic"><div class="tactic-name">Tiered Referral Rewards</div><div class="tactic-desc">1 referral = feature. 5 = free month. 10 = Ambassador status with exclusive badge. Pseudo-Set Framing—they want to complete the set.</div></div>
+
+<div class="tactic"><div class="tactic-name">Time-Limited Bonuses</div><div class="tactic-desc">'Invite this week, both get double rewards.' Creates Scarcity urgency. Best for Panicking Star and Sweating Target archetypes.</div></div>
+
+<div class="tactic"><div class="tactic-name">Referral Leaderboard</div><div class="tactic-desc">Monthly top 10 referrers get recognition. Variable Rewards—not everyone wins, but everyone could. Hawthorne Effect—public visibility changes behavior.</div></div>
+
+<div class="tactic"><div class="tactic-name">Cash Referral Bonuses</div><div class="tactic-desc">$50-100 per qualified referral. PayPal paid $10. High LTV justifies it. Works best for Stressed Performer (needs win) and Hungry Underdog (needs money).</div></div>
+
+<div class="tactic"><div class="tactic-name">Exclusive Access Rewards</div><div class="tactic-desc">Refer 3 = early access to new features. Creates exclusivity that Anxious Elite and Worried Darling crave.</div></div>
+
+<div class="tactic"><div class="tactic-name">Waitlist Jump</div><div class="tactic-desc">'Move from #847 to #12 by referring 3 friends.' Combines Scarcity + Endowed Progress + Goal Gradient. Powerful compound.</div></div>
+
+<div class="tactic"><div class="tactic-name">Referral Milestones with Swag</div><div class="tactic-desc">Physical rewards at 5/10/25 referrals. People photograph and share. IKEA Effect—they earned it, they value it.</div></div>
+
+<h3>1B. Team Spread Mechanics</h3>
+
+<div class="tactic"><div class="tactic-name">Team Workspace Invites</div><div class="tactic-desc">One creates workspace → invites team → some leave company → start new workspaces elsewhere. Network effect compounds. The Rebuilding Leader brings tools to every new role.</div></div>
+
+<div class="tactic"><div class="tactic-name">Manager Seat Triggers</div><div class="tactic-desc">When VP joins, prompt: 'Invite your 3 top performers to see team insights.' Commitment & Consistency—once they've invited one, they'll invite more.</div></div>
+
+<div class="tactic"><div class="tactic-name">Team Leaderboards</div><div class="tactic-desc">Public performance boards. 'Your team vs industry.' Social Proof + Competitive drive. Managers want all reps visible.</div></div>
+
+<div class="tactic"><div class="tactic-name">Deal Handoff Invites</div><div class="tactic-desc">When deal moves to CS, auto-invite them. When SDR qualifies for AE, invite AE. Spreads internally through workflow.</div></div>
+
+<div class="tactic"><div class="tactic-name">Job Change Detection</div><div class="tactic-desc">Reps change jobs every 18-24 months (VP Sales even faster at 17-19). Detect LinkedIn changes and reach out: 'Bring your Pipeline Score to your new role!'</div></div>
+
+<div class="tactic"><div class="tactic-name">Cross-Department Invites</div><div class="tactic-desc">'Share your win with Marketing.' When Frustrated Fighter proves Marketing Ghost was real, they'll share with Marketing to make the point.</div></div>
+
+<h3>1C. Network Effect Mechanics</h3>
+
+<div class="tactic"><div class="tactic-name">Collaborative Deal Rooms</div><div class="tactic-desc">Shared spaces for multi-stakeholder deals. Prospects experience product before buying. Every deal = mini product demo.</div></div>
+
+<div class="tactic"><div class="tactic-name">Cross-Company Benchmark Networks</div><div class="tactic-desc">'See how 847 VPs at your stage perform.' Network becomes valuable because others are in it. Peer Comparison psychology.</div></div>
+
+<div class="tactic"><div class="tactic-name">Partner Portal</div><div class="tactic-desc">Agencies and consultants get partner accounts. One partner = many customer introductions. Revenue share creates aligned incentives.</div></div>
+
+<div class="tactic"><div class="tactic-name">Integration Marketplace</div><div class="tactic-desc">List on HubSpot/Salesforce/Outreach marketplaces. Users discover through existing ecosystem. Low friction adoption.</div></div>
+
+<div class="tactic"><div class="tactic-name">Alumni Networks</div><div class="tactic-desc">Track users as they move companies. Build community of 'graduates.' Fresh Start Effect—new job = new tools = reactivation opportunity.</div></div>
+
+<h2>Section 2: Shareable Outputs</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Shareables exploit IKEA Effect (they co-created it, they value it), Peak-End Rule (memorable moment), and Status Signaling (sharing wins signals success). Every share is free advertising.
+</div>
+
+<h3>2A. Diagnostic & Assessment Outputs</h3>
+
+<div class="tactic"><div class="tactic-name">Pipeline Exposure Score Card</div><div class="tactic-desc">Beautiful visual showing their score vs benchmark. 'Powered by [Brand]' footer. Designed for LinkedIn/Slack sharing. Singularity Effect—it's THEIR score.</div></div>
+
+<div class="tactic"><div class="tactic-name">Stakeholder Map Visualization</div><div class="tactic-desc">Beautiful diagram of their deal's stakeholder network. So useful they'll share with team. Recipients ask 'what tool made this?'</div></div>
+
+<div class="tactic"><div class="tactic-name">Gap Analysis PDF</div><div class="tactic-desc">Professional 5-page report with their inputs, benchmark comparisons, recommendations. Labor Illusion—looks like $5K consulting work.</div></div>
+
+<div class="tactic"><div class="tactic-name">Maturity Assessment Results</div><div class="tactic-desc">'Your Sales Process Maturity: Level 3 of 5.' Progress bar visual. Zeigarnik Effect—incomplete status motivates action AND sharing.</div></div>
+
+<div class="tactic"><div class="tactic-name">Personalized Benchmark Report</div><div class="tactic-desc">'You vs 500+ VPs at your stage.' Peer Comparison is the #1 thing executives want. They'll share to show they participated.</div></div>
+
+<h3>2B. Win & Achievement Outputs</h3>
+
+<div class="tactic"><div class="tactic-name">Win Celebration Cards</div><div class="tactic-desc">Auto-generate 'I closed a $X deal!' cards for LinkedIn when deals close. One-click share. Micro-Interaction delight at peak moment.</div></div>
+
+<div class="tactic"><div class="tactic-name">Weekly Stats Cards</div><div class="tactic-desc">'47 calls, 12 meetings, $120K pipeline added' — shareable image like Spotify Wrapped. Use Chunking—3 key metrics, not 10.</div></div>
+
+<div class="tactic"><div class="tactic-name">Year in Review</div><div class="tactic-desc">Annual summary of user's activity. People will share this if designed well. Peak-End Rule—make it a celebration.</div></div>
+
+<div class="tactic"><div class="tactic-name">Quarter in Review</div><div class="tactic-desc">Same as annual but quarterly. Fresh Start Effect—tied to Q1/Q2/Q3/Q4 natural breakpoints.</div></div>
+
+<div class="tactic"><div class="tactic-name">Achievement Badges</div><div class="tactic-desc">'100 Deals Analyzed' — shareable badges optimized for LinkedIn. Pseudo-Set Framing—collect the full set.</div></div>
+
+<div class="tactic"><div class="tactic-name">Streak Celebrations</div><div class="tactic-desc">'7-day active streak!' — shareable achievements. Duolingo proved this works. Variable Rewards—different streaks unlock different visuals.</div></div>
+
+<div class="tactic"><div class="tactic-name">Goal Achievement Cards</div><div class="tactic-desc">'Hit quota 3 weeks early!' — auto-generated when goals met. The Panicking Star NEEDS to share this to prove Glory Hangover is beaten.</div></div>
+
+<div class="tactic"><div class="tactic-name">Comeback Story Cards</div><div class="tactic-desc">'From 60% to 110% in 8 weeks.' Narrative Arc—the struggle-to-success story. Rebuilding Leader's dream share.</div></div>
+
+<h3>2C. Competitive & Benchmark Outputs</h3>
+
+<div class="tactic"><div class="tactic-name">Benchmark Comparisons</div><div class="tactic-desc">'Top 10% of sales reps for call volume' — shareable stats. Status signaling at its purest.</div></div>
+
+<div class="tactic"><div class="tactic-name">Industry Ranking Cards</div><div class="tactic-desc">'#47 of 3,200 SaaS Sales Leaders.' Specific numbers create credibility. Anchoring Bias—big number first.</div></div>
+
+<div class="tactic"><div class="tactic-name">Team vs Industry Reports</div><div class="tactic-desc">Managers share to recruit—'My team outperforms 80% of industry.' Becomes recruiting tool.</div></div>
+
+<div class="tactic"><div class="tactic-name">Improvement Trajectory</div><div class="tactic-desc">'Moved from bottom 40% to top 20% in 90 days.' Story Arc visualization. The journey is the shareable content.</div></div>
+
+<h3>2D. Document & Deliverable Outputs</h3>
+
+<div class="tactic"><div class="tactic-name">AI-Generated Proposals</div><div class="tactic-desc">Beautiful docs with professional design. Recipients ask 'what tool is this?' Every proposal is a product demo.</div></div>
+
+<div class="tactic"><div class="tactic-name">Meeting Prep Briefs</div><div class="tactic-desc">One-page stakeholder summaries. So useful they forward to team. 'Powered by' footer on every page.</div></div>
+
+<div class="tactic"><div class="tactic-name">Embeddable Widgets</div><div class="tactic-desc">Buyer group visualizations for presentations. Every deck at every meeting = brand exposure.</div></div>
+
+<div class="tactic"><div class="tactic-name">Email Signature Badges</div><div class="tactic-desc">'I use [Brand]' badge for signatures. Every email is an ad. Commitment & Consistency—public declaration.</div></div>
+
+<div class="tactic"><div class="tactic-name">AI Insight Snippets</div><div class="tactic-desc">Tweetable insights: '[Brand] told me the CFO has authority over this decision.' Aha moments designed for sharing.</div></div>
+
+<h2>Section 3: 'Powered By' Everywhere</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Passive exposure builds Familiarity Bias. Every touchpoint is an impression. Mere Exposure Effect—the more they see it, the more they trust it.
+</div>
+
+<h3>3A. Document Branding</h3>
+
+<div class="section-grid">
+    <div class="section-card"><h4>Shared Documents Footer</h4><p style="font-size: 14px; margin-bottom: 0;">Every external doc has 'Powered by [Brand] | Get your Pipeline Score' with link. Subtle but persistent.</p></div>
+    <div class="section-card"><h4>Export Watermarks</h4><p style="font-size: 14px; margin-bottom: 0;">Free tier exports have small watermark. Paid removes it. Creates upgrade incentive while spreading brand.</p></div>
+    <div class="section-card"><h4>Report Cover Pages</h4><p style="font-size: 14px; margin-bottom: 0;">Every generated report has professional cover with branding. Looks like expensive consulting deliverable.</p></div>
+    <div class="section-card"><h4>Slide Template Branding</h4><p style="font-size: 14px; margin-bottom: 0;">PowerPoint/Google Slides templates with subtle footer. Every presentation is brand exposure.</p></div>
+</div>
+
+<h3>3B. Communication Branding</h3>
+
+<div class="section-grid">
+    <div class="section-card"><h4>Calendar Booking Pages</h4><p style="font-size: 14px; margin-bottom: 0;">Scheduling confirmations show branding. Every meeting = brand impression.</p></div>
+    <div class="section-card"><h4>Outbound Email Footer</h4><p style="font-size: 14px; margin-bottom: 0;">'Intelligence powered by [Brand]' at bottom of automated sequences.</p></div>
+    <div class="section-card"><h4>Meeting Notes Branding</h4><p style="font-size: 14px; margin-bottom: 0;">Auto-generated meeting summaries have footer. Shared with all attendees.</p></div>
+    <div class="section-card"><h4>Shared Link Pages</h4><p style="font-size: 14px; margin-bottom: 0;">Public report pages have branding and signup CTA. Every share is a landing page.</p></div>
+</div>
+
+<h2>Section 4: Social Proof & Status</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Social Proof (others doing it validates action), Authority Bias (experts endorse it), and Status Seeking (exclusivity signals success). VP Sales are competitive—they want what other VP Sales have.
+</div>
+
+<h3>4A. Certification & Recognition</h3>
+
+<div class="tactic"><div class="tactic-name">Professional Certification</div><div class="tactic-desc">Free certification program. Users get LinkedIn badge. 'Certified [Methodology] Expert.' Creates ambassadors who publicly identify with brand.</div></div>
+
+<div class="tactic"><div class="tactic-name">Power User Status</div><div class="tactic-desc">'Top 1% of users' badges. Exclusivity that Anxious Elite and Worried Darling crave. They'll share because it signals competence.</div></div>
+
+<div class="tactic"><div class="tactic-name">Customer Advisory Board</div><div class="tactic-desc">Top users get exclusive access and influence. They champion to their network. Authority Bias—'I advise [Brand]' carries weight.</div></div>
+
+<div class="tactic"><div class="tactic-name">Early Adopter Recognition</div><div class="tactic-desc">'Founding Member' permanent badge. People love being first. Never expires. IKEA Effect—they were part of building it.</div></div>
+
+<div class="tactic"><div class="tactic-name">Skills Endorsements</div><div class="tactic-desc">'Pipeline Expert' badges based on usage. Designed for LinkedIn profiles. Every profile view = brand impression.</div></div>
+
+<h3>4B. Case Studies & Spotlights</h3>
+
+<div class="tactic"><div class="tactic-name">Customer Spotlight</div><div class="tactic-desc">Feature users on blog/podcast. They share content widely. Singularity Effect—it's about THEM specifically.</div></div>
+
+<div class="tactic"><div class="tactic-name">Case Study Co-Creation</div><div class="tactic-desc">Create with customers, not about them. They co-own it. IKEA Effect—they helped build it, they'll share it.</div></div>
+
+<div class="tactic"><div class="tactic-name">Video Testimonials</div><div class="tactic-desc">Short clips users can share. 'How I shortened my cycle 40%.' Narrative Arc—problem → solution → result.</div></div>
+
+<div class="tactic"><div class="tactic-name">Turnaround Stories</div><div class="tactic-desc">'From 60% to 120% in one quarter.' The Rebuilding Leader's favorite content. They share to show what's possible.</div></div>
+
+<div class="tactic"><div class="tactic-name">Annual Awards</div><div class="tactic-desc">'Sales Leader of the Year' awards. Winners share everywhere. Creates aspiration for non-winners.</div></div>
+
+<h3>4C. Exclusive Communities</h3>
+
+<div class="tactic"><div class="tactic-name">Slack/Discord Community</div><div class="tactic-desc">Power users help each other, share tips. Organic recruitment. Social Proof—'847 VP Sales are in here.'</div></div>
+
+<div class="tactic"><div class="tactic-name">Private Peer Groups</div><div class="tactic-desc">'Series B VP Sales Mastermind.' Exclusivity by stage. Worried Darling wants private, confidential spaces.</div></div>
+
+<div class="tactic"><div class="tactic-name">Regional Chapters</div><div class="tactic-desc">'NYC Sales Leaders.' Geography creates intimacy. In-person events drive belonging.</div></div>
+
+<div class="tactic"><div class="tactic-name">Industry Verticals</div><div class="tactic-desc">'Fintech Sales Leaders.' Niche = deep relevance. Familiarity Bias—'these are my people.'</div></div>
+
+<h2>Section 5: Free Tools (Prosumer)</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Reciprocity (give value first), Endowed Progress (they've started with you), and Learning Loop (teach them your methodology). Free tools are the top of funnel. Each tool should teach ONE thing and hint at what's next.
+</div>
+
+<h3>5A. Diagnostic Free Tools</h3>
+
+<div class="section-grid">
+    <div class="section-card"><h4>Pipeline Score Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">Free assessment. 5 questions → score. Partial Unlock—show score, blur recommendations. One-Question Start principle.</p></div>
+    <div class="section-card"><h4>Speed Gap Analysis</h4><p style="font-size: 14px; margin-bottom: 0;">'How fast are you vs benchmark?' Guess-Then-Reveal mechanic. Curiosity Gap drives completion.</p></div>
+    <div class="section-card"><h4>Tool Sprawl Audit</h4><p style="font-size: 14px; margin-bottom: 0;">'How many sales tools are you using?' Perfect for Stretched Striver archetype. Quantifies their pain.</p></div>
+    <div class="section-card"><h4>Marketing-Sales Alignment Score</h4><p style="font-size: 14px; margin-bottom: 0;">For Frustrated Fighter. Validates their suspicion about Marketing Ghost.</p></div>
+    <div class="section-card"><h4>Quota Attainment Predictor</h4><p style="font-size: 14px; margin-bottom: 0;">'Will you hit quota this quarter?' Input pipeline → get probability. For Panicking Star.</p></div>
+</div>
+
+<h3>5B. Calculator Free Tools</h3>
+
+<div class="section-grid">
+    <div class="section-card"><h4>ROI Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">'What's one month faster sales cycles worth?' Single Mechanic—sliders everywhere. Their numbers = IKEA Effect ownership.</p></div>
+    <div class="section-card"><h4>Research Cost Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">'How much are you spending on manual research?' Anchoring—show big number before solution cost.</p></div>
+    <div class="section-card"><h4>Headcount Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">'How many reps do you need to hit target?' For Stressed Performer seeking ammunition.</p></div>
+    <div class="section-card"><h4>Payback Period Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">'When does this investment break even?' Addresses Anxious Elite's skepticism.</p></div>
+    <div class="section-card"><h4>Commission Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">'What could you earn with 10% faster cycles?' Makes it personal. Singularity Effect.</p></div>
+</div>
+
+<h3>5C. Generator Free Tools</h3>
+
+<div class="section-grid">
+    <div class="section-card"><h4>AI Cold Email Writer</h4><p style="font-size: 14px; margin-bottom: 0;">Enter prospect → get personalized sequence. Gateway to full product. Free tier has branding.</p></div>
+    <div class="section-card"><h4>Voicemail Script Generator</h4><p style="font-size: 14px; margin-bottom: 0;">Enter prospect → get personalized script. For Hungry Underdog who needs unfair advantages.</p></div>
+    <div class="section-card"><h4>ICP Builder Tool</h4><p style="font-size: 14px; margin-bottom: 0;">Free ICP definition wizard. Output feeds into paid prospecting. Progressive Disclosure—advanced features locked.</p></div>
+    <div class="section-card"><h4>Meeting Agenda Generator</h4><p style="font-size: 14px; margin-bottom: 0;">Input deal context → get structured agenda. Useful enough to share with prospects.</p></div>
+    <div class="section-card"><h4>Objection Response Generator</h4><p style="font-size: 14px; margin-bottom: 0;">Enter objection → get 3 responses. Quick wins build trust.</p></div>
+</div>
+
+<h3>5D. Extension Free Tools</h3>
+
+<div class="section-grid">
+    <div class="section-card"><h4>Chrome Extension</h4><p style="font-size: 14px; margin-bottom: 0;">Shows company intel on any website. Free with branding. Every browse = brand exposure.</p></div>
+    <div class="section-card"><h4>LinkedIn Overlay</h4><p style="font-size: 14px; margin-bottom: 0;">Shows buyer signals on LinkedIn profiles. Free tier limited. Every LinkedIn session = touchpoint.</p></div>
+    <div class="section-card"><h4>Salesforce Sidebar</h4><p style="font-size: 14px; margin-bottom: 0;">Intel widget in Salesforce. Free basic, paid advanced. Inside their CRM daily.</p></div>
+</div>
+
+<h2>Section 6: Gamification</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Variable Rewards (unpredictability creates obsession), Goal Gradient (acceleration toward goal), Zeigarnik Effect (incomplete tasks remembered), and Learning Loop (fun = learning). Gamification isn't points—it's the psychological mechanics that make games engaging.
+</div>
+
+<h3>6A. Progress & Streaks</h3>
+
+<div class="tactic"><div class="tactic-name">Daily Streaks</div><div class="tactic-desc">Duolingo-style. '15-day streak!' Loss Aversion—don't break the streak. Variable Rewards—different streak milestones unlock different rewards.</div></div>
+
+<div class="tactic"><div class="tactic-name">XP and Levels</div><div class="tactic-desc">Earn XP for activities. Level up unlocks features. Endowed Progress—they've already started.</div></div>
+
+<div class="tactic"><div class="tactic-name">Achievement System</div><div class="tactic-desc">'First $100K deal', '100 calls in a week' — shareable badges. Pseudo-Set Framing—collect them all.</div></div>
+
+<div class="tactic"><div class="tactic-name">Progress Rings</div><div class="tactic-desc">Apple Watch-style daily goals. Visual and satisfying. Close the ring. Zeigarnik Effect—incomplete ring bothers them.</div></div>
+
+<div class="tactic"><div class="tactic-name">Mastery Trees</div><div class="tactic-desc">Skill progression visualization. 'Pipeline Master' → 'Stakeholder Expert' → 'Deal Architect.' Learning Loop made visible.</div></div>
+
+<h3>6B. Competition & Leaderboards</h3>
+
+<div class="tactic"><div class="tactic-name">Sales Challenges</div><div class="tactic-desc">Weekly challenges. Winners share, losers recruit friends to help. Time-boxed competitions create urgency.</div></div>
+
+<div class="tactic"><div class="tactic-name">Competitive Leaderboards</div><div class="tactic-desc">Company and industry rankings. Top performers get recognition. Hawthorne Effect—public visibility changes behavior.</div></div>
+
+<div class="tactic"><div class="tactic-name">Team Competitions</div><div class="tactic-desc">Company A vs B. Teams recruit more users to win. Network effect through competition.</div></div>
+
+<div class="tactic"><div class="tactic-name">Seasonal Tournaments</div><div class="tactic-desc">Quarterly championships. Fresh Start Effect—new quarter, new chance.</div></div>
+
+<div class="tactic"><div class="tactic-name">Head-to-Head Matches</div><div class="tactic-desc">Challenge specific peers. Personal stakes increase engagement.</div></div>
+
+<h3>6C. Rewards & Surprises</h3>
+
+<div class="tactic"><div class="tactic-name">Random Reward Drops</div><div class="tactic-desc">Surprise bonuses. Variable Rewards—unpredictability increases engagement. 'Mystery insight' after random actions.</div></div>
+
+<div class="tactic"><div class="tactic-name">Milestone Swag</div><div class="tactic-desc">Physical rewards at milestones. People photograph and share → organic marketing.</div></div>
+
+<div class="tactic"><div class="tactic-name">Feature Unlocks</div><div class="tactic-desc">Use = earn. The more they use, the more they unlock. Progressive Disclosure through gamification.</div></div>
+
+<div class="tactic"><div class="tactic-name">Loot Box Mechanics</div><div class="tactic-desc">Complete action → random reward type (insight, badge, feature, discount). Variable Rewards psychology.</div></div>
+
+<div class="tactic"><div class="tactic-name">Daily Spin</div><div class="tactic-desc">Log in → spin wheel for reward. Creates daily habit. Ritual behavior.</div></div>
+
+<h2>Section 7: Content & Community</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Authority Bias (expertise signals trustworthiness), Reciprocity (free value creates obligation), and Familiarity Bias (repeated exposure builds trust). Content is long-game growth. Community is retention and advocacy.
+</div>
+
+<h3>7A. Educational Content</h3>
+
+<div class="tactic"><div class="tactic-name">Free Educational Library</div><div class="tactic-desc">Best content on buyer psychology, sales cycles, stakeholder mapping. SEO brings organic traffic. Authority positioning.</div></div>
+
+<div class="tactic"><div class="tactic-name">Playbook Library</div><div class="tactic-desc">Sales playbooks using methodology. Teams need tool to implement. Content → Product funnel.</div></div>
+
+<div class="tactic"><div class="tactic-name">Academy Courses</div><div class="tactic-desc">Free courses on sales skills. Graduates become advocates. Certification at end → LinkedIn badge → brand exposure.</div></div>
+
+<div class="tactic"><div class="tactic-name">Weekly Newsletter</div><div class="tactic-desc">Industry insights and benchmarks. Forward-worthy content. Every forward = referral.</div></div>
+
+<div class="tactic"><div class="tactic-name">Research Reports</div><div class="tactic-desc">Original data on VP Sales performance. Journalists cite it. PR through research. Authority Bias at scale.</div></div>
+
+<h3>7B. User-Generated Content</h3>
+
+<div class="tactic"><div class="tactic-name">User-Generated Templates</div><div class="tactic-desc">Users create templates, share publicly. New users need tool to use templates. IKEA Effect—they built it.</div></div>
+
+<div class="tactic"><div class="tactic-name">Best Practices Submissions</div><div class="tactic-desc">'How I use [tool]' stories. Featured on blog. Singularity Effect—it's about THEM.</div></div>
+
+<div class="tactic"><div class="tactic-name">Community Q&A</div><div class="tactic-desc">Users answer other users. Builds expertise identity. Social Proof—'847 answers this week.'</div></div>
+
+<div class="tactic"><div class="tactic-name">Challenge Results</div><div class="tactic-desc">Publish competition outcomes. Winners share. Creates FOMO for next round.</div></div>
+
+<h3>7C. Podcast & Video</h3>
+
+<div class="tactic"><div class="tactic-name">Podcast with Customers</div><div class="tactic-desc">Interview sales leaders who use tool. They share with entire audience. Authority through association.</div></div>
+
+<div class="tactic"><div class="tactic-name">Video Testimonials</div><div class="tactic-desc">Short clips for social. 'How I shortened my cycle 40%.' Narrative Arc—struggle to success.</div></div>
+
+<div class="tactic"><div class="tactic-name">YouTube Tutorials</div><div class="tactic-desc">How-to content. SEO through video. Each view = brand impression.</div></div>
+
+<div class="tactic"><div class="tactic-name">Live Sessions</div><div class="tactic-desc">Weekly live Q&A or training. Creates ritual. Scarcity—'only live attendees get recording.'</div></div>
+
+<h2>Section 8: Unconventional Tactics</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Pattern Interrupt (unusual approaches get attention), Scarcity (limited opportunities), and Long-term Investment (sacrificing today for compound returns). These are high-effort, high-reward plays.
+</div>
+
+<h3>8A. Partnership & Ecosystem</h3>
+
+<div class="tactic"><div class="tactic-name">VC Portfolio Deals</div><div class="tactic-desc">Partner with VCs. One deal = access to 50+ portfolio companies. Network effect through investors.</div></div>
+
+<div class="tactic"><div class="tactic-name">Free for Accelerators</div><div class="tactic-desc">Free for YC/Techstars/500. They grow and pay later. Alumni recommend to future cohorts.</div></div>
+
+<div class="tactic"><div class="tactic-name">SDR Bootcamp Sponsorship</div><div class="tactic-desc">New SDRs learn on tool. Take it to every future job. Capture at career start, retain for career.</div></div>
+
+<div class="tactic"><div class="tactic-name">Sales Enablement Partnerships</div><div class="tactic-desc">Partner with training companies. Their curriculum uses tool. Graduates become users.</div></div>
+
+<div class="tactic"><div class="tactic-name">Pay Influencers in Equity</div><div class="tactic-desc">Aligned incentives. They become invested in long-term promotion. Commitment & Consistency.</div></div>
+
+<h3>8B. Media & Events</h3>
+
+<div class="tactic"><div class="tactic-name">Sponsor Every Sales Podcast</div><div class="tactic-desc">Highly targeted reach. Frequency builds familiarity. Every listen = impression.</div></div>
+
+<div class="tactic"><div class="tactic-name">Write a Book</div><div class="tactic-desc">'The [Methodology] Playbook.' Give free copies. Readers become users. Authority Bias at maximum.</div></div>
+
+<div class="tactic"><div class="tactic-name">Conference Takeover</div><div class="tactic-desc">At SaaStr/Dreamforce, be everywhere. Everyone leaves knowing brand. Pattern Interrupt through omnipresence.</div></div>
+
+<div class="tactic"><div class="tactic-name">Sales Olympics</div><div class="tactic-desc">Annual competition. Grand prize + media coverage. Creates massive awareness spike.</div></div>
+
+<div class="tactic"><div class="tactic-name">Sales Reality Show</div><div class="tactic-desc">YouTube series following reps using tool. Entertainment + continuous product demo.</div></div>
+
+<h3>8C. Launch & Visibility</h3>
+
+<div class="tactic"><div class="tactic-name">Product Hunt Launch</div><div class="tactic-desc">Launch free tool. #1 of the day = massive exposure. Coordinate community upvotes.</div></div>
+
+<div class="tactic"><div class="tactic-name">Revenue Share Program</div><div class="tactic-desc">% of revenue from referrals forever. Creates army of aligned promoters.</div></div>
+
+<div class="tactic"><div class="tactic-name">Viral Simulation Game</div><div class="tactic-desc">Fun game teaching methodology concepts. Gamers become users. Entertainment → Education → Product.</div></div>
+
+<h2>Section 9: Quick Wins</h2>
+
+<div class="psychology-note">
+    <strong>PSYCHOLOGY:</strong> Micro-Interactions (small moments of delight), Pacing (one thing at a time), and Hintiness (subtle cues, not interruptions). These are low-effort, high-impact optimizations. Implement in days, not weeks.
+</div>
+
+<h3>9A. Share Optimization</h3>
+
+<div class="tactic"><div class="tactic-name">Add Share Buttons Everywhere</div><div class="tactic-desc">Every report, achievement, win — one-click share to LinkedIn/Twitter. Reduce friction to zero.</div></div>
+
+<div class="tactic"><div class="tactic-name">Social Meta Tags</div><div class="tactic-desc">Beautiful Open Graph images for all shareable links. Control how content appears when shared.</div></div>
+
+<div class="tactic"><div class="tactic-name">Pre-Written Share Copy</div><div class="tactic-desc">Draft the tweet/post for them. They just click. Remove cognitive load from sharing.</div></div>
+
+<div class="tactic"><div class="tactic-name">Screenshot Optimization</div><div class="tactic-desc">Design key screens to look great when screenshotted. People will screenshot and share organically.</div></div>
+
+<h3>9B. Referral Optimization</h3>
+
+<div class="tactic"><div class="tactic-name">Show Referral Link in Onboarding</div><div class="tactic-desc">Plant the seed early. 'Your personal link: xyz.' Endowed Progress—they already have something.</div></div>
+
+<div class="tactic"><div class="tactic-name">Referral Tracking Dashboard</div><div class="tactic-desc">Show who they've referred and status. Gamifies referrals. Goal Gradient—'2 more for next reward.'</div></div>
+
+<div class="tactic"><div class="tactic-name">'Invite Team' Prompt After First Win</div><div class="tactic-desc">'Want to invite your team to see this?' Peak moment = best time to ask.</div></div>
+
+<div class="tactic"><div class="tactic-name">NPS Survey → Share</div><div class="tactic-desc">After positive NPS: 'Great! Share with a colleague?' Convert satisfaction into action.</div></div>
+
+<h3>9C. Delight Optimization</h3>
+
+<div class="tactic"><div class="tactic-name">Confetti on Milestones</div><div class="tactic-desc">Celebrate with animation + share prompt. People screenshot confetti. Peak-End Rule.</div></div>
+
+<div class="tactic"><div class="tactic-name">Sound on Achievements</div><div class="tactic-desc">Satisfying audio feedback. Sensory Appeal—multi-sense = memorable.</div></div>
+
+<div class="tactic"><div class="tactic-name">Personalized Celebrations</div><div class="tactic-desc">'Great job, [Name]! That's your 5th win this month.' Singularity Effect.</div></div>
+
+<div class="tactic"><div class="tactic-name">Easter Eggs</div><div class="tactic-desc">Hidden features for power users to discover. Variable Rewards—unexpected delight.</div></div>
+
+<h2>Section 10: Archetype-Specific Growth</h2>
+
+<div class="insight">
+    <strong>KEY INSIGHT:</strong> Different archetypes share for different reasons. Match the growth tactic to the psychological driver.
+</div>
+
+<table>
+    <tr><th>Archetype</th><th>Why They Share</th><th>Best Tactics</th><th>Trigger Moment</th></tr>
+    <tr><td><strong>Anxious Elite</strong></td><td>Validates expertise</td><td>Certification, Advisory Board, Exclusive access</td><td>When suspicion confirmed</td></tr>
+    <tr><td><strong>Worried Darling</strong></td><td>Private recommendations</td><td>Private groups, 1:1 referrals, Confidential benchmarks</td><td>Privately after win</td></tr>
+    <tr><td><strong>Stressed Performer</strong></td><td>Proves their case</td><td>Benchmark reports, Data exports, ROI calculators</td><td>When presenting to CEO</td></tr>
+    <tr><td><strong>Panicking Star</strong></td><td>Speed of solution</td><td>Win cards, Quick results, Speed badges</td><td>Immediately after win</td></tr>
+    <tr><td><strong>Desperate Hitter</strong></td><td>Hope for others</td><td>Turnaround stories, Community help, Recovery playbooks</td><td>When turnaround starts</td></tr>
+    <tr><td><strong>Rebuilding Leader</strong></td><td>New approach works</td><td>Before/after comparisons, Methodology case studies</td><td>90 days into new role</td></tr>
+    <tr><td><strong>Stretched Striver</strong></td><td>Efficiency discovered</td><td>Time saved calculators, Tool consolidation stories</td><td>When time saved visible</td></tr>
+    <tr><td><strong>Frustrated Fighter</strong></td><td>Vindication</td><td>Marketing-Sales gap reports, Attribution data</td><td>When data proves point</td></tr>
+    <tr><td><strong>Hungry Underdog</strong></td><td>Secret weapon found</td><td>Underdog success stories, David vs Goliath content</td><td>When beating larger competitors</td></tr>
+    <tr><td><strong>Sweating Target</strong></td><td>Deadline met</td><td>Countdown achievements, Crisis recovery stories</td><td>After surviving deadline</td></tr>
+</table>
+
+<h2>Implementation Priority</h2>
+
+<div style="margin: 24px 0;">
+    <div class="priority-tier">TIER 1: IMMEDIATE (Week 1-2)</div>
+    <ul>
+        <li>Add share buttons to every output</li>
+        <li>'Powered by' footer on all exports</li>
+        <li>Referral link in onboarding</li>
+        <li>Confetti on milestones</li>
+        <li>Social meta tags for all pages</li>
+    </ul>
+</div>
+
+<div style="margin: 24px 0;">
+    <div class="priority-tier">TIER 2: SHORT-TERM (Week 3-6)</div>
+    <ul>
+        <li>Two-sided referral program</li>
+        <li>Win celebration cards</li>
+        <li>Pipeline Score free tool</li>
+        <li>Weekly stats cards</li>
+        <li>Team invite prompts</li>
+    </ul>
+</div>
+
+<div style="margin: 24px 0;">
+    <div class="priority-tier">TIER 3: MEDIUM-TERM (Month 2-3)</div>
+    <ul>
+        <li>Certification program</li>
+        <li>Slack community</li>
+        <li>Chrome extension</li>
+        <li>Gamification (streaks, XP)</li>
+        <li>ROI calculator tool</li>
+    </ul>
+</div>
+
+<div style="margin: 24px 0;">
+    <div class="priority-tier">TIER 4: LONG-TERM (Quarter 2+)</div>
+    <ul>
+        <li>VC portfolio partnerships</li>
+        <li>Podcast sponsorships</li>
+        <li>Annual awards program</li>
+        <li>Book publication</li>
+        <li>Conference takeover</li>
+    </ul>
+</div>
+
+<div class="final-box">
+    <h2>The Growth Equation</h2>
+    <p style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Growth = (Value Delivered × Shareability × Triggers) / Friction</p>
+    <p>Every tactic should: (1) Deliver real value, (2) Be designed for sharing, (3) Appear at peak moments, (4) Have zero-friction execution.</p>
+    <div class="insight" style="margin-top: 24px; margin-bottom: 0;">
+        <strong>REMEMBER:</strong> VP Sales are in survival mode. They share what helps them survive. Make your product so valuable that NOT sharing feels like withholding help from peers.
+    </div>
+</div>
+
+</div><!-- end readable-content -->
+
+<audio id="audioElement" preload="auto" style="display:none;">
+    <source src="contagion.mp3" type="audio/mpeg">
+</audio>
+<script>
+// Audio player - tries MP3 first, falls back to Web Speech API
+let isPlaying = false;
+let isPaused = false;
+let audioMode = 'mp3';
+let utterance = null;
+let speechRate = 1.5;
+
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() {
+    if (audioMode === 'mp3') toggleMp3Audio();
+    else toggleSpeechAudio();
+}
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) {
+        audioEl.pause();
+        isPaused = true;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused';
+    } else if (isPaused) {
+        audioEl.play();
+        isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing...';
+    } else {
+        audioEl.currentTime = 0;
+        audioEl.playbackRate = speechRate;
+        audioEl.play().then(() => {
+            isPlaying = true; isPaused = false;
+            document.getElementById('playIcon').style.display = 'none';
+            document.getElementById('pauseIcon').style.display = 'block';
+            document.getElementById('audioStatus').textContent = 'Playing...';
+        }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); });
+    }
+}
+
+audioEl.onended = () => {
+    isPlaying = false; isPaused = false;
+    document.getElementById('playIcon').style.display = 'block';
+    document.getElementById('pauseIcon').style.display = 'none';
+    document.getElementById('audioStatus').textContent = 'Click play to start';
+};
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) {
+        window.speechSynthesis.pause(); isPaused = true;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused';
+    } else if (isPaused) {
+        window.speechSynthesis.resume(); isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing...';
+    } else {
+        window.speechSynthesis.cancel();
+        const content = document.getElementById('content').innerText;
+        utterance = new SpeechSynthesisUtterance(content.substring(0, 10000));
+        utterance.rate = speechRate;
+        utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+        utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; };
+        utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; };
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+        window.speechSynthesis.speak(utterance);
+        isPlaying = true; isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Starting...';
+        setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100);
+    }
+}
+
+function setSpeed(speed) {
+    speechRate = parseFloat(speed);
+    document.getElementById('speedLabel').textContent = speed + 'x';
+    document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); });
+    document.getElementById('speedMenu').classList.remove('open');
+    if (audioMode === 'mp3') audioEl.playbackRate = speechRate;
+    else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); }
+}
+
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+    window.speechSynthesis.getVoices();
+    
+    // Close speed menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.speed-dropdown')) {
+            document.getElementById('speedMenu').classList.remove('open');
+        }
+    });
+    
+    document.body.addEventListener('click', (e) => {
+        if (e.target.closest('.audio-player') || e.target.closest('a') || e.target.closest('button') || e.target.closest('.speed-dropdown')) return;
+        toggleAudio();
+    });
+});
+</script>
+</body>
+</html>

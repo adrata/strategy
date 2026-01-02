@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software in the Era of AI | Andrej Karpathy</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Software in the Era of AI | Andrej Karpathy">
+    <meta property="og:description" content="Former Tesla AI Director Andrej Karpathy on the evolution of software from 1.0 to 3.0, LLMs as operating systems, and the future of human-AI collaboration.">
+    <meta property="og:image" content="../../og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+            --code-bg: #f4f4f4;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --highlight-bg: #1a1008;
+            --code-bg: #1a1a1a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
+        .speaker { font-size: 16px; color: var(--accent); font-weight: 600; margin-bottom: 24px; }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 64px 0 16px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h2:first-of-type { margin-top: 32px; border-top: none; padding-top: 0; }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--accent); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro { font-size: 20px; line-height: 1.7; margin-bottom: 32px; }
+        
+        .pull-quote { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px 32px; margin: 32px 0; font-size: 20px; font-style: italic; color: var(--text); }
+        
+        .key-point { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; }
+        .key-point h3 { color: #fff; margin-top: 0; font-size: 24px; }
+        .key-point p { color: rgba(255,255,255,0.9); }
+        .key-point ul { margin: 16px 0 0 24px; }
+        .key-point li { padding: 8px 0; font-weight: 500; }
+        
+        .concept-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .concept-card h4 { color: var(--accent); margin: 0 0 12px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+        .concept-card p { margin-bottom: 0; }
+        
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 24px 0; }
+        @media (max-width: 700px) { .comparison-grid { grid-template-columns: 1fr; } }
+        
+        .version-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+        .version-card .version { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 8px; }
+        .version-card h4 { margin: 0 0 8px; font-size: 16px; }
+        .version-card p { color: var(--text-muted); font-size: 14px; margin: 0; }
+        
+        ul.takeaway-list { list-style: none; margin: 24px 0; }
+        ul.takeaway-list li { padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; color: var(--text-secondary); font-size: 16px; display: flex; align-items: flex-start; gap: 12px; }
+        ul.takeaway-list li::before { content: "→"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+        
+        .analogy-box { background: var(--highlight-bg); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .analogy-box h4 { color: var(--text); margin: 0 0 12px; font-size: 18px; }
+        .analogy-box p { color: var(--text-secondary); margin: 0; }
+        
+        .share-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 32px; margin: 48px 0; text-align: center; }
+        .share-section h3 { font-size: 18px; margin-bottom: 16px; color: var(--text); }
+        .share-form { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+        .share-form input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); }
+        .share-form button { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .share-form button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Talk</div>
+            <h1>Software in the Era of AI</h1>
+            <div class="subtitle">The evolution of programming paradigms and the rise of LLMs as operating systems</div>
+            <div class="speaker">Andrej Karpathy, Former Director of AI at Tesla</div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this talk</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">1.5x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
+
+    <p class="intro">It's an extremely unique and very interesting time to enter the industry right now. Fundamentally, software is changing again. Roughly speaking, software has not changed much on such a fundamental level for 70 years. Then it changed twice quite rapidly in the last few years. There's a huge amount of work to do—a huge amount of software to write and rewrite.</p>
+
+    <h2>Software Evolution: From 1.0 to 3.0</h2>
+    
+    <p>If we think of all the software that's written as a map, we can visualize it on GitHub—all the different repositories, all the code. A few years ago, I observed that software was changing, that there was a new type of software around. I called this Software 2.0.</p>
+    
+    <div class="comparison-grid">
+        <div class="version-card">
+            <div class="version">1.0</div>
+            <h4>Computer Code</h4>
+            <p>You write explicit instructions for the computer. Traditional programming.</p>
+        </div>
+        <div class="version-card">
+            <div class="version">2.0</div>
+            <h4>Neural Networks</h4>
+            <p>The weights of a neural net. You tune datasets, run an optimizer.</p>
+        </div>
+        <div class="version-card">
+            <div class="version">3.0</div>
+            <h4>LLM Prompts</h4>
+            <p>Programs written in English that program the LLM. A new paradigm.</p>
+        </div>
+    </div>
+    
+    <p>At the time, neural nets were seen as just a different kind of classifier—like a decision tree. Now what we have is the equivalent of GitHub in the realm of Software 2.0: Hugging Face. There's also Model Atlas where you can visualize all the code written there.</p>
+    
+    <div class="pull-quote">
+        What's changed—and I think is a quite fundamental change—is that neural networks became programmable with large language models. It's a new kind of computer worth giving a new designation: Software 3.0.
+    </div>
+    
+    <p>Your prompts are now programs that program the LLM. And remarkably, these prompts are written in English. It's a very interesting programming language.</p>
+
+    <h3>The Tesla Autopilot Experience</h3>
+    
+    <p>When I was at Tesla working on autopilot, the inputs to the car went through a software stack to produce steering and acceleration. There was a ton of C++ code—the Software 1.0 code—and some neural nets doing image recognition.</p>
+    
+    <p>Over time, as we made autopilot better, the neural network grew in capability and size. All the C++ code was being deleted. A lot of the capabilities originally written in 1.0 migrated to 2.0. The stitching of information across images from different cameras and across time was done by a neural network. We were able to delete a lot of code.</p>
+    
+    <div class="concept-card">
+        <h4>The Pattern</h4>
+        <p>The Software 2.0 stack quite literally ate through the software stack of the autopilot. We're seeing the same thing again—a new kind of software eating through the stack. We have three completely different programming paradigms, and if you're entering the industry, it's a very good idea to be fluent in all of them.</p>
+    </div>
+
+    <h2>LLMs as Utilities, Fabs, and Operating Systems</h2>
+    
+    <p>Andrew Ng said years ago: "AI is the new electricity." LLMs certainly feel like they have properties of utilities right now.</p>
+    
+    <div class="analogy-box">
+        <h4>The Utility Analogy</h4>
+        <p>LLM labs like OpenAI, Gemini, Anthropic spend capex to train LLMs—like building out a grid. There's opex to serve that intelligence over APIs—metered access where we pay per million tokens. We demand low latency, high uptime, consistent quality. In electricity, you'd have a transfer switch. In LLMs, we have OpenRouter to easily switch between different types of LLMs.</p>
+    </div>
+    
+    <p>When state-of-the-art LLMs go down, it's actually kind of like an intelligence brownout in the world. The planet just gets dumber the more reliance we have on these models.</p>
+    
+    <p>But LLMs don't only have properties of utilities. They also have properties of fabs. The capex required for building LLMs is quite large. The tech tree for the technology is growing rapidly. We're in a world with deep tech trees, research and development secrets centralizing inside the LLM labs.</p>
+
+    <div class="key-point">
+        <h3>LLMs Are Operating Systems</h3>
+        <p>The analogy that makes the most sense is that LLMs have very strong analogies to operating systems. They're not just electricity or water—not something that comes out of the tap as a commodity. These are increasingly complex software ecosystems.</p>
+        <ul>
+            <li>A few closed-source providers (like Windows or Mac OS)</li>
+            <li>An open-source alternative (Llama ecosystem → Linux)</li>
+            <li>The LLM is the CPU equivalent</li>
+            <li>Context windows are like memory</li>
+            <li>The LLM orchestrates memory and compute for problem-solving</li>
+        </ul>
+    </div>
+    
+    <p>If you want to download an app, you can download VS Code and run it on Windows, Linux, or Mac. In the same way, you can take an LLM app like Cursor and run it on GPT or Claude or Gemini. It's just a dropdown.</p>
+
+    <h3>The 1960s of Computing</h3>
+    
+    <p>We're kind of like in this 1960s-ish era where LLM compute is still very expensive for this new kind of computer. That forces LLMs to be centralized in the cloud. We're all just thin clients that interact over the network. None of us have full utilization of these computers—therefore it makes sense to use time-sharing where we're all just a dimension of the batch.</p>
+    
+    <div class="pull-quote">
+        The personal computing revolution hasn't happened yet because it's just not economical. Some people are trying—Mac minis are a very good fit for some LLMs because batch-one inference is all super memory bound. But it's not clear what this looks like yet. Maybe some of you get to invent what this is.
+    </div>
+    
+    <p>Whenever I talk to ChatGPT directly in text, I feel like I'm talking to an operating system through the terminal. A GUI hasn't yet really been invented in a general way.</p>
+
+    <h3>Technology Diffusion is Flipped</h3>
+    
+    <p>LLMs flip the direction of technology diffusion. Usually with electricity, cryptography, computing, flight, internet, GPS—the government and corporations are the first users because it's new and expensive. It only later diffuses to consumers.</p>
+    
+    <p>But with LLMs, it's flipped. With early computers, it was all about ballistics and military use. But with LLMs? It's all about how to boil an egg. We have a new magical computer and it's helping me boil an egg—not helping the government do some military ballistics.</p>
+    
+    <p>Corporations and governments are lagging behind the adoption of all of us.</p>
+
+    <h2>The Psychology of LLMs</h2>
+    
+    <p>The way I like to think about LLMs is that they're kind of like people spirits. They are stochastic simulations of people. The simulator is an auto-regressive transformer—it goes chunk chunk chunk chunk chunk with almost equal compute for every single chunk.</p>
+    
+    <p>Because it's trained on humans, it's got this emergent psychology that is human-like.</p>
+    
+    <h3>Superpowers</h3>
+    <ul class="takeaway-list">
+        <li>Encyclopedic knowledge and memory—they can remember a lot more than any single individual human because they read so many things</li>
+        <li>Like the character in Rainman who can read a phone book and remember all the names and numbers</li>
+        <li>They can remember SHA hashes and lots of different kinds of things very easily</li>
+    </ul>
+    
+    <h3>Cognitive Deficits</h3>
+    <ul class="takeaway-list">
+        <li>They hallucinate quite a bit—make up stuff without good internal self-knowledge</li>
+        <li>Jagged intelligence: superhuman in some problem-solving domains, then making mistakes no human would make (9.11 > 9.9, two Rs in strawberry)</li>
+        <li>Anterograde amnesia: unlike a co-worker who learns your organization over time, LLMs don't natively do this</li>
+        <li>Security limitations: quite gullible, susceptible to prompt injection, might leak your data</li>
+    </ul>
+    
+    <div class="concept-card">
+        <h4>The Movie Analogies</h4>
+        <p>I recommend Memento and 50 First Dates. In both movies, the protagonists' weights are fixed and their context window gets wiped every single morning. It's really problematic to go to work or have relationships when this happens—and this happens to LLMs all the time.</p>
+    </div>
+
+    <h2>Partial Autonomy Apps</h2>
+    
+    <p>The first thing I'm excited about is what I would call partial autonomy apps. For coding, you can go to ChatGPT directly and copy-paste code around. But why would you go directly to the operating system? It makes a lot more sense to have an app dedicated for this—like Cursor.</p>
+    
+    <div class="key-point">
+        <h3>Properties of LLM Apps</h3>
+        <ul>
+            <li><strong>Context management:</strong> LLMs do a ton of the context management for you</li>
+            <li><strong>Orchestration:</strong> Multiple calls to LLMs—embedding models, chat models, diff models—all orchestrated</li>
+            <li><strong>Application-specific GUI:</strong> You don't want to talk to the OS directly in text. Much better to see a diff as red and green, use Command-Y to accept or Command-N to reject</li>
+            <li><strong>The autonomy slider:</strong> Tab completion (you're in charge) → Command-K (change a chunk) → Command-L (change the file) → Command-I (full repo agent)</li>
+        </ul>
+    </div>
+    
+    <p>Depending on the complexity of the task at hand, you can tune the amount of autonomy you're willing to give up for that task.</p>
+
+    <h3>The Human-AI Collaboration Loop</h3>
+    
+    <p>We're now cooperating with AIs. Usually they do the generation and we do the verification. It's in our interest to make this loop go as fast as possible.</p>
+    
+    <div class="analogy-box">
+        <h4>Two Ways to Speed Up</h4>
+        <p><strong>1. Speed up verification.</strong> GUIs are extremely important—they utilize your computer vision GPU in your head. Reading text is effortful; looking at stuff is fun and it's a highway to your brain.</p>
+        <p><strong>2. Keep the AI on the leash.</strong> It's not useful to get a diff of 10,000 lines of code. I'm still the bottleneck—I have to make sure it's not introducing bugs. The AI gets way too overreactive.</p>
+    </div>
+    
+    <p>If I'm just vibe-coding, everything is nice and great. But if I'm actually trying to get work done, it's not so great to have an overreactive agent. I'm always scared to get way too big diffs. I always go in small incremental chunks, make sure everything is good, spin this loop very fast, work on small chunks of single concrete things.</p>
+    
+    <div class="pull-quote">
+        If your prompt is vague, the AI might not do exactly what you wanted, and verification will fail. You're going to ask for something else and start spinning. It makes more sense to spend a bit more time to be more concrete in your prompts—which increases the probability of successful verification.
+    </div>
+
+    <h3>Lessons from Tesla Autopilot</h3>
+    
+    <p>I'm no stranger to partial autonomy. The first time I drove a self-driving vehicle was in 2013—a 30-minute drive around Palo Alto with zero interventions. I felt like self-driving was imminent because this just worked.</p>
+    
+    <p>But here we are 12 years later, still working on autonomy. Even now we haven't really declared success. Waymos look driverless, but there's still a lot of teleoperation and human-in-the-loop.</p>
+    
+    <div class="concept-card">
+        <h4>The Iron Man Analogy</h4>
+        <p>The Iron Man suit is both an augmentation (Tony Stark can drive it) and an agent (it can fly around autonomously). This is the autonomy slider—we can build augmentations or agents, and we want to do a bit of both. But at this stage, working with fallible LLMs, it's less Iron Man robots and more Iron Man suits you want to build. Less flashy demos of autonomous agents, more building partial autonomy products.</p>
+    </div>
+
+    <h2>Vibe Coding: Everyone Is Now a Programmer</h2>
+    
+    <p>Not only is there a new programming language that allows for autonomy in software, but it's programmed in English—a natural interface. Suddenly everyone is a programmer because everyone speaks natural language.</p>
+    
+    <p>It used to be the case that you need to spend five to 10 years studying something to be able to do something in software. This is not the case anymore.</p>
+    
+    <div class="pull-quote">
+        I thought that tweet was going to fizzle and no one would care. But it became a total meme and now there's a Wikipedia page. It gave a name to something that everyone was feeling but couldn't quite say in words.
+    </div>
+    
+    <p>Vibe coding is so great when you want to build something super custom that doesn't appear to exist and you just want to wing it because it's a Saturday. I built an iOS app in Swift—I can't actually program in Swift—but I was able to build a super basic app in a day and it was running on my phone.</p>
+
+    <h3>The Hard Part</h3>
+    
+    <p>The fascinating thing about my menu.app project: the vibe-coding part, the code, was actually the easy part. Most of it was when I tried to make it real—authentication, payments, domain name, Vercel deployment. All of this was not code. All of this DevOps stuff was me in the browser clicking stuff. This was extremely slow and took another week.</p>
+    
+    <p>I had the demo working on my laptop in a few hours. Then it took me a week trying to make it real. For example, if you try to add Google login to your webpage, there's a huge amount of instructions telling me: go to this URL, click on this dropdown, choose this, go to this, and click on that.</p>
+    
+    <div class="pull-quote">
+        A computer is telling me the actions I should be taking. Like, you do it. Why am I doing this?
+    </div>
+
+    <h2>Building for Agents</h2>
+    
+    <p>There's a new category of consumer and manipulator of digital information. It used to be just humans through GUIs or computers through APIs. Now we have a completely new thing. Agents are computers, but they're human-like. They're people spirits on the internet and they need to interact with our software infrastructure. Can we build for them?</p>
+    
+    <h3>Making Infrastructure LLM-Friendly</h3>
+    
+    <ul class="takeaway-list">
+        <li><strong>llms.txt:</strong> A simple markdown file telling LLMs what this domain is about—much more readable than parsing HTML</li>
+        <li><strong>LLM-specific documentation:</strong> Vercel and Stripe offer their documentation in markdown. Markdown is super easy for LLMs to understand</li>
+        <li><strong>Replace "click" with curl:</strong> Anytime your docs say "click," an LLM can't natively take that action. Vercel replaces every occurrence with an equivalent curl command</li>
+        <li><strong>Model Context Protocol:</strong> Anthropic's protocol for speaking directly to agents as this new consumer of digital information</li>
+    </ul>
+    
+    <div class="concept-card">
+        <h4>Tools That Transform URLs</h4>
+        <p>When you go to a GitHub repo, you can't feed it directly to an LLM. But if you change the URL from github.com to getingest, it concatenates all files into a single giant text with a directory structure—ready to be copy-pasted into your favorite LLM. Deep Wiki goes further: Devon does analysis of the GitHub repo and builds docs pages just for your repo.</p>
+    </div>
+    
+    <p>It's absolutely possible that LLMs will be able to go around and click stuff. But I still think it's worth meeting LLMs halfway and making it easier for them to access information—because this is still fairly expensive to use and a lot more difficult.</p>
+
+    <h2>Summary: We're in the 1960s of LLMs</h2>
+    
+    <p>What an amazing time to get into the industry. We need to rewrite a ton of code. A ton of code will be written by professionals and by vibe-coders.</p>
+    
+    <div class="key-point">
+        <h3>Key Takeaways</h3>
+        <ul>
+            <li>LLMs are kind of like utilities, kind of like fabs, but especially like operating systems</li>
+            <li>It's so early—like the 1960s of operating systems. A lot of the analogies cross over</li>
+            <li>LLMs are fallible people spirits that we have to learn to work with</li>
+            <li>Build partial autonomy products with custom GUIs and autonomy sliders</li>
+            <li>Speed up the generation-verification loop; keep the AI on the leash</li>
+            <li>Adjust our infrastructure to be LLM-friendly</li>
+        </ul>
+    </div>
+    
+    <p>Going back to the Iron Man suit analogy: over the next decade, we're going to take the slider from left to right. It's going to be very interesting to see what that looks like.</p>
+
+    <div class="share-section">
+        <h3>Share</h3>
+        <form class="share-form" onsubmit="handleShare(event)">
+            <input type="email" placeholder="Their email" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Audio functionality using Web Speech API
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        let isPlaying = false;
+        let isPaused = false;
+        let currentRate = 1.5;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+
+        function getDocumentText() {
+            const content = document.body.cloneNode(true);
+            content.querySelectorAll('.audio-player, .share-section, .theme-toggle, script, style').forEach(el => el.remove());
+            let text = content.textContent || '';
+            text = text.replace(/\s+/g, ' ').trim();
+            return text.substring(0, 10000);
+        }
+
+        function toggleAudio() {
+            if (!synth) {
+                document.getElementById('audioStatus').textContent = 'Speech not supported';
+                return;
+            }
+
+            if (isPlaying && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Paused';
+                return;
+            }
+
+            if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+                return;
+            }
+
+            synth.cancel();
+            const text = getDocumentText();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentRate;
+
+            if (voices.length > 0) {
+                const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.lang.startsWith('en'));
+                if (preferred) utterance.voice = preferred;
+            }
+
+            utterance.onstart = () => {
+                isPlaying = true;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+            };
+
+            utterance.onend = () => {
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Click play to start';
+            };
+
+            utterance.onerror = (e) => {
+                if (e.error !== 'interrupted') {
+                    document.getElementById('audioStatus').textContent = 'Error: ' + e.error;
+                }
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+            };
+
+            synth.speak(utterance);
+
+            // Chrome workaround
+            setTimeout(() => {
+                if (synth.speaking && !synth.paused) {
+                    synth.pause();
+                    synth.resume();
+                }
+            }, 100);
+        }
+
+        function toggleSpeedMenu(e) {
+            e.stopPropagation();
+            document.getElementById('speedMenu').classList.toggle('open');
+        }
+
+        function setSpeed(rate) {
+            currentRate = rate;
+            document.getElementById('speedLabel').textContent = rate + 'x';
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('speedMenu').classList.remove('open');
+            
+            if (utterance) {
+                utterance.rate = rate;
+            }
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('speedMenu').classList.remove('open');
+        });
+
+        function handleShare(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input').value;
+            const subject = encodeURIComponent('Software in the Era of AI | Andrej Karpathy');
+            const body = encodeURIComponent('Check out this talk: ' + window.location.href);
+            window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+            e.target.innerHTML = '<p style="color: var(--accent); font-weight: 600;">Sent!</p>';
+        }
+    </script>
+</body>
+</html>
+

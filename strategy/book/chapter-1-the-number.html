@@ -14,28 +14,110 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
     <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'MiSans', -apple-system, sans-serif; background: #fff; color: #1a1a1a; line-height: 1.8; font-size: 16px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        body { 
+            font-family: 'MiSans', -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.85; 
+            font-size: 18px; 
+            padding: 0 24px 48px;
+            max-width: 900px; 
+            margin: 0 auto;
+        }
         
-        .audio-player { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
-        .audio-player button { background: #e65100; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .audio-player button:hover { background: #ff6d00; transform: scale(1.05); }
-        .audio-player button svg { width: 20px; height: 20px; fill: #fff; margin-left: 2px; }
-        .audio-info { flex: 1; }
-        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-        .audio-status { font-size: 12px; opacity: 0.7; }
-        .audio-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; }
-        .audio-select option { color: #333; }
-        .readable-content span.word { cursor: pointer; border-radius: 2px; transition: background 0.15s; }
-        .readable-content span.word:hover { background: rgba(230, 81, 0, 0.08); }
-        .readable-content span.word.speaking { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: #fff; padding: 2px 4px; margin: 0 -4px; border-radius: 3px; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3); }
+        /* Page Header */
+        .page-header {
+            padding: 32px 0 24px;
+        }
         
-        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #e65100; margin-bottom: 8px; }
-        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
-        .subtitle { font-size: 18px; color: #666; margin-bottom: 32px; font-style: italic; }
-        p { margin-bottom: 20px; color: #333; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
         
-        .scene-break { text-align: center; margin: 48px 0; color: #999; font-size: 18px; letter-spacing: 12px; }
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; }
+        
+        .subtitle { font-size: 16px; color: var(--text-muted); font-style: italic; margin-bottom: 24px; }
+        
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle:focus { outline: none; }
+        .theme-toggle svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .audio-player { 
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
+            padding: 14px 18px; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            color: #fff; 
+        }
+        .audio-player button { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; min-width: 0; }
+        .audio-title { font-weight: 600; font-size: 13px; margin-bottom: 1px; }
+        .audio-status { font-size: 11px; opacity: 0.9; }
+        /* Custom Speed Dropdown */
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 6px 10px; border-radius: 6px; color: #fff; font-size: 11px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .readable-content { padding-top: 8px; }
+        
+        p { margin-bottom: 20px; color: var(--text-secondary); }
+        em { font-style: italic; }
+        
+        .scene-break { text-align: center; margin: 48px 0; color: var(--text-muted); font-size: 18px; letter-spacing: 12px; }
         
         /* Dashboard Metrics */
         .dashboard {
@@ -45,15 +127,15 @@
             margin: 32px 0;
         }
         .metric-card {
-            background: #fafafa;
-            border: 1px solid #e5e5e5;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 8px;
             padding: 16px;
         }
         .metric-card .label {
             font-size: 11px;
             font-weight: 500;
-            color: #737373;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 6px;
@@ -61,46 +143,181 @@
         .metric-card .number {
             font-size: 28px;
             font-weight: 600;
-            color: #171717;
+            color: var(--text);
             line-height: 1;
         }
-        .metric-card .number.danger { color: #dc2626; }
+        .metric-card .number.danger { color: #ef4444; }
         .metric-card .change {
             font-size: 11px;
-            color: #737373;
+            color: var(--text-secondary);
             margin-top: 6px;
         }
-        .metric-card .change.negative { color: #dc2626; }
+        .metric-card .change.negative { color: #ef4444; }
+        
+        /* Newsletter Section - Anthropic Style */
+        .newsletter-section {
+            margin-top: 80px;
+            padding-top: 0;
+        }
+        
+        .newsletter-box {
+            background: #f5f5f0;
+            border-radius: 16px;
+            padding: 40px;
+            font-family: 'MiSans', -apple-system, sans-serif;
+        }
+        [data-theme="dark"] .newsletter-box {
+            background: #1a1a18;
+        }
+        .newsletter-box h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        .newsletter-box .subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-style: normal;
+            line-height: 1.6;
+        }
+        .newsletter-form {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 6px 6px 20px;
+            max-width: 480px;
+        }
+        .newsletter-form input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-family: 'MiSans', -apple-system, sans-serif;
+            color: var(--text);
+            outline: none;
+            padding: 10px 0;
+        }
+        .newsletter-form input::placeholder {
+            color: var(--text-muted);
+        }
+        .newsletter-submit {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .newsletter-submit:hover {
+            background: var(--accent-light);
+            transform: scale(1.05);
+        }
+        .newsletter-submit svg {
+            width: 18px;
+            height: 18px;
+            stroke: #fff;
+            stroke-width: 2;
+            fill: none;
+        }
+        .newsletter-disclaimer {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 16px;
+            line-height: 1.5;
+        }
+        
+        .thanks-state {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .thanks-state.show {
+            display: block;
+        }
+        .thanks-state h3 {
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .thanks-state p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .meet-author-btn {
+            background: var(--text);
+            border: none;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .meet-author-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
         
         @media (max-width: 600px) {
             .dashboard { grid-template-columns: 1fr; }
+            h1 { font-size: 26px; }
         }
     </style>
 </head>
 <body>
 
-<div class="audio-player">
-    <button id="playBtn" onclick="toggleAudio()">
-        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-    </button>
-    <div class="audio-info">
-        <div class="audio-title">Listen to this chapter</div>
-        <div class="audio-status" id="audioStatus">Click play to start</div>
+<div class="page-header">
+    <div class="doc-type">Q4: A Book for Trailblazers</div>
+    <div class="title-row">
+        <h1>Chapter 1: The Number</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
     </div>
-    <select class="audio-select" id="speedSelect" onchange="setSpeed(this.value)">
-        <option value="0.75">0.75x</option>
-        <option value="1" selected>1x</option>
-        <option value="1.25">1.25x</option>
-        <option value="1.5">1.5x</option>
-        <option value="2">2x</option>
-    </select>
+    <div class="subtitle">Monday, October 5, 2026</div>
+    
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this chapter</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">1.5x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="readable-content" id="content">
-<div class="doc-type">Q4: A Novel</div>
-<h1>Chapter 1: The Number</h1>
-<div class="subtitle">Monday, October 5, 2026</div>
 
 <p>The email arrives at 6:47 AM.</p>
 
@@ -114,7 +331,7 @@
 
 <p>Then, ominously: "Clear your calendars."</p>
 
-<p>I've been at VeloCloud for three years. VP of Enterprise Sales for the last eighteen months. I built this team from scratch. I know what "clear your calendars" means when it comes from Marco at 6:47 in the morning.</p>
+<p>I've been at VeloCloud for three years. VP of Enterprise Sales for the last eighteen months. I built this team from scratch—recruited every AE, designed every territory, ran every QBR. I know what "clear your calendars" means when it comes from Marco at 6:47 in the morning.</p>
 
 <p>I swing my legs out of bed and walk to the window. San Francisco is wrapped in fog, the Salesforce Tower half-swallowed by gray. Somewhere out there, fourteen Account Executives are still sleeping, unaware that their VP is about to walk into a meeting that will determine whether they still have jobs by Christmas.</p>
 
@@ -166,7 +383,7 @@
 
 <p>Matteo Ricci catches me in the hallway. He's my top AE—$3.2 million closed last year, natural relationship builder, the kind of rep who makes enterprise sales look easy.</p>
 
-<p>"Hey, Nico. You got a sec? I wanted to talk about Garrison."</p>
+<p>"Hey, Niko. You got a sec? I wanted to talk about Garrison."</p>
 
 <p>Garrison Financial. Our biggest opportunity. $2.1 million total contract value. Matteo has been working it for four months. It's the deal I'm counting on to save Q4.</p>
 
@@ -200,7 +417,7 @@
 
 <p>"Every enterprise software company is seeing longer cycles," I manage. "Buyers are more cautious. Procurement is more involved. The macro environment—"</p>
 
-<p>"Meridian grew 42% last quarter." Marco's voice is flat. "Stratos just raised $200 million at a $2.4 billion valuation. They're not struggling with buyer caution, Nico. The macro environment isn't stopping them."</p>
+<p>"Meridian grew 42% last quarter." Marco's voice is flat. "Stratos just raised $200 million at a $2.4 billion valuation. They're not struggling with buyer caution, Niko. The macro environment isn't stopping them."</p>
 
 <p>I have no response. I've told myself the same story—market conditions, headwinds, budget freezes—for months. But the competitors are thriving. The story doesn't hold up.</p>
 
@@ -296,141 +513,126 @@
 
 </div><!-- end readable-content -->
 
+<div class="newsletter-section">
+    <div class="newsletter-box" id="newsletterBox">
+        <div id="newsletterForm">
+            <h3>Get the next chapter</h3>
+            <p class="subtitle">New chapters, frameworks, and insights for enterprise sales leaders. Delivered when they're ready.</p>
+            <div class="newsletter-form">
+                <input type="email" id="newsletterEmail" placeholder="Enter your email">
+                <button class="newsletter-submit" onclick="sendNewsletter()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </div>
+            <p class="newsletter-disclaimer">We'll notify you when Chapter 2 is published. You can unsubscribe at any time.</p>
+        </div>
+        
+        <div class="thanks-state" id="thanksState">
+            <h3>You're in.</h3>
+            <p>We'll send you Chapter 2 as soon as it's ready.</p>
+            <a href="https://cal.com/adrata/30min" target="_blank" class="meet-author-btn">Meet the Author</a>
+        </div>
+    </div>
+</div>
+
 <script>
-let utterance = null;
+// Audio player using ElevenLabs MP3
+const audio = new Audio('chapter-1-the-number.mp3');
 let isPlaying = false;
-let isPaused = false;
-let currentSpeed = 1;
-let wordSpans = [];
-let currentWordIndex = 0;
-let pausedAtIndex = 0;
 
-function prepareContent() {
-    const content = document.getElementById('content');
-    const elements = content.querySelectorAll('p, li, td, blockquote');
-    elements.forEach(el => {
-        if (el.dataset.processed) return;
-        el.dataset.processed = 'true';
-        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-        const textNodes = [];
-        while (walker.nextNode()) textNodes.push(walker.currentNode);
-        textNodes.forEach(node => {
-            const words = node.textContent.split(/(\s+)/);
-            const fragment = document.createDocumentFragment();
-            words.forEach(word => {
-                if (word.trim()) {
-                    const span = document.createElement('span');
-                    span.className = 'word';
-                    span.textContent = word;
-                    span.onclick = (e) => { e.stopPropagation(); startFromWord(span); };
-                    fragment.appendChild(span);
-                    wordSpans.push(span);
-                } else {
-                    fragment.appendChild(document.createTextNode(word));
-                }
-            });
-            node.parentNode.replaceChild(fragment, node);
-        });
-    });
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    localStorage.setItem('theme', current === 'dark' ? 'light' : 'dark');
 }
 
-function getBestVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = ['Samantha', 'Alex', 'Ava', 'Karen', 'Daniel', 'Google US', 'Google UK'];
-    for (const name of preferred) {
-        const match = voices.find(v => v.name.includes(name));
-        if (match) return match;
-    }
-    return voices.find(v => v.lang.startsWith('en')) || voices[0];
+// Load saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
 }
 
-function getTextFromIndex(startIndex) {
-    return wordSpans.slice(startIndex).map(s => s.textContent).join(' ');
-}
+// Audio controls
+audio.playbackRate = 1.5;
 
-function highlightWord(index) {
-    wordSpans.forEach(s => s.classList.remove('speaking'));
-    if (index >= 0 && index < wordSpans.length) {
-        const span = wordSpans[index];
-        span.classList.add('speaking');
-        span.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        currentWordIndex = index;
-    }
-}
-
-function startFromWord(span) {
-    const index = wordSpans.indexOf(span);
-    if (index === -1) return;
-    currentWordIndex = index;
-    pausedAtIndex = index;
-    window.speechSynthesis.cancel();
-    isPaused = false;
-    const text = getTextFromIndex(index);
-    utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = currentSpeed;
-    utterance.voice = getBestVoice();
-    utterance.onboundary = (event) => {
-        if (event.name === 'word') {
-            highlightWord(currentWordIndex);
-            currentWordIndex++;
-        }
-    };
-    utterance.onend = () => {
-        isPlaying = false;
-        isPaused = false;
-        document.getElementById('playIcon').style.display = 'block';
-        document.getElementById('pauseIcon').style.display = 'none';
-        document.getElementById('audioStatus').textContent = 'Finished';
-        wordSpans.forEach(s => s.classList.remove('speaking'));
-        currentWordIndex = 0;
-    };
-    window.speechSynthesis.speak(utterance);
+audio.addEventListener('play', () => {
     isPlaying = true;
     document.getElementById('playIcon').style.display = 'none';
     document.getElementById('pauseIcon').style.display = 'block';
-    document.getElementById('audioStatus').textContent = 'Playing... click any word to jump';
-}
+    document.getElementById('audioStatus').textContent = 'Playing...';
+});
+
+audio.addEventListener('pause', () => {
+    isPlaying = false;
+    document.getElementById('playIcon').style.display = 'block';
+    document.getElementById('pauseIcon').style.display = 'none';
+    document.getElementById('audioStatus').textContent = 'Paused - click to resume';
+});
+
+audio.addEventListener('ended', () => {
+    isPlaying = false;
+    document.getElementById('playIcon').style.display = 'block';
+    document.getElementById('pauseIcon').style.display = 'none';
+    document.getElementById('audioStatus').textContent = 'Finished - click to replay';
+});
+
+audio.addEventListener('timeupdate', () => {
+    const progress = Math.floor((audio.currentTime / audio.duration) * 100);
+    if (!isNaN(progress)) {
+        document.getElementById('audioStatus').textContent = `Playing... ${progress}%`;
+    }
+});
 
 function toggleAudio() {
-    if (isPlaying && !isPaused) {
-        window.speechSynthesis.pause();
-        isPaused = true;
-        pausedAtIndex = currentWordIndex;
-        document.getElementById('playIcon').style.display = 'block';
-        document.getElementById('pauseIcon').style.display = 'none';
-        document.getElementById('audioStatus').textContent = 'Paused - click to resume';
-    } else if (isPaused) {
-        window.speechSynthesis.resume();
-        isPaused = false;
-        document.getElementById('playIcon').style.display = 'none';
-        document.getElementById('pauseIcon').style.display = 'block';
-        document.getElementById('audioStatus').textContent = 'Playing... click any word to jump';
+    if (isPlaying) {
+        audio.pause();
     } else {
-        const startIndex = pausedAtIndex > 0 ? pausedAtIndex : 0;
-        startFromWord(wordSpans[startIndex] || wordSpans[0]);
+        audio.play();
     }
 }
 
 function setSpeed(speed) {
-    currentSpeed = parseFloat(speed);
-    if (isPlaying) {
-        const restartIndex = currentWordIndex;
-        window.speechSynthesis.cancel();
-        isPaused = false;
-        setTimeout(() => startFromWord(wordSpans[restartIndex] || wordSpans[0]), 100);
+    audio.playbackRate = parseFloat(speed);
+    document.getElementById('speedLabel').textContent = speed + 'x';
+    document.querySelectorAll('.speed-option').forEach(opt => {
+        opt.classList.toggle('active', opt.textContent === speed + 'x');
+    });
+    document.getElementById('speedMenu').classList.remove('open');
+}
+
+function toggleSpeedMenu(e) {
+    e.stopPropagation();
+    document.getElementById('speedMenu').classList.toggle('open');
+}
+
+// Close speed menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.speed-dropdown')) {
+        const menu = document.getElementById('speedMenu');
+        if (menu) menu.classList.remove('open');
     }
+});
+
+function sendNewsletter() {
+    const email = document.getElementById('newsletterEmail').value;
+    if (!email || !email.includes('@')) {
+        document.getElementById('newsletterEmail').style.borderColor = '#ef4444';
+        return;
+    }
+    document.getElementById('newsletterForm').style.display = 'none';
+    document.getElementById('thanksState').classList.add('show');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    prepareContent();
     document.body.addEventListener('click', (e) => {
-        if (e.target.closest('.audio-player') || e.target.closest('.word') || e.target.closest('a') || e.target.closest('button') || e.target.closest('select')) return;
+        if (e.target.closest('.audio-player') || e.target.closest('a') || e.target.closest('button') || e.target.closest('select') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('.newsletter-box') || e.target.closest('.theme-toggle')) return;
         toggleAudio();
     });
 });
-
-window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 </script>
 </body>
 </html>
-

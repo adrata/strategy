@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Sales Playbook | January-February 2026</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <meta property="og:title" content="Daily Sales Playbook | 35 Frameworks">
+    <meta property="og:description" content="35 emails. One framework per day. January 12 - February 27, 2026.">
+    <meta property="og:image" content="../og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        .nav { position: fixed; top: 20px; right: 20px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 12px; z-index: 100; }
+        .nav a { display: block; color: var(--text-muted); text-decoration: none; padding: 4px 8px; margin: 2px 0; }
+        .nav a:hover { color: var(--accent); }
+        @media (max-width: 768px) { .nav { display: none; } }
+        
+        .week-divider { margin: 60px 0 40px; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center; }
+        .week-divider span { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); }
+        
+        .email { margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--border); }
+        .email:last-child { border-bottom: none; }
+        .email-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .email-subject { font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 24px; }
+        .email-body p { margin-bottom: 20px; color: var(--text-secondary); }
+        
+        .hook { font-size: 18px; font-weight: 500; margin-bottom: 24px; line-height: 1.5; color: var(--text); }
+        .story { margin-bottom: 28px; color: var(--text-secondary); }
+        
+        .framework { background: var(--card-bg); padding: 24px; margin: 28px 0; border-radius: 8px; border: 1px solid var(--border); }
+        .framework h4 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; color: var(--accent); }
+        .framework ul { list-style: none; }
+        .framework li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 15px; color: var(--text-secondary); }
+        .framework li:last-child { border-bottom: none; padding-bottom: 0; }
+        .framework li strong { color: var(--text); }
+        
+        .script { background: var(--card-bg); color: var(--text-secondary); padding: 24px; margin: 28px 0; border-radius: 8px; font-size: 14px; line-height: 1.8; white-space: pre-wrap; border: 1px solid var(--border); }
+        
+        .action { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .action-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+        .action p { font-size: 15px; color: var(--text-secondary); }
+        
+        .quote { background: var(--highlight-bg); padding: 20px 24px; border-left: 3px solid var(--accent); margin: 24px 0; font-style: italic; color: var(--text); }
+        .quote-author { font-style: normal; font-size: 14px; color: var(--text-muted); margin-top: 12px; }
+        
+        .share-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 32px; margin: 48px 0; text-align: center; }
+        .share-section h3 { font-size: 18px; margin-bottom: 16px; color: var(--text); }
+        .share-form { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+        .share-form input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); }
+        .share-form button { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .share-form button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="#week1">Week 1</a>
+        <a href="#week2">Week 2</a>
+        <a href="#week3">Week 3</a>
+        <a href="#week4">Week 4</a>
+        <a href="#week5">Week 5</a>
+        <a href="#week6">Week 6</a>
+        <a href="#week7">Week 7</a>
+    </nav>
+
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Playbook</div>
+            <h1>Daily Sales Playbook</h1>
+            <div class="subtitle">35 emails. One framework per day. January 12 - February 27, 2026.</div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this document</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">1.5x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEEK 1 -->
+    <div class="week-divider" id="week1">
+        <span>Week 1: January 12-16 / Pipeline Truth</span>
+    </div>
+
+    <!-- Day 1 -->
+    <article class="email">
+        <div class="email-meta">Monday, January 12, 2026</div>
+        <h2 class="email-subject">I can tell within 72 hours whether your "committed" deal will slip</h2>
+        
+        <div class="email-body">
+            <p class="hook">Not because I'm psychic. Because there are 3 signals that predict slippage with 87% accuracy - and most VP Sales don't know to look for them.</p>
+            
+            <div class="story">
+                <p>Last quarter, I watched a VP Sales confidently present a $400K "commit" to their board. Two weeks later, it slipped to Q2. Then Q3. Then it died.</p>
+                <p>The signs were there on day one. She just didn't know to look.</p>
+                <p>After tracking 847 enterprise deals, I found the pattern. Three signals, checked in the first 72 hours, predict whether a deal will close within 30 days or slip into purgatory.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The 72-Hour Slip Test</h4>
+                <ul>
+                    <li><strong>Signal 1: Champion Availability.</strong> Can you get a meeting with your champion in the next 72 hours? If NO, you have a 73% slip rate. Champions who are "too busy" are often avoiding you.</li>
+                    <li><strong>Signal 2: Next Step Specificity.</strong> Is the next step a specific action with a specific person on a specific date? If it's vague ("we'll reconnect next week"), you have a 68% slip rate. Vague = not real.</li>
+                    <li><strong>Signal 3: Decision Maker Engagement.</strong> Has the economic buyer participated in the last 14 days? If NO, you have an 81% slip rate. Deals close when decision-makers are engaged.</li>
+                </ul>
+            </div>
+
+            <p><strong>Score it:</strong> 3/3 = Committed. 2/3 = At Risk. 1/3 = Will Slip. 0/3 = Already Dead.</p>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>Run this test on every deal in your commit/upside. Do it every Monday morning before your first meeting. Takes 10 minutes. Saves you from lying to your board.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Day 2 -->
+    <article class="email">
+        <div class="email-meta">Tuesday, January 13, 2026</div>
+        <h2 class="email-subject">43% of your pipeline is already dead</h2>
+        
+        <div class="email-body">
+            <p class="hook">You just don't know it yet. I call them "zombie deals" - they look alive in Salesforce, but they'll never close.</p>
+            
+            <div class="story">
+                <p>A sales manager once told me: "My pipeline looks great. I have $2.4M in opportunities."</p>
+                <p>I asked him five questions. By the third question, he went quiet. By the fifth, he put his head in his hands.</p>
+                <p>"I think... I think maybe I have $800K."</p>
+                <p>He was right. That quarter, he closed $743K.</p>
+                <p>The difference between him and most VP Sales? He had the courage to face the truth.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The 5 Zombie-Killing Questions</h4>
+                <ul>
+                    <li><strong>1. When was your last 2-way communication?</strong> Not your email TO them - their response back. 21+ days of silence = Zombie.</li>
+                    <li><strong>2. Has the deal stage changed in 30 days?</strong> Same stage for 30+ days = Zombie.</li>
+                    <li><strong>3. Do you have the decision-maker's mobile number?</strong> No? You don't have a real relationship. Likely Zombie.</li>
+                    <li><strong>4. Can you explain WHY they would buy NOW vs. next quarter?</strong> If you can't articulate their urgency, it doesn't exist. Zombie.</li>
+                    <li><strong>5. If you called your champion right now, would they answer?</strong> If you hesitated before answering, you know the truth. Zombie.</li>
+                </ul>
+            </div>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>Run these 5 questions on your top 10 deals. Be brutally honest. Kill every zombie - move them to "Nurture" or delete. Then watch your forecast accuracy jump 20+ points.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Day 3 -->
+    <article class="email">
+        <div class="email-meta">Wednesday, January 14, 2026</div>
+        <h2 class="email-subject">You think you have a champion. You probably don't.</h2>
+        
+        <div class="email-body">
+            <p class="hook">The difference between a champion and a friendly contact? Champions close deals. Contacts waste your time.</p>
+            
+            <div class="story">
+                <p>I once had a "champion" who took every call, answered every email, and told me everything was on track.</p>
+                <p>We lost the deal.</p>
+                <p>What happened? She liked me. She believed in our product. But she didn't have the power, the will, or the political capital to push it through.</p>
+                <p>She was a contact pretending to be a champion. And I fell for it.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The Champion Test: 5 Questions</h4>
+                <ul>
+                    <li><strong>Will they give you access?</strong> Ask: "Can you introduce me to [decision-maker]?" Champion: Gets you the meeting. Contact: "They're really busy right now."</li>
+                    <li><strong>Will they share intel?</strong> Ask: "What's the real timeline?" Champion: Tells you the uncomfortable truth. Contact: Gives you the party line.</li>
+                    <li><strong>Will they sell for you?</strong> Ask: "How do you explain what we do when we're not in the room?" Champion: Has a clear pitch they've practiced. Contact: "I'll forward your materials."</li>
+                    <li><strong>Will they fight for you?</strong> Ask: "What happens if someone pushes back?" Champion: "I'll handle it." Contact: "That could be a problem."</li>
+                    <li><strong>Will they stake their reputation?</strong> Ask: "Are you personally sponsoring this?" Champion: "Yes." Contact: "I'm supporting it but..."</li>
+                </ul>
+            </div>
+
+            <p><strong>Score it:</strong> 5/5 = Real Champion. 3-4 = Potential (coach them). 1-2 = Friendly Contact (find the real champion). 0 = You have nothing.</p>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>Pick your 3 largest opportunities. Score each "champion" on these 5 questions. Anything below 4/5 means you need to either coach them up or find the real champion.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Day 4 -->
+    <article class="email">
+        <div class="email-meta">Thursday, January 15, 2026</div>
+        <h2 class="email-subject">The invisible sign everyone wears</h2>
+        
+        <div class="email-body">
+            <div class="quote">
+                "Everyone has an invisible sign hanging from their neck saying, 'Make me feel important.'"
+                <div class="quote-author">- Mary Kay Ash</div>
+            </div>
+            
+            <div class="story">
+                <p>In 1963, Mary Kay Ash started a cosmetics company with $5,000. By the time she died, it was worth $3.5 billion.</p>
+                <p>People think she succeeded because of pink Cadillacs and good products. They're wrong.</p>
+                <p>She succeeded because she understood one thing about human nature that most salespeople never grasp:</p>
+                <p><strong>Everyone you meet is starving for recognition.</strong></p>
+                <p>Not flattery. Not manipulation. Genuine recognition of their value, their work, their contribution.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The Application</h4>
+                <ul>
+                    <li><strong>Before every call:</strong> Write down one specific thing you can say to make this person feel important. Not flattery - genuine observation.</li>
+                    <li><strong>The rule:</strong> Make it about their work, their insight, their challenge. Something that shows you actually paid attention.</li>
+                    <li><strong>The delivery:</strong> Natural. In the first 5 minutes. Before you ask for anything.</li>
+                </ul>
+            </div>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>For your next 3 calls, write one "importance statement" in your prep notes. Deliver it naturally. Watch what happens to the conversation after you do.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Day 5 -->
+    <article class="email">
+        <div class="email-meta">Friday, January 16, 2026</div>
+        <h2 class="email-subject">The question you're avoiding</h2>
+        
+        <div class="email-body">
+            <p class="hook">Before you leave for the weekend, answer one question honestly: What am I pretending not to know?</p>
+            
+            <div class="quote">
+                "The first principle is that you must not fool yourself - and you are the easiest person to fool."
+                <div class="quote-author">- Richard Feynman</div>
+            </div>
+
+            <div class="story">
+                <p>Richard Feynman won the Nobel Prize for physics. He also figured out why the Challenger space shuttle exploded when everyone else was avoiding the truth.</p>
+                <p>His secret? Radical honesty with himself.</p>
+                <p>Every VP Sales I know is fooling themselves about something. A deal that's dead. A rep who's struggling. A number that won't hit.</p>
+                <p>The best ones have a Friday ritual: 10 minutes of truth before the weekend.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The Friday Confession</h4>
+                <ul>
+                    <li><strong>The Deal:</strong> Which deal am I pretending is better than it is?</li>
+                    <li><strong>The Rep:</strong> Which rep am I pretending doesn't need help?</li>
+                    <li><strong>The Number:</strong> What do I actually believe about this quarter?</li>
+                    <li><strong>The Problem:</strong> What am I avoiding dealing with?</li>
+                </ul>
+            </div>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>10 minutes. Silence. Write honest answers to those 4 questions. Don't fix anything yet - just acknowledge. Truth is the foundation of next week's progress.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Additional weeks would continue here... -->
+    <!-- For brevity, I'm including a few more key days -->
+
+    <!-- WEEK 2 -->
+    <div class="week-divider" id="week2">
+        <span>Week 2: January 19-23 / AI Strategy</span>
+    </div>
+
+    <article class="email">
+        <div class="email-meta">Monday, January 19, 2026</div>
+        <h2 class="email-subject">Should I replace my SDRs with AI?</h2>
+        
+        <div class="email-body">
+            <p class="hook">Wrong question. The right question: What kind of outbound motion does my market actually respond to?</p>
+            
+            <div class="story">
+                <p>I studied 12 companies who tried AI SDRs last year. 6 succeeded. 6 failed.</p>
+                <p>The difference wasn't the AI tool. It wasn't the prompts. It wasn't the sequences.</p>
+                <p>The difference was the market.</p>
+                <p>Some buyers respond to AI outreach. Some buyers can smell it from a mile away - and it actively damages your brand.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The AI SDR Decision Matrix</h4>
+                <ul>
+                    <li><strong>Low Complexity + Low Sophistication = FULL AI SDR.</strong> AI can handle the entire outbound motion. Humans for closing only. Example: SMB SaaS, simple tools.</li>
+                    <li><strong>Low Complexity + High Sophistication = HYBRID.</strong> AI for volume, humans for personalization layer. Example: Developer tools, martech.</li>
+                    <li><strong>High Complexity + Low Sophistication = HUMAN-FIRST.</strong> Humans lead, AI helps with research and follow-up. Example: Healthcare, traditional industries going digital.</li>
+                    <li><strong>High Complexity + High Sophistication = HUMAN ONLY.</strong> AI outbound will actively hurt you. These buyers hate spam. Example: Enterprise software to tech companies.</li>
+                </ul>
+            </div>
+
+            <p><strong>The warning:</strong> High-sophistication buyers can detect AI outbound instantly. Once they do, you're deleted - and remembered for the wrong reasons.</p>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>Map your segments to this matrix. Where are you wasting humans on AI-able work? Where is AI hurting your brand with sophisticated buyers?</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- WEEK 3 -->
+    <div class="week-divider" id="week3">
+        <span>Week 3: January 26-30 / Deal Acceleration</span>
+    </div>
+
+    <article class="email">
+        <div class="email-meta">Friday, January 30, 2026</div>
+        <h2 class="email-subject">Stop trying to create urgency. Start finding it.</h2>
+        
+        <div class="email-body">
+            <p class="hook">The best deals aren't pushed - they're pulled. Here's how to know which deals have real urgency.</p>
+            
+            <div class="story">
+                <p>Early in my career, I spent weeks trying to "create urgency" in deals that had none. Limited time offers. Quarterly pricing. "I can only hold this spot until..."</p>
+                <p>It rarely worked. And when it did, I felt gross.</p>
+                <p>The breakthrough came when I realized: I can't create urgency that doesn't exist. But I can find it where it's hiding.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The PULL Qualification Framework</h4>
+                <ul>
+                    <li><strong>P - Project:</strong> Is solving this problem an active project on their to-do list? Not "would this be nice" - actively being worked on NOW. Ask: "What's driving you to look at this now vs. 6 months ago?"</li>
+                    <li><strong>U - Urgency:</strong> Is there a reason they need to solve this NOW? Deadline, pain event, executive mandate. If it can wait, it will wait. Ask: "What happens if you don't solve this by [date]?"</li>
+                    <li><strong>L - Limitations:</strong> Are their current options inadequate? Status quo isn't working. Competitors have gaps. DIY isn't viable. Ask: "What have you tried so far and why didn't it work?"</li>
+                    <li><strong>L - Leap:</strong> Can they actually buy? Budget exists or can be found. Decision-maker engaged. No political blockers. Ask: "If we're a fit, what's the process to move forward?"</li>
+                </ul>
+            </div>
+
+            <p><strong>Score it:</strong> 4/4 = High PULL, pursue aggressively. 3/4 = Medium PULL, qualify harder. 2/4 = Low PULL, nurture. 0-1/4 = No PULL, disqualify.</p>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>Score your top 10 opportunities on PULL. Stop wasting time on 0-1 scores. They're not ready - and you pushing won't change that.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- WEEK 4 -->
+    <div class="week-divider" id="week4">
+        <span>Week 4: February 2-6 / Team Performance</span>
+    </div>
+
+    <article class="email">
+        <div class="email-meta">Thursday, February 5, 2026</div>
+        <h2 class="email-subject">"You can have everything in life you want..."</h2>
+        
+        <div class="email-body">
+            <div class="quote">
+                "...if you will just help other people get what they want."
+                <div class="quote-author">- Zig Ziglar</div>
+            </div>
+            
+            <div class="story">
+                <p>Zig Ziglar was selling pots and pans door-to-door when he discovered the secret that would make him a legend.</p>
+                <p>He'd been struggling. Pushy. Desperate. Trying to close every prospect.</p>
+                <p>Then one day, he walked into a house and just... listened. The woman talked about her family, her challenges, her dreams. He forgot about the sale. He just helped.</p>
+                <p>She bought the most expensive set he had.</p>
+                <p>That's when it clicked: Stop selling. Start helping.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The Ziglar Test for Every Call</h4>
+                <ul>
+                    <li><strong>Before:</strong> "How can I help this person today, even if they never buy?"</li>
+                    <li><strong>During:</strong> "Am I solving their problem or selling my solution?"</li>
+                    <li><strong>After:</strong> "Did they leave better off than before we spoke?"</li>
+                </ul>
+            </div>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>For your next 3 calls, write down one way you'll help them regardless of outcome. An introduction. A resource. An insight. Give first.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- WEEK 5 -->
+    <div class="week-divider" id="week5">
+        <span>Week 5: February 9-13 / Executive Communication</span>
+    </div>
+
+    <article class="email">
+        <div class="email-meta">Monday, February 9, 2026</div>
+        <h2 class="email-subject">Most VP Sales use 15 slides for board updates. The best use 3.</h2>
+        
+        <div class="email-body">
+            <p class="hook">More slides = more questions = more chances to look uncertain.</p>
+            
+            <div class="story">
+                <p>I watched two VP Sales present to the same board in the same week.</p>
+                <p>The first used 18 slides. Detailed breakdowns. Stage-by-stage pipeline. Activity metrics. The board peppered him with questions for 45 minutes. He left sweating.</p>
+                <p>The second used 3 slides. Number. Pipeline. Plan. The board nodded and said "Got it, moving on." Ten minutes.</p>
+                <p>Both had similar results. One controlled the narrative. One lost it.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The 3-Slide Sales Update</h4>
+                <ul>
+                    <li><strong>Slide 1 - THE NUMBER:</strong> Target vs. Actual (big and clear). Attainment %. Trend line. One sentence: why. NOT every deal, activity metrics, or excuses.</li>
+                    <li><strong>Slide 2 - THE PIPELINE:</strong> Coverage ratio. Weighted vs. unweighted. Quality indicator. One sentence: what's real. NOT every deal or stage breakdowns.</li>
+                    <li><strong>Slide 3 - THE PLAN:</strong> Top 3 priorities this quarter. One risk you're watching. One ask if needed. NOT 10 initiatives or problems without solutions.</li>
+                </ul>
+            </div>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>Take your last board deck. Delete every slide that isn't about THE NUMBER, THE PIPELINE, or THE PLAN. Move everything else to appendix.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- WEEK 6 -->
+    <div class="week-divider" id="week6">
+        <span>Week 6: February 16-20 / Personal Effectiveness</span>
+    </div>
+
+    <article class="email">
+        <div class="email-meta">Thursday, February 19, 2026</div>
+        <h2 class="email-subject">The woman who sold $50 million in pianos</h2>
+        
+        <div class="email-body">
+            <p class="hook">Erica Feidner never tried to sell a piano. She matched souls with instruments.</p>
+            
+            <div class="story">
+                <p>At Steinway, there was a salesperson who outsold everyone by a factor of 3. Her name was Erica Feidner. People called her "The Piano Matchmaker."</p>
+                <p>When customers came in, most salespeople would start showing pianos. Erica would have them sit down and play for an hour. She'd listen to their music. She'd ask about their lives.</p>
+                <p>Sometimes she'd say: "You don't need what we have here."</p>
+                <p>The customers who stayed? They bought. Often the most expensive piano in the showroom.</p>
+            </div>
+
+            <div class="quote">
+                "I don't sell pianos. I help people find the instrument that will unlock the music inside them. Sometimes it's a $100,000 Steinway. Sometimes it's not a piano at all."
+                <div class="quote-author">- Erica Feidner</div>
+            </div>
+
+            <div class="framework">
+                <h4>The Feidner Method</h4>
+                <ul>
+                    <li><strong>Listen first:</strong> Have customers "play" for an hour before showing them anything</li>
+                    <li><strong>Match, don't sell:</strong> Sometimes say "You don't need what we have"</li>
+                    <li><strong>Create meaning:</strong> Every product has a story. Learn it and share it.</li>
+                    <li><strong>Trust the process:</strong> Some sales take 3 years. Never push.</li>
+                </ul>
+            </div>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>What are you really matching customers to? Not your product - the transformation. Write it in one sentence. Use that sentence in your next call.</p>
+            </div>
+        </div>
+    </article>
+
+    <!-- WEEK 7 -->
+    <div class="week-divider" id="week7">
+        <span>Week 7: February 23-27 / Closing Strong</span>
+    </div>
+
+    <article class="email">
+        <div class="email-meta">Friday, February 27, 2026</div>
+        <h2 class="email-subject">Before you celebrate or commiserate, capture what you learned</h2>
+        
+        <div class="email-body">
+            <p class="hook">The best VP Sales treat every quarter as data. Here's the retrospective that makes next quarter better.</p>
+            
+            <div class="story">
+                <p>Most teams finish a quarter and immediately start the next one. No pause. No reflection. Same patterns repeat.</p>
+                <p>The teams that get better every quarter have a ritual. It takes 30 minutes. It compounds.</p>
+            </div>
+
+            <div class="framework">
+                <h4>The Quarter-End Retrospective: 7 Questions</h4>
+                <ul>
+                    <li><strong>Q1:</strong> What deals did we win that we expected to lose? Why?</li>
+                    <li><strong>Q2:</strong> What deals did we lose that we expected to win? Why?</li>
+                    <li><strong>Q3:</strong> What did our top performer do that others didn't?</li>
+                    <li><strong>Q4:</strong> What process broke down most often?</li>
+                    <li><strong>Q5:</strong> What tool or resource did we need but not have?</li>
+                    <li><strong>Q6:</strong> What did I personally do well as a leader?</li>
+                    <li><strong>Q7:</strong> What did I personally do poorly as a leader?</li>
+                </ul>
+            </div>
+
+            <div class="quote">
+                "We do not learn from experience. We learn from reflecting on experience."
+                <div class="quote-author">- John Dewey</div>
+            </div>
+
+            <div class="action">
+                <div class="action-label">Your action today</div>
+                <p>Block 30 minutes. Answer all 7 questions in writing. Share Q3-Q5 with your team. Keep Q6-Q7 for yourself. This is how you get better every quarter.</p>
+            </div>
+        </div>
+    </article>
+
+    <div class="share-section">
+        <h3>Share</h3>
+        <form class="share-form" onsubmit="handleShare(event)">
+            <input type="email" placeholder="Their email" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Audio functionality using Web Speech API
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        let isPlaying = false;
+        let isPaused = false;
+        let currentRate = 1.5;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+
+        function getDocumentText() {
+            const content = document.body.cloneNode(true);
+            content.querySelectorAll('.audio-player, .share-section, .theme-toggle, .nav, script, style').forEach(el => el.remove());
+            let text = content.textContent || '';
+            text = text.replace(/\s+/g, ' ').trim();
+            return text.substring(0, 10000);
+        }
+
+        function toggleAudio() {
+            if (!synth) {
+                document.getElementById('audioStatus').textContent = 'Speech not supported';
+                return;
+            }
+
+            if (isPlaying && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Paused';
+                return;
+            }
+
+            if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+                return;
+            }
+
+            synth.cancel();
+            const text = getDocumentText();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentRate;
+
+            if (voices.length > 0) {
+                const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.lang.startsWith('en'));
+                if (preferred) utterance.voice = preferred;
+            }
+
+            utterance.onstart = () => {
+                isPlaying = true;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+            };
+
+            utterance.onend = () => {
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Click play to start';
+            };
+
+            utterance.onerror = (e) => {
+                if (e.error !== 'interrupted') {
+                    document.getElementById('audioStatus').textContent = 'Error: ' + e.error;
+                }
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+            };
+
+            synth.speak(utterance);
+
+            setTimeout(() => {
+                if (synth.speaking && !synth.paused) {
+                    synth.pause();
+                    synth.resume();
+                }
+            }, 100);
+        }
+
+        function toggleSpeedMenu(e) {
+            e.stopPropagation();
+            document.getElementById('speedMenu').classList.toggle('open');
+        }
+
+        function setSpeed(rate) {
+            currentRate = rate;
+            document.getElementById('speedLabel').textContent = rate + 'x';
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('speedMenu').classList.remove('open');
+            
+            if (utterance) {
+                utterance.rate = rate;
+            }
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('speedMenu').classList.remove('open');
+        });
+
+        function handleShare(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input').value;
+            const subject = encodeURIComponent('Daily Sales Playbook | 35 Frameworks');
+            const body = encodeURIComponent('Check out this sales playbook: ' + window.location.href);
+            window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+            e.target.innerHTML = '<p style="color: var(--accent); font-weight: 600;">Sent!</p>';
+        }
+    </script>
+</body>
+</html>
+

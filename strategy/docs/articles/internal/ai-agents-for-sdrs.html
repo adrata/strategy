@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents for SDRs & BDRs | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="AI Agents for SDRs & BDRs">
+    <meta property="og:description" content="How SDRs and BDRs can deploy AI agents to prospect smarter, personalize at scale, and book more meetings without burning out.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .role-context { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .role-context h3 { margin-top: 0; color: var(--accent); }
+        
+        .agent-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .agent-icon { width: 48px; height: 48px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .agent-icon svg { width: 24px; height: 24px; stroke: #fff; fill: none; }
+        .agent-title { font-size: 20px; font-weight: 700; color: var(--text); }
+        .agent-subtitle { font-size: 14px; color: var(--text-muted); }
+        .agent-description { margin-bottom: 16px; }
+        .agent-capabilities { display: grid; gap: 8px; }
+        .capability { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-size: 14px; }
+        .capability strong { color: var(--accent); }
+        
+        .use-case { background: var(--highlight-bg); border-radius: 8px; padding: 20px; margin: 16px 0; }
+        .use-case h4 { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .use-case p { font-size: 14px; margin-bottom: 0; }
+        
+        .email-example { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin: 16px 0; overflow: hidden; }
+        .email-header { background: var(--code-bg); padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .email-body { padding: 16px; font-size: 14px; line-height: 1.7; }
+        .email-body .highlight { background: #fef08a; padding: 2px 4px; border-radius: 3px; }
+        body.dark-mode .email-body .highlight { background: #854d0e; color: #fef9c3; }
+        
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin: 24px 0; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-card .number { font-size: 32px; font-weight: 800; color: var(--accent); }
+        .stat-card .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        .workflow-timeline { display: grid; gap: 16px; margin: 24px 0; }
+        .timeline-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; display: grid; grid-template-columns: auto 1fr; gap: 16px; }
+        .timeline-time { background: var(--accent); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; text-align: center; min-width: 80px; height: fit-content; }
+        .timeline-content h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+        .timeline-content p { font-size: 14px; margin-bottom: 0; }
+        
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Adrata Agent Guide</div>
+        <h1>AI Agents for SDRs & BDRs</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">How SDRs and BDRs can deploy AI agents to prospect smarter, personalize at scale, and book more meetings—without burning out or sounding like a robot.</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this guide</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="role-context">
+    <h3>The SDR's Challenge</h3>
+    <p>You need to reach 100+ prospects per day. Each one should feel personalized. Research takes time. Templates feel fake. The math doesn't work—until now.</p>
+    <p style="margin-top: 12px; margin-bottom: 0;"><strong>AI agents don't replace your hustle. They multiply it.</strong> They do the research in seconds so you can focus on what actually books meetings: the human touch.</p>
+</div>
+
+<h2>The Five Essential Agents for SDRs</h2>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Prospect Research Agent</div>
+            <div class="agent-subtitle">Deep research in seconds, not hours</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent researches every prospect on your list before you reach out. Company context, recent news, tech stack, hiring patterns, leadership changes—everything you need to write an email that actually gets opened.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Company Intelligence:</strong> Recent funding, product launches, leadership changes, office openings, layoffs</div>
+        <div class="capability"><strong>Person Research:</strong> LinkedIn activity, recent posts, job history, common connections, interests</div>
+        <div class="capability"><strong>Tech Stack Detection:</strong> What tools they use (from job postings, website code, and public sources)</div>
+        <div class="capability"><strong>Trigger Events:</strong> Signals that suggest they might need your solution right now</div>
+    </div>
+    
+    <div class="use-case">
+        <h4>Example: Research on Jennifer Martinez, VP Marketing at TechFlow</h4>
+        <p><strong>Company:</strong> TechFlow raised Series B ($35M) 3 weeks ago. Hiring 4 marketing roles. Just launched in EMEA.<br>
+        <strong>Person:</strong> Jennifer joined 6 months ago from a competitor. Posted about "scaling demand gen" last week. Connected to 3 of your customers.<br>
+        <strong>Trigger:</strong> Job posting for "Marketing Ops Manager" mentions "CRM integration challenges"—your exact use case.</p>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Email Personalization Agent</div>
+            <div class="agent-subtitle">Craft personalized first lines at scale</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent writes personalized email openers based on real research—not fake personalization like "I saw you work at [Company]." It crafts first lines that prove you did your homework and gives recipients a reason to keep reading.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Research-Based Openers:</strong> First lines based on actual company news, prospect activity, or trigger events</div>
+        <div class="capability"><strong>Multi-Channel Personalization:</strong> Different hooks for email, LinkedIn, and cold calls</div>
+        <div class="capability"><strong>Pain Point Mapping:</strong> Connects research to the specific problems your product solves</div>
+        <div class="capability"><strong>A/B Testing:</strong> Generates multiple versions so you can test what resonates</div>
+    </div>
+    
+    <div class="email-example">
+        <div class="email-header">Generated Email for Jennifer Martinez</div>
+        <div class="email-body">
+            <p><span class="highlight">Congrats on the Series B—and the EMEA expansion must be keeping your team busy.</span></p>
+            <p>I noticed you're hiring a Marketing Ops Manager and the job posting mentions "CRM integration challenges."</p>
+            <p>We helped Acme Corp solve that exact problem during their European expansion—they went from 3 hours of daily CRM cleanup to zero.</p>
+            <p>Worth a 15-minute call to see if we could help you too?</p>
+        </div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Call Prep Agent</div>
+            <div class="agent-subtitle">30-second briefings before every dial</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent prepares you for cold calls with a quick briefing on the prospect and company. You never go into a call blind—and you always have a relevant hook ready when they answer.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Quick Briefing:</strong> 3-4 bullet points on the person and company, optimized for a 30-second scan</div>
+        <div class="capability"><strong>Conversation Starters:</strong> 2-3 opening lines based on recent activity or news</div>
+        <div class="capability"><strong>Objection Prep:</strong> Common objections from this persona and suggested responses</div>
+        <div class="capability"><strong>Competitive Intel:</strong> If they use a competitor, key differentiators to mention</div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Account Mapping Agent</div>
+            <div class="agent-subtitle">Find every relevant contact in target accounts</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent identifies all the stakeholders you should be reaching in each account—not just the obvious titles, but the hidden influencers and rising stars who might champion your deal.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Stakeholder Identification:</strong> Decision makers, influencers, users, and potential blockers</div>
+        <div class="capability"><strong>Org Chart Building:</strong> Who reports to whom, recent promotions, new hires</div>
+        <div class="capability"><strong>Champion Signals:</strong> Who's most likely to respond based on role, tenure, and activity</div>
+        <div class="capability"><strong>Multi-Threading Strategy:</strong> Recommended sequence for reaching multiple contacts</div>
+    </div>
+</div>
+
+<div class="agent-card">
+    <div class="agent-header">
+        <div class="agent-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        </div>
+        <div>
+            <div class="agent-title">Performance Coach Agent</div>
+            <div class="agent-subtitle">Real-time feedback on your outreach</div>
+        </div>
+    </div>
+    <div class="agent-description">
+        <p>This agent analyzes your outreach performance and tells you what's working. Open rates, reply rates, meeting rates—by subject line, by persona, by time of day. It turns your activity data into actionable coaching.</p>
+    </div>
+    <div class="agent-capabilities">
+        <div class="capability"><strong>Email Analytics:</strong> Which subject lines, openers, and CTAs are driving replies?</div>
+        <div class="capability"><strong>Call Analysis:</strong> Talk time, objection handling, appointment setting rate by approach</div>
+        <div class="capability"><strong>Persona Insights:</strong> Which titles are most responsive? Which industries?</div>
+        <div class="capability"><strong>Timing Optimization:</strong> Best days and times for outreach based on your actual data</div>
+    </div>
+</div>
+
+<h2>The SDR's Daily Rhythm with Agents</h2>
+
+<div class="workflow-timeline">
+    <div class="timeline-item">
+        <div class="timeline-time">8:00 AM</div>
+        <div class="timeline-content">
+            <h4>Morning Research Block</h4>
+            <p>Prospect Research Agent has already analyzed today's 50 accounts overnight. You review the top 10 with the strongest trigger events and prioritize those for personalized outreach.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">9:00 AM</div>
+        <div class="timeline-content">
+            <h4>Email Power Hour</h4>
+            <p>Email Personalization Agent generates first lines for your priority list. You review, adjust tone where needed, and send. 25 truly personalized emails in 45 minutes instead of 3 hours.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">10:30 AM</div>
+        <div class="timeline-content">
+            <h4>Cold Call Block</h4>
+            <p>Call Prep Agent delivers a 30-second briefing before each dial. You're never caught off guard and always have a relevant hook. Connect rate: same. Conversation quality: dramatically higher.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">2:00 PM</div>
+        <div class="timeline-content">
+            <h4>Account Expansion</h4>
+            <p>Account Mapping Agent identified 3 additional stakeholders at accounts that went dark. You multi-thread into the CFO and a VP who just joined from a customer.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">4:30 PM</div>
+        <div class="timeline-content">
+            <h4>Performance Review</h4>
+            <p>Performance Coach Agent shows that emails mentioning "Series B" had 3x the reply rate this week. Tomorrow, you'll prioritize recently funded companies.</p>
+        </div>
+    </div>
+</div>
+
+<h2>Impact: What SDRs Report</h2>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="number">3x</div>
+        <div class="label">More personalized emails per hour</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">2.5x</div>
+        <div class="label">Higher reply rates</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">40%</div>
+        <div class="label">More meetings booked</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">2hrs</div>
+        <div class="label">Less research time daily</div>
+    </div>
+</div>
+
+<div class="insight">
+    <strong>The goal isn't to send more emails.</strong> It's to send better emails—emails that prove you understand the prospect's world. AI agents do the research so you can focus on the craft: the tone, the timing, and the human connection that turns cold outreach into warm conversations.
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the SDR playbook</h3>
+        <p class="desc">Sequences, templates, and AI-powered prospecting strategies that actually book meetings.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="ai-agents-for-sdrs.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the playbook.</p>'; } }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>
+
+

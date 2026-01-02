@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How We Built Our Multi-Agent Research System | Anthropic Engineering</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="How We Built Our Multi-Agent Research System">
+    <meta property="og:description" content="Our Research feature uses multiple Claude agents to explore complex topics more effectively. We share the engineering challenges and the lessons we learned.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+            --diagram-bg: #f0f4f8;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+            --diagram-bg: #151a1f;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .date { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .intro-box p { margin-bottom: 0; }
+        
+        .stat-highlight { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center; }
+        .stat-number { font-size: 48px; font-weight: 800; color: var(--accent); }
+        .stat-label { font-size: 16px; color: var(--text-muted); margin-top: 4px; }
+        
+        .architecture-diagram { background: var(--diagram-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .architecture-diagram h4 { font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .diagram-flow { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+        .diagram-row { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .diagram-node { background: var(--accent); color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; text-align: center; }
+        .diagram-node.secondary { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); }
+        .diagram-node.subagent { background: #3b82f6; }
+        .diagram-arrow { color: var(--text-muted); font-size: 20px; }
+        .diagram-arrow.down { transform: rotate(90deg); }
+        
+        .section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .section-card h3 { margin-top: 0; color: var(--accent); }
+        
+        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .principles-grid { display: grid; gap: 16px; margin: 24px 0; }
+        .principle-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .principle-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .principle-card p { font-size: 14px; margin-bottom: 0; }
+        
+        .token-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 24px 0; }
+        .token-stat { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+        .token-stat .number { font-size: 32px; font-weight: 800; color: var(--accent); }
+        .token-stat .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        
+        .eval-criteria { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 24px 0; }
+        .eval-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .eval-item strong { color: var(--accent); font-size: 14px; }
+        .eval-item p { font-size: 13px; margin-bottom: 0; margin-top: 4px; }
+        
+        .challenge-list { display: grid; gap: 16px; margin: 24px 0; }
+        .challenge-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .challenge-item h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .challenge-item h4::before { content: ""; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+        .challenge-item p { font-size: 14px; margin-bottom: 0; }
+        
+        .appendix { background: var(--highlight-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .appendix h3 { color: var(--accent); margin-top: 0; }
+        
+        .credits { background: var(--card-bg); padding: 20px; border-radius: 8px; margin: 32px 0; font-size: 14px; }
+        .credits strong { color: var(--text); }
+        
+        /* Newsletter Section */
+        .newsletter-section { margin-top: 64px; }
+        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
+        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+        .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
+        .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
+        .newsletter-form input::placeholder { color: var(--text-muted); }
+        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
+        .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
+        .newsletter-disclaimer { font-size: 12px; color: var(--text-muted); margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Anthropic Engineering</div>
+        <h1>How We Built Our Multi-Agent Research System</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">Our Research feature uses multiple Claude agents to explore complex topics more effectively. We share the engineering challenges and the lessons we learned from building this system.</div>
+<div class="date">Published Jun 13, 2025</div>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this article</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">1.5x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+            <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="intro-box">
+    <p>Claude now has Research capabilities that allow it to search across the web, Google Workspace, and any integrations to accomplish complex tasks. The journey of this multi-agent system from prototype to production taught us critical lessons about system architecture, tool design, and prompt engineering.</p>
+</div>
+
+<h2>Benefits of a Multi-Agent System</h2>
+
+<p>Research work involves open-ended problems where it's very difficult to predict the required steps in advance. You can't hardcode a fixed path for exploring complex topics, as the process is inherently dynamic and path-dependent. When people conduct research, they tend to continuously update their approach based on discoveries.</p>
+
+<div class="insight">
+    The essence of search is compression: distilling insights from a vast corpus. Subagents facilitate compression by operating in parallel with their own context windows, exploring different aspects of the question simultaneously before condensing the most important tokens for the lead research agent.
+</div>
+
+<div class="stat-highlight">
+    <div class="stat-number">90.2%</div>
+    <div class="stat-label">Multi-agent system with Claude Opus 4 + Sonnet 4 subagents outperformed single-agent Claude Opus 4 on internal research eval</div>
+</div>
+
+<h3>What Explains Performance?</h3>
+
+<p>In our analysis, three factors explained 95% of the performance variance in the BrowseComp evaluation:</p>
+
+<div class="token-stats">
+    <div class="token-stat">
+        <div class="number">80%</div>
+        <div class="label">Token Usage</div>
+    </div>
+    <div class="token-stat">
+        <div class="number">4x</div>
+        <div class="label">Agents vs Chat</div>
+    </div>
+    <div class="token-stat">
+        <div class="number">15x</div>
+        <div class="label">Multi-Agent vs Chat</div>
+    </div>
+</div>
+
+<p>Token usage alone explains 80% of the variance. Multi-agent architectures effectively scale token usage for tasks that exceed the limits of single agents.</p>
+
+<div class="insight">
+    Multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools.
+</div>
+
+<h2>Architecture Overview</h2>
+
+<p>Our Research system uses a multi-agent architecture with an <strong>orchestrator-worker pattern</strong>, where a lead agent coordinates the process while delegating to specialized subagents that operate in parallel.</p>
+
+<div class="architecture-diagram">
+    <h4>Multi-Agent Research Flow</h4>
+    <div class="diagram-flow">
+        <div class="diagram-row">
+            <div class="diagram-node secondary">User Query</div>
+        </div>
+        <div class="diagram-arrow down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-node">Lead Researcher</div>
+        </div>
+        <div class="diagram-arrow down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-node subagent">Subagent 1</div>
+            <div class="diagram-node subagent">Subagent 2</div>
+            <div class="diagram-node subagent">Subagent N</div>
+        </div>
+        <div class="diagram-arrow down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-node">Synthesize Results</div>
+        </div>
+        <div class="diagram-arrow down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-node secondary">Citation Agent</div>
+        </div>
+        <div class="diagram-arrow down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-node secondary">Final Research Report</div>
+        </div>
+    </div>
+</div>
+
+<p>When a user submits a query, the lead agent analyzes it, develops a strategy, and spawns subagents to explore different aspects simultaneously. The subagents act as intelligent filters by iteratively using search tools to gather information, then returning findings to the lead agent so it can compile a final answer.</p>
+
+<h2>Prompt Engineering Principles</h2>
+
+<p>Multi-agent systems have key differences from single-agent systems, including a rapid growth in coordination complexity. Early agents made errors like spawning 50 subagents for simple queries, scouring the web endlessly for nonexistent sources, and distracting each other with excessive updates.</p>
+
+<div class="principles-grid">
+    <div class="principle-card">
+        <h4>Think Like Your Agents</h4>
+        <p>Build simulations with exact prompts and tools from your system, then watch agents work step-by-step. This immediately reveals failure modes: agents continuing when they already have sufficient results, using overly verbose search queries, or selecting incorrect tools.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Teach the Orchestrator How to Delegate</h4>
+        <p>Each subagent needs an objective, an output format, guidance on tools and sources, and clear task boundaries. Without detailed task descriptions, agents duplicate work, leave gaps, or fail to find necessary information.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Scale Effort to Query Complexity</h4>
+        <p>Simple fact-finding requires just 1 agent with 3-10 tool calls. Direct comparisons might need 2-4 subagents with 10-15 calls each. Complex research might use more than 10 subagents with clearly divided responsibilities.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Tool Design is Critical</h4>
+        <p>Using the right tool is efficient—often, it's strictly necessary. An agent searching the web for context that only exists in Slack is doomed from the start. Give agents explicit heuristics for tool selection.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Let Agents Improve Themselves</h4>
+        <p>Claude 4 models can be excellent prompt engineers. We created a tool-testing agent that attempts to use flawed MCP tools and rewrites the description to avoid failures. This resulted in a 40% decrease in task completion time.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Start Wide, Then Narrow Down</h4>
+        <p>Agents often default to overly long, specific queries that return few results. Prompt agents to start with short, broad queries, evaluate what's available, then progressively narrow focus.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Guide the Thinking Process</h4>
+        <p>Extended thinking mode serves as a controllable scratchpad. The lead agent uses thinking to plan its approach. Our testing showed that extended thinking improved instruction-following, reasoning, and efficiency.</p>
+    </div>
+    <div class="principle-card">
+        <h4>Parallel Tool Calling</h4>
+        <p>We introduced two kinds of parallelization: (1) the lead agent spins up 3-5 subagents in parallel; (2) subagents use 3+ tools in parallel. These changes cut research time by up to 90% for complex queries.</p>
+    </div>
+</div>
+
+<h2>Effective Evaluation of Agents</h2>
+
+<p>Evaluating multi-agent systems presents unique challenges. Traditional evaluations assume the AI follows the same steps each time. But multi-agent systems don't work this way—even with identical starting points, agents might take completely different valid paths to reach their goal.</p>
+
+<div class="section-card">
+    <h3>Evaluation Principles</h3>
+    <ul>
+        <li><strong>Start evaluating immediately with small samples.</strong> In early development, changes tend to have dramatic impacts. A prompt tweak might boost success rates from 30% to 80%. We started with about 20 queries representing real usage patterns.</li>
+        <li><strong>LLM-as-judge evaluation scales when done well.</strong> We used an LLM judge that evaluated each output against criteria in a rubric. A single LLM call with scores from 0.0-1.0 was most consistent and aligned with human judgements.</li>
+        <li><strong>Human evaluation catches what automation misses.</strong> Human testers noticed our early agents consistently chose SEO-optimized content farms over authoritative sources like academic PDFs.</li>
+    </ul>
+</div>
+
+<h3>Evaluation Criteria</h3>
+
+<div class="eval-criteria">
+    <div class="eval-item">
+        <strong>Factual Accuracy</strong>
+        <p>Do claims match sources?</p>
+    </div>
+    <div class="eval-item">
+        <strong>Citation Accuracy</strong>
+        <p>Do cited sources match claims?</p>
+    </div>
+    <div class="eval-item">
+        <strong>Completeness</strong>
+        <p>Are all requested aspects covered?</p>
+    </div>
+    <div class="eval-item">
+        <strong>Source Quality</strong>
+        <p>Primary sources over secondary?</p>
+    </div>
+    <div class="eval-item">
+        <strong>Tool Efficiency</strong>
+        <p>Right tools, reasonable number of times?</p>
+    </div>
+</div>
+
+<h2>Production Reliability Challenges</h2>
+
+<p>In traditional software, a bug might break a feature, degrade performance, or cause outages. In agentic systems, minor changes cascade into large behavioral changes, which makes it remarkably difficult to write code for complex agents that must maintain state in a long-running process.</p>
+
+<div class="challenge-list">
+    <div class="challenge-item">
+        <h4>Agents are Stateful and Errors Compound</h4>
+        <p>Agents can run for long periods of time, maintaining state across many tool calls. Without effective mitigations, minor system failures can be catastrophic. We built systems that can resume from where the agent was when errors occurred, and use the model's intelligence to handle issues gracefully.</p>
+    </div>
+    <div class="challenge-item">
+        <h4>Debugging Benefits from New Approaches</h4>
+        <p>Agents make dynamic decisions and are non-deterministic between runs. Adding full production tracing let us diagnose why agents failed and fix issues systematically. We monitor agent decision patterns and interaction structures—without monitoring individual conversation contents.</p>
+    </div>
+    <div class="challenge-item">
+        <h4>Deployment Needs Careful Coordination</h4>
+        <p>Agent systems are highly stateful webs of prompts, tools, and execution logic that run almost continuously. We use rainbow deployments to avoid disrupting running agents, gradually shifting traffic from old to new versions while keeping both running.</p>
+    </div>
+    <div class="challenge-item">
+        <h4>Synchronous Execution Creates Bottlenecks</h4>
+        <p>Currently, our lead agents execute subagents synchronously, waiting for each set to complete before proceeding. This simplifies coordination but creates bottlenecks. Asynchronous execution would enable additional parallelism but adds challenges in result coordination and state consistency.</p>
+    </div>
+</div>
+
+<h2>Conclusion</h2>
+
+<p>When building AI agents, the last mile often becomes most of the journey. Codebases that work on developer machines require significant engineering to become reliable production systems. The compound nature of errors in agentic systems means that minor issues for traditional software can derail agents entirely.</p>
+
+<div class="insight">
+    Despite these challenges, multi-agent systems have proven valuable for open-ended research tasks. Users have said that Claude helped them find business opportunities they hadn't considered, navigate complex healthcare options, resolve thorny technical bugs, and save up to days of work by uncovering research connections they wouldn't have found alone.
+</div>
+
+<p>Multi-agent research systems can operate reliably at scale with careful engineering, comprehensive testing, detail-oriented prompt and tool design, robust operational practices, and tight collaboration between research, product, and engineering teams.</p>
+
+<div class="appendix">
+    <h3>Appendix: Additional Tips for Multi-Agent Systems</h3>
+    
+    <h4>End-State Evaluation</h4>
+    <p>For agents that mutate state over many turns, focus on end-state evaluation rather than turn-by-turn analysis. Instead of judging whether the agent followed a specific process, evaluate whether it achieved the correct final state.</p>
+    
+    <h4>Long-Horizon Conversation Management</h4>
+    <p>Production agents often engage in conversations spanning hundreds of turns. Implement patterns where agents summarize completed work phases and store essential information in external memory before proceeding to new tasks. When context limits approach, agents can spawn fresh subagents with clean contexts while maintaining continuity through careful handoffs.</p>
+    
+    <h4>Subagent Output to Filesystem</h4>
+    <p>Rather than requiring subagents to communicate everything through the lead agent, implement artifact systems where specialized agents can create outputs that persist independently. Subagents call tools to store their work in external systems, then pass lightweight references back to the coordinator. This prevents information loss during multi-stage processing.</p>
+</div>
+
+<div class="credits">
+    <p><strong>Written by:</strong> Jeremy Hadfield, Barry Zhang, Kenneth Lien, Florian Scholz, Jeremy Fox, and Daniel Ford at Anthropic</p>
+    <p>This work reflects the collective efforts of several teams across Anthropic. Special thanks to the Anthropic apps engineering team, whose dedication brought this complex multi-agent system to production.</p>
+</div>
+
+</div><!-- end readable-content -->
+
+<div class="newsletter-section">
+    <div class="newsletter-box">
+        <h3>Get the latest research</h3>
+        <p class="desc">AI engineering insights, multi-agent patterns, and practical frameworks. Delivered when they matter.</p>
+        <div class="newsletter-form">
+            <input type="email" id="newsletterEmail" placeholder="Enter your email">
+            <button class="newsletter-submit" onclick="subscribeNewsletter()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+        <p class="newsletter-disclaimer">We'll only send you the good stuff. Unsubscribe anytime.</p>
+    </div>
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="multi-agent-research.mp3" type="audio/mpeg"></audio>
+<script>
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+const audioEl = document.getElementById('audioElement');
+audioEl.onerror = () => { audioMode = 'speech'; };
+
+function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) { audioEl.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { audioEl.play(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { audioEl.currentTime = 0; audioEl.playbackRate = speechRate; audioEl.play().then(() => { isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }).catch(e => { audioMode = 'speech'; toggleSpeechAudio(); }); }
+}
+audioEl.onended = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; };
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) { document.getElementById('audioStatus').textContent = 'Speech not supported'; return; }
+    if (isPlaying && !isPaused) { window.speechSynthesis.pause(); isPaused = true; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; }
+    else if (isPaused) { window.speechSynthesis.resume(); isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; }
+    else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100); }
+}
+
+function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
+function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the next article when it\'s ready.</p>'; } }
+
+document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+</script>
+</body>
+</html>
+
+

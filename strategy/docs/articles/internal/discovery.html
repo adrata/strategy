@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PULL as a Discovery Framework | How to Start a Sales Call</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="PULL as a Discovery Framework | How to Start a Sales Call">
+    <meta property="og:description" content="What questions should we ask? What are we trying to learn? PULL is the minimum essential information to know what they want.">
+    <meta property="og:image" content="../og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 64px 0 16px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h2:first-of-type { margin-top: 32px; border-top: none; padding-top: 0; }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--accent); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro { font-size: 20px; line-height: 1.7; margin-bottom: 32px; }
+        
+        .pull-quote { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px 32px; margin: 32px 0; font-size: 20px; font-style: italic; color: var(--text); }
+        
+        .framework-box { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; }
+        .framework-box h3 { color: #fff; margin-top: 0; font-size: 24px; }
+        .framework-box p { color: rgba(255,255,255,0.9); }
+        .framework-box ol, .framework-box ul { margin: 16px 0 0 24px; }
+        .framework-box li { padding: 6px 0; }
+        
+        .problem-list { list-style: none; margin: 24px 0; }
+        .problem-list li { padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; color: var(--text-secondary); font-size: 16px; }
+        .problem-list li strong { color: var(--text); }
+        
+        .example-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .example-card h4 { color: var(--accent); margin: 0 0 12px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+        .example-card p { margin-bottom: 12px; font-size: 16px; }
+        .example-card p:last-child { margin-bottom: 0; }
+        
+        .quote-block { background: var(--card-bg); border-left: 4px solid var(--border); padding: 20px 24px; margin: 24px 0; font-style: italic; color: var(--text-secondary); }
+        
+        .pull-framework { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .pull-framework h4 { color: var(--accent); margin: 0 0 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .pull-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .pull-item:last-child { border-bottom: none; }
+        .pull-letter { background: var(--accent); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .pull-content { flex: 1; }
+        .pull-content strong { color: var(--text); display: block; margin-bottom: 4px; }
+        .pull-content span { color: var(--text-muted); font-size: 14px; }
+        
+        .scenario-card { background: var(--highlight-bg); border-radius: 8px; padding: 20px; margin: 16px 0; }
+        .scenario-card h5 { color: var(--accent); margin: 0 0 8px; font-size: 14px; }
+        .scenario-card p { margin: 0; font-size: 15px; }
+        
+        .flowchart { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .flowchart h4 { color: var(--accent); margin: 0 0 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .flow-step { padding: 16px 20px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+        .flow-step:last-child { margin-bottom: 0; }
+        .flow-step .step-num { display: inline-block; background: var(--accent); color: #fff; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-weight: 700; font-size: 12px; margin-right: 12px; }
+        .flow-step p { display: inline; margin: 0; font-size: 15px; }
+        
+        .stat-box { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; text-align: center; }
+        .stat-box .stat { font-size: 64px; font-weight: 800; }
+        .stat-box p { color: rgba(255,255,255,0.8); margin: 8px 0 0; }
+        body.dark-mode .stat-box { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 1px solid #333; }
+        
+        .share-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 32px; margin: 48px 0; text-align: center; }
+        .share-section h3 { font-size: 18px; margin-bottom: 16px; color: var(--text); }
+        .share-form { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; }
+        .share-form input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); }
+        .share-form button { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .share-form button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Sales Framework</div>
+            <h1>PULL as a Discovery Framework</h1>
+            <div class="subtitle">How to start a sales call and know exactly what to look for</div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this document</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">1.5x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
+
+    <p class="intro">The first part of a sales call—or even the whole first call—is supposed to be "discovery." We're supposed to ask questions. Their words should inform our pitch and demo. But what questions should we ask? What are we trying to learn?</p>
+
+    <h2>The Problem</h2>
+    
+    <p>After watching roughly 3,000 sales calls from startups, scaleups, and "normal" companies, it's clear that nobody really knows what to look for in discovery. Founders don't know. Sales reps—even experienced ones—rarely know. And prospects sure as hell don't know.</p>
+    
+    <div class="stat-box">
+        <div class="stat">75-90%</div>
+        <p>Estimated time wasted in the average sales call</p>
+    </div>
+    
+    <p>When we fix this, startups tend to take off. The fastest-growing startup helped recently ($0→$6M in less than 3 months) attributes "knowing exactly what to look for in discovery" as the thing that helped them figure out what product to build and scale super fast.</p>
+
+    <h2>What Discovery Becomes</h2>
+    
+    <p>Without a framework, discovery turns into a game of whack-a-mole—a potpourri of random questions:</p>
+    
+    <ul class="problem-list">
+        <li><strong>Open-ended questions about current state, pain points, and problems...</strong> We learn interesting things that are mostly irrelevant.</li>
+        <li><strong>Leading questions that paint them into a corner...</strong> "If you could increase revenue without lifting a finger, would you?"</li>
+        <li><strong>Questions about the supply they want, not the demand they have...</strong> Which gives us a list of features they may or may not need.</li>
+        <li><strong>Questions from a qualification framework (like BANT or MEDDPICC)...</strong> Asking about "budget" or the "economic decisionmaker" before you understand what they want is awkward and offensive.</li>
+    </ul>
+    
+    <p>Prospects get annoyed with these questions but can't explain why. They often ask to "just see the product" to skip what feels like an interrogation.</p>
+    
+    <p>Then they get even more annoyed because we pitch something that doesn't fit their needs:</p>
+    
+    <div class="quote-block">
+        Here's the $900b problem we're solving in the world. Here's why it's even more urgent now. Here's why we're solving it. Here's our theory on the problem. Here's the overview of the solution. Here's how the product works at a detailed technical level.
+    </div>
+    
+    <p>The pitch is designed around an abstract problem that buyers don't actually have—or a problem they agree exists but isn't what they're trying to accomplish <em>right now</em>. The entire pitch becomes a mostly irrelevant lecture.</p>
+    
+    <div class="pull-quote">
+        In many cases, when buyers buy, they buy despite most of our sales call, not because of it—and they usually buy for reasons we don't understand.
+    </div>
+
+    <h2>PULL Is a Discovery Framework</h2>
+    
+    <p>You can use the PULL framework for your discovery framework. You should have this in your head—even in a doc—which you are filling out on a call.</p>
+    
+    <div class="framework-box">
+        <h3>What You're Trying to Understand</h3>
+        <ol>
+            <li><strong>P — Project:</strong> What exactly are they trying to accomplish? (The "project" on their to-do list)</li>
+            <li><strong>U — Urgency:</strong> Of all the things they could prioritize, why this thing, and why now? (Why it's urgent or unavoidable)</li>
+            <li><strong>L — List:</strong> What have they looked into and/or tried so far? (Their list of options)</li>
+            <li><strong>L — Limitations:</strong> Why aren't those things good enough? (The limitations of their options)</li>
+        </ol>
+    </div>
+    
+    <p>PULL is the minimum essential information to know what they want—whether the deal is outbound, inbound, SMB, enterprise. Once we know PULL, we know what to offer—something that fits their PULL, with no extraneous concepts, screens, or words.</p>
+
+    <h2>Example: AI Tool for Cloud Infrastructure</h2>
+    
+    <p>During a sales call, a prospective customer says:</p>
+    
+    <div class="quote-block">
+        "Yeah so we need to move our MVP from Vercel to something more serious because we're scaling now and have outgrown Vercel, and so we are considering bringing in a DevOps consultant to help us build our new platform."
+    </div>
+    
+    <p>Based on this quote, fill out the PULL framework:</p>
+    
+    <div class="pull-framework">
+        <h4>Their PULL (with question marks for unknowns)</h4>
+        <div class="pull-item">
+            <div class="pull-letter">P</div>
+            <div class="pull-content">
+                <strong>Move product onto "serious" infrastructure (?)</strong>
+                <span>What does "serious" mean to them?</span>
+            </div>
+        </div>
+        <div class="pull-item">
+            <div class="pull-letter">U</div>
+            <div class="pull-content">
+                <strong>Scaling, have "outgrown" Vercel (?)</strong>
+                <span>What does it mean to have "outgrown" Vercel?</span>
+            </div>
+        </div>
+        <div class="pull-item">
+            <div class="pull-letter">L</div>
+            <div class="pull-content">
+                <strong>DevOps consultant</strong>
+                <span>This is clear—they're considering a consultant.</span>
+            </div>
+        </div>
+        <div class="pull-item">
+            <div class="pull-letter">L</div>
+            <div class="pull-content">
+                <strong>(?)</strong>
+                <span>Why isn't a DevOps consultant good enough?</span>
+            </div>
+        </div>
+    </div>
+    
+    <p>Based on the framework and the question marks, you know exactly what to ask to fill out their PULL and have confidence you can pitch the right thing.</p>
+    
+    <h3>Scenario A</h3>
+    <div class="scenario-card">
+        <h5>What You Learn</h5>
+        <p>"Serious" infrastructure is, in their mind, infrastructure-as-code on AWS/GCP. They have "outgrown" Vercel because their backend has specific needs Vercel can't support. The DevOps consultant is quite expensive ($30k+).</p>
+    </div>
+    
+    <p><strong>Your pitch:</strong> "A way to create serious custom infra you can trust, at the same quality level as a DevOps consultant, for less than 10% of the cost."</p>
+    
+    <h3>Scenario B</h3>
+    <div class="scenario-card">
+        <h5>What You Learn</h5>
+        <p>Same as Scenario A, but with one difference: "I'm worried we're not going to be able to maintain what the DevOps consultant gives us."</p>
+    </div>
+    
+    <p><strong>Your pitch:</strong> "A way to create serious custom infra you can trust, at the same quality level as a DevOps consultant, but it's basically self-managing so you don't have to worry about maintaining it."</p>
+    
+    <div class="pull-quote">
+        Describing anything other than this gives the potential customer more things to think about—things not directly related to their PULL. The more random things they have to think about, the less likely they are to decide and buy.
+    </div>
+    
+    <h3>What to Demo?</h3>
+    <p>Maybe nothing! Maybe just the description is enough! Or if we need to demo something:</p>
+    <ul style="margin: 16px 0 24px 24px; color: var(--text-secondary);">
+        <li><strong>Scenario A:</strong> Something that indicates we can create serious infra—e.g., a cloud infra diagram our product generates.</li>
+        <li><strong>Scenario B:</strong> The diagram plus something to indicate it's mostly self-managing (e.g., infra alert + AI suggestion + simple "yes/no" for the engineer).</li>
+    </ul>
+
+    <h2>The Discovery Process</h2>
+    
+    <p>How to consistently get prospective customers to fill out the PULL framework:</p>
+    
+    <div class="flowchart">
+        <h4>The Playbook</h4>
+        <div class="flow-step">
+            <span class="step-num">1</span>
+            <p><strong>Ask why they took the call</strong> and what they're hoping to get out of it. This is now required for all calls—outbound or inbound. They will often fill out some piece of the PULL framework, and you can double-click into the other pieces.</p>
+        </div>
+        <div class="flow-step">
+            <span class="step-num">2</span>
+            <p><strong>If that doesn't work, ask 1-2 discovery questions</strong> trying to get them to explain some piece of their PULL. Example: "As it relates to QA and release cycles, what are you trying to change in the near term?" (This performs better than a very open-ended "what are your priorities?")</p>
+        </div>
+        <div class="flow-step">
+            <span class="step-num">3</span>
+            <p><strong>If that gets you nowhere, talk about what others have said</strong> and see if that rings a bell. You might have a "demand slide" showing what other people's PULL has been. If nothing resonates, say "Huh, seems like you're all set then?"</p>
+        </div>
+        <div class="flow-step">
+            <span class="step-num">4</span>
+            <p><strong>If that gets you nowhere, end the call early or "YOLO-a-demo"</strong>—show the product/pitch and see if any PULL-related synapse fires. Remember that anything they say could help you fill out the PULL framework.</p>
+        </div>
+    </div>
+    
+    <p>If they have PULL, this should get it out of them. If they don't have PULL, well, that's a different problem.</p>
+
+    <h2>The Key Insight</h2>
+    
+    <div class="framework-box">
+        <h3>What Changes When You Know PULL</h3>
+        <ul>
+            <li>Discovery might take 20 minutes or 5—but it's pointed in the right direction</li>
+            <li>You know what you're looking for—if they don't have PULL, they're not going to buy</li>
+            <li>You don't waste effort following up with non-buyers</li>
+            <li>Your pitch fits their actual needs, not abstract problems</li>
+            <li>Demo only what matters to their specific PULL</li>
+        </ul>
+    </div>
+    
+    <p>After you've filled out the PULL framework, you may need to add qualification questions from BANT/MEDDPICC. But that comes after:</p>
+    <ol style="margin: 16px 0 24px 24px; color: var(--text-secondary);">
+        <li>You give a conceptual overview of your supply</li>
+        <li>They say your supply sounds like it fits their demand</li>
+    </ol>
+    
+    <p>That's when qualification questions become natural rather than awkward and offensive.</p>
+
+    <div class="share-section">
+        <h3>Share</h3>
+        <form class="share-form" onsubmit="handleShare(event)">
+            <input type="email" placeholder="Their email" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Audio functionality using Web Speech API
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        let isPlaying = false;
+        let isPaused = false;
+        let currentRate = 1.5;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+
+        function getDocumentText() {
+            const content = document.body.cloneNode(true);
+            content.querySelectorAll('.audio-player, .share-section, .theme-toggle, script, style').forEach(el => el.remove());
+            let text = content.textContent || '';
+            text = text.replace(/\s+/g, ' ').trim();
+            return text.substring(0, 10000);
+        }
+
+        function toggleAudio() {
+            if (!synth) {
+                document.getElementById('audioStatus').textContent = 'Speech not supported';
+                return;
+            }
+
+            if (isPlaying && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Paused';
+                return;
+            }
+
+            if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+                return;
+            }
+
+            synth.cancel();
+            const text = getDocumentText();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentRate;
+
+            if (voices.length > 0) {
+                const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.lang.startsWith('en'));
+                if (preferred) utterance.voice = preferred;
+            }
+
+            utterance.onstart = () => {
+                isPlaying = true;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+            };
+
+            utterance.onend = () => {
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Click play to start';
+            };
+
+            utterance.onerror = (e) => {
+                if (e.error !== 'interrupted') {
+                    document.getElementById('audioStatus').textContent = 'Error: ' + e.error;
+                }
+                isPlaying = false;
+                isPaused = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+            };
+
+            synth.speak(utterance);
+
+            // Chrome workaround
+            setTimeout(() => {
+                if (synth.speaking && !synth.paused) {
+                    synth.pause();
+                    synth.resume();
+                }
+            }, 100);
+        }
+
+        function toggleSpeedMenu(e) {
+            e.stopPropagation();
+            document.getElementById('speedMenu').classList.toggle('open');
+        }
+
+        function setSpeed(rate) {
+            currentRate = rate;
+            document.getElementById('speedLabel').textContent = rate + 'x';
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('speedMenu').classList.remove('open');
+            
+            if (utterance) {
+                utterance.rate = rate;
+            }
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('speedMenu').classList.remove('open');
+        });
+
+        function handleShare(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input').value;
+            const subject = encodeURIComponent('PULL as a Discovery Framework');
+            const body = encodeURIComponent('Check out this sales discovery framework: ' + window.location.href);
+            window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+            e.target.innerHTML = '<p style="color: var(--accent); font-weight: 600;">Sent!</p>';
+        }
+    </script>
+</body>
+</html>
+
