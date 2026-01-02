@@ -3,12 +3,15 @@
  * Strategy Docs - ElevenLabs Audio Generator
  * 
  * Generates FULL audio for all strategy documents using ElevenLabs.
- * Handles long documents by chunking and concatenating audio.
+ * - Handles long documents by chunking and concatenating audio
+ * - Skips files that already have MP3s (use --force to regenerate)
+ * - Dynamically discovers files from folder structure
  * 
  * Usage:
- *   node scripts/generate-docs-audio.js
- *   node scripts/generate-docs-audio.js --file archetypes.html
- *   node scripts/generate-docs-audio.js --full  # Force regenerate all, no truncation
+ *   node scripts/generate-docs-audio.js           # Generate missing audio only
+ *   node scripts/generate-docs-audio.js --force   # Regenerate all audio
+ *   node scripts/generate-docs-audio.js --file capabilities.html  # Specific file
+ *   node scripts/generate-docs-audio.js --list    # List all docs
  */
 
 const fs = require('fs');
@@ -25,59 +28,73 @@ try {
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || process.env.ELEVEN_LABS_API_KEY || '6cd0b1a66c70e335ae812cdc6e9ff5c23211f6e373de9dc5602fecb3e0842946';
 const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1';
 
-// Use a clear, professional voice for documents
-const DOC_VOICE_ID = '21m00Tcm4TlvDq8ikWAM'; // "American Calm" - Professional, clear
+// Default Adrata voice for all articles and documents
+const DOC_VOICE_ID = 'uf0ZrRtyyJlbbGIn43uD'; // Adrata default voice - premium male narrator
 
 // Chunk size for ElevenLabs API (stay under 5000 to be safe)
 const CHUNK_SIZE = 4500;
 
-// All documents to generate audio for
-const DOCS = [
-  // Main docs
-  'docs/archetypes.html',
-  'docs/capabilities.html',
-  'docs/contagion.html',
-  'docs/conversion.html',
-  'docs/daily-sales-playbook.html',
-  'docs/demand.html',
-  'docs/frameworks.html',
-  'docs/greatest-salespeople.html',
-  'docs/history-of-sales-technology.html',
-  'docs/offers.html',
-  'docs/pains-and-challenges.html',
-  'docs/storytelling.html',
-  
-  // Internal Articles (Adrata-authored)
-  'docs/articles/internal/ai-agents-for-account-executives.html',
-  'docs/articles/internal/ai-agents-for-revops.html',
-  'docs/articles/internal/ai-agents-for-sales-leaders.html',
-  'docs/articles/internal/ai-agents-for-sales-managers.html',
-  'docs/articles/internal/ai-agents-for-sales-teams.html',
-  'docs/articles/internal/ai-agents-for-sdrs.html',
-  'docs/articles/internal/discovery.html',
-  'docs/articles/internal/game-ux.html',
-  'docs/articles/internal/pitch.html',
-  'docs/articles/internal/pull.html',
-  'docs/articles/internal/recursive.html',
-  
-  // External Articles (curated from Anthropic, OpenAI, etc.)
-  'docs/articles/external/10x-revenue-club.html',
-  'docs/articles/external/building-effective-agents.html',
-  'docs/articles/external/claude-agent-sdk.html',
-  'docs/articles/external/competition-is-for-losers.html',
-  'docs/articles/external/deep-research.html',
-  'docs/articles/external/long-running-agents.html',
-  'docs/articles/external/multi-agent-research.html',
-  'docs/articles/external/writing-effective-tools.html',
-  
-  // Talks
-  'docs/talks/software-era-of-ai.html',
-  'docs/talks/urgency-profits.html',
+// Base path for strategy docs
+const STRATEGY_PATH = path.join(__dirname, '../strategy');
+
+// Folders to scan for HTML files (in order)
+const DOC_FOLDERS = [
+  'docs/foundations',
+  'docs/strategy', 
+  'docs/playbooks',
+  'docs/articles/internal',
+  'docs/articles/external',
+  'docs/talks',
+  'docs/internal-docs',
 ];
 
-// Extract text content from HTML
+/**
+ * Dynamically discover all HTML files from configured folders
+ */
+function discoverDocs() {
+  const docs = [];
+  
+  for (const folder of DOC_FOLDERS) {
+    const folderPath = path.join(STRATEGY_PATH, folder);
+    
+    if (!fs.existsSync(folderPath)) {
+      continue;
+    }
+    
+    const files = fs.readdirSync(folderPath)
+      .filter(f => f.endsWith('.html'))
+      .map(f => `${folder}/${f}`);
+    
+    docs.push(...files);
+  }
+  
+  return docs;
+}
+
+/**
+ * Check if MP3 already exists for a given HTML file
+ */
+function hasExistingAudio(htmlPath) {
+  const mp3Path = htmlPath.replace('.html', '.mp3');
+  const fullPath = path.join(STRATEGY_PATH, mp3Path);
+  return fs.existsSync(fullPath);
+}
+
+/**
+ * Get file size in human-readable format
+ */
+function getFileSize(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  const stats = fs.statSync(filePath);
+  const mb = stats.size / (1024 * 1024);
+  return mb > 1 ? `${mb.toFixed(1)} MB` : `${(stats.size / 1024).toFixed(1)} KB`;
+}
+
+/**
+ * Extract text content from HTML
+ */
 function extractTextFromHtml(htmlPath) {
-  const fullPath = path.join(__dirname, '../strategy', htmlPath);
+  const fullPath = path.join(STRATEGY_PATH, htmlPath);
   
   if (!fs.existsSync(fullPath)) {
     console.error(`  ❌ File not found: ${fullPath}`);
@@ -90,9 +107,11 @@ function extractTextFromHtml(htmlPath) {
   let text = htmlContent
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<audio[\s\S]*?<\/audio>/gi, '')
     .replace(/<div class="audio-player[\s\S]*?<\/div>\s*<\/div>/gi, '')
+    .replace(/<div class="share-widget[\s\S]*?<\/div>\s*<\/form>\s*<\/div>/gi, '')
     .replace(/<div class="share-section[\s\S]*?<\/div>\s*<\/div>/gi, '')
-    .replace(/<div class="newsletter-widget[\s\S]*?<\/div>\s*<\/form>\s*<\/div>/gi, '')
+    .replace(/<div class="newsletter[\s\S]*?<\/div>\s*<\/div>/gi, '')
     .replace(/<button[^>]*>[\s\S]*?<\/button>/gi, '')
     .replace(/<nav[\s\S]*?<\/nav>/gi, '')
     .replace(/<header[\s\S]*?<\/header>/gi, '')
@@ -119,7 +138,9 @@ function extractTextFromHtml(htmlPath) {
   return text;
 }
 
-// Split text into chunks at sentence boundaries
+/**
+ * Split text into chunks at sentence boundaries
+ */
 function splitIntoChunks(text, maxChunkSize = CHUNK_SIZE) {
   const chunks = [];
   let currentChunk = '';
@@ -172,7 +193,9 @@ function splitIntoChunks(text, maxChunkSize = CHUNK_SIZE) {
   return chunks;
 }
 
-// Generate audio using ElevenLabs
+/**
+ * Generate audio using ElevenLabs
+ */
 async function generateAudioChunk(text, voiceId) {
   const response = await fetch(`${ELEVENLABS_API_URL}/text-to-speech/${voiceId}`, {
     method: 'POST',
@@ -201,7 +224,9 @@ async function generateAudioChunk(text, voiceId) {
   return Buffer.from(await response.arrayBuffer());
 }
 
-// Generate full audio by chunking and concatenating
+/**
+ * Generate full audio by chunking and concatenating
+ */
 async function generateFullAudio(text, voiceId) {
   const chunks = splitIntoChunks(text);
   
@@ -210,14 +235,22 @@ async function generateFullAudio(text, voiceId) {
     return await generateAudioChunk(chunks[0], voiceId);
   }
   
-  console.log(`  📦 Split into ${chunks.length} chunks for full audio`);
+  console.log(`  📦 Split into ${chunks.length} chunks`);
   
   const audioBuffers = [];
   
   for (let i = 0; i < chunks.length; i++) {
-    console.log(`  🎤 Generating chunk ${i + 1}/${chunks.length} (${chunks[i].length} chars)...`);
-    const audio = await generateAudioChunk(chunks[i], voiceId);
-    audioBuffers.push(audio);
+    const chunkLen = chunks[i].length;
+    process.stdout.write(`  🎤 Chunk ${i + 1}/${chunks.length} (${chunkLen} chars)...`);
+    
+    try {
+      const audio = await generateAudioChunk(chunks[i], voiceId);
+      audioBuffers.push(audio);
+      console.log(' ✓');
+    } catch (error) {
+      console.log(' ✗');
+      throw error;
+    }
     
     // Rate limit between chunks
     if (i < chunks.length - 1) {
@@ -226,61 +259,74 @@ async function generateFullAudio(text, voiceId) {
   }
   
   // Concatenate all audio buffers
-  // For MP3, we can simply concatenate the buffers
-  // Note: This works for same-format MP3s, but for perfect results you'd use ffmpeg
   const totalLength = audioBuffers.reduce((sum, buf) => sum + buf.length, 0);
   const combined = Buffer.concat(audioBuffers, totalLength);
   
   return combined;
 }
 
-// Get output path for audio file
+/**
+ * Get output path for audio file
+ */
 function getOutputPath(htmlPath) {
   const mp3Path = htmlPath.replace('.html', '.mp3');
-  return path.join(__dirname, '../strategy', mp3Path);
+  return path.join(STRATEGY_PATH, mp3Path);
 }
 
-// Main function
+/**
+ * Main function
+ */
 async function main() {
-  console.log('Strategy Docs - ElevenLabs Audio Generator (Full Audio)');
-  console.log('========================================================\n');
+  console.log('Strategy Docs - ElevenLabs Audio Generator');
+  console.log('==========================================\n');
   
-  if (!ELEVENLABS_API_KEY) {
-    console.error('❌ ELEVENLABS_API_KEY not found in environment');
-    process.exit(1);
+  // Parse arguments
+  const args = process.argv.slice(2);
+  const forceRegenerate = args.includes('--force') || args.includes('-f');
+  const listOnly = args.includes('--list') || args.includes('-l');
+  
+  // Discover all docs
+  const allDocs = discoverDocs();
+  
+  if (listOnly) {
+    console.log(`Found ${allDocs.length} documents:\n`);
+    for (const doc of allDocs) {
+      const hasAudio = hasExistingAudio(doc);
+      const mp3Path = path.join(STRATEGY_PATH, doc.replace('.html', '.mp3'));
+      const size = hasAudio ? getFileSize(mp3Path) : null;
+      console.log(`  ${hasAudio ? '✓' : '○'} ${doc}${size ? ` (${size})` : ''}`);
+    }
+    console.log(`\n✓ = has audio, ○ = missing audio`);
+    return;
   }
   
-  // Check for arguments
-  const args = process.argv.slice(2);
-  let docsToProcess = DOCS;
-  const forceRegenerate = args.includes('--full') || args.includes('--force');
-  
-  if (args.includes('--file') || args.includes('-f')) {
-    const fileIndex = args.indexOf('--file') !== -1 ? args.indexOf('--file') : args.indexOf('-f');
-    const fileName = args[fileIndex + 1];
-    if (fileName) {
-      docsToProcess = DOCS.filter(d => d.includes(fileName));
-      if (docsToProcess.length === 0) {
-        console.error(`No matching doc found for: ${fileName}`);
-        console.log('Available docs:', DOCS.map(d => path.basename(d)).join(', '));
-        process.exit(1);
-      }
+  // Check for specific file
+  let docsToProcess = allDocs;
+  const fileArgIndex = args.findIndex(a => a === '--file' || a === '--only');
+  if (fileArgIndex !== -1 && args[fileArgIndex + 1]) {
+    const fileName = args[fileArgIndex + 1];
+    docsToProcess = allDocs.filter(d => d.includes(fileName));
+    if (docsToProcess.length === 0) {
+      console.error(`No matching doc found for: ${fileName}`);
+      console.log('Use --list to see all available docs');
+      process.exit(1);
     }
   }
   
-  // Check for --truncated flag to only process previously truncated docs
-  if (args.includes('--truncated')) {
-    // These are the docs that were truncated in the previous run
-    const truncatedDocs = [
-      'docs/contagion.html',
-      'docs/conversion.html', 
-      'docs/demand.html',
-      'docs/frameworks.html',
-      'docs/offers.html',
-      'docs/storytelling.html',
-    ];
-    docsToProcess = truncatedDocs;
-    console.log('🔄 Regenerating only previously truncated documents...\n');
+  // Filter to only missing audio (unless --force)
+  if (!forceRegenerate) {
+    const before = docsToProcess.length;
+    docsToProcess = docsToProcess.filter(d => !hasExistingAudio(d));
+    const skipped = before - docsToProcess.length;
+    if (skipped > 0) {
+      console.log(`⏭️  Skipping ${skipped} docs with existing audio (use --force to regenerate)\n`);
+    }
+  }
+  
+  if (docsToProcess.length === 0) {
+    console.log('✅ All documents already have audio!');
+    console.log('   Use --force to regenerate all audio');
+    return;
   }
   
   console.log(`Processing ${docsToProcess.length} documents...\n`);
@@ -290,7 +336,8 @@ async function main() {
   
   for (const docPath of docsToProcess) {
     const docName = path.basename(docPath, '.html');
-    console.log(`📄 ${docName}`);
+    const folder = path.dirname(docPath).split('/').pop();
+    console.log(`📄 [${folder}] ${docName}`);
     
     // Extract text
     const text = extractTextFromHtml(docPath);
@@ -299,7 +346,7 @@ async function main() {
       continue;
     }
     
-    console.log(`  📝 Extracted ${text.length} characters`);
+    console.log(`  📝 ${text.length.toLocaleString()} characters`);
     
     // Generate audio
     try {
@@ -315,7 +362,8 @@ async function main() {
       }
       
       fs.writeFileSync(outputPath, audio);
-      console.log(`  ✅ Saved: ${path.basename(outputPath)} (${(audio.length / 1024).toFixed(1)} KB)`);
+      const size = getFileSize(outputPath);
+      console.log(`  ✅ Saved: ${path.basename(outputPath)} (${size})`);
       successCount++;
       
       // Rate limit between documents
@@ -329,7 +377,7 @@ async function main() {
     console.log();
   }
   
-  console.log('========================================================');
+  console.log('==========================================');
   console.log(`✅ Success: ${successCount}/${docsToProcess.length}`);
   if (errorCount > 0) {
     console.log(`❌ Errors: ${errorCount}`);
