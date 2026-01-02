@@ -16,11 +16,11 @@ const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1';
 
 // Voice IDs - Using high-quality ElevenLabs voices
 const VOICES = {
-  // Niko (Narrator) - Warm captivating storyteller, perfect for audiobooks
+  // Niko (Narrator) - User-selected premium voice for audiobook narration
   narrator: {
-    id: 'JBFqnCBsd6RMkjVDRZzb', // "George" - Warm, Captivating Storyteller (British, narrative_story)
+    id: 'uf0ZrRtyyJlbbGIn43uD', // User-specified premium male voice
     name: 'Niko (Narrator)',
-    description: 'First-person narrator, VP of Sales - warm storytelling voice'
+    description: 'First-person narrator, VP of Sales - premium audiobook voice'
   },
   
   // Marco Valenti - CEO, authoritative commanding
