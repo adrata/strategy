@@ -10,8 +10,8 @@ class AIReasoning {
     // Clean API key - remove newlines and trim whitespace
     const cleanedApiKey = (apiKey || process.env.ANTHROPIC_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
     this.apiKey = cleanedApiKey;
-    // Use claude-sonnet-4-5 (latest Claude 4.5 Sonnet model)
-    this.model = 'claude-sonnet-4-5'; // Claude 4.5 Sonnet (latest stable version)
+    // Use Claude Opus 4.5 for highest quality reasoning
+    this.model = 'claude-opus-4-5-20251101'; // Claude Opus 4.5 (most capable model)
     this.baseUrl = 'https://api.anthropic.com/v1/messages';
     
     if (!this.apiKey) {

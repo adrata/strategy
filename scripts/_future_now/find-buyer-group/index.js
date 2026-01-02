@@ -31,6 +31,44 @@ class SmartBuyerGroupPipeline {
     this.targetCompany = options.targetCompany || options.linkedinUrl;
     this.options = options; // Store all options for passing to modules
     
+    // 🎯 STRICT SALES MODE: When enabled, ONLY finds sales/revenue roles
+    // - No fallback to random employees
+    // - Skips companies without sales people
+    // - Returns empty buyer group if no sales hunters found
+    this.strictSalesMode = options.strictSalesMode || false;
+    
+    // 🎯 HUNTER WEIGHTED MODE: Full buyer groups but exclude farmers
+    // - Builds complete buyer groups with all roles
+    // - Excludes "farmer" roles (Account Managers, Strategic AEs, CS)
+    // - Prioritizes hunters in scoring
+    this.hunterWeightedMode = options.hunterWeightedMode || false;
+    
+    // Sales hunter keywords for strict mode filtering
+    this.salesHunterTitles = [
+      'chief revenue officer', 'cro', 'vp sales', 'vice president sales',
+      'vp revenue', 'svp sales', 'head of sales', 'sales director',
+      'director of sales', 'rvp', 'regional vice president', 'commercial',
+      'account executive', 'ae ', 'sales manager', 'bdr manager', 'sdr manager',
+      'business development', 'sales development', 'revenue operations',
+      'sales operations', 'sales enablement'
+    ];
+    
+    // FARMER roles to exclude (they manage existing accounts, not new business)
+    this.farmerTitles = [
+      'account manager', 'strategic account', 'global account', 'named account',
+      'key account', 'enterprise account manager', 'customer success',
+      'client success', 'renewal', 'expansion', 'retention'
+    ];
+    
+    // Titles to EXCLUDE in strict mode
+    this.excludedTitles = [
+      'marketing', 'hr', 'human resources', 'recruiter', 'recruiting', 'talent',
+      'people', 'customer success', 'account manager', 'strategic account',
+      'global account', 'partner', 'channel', 'support', 'engineer', 'product',
+      'design', 'analyst', 'finance', 'legal', 'operations manager',
+      'executive assistant', 'executive business partner', 'office manager'
+    ];
+    
     // Initialize modules
     this.companyIntel = new CompanyIntelligence(this.prisma, this.workspaceId);
     this.previewSearch = new PreviewSearch(process.env.CORESIGNAL_API_KEY);
@@ -62,6 +100,115 @@ class SmartBuyerGroupPipeline {
   }
 
   /**
+   * 🎯 Check if a person is a sales hunter (for strict sales mode)
+   * Sales hunters are people who acquire new business, not farmers who expand existing accounts
+   * @param {string} title - Person's job title
+   * @returns {boolean} True if they are a sales hunter
+   */
+  isSalesHunter(title) {
+    const t = (title || '').toLowerCase();
+    
+    // First check if excluded (farmers, marketing, HR, etc.)
+    const isExcluded = this.excludedTitles.some(ex => t.includes(ex));
+    if (isExcluded) return false;
+    
+    // Then check if they have a sales hunter title
+    const isSales = this.salesHunterTitles.some(s => t.includes(s));
+    return isSales;
+  }
+
+  /**
+   * 🌾 Check if a person is a "farmer" (manages existing accounts, not new business)
+   * Farmers include: Account Managers, Strategic AEs, Customer Success, Renewals
+   * @param {string} title - Person's job title
+   * @returns {boolean} True if they are a farmer
+   */
+  isFarmer(title) {
+    const t = (title || '').toLowerCase();
+    return this.farmerTitles.some(f => t.includes(f));
+  }
+
+  /**
+   * 🎯 Filter buyer group to only sales hunters (for strict sales mode)
+   * @param {Array} buyerGroup - Array of buyer group members
+   * @returns {Array} Filtered array with only sales hunters
+   */
+  filterToSalesHunters(buyerGroup) {
+    if (!this.strictSalesMode) return buyerGroup;
+    
+    const hunters = buyerGroup.filter(m => this.isSalesHunter(m.title));
+    const removed = buyerGroup.length - hunters.length;
+    
+    if (removed > 0) {
+      console.log(`🎯 Strict Sales Mode: Filtered ${removed} non-sales members, keeping ${hunters.length} sales hunters`);
+    }
+    
+    return hunters;
+  }
+
+  /**
+   * 🎯 Filter out farmers from buyer group (for hunter weighted mode)
+   * Keeps full buyer group but removes farmer roles
+   * @param {Array} buyerGroup - Array of buyer group members
+   * @returns {Array} Filtered array without farmers
+   */
+  filterOutFarmers(buyerGroup) {
+    if (!this.hunterWeightedMode) return buyerGroup;
+
+    const filtered = buyerGroup.filter(m => !this.isFarmer(m.title));
+    const removed = buyerGroup.length - filtered.length;
+
+    if (removed > 0) {
+      console.log(`🎯 Hunter Weighted: Removed ${removed} farmer roles, keeping ${filtered.length} members`);
+    }
+
+    return filtered;
+  }
+
+  /**
+   * 🧠 Calculate optimal max results target for intelligent multi-query
+   * Based on company size, buyer group needs, and cost efficiency
+   *
+   * @param {object} intelligence - Company intelligence data
+   * @param {object} params - Pipeline parameters
+   * @returns {number} Target max results for multi-query
+   */
+  calculateMaxResultsTarget(intelligence, params) {
+    const companySize = intelligence.employeeCount || 100;
+    const buyerGroupTarget = params.buyerGroupSize?.max || 15;
+
+    // Base calculation: We want enough candidates to find a quality buyer group
+    // Rule of thumb: Need ~10x candidates to find ideal buyer group after filtering
+    const baseTarget = buyerGroupTarget * 10;
+
+    // Adjust based on company size
+    let maxTarget;
+    if (companySize <= 100) {
+      // Small company: Get everyone we can
+      maxTarget = Math.min(companySize, 200);
+    } else if (companySize <= 500) {
+      // Medium company: Good sample
+      maxTarget = Math.min(baseTarget, 300);
+    } else if (companySize <= 2000) {
+      // Large company: Larger sample needed
+      maxTarget = Math.min(baseTarget * 1.5, 500);
+    } else {
+      // Enterprise: Need strategic sampling
+      maxTarget = Math.min(baseTarget * 2, 750);
+    }
+
+    // Never exceed the total available
+    const totalAvailable = intelligence.totalAvailable || companySize;
+    maxTarget = Math.min(maxTarget, totalAvailable);
+
+    // Minimum useful amount
+    maxTarget = Math.max(maxTarget, 50);
+
+    console.log(`📊 Max results target: ${maxTarget} (company: ${companySize} employees, buyer group: ${buyerGroupTarget})`);
+    return maxTarget;
+  }
+
+  /**
    * Run the complete buyer group discovery pipeline
    * @param {object} company - Company object from database
    * @returns {object} Complete results with buyer group and report
@@ -87,7 +234,7 @@ class SmartBuyerGroupPipeline {
       }
       
       // Stage 2: Wide Preview Search (cheap) - with adaptive expansion
-      let previewEmployees = await this.executeStage('preview-search', async () => {
+      let previewResult = await this.executeStage('preview-search', async () => {
         return await this.previewSearch.discoverAllStakeholders(
           {
             linkedinUrl: intelligence.linkedinUrl,
@@ -101,15 +248,20 @@ class SmartBuyerGroupPipeline {
           this.options.usaOnly || false
         );
       });
-      
+
+      // Extract employees array from result (backward compatibility)
+      let previewEmployees = previewResult.employees || [];
+      let totalAvailable = previewResult.totalAvailable || previewEmployees.length;
+      let hitLimit = previewResult.hitLimit || false;
+
       // ENHANCED: Try alternative company identifiers if no employees found
       if (previewEmployees.length === 0) {
         console.log('⚠️ No employees found with primary identifiers, trying alternatives...');
-        
+
         // Strategy 1: Try company name search if we have LinkedIn/website but no results
         if (intelligence.companyName && !intelligence.linkedinUrl && !intelligence.website) {
           console.log('🔍 Strategy 1: Trying company name search...');
-          const nameEmployees = await this.previewSearch.discoverAllStakeholders(
+          const nameResult = await this.previewSearch.discoverAllStakeholders(
             {
               companyName: intelligence.companyName,
               linkedinUrl: null,
@@ -121,8 +273,11 @@ class SmartBuyerGroupPipeline {
             this.options.customFiltering || null,
             this.options.usaOnly || false
           );
+          const nameEmployees = nameResult.employees || [];
           if (nameEmployees.length > 0) {
             previewEmployees = nameEmployees;
+            totalAvailable = nameResult.totalAvailable || nameEmployees.length;
+            hitLimit = nameResult.hitLimit || false;
             console.log(`✅ Found ${previewEmployees.length} employees via company name search`);
           }
         }
@@ -133,7 +288,7 @@ class SmartBuyerGroupPipeline {
           if (domain.split('.').length > 2) {
             const parentDomain = domain.split('.').slice(-2).join('.');
             console.log(`🔍 Strategy 2: Trying parent domain: ${parentDomain}...`);
-            const parentEmployees = await this.previewSearch.discoverAllStakeholders(
+            const parentResult = await this.previewSearch.discoverAllStakeholders(
               {
                 linkedinUrl: intelligence.linkedinUrl,
                 website: `https://${parentDomain}`,
@@ -145,13 +300,16 @@ class SmartBuyerGroupPipeline {
               this.options.customFiltering || null,
               this.options.usaOnly || false
             );
+            const parentEmployees = parentResult.employees || [];
             if (parentEmployees.length > 0) {
               previewEmployees = parentEmployees;
+              totalAvailable = parentResult.totalAvailable || parentEmployees.length;
+              hitLimit = parentResult.hitLimit || false;
               console.log(`✅ Found ${previewEmployees.length} employees via parent domain`);
             }
           }
         }
-        
+
         // Strategy 3: Try LinkedIn company search by name if we have company name
         if (previewEmployees.length === 0 && intelligence.companyName && !intelligence.linkedinUrl) {
           console.log('🔍 Strategy 3: Trying LinkedIn company search by name...');
@@ -160,7 +318,7 @@ class SmartBuyerGroupPipeline {
             const companySearchResult = await this.companyIntel.searchCompanyByName(intelligence.companyName);
             if (companySearchResult && companySearchResult.linkedin_url) {
               console.log(`✅ Found LinkedIn URL: ${companySearchResult.linkedin_url}`);
-              const linkedinEmployees = await this.previewSearch.discoverAllStakeholders(
+              const linkedinResult = await this.previewSearch.discoverAllStakeholders(
                 {
                   linkedinUrl: companySearchResult.linkedin_url,
                   website: intelligence.website,
@@ -172,8 +330,11 @@ class SmartBuyerGroupPipeline {
                 this.options.customFiltering || null,
                 this.options.usaOnly || false
               );
+              const linkedinEmployees = linkedinResult.employees || [];
               if (linkedinEmployees.length > 0) {
                 previewEmployees = linkedinEmployees;
+                totalAvailable = linkedinResult.totalAvailable || linkedinEmployees.length;
+                hitLimit = linkedinResult.hitLimit || false;
                 intelligence.linkedinUrl = companySearchResult.linkedin_url; // Update intelligence
                 console.log(`✅ Found ${previewEmployees.length} employees via LinkedIn company search`);
               }
@@ -188,7 +349,7 @@ class SmartBuyerGroupPipeline {
         if ((previewEmployees.length === 0 || previewEmployees.length < 5) && intelligence.companyName) {
           console.log(`🔍 Strategy 4: Trying company name search (found ${previewEmployees.length} employees, need more)...`);
           // Search by company name only (no LinkedIn URL) with no filtering to cast wider net
-          const nameEmployees = await this.previewSearch.discoverAllStakeholders(
+          const nameResult = await this.previewSearch.discoverAllStakeholders(
             {
               companyName: intelligence.companyName,
               linkedinUrl: null, // Don't use LinkedIn URL - search by name only
@@ -200,26 +361,31 @@ class SmartBuyerGroupPipeline {
             this.options.customFiltering || null,
             this.options.usaOnly || false
           );
+          const nameEmployees = nameResult.employees || [];
           if (nameEmployees.length > previewEmployees.length) {
             // Merge results, preferring name search results (they're more comprehensive)
             const existingIds = new Set(previewEmployees.map(e => e.id));
             const newEmployees = nameEmployees.filter(e => !existingIds.has(e.id));
             previewEmployees = [...previewEmployees, ...newEmployees];
+            totalAvailable = Math.max(totalAvailable, nameResult.totalAvailable || nameEmployees.length);
+            hitLimit = hitLimit || nameResult.hitLimit || false;
             console.log(`✅ Found ${newEmployees.length} additional employees via company name search (total: ${previewEmployees.length})`);
           } else if (nameEmployees.length > 0 && previewEmployees.length === 0) {
             // If we had 0 and name search found some, use those
             previewEmployees = nameEmployees;
+            totalAvailable = nameResult.totalAvailable || nameEmployees.length;
+            hitLimit = nameResult.hitLimit || false;
             console.log(`✅ Found ${previewEmployees.length} employees via company name search`);
           }
         }
       }
-      
+
       // Strategy 4: Try company name search if we have very few results (< 5 employees)
       // This helps when LinkedIn URL search returns limited results but we need more candidates
       if (previewEmployees.length > 0 && previewEmployees.length < 5 && intelligence.companyName) {
         console.log(`🔍 Strategy 4: Trying company name search (found ${previewEmployees.length} employees, need more)...`);
         // Search by company name only (no LinkedIn URL) with no filtering to cast wider net
-        const nameEmployees = await this.previewSearch.discoverAllStakeholders(
+        const nameResult = await this.previewSearch.discoverAllStakeholders(
           {
             companyName: intelligence.companyName,
             linkedinUrl: null, // Don't use LinkedIn URL - search by name only
@@ -231,22 +397,25 @@ class SmartBuyerGroupPipeline {
           this.options.customFiltering || null,
           this.options.usaOnly || false
         );
+        const nameEmployees = nameResult.employees || [];
         if (nameEmployees.length > previewEmployees.length) {
           // Merge results, preferring name search results (they're more comprehensive)
           const existingIds = new Set(previewEmployees.map(e => e.id));
           const newEmployees = nameEmployees.filter(e => !existingIds.has(e.id));
           previewEmployees = [...previewEmployees, ...newEmployees];
+          totalAvailable = Math.max(totalAvailable, nameResult.totalAvailable || nameEmployees.length);
+          hitLimit = hitLimit || nameResult.hitLimit || false;
           console.log(`✅ Found ${newEmployees.length} additional employees via company name search (total: ${previewEmployees.length})`);
         }
       }
-      
+
       // Adaptive expansion: If we found very few employees, search more pages
       const minEmployeesNeeded = Math.max(5, Math.floor((intelligence.employeeCount || 100) * 0.1));
       if (previewEmployees.length < minEmployeesNeeded && previewEmployees.length < 50 && previewEmployees.length > 0) {
         const additionalPages = Math.min(5, Math.ceil((minEmployeesNeeded - previewEmployees.length) / 50));
         if (additionalPages > 0) {
           console.log(`📈 Found only ${previewEmployees.length} employees, expanding search by ${additionalPages} more pages...`);
-          const additionalEmployees = await this.previewSearch.discoverAllStakeholders(
+          const additionalResult = await this.previewSearch.discoverAllStakeholders(
             {
               linkedinUrl: intelligence.linkedinUrl,
               website: intelligence.website,
@@ -258,18 +427,57 @@ class SmartBuyerGroupPipeline {
             this.options.customFiltering || null,
             this.options.usaOnly || false
           );
-          
+
+          const additionalEmployees = additionalResult.employees || [];
+
           // Merge and deduplicate by ID
           const existingIds = new Set(previewEmployees.map(e => e.id));
           const newEmployees = additionalEmployees.filter(e => !existingIds.has(e.id));
           previewEmployees = [...previewEmployees, ...newEmployees];
+          totalAvailable = Math.max(totalAvailable, additionalResult.totalAvailable || additionalEmployees.length);
+          hitLimit = hitLimit || additionalResult.hitLimit || false;
           console.log(`✅ Expanded search found ${newEmployees.length} additional employees (total: ${previewEmployees.length})`);
         }
       }
       
+      // 🧠 INTELLIGENT MULTI-QUERY: Expand search when hitting API limit
+      // This uses cheap preview queries (search credits) to get more candidates
+      // before expensive collect operations
+      if (hitLimit && this.options.customFiltering && previewEmployees.length < totalAvailable) {
+        const maxResultsTarget = this.calculateMaxResultsTarget(intelligence, params);
+
+        if (previewEmployees.length < maxResultsTarget && totalAvailable > previewEmployees.length) {
+          console.log(`🧠 INTELLIGENT MULTI-QUERY: Expanding from ${previewEmployees.length} to target ${maxResultsTarget}...`);
+          console.log(`   Total available in Coresignal: ${totalAvailable}`);
+
+          try {
+            const expandedEmployees = await this.previewSearch.intelligentMultiQuery(
+              {
+                linkedinUrl: intelligence.linkedinUrl,
+                website: intelligence.website,
+                companyName: intelligence.companyName
+              },
+              this.options.customFiltering,
+              maxResultsTarget
+            );
+
+            if (expandedEmployees.length > previewEmployees.length) {
+              const newCount = expandedEmployees.length - previewEmployees.length;
+              console.log(`✅ Intelligent multi-query found ${newCount} additional employees`);
+              previewEmployees = expandedEmployees;
+            } else {
+              console.log(`⚠️ Intelligent multi-query did not find additional unique employees`);
+            }
+          } catch (error) {
+            console.log(`⚠️ Intelligent multi-query failed: ${error.message}`);
+            // Continue with existing results
+          }
+        }
+      }
+
       this.pipelineState.totalEmployees = previewEmployees.length;
       this.pipelineState.costs.preview = previewEmployees.length * 0.1; // $0.10 per preview
-      
+
       // Stage 3: Smart Scoring & Filtering (free)
       const scoredEmployees = await this.executeStage('smart-scoring', async () => {
         const scoring = new SmartScoring(intelligence, this.dealSize, this.productCategory, this.options.customFiltering || null);
@@ -291,6 +499,37 @@ class SmartBuyerGroupPipeline {
         );
         console.log(`🎯 Relaxed filtering: ${relevantEmployees.length} relevant candidates`);
       }
+      
+      // 🎯 HUNTER WEIGHTED MODE: Full buyer groups but exclude farmers
+      if (this.hunterWeightedMode && !this.strictSalesMode) {
+        console.log('🎯 Hunter Weighted Mode: Building full buyer group, excluding farmers');
+        
+        // Filter out farmer roles from the candidate pool
+        const beforeCount = relevantEmployees.length;
+        relevantEmployees = relevantEmployees.filter(emp => !this.isFarmer(emp.title));
+        const removed = beforeCount - relevantEmployees.length;
+        
+        if (removed > 0) {
+          console.log(`🎯 Hunter Weighted: Removed ${removed} farmer roles (Account Managers, Strategic AEs, CS)`);
+        }
+        console.log(`🎯 Hunter Weighted: ${relevantEmployees.length} candidates remaining`);
+      }
+      
+      // 🎯 STRICT SALES MODE: Skip all fallbacks - only keep sales hunters
+      if (this.strictSalesMode) {
+        console.log('🎯 Strict Sales Mode: Only keeping sales/revenue roles, no fallbacks');
+        
+        // Filter to only sales hunters from the scored employees
+        relevantEmployees = scoredEmployees.filter(emp => this.isSalesHunter(emp.title));
+        console.log(`🎯 Strict Sales Mode: Found ${relevantEmployees.length} sales hunters`);
+        
+        if (relevantEmployees.length === 0) {
+          console.log('⚠️ No sales hunters found - SKIPPING this company (strict mode)');
+          console.log('   This company may not have USA-based sales people');
+          // Return early with empty result
+        }
+      } else {
+        // Original fallback logic for non-strict mode
       
       // If still zero, fall back to CEO/C-level executives
       if (relevantEmployees.length === 0 && scoredEmployees.length > 0) {
@@ -336,6 +575,7 @@ class SmartBuyerGroupPipeline {
           .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))
           .slice(0, Math.min(10, scoredEmployees.length)); // Take up to 10 best
         console.log(`🎯 Final fallback: ${relevantEmployees.length} candidates (using all available)`);
+        }
       }
       
       // CRITICAL: If we have NO employees at all, this is a failure case
@@ -1332,15 +1572,14 @@ class SmartBuyerGroupPipeline {
         if (!verifiedPhone && member.linkedinUrl) {
           console.log(`   🔍 Discovering phone for ${member.name}...`);
           
-          // Use Lusha LinkedIn enrichment for phone discovery
+          // Try Lusha first for phone discovery
           if (process.env.LUSHA_API_KEY) {
             try {
-              // Clean Lusha API key - remove newlines and trim whitespace
+              console.log(`   🔗 Lusha enrichment: ${member.linkedinUrl.split('/').pop()}...`);
               const cleanedLushaKey = (process.env.LUSHA_API_KEY || '').trim().replace(/\n/g, '').replace(/\r/g, '');
               const lushaResult = await this.enrichWithLushaLinkedIn(member.linkedinUrl, cleanedLushaKey);
               
               if (lushaResult && (lushaResult.phone1 || lushaResult.mobilePhone || lushaResult.directDialPhone)) {
-                // Pick best phone (prioritize direct dial > mobile > work)
                 verifiedPhone = lushaResult.directDialPhone || lushaResult.mobilePhone || lushaResult.phone1;
                 phoneConfidence = lushaResult.phoneDataQuality || 75;
                 phoneType = this.determineLushaPhoneType(lushaResult);
@@ -1350,13 +1589,37 @@ class SmartBuyerGroupPipeline {
                   confidence: phoneConfidence,
                   reasoning: `Discovered via Lusha LinkedIn enrichment: ${phoneType}`
                 }];
-                verificationCost = 0.01; // Lusha LinkedIn lookup cost
+                verificationCost = 0.01;
                 phonesDiscovered++;
-                
-                console.log(`   ✅ Discovered phone: ${verifiedPhone} (${phoneConfidence}% confidence)`);
+                console.log(`   ✅ Lusha phone: ${verifiedPhone} (${phoneConfidence}% confidence)`);
               }
             } catch (error) {
-              console.log(`   ⚠️ Phone discovery failed: ${error.message}`);
+              console.log(`   ⚠️ Lusha Phone API error: ${error.message?.substring(0, 50)}`);
+            }
+          }
+          
+          // Fallback to Prospeo if Lusha didn't find phone
+          if (!verifiedPhone && process.env.PROSPEO_API_KEY) {
+            try {
+              console.log(`   🔗 Prospeo enrichment: ${member.linkedinUrl.split('/').pop()}...`);
+              const prospeoResult = await this.enrichWithProspeoLinkedIn(member.linkedinUrl);
+              
+              if (prospeoResult && prospeoResult.phone) {
+                verifiedPhone = prospeoResult.phone;
+                phoneConfidence = 70;
+                phoneType = 'mobile';
+                phoneVerificationDetails = [{
+                  source: 'Prospeo',
+                  verified: true,
+                  confidence: phoneConfidence,
+                  reasoning: 'Discovered via Prospeo LinkedIn enrichment'
+                }];
+                verificationCost = 0.02;
+                phonesDiscovered++;
+                console.log(`   ✅ Prospeo phone: ${verifiedPhone} (${phoneConfidence}% confidence)`);
+              }
+            } catch (error) {
+              console.log(`   ⚠️ Prospeo Phone API error: ${error.message?.substring(0, 50)}`);
             }
           }
         }
@@ -1493,6 +1756,54 @@ class SmartBuyerGroupPipeline {
       
     } catch (error) {
       console.log(`   ⚠️ LinkedIn Phone error:`, error.message);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Enrich contact with phone number from Prospeo LinkedIn lookup
+   * @param {string} linkedinUrl - LinkedIn profile URL
+   * @returns {object} Prospeo enrichment result with phone
+   */
+  async enrichWithProspeoLinkedIn(linkedinUrl) {
+    try {
+      const prospeoKey = process.env.PROSPEO_API_KEY;
+      if (!prospeoKey) return null;
+      
+      const response = await fetch('https://api.prospeo.io/linkedin-email-finder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-KEY': prospeoKey
+        },
+        body: JSON.stringify({ url: linkedinUrl })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (!data.error && data.response) {
+          const result = {
+            email: typeof data.response.email === 'string' 
+              ? data.response.email 
+              : data.response.email?.email,
+            phone: data.response.phone || data.response.mobile_phone || null,
+            firstName: data.response.first_name,
+            lastName: data.response.last_name,
+            title: data.response.title,
+            company: data.response.company
+          };
+          
+          return result;
+        }
+      } else {
+        const errorText = await response.text();
+        console.log(`   ⚠️ Prospeo API error: ${response.status} - ${errorText.substring(0, 50)}`);
+      }
+      
+    } catch (error) {
+      console.log(`   ⚠️ Prospeo error:`, error.message);
     }
     
     return null;
@@ -2114,13 +2425,21 @@ class SmartBuyerGroupPipeline {
         // Extract phone from Coresignal data
         const coresignalPhone = this.extractPhoneFromCoresignal(member.fullProfile);
         
+        // Extract LinkedIn URL from Coresignal fullProfile (prioritize fullProfile over preview data)
+        const coresignalLinkedIn = member.fullProfile?.linkedin_url || 
+                                   member.fullProfile?.linkedinUrl || 
+                                   member.fullProfile?.profile_url ||
+                                   null;
+        // Use LinkedIn URL from fullProfile if available, otherwise use preview data
+        const linkedinUrl = coresignalLinkedIn || member.linkedinUrl || null;
+        
         // Check if person already exists
         // Use LinkedIn URL as primary identifier, fallback to email if no LinkedIn
         const existingPerson = await this.prisma.people.findFirst({
           where: {
             workspaceId: this.workspaceId,
             OR: [
-              member.linkedinUrl ? { linkedinUrl: member.linkedinUrl } : null,
+              linkedinUrl ? { linkedinUrl: linkedinUrl } : null,
               email ? { email: email } : null
             ].filter(Boolean)
           }
@@ -2270,7 +2589,8 @@ class SmartBuyerGroupPipeline {
                 }
               },
               aiLastUpdated: new Date(),
-              // LinkedIn data
+              // LinkedIn data - update from fullProfile if available
+              linkedinUrl: linkedinUrl || existingPerson.linkedinUrl,
               linkedinConnections: coresignalData.connections_count,
               linkedinFollowers: coresignalData.followers_count,
               // Skills and experience
@@ -2307,7 +2627,7 @@ class SmartBuyerGroupPipeline {
               emailVerified: member.emailVerified || false,
               emailConfidence: member.emailConfidence || 0,
               phone: coresignalPhone || member.phone,
-              linkedinUrl: member.linkedinUrl,
+              linkedinUrl: linkedinUrl, // Use LinkedIn URL from fullProfile (prioritized over preview data)
               // Store verification details in enrichedData
               enrichedData: {
                 ...aiIntelligence,

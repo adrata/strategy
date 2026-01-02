@@ -1,0 +1,109 @@
+{
+  "context": {
+    "seller": {
+      "name": "Valence Security",
+      "website": "https://www.valencesecurity.com",
+      "product": "SaaS Security Posture Management (SSPM)",
+      "valueProposition": "Discover and secure risky SaaS-to-SaaS integrations, OAuth tokens, and third-party app permissions before they become breaches.",
+      "keyCapabilities": [
+        "Shadow SaaS discovery",
+        "OAuth token monitoring",
+        "Third-party app risk assessment",
+        "Automated remediation workflows",
+        "Compliance reporting (SOC 2, GDPR)"
+      ]
+    },
+    "buyer": {
+      "name": "Freshworks",
+      "website": "https://www.freshworks.com",
+      "industry": "SaaS / Enterprise Software",
+      "ticker": "NASDAQ: FRSH",
+      "products": [
+        "Freshdesk",
+        "Freshsales",
+        "Freshservice",
+        "Freshchat",
+        "Freshmarketer"
+      ],
+      "relevantContext": [
+        "Public SaaS company with ~5,000+ employees",
+        "Heavy internal SaaS usage across departments",
+        "Customer data security is critical for reputation",
+        "SOC 2 and GDPR compliance requirements",
+        "Global operations with distributed teams"
+      ]
+    },
+    "dealSize": 250000,
+    "generatedAt": "2025-12-16T20:46:02.061Z"
+  },
+  "buyerGroup": {
+    "totalMembers": 4,
+    "members": [
+      {
+        "name": "Murali Swaminathan",
+        "title": "Chief Technology Officer",
+        "department": "C-Suite",
+        "role": "decision",
+        "roleConfidence": 80,
+        "roleReasoning": "Selected as Decision Maker for $250,000 deal: High product relevance (65%) and department fit (10/10) for sales software. IT/Technology leaders approve all software and platform purchases.",
+        "email": "",
+        "phone": "+1 669-262-3379",
+        "linkedin": "https://www.linkedin.com/in/muraliswaminathan",
+        "verified": false
+      },
+      {
+        "name": "Elavazhagan Varatharajan",
+        "title": "Director Of Engineering",
+        "department": "Engineering and Technical",
+        "role": "champion",
+        "roleConfidence": 64,
+        "roleReasoning": "Selected as Champion for advocacy and implementation: Director-level operational leaders drive adoption and change management. High champion potential based on role and department alignment.",
+        "email": "",
+        "phone": "+91 95977 35805",
+        "linkedin": "https://www.linkedin.com/in/elavazhaganv",
+        "verified": false
+      },
+      {
+        "name": "Ashwin Subrahmanyam",
+        "title": "Director - Engineering",
+        "department": "Engineering and Technical",
+        "role": "champion",
+        "roleConfidence": 64,
+        "roleReasoning": "Selected as Champion for advocacy and implementation: Director-level operational leaders drive adoption and change management. High champion potential based on role and department alignment.",
+        "email": "",
+        "phone": "+91 44 6748 2470",
+        "linkedin": "https://www.linkedin.com/in/ashwinsubrahmanyam",
+        "verified": false
+      },
+      {
+        "name": "Nathasha Bai",
+        "title": "Lead - Finance Operations",
+        "department": "Finance & Accounting",
+        "role": "stakeholder",
+        "roleConfidence": 70,
+        "roleReasoning": "Added for financial coverage",
+        "email": "",
+        "phone": "",
+        "linkedin": "https://www.linkedin.com/in/nathasha-bai-773124a2",
+        "verified": false
+      }
+    ]
+  },
+  "company": {
+    "name": "Freshworks",
+    "website": "https://www.freshworks.com",
+    "employeeCount": 9544,
+    "industry": "Software Development"
+  },
+  "costs": {
+    "preview": 3,
+    "collect": 4,
+    "total": 7.03,
+    "email": 0,
+    "phone": 0.03
+  },
+  "metadata": {
+    "pipelineVersion": "1.0",
+    "workspaceId": "01KCMCTXM3ZTKJMHV5WPVZRN4A"
+  }
+}

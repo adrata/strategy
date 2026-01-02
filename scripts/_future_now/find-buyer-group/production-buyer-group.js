@@ -62,6 +62,8 @@ class ProductionBuyerGroupPipeline {
         pipelineOptions.dealSize = config.dealSizeRange || this.dealSize;
         pipelineOptions.productCategory = config.productCategory || 'sales';
         pipelineOptions.productName = config.productName;
+        
+        // ENHANCED: Include title exclusions and all filtering options
         pipelineOptions.customFiltering = {
           departments: {
             primary: config.departmentFiltering?.primaryDepartments || [],
@@ -70,16 +72,30 @@ class ProductionBuyerGroupPipeline {
           },
           titles: {
             primary: config.titleFiltering?.primaryTitles || [],
-            secondary: config.titleFiltering?.secondaryTitles || []
-          }
+            secondary: config.titleFiltering?.secondaryTitles || [],
+            exclude: config.titleFiltering?.excludedTitles || []  // CRITICAL: Include title exclusions
+          },
+          // Special requirements for smarter filtering
+          bestClosingTitle: config.specialRequirements?.bestClosingTitle || null,
+          alwaysInclude: config.specialRequirements?.alwaysInclude || []
         };
         pipelineOptions.buyerGroupSize = config.buyerGroupSizing;
         pipelineOptions.rolePriorities = config.rolePriorities;
-        pipelineOptions.usaOnly = config.usaOnly || false; // Add USA-only filter from config
+        pipelineOptions.usaOnly = config.usaOnly || false;
         
         console.log(`💰 Deal Size: $${pipelineOptions.dealSize.toLocaleString()}`);
         console.log(`🏷️  Product: ${pipelineOptions.productName || 'N/A'}`);
         console.log(`📊 Category: ${pipelineOptions.productCategory}`);
+        
+        // Log exclusions for visibility
+        const excludedDepts = config.departmentFiltering?.excludedDepartments || [];
+        const excludedTitles = config.titleFiltering?.excludedTitles || [];
+        if (excludedDepts.length > 0) {
+          console.log(`🚫 Excluded Depts: ${excludedDepts.join(', ')}`);
+        }
+        if (excludedTitles.length > 0) {
+          console.log(`🚫 Excluded Titles: ${excludedTitles.join(', ')}`);
+        }
         if (pipelineOptions.usaOnly) {
           console.log(`🇺🇸 Location Filter: USA-only enabled`);
         }

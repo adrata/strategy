@@ -1,4 +1,4 @@
-export type TestDriveMode = 'run-1' | 'run-many';
+export type TestDriveMode = 'run-1' | 'run-many' | 'pull-intelligence' | 'industry-ranking' | 'industry-comparison';
 
 export interface CompanyInput {
   name?: string;
@@ -75,5 +75,256 @@ export interface RunManyResults {
   totalProcessed: number;
   totalSuccessful: number;
   totalFailed: number;
+}
+
+// =============================================================================
+// PULL Intelligence (OBP) Types
+// =============================================================================
+
+export interface PullIntelligenceFormData {
+  yourCompany: CompanyInput;
+  targetCompany: CompanyInput;
+  productContext?: {
+    productName?: string;
+    problemStatement?: string;
+    targetDepartments?: string[];
+  };
+}
+
+export interface PullChampion {
+  name: string;
+  title: string;
+  tenure: string;
+  tenureDays?: number;
+  windowRemaining: string | number;
+  previousCompany?: string;
+  previousTitle?: string;
+  urgencyLevel?: number;
+  knowledgeLevel?: string;
+  insight?: string;
+}
+
+export interface PullTension {
+  score: number;
+  implication: string;
+  data?: Record<string, unknown>;
+}
+
+export interface PullTensions {
+  ratio: PullTension;
+  leadership: PullTension & { champions?: number };
+  growth: PullTension & { companyGrowth?: number };
+  resource: PullTension & { fundingStage?: string };
+  reporting: PullTension;
+}
+
+export interface PullActionWindow {
+  type: string;
+  daysRemaining?: number;
+  urgency: 'high' | 'moderate' | 'low';
+  description: string;
+}
+
+export interface PullPredictions {
+  buyingProbability: number;
+  actionWindow: {
+    windows: PullActionWindow[];
+    primaryWindow?: PullActionWindow;
+    optimalTiming?: string;
+  };
+  decisionPath?: {
+    champion?: string;
+    reportsTo?: string;
+    budgetAuthority?: string;
+    stakeholders?: Array<{
+      role: string;
+      person: string;
+      need?: string;
+      objection?: string;
+    }>;
+  };
+  behavioralPatterns?: Array<{
+    principle: string;
+    description: string;
+    application: string;
+    tactic: string;
+  }>;
+}
+
+export interface PullStrategy {
+  pitchAngle?: {
+    primary?: {
+      audience: string;
+      message: string;
+      format?: string;
+    };
+    secondary?: Array<{
+      audience: string;
+      message: string;
+      format?: string;
+    }>;
+    avoid?: string[];
+    openingAngle?: string;
+  };
+  timing?: {
+    urgency: 'high' | 'moderate' | 'low';
+    daysToAct?: number;
+    rationale?: string[];
+    bestApproach?: string;
+  };
+  objections?: Array<{
+    source: string;
+    objection: string;
+    response: string;
+  }>;
+}
+
+export interface PullIntelligenceResult {
+  success: boolean;
+  company: string;
+  pullScore: number;
+  classification: {
+    category: 'HIGH_PULL' | 'PULL' | 'HIGH_CONSIDERATION' | 'CONSIDERATION' | 'LOW_PRIORITY' | 'NOT_IN_MARKET';
+    description: string;
+    score: number;
+  };
+  executiveSummary?: string;
+  champion?: PullChampion;
+  tensions: PullTensions;
+  predictions?: PullPredictions;
+  strategy?: PullStrategy;
+  internalDialogue?: string;
+  htmlReportUrl?: string;
+  analyzedAt: string;
+  processingTime?: number;
+  error?: string;
+}
+
+// =============================================================================
+// Industry Ranking (PULL Scan) Types
+// =============================================================================
+
+export interface IndustryRankingFormData {
+  yourCompany: CompanyInput;
+  industry: string;
+  employeeRange: { min: number; max: number };
+  location?: string;
+  maxCompanies: number;
+  deepAnalysisCount: number;
+}
+
+export interface IndustryRankingCompany {
+  rank: number;
+  company: string;
+  domain?: string;
+  coresignalId?: string;
+  pullScore: number;
+  classification: {
+    category: 'HIGH_PULL' | 'PULL' | 'HIGH_CONSIDERATION' | 'CONSIDERATION' | 'LOW_PRIORITY' | 'NOT_IN_MARKET';
+    description: string;
+  };
+  champion?: PullChampion;
+  tensions?: PullTensions;
+  quickInsight: string;
+  analyzed: boolean;
+  preScreenFactors?: Array<{
+    factor: string;
+    impact: number;
+    value?: string;
+  }>;
+}
+
+export interface IndustryRankingResult {
+  success: boolean;
+  totalScanned: number;
+  totalAnalyzed: number;
+  rankings: IndustryRankingCompany[];
+  costUsed?: {
+    coresignalCredits: number;
+    claudeTokens: number;
+  };
+  scanDuration: number;
+  error?: string;
+}
+
+export interface IndustryRankingProgress {
+  stage: 'discovery' | 'collection' | 'pre_screening' | 'deep_analysis' | 'complete';
+  totalCompanies: number;
+  scanned: number;
+  preScreened: number;
+  deepAnalyzed: number;
+  currentCompany: string | null;
+}
+
+// =============================================================================
+// Industry Comparison Types
+// =============================================================================
+
+export type ComparisonTier = 'pulse' | 'scan' | 'deep';
+
+export interface IndustryComparisonFormData {
+  yourCompany: CompanyInput;
+  industries: string[];
+  tier: ComparisonTier;
+  employeeRange?: { min: number; max: number };
+  location?: string;
+}
+
+export interface IndustryScoreDimension {
+  value: string | number;
+  score: number;
+  weight: number;
+  interpretation: string;
+}
+
+export interface IndustryScoring {
+  totalScore: number;
+  dimensions: {
+    pullConcentration: IndustryScoreDimension;
+    marketSize: IndustryScoreDimension;
+    growthRate: IndustryScoreDimension;
+    competitiveIntensity: IndustryScoreDimension;
+    dealVelocity: IndustryScoreDimension;
+    accessibility: IndustryScoreDimension;
+    regulatoryPressure: IndustryScoreDimension;
+  };
+  highPullCompanies: Array<{
+    company: string;
+    pullScore: number;
+    champion: string | null;
+  }>;
+  companiesScanned: number;
+  companiesWithPull: number;
+}
+
+export interface IndustryRecommendation {
+  action: 'PRIORITIZE' | 'FOCUS' | 'TEST' | 'DEPRIORITIZE';
+  priority: number;
+  rationale: string;
+  insights: string[];
+  topTargets: Array<{
+    company: string;
+    pullScore: number;
+    champion: string | null;
+  }>;
+}
+
+export interface IndustryComparisonResultItem {
+  rank: number | null;
+  industry: string;
+  scoring: IndustryScoring | null;
+  recommendation: IndustryRecommendation | null;
+  error?: string;
+}
+
+export interface IndustryComparisonResult {
+  success: boolean;
+  tier: string;
+  industriesCompared: number;
+  results: IndustryComparisonResultItem[];
+  topRecommendation: IndustryComparisonResultItem | null;
+  comparisonDuration: number;
+  estimatedCreditsUsed: number;
+  error?: string;
 }
 

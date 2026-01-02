@@ -199,33 +199,33 @@ class CompanyIntelligence {
     const employeeCount = intelligence.employeeCount || 100;
     
     // Company-size-aware search strategy
+    // IMPORTANT: Preview API maximum = 5 pages (100 results) per Coresignal documentation
     let searchStrategy, searchSize, maxPreviewPages, filteringLevel;
-    
+
     if (employeeCount <= 100) {
       // Small companies: Get ALL employees for comprehensive understanding
       // Preview is cheap ($0.10), so we can afford to get everyone
       searchStrategy = 'comprehensive';
-      searchSize = employeeCount; // Get everyone
-      maxPreviewPages = Math.max(5, Math.ceil(employeeCount / 50)); // At least 5 pages (250 people) or more
+      searchSize = Math.min(100, employeeCount); // Preview API max = 100 results
+      maxPreviewPages = Math.min(5, Math.max(3, Math.ceil(employeeCount / 20))); // Preview API max = 5 pages (20 per page)
       filteringLevel = 'none'; // No filtering - analyze everyone
     } else if (employeeCount <= 500) {
-      // Medium companies: Get at least 100-150 people for good coverage
-      // Preview is cheap, so we can afford to search more
+      // Medium companies: Get at least 100 people for good coverage
       searchStrategy = 'representative';
-      searchSize = Math.max(150, Math.floor(employeeCount * 0.8)); // At least 150 people
-      maxPreviewPages = Math.max(5, Math.ceil(searchSize / 50)); // At least 5 pages
+      searchSize = 100; // Preview API max = 100 results (5 pages × 20 per page)
+      maxPreviewPages = 5; // Preview API maximum = 5 pages per Coresignal docs
       filteringLevel = 'light'; // Light filtering - keep more roles
     } else if (employeeCount <= 2000) {
-      // Large companies: Get at least 200 people for representative sample
+      // Large companies: Sample 100 people (preview API limit)
       searchStrategy = 'sampling';
-      searchSize = Math.max(200, Math.floor(employeeCount * 0.5));
-      maxPreviewPages = Math.max(5, Math.ceil(searchSize / 50)); // At least 5 pages
+      searchSize = 100; // Preview API max = 100 results
+      maxPreviewPages = 5; // Preview API maximum = 5 pages per Coresignal docs
       filteringLevel = 'moderate'; // Moderate filtering
     } else {
-      // Enterprise: Get at least 250 people for focused search
+      // Enterprise: Sample 100 people with strict filtering
       searchStrategy = 'focused';
-      searchSize = Math.max(250, Math.floor(employeeCount * 0.3));
-      maxPreviewPages = Math.max(6, Math.ceil(searchSize / 50)); // At least 6 pages
+      searchSize = 100; // Preview API max = 100 results
+      maxPreviewPages = 5; // Preview API maximum = 5 pages (100 results) per Coresignal docs
       filteringLevel = 'strict'; // Strict filtering - only relevant roles
     }
     
@@ -370,6 +370,19 @@ class CompanyIntelligence {
                 }
               } else {
                 console.log(`   ⚠️ Collect endpoint failed: ${companyResponse.status}`);
+                // CRITICAL FIX: Use enrich data directly when collect endpoint fails
+                // The enrich endpoint already has all the key data we need
+                console.log(`   ✅ Using enrich endpoint data directly (collect failed)`);
+                return {
+                  id: enrichData.id || enrichData.data?.id,
+                  name: enrichData.company_name || enrichData.data?.company_name,
+                  company_name: enrichData.company_name || enrichData.data?.company_name,
+                  linkedin_url: enrichData.linkedin_url || enrichData.data?.linkedin_url,
+                  website: enrichData.website || enrichData.data?.website,
+                  employees_count: enrichData.employees_count || enrichData.data?.employees_count,
+                  industry: enrichData.industry || enrichData.data?.industry,
+                  type: enrichData.type || enrichData.data?.type
+                };
               }
             } else {
               console.log(`   ⚠️ Enrich endpoint response missing company ID`);
@@ -928,18 +941,45 @@ class CompanyIntelligence {
       const data = await response.json();
       
       if (Array.isArray(data) && data.length > 0) {
-        // Get full data for first result
-        const companyId = data[0];
-        const companyResponse = await fetch(`${baseUrl}/company_multi_source/collect/${companyId}`, {
-          method: 'GET',
+        // CRITICAL FIX: Use preview endpoint to get full data without separate collect call
+        // This avoids credit exhaustion and gives us data to validate
+        const previewResponse = await fetch(`${baseUrl}/company_multi_source/search/es_dsl/preview?items_per_page=5`, {
+          method: 'POST',
           headers: {
             'apikey': apiKey,
+            'Content-Type': 'application/json',
             'Accept': 'application/json'
-          }
+          },
+          body: JSON.stringify(query)
         });
 
-        if (companyResponse.ok) {
-          return await companyResponse.json();
+        if (previewResponse.ok) {
+          const companies = await previewResponse.json();
+          
+          if (Array.isArray(companies) && companies.length > 0) {
+            // Validate each result and pick the best match
+            let bestMatch = null;
+            let bestScore = 0;
+            
+            for (const company of companies) {
+              const foundCompanyName = company.company_name || company.name || '';
+              const score = this.calculateNameSimilarity(companyName, foundCompanyName);
+              
+              // Require minimum 70% similarity to prevent wrong matches
+              if (score >= 0.7 && score > bestScore) {
+                bestMatch = company;
+                bestScore = score;
+              }
+            }
+            
+            if (bestMatch) {
+              console.log(`✅ Found valid company match: ${bestMatch.company_name || bestMatch.name} (similarity: ${(bestScore * 100).toFixed(1)}%)`);
+              return bestMatch;
+            } else {
+              console.log(`⚠️  No valid company match found (all results below 70% similarity threshold)`);
+              return null;
+            }
+          }
         }
       }
 

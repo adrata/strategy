@@ -1,0 +1,709 @@
+{
+  "context": {
+    "seller": {
+      "name": "TruthKeep.ai",
+      "website": "https://truthkeep.ai",
+      "product": "AI Intelligence Platform for Semiconductors",
+      "valueProposition": "Unifies scattered signals across forums, CRM, and support data for real-time intelligence"
+    },
+    "buyer": {
+      "name": "Renesas Electronics Corporation",
+      "website": "https://www.renesas.com",
+      "industry": "Semiconductor Manufacturing",
+      "products": "MCUs, Analog Components, Power Management, SoCs",
+      "focusAreas": [
+        "IoT",
+        "Industrial Automation",
+        "Robotics",
+        "HMI"
+      ]
+    },
+    "discoveredAt": "2025-12-17T18:17:22.249Z"
+  },
+  "company": {
+    "name": "Renesas Electronics",
+    "website": "https://www.renesas.com",
+    "linkedinUrl": "https://www.linkedin.com/company/renesas",
+    "industry": "Semiconductor Manufacturing",
+    "employeeCount": 11591,
+    "revenue": null
+  },
+  "product": {
+    "name": "AI Intelligence Platform for Semiconductors",
+    "description": "Unifies scattered signals across forums, CRM systems, and support data to provide real-time intelligence",
+    "category": "custom",
+    "dealSize": 450000,
+    "dealSizeRange": {
+      "min": 300000,
+      "max": 600000
+    }
+  },
+  "buyerGroup": {
+    "totalMembers": 3,
+    "members": [
+      {
+        "name": "David Kraft",
+        "title": "Director",
+        "department": "C-Suite",
+        "role": "decision",
+        "roleConfidence": 60,
+        "roleReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "email": "",
+        "phone": "+49 211 65031122",
+        "linkedin": "https://www.linkedin.com/in/david-kraft-bb80b6265",
+        "influenceScore": 3,
+        "painPoints": [
+          {
+            "title": "Fragmented AI Model Validation Across Product Lines",
+            "description": "With Renesas's vast portfolio of semiconductor products spanning automotive, IoT, and industrial applications, validating AI models across different chip architectures is extremely complex and time-consuming. Each product line requires different validation approaches, creating bottlenecks in bringing AI-enabled semiconductors to market and increasing the risk of performance inconsistencies.",
+            "rootCause": "Lack of unified AI intelligence platform that can standardize testing and validation protocols across diverse semiconductor architectures and use cases.",
+            "frequency": "daily",
+            "impact": "Extended time-to-market for new AI-capable semiconductor products by 3-6 months, potentially losing competitive advantage in fast-moving segments like automotive ADAS and edge AI. Increased engineering costs due to duplicated validation efforts across product teams, potentially adding $2-3M annually in operational overhead.",
+            "urgency": "high",
+            "urgencyDrivers": "Semiconductor industry is rapidly consolidating around AI capabilities; competitors like NVIDIA, Qualcomm, and Intel are accelerating AI chip releases. Customer demand for validated AI solutions in automotive (ISO 26262) and industrial sectors requires faster certification cycles.",
+            "relatedMetrics": [
+              "Time-to-market for AI-enabled products",
+              "AI model validation cycle time",
+              "Cross-platform compatibility rate",
+              "Engineering resource utilization",
+              "Product certification costs"
+            ]
+          },
+          {
+            "title": "Limited Real-World AI Performance Predictability",
+            "description": "Semiconductor customers deploying Renesas chips in AI applications struggle to predict actual performance in production environments versus lab conditions. This gap between theoretical chip specifications and real-world AI workload performance creates customer dissatisfaction, increased support tickets, and potential design-in losses.",
+            "rootCause": "Insufficient AI intelligence platform capabilities to simulate diverse deployment scenarios and workload patterns before customer implementation.",
+            "frequency": "weekly",
+            "impact": "Customer churn risk increases as 20-30% of design wins fail to meet expected AI performance benchmarks, damaging Renesas's reputation in emerging AI markets. Support and field application engineering costs escalate as teams troubleshoot unexpected performance issues post-deployment.",
+            "urgency": "high",
+            "urgencyDrivers": "Major automotive and industrial customers are making multi-year platform decisions now; inability to guarantee AI performance predictability could result in losing strategic design wins worth $50M+ over product lifecycles. Customer expectations for AI inference accuracy and latency guarantees are becoming contractual requirements.",
+            "relatedMetrics": [
+              "Customer satisfaction scores (CSAT/NPS)",
+              "Design-win conversion rate",
+              "Field failure rate",
+              "Support ticket volume",
+              "AI inference accuracy variance",
+              "Customer retention rate"
+            ]
+          },
+          {
+            "title": "Inefficient AI-Semiconductor Co-Design Process",
+            "description": "Engineering teams lack integrated tools to optimize both AI algorithms and semiconductor hardware simultaneously, leading to suboptimal solutions where either the chip is over-specified (costly) or under-powered (performance issues). This sequential design approach creates multiple iteration cycles and delays innovation.",
+            "rootCause": "Absence of AI intelligence platform that enables concurrent hardware-software optimization and provides actionable insights for chip architecture decisions based on AI workload analysis.",
+            "frequency": "monthly",
+            "impact": "While not immediately critical, the cumulative effect significantly impacts Renesas's ability to compete in the $67B AI semiconductor market projected by 2025. Next-generation product roadmaps are at risk if co-design efficiency isn't improved within the next 12-18 months.",
+            "urgency": "medium",
+            "urgencyDrivers": "Next-generation automotive platforms (2025-2027 model years) require commitment to semiconductor specifications within the next 6-9 months.",
+            "relatedMetrics": [
+              "Product development cycle time",
+              "Design iteration count",
+              "Gross margin percentage",
+              "Silicon area efficiency",
+              "Power consumption per TOPS (AI operations)",
+              "R&D cost per product launch"
+            ]
+          },
+          {
+            "title": "Lack of Competitive AI Benchmark Intelligence",
+            "description": "Without comprehensive visibility into how Renesas's AI-enabled semiconductors perform against competitors across various workloads and use cases, the company struggles to position products effectively and identify critical capability gaps. Sales teams lack data-driven differentiation stories, and product planning operates with incomplete competitive intelligence.",
+            "rootCause": "No centralized AI intelligence platform to continuously benchmark Renesas products against competitive offerings across standardized and customer-specific AI workloads.",
+            "frequency": "quarterly",
+            "impact": "Lost revenue opportunities estimated at $15-25M annually due to inability to clearly articulate AI performance advantages in competitive evaluations. Strategic product roadmap decisions are made with incomplete data, risking misalignment with market demands and potentially wasting $5-10M in R&D investment on non-differentiated features.",
+            "urgency": "medium",
+            "urgencyDrivers": "Major customer RFPs in automotive and industrial segments are becoming more sophisticated in AI performance requirements; need concrete benchmark data to compete effectively in Q2-Q3 evaluation cycles.",
+            "relatedMetrics": [
+              "Win rate in competitive evaluations",
+              "Sales cycle length",
+              "Average selling price (ASP) premium",
+              "Market share in AI semiconductor segments",
+              "Competitive displacement rate",
+              "Product positioning effectiveness score"
+            ]
+          },
+          {
+            "title": "Scaling AI Support Across Global Customer Base",
+            "description": "As Renesas's customers increasingly deploy AI applications on its semiconductor platforms, the demand for AI-specific technical support, optimization guidance, and best practices has overwhelmed existing field application engineering resources. The company cannot scale AI expertise fast enough to support 11,000+ employees and thousands of customers globally.",
+            "rootCause": "Lack of AI intelligence platform that provides self-service optimization tools, automated recommendations, and scalable knowledge base for customers and internal teams.",
+            "frequency": "daily",
+            "impact": "Customer satisfaction declines as response times for AI-related technical queries extend from 24 hours to 5-7 days, risking account relationships worth $100M+ annually. FAE team burnout and turnover increases as specialized AI engineers are stretched across too many accounts, with recruitment costs for replacement talent exceeding $200K per hire.",
+            "urgency": "high",
+            "urgencyDrivers": "Customer frustration is mounting with 40-60% of support tickets now AI-related; major accounts are explicitly requesting dedicated AI support as a condition for expanding design-in commitments. Competitive vendors offering better AI enablement tools are being considered as alternatives.",
+            "relatedMetrics": [
+              "Average response time for technical queries",
+              "FAE utilization rate",
+              "Employee turnover in technical roles",
+              "Customer effort score (CES)",
+              "Support cost per customer",
+              "AI-related escalation rate"
+            ]
+          }
+        ],
+        "personalizedStrategy": null
+      },
+      {
+        "name": "Robin Thum",
+        "title": "Key Account Manager - Automotive",
+        "department": "Sales",
+        "role": "champion",
+        "roleConfidence": 60,
+        "roleReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "email": "",
+        "phone": "",
+        "linkedin": "https://www.linkedin.com/in/robin-thum-016756237",
+        "influenceScore": 3,
+        "painPoints": [
+          {
+            "title": "Automotive Customers Demand AI-Enabled Semiconductor Solutions",
+            "description": "Key automotive accounts are increasingly requiring semiconductors with integrated AI capabilities for autonomous driving, ADAS, and smart cockpit applications. Robin likely faces pressure to articulate complex AI semiconductor value propositions to automotive engineers and procurement teams who have limited understanding of AI chip architectures and performance benchmarks.",
+            "rootCause": "The automotive industry's rapid shift toward software-defined vehicles and autonomous systems requires semiconductors with AI processing capabilities that traditional products don't adequately address.",
+            "frequency": "weekly",
+            "impact": "Without clear AI intelligence data and competitive positioning, Robin risks losing key accounts to competitors like NVIDIA, Qualcomm, or Intel who can better demonstrate AI performance metrics. This directly threatens account retention and expansion opportunities in the high-value automotive segment worth hundreds of millions in potential pipeline.",
+            "urgency": "high",
+            "urgencyDrivers": "Automotive OEMs are making platform decisions now for 2025-2027 vehicle launches; missing these design-win windows means 5-7 year exclusion from programs. The automotive semiconductor market is consolidating around AI-capable suppliers.",
+            "relatedMetrics": [
+              "Account retention rate",
+              "Design win conversion rate",
+              "Average deal size in automotive segment",
+              "Time-to-close for AI semiconductor opportunities",
+              "Share of wallet with key automotive accounts"
+            ]
+          },
+          {
+            "title": "Lack of Real-Time Intelligence on Competitor AI Solutions",
+            "description": "Robin needs to defend Renesas' position against aggressive competitors in automotive AI semiconductors but likely lacks comprehensive, real-time intelligence on competitors' AI chip roadmaps, performance benchmarks, and pricing strategies. This information gap makes it difficult to proactively position Renesas solutions and respond effectively during customer evaluations.",
+            "rootCause": "The AI semiconductor landscape evolves rapidly with frequent product launches, performance improvements, and partnerships that are difficult to track manually across multiple competitors.",
+            "frequency": "daily",
+            "impact": "Without competitive AI intelligence, Robin may be blindsided during customer discussions when competitors introduce new capabilities or pricing models. This reactive posture weakens negotiating position and credibility with technical buyers, potentially costing millions in lost opportunities where Renesas actually has superior solutions but can't prove it effectively.",
+            "urgency": "high",
+            "urgencyDrivers": "Automotive customers conduct rigorous competitive evaluations with detailed technical and commercial scorecards. Major competitors are aggressively investing in automotive AI, making the competitive window narrow for establishing Renesas as the preferred AI semiconductor partner.",
+            "relatedMetrics": [
+              "Win rate against specific competitors",
+              "Competitive displacement rate",
+              "Sales cycle length",
+              "Proposal-to-win ratio",
+              "Customer satisfaction scores on technical expertise"
+            ]
+          },
+          {
+            "title": "Inability to Quantify AI ROI for Automotive Customers",
+            "description": "Automotive buyers require detailed business cases showing how AI-enabled semiconductors will reduce system costs, improve performance, or enable new revenue streams. Robin likely struggles to provide customer-specific ROI calculations that account for power consumption, processing efficiency, development time savings, and total cost of ownership across the vehicle lifecycle.",
+            "rootCause": "Traditional semiconductor sales focus on technical specs rather than business outcomes, and AI intelligence platforms that could generate these insights are not currently available or integrated into the sales process.",
+            "frequency": "weekly",
+            "impact": "Automotive procurement cycles are becoming more financially sophisticated, requiring stronger business justification. CFOs and supply chain leaders are increasingly involved in semiconductor selection, demanding clear financial value beyond technical performance.",
+            "urgency": "medium",
+            "urgencyDrivers": "",
+            "relatedMetrics": [
+              "Average sales cycle duration",
+              "Discount rate on AI semiconductor products",
+              "Deal slippage rate",
+              "Gross margin percentage",
+              "Customer acquisition cost"
+            ]
+          },
+          {
+            "title": "Fragmented Customer Intelligence Across Global Automotive Accounts",
+            "description": "As a Key Account Manager for a global semiconductor company, Robin likely manages relationships across multiple regions, divisions, and vehicle platforms within major automotive OEMs. Critical intelligence about customer AI projects, pain points, decision-makers, and competitive threats is probably scattered across emails, CRM notes, and individual team members' knowledge rather than consolidated in an accessible AI-driven platform.",
+            "rootCause": "Enterprise semiconductor sales involve complex stakeholder networks and long sales cycles, but traditional CRM systems don't effectively capture or surface AI-specific opportunity intelligence needed for strategic account planning.",
+            "frequency": "daily",
+            "impact": "This fragmentation causes Robin to miss cross-selling opportunities, duplicate efforts across regions, and fail to identify early warning signs of account risk. It also prevents effective coordination with Renesas' technical teams who could provide AI solutions if they knew about specific customer challenges earlier in the development cycle.",
+            "urgency": "medium",
+            "urgencyDrivers": "Key automotive accounts represent 60-80% of semiconductor revenue but are increasingly consolidating suppliers. Missing signals about customer dissatisfaction or emerging needs could result in losing preferred supplier status worth tens of millions annually.",
+            "relatedMetrics": [
+              "Account penetration rate",
+              "Cross-sell and upsell revenue",
+              "Customer lifetime value",
+              "Number of active projects per account",
+              "Response time to customer inquiries"
+            ]
+          },
+          {
+            "title": "Technical Credibility Gap in AI Semiconductor Conversations",
+            "description": "Automotive customers' AI engineering teams ask increasingly sophisticated questions about neural network acceleration, inference performance, power efficiency, and software toolchains that go beyond traditional semiconductor specifications. Robin, coming from a sales and field service background, likely needs better tools and intelligence to quickly access technical answers, competitive comparisons, and application-specific AI benchmarks during customer meetings.",
+            "rootCause": "The convergence of AI software and semiconductor hardware creates a knowledge gap for sales professionals trained in traditional chip sales, while customers' technical requirements have become exponentially more complex.",
+            "frequency": "weekly",
+            "impact": "Credibility issues with technical buyers slow relationship building and require excessive escalation to engineering teams, extending sales cycles and reducing Robin's ability to independently advance opportunities. This dependency on technical resources also limits the number of opportunities Robin can effectively manage, constraining revenue growth.",
+            "urgency": "medium",
+            "urgencyDrivers": "Automotive AI buyers prefer working with trusted advisors who understand their technical challenges rather than traditional sales reps. Competitors with better-equipped sales teams using AI intelligence platforms gain faster access to decision-makers and earlier involvement in design specifications.",
+            "relatedMetrics": [
+              "Number of meetings progressed without technical support",
+              "Technical win rate in evaluations",
+              "Sales capacity utilization",
+              "Engineering resource hours per deal",
+              "Customer engagement scores"
+            ]
+          }
+        ],
+        "personalizedStrategy": null
+      },
+      {
+        "name": "Jinyoung Oh",
+        "title": "Sales Account Manager",
+        "department": "Sales",
+        "role": "champion",
+        "roleConfidence": 60,
+        "roleReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "email": "",
+        "phone": "+82 2-2020-8874",
+        "linkedin": "https://www.linkedin.com/in/jinyoung-oh-98b12664",
+        "influenceScore": 3,
+        "painPoints": [
+          {
+            "title": "Inability to Demonstrate AI Differentiation to Technical Buyers",
+            "description": "As a Sales Account Manager at Renesas Electronics, Jinyoung likely struggles to articulate the specific AI capabilities and performance advantages of semiconductor products to increasingly sophisticated buyers. Technical evaluators demand concrete AI benchmarks, inference speeds, and power efficiency metrics that traditional product sheets don't adequately address.",
+            "rootCause": "Semiconductor sales teams lack real-time AI performance intelligence and competitive positioning data that aligns with how modern buyers evaluate AI-enabled chips.",
+            "frequency": "daily",
+            "impact": "Sales cycles extend by 30-60 days as technical validation becomes more complex, leading to lost deals to competitors who better demonstrate AI capabilities. This directly impacts quarterly quota attainment and deal velocity in a highly competitive semiconductor market.",
+            "urgency": "high",
+            "urgencyDrivers": "AI chip market growing at 35% CAGR with intense competition from NVIDIA, AMD, and emerging players. Buyers are making rapid purchase decisions based on AI performance metrics, creating immediate risk of being excluded from evaluation shortlists.",
+            "relatedMetrics": [
+              "Average Sales Cycle Length",
+              "Win Rate Against AI-Focused Competitors",
+              "Technical Qualification Conversion Rate",
+              "Deal Velocity",
+              "Quota Attainment Percentage"
+            ]
+          },
+          {
+            "title": "Lack of Customer AI Use Case Intelligence",
+            "description": "Jinyoung needs to understand how customers are actually implementing AI workloads on semiconductor solutions but lacks visibility into real-world deployment patterns and success metrics. Without this intelligence, he cannot effectively position Renesas products for emerging AI applications in automotive, IoT, and industrial sectors.",
+            "rootCause": "Traditional semiconductor sales approaches focus on chip specifications rather than AI application outcomes, creating a gap between product features and customer AI implementation needs.",
+            "frequency": "weekly",
+            "impact": "Missed opportunities to upsell or cross-sell appropriate AI-optimized solutions result in 20-30% lower average deal sizes. Customers often discover post-purchase that alternative chip configurations would better serve their AI requirements, damaging long-term account relationships.",
+            "urgency": "high",
+            "urgencyDrivers": "Customers are rapidly deploying edge AI applications and need immediate guidance on optimal semiconductor selection. Competitors offering AI application intelligence are capturing larger wallet share and strategic vendor status.",
+            "relatedMetrics": [
+              "Average Deal Size",
+              "Attach Rate for AI-Optimized Products",
+              "Customer Lifetime Value",
+              "Upsell/Cross-sell Revenue",
+              "Net Revenue Retention"
+            ]
+          },
+          {
+            "title": "Inefficient AI-Focused Account Prioritization and Targeting",
+            "description": "With a large territory and multiple accounts, Jinyoung likely struggles to identify which prospects have the highest propensity to invest in AI-enabled semiconductor solutions. Without AI-driven intelligence on account behavior, buying signals, and project pipelines, he wastes time on low-probability opportunities while missing high-value AI deployment projects.",
+            "rootCause": "Semiconductor sales organizations rely on manual account research and outdated CRM data rather than AI-powered buyer intent and market intelligence platforms.",
+            "frequency": "weekly",
+            "impact": "Sales productivity decreases by 25-40% as time is misallocated across accounts with varying AI investment readiness. High-potential AI projects at key accounts go undetected until competitors have already established relationships with the technical teams.",
+            "urgency": "medium",
+            "urgencyDrivers": "",
+            "relatedMetrics": [
+              "Sales Productivity (Revenue per Rep)",
+              "Pipeline Quality Score",
+              "Time Spent on High-Value Opportunities",
+              "Opportunity Win Rate by Segment",
+              "Sales Activity ROI"
+            ]
+          },
+          {
+            "title": "Competitive Blind Spots in AI Performance Positioning",
+            "description": "Jinyoung faces challenges defending Renesas's AI chip positioning against competitors like NVIDIA, Qualcomm, and emerging AI semiconductor startups during technical evaluations. He lacks real-time competitive intelligence on rival AI benchmarks, pricing strategies, and customer win/loss patterns that would enable more effective objection handling.",
+            "rootCause": "Semiconductor companies traditionally compete on process node and specification sheets, but AI buyers evaluate on workload-specific performance, software ecosystem, and total cost of ownership—requiring different competitive intelligence.",
+            "frequency": "weekly",
+            "impact": "Competitive displacement occurs in 35-45% of late-stage opportunities when technical buyers receive superior AI performance demonstrations from rivals. This leads to longer replacement sales cycles and reduced market share in high-growth AI application segments.",
+            "urgency": "high",
+            "urgencyDrivers": "AI semiconductor market consolidating rapidly with customers standardizing on 2-3 preferred vendors. Missing competitive intelligence means being excluded from strategic vendor programs that represent 60-70% of future revenue potential.",
+            "relatedMetrics": [
+              "Win Rate vs. Specific Competitors",
+              "Competitive Displacement Rate",
+              "Late-Stage Deal Loss Ratio",
+              "Strategic Account Penetration",
+              "Market Share in AI Segments"
+            ]
+          },
+          {
+            "title": "Inability to Quantify AI ROI for Customers",
+            "description": "Buyers increasingly demand business case justification for AI semiconductor investments, but Jinyoung lacks tools to calculate and demonstrate tangible ROI based on performance improvements, power savings, and deployment costs. This is particularly challenging when selling complex AI solutions where benefits materialize across multiple business units and use cases.",
+            "rootCause": "Semiconductor sales traditionally emphasize technical specifications over business outcomes, leaving account managers without frameworks or data to build compelling AI ROI models for executive buyers.",
+            "frequency": "monthly",
+            "impact": "Deals stall at the procurement and executive approval stage as buyers cannot justify premium pricing for AI-optimized semiconductors. This results in downgrade to lower-tier products or extended evaluation periods that push revenue recognition into future quarters.",
+            "urgency": "medium",
+            "urgencyDrivers": "Economic uncertainty is forcing more rigorous ROI scrutiny on all technology investments. CFOs and procurement teams are demanding quantified business cases for AI infrastructure spend, creating new approval gates that sales teams must address.",
+            "relatedMetrics": [
+              "Deal Stall Rate",
+              "Executive Sponsor Engagement",
+              "Discount Rate to Close",
+              "Average Contract Value",
+              "Forecast Accuracy"
+            ]
+          }
+        ],
+        "personalizedStrategy": null
+      }
+    ],
+    "cohesionScore": 46,
+    "coverage": {
+      "primary": true,
+      "technical": true,
+      "risk": false,
+      "financial": false,
+      "details": {
+        "primary": {
+          "covered": [
+            "Sales"
+          ],
+          "missing": [
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "Robin Thum",
+              "title": "Key Account Manager - Automotive",
+              "department": "Sales"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [
+            "IT"
+          ],
+          "missing": [
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": [
+            {
+              "function": "IT",
+              "name": "David Kraft",
+              "title": "Director",
+              "department": "C-Suite"
+            }
+          ]
+        },
+        "risk": {
+          "covered": [],
+          "missing": [
+            "Security",
+            "Legal",
+            "Compliance"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      }
+    }
+  },
+  "report": {
+    "id": "report_1765994486277_dt4rcnb0q",
+    "generatedAt": "2025-12-17T18:12:58.813Z",
+    "executiveSummary": "Identified 3-person buyer group for Renesas Electronics ($450,000 deal) with 46% cohesion score. Group includes 1 decision maker(s), 2 champion(s), and comprehensive cross-functional coverage. Research methodology validated 3 final members from 75 initial candidates.",
+    "researchMethodology": {
+      "approach": "Double-waterfall discovery with multi-dimensional scoring",
+      "stages": [
+        {
+          "stage": 1,
+          "name": "Company Intelligence",
+          "description": "Database-first company research with Coresignal API fallback",
+          "result": "Optimal search parameters calculated"
+        },
+        {
+          "stage": 2,
+          "name": "Wide Preview Search",
+          "description": "Cross-departmental employee discovery using Coresignal Preview API",
+          "result": "75 employees discovered across all functions"
+        },
+        {
+          "stage": 3,
+          "name": "Smart Scoring",
+          "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+          "result": "Top candidates identified before expensive collect API"
+        },
+        {
+          "stage": 4,
+          "name": "Role Assignment",
+          "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+          "result": "Appropriate roles assigned based on deal size"
+        },
+        {
+          "stage": 5,
+          "name": "Cross-Functional Validation",
+          "description": "Stakeholder completeness validation across all relevant functions",
+          "result": "Missing stakeholders added for comprehensive coverage"
+        },
+        {
+          "stage": 6,
+          "name": "Full Profile Collection",
+          "description": "Coresignal Collect API for final buyer group members only",
+          "result": "Complete profiles for final buyer group"
+        },
+        {
+          "stage": 7,
+          "name": "Cohesion Analysis",
+          "description": "Multi-factor cohesion validation",
+          "result": "46% cohesion score with detailed analysis"
+        }
+      ],
+      "searchParameters": {
+        "searchSize": 3477,
+        "maxPreviewPages": 70,
+        "buyerGroupSize": {
+          "min": 12,
+          "max": 15,
+          "ideal": 14
+        },
+        "companySize": 11591,
+        "industry": "Semiconductor Manufacturing",
+        "searchStrategy": "focused",
+        "filteringLevel": "strict"
+      },
+      "dataSources": [
+        "Coresignal API",
+        "Internal Database",
+        "AI Analysis"
+      ],
+      "confidenceLevel": 53
+    },
+    "companyIntelligence": {
+      "employeeCount": 11591,
+      "revenue": 0,
+      "industry": "Semiconductor Manufacturing",
+      "growthRate": -0.6427666123483614,
+      "activeHiring": 37,
+      "fundingStage": "bootstrapped",
+      "dataSource": "coresignal",
+      "lastUpdated": "2025-12-17T18:01:28.656Z",
+      "insights": [
+        "Company size: Enterprise",
+        "Growth trajectory: Stable",
+        "Hiring activity: Active",
+        "Funding status: bootstrapped"
+      ]
+    },
+    "buyerGroupJustification": [
+      {
+        "name": "David Kraft",
+        "title": "Director",
+        "department": "C-Suite",
+        "role": "decision",
+        "confidence": "60%",
+        "detailedReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "keyInsights": [
+          "Seniority score: 6/10",
+          "Champion potential: 12/25",
+          "Influence score: 3/10",
+          "Network: 242 connections",
+          "Relevance: 70%"
+        ],
+        "addedForCoverage": false,
+        "justification": "**David Kraft (Director) - DECISION**\n\n**Budget Authority**: Owns technology strategy and budget for software/platform purchases.\n**Department Relevance**: IT/Technology leaders approve all software and platform purchases.\n\n**Selection Criteria**:\n- Seniority Score: 6/10\n- Influence Score: 3/10\n- Network Size: 242 connections\n- Role Confidence: 60%\n"
+      },
+      {
+        "name": "Robin Thum",
+        "title": "Key Account Manager - Automotive",
+        "department": "Sales",
+        "role": "champion",
+        "confidence": "60%",
+        "detailedReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "keyInsights": [
+          "Seniority score: 3/10",
+          "Champion potential: 8/25",
+          "Influence score: 3/10",
+          "Network: 316 connections",
+          "Relevance: 35%"
+        ],
+        "addedForCoverage": false,
+        "justification": "**Robin Thum (Key Account Manager - Automotive) - CHAMPION**\n\n**Operational Leadership**: Manager-level leaders implement solutions and influence team adoption.\n**Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 316 connections\n- Role Confidence: 60%\n"
+      },
+      {
+        "name": "Jinyoung Oh",
+        "title": "Sales Account Manager",
+        "department": "Sales",
+        "role": "champion",
+        "confidence": "60%",
+        "detailedReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "keyInsights": [
+          "Seniority score: 3/10",
+          "Champion potential: 8/25",
+          "Influence score: 3/10",
+          "Network: 296 connections",
+          "Relevance: 45%"
+        ],
+        "addedForCoverage": false,
+        "justification": "**Jinyoung Oh (Sales Account Manager) - CHAMPION**\n\n**Operational Leadership**: Manager-level leaders implement solutions and influence team adoption.\n**Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 296 connections\n- Role Confidence: 60%\n"
+      }
+    ],
+    "crossFunctionalCoverage": {
+      "summary": {
+        "primaryCovered": true,
+        "technicalCovered": true,
+        "riskCovered": false,
+        "financialCovered": false,
+        "overallScore": 50
+      },
+      "byFunction": {
+        "primary": {
+          "covered": [
+            "Sales"
+          ],
+          "missing": [
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "Robin Thum",
+              "title": "Key Account Manager - Automotive",
+              "department": "Sales"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [
+            "IT"
+          ],
+          "missing": [
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": [
+            {
+              "function": "IT",
+              "name": "David Kraft",
+              "title": "Director",
+              "department": "C-Suite"
+            }
+          ]
+        },
+        "risk": {
+          "covered": [],
+          "missing": [
+            "Security",
+            "Legal",
+            "Compliance"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      },
+      "gaps": [
+        "Risk management",
+        "Financial approval"
+      ],
+      "recommendations": [
+        "Add Security/Legal stakeholder for risk management",
+        "Add Finance stakeholder for budget approval"
+      ]
+    },
+    "cohesionAnalysis": {
+      "overallScore": 46,
+      "confidence": "VERY_LOW",
+      "factors": {
+        "reportingProximity": {
+          "score": 35,
+          "explanation": "Executive reporting relationships"
+        },
+        "departmentClustering": {
+          "score": 33,
+          "explanation": "Department collaboration patterns"
+        },
+        "seniorityBalance": {
+          "score": 81,
+          "explanation": "Appropriate seniority distribution"
+        },
+        "geographicAlignment": {
+          "score": 75,
+          "explanation": "Location-based collaboration"
+        },
+        "functionalInterdependence": {
+          "score": 0,
+          "explanation": "Cross-functional work relationships"
+        }
+      },
+      "reasoning": "Limited reporting proximity; Departments may not collaborate regularly; Well-balanced seniority levels; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from adjacent departments",
+        "Consider adding members from interdependent functions",
+        "Overall cohesion could be improved with better stakeholder selection"
+      ]
+    },
+    "championAnalysis": {
+      "count": 2,
+      "champions": [
+        {
+          "name": "Robin Thum",
+          "title": "Key Account Manager - Automotive",
+          "department": "Sales",
+          "championScore": 8,
+          "advocacyPotential": "Low",
+          "internalInfluence": "Medium",
+          "networkStrength": 316
+        },
+        {
+          "name": "Jinyoung Oh",
+          "title": "Sales Account Manager",
+          "department": "Sales",
+          "championScore": 8,
+          "advocacyPotential": "Low",
+          "internalInfluence": "Medium",
+          "networkStrength": 296
+        }
+      ],
+      "analysis": "Moderate champion potential - consider additional advocates"
+    },
+    "costEfficiency": {
+      "methodology": "Double-waterfall approach (preview then collect)",
+      "costs": {
+        "preview": 7.5,
+        "collect": 3,
+        "total": 0
+      },
+      "comparison": {
+        "naiveApproach": 75,
+        "smartApproach": 0,
+        "savings": 75,
+        "savingsPercentage": 100
+      },
+      "efficiency": {
+        "previewToCollectRatio": 4,
+        "costPerFinalMember": 0
+      }
+    },
+    "qualityMetrics": {
+      "averageConfidence": 60,
+      "averageInfluence": 3,
+      "averageRelevance": 50,
+      "decisionMakerCount": 1,
+      "championCount": 2,
+      "stakeholderCount": 0,
+      "blockerCount": 0,
+      "introducerCount": 0,
+      "qualityGrade": "D"
+    },
+    "recommendations": [
+      "Consider improving buyer group cohesion through better stakeholder selection",
+      "Consider adding more stakeholders for comprehensive coverage"
+    ]
+  },
+  "costs": {
+    "preview": 7.5,
+    "collect": 3,
+    "total": 10.52,
+    "email": 0,
+    "phone": 0.02
+  },
+  "metadata": {
+    "generatedAt": "2025-12-17T18:17:22.249Z",
+    "pipelineVersion": "1.0",
+    "workspaceId": "01KCPQJPC2VCHBN288WWGJ0S5N"
+  }
+}

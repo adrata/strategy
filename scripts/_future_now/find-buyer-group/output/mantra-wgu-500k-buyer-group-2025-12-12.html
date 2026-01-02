@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buyer Group Intelligence | Mantra Health to WGU | $500K</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Mantra Health Brand Colors */
+    :root {
+      --primary: #6B46C1;
+      --secondary: #319795;
+      --accent: #9F7AEA;
+      --warning: #DD6B20;
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-900: #111827;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--white);
+      color: var(--gray-900);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+    
+    .page { max-width: 800px; margin: 0 auto; padding: 48px 40px; }
+    
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: 32px;
+    }
+    
+    .header-left h1 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 4px;
+    }
+    
+    .header-left h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    
+    .deal-size {
+      text-align: right;
+    }
+    
+    .deal-size .amount {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .deal-size .label {
+      font-size: 11px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .context-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .context-box {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    
+    .context-box h3 {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .context-box dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 12px;
+      font-size: 12px;
+    }
+    
+    .context-box dt {
+      color: var(--gray-500);
+    }
+    
+    .context-box dd {
+      color: var(--gray-900);
+      font-weight: 500;
+    }
+    
+    .context-box sup {
+      color: var(--primary);
+      font-size: 9px;
+    }
+    
+    .key-insight {
+      background: linear-gradient(135deg, var(--primary) 0%, #553C9A 100%);
+      color: var(--white);
+      padding: 20px 24px;
+      border-radius: 8px;
+      margin-bottom: 40px;
+    }
+    
+    .key-insight h4 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 8px;
+    }
+    
+    .key-insight p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .key-insight strong {
+      color: #C4F1F9;
+    }
+    
+    .section {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--gray-200);
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--gray-900);
+    }
+    
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 20px;
+    }
+    
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--gray-200);
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    
+    .stat-box {
+      background: var(--white);
+      padding: 14px 10px;
+      text-align: center;
+    }
+    
+    .stat-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 4px;
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .profiles-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .profile-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      padding: 18px;
+      border-radius: 8px;
+    }
+    
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .profile-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    
+    .profile-title {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+    
+    .profile-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    
+    .role-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: white;
+      border-radius: 4px;
+    }
+    
+    .verified-badge {
+      font-size: 10px;
+      color: var(--secondary);
+      font-weight: 500;
+    }
+    
+    .research-needed {
+      font-size: 10px;
+      color: var(--warning);
+      font-weight: 500;
+    }
+    
+    .profile-logic {
+      font-size: 12px;
+      color: var(--gray-700);
+      line-height: 1.6;
+      background: var(--gray-50);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    
+    .profile-logic strong {
+      color: var(--primary);
+    }
+    
+    .pain-points {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #FAF5FF;
+      border-radius: 6px;
+      border-left: 3px solid var(--primary);
+    }
+    
+    .pain-points strong {
+      color: #553C9A;
+    }
+    
+    .pain-list {
+      margin-top: 8px;
+      margin-left: 16px;
+      line-height: 1.5;
+    }
+    
+    .pain-list li {
+      margin-bottom: 6px;
+    }
+    
+    .profile-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+    
+    .linkedin-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .no-linkedin {
+      color: var(--gray-400);
+    }
+    
+    .confidence {
+      color: var(--gray-400);
+    }
+    
+    .strategy-list { list-style: none; }
+    
+    .strategy-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .strategy-item:last-child { border-bottom: none; }
+    
+    .strategy-number {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    
+    .strategy-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--gray-900);
+    }
+    
+    .strategy-text {
+      font-size: 12px;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+    
+    .footnotes {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--gray-200);
+    }
+    
+    .footnotes h4 {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+    
+    .footnote {
+      font-size: 10px;
+      color: var(--gray-500);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    
+    .footnote sup {
+      color: var(--primary);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    
+    .footer {
+      text-align: center;
+      padding-top: 32px;
+      margin-top: 20px;
+      border-top: 1px solid var(--gray-200);
+      font-size: 10px;
+      color: var(--gray-400);
+    }
+    
+    .page-break { page-break-before: always; padding-top: 40px; }
+    
+    @media print {
+      * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+      .page { padding: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header-bar">
+      <div class="header-left">
+        <h1>Buyer Group Intelligence</h1>
+        <h2>Mantra Health to WGU</h2>
+      </div>
+      <div class="deal-size">
+        <div class="amount">$500K</div>
+        <div class="label">Mental Health & Retention</div>
+      </div>
+    </div>
+    
+    <div class="context-grid">
+      <div class="context-box">
+        <h3>Seller: Mantra Health</h3>
+        <dl>
+          <dt>Type</dt><dd>Digital mental health for higher ed<sup>1</sup></dd>
+          <dt>CEO</dt><dd>Matt Kennedy (since May 2023)<sup>1</sup></dd>
+          <dt>Services</dt><dd>Therapy, psychiatry, 24/7 crisis</dd>
+          <dt>Stayed Enrolled</dt><dd>70% of users<sup>2</sup></dd>
+          <dt>Partners</dt><dd>EAB, Single Stop, Charlie Health<sup>8</sup></dd>
+        </dl>
+      </div>
+      <div class="context-box">
+        <h3>Buyer: Western Governors University</h3>
+        <dl>
+          <dt>Students</dt><dd>192,613 enrolled<sup>4</sup></dd>
+          <dt>Model</dt><dd>100% online, CBE</dd>
+          <dt>Retention</dt><dd>62% first-year<sup>6</sup></dd>
+          <dt>Underserved</dt><dd>74% of student body<sup>5</sup></dd>
+          <dt>Current MH</dt><dd>Wellbeing Services + Peers.net pilot<sup>7</sup></dd>
+        </dl>
+      </div>
+    </div>
+    
+    <div class="key-insight">
+      <h4>Mental Health is the Retention Lever</h4>
+      <p><strong>Mental health is the #1 reason students drop out.</strong> WGU's 192,000 adult learners face unique stressors: work-life balance, family obligations, financial pressure, and isolation of online learning. Mantra's 70% "stayed enrolled" outcome<sup>2</sup> directly addresses WGU's 62% retention rate<sup>6</sup>. WGU Labs has already piloted peer support with Flourish Labs<sup>7</sup>—they're actively seeking scaled mental health solutions.</p>
+    </div>
+    
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-label">Buyer Group</div>
+        <div class="stat-value">6</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Decision</div>
+        <div class="stat-value">1</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Champions</div>
+        <div class="stat-value">3</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Blockers</div>
+        <div class="stat-value">1</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Stakeholders</div>
+        <div class="stat-value">1</div>
+      </div>
+    </div>
+    
+    <div class="section page-break">
+      <h2 class="section-title">Buyer Group Profiles</h2>
+      <p class="section-subtitle">6 verified stakeholders for $500K mental health investment</p>
+      
+      <div class="profiles-grid">
+        
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Debbie Fowler, J.D.</div>
+              <div class="profile-title">Senior Vice President of Academic Delivery</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #6B46C1;">DECISION MAKER</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Primary decision maker for $500K student success investment. Oversees 2,900 faculty/staff serving 192,000+ students. Author of "Fostering Connection in Higher Ed" (Nov 2024) addressing student isolation. Her team includes Program Mentors who are first to identify at-risk students. Budget authority at this level.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Mental Health as Retention Barrier:</strong> Mental health is the #1 reason students drop out. WGU's adult learners face unique stressors: work, family, finances, isolation of online learning.</li><li><strong>Scaling Support at 60:1 Ratio:</strong> 192,000 students with 2,900 faculty/staff = ~66:1 ratio. Program Mentors cannot individually assess mental health for all students.</li><li><strong>74% Underserved Population:</strong> 74% of WGU students are from underserved populations (first-gen, low-income, rural, underrepresented). These groups face higher mental health barriers and stigma.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/debbie-fowler-a86a949b/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="confidence">Confidence: 98%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Jason Levin</div>
+              <div class="profile-title">Executive Director, WGU Labs</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #319795;">CHAMPION</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Key innovation champion. Leads WGU Labs which piloted Flourish Labs Peers.net peer support platform. Former VP of Institutional Research. MBA from University of Miami. His team runs student success pilots—mental health is in his wheelhouse. Already invested in mental health innovation.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Scaling Mental Health Innovation:</strong> WGU Labs piloted Flourish Labs peer support with promising results (85%+ positive feedback). Looking for scalable solutions beyond pilots.</li><li><strong>Evidence-Based Decision Making:</strong> As former VP of Institutional Research, Jason requires data-driven evidence. Mantra's 70% "stayed enrolled" outcome resonates.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/jasonhlevin/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="confidence">Confidence: 95%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Dr. Stacey Ludwig Johnson</div>
+              <div class="profile-title">Senior Vice President and Executive Dean, School of Education</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #319795;">CHAMPION</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> 25+ years at WGU since 1998. Ph.D. from University of Colorado. Leads nation's largest nonprofit school of education. Pioneer in competency-based education. Her students (current/future teachers) face high stress and burnout. Strong advocate for student support.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Teacher Burnout and Mental Health:</strong> Education students often work as teachers while studying. They face burnout, anxiety, and compassion fatigue before even graduating.</li><li><strong>National Teacher Shortage Context:</strong> Teacher mental health directly impacts the national teacher shortage. Supporting education students through to completion is mission-critical.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/stacey-ludwig-johnson-0bba1715/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="confidence">Confidence: 92%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Anmy Tran Mayfield</div>
+              <div class="profile-title">Vice President and Dean, College of Nursing, Leavitt School of Health</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #319795;">CHAMPION</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Appointed March 2024. Family Nurse Practitioner. First-generation graduate. Champions equity and nontraditional pathways. Nursing students face high stress (clinical placements, exams, compassion fatigue). Her college is high-need population for mental health support.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Nursing Student Mental Health Crisis:</strong> Nursing students face clinical placement stress, exam anxiety, and compassion fatigue. Healthcare students have elevated mental health needs.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/anmy-mayfield/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="confidence">Confidence: 85%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">David Morales, MBA</div>
+              <div class="profile-title">Senior Vice President of Technology and CIO</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #DD6B20;">BLOCKER</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> CIO since November 2018. Former Walmart Senior Director of Engineering. MBA from WGU. CIO 100 Award winner. Leading AI integration at WGU. Mental health platform must meet HIPAA standards (beyond FERPA) and integrate with student portal.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>HIPAA Compliance (Beyond FERPA):</strong> Mental health data requires HIPAA-level protections, BAA agreements, and stringent audit controls. This is higher bar than typical EdTech.</li><li><strong>Student Portal Integration:</strong> Seamless access through WGU student portal is essential. Students won't use siloed tools.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/moralesdavid/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="confidence">Confidence: 90%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Dr. Courtney Hills McBeth</div>
+              <div class="profile-title">Chief Academic Officer and Provost</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #4A5568;">STAKEHOLDER</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Joined January 2024 from Strada Education Foundation. Ph.D. from UPenn. Oversees 80+ programs across all schools. Mental health impacts completion rates and accreditation standing. At $500K, she is informed stakeholder (Debbie is decision maker).
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Academic Quality and Completion:</strong> Mental health struggles manifest as academic struggles. Students in crisis cannot demonstrate competencies.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/courtney-hills-mcbeth-34973b2/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="confidence">Confidence: 88%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section page-break">
+      <h2 class="section-title">Recommended Approach</h2>
+      <p class="section-subtitle">Position mental health as retention strategy</p>
+      
+      <ul class="strategy-list">
+        <li class="strategy-item">
+          <div class="strategy-number">1</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Lead with Jason Levin at WGU Labs</div>
+            <div class="strategy-text">Jason's team already piloted Flourish Labs peer support. He understands mental health as innovation priority. His endorsement provides internal credibility and potential pilot pathway. Reference his Peers.net pilot outcomes.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">2</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Position for Debbie Fowler as Retention Investment</div>
+            <div class="strategy-text">Frame Mantra as retention lever, not wellness perk. Lead with 70% "stayed enrolled" outcome. Connect to her Nov 2024 blog on "Fostering Connection"—she's already thinking about student isolation and belonging.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">3</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Propose School of Health or Education Pilot</div>
+            <div class="strategy-text">Anmy Mayfield (Nursing) and Stacey Ludwig Johnson (Education) lead highest-stress student populations. Propose pilot with one school to demonstrate outcomes before enterprise rollout.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">4</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Address HIPAA Early with CIO Morales</div>
+            <div class="strategy-text">Mental health data requires HIPAA beyond FERPA. Engage David Morales early with security documentation, BAA templates, and integration architecture. Reference Mantra's EAB Navigate360 integration as precedent.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">5</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Build ROI Around 74% Underserved Population</div>
+            <div class="strategy-text">74% of WGU students are from underserved populations who face higher mental health barriers. Mantra's diverse provider matching and stigma-free digital access addresses this. Mission alignment + ROI = compelling case.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="footnotes">
+      <h4>Sources & References</h4>
+      <div class="footnote"><sup>1</sup> Mantra Health leadership realignment press release, May 2023 (mantrahealth.com)</div><div class="footnote"><sup>2</sup> Behavioral Health Business, "70% of users report services helped them stay enrolled," April 2022 (bhbusiness.com)</div><div class="footnote"><sup>3</sup> Digital Health Skills research report, 2024 (digitalhealthskills.com)</div><div class="footnote"><sup>4</sup> WGU enrollment as of June 30, 2025 (en.wikipedia.org, wgu.edu)</div><div class="footnote"><sup>5</sup> WGU Overview One-Pager: 74% underserved populations, February 2024 (wgu.edu)</div><div class="footnote"><sup>6</sup> WGU IPEDS 2024-2025 Fall Enrollment Survey: 62% first-year retention (wgu.edu)</div><div class="footnote"><sup>7</sup> WGU Labs + Flourish Labs Peers.net pilot, 85%+ positive feedback (wgulabs.org)</div><div class="footnote"><sup>8</sup> Mantra Health + EAB Navigate360 partnership, January 2024 (eab.com)</div>
+    </div>
+    
+    <div class="footer">
+      Mantra Health | Western Governors University | $500K Mental Health & Retention Solution | December 11, 2025
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+{
+  "context": {
+    "seller": {
+      "name": "eCore Services",
+      "website": "https://ecoreservice.com",
+      "product": "B2B Data Enrichment Platform",
+      "description": "Enterprise contact database with 200M+ contacts, 95%+ accuracy, real-time job change tracking, and CRM data cleansing",
+      "keyFeatures": [
+        "200M+ B2B contacts globally",
+        "80M+ verified email addresses",
+        "70M+ mobile phone numbers",
+        "95%+ data accuracy guarantee",
+        "Real-time job change alerts",
+        "CRM data cleansing & deduplication",
+        "Standard & Pro waterfall enrichment",
+        "API integration for automation"
+      ],
+      "brandColors": {
+        "primary": "#BB1985",
+        "secondary": "#DD5E4D",
+        "accent": "#F79421"
+      }
+    },
+    "buyer": {
+      "name": "Cisco Systems",
+      "website": "https://www.cisco.com",
+      "industry": "Technology / Networking",
+      "employeeCount": 86000,
+      "revenue": "$54B (FY2024)",
+      "headquarters": "San Jose, CA"
+    },
+    "deal": {
+      "estimatedSize": "$150,000 - $200,000",
+      "dealType": "Annual Enterprise License"
+    }
+  },
+  "buyerGroup": {
+    "totalMembers": 10,
+    "members": [
+      {
+        "name": "Carrie Palin",
+        "title": "SVP & Chief Marketing Officer",
+        "role": "decision",
+        "department": "Marketing",
+        "linkedin": "https://www.linkedin.com/in/carrie-palin-37a1802/",
+        "insight": "Member of Executive Leadership Team. Named to Forbes Most Influential CMOs list 2023 & 2024. Board member at DemandScience (B2B data company) and NetApp. Previously CMO at Splunk, SendGrid, and Box.",
+        "painPoint": "As CMO, she owns the marketing budget and ROI metrics. With Cisco operating in 59 countries, bad contact data creates wasted spend across every region. Her board seat at DemandScience means she already understands the B2B data market—she knows what good data costs and what bad data costs more.",
+        "rationale": "Ultimate budget authority for marketing technology investments. Her board seat at DemandScience (a B2B data company) demonstrates direct familiarity with this product category."
+      },
+      {
+        "name": "Rebecca Stone",
+        "title": "SVP, Global Revenue Marketing",
+        "role": "decision",
+        "department": "Revenue Marketing",
+        "linkedin": "https://www.linkedin.com/in/rebeccalawstone/",
+        "insight": "Oversees integrated marketing, campaign planning, sales development, content marketing, media, and marketing technology operations. 20+ years B2B marketing experience with proven 5-10x pipeline growth.",
+        "painPoint": "Responsible for marketing-generated pipeline. Inaccurate contact data wastes SDR time and marketing budget. Needs reliable data enrichment to maximize campaign effectiveness and sales development productivity across the entire revenue marketing organization.",
+        "rationale": "Owns marketing technology operations and sales development—the two primary use cases for B2B contact data. Her team would be the primary users of eCore's platform."
+      },
+      {
+        "name": "Chad Reese",
+        "title": "VP, Marketing Operations & Digital Marketing Platforms",
+        "role": "champion",
+        "department": "Marketing Operations",
+        "linkedin": "https://www.linkedin.com/in/reesechad/",
+        "insight": "23-year Cisco veteran. Accountable for end-to-end marketing technology strategy. Led Partner Revenue Marketing delivering $2.6B in SQL globally. Enables campaign execution across 59 countries and 27 languages.",
+        "painPoint": "Managing marketing technology across 59 countries means constant data quality challenges. Every campaign depends on accurate contact information. His $2.6B SQL responsibility is directly impacted by data decay—every bounced email and wrong number is lost revenue opportunity.",
+        "rationale": "Directly responsible for marketing technology stack and data infrastructure. Would evaluate, implement, and champion a B2B data enrichment solution. His team manages the systems that would integrate with eCore."
+      },
+      {
+        "name": "Britney Bartlett",
+        "title": "VP, Global Field Marketing",
+        "role": "champion",
+        "department": "Field Marketing",
+        "linkedin": "https://www.linkedin.com/in/britneybartlett/",
+        "insight": "Won Go-to-Market Leader of the Year 2024. Led Cisco's transformation from scale-based to account-based marketing. Expertise in demand generation and sales-marketing alignment.",
+        "painPoint": "ABM success depends on reaching the right people at target accounts. Account-based programs fail when contact data is stale or incomplete. Her award-winning ABM transformation requires continuously enriched data to maintain targeting accuracy and personalization at scale.",
+        "rationale": "ABM programs require accurate, enriched account and contact data. She would champion a solution that improves targeting accuracy for her field marketing campaigns."
+      },
+      {
+        "name": "Rune Olslund",
+        "title": "Sr. Director, Omnichannel Experiences & Demand Generation",
+        "role": "champion",
+        "department": "Digital Marketing",
+        "linkedin": "https://www.linkedin.com/in/runeolslund/",
+        "insight": "24-year Cisco veteran. Grew inbound hand-raisers from 500K to 1M+. Contributed to $8.2B SQL pipeline and $3.1B revenue. Led Cisco.com transformation with 70% YoY engagement increase.",
+        "painPoint": "Scaling from 500K to 1M+ hand-raisers means exponentially more data to verify and enrich. His demand gen engine needs real-time job change alerts to catch prospects moving between companies. Outdated data means missed opportunities in the $8.2B pipeline he supports.",
+        "rationale": "Demand generation effectiveness directly tied to contact data quality. His team needs verified emails and accurate contact info to drive inbound and outbound campaigns."
+      },
+      {
+        "name": "Dan Wastchak",
+        "title": "Director, Global Revenue Operations",
+        "role": "champion",
+        "department": "Revenue Operations",
+        "linkedin": "https://www.linkedin.com/in/dan-wastchak/",
+        "insight": "15+ years leading global strategy and operations teams. Responsible for critical RevOps processes, aligning work with Sales GTM Strategy, and driving execution across the organization.",
+        "painPoint": "RevOps lives and dies by CRM data quality. Duplicate records, outdated contacts, and missing information create friction between sales and marketing. He needs automated data cleansing and enrichment to keep the revenue engine running smoothly across global operations.",
+        "rationale": "RevOps owns CRM data quality and sales-marketing alignment. Would champion data cleansing and enrichment to reduce operational friction and improve pipeline accuracy."
+      },
+      {
+        "name": "Michael Prevete",
+        "title": "Director, Revenue Operations",
+        "role": "stakeholder",
+        "department": "Revenue Operations",
+        "linkedin": "https://www.linkedin.com/in/mikeprevete/",
+        "insight": "Part of the Revenue Operations leadership team. Works alongside Dan Wastchak on sales and marketing alignment through data and process optimization.",
+        "painPoint": "Day-to-day operations suffer when contact data is unreliable. His team spends time on manual data cleanup instead of strategic initiatives. Integration with existing CRM and marketing automation systems is critical for any data enrichment solution to deliver value.",
+        "rationale": "Day-to-day RevOps operations impacted by data quality. Would be involved in evaluating how eCore integrates with existing CRM and marketing automation systems."
+      },
+      {
+        "name": "Todd Shimizu",
+        "title": "VP, Digital Marketing and Media",
+        "role": "stakeholder",
+        "department": "Digital Marketing",
+        "linkedin": "https://www.linkedin.com/in/todd-shimizu-6027164/",
+        "insight": "Leads digital marketing and media strategy at Cisco. Responsible for digital advertising effectiveness and audience targeting across channels.",
+        "painPoint": "Digital advertising ROI depends on accurate audience data. Every ad served to the wrong person or outdated contact is wasted spend. Better enriched data means more precise targeting, reduced waste, and higher conversion rates across all digital channels.",
+        "rationale": "Digital advertising ROI depends on accurate targeting data. Would provide input on how enriched data could improve ad targeting and reduce wasted spend."
+      },
+      {
+        "name": "Alexandra Lopez",
+        "title": "SVP & Chief Procurement Officer",
+        "role": "blocker",
+        "department": "Global Procurement Services",
+        "linkedin": "https://www.linkedin.com/in/alexandra-lopez-408b92/",
+        "insight": "Leads end-to-end buying ecosystem including vendor management. Named Top 10 Women in Procurement 2022. Member of Cisco Sustainability Council.",
+        "painPoint": "Every new vendor adds complexity to the procurement ecosystem. She needs to validate pricing is competitive, contract terms protect Cisco, and the vendor meets sustainability and compliance standards. Data vendors handling personal information face extra scrutiny.",
+        "rationale": "All enterprise vendor contracts require procurement approval. Will evaluate pricing, contract terms, and vendor compliance. Must validate eCore meets Cisco's procurement standards."
+      },
+      {
+        "name": "Trevor Thiel",
+        "title": "Chief Information Security Officer (CISO)",
+        "role": "blocker",
+        "department": "Information Security",
+        "linkedin": "https://www.linkedin.com/in/trevor-thiel-b2a1a322b/",
+        "insight": "Oversees information and data security at Cisco. Any solution handling customer or prospect data requires security review and approval.",
+        "painPoint": "B2B data vendors handle sensitive personal and business information. Any breach or compliance failure reflects on Cisco. He must validate SOC 2 Type II certification, GDPR/CCPA compliance, data handling practices, and ensure no security vulnerabilities before approval.",
+        "rationale": "B2B data vendors must pass security review. Will validate SOC 2 compliance, data handling practices, and privacy controls. GDPR and CCPA compliance critical for approval."
+      }
+    ]
+  },
+  "roleRationale": {
+    "decisionMakers": "Budget authority for marketing technology investments. CMO and SVP Revenue Marketing control spend on data vendors and have final sign-off on enterprise contracts of this size ($150K-$200K).",
+    "champions": "Operational leaders who would evaluate, implement, and advocate for the solution. Marketing Operations owns the tech stack, Field Marketing needs accurate data for ABM, Demand Gen relies on verified contacts, and RevOps manages CRM data quality.",
+    "stakeholders": "End users and technical evaluators who would provide input but don't have final authority. They would assess integration requirements and day-to-day usability.",
+    "blockers": "Required approvers for enterprise vendor contracts. CPO (procurement) must approve vendor terms, pricing, and compliance. CISO must validate security controls, SOC 2 compliance, and data handling practices for any solution touching customer/prospect data."
+  }
+}

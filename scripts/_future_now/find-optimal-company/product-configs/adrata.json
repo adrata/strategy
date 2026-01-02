@@ -1,0 +1,154 @@
+{
+  "product": {
+    "name": "Adrata",
+    "company": "Adrata",
+    "category": "compliance_automation",
+    "tagline": "Continuous compliance automation that scales with your business",
+    "problemStatement": "Manual compliance processes that drain engineering resources, delay enterprise deals, and create audit anxiety",
+    "quickWinMetric": "SOC 2 Type II in 4 months vs 12-18 months manually, saving 2+ FTE hours weekly",
+    "averageDealSize": 75000,
+    "typicalSalesCycle": "45-90 days"
+  },
+
+  "targetBuyer": {
+    "primaryDepartments": ["security", "compliance"],
+    "championTitles": [
+      "CISO", "Chief Information Security Officer",
+      "Head of Security", "VP of Security", "VP Security",
+      "Director of Security", "Director of Information Security",
+      "Head of Compliance", "VP of Compliance",
+      "Director of Compliance", "Head of GRC",
+      "Security Engineering Manager", "Security Operations Manager"
+    ],
+    "economicBuyerTitles": [
+      "CFO", "Chief Financial Officer",
+      "CTO", "Chief Technology Officer",
+      "CEO", "Chief Executive Officer",
+      "COO", "Chief Operating Officer",
+      "VP of Engineering", "VP Engineering"
+    ],
+    "targetCompanySize": {
+      "min": 50,
+      "max": 5000,
+      "sweet_spot": { "min": 150, "max": 1500 }
+    },
+    "targetFundingStages": ["series_a", "series_b", "series_c", "series_d_plus"],
+    "targetIndustries": [
+      "B2B SaaS",
+      "FinTech",
+      "HealthTech",
+      "Enterprise Software",
+      "Developer Tools",
+      "Data & Analytics",
+      "Cybersecurity",
+      "HR Tech",
+      "MarTech"
+    ]
+  },
+
+  "pullSignals": {
+    "triggers": [
+      {
+        "name": "New Security Leader",
+        "description": "New CISO/Head of Security in last 90 days - in 'prove myself' window",
+        "weight": 0.30,
+        "urgencyMultiplier": 1.5,
+        "messaging": "Quick win for your first 90 days"
+      },
+      {
+        "name": "Ratio Shock",
+        "description": "Security team understaffed vs healthy 1:50 benchmark",
+        "weight": 0.25,
+        "urgencyMultiplier": 1.3,
+        "messaging": "Force multiplier for your stretched team"
+      },
+      {
+        "name": "Hypergrowth",
+        "description": "Company growing 30%+ YoY - security can't keep pace",
+        "weight": 0.20,
+        "urgencyMultiplier": 1.2,
+        "messaging": "Scale compliance with your growth"
+      },
+      {
+        "name": "Post-Funding Pressure",
+        "description": "Series B+ in last 6 months - investor pressure to professionalize",
+        "weight": 0.15,
+        "urgencyMultiplier": 1.4,
+        "messaging": "Enterprise readiness for Series C story"
+      },
+      {
+        "name": "Enterprise Motion",
+        "description": "Selling to enterprises that require SOC 2",
+        "weight": 0.10,
+        "urgencyMultiplier": 1.1,
+        "messaging": "Unlock enterprise deals waiting on compliance"
+      }
+    ],
+    "disqualifiers": [
+      "Already using Vanta, Drata, Secureframe, or similar",
+      "Company under 50 employees (too early)",
+      "Company over 10,000 employees (different buying process)",
+      "Public company (SOX focus, not SOC 2)",
+      "Non-tech industry without compliance needs"
+    ]
+  },
+
+  "competitors": {
+    "direct": ["Vanta", "Drata", "Secureframe", "Laika", "Thoropass", "Sprinto"],
+    "indirect": ["Manual spreadsheets", "Compliance consultants", "Build in-house", "Big 4 audit firms"],
+    "matureCompanies": [
+      "Stripe", "Square", "Plaid", "Gusto", "Rippling", "Brex", "Ramp",
+      "Datadog", "Snowflake", "Twilio", "Segment", "Amplitude", "Okta",
+      "Notion", "Figma", "Airtable", "Asana", "Monday.com"
+    ]
+  },
+
+  "ratios": {
+    "security_to_company": {
+      "healthy": { "min": 0.015, "max": 0.025, "label": "1:40 to 1:67" },
+      "concerning": { "min": 0.008, "max": 0.015, "label": "1:67 to 1:125" },
+      "critical": { "max": 0.008, "label": "worse than 1:125" }
+    },
+    "security_to_engineering": {
+      "healthy": { "min": 0.05, "max": 0.10, "label": "1:10 to 1:20" },
+      "concerning": { "min": 0.02, "max": 0.05, "label": "1:20 to 1:50" },
+      "critical": { "max": 0.02, "label": "worse than 1:50" }
+    },
+    "compliance_to_company": {
+      "healthy": { "min": 0.005, "max": 0.01, "label": "1:100 to 1:200" },
+      "concerning": { "min": 0.002, "max": 0.005, "label": "1:200 to 1:500" },
+      "critical": { "max": 0.002, "label": "worse than 1:500" }
+    }
+  },
+
+  "messaging": {
+    "valueProps": [
+      "SOC 2 in 4 months vs 12-18 months manually",
+      "Save 2+ FTE hours weekly on evidence collection",
+      "Continuous compliance monitoring (not point-in-time)",
+      "Single pane of glass for all frameworks",
+      "Auditor-approved evidence collection"
+    ],
+    "objectionHandling": {
+      "price": "Calculate FTE cost vs platform cost - typically 3-5x ROI in year one from time savings alone",
+      "build_vs_buy": "Your engineers cost $200/hr. Is compliance evidence collection the best use of their time?",
+      "timing": "Every month without SOC 2 is enterprise deals you can't close. What's the revenue cost of waiting?",
+      "competitor": "Focus on what matters: time to compliance, ongoing maintenance burden, auditor relationships"
+    },
+    "socialProof": [
+      "Used by 1000+ companies including [customer examples]",
+      "Average customer gets SOC 2 Type II in 4 months",
+      "95%+ customer retention rate"
+    ]
+  },
+
+  "reportBranding": {
+    "primaryColor": "#6366F1",
+    "secondaryColor": "#4F46E5",
+    "accentColor": "#818CF8",
+    "gradientStart": "#6366F1",
+    "gradientEnd": "#8B5CF6",
+    "logo": null,
+    "companyWebsite": "https://adrata.com"
+  }
+}

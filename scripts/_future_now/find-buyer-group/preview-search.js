@@ -1,8 +1,13 @@
 /**
  * Preview Search Module
- * 
+ *
  * Discovers employees using the working Coresignal approach
  * Uses single query to get all employees, then filters in JavaScript
+ *
+ * ENHANCED: Now supports intelligent multi-query to bypass 100 result limit
+ * - Uses cursor-based pagination for reliable results
+ * - Automatically splits queries when hitting API limits
+ * - Cost-efficient: Preview uses search credits (2x more than collect credits)
  */
 
 const { extractDomain, deduplicate, delay } = require('./utils');
@@ -11,6 +16,15 @@ class PreviewSearch {
   constructor(apiKey) {
     this.apiKey = apiKey;
     this.baseUrl = 'https://api.coresignal.com/cdapi/v2';
+
+    // Configuration for search optimization
+    this.config = {
+      itemsPerPage: 100,        // API supports up to 1000, but 100 is optimal for preview
+      maxPagesPerQuery: 10,     // Max pages per single query (1000 results)
+      maxTotalResults: 500,     // Default max results across all queries
+      rateLimitDelay: 60,       // ms between requests (18 req/sec limit)
+      requestTimeout: 30000     // 30 second timeout
+    };
   }
 
   /**
@@ -34,22 +48,31 @@ class PreviewSearch {
     const query = this.buildCoresignalQuery(companyData);
     
     console.log(`📋 Getting all employees...`);
-    let allEmployeesRaw = await this.executeSearch(query, maxPages);
+    let searchResult = await this.executeSearch(query, maxPages);
+
+    // Extract metadata and employees array
+    let allEmployeesRaw = searchResult.employees || [];
+    let totalAvailable = searchResult.totalAvailable || allEmployeesRaw.length;
+    let hitLimit = searchResult.hitLimit || false;
+
     console.log(`✅ Found ${allEmployeesRaw.length} total employees`);
-    
+
     // Parent domain fallback for subdomains (e.g., sketchup.trimble.com -> trimble.com)
     if (allEmployeesRaw.length === 0 && companyData.website) {
       const domain = this.extractDomain(companyData.website);
       if (domain.split('.').length > 2) {
         const parentDomain = domain.split('.').slice(-2).join('.');
         console.log(`⚠️ Zero employees found for ${domain}, trying parent domain: ${parentDomain}`);
-        
+
         const parentQuery = this.buildCoresignalQuery({
           ...companyData,
           website: `https://${parentDomain}`
         });
-        
-        allEmployeesRaw = await this.executeSearch(parentQuery, maxPages);
+
+        searchResult = await this.executeSearch(parentQuery, maxPages);
+        allEmployeesRaw = searchResult.employees || [];
+        totalAvailable = searchResult.totalAvailable || allEmployeesRaw.length;
+        hitLimit = searchResult.hitLimit || false;
         console.log(`✅ Parent domain search found ${allEmployeesRaw.length} total employees`);
       }
     }
@@ -113,9 +136,15 @@ class PreviewSearch {
       relevantEmployees = relevantEmployees.filter(emp => this.isUSAEmployee(emp));
       console.log(`🇺🇸 Location filter: ${beforeLocationFilter} → ${relevantEmployees.length} employees (filtered out ${beforeLocationFilter - relevantEmployees.length} non-USA)`);
     }
-    
-    // Deduplicate and return
-    return deduplicate(relevantEmployees);
+
+    // Deduplicate and return with metadata
+    const deduplicatedEmployees = deduplicate(relevantEmployees);
+
+    return {
+      employees: deduplicatedEmployees,
+      totalAvailable: totalAvailable,
+      hitLimit: hitLimit
+    };
   }
 
   /**
@@ -405,25 +434,49 @@ class PreviewSearch {
 
   /**
    * Execute search query against Coresignal API with retry logic and pagination
+   * ENHANCED: Uses larger page sizes and cursor-based pagination for more results
+   *
    * @param {object} query - Elasticsearch query
    * @param {number} maxPages - Maximum pages to fetch
    * @param {number} maxRetries - Maximum number of retries
-   * @returns {Array} Array of employee data
+   * @param {number} maxResults - Maximum total results to fetch (default from config)
+   * @returns {object} { employees: Array, totalAvailable: number, hitLimit: boolean }
    */
-  async executeSearch(query, maxPages = 5, maxRetries = 3) {
+  async executeSearch(query, maxPages = 10, maxRetries = 3, maxResults = null) {
     let allEmployees = [];
     let lastError;
-    
+    let totalAvailable = null;
+    let hitLimit = false;
+    let cursor = null; // For cursor-based pagination
+
+    // Use config defaults if not specified
+    const effectiveMaxResults = maxResults || this.config.maxTotalResults;
+    const itemsPerPage = this.config.itemsPerPage;
+
     for (let page = 1; page <= maxPages; page++) {
+      // Stop if we've hit our target
+      if (allEmployees.length >= effectiveMaxResults) {
+        console.log(`✅ Reached target of ${effectiveMaxResults} results, stopping pagination`);
+        break;
+      }
+
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           console.log(`🔍 Coresignal API page ${page}/${maxPages}, attempt ${attempt}/${maxRetries}...`);
-          
+
           // Add timeout to prevent hanging
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-          
-          const response = await fetch(`${this.baseUrl}/employee_multi_source/search/es_dsl/preview?page=${page}&items_per_page=50`, {
+          const timeoutId = setTimeout(() => controller.abort(), this.config.requestTimeout);
+
+          // Build URL with cursor-based pagination if available
+          let url = `${this.baseUrl}/employee_multi_source/search/es_dsl/preview?items_per_page=${itemsPerPage}`;
+          if (cursor) {
+            url += `&after=${encodeURIComponent(cursor)}`;
+          } else {
+            url += `&page=${page}`;
+          }
+
+          const response = await fetch(url, {
             method: 'POST',
             headers: {
               'apikey': this.apiKey,
@@ -446,6 +499,29 @@ class PreviewSearch {
               throw new Error(`Coresignal search failed: ${response.status} ${response.statusText}`);
             }
           }
+
+          // Read pagination headers
+          const nextPageCursor = response.headers.get('x-next-page-after');
+          const totalResults = parseInt(response.headers.get('x-total-results') || '0');
+          const totalPages = parseInt(response.headers.get('x-total-pages') || '1');
+
+          // CRITICAL: Read x-total-results header on first page
+          if (page === 1) {
+            totalAvailable = totalResults;
+            // Calculate if we need multi-query based on available results vs what we can fetch
+            const maxFetchable = Math.min(effectiveMaxResults, maxPages * itemsPerPage);
+            hitLimit = totalAvailable > maxFetchable;
+
+            if (totalAvailable > 0) {
+              console.log(`📊 Total results available: ${totalAvailable} (fetching up to ${maxFetchable})`);
+              if (hitLimit) {
+                console.log(`⚠️  LIMIT HIT: ${totalAvailable - maxFetchable} results may need multi-query strategy`);
+              }
+            }
+          }
+
+          // Update cursor for next page
+          cursor = nextPageCursor;
 
           const data = await response.json();
           console.log(`✅ Coresignal API success on page ${page}, attempt ${attempt}`);
@@ -503,18 +579,41 @@ class PreviewSearch {
           // If no employees returned, we've reached the end
           if (pageEmployees.length === 0) {
             console.log(`📄 No more employees on page ${page}, stopping pagination`);
-            return allEmployees;
+            return {
+              employees: allEmployees,
+              totalAvailable: totalAvailable || allEmployees.length,
+              hitLimit: hitLimit
+            };
           }
-          
+
           allEmployees = allEmployees.concat(pageEmployees);
           console.log(`📊 Page ${page}: Found ${pageEmployees.length} employees (Total: ${allEmployees.length})`);
-          
-          // If we got fewer than 50 employees, we've likely reached the end
-          if (pageEmployees.length < 50) {
-            console.log(`📄 Less than 50 employees on page ${page}, stopping pagination`);
-            return allEmployees;
+
+          // If we got fewer than requested, we've reached the end of results
+          if (pageEmployees.length < itemsPerPage) {
+            console.log(`📄 Less than ${itemsPerPage} employees on page ${page}, stopping pagination`);
+            return {
+              employees: allEmployees,
+              totalAvailable: totalAvailable || allEmployees.length,
+              hitLimit: hitLimit
+            };
           }
-          
+
+          // If no cursor for next page, we've reached the end
+          if (!cursor) {
+            console.log(`📄 No cursor for next page, stopping pagination`);
+            return {
+              employees: allEmployees,
+              totalAvailable: totalAvailable || allEmployees.length,
+              hitLimit: hitLimit
+            };
+          }
+
+          // Rate limiting between requests (18 req/sec limit)
+          if (page < maxPages) {
+            await delay(this.config.rateLimitDelay);
+          }
+
           // Success, move to next page
           break;
           
@@ -535,11 +634,15 @@ class PreviewSearch {
             console.log(`💥 All ${maxRetries} attempts failed for page ${page}`);
             if (allEmployees.length > 0) {
               console.log(`⚠️ Returning ${allEmployees.length} employees found so far`);
-              return allEmployees;
+              return {
+                employees: allEmployees,
+                totalAvailable: totalAvailable || allEmployees.length,
+                hitLimit: hitLimit
+              };
             }
             throw lastError;
           }
-          
+
           // Wait before retrying with exponential backoff
           const waitTime = Math.min(1000 * Math.pow(2, attempt - 1), 10000); // Max 10 seconds
           console.log(`⏳ Waiting ${waitTime}ms before retry...`);
@@ -547,8 +650,12 @@ class PreviewSearch {
         }
       }
     }
-    
-    return allEmployees;
+
+    return {
+      employees: allEmployees,
+      totalAvailable: totalAvailable || allEmployees.length,
+      hitLimit: hitLimit
+    };
   }
 
   /**
@@ -580,7 +687,247 @@ class PreviewSearch {
         }
       }
     };
-    return await this.executeSearch(query);
+    const result = await this.executeSearch(query);
+    return result.employees; // Extract employees array for backward compatibility
+  }
+
+  /**
+   * 🧠 INTELLIGENT MULTI-QUERY SYSTEM
+   * Automatically splits queries when hitting Coresignal preview API limits (100 results max)
+   * Implements intelligent pagination by generating refined sub-queries
+   *
+   * @param {object} companyData - Company data for search
+   * @param {object} customFiltering - Custom filtering configuration with departments/titles
+   * @param {number} maxResults - Maximum total results to fetch (default 500)
+   * @returns {Promise<Array>} Array of all employees from multiple queries (deduplicated)
+   */
+  async intelligentMultiQuery(companyData, customFiltering, maxResults = 500) {
+    console.log(`🧠 INTELLIGENT MULTI-QUERY ACTIVATED`);
+    console.log(`📊 Target: ${companyData.name || companyData.linkedinUrl}`);
+    console.log(`🎯 Max results: ${maxResults}`);
+
+    // Execute base query first
+    const baseResult = await this.discoverAllStakeholders(
+      companyData,
+      5, // maxPages
+      'strict',
+      'custom',
+      customFiltering,
+      false // skipEnrichment
+    );
+
+    const allEmployees = Array.isArray(baseResult) ? baseResult : (baseResult.employees || []);
+    const totalAvailable = baseResult.totalAvailable || allEmployees.length;
+    const hitLimit = baseResult.hitLimit || false;
+
+    console.log(`📊 Base query results: ${allEmployees.length}/${totalAvailable} (hitLimit: ${hitLimit})`);
+
+    // If we didn't hit the limit or already have enough, done
+    if (!hitLimit || allEmployees.length >= maxResults || totalAvailable <= 100) {
+      console.log(`✅ No additional queries needed (sufficient data or no limit hit)`);
+      return allEmployees;
+    }
+
+    // Calculate how many more results we want
+    const remaining = Math.min(totalAvailable - allEmployees.length, maxResults - allEmployees.length);
+    console.log(`🔍 ${remaining} results remaining - generating refined queries...`);
+
+    // Select splitting strategy
+    const strategy = this.selectSplittingStrategy(customFiltering, totalAvailable, allEmployees.length);
+    console.log(`🎯 Strategy: ${strategy}`);
+
+    // Generate refined queries
+    const refinedQueries = this.generateRefinedQueries(companyData, customFiltering, strategy);
+    console.log(`📋 Generated ${refinedQueries.length} refined queries`);
+
+    // Execute refined queries and merge results
+    for (let i = 0; i < refinedQueries.length; i++) {
+      if (allEmployees.length >= maxResults) {
+        console.log(`✅ Reached max results (${maxResults}), stopping`);
+        break;
+      }
+
+      const refinedQuery = refinedQueries[i];
+      console.log(`🔍 Query ${i + 1}/${refinedQueries.length}: ${refinedQuery._splitDescription}...`);
+
+      try {
+        const refinedResult = await this.discoverAllStakeholders(
+          refinedQuery.companyData,
+          5,
+          'strict',
+          'custom',
+          refinedQuery.customFiltering,
+          false
+        );
+
+        const refinedEmployees = Array.isArray(refinedResult) ? refinedResult : (refinedResult.employees || []);
+
+        // Deduplicate by Coresignal ID
+        const newEmployees = refinedEmployees.filter(e =>
+          !allEmployees.some(existing => existing.id === e.id)
+        );
+
+        allEmployees.push(...newEmployees);
+        console.log(`   ✅ +${newEmployees.length} new (${allEmployees.length} total, ${refinedEmployees.length} fetched)`);
+
+        // Rate limiting: 100ms between queries
+        if (i < refinedQueries.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      } catch (error) {
+        console.log(`   ⚠️  Query failed: ${error.message}`);
+        // Continue with next query
+      }
+    }
+
+    console.log(`🎉 Intelligent multi-query complete: ${allEmployees.length} total employees`);
+    return allEmployees;
+  }
+
+  /**
+   * Select optimal splitting strategy based on query characteristics
+   * @param {object} customFiltering - Custom filtering configuration
+   * @param {number} totalResults - Total results available
+   * @param {number} fetchedResults - Results already fetched
+   * @returns {string} Strategy name: DEPARTMENT_SPLIT, TITLE_SPLIT, or SENIORITY_SPLIT
+   */
+  selectSplittingStrategy(customFiltering, totalResults, fetchedResults) {
+    const remaining = totalResults - fetchedResults;
+
+    // Check what's available in the configuration
+    const primaryDepartments = customFiltering?.departments?.primary || [];
+    const primaryTitles = customFiltering?.titles?.primary || [];
+    const hasMultipleDepartments = primaryDepartments.length > 1;
+    const hasMultipleTitles = primaryTitles.length > 5;
+
+    // Decision tree for strategy selection
+    if (hasMultipleDepartments && remaining > 500) {
+      return 'DEPARTMENT_SPLIT'; // Best for large result sets with multiple departments
+    } else if (hasMultipleTitles && remaining > 300) {
+      return 'TITLE_SPLIT'; // Split by specific title groups
+    } else {
+      return 'SENIORITY_SPLIT'; // Default: split by seniority level
+    }
+  }
+
+  /**
+   * Generate refined queries based on splitting strategy
+   * @param {object} companyData - Original company data
+   * @param {object} customFiltering - Original custom filtering
+   * @param {string} strategy - Splitting strategy
+   * @returns {Array} Array of refined query objects
+   */
+  generateRefinedQueries(companyData, customFiltering, strategy) {
+    switch (strategy) {
+      case 'DEPARTMENT_SPLIT':
+        return this.generateDepartmentQueries(companyData, customFiltering);
+      case 'TITLE_SPLIT':
+        return this.generateTitleQueries(companyData, customFiltering);
+      case 'SENIORITY_SPLIT':
+        return this.generateSeniorityQueries(companyData, customFiltering);
+      default:
+        return [];
+    }
+  }
+
+  /**
+   * Split query by individual departments
+   * @param {object} companyData - Company data
+   * @param {object} customFiltering - Custom filtering
+   * @returns {Array} Array of department-specific queries
+   */
+  generateDepartmentQueries(companyData, customFiltering) {
+    const primaryDepartments = customFiltering?.departments?.primary || [];
+
+    // Create one query per department
+    return primaryDepartments.map(dept => ({
+      companyData: { ...companyData },
+      customFiltering: {
+        ...customFiltering,
+        departments: {
+          primary: [dept], // Single department
+          secondary: customFiltering?.departments?.secondary || []
+        }
+      },
+      _splitStrategy: 'department',
+      _splitValue: dept,
+      _splitDescription: `Department: ${dept}`
+    }));
+  }
+
+  /**
+   * Split query by title groups
+   * @param {object} companyData - Company data
+   * @param {object} customFiltering - Custom filtering
+   * @returns {Array} Array of title-specific queries
+   */
+  generateTitleQueries(companyData, customFiltering) {
+    const primaryTitles = customFiltering?.titles?.primary || [];
+
+    // Group titles into sets of 3-5 each
+    const titleGroups = [];
+    for (let i = 0; i < primaryTitles.length; i += 3) {
+      titleGroups.push(primaryTitles.slice(i, i + 3));
+    }
+
+    return titleGroups.map((titleGroup, index) => ({
+      companyData: { ...companyData },
+      customFiltering: {
+        ...customFiltering,
+        titles: {
+          primary: titleGroup,
+          secondary: []
+        }
+      },
+      _splitStrategy: 'title',
+      _splitValue: titleGroup.join(', '),
+      _splitDescription: `Titles: ${titleGroup.slice(0, 2).join(', ')}...`
+    }));
+  }
+
+  /**
+   * Split query by seniority levels
+   * @param {object} companyData - Company data
+   * @param {object} customFiltering - Custom filtering
+   * @returns {Array} Array of seniority-specific queries
+   */
+  generateSeniorityQueries(companyData, customFiltering) {
+    const seniorityLevels = [
+      {
+        name: 'VP/SVP',
+        keywords: ['vp', 'vice president', 'svp', 'senior vice president'],
+        description: 'VP/SVP level'
+      },
+      {
+        name: 'Director',
+        keywords: ['director', 'senior director'],
+        description: 'Director level'
+      },
+      {
+        name: 'Manager',
+        keywords: ['manager', 'senior manager', 'engineering manager', 'product manager'],
+        description: 'Manager level'
+      },
+      {
+        name: 'Lead/Principal',
+        keywords: ['lead', 'principal', 'staff', 'senior engineer', 'senior analyst'],
+        description: 'Lead/Principal level'
+      }
+    ];
+
+    return seniorityLevels.map(level => ({
+      companyData: { ...companyData },
+      customFiltering: {
+        ...customFiltering,
+        titles: {
+          primary: level.keywords,
+          secondary: []
+        }
+      },
+      _splitStrategy: 'seniority',
+      _splitValue: level.name,
+      _splitDescription: level.description
+    }));
   }
 
   /**

@@ -167,11 +167,12 @@ html {
   box-sizing: border-box;
 }
 
-/* Ensure main app container doesn't cause page scrollbars */
+/* Ensure main app container allows scrolling */
 #__next,
 [data-nextjs-scroll-focus-boundary] {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: #ffffff; /* Prevent black flicker */
 }
 

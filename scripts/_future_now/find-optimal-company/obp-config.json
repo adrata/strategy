@@ -1,0 +1,311 @@
+{
+  "version": "1.0.0",
+  "name": "Organizational Behavioral Physics Configuration",
+
+  "ratios": {
+    "security_to_company": {
+      "description": "Security team size relative to total company",
+      "healthy": { "min": 0.015, "max": 0.025, "label": "1:40 to 1:67" },
+      "concerning": { "min": 0.008, "max": 0.015, "label": "1:67 to 1:125" },
+      "critical": { "max": 0.008, "label": "worse than 1:125" },
+      "industryAdjustments": {
+        "fintech": 1.3,
+        "healthcare": 1.2,
+        "enterprise_saas": 1.1,
+        "consumer": 0.8
+      }
+    },
+    "security_to_engineering": {
+      "description": "Security team relative to engineering team",
+      "healthy": { "min": 0.05, "max": 0.10, "label": "1:10 to 1:20" },
+      "concerning": { "min": 0.02, "max": 0.05, "label": "1:20 to 1:50" },
+      "critical": { "max": 0.02, "label": "worse than 1:50" }
+    },
+    "compliance_to_company": {
+      "description": "Compliance team relative to total company",
+      "healthy": { "min": 0.005, "max": 0.015, "label": "1:67 to 1:200" },
+      "concerning": { "min": 0.002, "max": 0.005, "label": "1:200 to 1:500" },
+      "critical": { "max": 0.002, "label": "worse than 1:500" }
+    }
+  },
+
+  "leadershipPatterns": {
+    "proveYourselfWindow": 90,
+    "honeymoonWindow": 30,
+    "actionWindow": { "start": 30, "end": 90, "peakUrgency": 60 },
+    "newLeaderBuyingProbability": {
+      "0-30_days": 0.2,
+      "30-60_days": 0.6,
+      "60-90_days": 0.5,
+      "90-180_days": 0.3,
+      "180+_days": 0.15
+    }
+  },
+
+  "matureCompanies": {
+    "tier1_gold_standard": [
+      "stripe", "square", "plaid", "shopify", "twilio",
+      "datadog", "snowflake", "crowdstrike", "okta", "cloudflare"
+    ],
+    "tier2_strong_programs": [
+      "gusto", "rippling", "brex", "ramp", "notion",
+      "figma", "linear", "vercel", "supabase", "planetscale",
+      "segment", "amplitude", "mixpanel", "heap"
+    ],
+    "tier3_established": [
+      "salesforce", "workday", "servicenow", "atlassian",
+      "hubspot", "zendesk", "intercom", "drift"
+    ],
+    "compliancePlatformUsers": [
+      "vanta", "drata", "secureframe", "laika", "thoropass"
+    ]
+  },
+
+  "reportingLineImplications": {
+    "CEO": {
+      "mandate": "strategic",
+      "budget": "flexible",
+      "speed": "fast",
+      "framingAdvice": "Business impact, competitive advantage, strategic enablement",
+      "objectionLikely": "Is this the right priority vs. other initiatives?"
+    },
+    "CTO": {
+      "mandate": "technical",
+      "budget": "moderate",
+      "speed": "moderate",
+      "framingAdvice": "Technical excellence, engineering productivity, platform reliability",
+      "objectionLikely": "Can we build this ourselves? Does it integrate well?"
+    },
+    "CFO": {
+      "mandate": "cost_compliance",
+      "budget": "strict",
+      "speed": "slow",
+      "framingAdvice": "ROI, cost savings, audit readiness, risk reduction",
+      "objectionLikely": "What's the payback period? Can we defer this?"
+    },
+    "COO": {
+      "mandate": "operational",
+      "budget": "moderate",
+      "speed": "moderate",
+      "framingAdvice": "Efficiency, process improvement, operational excellence",
+      "objectionLikely": "How does this fit our existing processes?"
+    },
+    "General Counsel": {
+      "mandate": "risk_legal",
+      "budget": "strict",
+      "speed": "slow",
+      "framingAdvice": "Risk mitigation, regulatory compliance, liability reduction",
+      "objectionLikely": "What are the contractual implications?"
+    },
+    "CISO": {
+      "mandate": "security",
+      "budget": "moderate",
+      "speed": "moderate",
+      "framingAdvice": "Security posture, threat reduction, compliance automation",
+      "objectionLikely": "How mature is the vendor's security?"
+    },
+    "VP Engineering": {
+      "mandate": "delivery",
+      "budget": "moderate",
+      "speed": "fast",
+      "framingAdvice": "Developer experience, velocity, reduced friction",
+      "objectionLikely": "Will this slow down our sprints?"
+    }
+  },
+
+  "fundingPressure": {
+    "pre_seed": {
+      "pressure": "minimal",
+      "professionalization": false,
+      "complianceNeed": "rare",
+      "typicalHeadcount": "1-10"
+    },
+    "seed": {
+      "pressure": "low",
+      "professionalization": false,
+      "complianceNeed": "planning",
+      "typicalHeadcount": "5-25"
+    },
+    "series_a": {
+      "pressure": "moderate",
+      "professionalization": "emerging",
+      "complianceNeed": "starting",
+      "typicalHeadcount": "20-75"
+    },
+    "series_b": {
+      "pressure": "high",
+      "professionalization": "required",
+      "complianceNeed": "urgent",
+      "typicalHeadcount": "50-200"
+    },
+    "series_c": {
+      "pressure": "critical",
+      "professionalization": "expected",
+      "complianceNeed": "mature",
+      "typicalHeadcount": "150-500"
+    },
+    "series_d_plus": {
+      "pressure": "critical",
+      "professionalization": "mature",
+      "complianceNeed": "expanding",
+      "typicalHeadcount": "400+"
+    },
+    "public": {
+      "pressure": "regulatory",
+      "professionalization": "mandated",
+      "complianceNeed": "SOX/continuous",
+      "typicalHeadcount": "varies"
+    }
+  },
+
+  "postFundingTimeline": {
+    "0-90_days": {
+      "phase": "celebration_planning",
+      "buyingLikelihood": 0.3,
+      "focus": "Hiring plan, strategy refinement"
+    },
+    "90-180_days": {
+      "phase": "deployment",
+      "buyingLikelihood": 0.7,
+      "focus": "Executing on promised initiatives, tool purchases"
+    },
+    "180-365_days": {
+      "phase": "scaling",
+      "buyingLikelihood": 0.5,
+      "focus": "Process optimization, preparing for next round"
+    },
+    "365+_days": {
+      "phase": "proving",
+      "buyingLikelihood": 0.4,
+      "focus": "Metrics for next funding, efficiency"
+    }
+  },
+
+  "growthTensionThresholds": {
+    "hypergrowth_mismatch": {
+      "company_growth_min": 40,
+      "department_growth_max": 15,
+      "tension_score": 90,
+      "implication": "Department drowning - attack surface growing 3x faster than defense"
+    },
+    "significant_mismatch": {
+      "company_growth_min": 25,
+      "department_growth_max": 10,
+      "tension_score": 70,
+      "implication": "Department falling behind - needs force multipliers"
+    },
+    "moderate_mismatch": {
+      "company_growth_min": 15,
+      "department_growth_max": 5,
+      "tension_score": 50,
+      "implication": "Department stretched - efficiency gains needed"
+    }
+  },
+
+  "titlePatterns": {
+    "security_leadership": [
+      "CISO", "Chief Information Security Officer",
+      "VP Security", "VP of Security", "Vice President Security",
+      "Head of Security", "Director of Security",
+      "VP Information Security", "Head of InfoSec"
+    ],
+    "compliance_leadership": [
+      "Chief Compliance Officer", "CCO",
+      "VP Compliance", "Head of Compliance", "Director of Compliance",
+      "VP Risk", "Head of Risk", "Chief Risk Officer"
+    ],
+    "engineering_leadership": [
+      "CTO", "Chief Technology Officer",
+      "VP Engineering", "VP of Engineering",
+      "Head of Engineering", "Director of Engineering",
+      "SVP Engineering"
+    ],
+    "security_team": [
+      "Security Engineer", "Security Analyst",
+      "Application Security", "AppSec",
+      "Infrastructure Security", "Cloud Security",
+      "Security Operations", "SecOps"
+    ],
+    "compliance_team": [
+      "Compliance Analyst", "Compliance Manager",
+      "GRC Analyst", "Risk Analyst",
+      "Audit", "Internal Audit"
+    ]
+  },
+
+  "departmentKeywords": {
+    "security": ["security", "infosec", "cybersecurity", "appsec", "secops", "soc"],
+    "compliance": ["compliance", "grc", "risk", "audit", "regulatory"],
+    "engineering": ["engineering", "software", "developer", "sre", "devops", "platform"],
+    "product": ["product", "pm", "product manager", "product design"],
+    "sales": ["sales", "account executive", "sdr", "bdr", "revenue"],
+    "marketing": ["marketing", "growth", "demand gen", "content"],
+    "finance": ["finance", "accounting", "fp&a", "controller"],
+    "hr": ["hr", "people", "talent", "recruiting", "human resources"]
+  },
+
+  "behavioralPrinciples": {
+    "anchoring": {
+      "description": "New leaders anchor on their previous company's approach",
+      "applicationRule": "If leader came from Tier 1 company, they expect similar tooling/ratios"
+    },
+    "loss_aversion": {
+      "description": "Pain of loss is 2x stronger than pleasure of equivalent gain",
+      "applicationRule": "Frame around what they'll lose without action, not just what they'll gain"
+    },
+    "social_proof": {
+      "description": "People follow what similar others do",
+      "applicationRule": "Reference what their previous company or competitors do"
+    },
+    "commitment_consistency": {
+      "description": "People want to be consistent with past commitments",
+      "applicationRule": "If they've publicly committed to compliance, remind them"
+    },
+    "scarcity": {
+      "description": "Limited availability increases perceived value",
+      "applicationRule": "Emphasize closing timeline windows (90-day, board meeting, audit)"
+    },
+    "authority": {
+      "description": "People defer to experts and authority figures",
+      "applicationRule": "Champion's previous company experience gives them internal authority"
+    }
+  },
+
+  "fiscalCalendarPatterns": {
+    "q4": {
+      "pattern": "budget_flush",
+      "buyingLikelihood": 0.7,
+      "framing": "Use it or lose it - get this approved before year end"
+    },
+    "q1": {
+      "pattern": "new_initiatives",
+      "buyingLikelihood": 0.6,
+      "framing": "New budget, new priorities - perfect time to invest"
+    },
+    "q2": {
+      "pattern": "execution",
+      "buyingLikelihood": 0.5,
+      "framing": "Execute on Q1 plans before mid-year review"
+    },
+    "q3": {
+      "pattern": "planning",
+      "buyingLikelihood": 0.4,
+      "framing": "Get this into next year's budget now"
+    }
+  },
+
+  "pullScoreWeights": {
+    "ratio_tension": 0.25,
+    "leadership_tension": 0.30,
+    "growth_tension": 0.20,
+    "resource_tension": 0.15,
+    "reporting_tension": 0.10
+  },
+
+  "pullClassification": {
+    "PULL": { "min_score": 75, "description": "Active blocked demand - would be weird NOT to buy" },
+    "HIGH_CONSIDERATION": { "min_score": 60, "description": "Strong tensions present - likely to act soon" },
+    "CONSIDERATION": { "min_score": 45, "description": "Some tensions - nurture and monitor" },
+    "NOT_IN_MARKET": { "max_score": 45, "description": "No significant tensions detected" }
+  }
+}

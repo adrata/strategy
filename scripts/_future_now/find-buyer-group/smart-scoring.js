@@ -16,6 +16,85 @@ class SmartScoring {
   }
 
   /**
+   * Detect sales org segment from title (Hunter vs Farmer detection)
+   * Added from Snowflake buyer group audit - critical for sales org targeting
+   * 
+   * Sales Org Segments:
+   * - Commercial = HUNTERS (acquisition, new business) ✅
+   * - SMB = HUNTERS (high-volume new business) ✅
+   * - Enterprise = MIXED (some acquisition, some expansion) ⚠️
+   * - Majors/Strategic = FARMERS (single account, expansion only) ❌
+   * - Global = FARMERS (named accounts, expansion) ❌
+   * 
+   * @param {string} title - Employee title
+   * @returns {object} Segment info with type, priority, and score adjustment
+   */
+  detectSalesSegment(title) {
+    const titleLower = (title || '').toLowerCase();
+    
+    // FARMERS - Expansion focused, penalize heavily
+    if (titleLower.includes('strategic account') || titleLower.includes('strategic ae')) {
+      return { segment: 'majors', type: 'farmer', priority: 'low', scoreAdjust: -30 };
+    }
+    if (titleLower.includes('global account') || titleLower.includes('global ae')) {
+      return { segment: 'global', type: 'farmer', priority: 'low', scoreAdjust: -30 };
+    }
+    if (titleLower.includes('major account') || titleLower.includes('majors')) {
+      return { segment: 'majors', type: 'farmer', priority: 'low', scoreAdjust: -25 };
+    }
+    if (titleLower.includes('named account')) {
+      return { segment: 'named', type: 'farmer', priority: 'low', scoreAdjust: -25 };
+    }
+    if (titleLower.includes('key account') && !titleLower.includes('commercial')) {
+      return { segment: 'key', type: 'farmer', priority: 'low', scoreAdjust: -20 };
+    }
+    if (titleLower.includes('expansion') && !titleLower.includes('commercial')) {
+      return { segment: 'expansion', type: 'farmer', priority: 'low', scoreAdjust: -20 };
+    }
+    
+    // HUNTERS - Acquisition focused, boost
+    if (titleLower.includes('commercial')) {
+      return { segment: 'commercial', type: 'hunter', priority: 'high', scoreAdjust: 20 };
+    }
+    if (titleLower.includes('smb') || titleLower.includes('small business')) {
+      return { segment: 'smb', type: 'hunter', priority: 'high', scoreAdjust: 15 };
+    }
+    if (titleLower.includes('acquisition')) {
+      return { segment: 'acquisition', type: 'hunter', priority: 'high', scoreAdjust: 15 };
+    }
+    if (titleLower.includes('new business')) {
+      return { segment: 'new_business', type: 'hunter', priority: 'high', scoreAdjust: 15 };
+    }
+    
+    // MIXED - Enterprise segment, neutral
+    if (titleLower.includes('enterprise account') || titleLower.includes('enterprise ae')) {
+      return { segment: 'enterprise', type: 'mixed', priority: 'medium', scoreAdjust: -5 };
+    }
+    
+    // UNKNOWN - Generic AE or sales role
+    if (titleLower.includes('account executive') || titleLower.includes(' ae ') || titleLower.endsWith(' ae')) {
+      return { segment: 'unknown', type: 'unknown', priority: 'medium', scoreAdjust: 0 };
+    }
+    
+    // Not a sales segment role (leadership, etc.)
+    return { segment: 'none', type: 'leadership', priority: 'high', scoreAdjust: 0 };
+  }
+
+  /**
+   * Score employee based on sales segment (hunter vs farmer)
+   * @param {object} employee - Employee data
+   * @returns {number} Segment score adjustment (-30 to +20)
+   */
+  scoreSalesSegment(employee) {
+    if (this.productCategory !== 'sales') {
+      return 0; // Only apply to sales product category
+    }
+    
+    const segment = this.detectSalesSegment(employee.title);
+    return segment.scoreAdjust;
+  }
+
+  /**
    * Score all employees with multi-dimensional analysis
    * @param {Array} previewEmployees - Array of employee previews
    * @returns {Array} Array of scored employees
@@ -51,13 +130,21 @@ class SmartScoring {
    * @returns {object} All scores
    */
   calculateAllScores(employee) {
+    // Get segment info for logging
+    const segmentInfo = this.detectSalesSegment(employee.title);
+    
     return {
       seniority: this.scoreSeniority(employee),
       departmentFit: this.scoreDepartmentFit(employee),
       influence: this.scoreInfluence(employee),
       championPotential: this.scoreChampionPotential(employee),
       crossFunctional: this.scoreCrossFunctional(employee),
-      geoAlignment: this.scoreGeography(employee)
+      geoAlignment: this.scoreGeography(employee),
+      // NEW: Sales segment scoring (hunter vs farmer detection)
+      // Added from Snowflake audit - penalizes farmers, boosts hunters
+      salesSegment: this.scoreSalesSegment(employee),
+      // Store segment info for role assignment
+      _segmentInfo: segmentInfo
     };
   }
 
@@ -241,36 +328,48 @@ class SmartScoring {
       return 4; // Default for custom filtering
     }
     
-    // Product-specific relevance (for Sales software)
+    // Product-specific relevance (for Sales software) - ACQUISITION FOCUSED
     if (this.productCategory === 'sales') {
-      // Primary relevance - direct users and decision makers
-      const primaryDepts = ['sales', 'revenue', 'operations', 'business development', 'sales enablement', 'revenue operations'];
-      const primaryTitles = ['sales', 'revenue', 'business development', 'account executive', 'cro', 'chief revenue officer'];
+      // EXCLUSIONS FIRST - these roles are NOT relevant for sales acquisition
+      // Account Management = existing customer focus (expansion/retention)
+      // Product roles = build products, don't buy sales tools
+      // Customer Success = existing customer focus
+      if (dept.includes('account management') || 
+          dept.includes('customer success') || 
+          dept.includes('customer service') ||
+          dept.includes('product management') ||
+          dept.includes('product') ||
+          dept.includes('engineering')) {
+        return 2; // Low score - not relevant for acquisition
+      }
+      
+      if (title.includes('account manager') ||
+          title.includes('customer success') ||
+          title.includes('product manager') ||
+          title.includes('product owner') ||
+          title.includes('engineer') ||
+          title.includes('developer')) {
+        return 2; // Low score - not relevant for acquisition
+      }
+      
+      // Primary relevance - direct users and decision makers for sales tools
+      const primaryDepts = ['sales', 'revenue', 'business development', 'sales enablement', 'revenue operations', 'sales operations'];
+      const primaryTitles = ['sales', 'revenue', 'business development', 'cro', 'chief revenue officer', 'sdr', 'bdr', 'revops'];
       
       if (primaryDepts.some(d => dept.includes(d))) return 10;
       if (primaryTitles.some(t => title.includes(t))) return 9;
       
-      // Secondary relevance - influencers and adjacent functions
-      const secondaryDepts = ['marketing', 'product']; // Only if sales enablement related
-      if (secondaryDepts.some(d => dept.includes(d))) {
-        // Check if it's sales enablement related
-        if (title.includes('sales enablement') || title.includes('revenue') || title.includes('growth')) {
+      // Secondary relevance - marketing only if growth/demand gen focused
+      if (dept.includes('marketing')) {
+        if (title.includes('growth') || title.includes('demand gen') || title.includes('revenue')) {
           return 8;
         }
-        return 6; // General marketing/product
+        return 5; // General marketing
       }
       
-      // Technical relevance for sales tools
-      const techDepts = ['it', 'technology', 'engineering'];
-      if (techDepts.some(d => dept.includes(d))) return 6;
-      
-      // EXCLUDE Customer Success unless managing sales
-      if (dept.includes('customer success') || dept.includes('customer service')) {
-        // Special case: Customer Success managing sales
-        if (title.includes('sales') || title.includes('revenue') || title.includes('business development')) {
-          return 7; // Include if managing sales
-        }
-        return 2; // Exclude otherwise
+      // Operations can be relevant for sales ops
+      if (dept.includes('operations') && !dept.includes('product operations')) {
+        return 7;
       }
     }
     
@@ -366,9 +465,18 @@ class SmartScoring {
       if (dept.includes('enrollment management') || dept.includes('academic advising')) score += 6;
       if (dept.includes('financial aid') || dept.includes('counseling services')) score += 5;
     } else {
-      // Standard B2B departments
-      if (dept.includes('sales') || dept.includes('revenue') || dept.includes('operations')) score += 8;
-      if (dept.includes('product') || dept.includes('marketing')) score += 6;
+      // Standard B2B departments for SALES SOFTWARE - ACQUISITION FOCUSED
+      // EXCLUDED: Product roles - they build products, they don't buy sales tools
+      // EXCLUDED: Account Management - existing customer focus
+      if (dept.includes('account management') || 
+          dept.includes('customer success') ||
+          dept.includes('product')) {
+        score += 0; // No champion score for excluded roles
+      } else if (dept.includes('sales') || dept.includes('revenue') || dept.includes('business development')) {
+        score += 8;
+      } else if (dept.includes('operations') || dept.includes('marketing')) {
+        score += 5;
+      }
     }
     
     // Network influence for internal advocacy
@@ -463,36 +571,49 @@ class SmartScoring {
       return Math.min(relevance, 1.0);
     }
     
-    // Product-specific relevance calculation
+    // Product-specific relevance calculation - ACQUISITION FOCUSED
     if (this.productCategory === 'sales') {
-      // Primary relevance (direct users and decision makers)
-      const primaryDepts = ['sales', 'revenue', 'operations', 'business development', 'sales enablement', 'revenue operations'];
-      const primaryTitles = ['sales', 'revenue', 'business development', 'account', 'cro', 'chief revenue officer'];
+      // EXCLUSIONS FIRST - these roles are NOT relevant for sales acquisition
+      // Account Management = existing customer focus (expansion/retention)
+      // Product roles = build products, don't buy sales tools
+      // Customer Success = existing customer focus
+      if (dept.includes('account management') || 
+          dept.includes('customer success') || 
+          dept.includes('customer service') ||
+          dept.includes('product management') ||
+          dept.includes('product') ||
+          dept.includes('engineering')) {
+        return 0.1; // Very low relevance
+      }
+      
+      if (title.includes('account manager') ||
+          title.includes('customer success') ||
+          title.includes('product manager') ||
+          title.includes('product owner') ||
+          title.includes('engineer') ||
+          title.includes('developer')) {
+        return 0.1; // Very low relevance
+      }
+      
+      // Primary relevance (direct users and decision makers for sales tools)
+      const primaryDepts = ['sales', 'revenue', 'business development', 'sales enablement', 'revenue operations', 'sales operations'];
+      const primaryTitles = ['sales', 'revenue', 'business development', 'cro', 'chief revenue officer', 'sdr', 'bdr', 'revops'];
       
       if (primaryDepts.some(d => dept.includes(d))) relevance += 0.5;
       if (primaryTitles.some(t => title.includes(t))) relevance += 0.4;
       
-      // Secondary relevance (influencers) - more restrictive
-      const secondaryDepts = ['marketing', 'product']; // Removed customer success
-      const secondaryTitles = ['marketing', 'product', 'strategy'];
-      
-      if (secondaryDepts.some(d => dept.includes(d))) {
-        // Only if sales enablement related
-        if (title.includes('sales enablement') || title.includes('revenue') || title.includes('growth')) {
+      // Marketing only if growth/demand gen focused
+      if (dept.includes('marketing')) {
+        if (title.includes('growth') || title.includes('demand gen') || title.includes('revenue')) {
           relevance += 0.3;
         } else {
-          relevance += 0.1; // General marketing/product
+          relevance += 0.1; // General marketing
         }
       }
-      if (secondaryTitles.some(t => title.includes(t))) relevance += 0.1;
       
-      // EXCLUDE Customer Success unless managing sales
-      if (dept.includes('customer success') || dept.includes('customer service')) {
-        if (title.includes('sales') || title.includes('revenue') || title.includes('business development')) {
-          relevance += 0.3; // Include if managing sales
-        } else {
-          relevance = 0.1; // Exclude otherwise
-        }
+      // Operations relevance (for sales ops)
+      if (dept.includes('operations') && !dept.includes('product operations')) {
+        relevance += 0.2;
       }
     } else {
       // General relevance for other products

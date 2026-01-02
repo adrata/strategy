@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Ideas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background: #fff; color: #111; line-height: 1.6; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .subtitle { color: #666; margin-bottom: 48px; }
+        h2 { font-size: 20px; font-weight: 600; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+        .idea { padding: 12px 0; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: opacity 0.2s; }
+        .idea:hover { background: #fafafa; margin: 0 -12px; padding: 12px; }
+        .idea.checked { opacity: 0.4; text-decoration: line-through; }
+        .idea strong { font-weight: 600; }
+        .idea span { color: #666; font-size: 14px; }
+        .quote { background: #f9f9f9; padding: 24px; margin: 32px 0; border-left: 3px solid #111; font-style: italic; }
+        .quote cite { display: block; margin-top: 8px; font-style: normal; font-weight: 600; font-size: 14px; }
+        .metric { display: inline-block; background: #f5f5f5; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; margin-right: 8px; margin-bottom: 8px; }
+        
+        /* Audio Player Styles */
+        .audio-player {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #fff;
+        }
+        .audio-player button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .audio-player button:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
+        .audio-player button svg { width: 24px; height: 24px; fill: #fff; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .audio-controls { display: flex; gap: 8px; }
+        .speed-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn.active { background: #fff; color: #667eea; }
+    </style>
+</head>
+<body>
+
+<!-- Audio Player -->
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this article</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="audio-controls">
+        <button class="speed-btn" onclick="setSpeed(0.75)">0.75x</button>
+        <button class="speed-btn active" onclick="setSpeed(1)">1x</button>
+        <button class="speed-btn" onclick="setSpeed(1.25)">1.25x</button>
+        <button class="speed-btn" onclick="setSpeed(1.5)">1.5x</button>
+    </div>
+</div>
+
+<h1>Growth Ideas</h1>
+<p class="subtitle">100+ ways to turn one user into many. Click to mark as done.</p>
+
+<div class="quote">
+    "The end goal of every growth hacker is to build a self-perpetuating marketing machine that reaches millions by itself."
+    <cite>— Ryan Holiday</cite>
+</div>
+
+<p><span class="metric">K > 1.0 = viral</span> <span class="metric">Target: 25% invite rate</span> <span class="metric">Target: 40% accept rate</span></p>
+
+<h2>Viral Loops</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Personal referral links</strong><br>
+    <span>Every user gets unique URL. Track who brings whom. Show count on dashboard.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Two-sided rewards</strong><br>
+    <span>Both referrer and referee get something. "Your friend gets 20% off, you get free month."</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Invite-to-unlock features</strong><br>
+    <span>Free tier gets 3 lookups. Invite 2 friends = unlock 5 more.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Tiered referral rewards</strong><br>
+    <span>1 referral = feature. 5 = free month. 10 = Ambassador status.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Time-limited bonuses</strong><br>
+    <span>"Invite this week, both get double rewards." Creates urgency spikes.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Referral leaderboard</strong><br>
+    <span>Monthly top 10 referrers get recognition and prizes.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Cash referral bonuses</strong><br>
+    <span>$50-100 per referral. PayPal did $10. High LTV justifies it.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Exclusive access rewards</strong><br>
+    <span>Refer 3 = early access to new features. Creates exclusivity.</span>
+</div>
+
+<h2>Shareable Outputs</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Shareable buyer group reports</strong><br>
+    <span>Beautiful PDF/web reports with "Powered by Adrata" footer.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Win celebration cards</strong><br>
+    <span>Auto-generate "I closed a deal!" cards for LinkedIn when deals close.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Weekly stats cards</strong><br>
+    <span>"47 calls, 12 meetings, $120K pipeline" — shareable image like Spotify Wrapped.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Year in review</strong><br>
+    <span>Annual summary of user's activity. People will share this.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Achievement badges</strong><br>
+    <span>"100 Buyer Groups Identified" — shareable badges for LinkedIn.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>AI-generated proposals</strong><br>
+    <span>Beautiful docs with branding. Recipients ask "what tool is this?"</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Embeddable widgets</strong><br>
+    <span>Buyer group visualizations for presentations. Every deck = exposure.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Email signature badges</strong><br>
+    <span>"I use Adrata" badge for signatures. Every email is an ad.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Streak celebrations</strong><br>
+    <span>"7-day calling streak!" — shareable streak achievements.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Benchmark comparisons</strong><br>
+    <span>"Top 10% of sales reps for call volume" — shareable stats.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Goal achievement cards</strong><br>
+    <span>"Hit quota 3 weeks early!" — auto-generated when goals met.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>AI insight snippets</strong><br>
+    <span>Tweetable insights: "Adrata told me the CFO has authority." Aha moments.</span>
+</div>
+
+<h2>"Powered By" Everywhere</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Shared documents footer</strong><br>
+    <span>Every external doc has "Powered by Adrata | Get buyer groups" with link.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Calendar booking pages</strong><br>
+    <span>Scheduling confirmations show Adrata branding.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Outbound email footer</strong><br>
+    <span>"Sent via Adrata Speedrun" at bottom of emails.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Shared link pages</strong><br>
+    <span>Public report pages have Adrata branding and signup CTA.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Export watermarks</strong><br>
+    <span>Free tier exports have small watermark. Paid removes it.</span>
+</div>
+
+<h2>Network Effects</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Team workspace invites</strong><br>
+    <span>One creates workspace → invites team → some leave → start new workspaces elsewhere.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Collaborative deal rooms</strong><br>
+    <span>Shared spaces for multi-stakeholder deals. Prospects experience product.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Cross-company chat</strong><br>
+    <span>Chat with prospects in Adrata. They get exposed to platform.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Partner portal</strong><br>
+    <span>Agencies get partner accounts. One partner = many customers.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Job change detection</strong><br>
+    <span>Reps change jobs every 18-24 months. Detect and reach out: "Bring Adrata!"</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Team leaderboards</strong><br>
+    <span>Public performance boards. Managers want all reps on it.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Deal handoff invites</strong><br>
+    <span>When deal moves to CS, invite them. Spreads internally.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Integration marketplace</strong><br>
+    <span>List on HubSpot/Salesforce marketplaces. Users discover through ecosystem.</span>
+</div>
+
+<h2>Social Proof & Status</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Adrata certification</strong><br>
+    <span>Free program. Users get LinkedIn badge. Creates ambassadors.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Power user status</strong><br>
+    <span>"Top 1% of users" badges. People love exclusivity.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Customer advisory board</strong><br>
+    <span>Top users get exclusive access. They champion to their network.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Customer spotlight</strong><br>
+    <span>Feature users on blog/podcast. They share content widely.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Case study co-creation</strong><br>
+    <span>Create with customers. They share as professional validation.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Early adopter recognition</strong><br>
+    <span>"Founding Member" permanent badge. People love being first.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Skills endorsements</strong><br>
+    <span>"Buyer Group Expert" badges based on usage for LinkedIn.</span>
+</div>
+
+<h2>Content & Community</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Slack/Discord community</strong><br>
+    <span>Power users help each other, share tips, recruit organically.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>User-generated templates</strong><br>
+    <span>Users create templates, share publicly. New users need Adrata to use.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Podcast with customers</strong><br>
+    <span>Interview sales leaders who use Adrata. They share with audience.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Free educational content</strong><br>
+    <span>Best content on buyer groups, sales cycles. SEO brings traffic.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Video testimonials</strong><br>
+    <span>Short videos users can share. "How I shortened my cycle 40%."</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Annual awards</strong><br>
+    <span>"Sales Rep of the Year" awards. Winners share everywhere.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Playbook library</strong><br>
+    <span>Sales playbooks using Adrata. Teams need Adrata to implement.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Adrata Academy</strong><br>
+    <span>Free courses on sales skills. Graduates become advocates.</span>
+</div>
+
+<h2>Free Tools (Prosumer)</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Test Drive tool</strong><br>
+    <span>Free buyer group lookup. 3 free, then invite or pay.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Free email finder</strong><br>
+    <span>Enter name + company → get email. Limited free tier. SEO potential.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Chrome extension</strong><br>
+    <span>Shows company intel on any website. Free with branding.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>PULL score calculator</strong><br>
+    <span>"Score any company's buying readiness." Sales reps try on every deal.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>AI cold email writer</strong><br>
+    <span>Free tool to write personalized cold emails. Gateway to full product.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Sales cycle benchmark</strong><br>
+    <span>"How does your cycle compare?" Free assessment → shows how Adrata helps.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Voicemail script generator</strong><br>
+    <span>Enter prospect → get personalized script. Ties into Speedrun.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>ICP builder tool</strong><br>
+    <span>Free ICP definition tool. Output feeds into Adrata prospecting.</span>
+</div>
+
+<h2>Gamification</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Daily streaks</strong><br>
+    <span>Duolingo-style. "15-day streak!" Users want to maintain and share.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>XP and levels</strong><br>
+    <span>Earn XP for activities. Level up unlocks features.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Achievement system</strong><br>
+    <span>"First $100K deal", "100 calls in a week" — shareable badges.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Sales challenges</strong><br>
+    <span>Weekly challenges. Winners share, losers recruit friends to help.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Competitive leaderboards</strong><br>
+    <span>Company and industry leaderboards. Top performers get recognition.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Random reward drops</strong><br>
+    <span>Surprise bonuses. Variable rewards increase engagement.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Team competitions</strong><br>
+    <span>Company A vs B. Teams recruit more users to win.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Milestone swag</strong><br>
+    <span>Physical rewards at milestones. People show off → organic marketing.</span>
+</div>
+
+<h2>Unconventional</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Sponsor sales podcasts</strong><br>
+    <span>Sponsor every major sales podcast. Highly targeted reach.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Write a book</strong><br>
+    <span>"The Buyer Group Method" — give free copies. Readers become users.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>SDR bootcamp sponsorship</strong><br>
+    <span>New SDRs learn on Adrata. Take it to every future job.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Free for startups</strong><br>
+    <span>Free for YC/Techstars. They grow and pay. Recommend to portfolio.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>VC portfolio deals</strong><br>
+    <span>Partner with VCs. One deal = 50+ companies.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Conference takeover</strong><br>
+    <span>At SaaStr/Dreamforce, be everywhere. Everyone leaves knowing Adrata.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Sales simulation game</strong><br>
+    <span>Fun game teaching Adrata concepts. Gamers become users.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Sales reality show</strong><br>
+    <span>YouTube series following reps using Adrata. Entertainment + demo.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Sales Olympics</strong><br>
+    <span>Annual competition. Grand prize. Media coverage. Massive awareness.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Pay influencers in equity</strong><br>
+    <span>Aligned incentives. They become invested in promoting.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Revenue share with referrers</strong><br>
+    <span>% of revenue from referrals forever. MLM-lite but aligned.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Product Hunt launch</strong><br>
+    <span>Launch Test Drive. #1 of the day = massive exposure.</span>
+</div>
+
+<h2>Quick Wins</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Add share buttons everywhere</strong><br>
+    <span>Every report, achievement, win — one-click share to LinkedIn/Twitter.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>"Invite team" prompt after first win</strong><br>
+    <span>"Want to invite your team to see this?" Simple but effective.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Confetti on milestones</strong><br>
+    <span>Celebrate with animation + share prompt. People screenshot.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Referral tracking dashboard</strong><br>
+    <span>Show who they've referred and status. Gamifies referrals.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>NPS survey → share</strong><br>
+    <span>After positive NPS: "Great! Share with a colleague?"</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Show referral link in onboarding</strong><br>
+    <span>Plant the seed early. Easy to copy.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Footer branding on exports</strong><br>
+    <span>Every PDF/CSV has "Generated by Adrata" footer with link.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Social meta tags</strong><br>
+    <span>Beautiful Open Graph images for all shareable links.</span>
+</div>
+
+<h2>Game UX Inspired (Scott Jenson)</h2>
+
+<div class="quote">
+    "Fun is just another word for learning." Games teach without users knowing they're learning. Apply this to sharing.
+    <cite>— Raph Koster, A Theory of Fun</cite>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Story vs Narrative: Design the sharing journey</strong><br>
+    <span>Users construct their own narrative. Design tight story arcs so the narrative they create is "I have to share this." Don't leave gaps they fill with confusion.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>The Mac boot sequence approach</strong><br>
+    <span>Mac 1984 started with a promise (smiling Mac) that "inflated" into reality. Your onboarding should start with a promise of the value they'll share later.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Fractal sharing loops</strong><br>
+    <span>Break "sharing" into nested layers: 1) Experience value 2) Feel compelled 3) Know how to share 4) Actually share 5) Friend signs up. Each layer needs its own feedback.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>One action, multiple sharing variations</strong><br>
+    <span>Like Mario's jump (basic, long, landing), make "share" feel like one action with natural variations: share a win, share a report, invite a colleague. Same muscle, different contexts.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>The Frogger principle</strong><br>
+    <span>Start in safe zone (using product alone), then street (sharing internally), then river (sharing externally), then parking (converting friends). Progressive challenge.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Multi-variant affordances</strong><br>
+    <span>When something is shareable, show multiple subtle signals: visual highlight, slight animation, share icon appears. Encode shareability in multiple ways like games encode stamina.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Grace notes for sharing</strong><br>
+    <span>Small delightful micro-interactions that prep users for sharing. Like flushing toilets in Half-Life — meaningless but trains you to try things. Small "share" hints everywhere.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>The stamina wheel for virality</strong><br>
+    <span>Breath of the Wild shows stamina + rate of drain. Show users their "sharing potential" — how many people they've reached, how close to next reward. Make progress visible.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Hintiness, not popups</strong><br>
+    <span>Games hint subtly and repeatedly until you get it. Don't popup "INVITE FRIENDS!" Instead, subtly show others sharing, show the reward, animate from ruler like Photoshop guide.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Prevent sharing "bottom feeders"</strong><br>
+    <span>Games call it "bottom feeding" when players stay at easy levels forever. Users who use but never share are bottom feeders. Use hintiness to move them to sharing loops.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Moon chains for referrals</strong><br>
+    <span>In Mario Odyssey, you can always see the next moon. After every share action, show the NEXT sharing opportunity. Always visible, never pushy.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>The broken wall pattern</strong><br>
+    <span>In Zelda, smooth walls are normal but broken patterns signal "something interesting here." Make shareable content visually distinct — a subtle pattern that says "share me."</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Start with ONE sharing action</strong><br>
+    <span>WoW starts with 1 attack spell, not 50. Don't show referral program + share buttons + invite team on day 1. Start with ONE: "Share this report." Build from there.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Pacing the viral journey</strong><br>
+    <span>Day 1: Use product. Day 3: See first shareable output. Day 7: Share internally. Day 14: Share externally. Day 30: Formal referral. Progressive unlocking.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Mixed visual styles for shareability</strong><br>
+    <span>Games use different styles for "me vs world." Use distinct visual style for "my work" vs "shareable outputs" — makes exports feel special and share-worthy.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>The grasshopper principle</strong><br>
+    <span>In Zelda, grasshoppers fly from grass — atmospheric but teaches you to cut grass later. Add small ambient hints that prep users for sharing actions they'll take later.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Animate the origin of shares</strong><br>
+    <span>When user creates a report, animate it "emerging" from the data. Like Photoshop guide suggestion: show where shares come from so users discover they can do it directly.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Juicy sharing feedback</strong><br>
+    <span>Games are "juicy" — lots of feedback per action. When someone shares, make it FEEL good: sound, animation, confetti, counter incrementing. Reward the behavior richly.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>The second derivative</strong><br>
+    <span>Breath of the Wild shows stamina AND rate of use (sweat, leaning). Show not just "you've shared 5 times" but "you're sharing more than last week" — the trend, not just the count.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Teach sharing without teaching</strong><br>
+    <span>The game taught Jenson to take less steep routes without him knowing. Design the product so users learn to share without realizing they're being taught. Pure behavioral design.</span>
+</div>
+
+<h2>Aha Moment Design</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Define your "aha moment"</strong><br>
+    <span>Facebook: 7 friends in 10 days. Slack: 2000 messages. What's Adrata's? "Saw buyer group for first time"? "Shortened first sales cycle"? Find it and optimize for it.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Time to aha under 5 minutes</strong><br>
+    <span>Test Drive should deliver aha in under 5 minutes. Enter company → see buyer group → mind blown. No signup friction before the aha.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Aha → share in same session</strong><br>
+    <span>Immediately after aha moment, surface share option. "Wow, this is useful! Share with colleague?" Strike while iron is hot.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Screenshot-worthy aha</strong><br>
+    <span>Design the aha moment screen to be screenshot-worthy. Clean, impressive, shareable. Users naturally screenshot things that blow their mind.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Aha moment for the recipient too</strong><br>
+    <span>When someone receives a shared report, THEY should have an aha moment too. The share itself should be impressive, not just a link to signup.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Stack aha moments</strong><br>
+    <span>First aha: buyer group. Second aha: PULL score. Third aha: AI insights. Each aha is a potential share moment. Design a sequence.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Aha for different personas</strong><br>
+    <span>SDR aha: "I know who to call." Manager aha: "I see my team's pipeline." VP aha: "I see why deals stall." Different ahas for different sharers.</span>
+</div>
+
+<h2>Friction Removal</h2>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>One-click share with pre-written message</strong><br>
+    <span>Don't make users write the share message. Pre-write it perfectly. "Check out this buyer group for [Company] — found it in 30 seconds."</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Share without login for recipient</strong><br>
+    <span>Shared reports should be viewable without signup. Signup prompt comes AFTER they see value. Remove friction to experiencing the aha.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Mobile-first sharing</strong><br>
+    <span>Most shares happen on mobile (LinkedIn, iMessage, Slack). Ensure shared links look beautiful on mobile. Test your Open Graph images on phones.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Copy link with one tap</strong><br>
+    <span>Obvious but often missing. Big "Copy Link" button that shows "Copied!" feedback. Reduce taps to share.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Share to specific apps</strong><br>
+    <span>Don't just "Share" — offer "Share to Slack", "Share to LinkedIn", "Email to team". Pre-formatted for each platform.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Remember who they've shared with</strong><br>
+    <span>"Share with Dan again?" Show recent recipients. Make re-sharing to same people effortless.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>Bulk invite from contacts</strong><br>
+    <span>Import from Google Contacts / LinkedIn. Select multiple. Invite all at once. Don't make them type emails one by one.</span>
+</div>
+
+<div class="idea" onclick="this.classList.toggle('checked')">
+    <strong>QR code for in-person sharing</strong><br>
+    <span>At conferences, meetings, lunches. "Scan this to see the buyer group I was telling you about." Physical to digital bridge.</span>
+</div>
+
+<div class="quote" style="margin-top: 48px; background: #111; color: #fff; border-left-color: #fff;">
+    The goal: K > 1. Every user brings more than one new user. Then growth is automatic.
+</div>
+
+<script>
+// Audio Player using Web Speech API
+let utterance = null;
+let isPlaying = false;
+let currentSpeed = 1;
+
+function getDocumentText() {
+    const content = document.body.cloneNode(true);
+    const player = content.querySelector('.audio-player');
+    if (player) player.remove();
+    const scripts = content.querySelectorAll('script, style');
+    scripts.forEach(s => s.remove());
+    return content.innerText;
+}
+
+function toggleAudio() {
+    if (isPlaying) {
+        window.speechSynthesis.pause();
+        isPlaying = false;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused';
+    } else {
+        if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+        } else {
+            const text = getDocumentText();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentSpeed;
+            utterance.pitch = 1;
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Google') || v.lang.startsWith('en'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.onend = () => {
+                isPlaying = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Finished';
+            };
+            window.speechSynthesis.speak(utterance);
+        }
+        isPlaying = true;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing...';
+    }
+}
+
+function setSpeed(speed) {
+    currentSpeed = speed;
+    document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    if (utterance) utterance.rate = speed;
+    if (isPlaying) {
+        window.speechSynthesis.cancel();
+        const text = getDocumentText();
+        utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = currentSpeed;
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+</script>
+
+</body>
+</html>

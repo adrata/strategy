@@ -9,7 +9,16 @@ import { TestDriveResults } from './components/TestDriveResults';
 import { RunManyInput } from './components/RunManyInput';
 import { RunManyProcessing } from './components/RunManyProcessing';
 import { RunManyResults } from './components/RunManyResults';
-import type { BuyerGroupResult, TestDriveFormData, TestDriveMode, RunManyFormData, RunManyResult } from './types';
+import { PullIntelligenceInput } from './components/PullIntelligenceInput';
+import { PullIntelligenceProcessing } from './components/PullIntelligenceProcessing';
+import { PullIntelligenceResults } from './components/PullIntelligenceResults';
+import { IndustryRankingInput } from './components/IndustryRankingInput';
+import { IndustryRankingProcessing } from './components/IndustryRankingProcessing';
+import { IndustryRankingResults } from './components/IndustryRankingResults';
+import { IndustryComparisonInput } from './components/IndustryComparisonInput';
+import { IndustryComparisonProcessing } from './components/IndustryComparisonProcessing';
+import { IndustryComparisonResults } from './components/IndustryComparisonResults';
+import type { BuyerGroupResult, TestDriveFormData, TestDriveMode, RunManyFormData, RunManyResult, PullIntelligenceFormData, PullIntelligenceResult, IndustryRankingFormData, IndustryRankingResult, IndustryComparisonFormData, IndustryComparisonResult } from './types';
 
 export default function TestDrivePage() {
   const workspaceId = useWorkspaceId();
@@ -24,7 +33,19 @@ export default function TestDrivePage() {
   // Run Many state
   const [runManyFormData, setRunManyFormData] = useState<RunManyFormData | null>(null);
   const [runManyResults, setRunManyResults] = useState<RunManyResult[] | null>(null);
-  
+
+  // PULL Intelligence state
+  const [pullFormData, setPullFormData] = useState<PullIntelligenceFormData | null>(null);
+  const [pullResult, setPullResult] = useState<PullIntelligenceResult | null>(null);
+
+  // Industry Ranking state
+  const [industryFormData, setIndustryFormData] = useState<IndustryRankingFormData | null>(null);
+  const [industryResult, setIndustryResult] = useState<IndustryRankingResult | null>(null);
+
+  // Industry Comparison state
+  const [comparisonFormData, setComparisonFormData] = useState<IndustryComparisonFormData | null>(null);
+  const [comparisonResult, setComparisonResult] = useState<IndustryComparisonResult | null>(null);
+
   const [error, setError] = useState<string | null>(null);
 
   if (!workspaceId) {
@@ -65,6 +86,12 @@ export default function TestDrivePage() {
     setResult(null);
     setRunManyFormData(null);
     setRunManyResults(null);
+    setPullFormData(null);
+    setPullResult(null);
+    setIndustryFormData(null);
+    setIndustryResult(null);
+    setComparisonFormData(null);
+    setComparisonResult(null);
     setError(null);
     setMode(null);
     setCurrentStep(0);
@@ -83,6 +110,57 @@ export default function TestDrivePage() {
   };
 
   const handleRunManyProcessingError = (errorMessage: string) => {
+    setError(errorMessage);
+    setCurrentStep(1);
+  };
+
+  // PULL Intelligence handlers
+  const handlePullFormSubmit = (data: PullIntelligenceFormData) => {
+    setPullFormData(data);
+    setError(null);
+    setCurrentStep(2);
+  };
+
+  const handlePullProcessingComplete = (result: PullIntelligenceResult) => {
+    setPullResult(result);
+    setCurrentStep(3);
+  };
+
+  const handlePullProcessingError = (errorMessage: string) => {
+    setError(errorMessage);
+    setCurrentStep(1);
+  };
+
+  // Industry Ranking handlers
+  const handleIndustryFormSubmit = (data: IndustryRankingFormData) => {
+    setIndustryFormData(data);
+    setError(null);
+    setCurrentStep(2);
+  };
+
+  const handleIndustryProcessingComplete = (result: IndustryRankingResult) => {
+    setIndustryResult(result);
+    setCurrentStep(3);
+  };
+
+  const handleIndustryProcessingError = (errorMessage: string) => {
+    setError(errorMessage);
+    setCurrentStep(1);
+  };
+
+  // Industry Comparison handlers
+  const handleComparisonFormSubmit = (data: IndustryComparisonFormData) => {
+    setComparisonFormData(data);
+    setError(null);
+    setCurrentStep(2);
+  };
+
+  const handleComparisonProcessingComplete = (result: IndustryComparisonResult) => {
+    setComparisonResult(result);
+    setCurrentStep(3);
+  };
+
+  const handleComparisonProcessingError = (errorMessage: string) => {
     setError(errorMessage);
     setCurrentStep(1);
   };
@@ -144,6 +222,9 @@ export default function TestDrivePage() {
             <ModeSelection
               onSelectRun1={() => handleModeSelect('run-1')}
               onSelectRunMany={() => handleModeSelect('run-many')}
+              onSelectPullIntelligence={() => handleModeSelect('pull-intelligence')}
+              onSelectIndustryRanking={() => handleModeSelect('industry-ranking')}
+              onSelectIndustryComparison={() => handleModeSelect('industry-comparison')}
             />
           )}
           
@@ -188,6 +269,72 @@ export default function TestDrivePage() {
             <RunManyResults
               yourCompany={runManyFormData.yourCompany}
               results={runManyResults}
+              onReset={handleReset}
+            />
+          )}
+
+          {/* PULL Intelligence Flow */}
+          {mode === 'pull-intelligence' && currentStep === 1 && (
+            <PullIntelligenceInput
+              onSubmit={handlePullFormSubmit}
+              initialData={pullFormData}
+            />
+          )}
+          {mode === 'pull-intelligence' && currentStep === 2 && pullFormData && workspaceId && (
+            <PullIntelligenceProcessing
+              formData={pullFormData}
+              workspaceId={workspaceId}
+              onComplete={handlePullProcessingComplete}
+              onError={handlePullProcessingError}
+            />
+          )}
+          {mode === 'pull-intelligence' && currentStep === 3 && pullResult && (
+            <PullIntelligenceResults
+              result={pullResult}
+              onReset={handleReset}
+            />
+          )}
+
+          {/* Industry Ranking Flow */}
+          {mode === 'industry-ranking' && currentStep === 1 && (
+            <IndustryRankingInput
+              onSubmit={handleIndustryFormSubmit}
+              initialData={industryFormData}
+            />
+          )}
+          {mode === 'industry-ranking' && currentStep === 2 && industryFormData && workspaceId && (
+            <IndustryRankingProcessing
+              formData={industryFormData}
+              workspaceId={workspaceId}
+              onComplete={handleIndustryProcessingComplete}
+              onError={handleIndustryProcessingError}
+            />
+          )}
+          {mode === 'industry-ranking' && currentStep === 3 && industryResult && (
+            <IndustryRankingResults
+              result={industryResult}
+              onReset={handleReset}
+            />
+          )}
+
+          {/* Industry Comparison Flow */}
+          {mode === 'industry-comparison' && currentStep === 1 && (
+            <IndustryComparisonInput
+              onSubmit={handleComparisonFormSubmit}
+              initialData={comparisonFormData}
+            />
+          )}
+          {mode === 'industry-comparison' && currentStep === 2 && comparisonFormData && workspaceId && (
+            <IndustryComparisonProcessing
+              formData={comparisonFormData}
+              workspaceId={workspaceId}
+              onComplete={handleComparisonProcessingComplete}
+              onError={handleComparisonProcessingError}
+            />
+          )}
+          {mode === 'industry-comparison' && currentStep === 3 && comparisonResult && (
+            <IndustryComparisonResults
+              result={comparisonResult}
               onReset={handleReset}
             />
           )}

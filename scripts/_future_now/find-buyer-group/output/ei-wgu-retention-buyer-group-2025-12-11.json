@@ -1,0 +1,202 @@
+{
+  "context": {
+    "seller": {
+      "name": "E&I Cooperative Services",
+      "website": "https://eandi.org",
+      "tagline": "Education's Purchasing Cooperative",
+      "product": "Student Retention Solution",
+      "valueProposition": "Comprehensive retention platform that identifies at-risk students, enables proactive intervention, and improves completion rates through data-driven insights and personalized support pathways",
+      "solutions": [
+        "Early Alert & Intervention System",
+        "Predictive Analytics for At-Risk Students",
+        "Personalized Student Success Pathways",
+        "Retention Dashboard & Reporting",
+        "Integration with SIS/LMS Systems",
+        "Financial Aid & Advising Coordination"
+      ]
+    },
+    "buyer": {
+      "name": "Western Governors University",
+      "website": "https://wgu.edu",
+      "industry": "Higher Education",
+      "size": "~175,000 students",
+      "location": "Salt Lake City, Utah",
+      "characteristics": [
+        "100% online, competency-based education",
+        "Adult learners and working professionals",
+        "One of largest universities in the US",
+        "Mission: Expanding access to higher education"
+      ]
+    },
+    "generatedAt": "2025-12-11T15:15:40.620Z"
+  },
+  "dealSize": 950000,
+  "buyerGroup": {
+    "totalMembers": 7,
+    "members": [
+      {
+        "name": "Scott D. Pulsipher",
+        "title": "President and Chief Executive Officer",
+        "department": "Executive Office",
+        "role": "decision",
+        "roleConfidence": 98,
+        "roleReasoning": "CEO with final authority on major strategic investments. A $1M retention solution requires C-suite approval. Scott has led WGU since 2016, overseeing growth to 175K+ students.",
+        "linkedin": "https://www.linkedin.com/in/scottpulsipher/",
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Student Completion Rates",
+            "description": "Online universities face scrutiny over completion rates. Improving retention directly impacts WGU's reputation and accreditation standing.",
+            "impact": "Every 1% improvement in retention = thousands more graduates and millions in tuition revenue.",
+            "urgency": "high"
+          },
+          {
+            "title": "Scaling Student Support",
+            "description": "With 175K+ students, traditional advising models don't scale. Need technology-enabled support.",
+            "impact": "Manual processes limit growth and personalization.",
+            "urgency": "high"
+          }
+        ]
+      },
+      {
+        "name": "Dr. Courtney Hills McBeth",
+        "title": "Chief Academic Officer and Provost",
+        "department": "Academic Affairs",
+        "role": "decision",
+        "roleConfidence": 95,
+        "roleReasoning": "Provost overseeing all academic programs and curriculum. Retention directly impacts academic outcomes. Joined WGU January 2024 from Strada Education Foundation where she focused on education-workforce transformation. PhD from UPenn.",
+        "linkedin": "https://www.linkedin.com/in/courtneyhillsmcbeth/",
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Academic Quality vs. Accessibility",
+            "description": "Balancing open access mission with academic rigor. Need data to identify where students struggle.",
+            "impact": "Without intervention tools, at-risk students fall through the cracks.",
+            "urgency": "high"
+          },
+          {
+            "title": "Competency-Based Progression Tracking",
+            "description": "CBE model requires sophisticated tracking of student progress. Traditional LMS may not capture early warning signs.",
+            "impact": "Delayed intervention leads to higher dropout rates.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "Debbie Fowler",
+        "title": "Senior Vice President of Academic Delivery",
+        "department": "Academic Delivery / Student Success",
+        "role": "champion",
+        "roleConfidence": 95,
+        "roleReasoning": "Formerly SVP Student Success, now SVP Academic Delivery overseeing 2,900 faculty/staff supporting 175K students. 30+ years experience. JD from USD. Executive Sponsor of NSLS. Key champion who owns student success metrics.",
+        "linkedin": "https://www.linkedin.com/in/debbie-fowler-a86a949b/",
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Faculty/Staff to Student Ratio",
+            "description": "With 175K students and 2,900 faculty/staff, need technology to identify which students need intervention.",
+            "impact": "Cannot provide personalized support at scale without predictive analytics.",
+            "urgency": "high"
+          },
+          {
+            "title": "Systemic Barriers to Completion",
+            "description": "Debbie champions removing barriers to education. Needs tools to identify and address obstacles.",
+            "impact": "Financial, personal, and academic barriers cause preventable dropouts.",
+            "urgency": "high"
+          }
+        ]
+      },
+      {
+        "name": "Sarah DeMark",
+        "title": "Vice Provost, Workforce Intelligence and Credential Integrity",
+        "department": "Academic Affairs",
+        "role": "stakeholder",
+        "roleConfidence": 85,
+        "roleReasoning": "Focuses on aligning program outcomes with employer needs. Retention data informs program quality and workforce relevance.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Program-to-Workforce Alignment",
+            "description": "Need data on which programs have retention issues that may indicate curriculum misalignment.",
+            "impact": "Poor retention in specific programs signals need for curriculum updates.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "CFO/VP Finance",
+        "title": "Chief Financial Officer",
+        "department": "Finance",
+        "role": "blocker",
+        "roleConfidence": 90,
+        "roleReasoning": "For a ~$1M investment, CFO approval is required. Will scrutinize ROI and total cost of ownership.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "ROI Justification",
+            "description": "$1M investment requires clear ROI. Retention improvements directly impact tuition revenue.",
+            "impact": "Each retained student = ~$7,000-15,000 in annual tuition.",
+            "urgency": "high"
+          },
+          {
+            "title": "Budget Cycle Alignment",
+            "description": "Major purchases must align with fiscal year planning.",
+            "impact": "Timing matters for deal closure.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "VP Enrollment Management",
+        "title": "Vice President of Enrollment Management",
+        "department": "Enrollment",
+        "role": "stakeholder",
+        "roleConfidence": 80,
+        "roleReasoning": "Enrollment and retention are interconnected. VP Enrollment cares about student lifecycle from admission to completion.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Enrollment-to-Completion Pipeline",
+            "description": "High enrollment means nothing if students don't persist. Need visibility into retention trends.",
+            "impact": "Enrollment targets are meaningless without retention.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "CIO/VP Technology",
+        "title": "Chief Information Officer",
+        "department": "Information Technology",
+        "role": "blocker",
+        "roleConfidence": 85,
+        "roleReasoning": "Technology integration gatekeeper. Retention solution must integrate with WGU's SIS, LMS, and data systems.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "System Integration Complexity",
+            "description": "New solutions must integrate with existing tech stack. WGU runs on custom CBE platform.",
+            "impact": "Poor integration = poor adoption.",
+            "urgency": "high"
+          },
+          {
+            "title": "Data Security & Privacy",
+            "description": "Student data requires FERPA compliance and robust security.",
+            "impact": "Security concerns can block or delay deals.",
+            "urgency": "high"
+          }
+        ]
+      }
+    ]
+  }
+}

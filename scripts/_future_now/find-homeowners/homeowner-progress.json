@@ -1,15 +1,15 @@
 {
-  "totalProperties": 10,
-  "totalHomeowners": 10,
-  "withPhone": 10,
+  "totalProperties": 250,
+  "totalHomeowners": 250,
+  "withPhone": 247,
   "withMobile": 0,
   "imported": 0,
   "skipped": 0,
   "failed": 3,
-  "averageScore": 16,
+  "averageScore": 0,
   "highPriority": 0,
   "mediumPriority": 0,
-  "lowPriority": 10,
+  "lowPriority": 104,
   "creditsUsed": {
     "batchData": 0,
     "phoneVerification": 0
@@ -1903,5 +1903,7 @@
   ],
   "processedIds": [],
   "startTime": "2025-12-02T14:25:20.826Z",
-  "lastSaved": "2025-12-02T15:19:56.689Z"
+  "lastSaved": "2025-12-13T02:14:55.881Z",
+  "arizonaPhones": 104,
+  "filteredOut": 146
 }

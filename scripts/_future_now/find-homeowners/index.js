@@ -8,6 +8,7 @@
  * 
  * Features:
  * - BatchData property search and skip-tracing
+ * - Arizona phone filtering (480, 520, 602, 623, 928 area codes only)
  * - "Thirsty Buyer" scoring algorithm
  * - Phone verification
  * - Prisma database integration
@@ -20,6 +21,7 @@
  *   --limit=1000              Max homeowners to import
  *   --min-score=50            Minimum thirsty buyer score
  *   --dry-run                 Preview without importing
+ *   --no-arizona-filter       Disable Arizona phone number filtering
  */
 
 require('dotenv').config();
@@ -30,6 +32,7 @@ const BatchDataSearcher = require('./modules/BatchDataSearcher');
 const { HomeownerScorer } = require('./modules/HomeownerScorer');
 const { PhoneVerifier } = require('./modules/PhoneVerifier');
 const { ProgressTracker } = require('./modules/ProgressTracker');
+const { ArizonaPhoneFilter } = require('./modules/ArizonaPhoneFilter');
 
 class FindHomeowners {
   constructor(options = {}) {
@@ -49,6 +52,10 @@ class FindHomeowners {
     this.scorer = new HomeownerScorer();
     this.phoneVerifier = new PhoneVerifier();
     this.progressTracker = new ProgressTracker();
+    this.arizonaFilter = new ArizonaPhoneFilter();
+    
+    // Filter options
+    this.arizonaOnly = options.arizonaOnly !== false; // Default to true
 
     // Get Josh's user ID
     this.userId = null;
@@ -62,6 +69,7 @@ class FindHomeowners {
     console.log(`   Target: ${this.city}, ${this.state}`);
     console.log(`   Max Results: ${this.maxResults}`);
     console.log(`   Min Score: ${this.minScore}`);
+    console.log(`   Arizona Only: ${this.arizonaOnly}`);
     console.log(`   Dry Run: ${this.dryRun}`);
 
     try {
@@ -102,6 +110,25 @@ class FindHomeowners {
       this.progressTracker.setStat('totalProperties', homeowners.length);
       this.progressTracker.setStat('totalHomeowners', homeowners.length);
       this.progressTracker.setStat('withPhone', homeowners.filter(h => h.phone).length);
+
+      // Step 1c: Filter for Arizona phone numbers only
+      if (this.arizonaOnly) {
+        console.log('\n   STEP 1c: Arizona Phone Filter');
+        console.log('   ' + '-'.repeat(40));
+        
+        // Show area code distribution before filtering
+        const distribution = this.arizonaFilter.getAreaCodeDistribution(homeowners);
+        console.log('   Area code distribution before filter:');
+        Object.entries(distribution).slice(0, 10).forEach(([code, count]) => {
+          const isAZ = this.arizonaFilter.arizonaAreaCodes.includes(code);
+          console.log(`     ${code}: ${count} ${isAZ ? '✅ AZ' : ''}`);
+        });
+        
+        homeowners = this.arizonaFilter.filterAll(homeowners);
+        
+        this.progressTracker.setStat('arizonaPhones', homeowners.length);
+        this.progressTracker.setStat('filteredOut', this.arizonaFilter.getStats().nonArizonaPhones + this.arizonaFilter.getStats().noPhone);
+      }
 
       // Step 2: Score homeowners with "Thirsty Buyer" algorithm
       console.log('\n   STEP 2: Scoring Homeowners (Thirsty Buyer Algorithm)');
@@ -368,6 +395,8 @@ async function main() {
       options.dryRun = true;
     } else if (arg.startsWith('--skip=')) {
       options.skipOffset = parseInt(arg.split('=')[1], 10);
+    } else if (arg === '--no-arizona-filter') {
+      options.arizonaOnly = false;
     }
   });
 

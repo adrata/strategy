@@ -1,0 +1,139 @@
+{
+  "context": {
+    "seller": {
+      "name": "Valence Security",
+      "website": "https://valencesecurity.com",
+      "product": "SaaS Security Platform (SSPM + ITDR)",
+      "description": "The only SaaS security platform delivering comprehensive SSPM, advanced risk remediation, and Identity Threat Detection & Response with AI governance capabilities",
+      "keyFeatures": [
+        "SaaS Security Posture Management (SSPM)",
+        "Identity Threat Detection & Response (ITDR)",
+        "Automated misconfiguration remediation",
+        "SaaS-to-SaaS integration risk analysis",
+        "GenAI governance and shadow AI detection",
+        "Business user collaboration workflows",
+        "NIST, ISO, CIS compliance mapping",
+        "Microsoft Copilot for Security integration"
+      ],
+      "brandColors": {
+        "primary": "#6366F1",
+        "secondary": "#8B5CF6",
+        "accent": "#EC4899"
+      }
+    },
+    "buyer": {
+      "name": "Freshworks",
+      "website": "https://www.freshworks.com",
+      "industry": "Enterprise SaaS / Business Software",
+      "employeeCount": 4400,
+      "revenue": "$720M (2024)",
+      "headquarters": "San Mateo, CA",
+      "ticker": "NASDAQ: FRSH"
+    },
+    "deal": {
+      "estimatedSize": "$75,000 - $120,000",
+      "dealType": "Annual Enterprise License"
+    }
+  },
+  "buyerGroup": {
+    "totalMembers": 9,
+    "members": [
+      {
+        "name": "Jason Loomis",
+        "title": "Chief Information Security Officer (CISO)",
+        "role": "decision",
+        "department": "Information Security",
+        "linkedin": "https://www.linkedin.com/in/jasonloomis1/",
+        "insight": "Joined Freshworks in 2022 with 20+ years in cybersecurity leadership. Previously CISO at MINDBODY and TechStyle Fashion Group (Fabletics, Savage X Fenty). Described as \"one of the most visionary and approachable CISOs\" with rare ability to align security with business strategy.",
+        "painPoint": "As CISO of a public SaaS company, he's responsible for securing dozens of business-critical SaaS applications across the organization. Shadow SaaS, misconfigurations, and unmanaged integrations create blind spots. He needs comprehensive SSPM visibility to protect Freshworks' own infrastructure while the company sells security-conscious software to 72,000+ customers.",
+        "rationale": "Primary budget owner for security tools. SSPM and SaaS security fall directly under his mandate. His experience at multiple SaaS companies means he understands the complexity of securing a SaaS-heavy environment."
+      },
+      {
+        "name": "Ashwin Ballal",
+        "title": "Chief Information Officer (CIO)",
+        "role": "decision",
+        "department": "Information Technology",
+        "linkedin": "https://www.linkedin.com/in/ashwinballal/",
+        "insight": "Appointed CIO in May 2024 with nearly 30 years of leadership experience. Previously EVP & CIO at Medallia where he transformed IT, security, workplace services, and corporate procurement. Earlier spent 15 years at KLA-Tencor as VP & Chief Information, Intelligence and Data Officer.",
+        "painPoint": "Owns the enterprise SaaS stack that powers Freshworks' 4,400+ employees globally. Every SaaS application introduces configuration drift, identity sprawl, and integration risks. His Medallia experience taught him that IT and security must work together—he needs tools that give both teams visibility without slowing down the business.",
+        "rationale": "Controls IT budget and SaaS procurement decisions. His dual experience in IT and security leadership at Medallia makes him uniquely positioned to evaluate SSPM solutions that bridge both functions."
+      },
+      {
+        "name": "Murali Swaminathan",
+        "title": "Chief Technology Officer (CTO)",
+        "role": "champion",
+        "department": "Engineering",
+        "linkedin": "https://www.linkedin.com/in/muraliswaminathan/",
+        "insight": "Joined as CTO in September 2024 with 30+ years in software engineering. Previously VP of Engineering at ServiceNow overseeing IT Service Management products. Leads Freshworks' technology roadmap, global engineering, and architecture teams.",
+        "painPoint": "Engineering teams use GitHub, AWS, and dozens of developer tools daily. Each tool has its own permissions, API tokens, and service accounts creating non-human identity sprawl. His ServiceNow background means he understands enterprise security requirements—he needs to ensure engineering tools are configured securely without slowing developer velocity.",
+        "rationale": "Engineering organization is a major consumer of SaaS applications with complex configurations. His ServiceNow ITSM experience gives him deep appreciation for security posture management. Would champion a solution that protects engineering tools."
+      },
+      {
+        "name": "Prakash K.",
+        "title": "Director, IT Security, Infrastructure and Operations",
+        "role": "champion",
+        "department": "IT Security",
+        "linkedin": "https://www.linkedin.com/in/prakash-k-447a7013/",
+        "insight": "Leads IT security, infrastructure, and operations at Freshworks. Passionate cybersecurity professional with expertise in global network architecture, cloud infrastructure strategy, and IT operations. Focus on embedding security essentials and ensuring data protection and compliance.",
+        "painPoint": "Responsible for day-to-day security operations across infrastructure and SaaS applications. Manual configuration reviews don't scale when the company uses dozens of SaaS apps across 13 global locations. He needs automated misconfiguration detection and remediation to keep pace with business growth while maintaining security posture.",
+        "rationale": "Hands-on security operations leader who would evaluate, implement, and manage an SSPM solution daily. His infrastructure background means he understands the complexity of securing cloud and SaaS environments."
+      },
+      {
+        "name": "Parastoo Sanadi",
+        "title": "Director, Security Compliance",
+        "role": "champion",
+        "department": "Security & Compliance",
+        "linkedin": "https://www.linkedin.com/in/parastoo-sanadi-cisa-88951726/",
+        "insight": "CISA-certified compliance and security leader at Freshworks. Recognized for creating elite compliance and security teams. Every audit under her leadership improved the company's security posture beyond compliance requirements.",
+        "painPoint": "As a public company (NASDAQ: FRSH), Freshworks faces SOX compliance, SOC 2 audits, and customer security questionnaires constantly. She needs continuous compliance monitoring across all SaaS applications—not point-in-time audits. Automated evidence collection for NIST, ISO, and CIS benchmarks would transform audit preparation from weeks to hours.",
+        "rationale": "Compliance requirements drive many security purchases. Her CISA certification and track record of exceeding compliance requirements means she would champion tools that provide continuous compliance visibility."
+      },
+      {
+        "name": "Shafiq Amarsi",
+        "title": "SVP, Go-to-Market Strategy and Operations",
+        "role": "stakeholder",
+        "department": "GTM Operations",
+        "linkedin": "https://www.linkedin.com/in/shafiqamarsi/",
+        "insight": "Oversees sales and marketing operations, strategy, program management, sales enablement, and IT. Previously spent 8 years at AWS leading worldwide sales strategy, operations, and enablement teams during hyper-growth phase.",
+        "painPoint": "His team relies on Salesforce, HubSpot, Outreach, and dozens of GTM SaaS tools. Each system contains sensitive customer and pipeline data. Misconfigured sharing settings or excessive permissions could expose competitive intelligence. He needs assurance that GTM tools are secured without impacting sales productivity.",
+        "rationale": "GTM operations uses high-value SaaS applications with sensitive business data. His IT oversight role means he has input on tools that affect sales and marketing operations. Would provide stakeholder perspective on business impact."
+      },
+      {
+        "name": "Srinivasan Raghavan",
+        "title": "Chief Product Officer (CPO)",
+        "role": "stakeholder",
+        "department": "Product",
+        "linkedin": "https://www.linkedin.com/in/srinivasanraghavan/",
+        "insight": "Appointed CPO in December 2024 with 20+ years in enterprise SaaS. Leads product strategy and vision, reporting directly to CEO Dennis Woodside. Responsible for Freshworks' product roadmap including Freshservice (ITSM) and security-related features.",
+        "painPoint": "Freshworks sells software to 72,000+ companies who ask about Freshworks' own security practices. Product teams use Figma, Jira, Confluence, and developer tools with complex permissions. He needs confidence that internal tools are secured—because customers will ask how Freshworks practices what it preaches.",
+        "rationale": "Product organization is a major SaaS consumer. Customer security questionnaires often ask about vendor's internal security practices. Would provide input on how security posture affects product credibility."
+      },
+      {
+        "name": "Tyler Sloat",
+        "title": "Chief Financial Officer & Chief Operating Officer",
+        "role": "blocker",
+        "department": "Finance & Operations",
+        "linkedin": "https://www.linkedin.com/in/tylersloat/",
+        "insight": "CFO since 2020, expanded to CFO/COO in 2024. Oversees finance, legal, IT, corporate strategy, and revenue enablement. Previously CFO at Zuora guiding them through IPO. Stanford MBA, California CPA. Board member at multiple companies.",
+        "painPoint": "Every new vendor adds complexity to procurement and legal review. He needs to validate ROI—does this reduce audit costs, prevent breaches, or improve efficiency? His dual CFO/COO role means he evaluates both financial and operational impact. Security tools must demonstrate measurable business value, not just technical capability.",
+        "rationale": "Ultimate budget authority for enterprise purchases. His expanded COO role means he oversees IT and operations, giving him direct influence on security tool decisions. Will scrutinize ROI and total cost of ownership."
+      },
+      {
+        "name": "Dennis Woodside",
+        "title": "Chief Executive Officer & President",
+        "role": "blocker",
+        "department": "Executive",
+        "linkedin": "https://www.linkedin.com/in/denniswoodside/",
+        "insight": "CEO since May 2024, previously President since 2022. Former COO at Dropbox ($250M to $1.3B revenue, successful IPO). Previously CEO of Motorola Mobility after Google acquisition. Various leadership roles at Google 2003-2014.",
+        "painPoint": "As CEO of a public company, he's accountable to shareholders and customers for security. A breach would damage Freshworks' reputation and stock price. His Dropbox and Google experience means he understands the stakes of enterprise security. He needs confidence that the security team has the tools to protect the company.",
+        "rationale": "Enterprise security purchases at public companies often require CEO awareness or approval. His background at security-conscious companies (Google, Dropbox) means he understands the importance of security tooling. Would be informed of significant security investments."
+      }
+    ]
+  },
+  "roleRationale": {
+    "decisionMakers": "CISO and CIO control security and IT budgets respectively. SSPM falls at the intersection of both—security tooling that protects IT-managed SaaS applications. Both must approve for enterprise security purchases at a public company.",
+    "champions": "CTO owns engineering tools security, Director of IT Security handles day-to-day operations, and Director of Compliance drives audit requirements. Each has a distinct use case for SSPM that makes them natural advocates.",
+    "stakeholders": "SVP GTM Ops and CPO lead teams that are heavy SaaS consumers. They provide business context on which applications matter most and how security tools affect productivity. Their input shapes requirements.",
+    "blockers": "CFO/COO controls budget and evaluates ROI for all enterprise purchases. CEO is accountable to shareholders for security posture. Both must be convinced of business value for significant security investments at a public company."
+  }
+}

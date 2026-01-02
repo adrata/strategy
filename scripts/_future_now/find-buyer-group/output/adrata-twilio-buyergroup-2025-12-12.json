@@ -1,0 +1,2467 @@
+{
+  "buyerGroup": [
+    {
+      "id": 397305527,
+      "name": "Alex Toor",
+      "title": "Technical Account Manager III",
+      "department": "Sales",
+      "company": "Twilio",
+      "managementLevel": "Manager",
+      "connectionsCount": 500,
+      "followersCount": 756,
+      "email": "",
+      "phone": "",
+      "linkedinUrl": "https://www.linkedin.com/in/alex-toor-73527737",
+      "location": "Atlanta, Georgia, United States",
+      "country": "United States",
+      "state": "",
+      "city": "",
+      "source": "coresignal_preview",
+      "scores": {
+        "seniority": 3,
+        "departmentFit": 10,
+        "influence": 3,
+        "championPotential": 16,
+        "crossFunctional": 7,
+        "geoAlignment": 8,
+        "salesSegment": 0,
+        "_segmentInfo": {
+          "segment": "none",
+          "type": "leadership",
+          "priority": "high",
+          "scoreAdjust": 0
+        }
+      },
+      "overallScore": 7,
+      "relevance": 0.3,
+      "isHighValue": false,
+      "aiRelevance": 0.3,
+      "aiReasoning": "Alex Toor is a Technical Account Manager III in the Sales department at Twilio. While technically part of the Sales organization, TAMs typically focus on post-sale customer success, technical implementation, and account retention rather than prospecting or lead generation activities where Sales Intelligence Software would be primarily utilized. His role is likely centered on managing existing customer relationships and ensuring technical success rather than driving new business. For a $250K purchase decision at a 100-employee company, this would typically require C-level or VP-level approval. As a 'Level III' individual contributor, Alex has limited decision-making authority for such a significant investment. However, he maintains moderate relevance because: (1) He sits within the Sales department and may have visibility into sales operations challenges, (2) He could potentially advocate for tools that help his colleagues in sales development/AE roles, and (3) His connection count (500+) and follower base (756) suggest he's reasonably networked and could introduce the right stakeholders. He's unlikely to be a champion or decision-maker himself, but could serve as a bridge to revenue leaders who would actually evaluate and purchase Sales Intelligence Software.",
+      "aiConfidence": 0.75,
+      "buyerGroupRole": "decision",
+      "roleConfidence": 70,
+      "roleReasoning": "Single person buyer group - automatically assigned as decision maker",
+      "aiRoleValidation": {
+        "suggestedRole": "decision",
+        "confidence": 0.85,
+        "reasoning": "Alex Toor is already assigned as 'decision' and this assignment should be maintained. As a Technical Account Manager III in Sales at Twilio, Alex is highly relevant for Sales Intelligence Software evaluation. The 'III' designation indicates senior-level status, suggesting significant authority within the sales organization. For a $250K deal involving sales enablement technology, a senior TAM would typically have: (1) Budget authority or strong influence over sales tooling decisions that directly impact their workflow and customer success responsibilities, (2) Deep understanding of technical requirements and integration needs with existing Twilio systems, (3) Authority to evaluate ROI impact on account management and revenue retention. Technical Account Managers at this level often manage strategic accounts and would be direct power users of sales intelligence tools. The deal size of $250K is substantial but within the approval threshold for senior sales leadership roles. Given that Saketh Sunki is listed as 'stakeholder', Alex as 'decision' creates a logical buyer group structure with a primary decision-maker and supporting stakeholder.",
+        "alternativeRoles": [
+          "champion",
+          "stakeholder"
+        ]
+      },
+      "aiRoleReasoning": "Alex Toor is already assigned as 'decision' and this assignment should be maintained. As a Technical Account Manager III in Sales at Twilio, Alex is highly relevant for Sales Intelligence Software evaluation. The 'III' designation indicates senior-level status, suggesting significant authority within the sales organization. For a $250K deal involving sales enablement technology, a senior TAM would typically have: (1) Budget authority or strong influence over sales tooling decisions that directly impact their workflow and customer success responsibilities, (2) Deep understanding of technical requirements and integration needs with existing Twilio systems, (3) Authority to evaluate ROI impact on account management and revenue retention. Technical Account Managers at this level often manage strategic accounts and would be direct power users of sales intelligence tools. The deal size of $250K is substantial but within the approval threshold for senior sales leadership roles. Given that Saketh Sunki is listed as 'stakeholder', Alex as 'decision' creates a logical buyer group structure with a primary decision-maker and supporting stakeholder.",
+      "fullProfile": {
+        "id": 397305527,
+        "parent_id": 397305527,
+        "created_at": "2016-08-10T11:16:38.000Z",
+        "updated_at": "2025-12-01T14:15:37.712771Z",
+        "checked_at": "2025-12-02T03:27:02.191494Z",
+        "changed_at": "2025-12-01T14:15:37.712771Z",
+        "experience_change_last_identified_at": null,
+        "is_deleted": 0,
+        "is_parent": 1,
+        "public_profile_id": 129053273,
+        "linkedin_url": "https://www.linkedin.com/in/alex-toor-73527737",
+        "linkedin_shorthand_names": [
+          "alex-toor-73527737",
+          "alextoor"
+        ],
+        "historical_ids": [
+          397305527
+        ],
+        "full_name": "Alex Toor",
+        "first_name": "Alex",
+        "first_name_initial": "A",
+        "middle_name": null,
+        "middle_name_initial": null,
+        "last_name": "Toor",
+        "last_name_initial": "T",
+        "headline": "SaaS Support Extraordinaire",
+        "summary": "• 10 years in tech-related customer service providing top-notch white glove style service…",
+        "picture_url": "https://static.licdn.com/aero-v1/sc/h/9c8pery4andzj6ohjkjp54ma2",
+        "location_country": "United States",
+        "location_country_iso2": "US",
+        "location_country_iso3": "USA",
+        "location_full": "Atlanta, Georgia, United States",
+        "location_regions": [
+          "Americas",
+          "Northern America",
+          "AMER"
+        ],
+        "location_city": "Atlanta",
+        "location_state": "Georgia",
+        "interests": [],
+        "inferred_skills": [
+          "apis",
+          "cloud",
+          "sms",
+          "voip",
+          "reports",
+          "rollout",
+          "coaching",
+          "messaging",
+          "sla",
+          "processing",
+          "testing",
+          "liaison",
+          "sales",
+          "zendesk",
+          "mailchimp",
+          "crm",
+          "salesforce",
+          "commerce",
+          "apple",
+          "saas",
+          "management",
+          "reporting",
+          "responsible",
+          "jira",
+          "engineering",
+          "software",
+          "procurement",
+          "customer service",
+          "customer support",
+          "best practices",
+          "technical support",
+          "customer satisfaction"
+        ],
+        "historical_skills": [
+          "creative writing",
+          "entertainment",
+          "video games",
+          "screenwriting",
+          "blogging",
+          "social media",
+          "ios",
+          "playstation",
+          "social networking",
+          "outstanding people skills",
+          "marketing",
+          "sales",
+          "graphic design",
+          "directing",
+          "playwriting",
+          "public relations",
+          "arts",
+          "writing",
+          "performing arts",
+          "acting",
+          "theatre",
+          "apple ios",
+          "sony playstation",
+          "microsoft office"
+        ],
+        "connections_count": 500,
+        "followers_count": 756,
+        "services": null,
+        "primary_professional_email": "al@twilio.com",
+        "primary_professional_email_status": "matched_email",
+        "professional_emails_collection": [
+          {
+            "professional_email": "al@twilio.com",
+            "professional_email_status": "matched_email",
+            "order_of_priority": 1
+          },
+          {
+            "professional_email": "alex@twilio.com",
+            "professional_email_status": "matched_email",
+            "order_of_priority": 2
+          }
+        ],
+        "is_working": 1,
+        "active_experience_company_id": 9684159,
+        "active_experience_title": "Technical Account Manager III",
+        "active_experience_description": "• Dedicated account manager providing premium, thorough support for high profile accounts that specifically pay for a top tier of specialized service • Working with APIs to understand and solve issues with cloud solutions and network connectivity regarding SMS, MMS, Email, and VoIP technologies • Creating regular status reports for multiple clients, meeting one-on-one remotely to address any and all needs that may occur during campaign rollout • Continuously collaborating with… Show more",
+        "active_experience_department": "Sales",
+        "active_experience_management_level": "Manager",
+        "is_decision_maker": 0,
+        "total_experience_duration_months": 128,
+        "total_experience_duration_months_breakdown_department": [
+          {
+            "department": "Customer Service",
+            "total_experience_duration_months": 35
+          },
+          {
+            "department": "Sales",
+            "total_experience_duration_months": 41
+          },
+          {
+            "department": "Engineering and Technical",
+            "total_experience_duration_months": 7
+          },
+          {
+            "department": "Other",
+            "total_experience_duration_months": 45
+          }
+        ],
+        "total_experience_duration_months_breakdown_management_level": [
+          {
+            "management_level": "Manager",
+            "total_experience_duration_months": 41
+          },
+          {
+            "management_level": "Specialist",
+            "total_experience_duration_months": 87
+          }
+        ],
+        "experience": [
+          {
+            "active_experience": 1,
+            "position_title": "Technical Account Manager III",
+            "department": "Sales",
+            "management_level": "Manager",
+            "location": null,
+            "description": "• Dedicated account manager providing premium, thorough support for high profile accounts that specifically pay for a top tier of specialized service • Working with APIs to understand and solve issues with cloud solutions and network connectivity regarding SMS, MMS, Email, and VoIP technologies • Creating regular status reports for multiple clients, meeting one-on-one remotely to address any and all needs that may occur during campaign rollout • Continuously collaborating with… Show more",
+            "date_from": "July 2022",
+            "date_from_year": 2022,
+            "date_from_month": 7,
+            "date_to": null,
+            "date_to_year": null,
+            "date_to_month": null,
+            "duration_months": 41,
+            "company_id": 9684159,
+            "company_name": "Twilio",
+            "company_type": "Public Company",
+            "company_founded_year": 2008,
+            "company_followers_count": 429380,
+            "company_website": "https://www.twilio.com",
+            "company_facebook_url": [
+              "https://www.facebook.com/teamtwilio"
+            ],
+            "company_twitter_url": [
+              "https://www.twitter.com/twilio"
+            ],
+            "company_linkedin_url": "https://www.linkedin.com/company/twilio-inc-",
+            "company_logo_url": "https://media.licdn.com/dms/image/v2/D560BAQEmISp-ciExQw/company-logo_100_100/B56ZYyhH7TGoAU-/0/1744604267044/twilio_inc__logo?e=2147483647&v=beta&t=ihMyPYEiafphmOZPbz9geedt58IwlTeVtLE6xNMwuD4",
+            "company_size_range": "5001-10,000 employees",
+            "company_employees_count": 6596,
+            "company_industry": "Software Development",
+            "company_categories_and_keywords": [
+              "communication apis",
+              "telecommunications",
+              "api",
+              "cloud communications",
+              "saas",
+              "telephony",
+              "sms",
+              "voice",
+              "voip",
+              "gdpr",
+              "whatsapp",
+              "messaging",
+              "technology",
+              "artificial-intelligence",
+              "cloud",
+              "cloud-platforms",
+              "customer-experience",
+              "cybersecurity",
+              "enterprise-software",
+              "enterprise software",
+              "mobile apps",
+              "software"
+            ],
+            "company_annual_revenue_source_5": 4896125000,
+            "company_annual_revenue_currency_source_5": "USD",
+            "company_annual_revenue_source_1": 4458036224,
+            "company_annual_revenue_currency_source_1": "USD",
+            "company_employees_count_change_yearly_percentage": 0.17320107069752794,
+            "company_last_funding_round_date": "2021-07-28",
+            "company_last_funding_round_amount_raised": null,
+            "company_hq_full_address": "101 Spear St; 5th Floor; San Francisco, California 94105, US",
+            "company_hq_country": "United States",
+            "company_hq_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "company_hq_country_iso2": "US",
+            "company_hq_country_iso3": "USA",
+            "company_hq_city": "San Francisco",
+            "company_hq_state": "California",
+            "company_hq_street": "101 Spear St; 5th Floor",
+            "company_hq_zipcode": "94105",
+            "company_last_updated_at": "2025-12-05",
+            "company_stock_ticker": [
+              {
+                "exchange": "NYSE",
+                "ticker": "TWLO"
+              },
+              {
+                "exchange": null,
+                "ticker": "TWLO"
+              }
+            ],
+            "company_is_b2b": 1,
+            "order_in_profile": 1
+          },
+          {
+            "active_experience": 0,
+            "position_title": "Customer Support Engineer",
+            "department": "Customer Service",
+            "management_level": "Specialist",
+            "location": "Remote",
+            "description": "• Crucial member of a two person support department for an ambitious SaaS management startup reporting directly to the VP of Product • Responsible for investigating, replicating, and filing priority reports for bugs and feature requests working with JIRA, Retool, and the rest of the Atlassian suite • Attended daily Engineering stand-ups to communicate and collaborate directly with the developers of our robust IT management and software procurement application",
+            "date_from": "November 2021",
+            "date_from_year": 2021,
+            "date_from_month": 11,
+            "date_to": "July 2022",
+            "date_to_year": 2022,
+            "date_to_month": 7,
+            "duration_months": 8,
+            "company_id": 32585177,
+            "company_name": "Vendr",
+            "company_type": "Privately Held",
+            "company_founded_year": 2019,
+            "company_followers_count": 24717,
+            "company_website": "https://www.vendr.com",
+            "company_facebook_url": [
+              "https://www.facebook.com/savewithvendr"
+            ],
+            "company_twitter_url": [
+              "https://www.twitter.com/vendrhq",
+              "https://www.twitter.com/vendrhq?lang=en"
+            ],
+            "company_linkedin_url": "https://www.linkedin.com/company/vendr-services",
+            "company_logo_url": null,
+            "company_size_range": "51-200 employees",
+            "company_employees_count": 225,
+            "company_industry": "Software Development",
+            "company_categories_and_keywords": [
+              "software buying",
+              "procurement",
+              "saas",
+              "software pricing",
+              "software renewals",
+              "it strategy",
+              "software services",
+              "procurement automation",
+              "software negotiations",
+              "integrations",
+              "price benchmarks",
+              "free",
+              "technology",
+              "cloud-services",
+              "data-management",
+              "platform",
+              "information technology",
+              "logistics",
+              "software"
+            ],
+            "company_annual_revenue_source_5": 55000000,
+            "company_annual_revenue_currency_source_5": "USD",
+            "company_annual_revenue_source_1": null,
+            "company_annual_revenue_currency_source_1": null,
+            "company_employees_count_change_yearly_percentage": -23.728813559322035,
+            "company_last_funding_round_date": "2022-06-16",
+            "company_last_funding_round_amount_raised": null,
+            "company_hq_full_address": "501 Boylston St; 10th Floor; Boston, Massachusetts 02116, US",
+            "company_hq_country": "United States",
+            "company_hq_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "company_hq_country_iso2": "US",
+            "company_hq_country_iso3": "USA",
+            "company_hq_city": "Boston",
+            "company_hq_state": "Massachusetts",
+            "company_hq_street": "501 Boylston St; 10th Floor",
+            "company_hq_zipcode": "02116",
+            "company_last_updated_at": "2025-12-06",
+            "company_stock_ticker": [],
+            "company_is_b2b": 1,
+            "order_in_profile": 2
+          },
+          {
+            "active_experience": 0,
+            "position_title": "Technical Support Engineer",
+            "department": "Engineering and Technical",
+            "management_level": "Specialist",
+            "location": "Remote",
+            "description": "• Troubleshooted customer issues and requests by taking ownership of them through to resolution whilst working towards internal SLA targets and goals • Identified customer requirements and prioritize issues accordingly • Managed customer expectations for technical questions by reproducing bugs and processing feature requests • Regular testing sessions with beta products, serving as a liaison between QA, Sales, Customer Success, and Development teams",
+            "date_from": "March 2021",
+            "date_from_year": 2021,
+            "date_from_month": 3,
+            "date_to": "October 2021",
+            "date_to_year": 2021,
+            "date_to_month": 10,
+            "duration_months": 7,
+            "company_id": 10935299,
+            "company_name": "Vizlib",
+            "company_type": "Privately Held",
+            "company_founded_year": 2016,
+            "company_followers_count": 17774,
+            "company_website": "https://www.vizlib.com",
+            "company_facebook_url": [
+              "https://www.facebook.com/vizlib"
+            ],
+            "company_twitter_url": [
+              "https://www.twitter.com/vizlib",
+              "https://www.twitter.com/insightsoftware"
+            ],
+            "company_linkedin_url": "https://www.linkedin.com/company/vizlib",
+            "company_logo_url": null,
+            "company_size_range": "51-200 employees",
+            "company_employees_count": 39,
+            "company_industry": "Software Development",
+            "company_categories_and_keywords": [
+              "technology/software",
+              "other analytics software",
+              "vizlib",
+              "other analytics",
+              "computers electronics and technology > programming and developer software",
+              "qlik sense",
+              "extensions",
+              "qlik",
+              "javascript",
+              "angular",
+              "visualisations",
+              "d3",
+              "qlik sense extensions",
+              "data visualisation",
+              "analytics",
+              "business intelligence",
+              "dataviz",
+              "dashboards",
+              "visual analytics",
+              "data analytics",
+              "analytics solutions",
+              "no code solutions",
+              "project planning",
+              "professional services",
+              "customer stories",
+              "embedded analytics",
+              "data visualization",
+              "information technology",
+              "internet",
+              "software"
+            ],
+            "company_annual_revenue_source_5": 5700000,
+            "company_annual_revenue_currency_source_5": "USD",
+            "company_annual_revenue_source_1": null,
+            "company_annual_revenue_currency_source_1": null,
+            "company_employees_count_change_yearly_percentage": -33.33333333333333,
+            "company_last_funding_round_date": "2018-12-14",
+            "company_last_funding_round_amount_raised": 280000,
+            "company_hq_full_address": "25 North Row, Mayfair; London, England W1K 6DJ, GB",
+            "company_hq_country": "United Kingdom",
+            "company_hq_regions": [
+              "Europe",
+              "Northern Europe",
+              "EMEA"
+            ],
+            "company_hq_country_iso2": "GB",
+            "company_hq_country_iso3": "GBR",
+            "company_hq_city": "London",
+            "company_hq_state": "England",
+            "company_hq_street": null,
+            "company_hq_zipcode": null,
+            "company_last_updated_at": "2025-12-06",
+            "company_stock_ticker": [],
+            "company_is_b2b": 1,
+            "order_in_profile": 3
+          },
+          {
+            "active_experience": 0,
+            "position_title": "Premium Customer Support Specialist",
+            "department": "Customer Service",
+            "management_level": "Specialist",
+            "location": "Atlanta, Georgia, United States",
+            "description": "• Promoted to highest tier of support 9 months into joining the company • Founding member of the phone support team, offering a new premium service to high end clients, coaching customers through high level technical issues in an easy to comprehend manner • Developed resources such as wikis, FAQs, and flowcharts outlining team initiatives, best practices, common scenarios, and canned messaging",
+            "date_from": "April 2019",
+            "date_from_year": 2019,
+            "date_from_month": 4,
+            "date_to": "October 2020",
+            "date_to_year": 2020,
+            "date_to_month": 10,
+            "duration_months": 18,
+            "company_id": 88348563,
+            "company_name": "Mailchimp",
+            "company_type": "Privately Held",
+            "company_founded_year": null,
+            "company_followers_count": 209724,
+            "company_website": "https://www.mailchimp.com",
+            "company_facebook_url": [
+              "https://www.facebook.com/mailchimp"
+            ],
+            "company_twitter_url": [
+              "https://www.twitter.com/mailchimp"
+            ],
+            "company_linkedin_url": "https://www.linkedin.com/company/mailchimp",
+            "company_logo_url": null,
+            "company_size_range": "1001-5000 employees",
+            "company_employees_count": 1651,
+            "company_industry": "Software Development",
+            "company_categories_and_keywords": [
+              "marketing and automation",
+              "email marketing software",
+              "intuit mailchimp email marketing",
+              "ai writing assistant",
+              "email marketing",
+              "email deliverability",
+              "transactional email",
+              "email testing",
+              "marketing automation",
+              "e-commerce email marketing",
+              "crm",
+              "analytics",
+              "marketing platform",
+              "small business marketing",
+              "e-commerce",
+              "social media marketing",
+              "automation",
+              "audience management",
+              "technology",
+              "email-marketing",
+              "platform",
+              "information technology",
+              "internet",
+              "marketing",
+              "software"
+            ],
+            "company_annual_revenue_source_5": 850000000,
+            "company_annual_revenue_currency_source_5": "USD",
+            "company_annual_revenue_source_1": 800000000,
+            "company_annual_revenue_currency_source_1": "USD",
+            "company_employees_count_change_yearly_percentage": -7.868303571428571,
+            "company_last_funding_round_date": "2018-07-01",
+            "company_last_funding_round_amount_raised": null,
+            "company_hq_full_address": "675 Ponce De Leon Ave. NE; 5000; Atlanta, GA 30308, US",
+            "company_hq_country": "United States",
+            "company_hq_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "company_hq_country_iso2": "US",
+            "company_hq_country_iso3": "USA",
+            "company_hq_city": "atlanta",
+            "company_hq_state": "Georgia",
+            "company_hq_street": "675 Ponce De Leon Ave. NE; 5000",
+            "company_hq_zipcode": "30308",
+            "company_last_updated_at": "2025-11-20",
+            "company_stock_ticker": [],
+            "company_is_b2b": 1,
+            "order_in_profile": 4
+          },
+          {
+            "active_experience": 0,
+            "position_title": "Customer Support Technician",
+            "department": "Customer Service",
+            "management_level": "Specialist",
+            "location": "Atlanta, Georgia, United States",
+            "description": "• Provided in-depth technical support via Zendesk in both email and live chat for the entire Mailchimp CRM platform along with hundreds of integrations such as Zapier, Salesforce, and most e-commerce platforms • Consistently ranked in top 5 agents per month in customer satisfaction scores and ticket totals • Excelled month after month in fast-paced, high tech environment at one of Atlanta's largest tech companies",
+            "date_from": "July 2018",
+            "date_from_year": 2018,
+            "date_from_month": 7,
+            "date_to": "April 2019",
+            "date_to_year": 2019,
+            "date_to_month": 4,
+            "duration_months": 9,
+            "company_id": 88348563,
+            "company_name": "Mailchimp",
+            "company_type": "Privately Held",
+            "company_founded_year": null,
+            "company_followers_count": 209724,
+            "company_website": "https://www.mailchimp.com",
+            "company_facebook_url": [
+              "https://www.facebook.com/mailchimp"
+            ],
+            "company_twitter_url": [
+              "https://www.twitter.com/mailchimp"
+            ],
+            "company_linkedin_url": "https://www.linkedin.com/company/mailchimp",
+            "company_logo_url": null,
+            "company_size_range": "1001-5000 employees",
+            "company_employees_count": 1651,
+            "company_industry": "Software Development",
+            "company_categories_and_keywords": [
+              "marketing and automation",
+              "email marketing software",
+              "intuit mailchimp email marketing",
+              "ai writing assistant",
+              "email marketing",
+              "email deliverability",
+              "transactional email",
+              "email testing",
+              "marketing automation",
+              "e-commerce email marketing",
+              "crm",
+              "analytics",
+              "marketing platform",
+              "small business marketing",
+              "e-commerce",
+              "social media marketing",
+              "automation",
+              "audience management",
+              "technology",
+              "email-marketing",
+              "platform",
+              "information technology",
+              "internet",
+              "marketing",
+              "software"
+            ],
+            "company_annual_revenue_source_5": 850000000,
+            "company_annual_revenue_currency_source_5": "USD",
+            "company_annual_revenue_source_1": 800000000,
+            "company_annual_revenue_currency_source_1": "USD",
+            "company_employees_count_change_yearly_percentage": -7.868303571428571,
+            "company_last_funding_round_date": "2018-07-01",
+            "company_last_funding_round_amount_raised": null,
+            "company_hq_full_address": "675 Ponce De Leon Ave. NE; 5000; Atlanta, GA 30308, US",
+            "company_hq_country": "United States",
+            "company_hq_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "company_hq_country_iso2": "US",
+            "company_hq_country_iso3": "USA",
+            "company_hq_city": "atlanta",
+            "company_hq_state": "Georgia",
+            "company_hq_street": "675 Ponce De Leon Ave. NE; 5000",
+            "company_hq_zipcode": "30308",
+            "company_last_updated_at": "2025-11-20",
+            "company_stock_ticker": [],
+            "company_is_b2b": 1,
+            "order_in_profile": 5
+          },
+          {
+            "active_experience": 0,
+            "position_title": "Expert",
+            "department": "Other",
+            "management_level": "Specialist",
+            "location": "Atlanta, Georgia, United States",
+            "description": "• Provided white glove customer service with at home delivery and personalized set-up of consumer tech products from Apple, DJI, Sonos, and more • Managed my own schedule around appointment based visits, traveling across the state on a day-to-day basis • Founding member of the Atlanta market for a brand new, fast-paced start-up founded by Genius Bar creator Ron Johnson with frequent levels of change in practices and policies",
+            "date_from": "July 2016",
+            "date_from_year": 2016,
+            "date_from_month": 7,
+            "date_to": "December 2017",
+            "date_to_year": 2017,
+            "date_to_month": 12,
+            "duration_months": 17,
+            "company_id": 6466601,
+            "company_name": "Enjoy Technology, Inc.",
+            "company_type": "Public Company",
+            "company_founded_year": 2014,
+            "company_followers_count": 46555,
+            "company_website": "https://www.enjoy.com",
+            "company_facebook_url": [
+              "https://www.facebook.com/goenjoyco"
+            ],
+            "company_twitter_url": [
+              "https://www.twitter.com/goenjoy"
+            ],
+            "company_linkedin_url": "https://www.linkedin.com/company/enjoy-inc-",
+            "company_logo_url": null,
+            "company_size_range": "1001-5000 employees",
+            "company_employees_count": 548,
+            "company_industry": "Retail",
+            "company_categories_and_keywords": [
+              "customer service",
+              "retail",
+              "mobile retail",
+              "mobile store",
+              "customer experience",
+              "personal commerce",
+              "technology",
+              "retail sales",
+              "the smart last mile",
+              "delivery",
+              "mobile apps",
+              "shopping",
+              "software"
+            ],
+            "company_annual_revenue_source_5": null,
+            "company_annual_revenue_currency_source_5": null,
+            "company_annual_revenue_source_1": null,
+            "company_annual_revenue_currency_source_1": null,
+            "company_employees_count_change_yearly_percentage": -10.361842105263158,
+            "company_last_funding_round_date": "2021-10-18",
+            "company_last_funding_round_amount_raised": null,
+            "company_hq_full_address": "2483 Hillview Avenue; Palo Alto, CA 94304, US",
+            "company_hq_country": "United States",
+            "company_hq_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "company_hq_country_iso2": "US",
+            "company_hq_country_iso3": "USA",
+            "company_hq_city": "Palo Alto",
+            "company_hq_state": "California",
+            "company_hq_street": "2483 Hillview Avenue",
+            "company_hq_zipcode": "94304",
+            "company_last_updated_at": "2025-12-03",
+            "company_stock_ticker": [],
+            "company_is_b2b": null,
+            "order_in_profile": 6
+          },
+          {
+            "active_experience": 0,
+            "position_title": "Specialist",
+            "department": "Other",
+            "management_level": "Specialist",
+            "location": "Alpharetta, Georgia, United States",
+            "description": "• Worked on both sales floor and technical back end of store providing a high level of customer service and technical knowledge to customers of all backgrounds • Thrived in busy sales environment, consistently exceeding sales goals and upsell expectations • Assisted with admin work when Genius team was overloaded, calling customers to set appointments and pick-ups",
+            "date_from": "March 2014",
+            "date_from_year": 2014,
+            "date_from_month": 3,
+            "date_to": "July 2016",
+            "date_to_year": 2016,
+            "date_to_month": 7,
+            "duration_months": 28,
+            "company_id": 9073671,
+            "company_name": "Apple",
+            "company_type": "Public Company",
+            "company_founded_year": 1976,
+            "company_followers_count": 17985935,
+            "company_website": "https://www.apple.com",
+            "company_facebook_url": [
+              "https://www.facebook.com/apple"
+            ],
+            "company_twitter_url": [
+              "https://www.twitter.com/apple"
+            ],
+            "company_linkedin_url": "https://www.linkedin.com/company/apple",
+            "company_logo_url": null,
+            "company_size_range": "10,001+ employees",
+            "company_employees_count": 164266,
+            "company_industry": "Computers and Electronics Manufacturing",
+            "company_categories_and_keywords": [
+              "electronics",
+              "innovative product development",
+              "world-class operations",
+              "retail",
+              "telephone support",
+              "apple",
+              "iphone",
+              "mac",
+              "ipad",
+              "apple watch",
+              "technology",
+              "application-software",
+              "consumer-electronics",
+              "consumer-software",
+              "platform",
+              "wearables"
+            ],
+            "company_annual_revenue_source_5": 416161000000,
+            "company_annual_revenue_currency_source_5": "USD",
+            "company_annual_revenue_source_1": 391034994688,
+            "company_annual_revenue_currency_source_1": "USD",
+            "company_employees_count_change_yearly_percentage": 0.23798481778906003,
+            "company_last_funding_round_date": null,
+            "company_last_funding_round_amount_raised": null,
+            "company_hq_full_address": "1 Apple Park Way; Cupertino, California 95014, US",
+            "company_hq_country": "United States",
+            "company_hq_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "company_hq_country_iso2": "US",
+            "company_hq_country_iso3": "USA",
+            "company_hq_city": "Cupertino",
+            "company_hq_state": "California",
+            "company_hq_street": "1 Apple Park Way",
+            "company_hq_zipcode": "95014",
+            "company_last_updated_at": "2025-11-14",
+            "company_stock_ticker": [
+              {
+                "exchange": "NASDAQ",
+                "ticker": "AAPL"
+              },
+              {
+                "exchange": null,
+                "ticker": "AAPL"
+              }
+            ],
+            "company_is_b2b": 0,
+            "order_in_profile": 7
+          }
+        ],
+        "projected_base_salary_p25": null,
+        "projected_base_salary_median": null,
+        "projected_base_salary_p75": null,
+        "projected_base_salary_period": null,
+        "projected_base_salary_currency": null,
+        "projected_base_salary_updated_at": null,
+        "projected_additional_salary": [],
+        "projected_additional_salary_period": null,
+        "projected_additional_salary_currency": null,
+        "projected_additional_salary_updated_at": null,
+        "projected_total_salary_p25": null,
+        "projected_total_salary_median": null,
+        "projected_total_salary_p75": null,
+        "projected_total_salary_period": null,
+        "projected_total_salary_currency": null,
+        "projected_total_salary_updated_at": null,
+        "last_graduation_date": 2014,
+        "education_degrees": [
+          "Freshman"
+        ],
+        "education": [
+          {
+            "degree": "Freshman",
+            "description": null,
+            "institution_url": "https://www.linkedin.com/school/columbus-state-university",
+            "institution_name": "Columbus State University",
+            "institution_full_address": "4225 University Ave; Columbus, GA 31907-5645, US",
+            "institution_country_iso2": "US",
+            "institution_country_iso3": "USA",
+            "institution_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "institution_city": "columbus",
+            "institution_state": "Georgia",
+            "institution_street": "4225 University Ave",
+            "institution_zipcode": "31907-5645",
+            "institution_logo_url": "https://media.licdn.com/dms/image/v2/C560BAQEn800ZA9LzOg/company-logo_100_100/company-logo_100_100/0/1631310644971?e=2147483647&v=beta&t=KE0_WBhJVNe5NsGfjk_4IFZgQBsioa78uByX8bwygH8",
+            "date_from_year": 2013,
+            "date_to_year": 2014,
+            "activities_and_societies": null,
+            "order_in_profile": 1
+          }
+        ],
+        "recommendations_count": 2,
+        "recommendations": [
+          {
+            "recommendation": "“Alex has a heart for people, always has a great attitude, and he gets very passionate about his work. As I have worked with him he has shown me that he is serious about his business and takes pride in his service. ”",
+            "referee_full_name": "Myles Young",
+            "referee_url": "https://www.linkedin.com/in/youngmy",
+            "order_in_profile": 1
+          },
+          {
+            "recommendation": "“I had the pleasure of working with Alex at Apple for many years. His drive for results and customer focus are not only top notch, it’s the the energy he carries and the ability to spread it amongst a team that I have personally seen make many impacts. Alex is honest, trustworthy, dedicated to his craft, and this has created some amazing long term professional relationships! ”",
+            "referee_full_name": "Beason Wilkes",
+            "referee_url": "https://www.linkedin.com/in/beasonwilkes",
+            "order_in_profile": 2
+          }
+        ],
+        "activity": [
+          {
+            "activity_url": "https://www.linkedin.com/posts/alextoor_dei-layoffs-needajob-activity-7071894827742744577-8-OQ",
+            "title": "Sometimes tragedy strikes... and then it strikes again.  I tend to be pretty private on social media, when it comes to my personal life.  But…",
+            "action": "Shared by",
+            "order_in_profile": 1
+          },
+          {
+            "activity_url": "https://www.linkedin.com/posts/candace-grundy_this-past-friday-after-8-years-at-intuit-activity-7061399289385660416-dEs7",
+            "title": "This past Friday, after 8+ years at Intuit Mailchimp, I logged off for the last time. To say it has been bittersweet would be an understatement. I…",
+            "action": "Liked by",
+            "order_in_profile": 2
+          }
+        ],
+        "awards": [],
+        "courses": [],
+        "certifications": [
+          {
+            "title": "Apple Certified Associate - Mac Integration 10.12",
+            "issuer": "Apple",
+            "issuer_url": "https://www.linkedin.com/company/apple",
+            "credential_id": null,
+            "certificate_url": "https://i7lp.integral7.com/durango/do/pr/prSearchResultDetail?ownername=apple&E3EAFEF0E33085858ED8F4537A799104=D845EE9E83F2453B743B76F8CEE56431&BF5792ACDD2C07080B097C9B2768BE90=6445AE02C4E46C4197E43EFA6579FEB5&trk=public_profile_certification-title",
+            "certificate_logo_url": "https://media.licdn.com/dms/image/v2/C560BAQHdAaarsO-eyA/company-logo_100_100/company-logo_100_100/0/1630637844948/apple_logo?e=2147483647&v=beta&t=p0JNmv2WB0EMMQgvzl9R8TaXgzEaDraGS4MWR0IawjQ",
+            "date_from": "Jan 2018",
+            "date_from_year": 2018,
+            "date_from_month": 1,
+            "date_to": null,
+            "date_to_year": null,
+            "date_to_month": null,
+            "order_in_profile": 1
+          }
+        ],
+        "languages": [
+          {
+            "language": "English",
+            "proficiency": "Native or bilingual proficiency",
+            "order_in_profile": 1
+          }
+        ],
+        "patents_count": null,
+        "patents_topics": [],
+        "patents": [],
+        "publications_count": null,
+        "publications_topics": [],
+        "publications": [],
+        "projects_count": null,
+        "projects_topics": [],
+        "projects": [],
+        "organizations": [],
+        "github_url": null,
+        "github_username": null,
+        "github_mapping_confidence": null,
+        "github_contributions_count": null,
+        "github_repos_summary": [],
+        "profile_root_field_changes_summary": [
+          {
+            "field_name": "follower_count",
+            "change_type": "updated",
+            "last_changed_at": "2025-08-30 21:02:17.235145"
+          },
+          {
+            "field_name": "summary",
+            "change_type": "updated",
+            "last_changed_at": "2025-12-01 14:15:37.712771"
+          },
+          {
+            "field_name": "deleted",
+            "change_type": "updated",
+            "last_changed_at": "2025-08-30 21:02:17.235145"
+          },
+          {
+            "field_name": "summary",
+            "change_type": "new",
+            "last_changed_at": "2025-03-19 03:48:09.736339"
+          },
+          {
+            "field_name": "recommendations_count",
+            "change_type": "updated",
+            "last_changed_at": "2025-10-15 16:30:53.902740"
+          }
+        ],
+        "profile_collection_field_changes_summary": [
+          {
+            "field_name": "activity",
+            "last_changed_at": "2025-08-30 21:02:17.235145"
+          },
+          {
+            "field_name": "certifications",
+            "last_changed_at": "2025-10-15 16:30:53.902740"
+          },
+          {
+            "field_name": "recommendations",
+            "last_changed_at": "2025-10-15 16:30:53.902740"
+          },
+          {
+            "field_name": "experience",
+            "last_changed_at": "2025-12-01 14:15:37.712771"
+          },
+          {
+            "field_name": "education",
+            "last_changed_at": "2025-12-01 14:15:37.712771"
+          }
+        ],
+        "experience_recently_started": [],
+        "experience_recently_closed": []
+      },
+      "enrichedAt": "2025-12-12T21:58:27.968Z",
+      "emailVerified": false,
+      "emailConfidence": 0,
+      "emailVerificationDetails": [],
+      "emailVerificationCost": 0,
+      "emailSource": "unverified",
+      "phoneVerified": false,
+      "phoneConfidence": 0,
+      "phoneVerificationDetails": [],
+      "phoneVerificationCost": 0,
+      "phoneSource": "unverified",
+      "phoneType": "unknown",
+      "phoneMetadata": {},
+      "mobilePhone": null,
+      "workPhone": null,
+      "directDialPhone": null,
+      "painPoints": [
+        {
+          "title": "Inadequate Account Intelligence for Technical Consultations",
+          "description": "As a Technical Account Manager handling complex API integrations and cloud communications, Alex likely struggles to access real-time technical stack intelligence and technology adoption signals about enterprise accounts. Without deep visibility into prospects' current infrastructure, integration challenges, and competitive tool usage, technical discovery calls become inefficient and generic.",
+          "rootCause": "Fragmented data sources fail to consolidate technical firmographics, technology stack data, and buying signals into a unified view for technical sales conversations.",
+          "frequency": "daily",
+          "impact": "This results in longer technical sales cycles as TAMs spend extra time on discovery rather than solution-focused conversations. It also leads to misaligned product recommendations and higher rates of technical objections late in the deal cycle that could have been addressed earlier.",
+          "urgency": "high",
+          "urgencyDrivers": "Twilio operates in a highly competitive CPaaS market where technical differentiation and speed-to-value are critical. Missing technical context early costs deals to competitors like Vonage or MessageBird who demonstrate faster technical fit.",
+          "relatedMetrics": [
+            "Time to First Value (technical onboarding)",
+            "Technical Discovery Call Quality Score",
+            "Deal Velocity (days in technical evaluation)",
+            "Win Rate Against Specific Competitors"
+          ]
+        },
+        {
+          "title": "Limited Visibility into Multi-Product Cross-Sell Opportunities",
+          "description": "Given Twilio's extensive product portfolio (SMS, Voice, Email, Video, etc.), Alex likely lacks consolidated intelligence on which existing accounts have expansion potential across product lines. Without unified sales intelligence showing usage patterns, pain points, and trigger events across the customer base, valuable upsell opportunities remain hidden until customers churn or seek alternatives.",
+          "rootCause": "Disconnected customer data systems and lack of behavioral buying signals prevent proactive identification of accounts ready for product expansion conversations.",
+          "frequency": "weekly",
+          "impact": "This leads to reactive account management where expansion discussions only happen during renewal conversations or QBRs rather than at optimal trigger moments. Revenue expansion targets are missed as competitors fill gaps in the customer's communication stack that Twilio already offers.",
+          "urgency": "high",
+          "urgencyDrivers": "In SaaS, expansion revenue from existing customers is 3-5x more efficient than new logo acquisition. With economic pressure on customer acquisition costs, missing cross-sell signals directly impacts revenue targets and account retention.",
+          "relatedMetrics": [
+            "Net Revenue Retention (NRR)",
+            "Product Adoption Rate per Account",
+            "Cross-Sell Attach Rate",
+            "Time to Expansion from Initial Purchase"
+          ]
+        },
+        {
+          "title": "Insufficient Early Warning System for Churn Risk",
+          "description": "Alex needs to identify technical and business warning signs before accounts enter at-risk status, but likely lacks predictive intelligence that combines usage decline, competitive evaluation activity, and organizational changes. Current CRM data and support ticket analysis provide lagging indicators rather than the forward-looking signals needed for proactive intervention at the Technical Account Manager level.",
+          "rootCause": "Traditional account health scoring relies on historical usage metrics and manual reporting rather than external signals like hiring freezes, technology stack changes, or competitive vendor engagement.",
+          "frequency": "monthly",
+          "impact": "Churn prevention becomes reactive firefighting rather than strategic intervention, often catching problems too late in the decision cycle. This results in higher customer acquisition cost burden as the team replaces lost revenue rather than compounding growth through retention.",
+          "urgency": "medium",
+          "urgencyDrivers": "",
+          "relatedMetrics": [
+            "Gross Revenue Retention (GRR)",
+            "Churn Rate (Logo and Revenue)",
+            "Customer Health Score Accuracy",
+            "Proactive Outreach Success Rate",
+            "Time from Risk Identification to Mitigation"
+          ]
+        },
+        {
+          "title": "Inefficient Account Prioritization Across Large Portfolio",
+          "description": "With Twilio's scale and Alex's likely responsibility for dozens of technical accounts, determining which accounts deserve immediate attention versus ongoing nurture is challenging without AI-driven prioritization. Manual account scoring based on contract value alone misses high-potential accounts showing buying signals or underestimates risk in seemingly stable accounts experiencing silent dissatisfaction.",
+          "rootCause": "Absence of intent data and predictive analytics forces TAMs to rely on subjective judgment and lagging indicators to allocate their limited time across diverse account portfolios.",
+          "frequency": "weekly",
+          "impact": "High-value opportunities receive insufficient technical guidance while resources are wasted on low-potential accounts, creating an inefficient allocation of technical expertise. This misprioritization directly affects quota attainment as the highest-revenue opportunities don't receive proportional attention.",
+          "urgency": "medium",
+          "urgencyDrivers": "As Twilio scales, TAM-to-customer ratios worsen, making intelligent prioritization increasingly critical. Missing a $100K expansion because time was spent on a $10K account that wasn't ready to buy represents significant opportunity cost.",
+          "relatedMetrics": [
+            "Revenue per Technical Account Manager",
+            "Account Coverage Ratio",
+            "Pipeline Generation per TAM",
+            "Opportunity Win Rate by Account Tier",
+            "Activity-to-Outcome Correlation"
+          ]
+        },
+        {
+          "title": "Fragmented Competitive Intelligence During Technical Evaluations",
+          "description": "When prospects are evaluating Twilio against competitors like Vonage, Plivo, or Sinch, Alex likely struggles to access real-time competitive intelligence about what alternatives the prospect is considering. This information gap prevents proactive differentiation and leaves TAMs unprepared for technical bake-offs, resulting in generic positioning rather than targeted competitive strategies.",
+          "rootCause": "Sales intelligence tools don't surface digital footprints, technology evaluation signals, or competitive vendor engagement happening outside of direct prospect communication.",
+          "frequency": "weekly",
+          "impact": "Deals are lost to competitors because technical positioning wasn't tailored to the specific competitive context the buyer was evaluating. Post-loss analysis reveals gaps that could have been addressed if competitive intelligence had been available during technical discovery and proof-of-concept phases.",
+          "urgency": "high",
+          "urgencyDrivers": "CPaaS market consolidation and competitive pricing pressure mean that differentiation in technical evaluations is increasingly narrow. Knowing which competitors are in play allows for surgical competitive strategies rather than broad, less-effective positioning.",
+          "relatedMetrics": [
+            "Win Rate in Competitive Deals",
+            "Win/Loss Ratio by Competitor",
+            "Technical Evaluation Conversion Rate",
+            "Deal Cycle Length (Competitive vs. Sole Source)",
+            "Competitive Displacement Rate"
+          ]
+        }
+      ]
+    }
+  ],
+  "report": {
+    "id": "report_1765576655491_pxjgx1fzj",
+    "generatedAt": "2025-12-12T21:58:46.856Z",
+    "executiveSummary": "Identified 1-person buyer group for Twilio ($250,000 deal) with 40% cohesion score. Group includes 1 decision maker(s), 0 champion(s), and comprehensive cross-functional coverage. Research methodology validated 1 final members from 13 initial candidates.",
+    "researchMethodology": {
+      "approach": "Double-waterfall discovery with multi-dimensional scoring",
+      "stages": [
+        {
+          "stage": 1,
+          "name": "Company Intelligence",
+          "description": "Database-first company research with Coresignal API fallback",
+          "result": "Optimal search parameters calculated"
+        },
+        {
+          "stage": 2,
+          "name": "Wide Preview Search",
+          "description": "Cross-departmental employee discovery using Coresignal Preview API",
+          "result": "13 employees discovered across all functions"
+        },
+        {
+          "stage": 3,
+          "name": "Smart Scoring",
+          "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+          "result": "Top candidates identified before expensive collect API"
+        },
+        {
+          "stage": 4,
+          "name": "Role Assignment",
+          "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+          "result": "Appropriate roles assigned based on deal size"
+        },
+        {
+          "stage": 5,
+          "name": "Cross-Functional Validation",
+          "description": "Stakeholder completeness validation across all relevant functions",
+          "result": "Missing stakeholders added for comprehensive coverage"
+        },
+        {
+          "stage": 6,
+          "name": "Full Profile Collection",
+          "description": "Coresignal Collect API for final buyer group members only",
+          "result": "Complete profiles for final buyer group"
+        },
+        {
+          "stage": 7,
+          "name": "Cohesion Analysis",
+          "description": "Multi-factor cohesion validation",
+          "result": "40% cohesion score with detailed analysis"
+        }
+      ],
+      "searchParameters": {
+        "searchSize": 100,
+        "maxPreviewPages": 5,
+        "buyerGroupSize": {
+          "min": 6,
+          "max": 9,
+          "ideal": 8
+        },
+        "companySize": 100,
+        "industry": "Unknown",
+        "searchStrategy": "comprehensive",
+        "filteringLevel": "none"
+      },
+      "dataSources": [
+        "Coresignal API",
+        "Internal Database",
+        "AI Analysis"
+      ],
+      "confidenceLevel": 55
+    },
+    "companyIntelligence": {
+      "employeeCount": 100,
+      "revenue": 0,
+      "industry": "Unknown",
+      "growthRate": 0,
+      "activeHiring": 0,
+      "fundingStage": "bootstrapped",
+      "dataSource": "default",
+      "lastUpdated": "2025-12-12T21:57:37.702Z",
+      "insights": [
+        "Company size: Medium",
+        "Growth trajectory: Stable",
+        "Hiring activity: Limited",
+        "Funding status: bootstrapped"
+      ]
+    },
+    "buyerGroupJustification": [
+      {
+        "name": "Alex Toor",
+        "title": "Technical Account Manager III",
+        "department": "Sales",
+        "role": "decision",
+        "confidence": "70%",
+        "detailedReasoning": "Single person buyer group - automatically assigned as decision maker",
+        "keyInsights": [
+          "Seniority score: 3/10",
+          "Champion potential: 16/25",
+          "Influence score: 3/10",
+          "Network: 500 connections",
+          "Relevance: 30%"
+        ],
+        "addedForCoverage": false,
+        "justification": "**Alex Toor (Technical Account Manager III) - DECISION**\n\n**Budget Authority**: **Department Relevance**: Sales leadership controls revenue-generating technology investments.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 500 connections\n- Role Confidence: 70%\n"
+      }
+    ],
+    "crossFunctionalCoverage": {
+      "summary": {
+        "primaryCovered": true,
+        "technicalCovered": false,
+        "riskCovered": false,
+        "financialCovered": false,
+        "overallScore": 25
+      },
+      "byFunction": {
+        "primary": {
+          "covered": [
+            "Sales"
+          ],
+          "missing": [
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "Alex Toor",
+              "title": "Technical Account Manager III",
+              "department": "Sales"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [],
+          "missing": [
+            "IT",
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": []
+        },
+        "risk": {
+          "covered": [],
+          "missing": [
+            "Security",
+            "Legal",
+            "Compliance"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      },
+      "gaps": [
+        "Technical implementation",
+        "Risk management",
+        "Financial approval"
+      ],
+      "recommendations": [
+        "Add IT stakeholder for technical implementation",
+        "Add Security/Legal stakeholder for risk management",
+        "Add Finance stakeholder for budget approval"
+      ]
+    },
+    "cohesionAnalysis": {
+      "overallScore": 40,
+      "confidence": "VERY_LOW",
+      "factors": {
+        "reportingProximity": {
+          "score": 5,
+          "explanation": "Executive reporting relationships"
+        },
+        "departmentClustering": {
+          "score": 50,
+          "explanation": "Department collaboration patterns"
+        },
+        "seniorityBalance": {
+          "score": 72,
+          "explanation": "Appropriate seniority distribution"
+        },
+        "geographicAlignment": {
+          "score": 75,
+          "explanation": "Location-based collaboration"
+        },
+        "functionalInterdependence": {
+          "score": 0,
+          "explanation": "Cross-functional work relationships"
+        }
+      },
+      "reasoning": "Limited reporting proximity; Well-balanced seniority levels; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from interdependent functions",
+        "Overall cohesion could be improved with better stakeholder selection"
+      ]
+    },
+    "championAnalysis": {
+      "count": 0,
+      "champions": [],
+      "analysis": "No champions identified - consider adding internal advocates"
+    },
+    "costEfficiency": {
+      "methodology": "Double-waterfall approach (preview then collect)",
+      "costs": {
+        "preview": 1.3,
+        "collect": 1,
+        "total": 0
+      },
+      "comparison": {
+        "naiveApproach": 13,
+        "smartApproach": 0,
+        "savings": 13,
+        "savingsPercentage": 100
+      },
+      "efficiency": {
+        "previewToCollectRatio": 8,
+        "costPerFinalMember": 0
+      }
+    },
+    "qualityMetrics": {
+      "averageConfidence": 70,
+      "averageInfluence": 3,
+      "averageRelevance": 30,
+      "decisionMakerCount": 1,
+      "championCount": 0,
+      "stakeholderCount": 0,
+      "blockerCount": 0,
+      "introducerCount": 0,
+      "qualityGrade": "D"
+    },
+    "recommendations": [
+      "Consider improving buyer group cohesion through better stakeholder selection",
+      "Critical: Add internal champion for advocacy",
+      "Consider adding more stakeholders for comprehensive coverage"
+    ]
+  },
+  "cohesion": {
+    "score": 40,
+    "confidence": "VERY_LOW",
+    "factors": {
+      "reportingProximity": 5,
+      "departmentClustering": 50,
+      "seniorityBalance": 72,
+      "geographicAlignment": 75,
+      "functionalInterdependence": 0
+    },
+    "reasoning": "Limited reporting proximity; Well-balanced seniority levels; Limited functional interdependence",
+    "recommendations": [
+      "Consider adding members who report to same executives",
+      "Consider adding members from interdependent functions",
+      "Overall cohesion could be improved with better stakeholder selection"
+    ]
+  },
+  "coverage": {
+    "primary": true,
+    "technical": false,
+    "risk": false,
+    "financial": false,
+    "details": {
+      "primary": {
+        "covered": [
+          "Sales"
+        ],
+        "missing": [
+          "Operations",
+          "Revenue"
+        ],
+        "representatives": [
+          {
+            "function": "Sales",
+            "name": "Alex Toor",
+            "title": "Technical Account Manager III",
+            "department": "Sales"
+          }
+        ]
+      },
+      "technical": {
+        "covered": [],
+        "missing": [
+          "IT",
+          "Technology",
+          "Engineering"
+        ],
+        "representatives": []
+      },
+      "risk": {
+        "covered": [],
+        "missing": [
+          "Security",
+          "Legal",
+          "Compliance"
+        ],
+        "representatives": []
+      },
+      "financial": {
+        "covered": [],
+        "missing": [
+          "Finance",
+          "Procurement",
+          "FP&A"
+        ],
+        "representatives": []
+      }
+    }
+  },
+  "intelligence": {
+    "employeeCount": 100,
+    "revenue": 0,
+    "industry": "Unknown",
+    "growthRate": 0,
+    "activeHiring": 0,
+    "fundingStage": "bootstrapped",
+    "dataSource": "default",
+    "lastUpdated": "2025-12-12T21:57:37.702Z",
+    "tier": "S6",
+    "searchStrategy": "comprehensive",
+    "filteringLevel": "none",
+    "companyName": "Twilio",
+    "linkedinUrl": "https://www.linkedin.com/company/little-romania-ltd"
+  },
+  "costs": {
+    "preview": 1.3,
+    "collect": 1,
+    "total": 2.3,
+    "email": 0,
+    "phone": 0
+  },
+  "processingTime": 126730,
+  "pipelineState": {
+    "startTime": 1765576655494,
+    "stage": "completed",
+    "totalEmployees": 13,
+    "processedEmployees": 0,
+    "finalBuyerGroup": [
+      {
+        "id": 397305527,
+        "name": "Alex Toor",
+        "title": "Technical Account Manager III",
+        "department": "Sales",
+        "company": "Twilio",
+        "managementLevel": "Manager",
+        "connectionsCount": 500,
+        "followersCount": 756,
+        "email": "",
+        "phone": "",
+        "linkedinUrl": "https://www.linkedin.com/in/alex-toor-73527737",
+        "location": "Atlanta, Georgia, United States",
+        "country": "United States",
+        "state": "",
+        "city": "",
+        "source": "coresignal_preview",
+        "scores": {
+          "seniority": 3,
+          "departmentFit": 10,
+          "influence": 3,
+          "championPotential": 16,
+          "crossFunctional": 7,
+          "geoAlignment": 8,
+          "salesSegment": 0,
+          "_segmentInfo": {
+            "segment": "none",
+            "type": "leadership",
+            "priority": "high",
+            "scoreAdjust": 0
+          }
+        },
+        "overallScore": 7,
+        "relevance": 0.3,
+        "isHighValue": false,
+        "aiRelevance": 0.3,
+        "aiReasoning": "Alex Toor is a Technical Account Manager III in the Sales department at Twilio. While technically part of the Sales organization, TAMs typically focus on post-sale customer success, technical implementation, and account retention rather than prospecting or lead generation activities where Sales Intelligence Software would be primarily utilized. His role is likely centered on managing existing customer relationships and ensuring technical success rather than driving new business. For a $250K purchase decision at a 100-employee company, this would typically require C-level or VP-level approval. As a 'Level III' individual contributor, Alex has limited decision-making authority for such a significant investment. However, he maintains moderate relevance because: (1) He sits within the Sales department and may have visibility into sales operations challenges, (2) He could potentially advocate for tools that help his colleagues in sales development/AE roles, and (3) His connection count (500+) and follower base (756) suggest he's reasonably networked and could introduce the right stakeholders. He's unlikely to be a champion or decision-maker himself, but could serve as a bridge to revenue leaders who would actually evaluate and purchase Sales Intelligence Software.",
+        "aiConfidence": 0.75,
+        "buyerGroupRole": "decision",
+        "roleConfidence": 70,
+        "roleReasoning": "Single person buyer group - automatically assigned as decision maker",
+        "aiRoleValidation": {
+          "suggestedRole": "decision",
+          "confidence": 0.85,
+          "reasoning": "Alex Toor is already assigned as 'decision' and this assignment should be maintained. As a Technical Account Manager III in Sales at Twilio, Alex is highly relevant for Sales Intelligence Software evaluation. The 'III' designation indicates senior-level status, suggesting significant authority within the sales organization. For a $250K deal involving sales enablement technology, a senior TAM would typically have: (1) Budget authority or strong influence over sales tooling decisions that directly impact their workflow and customer success responsibilities, (2) Deep understanding of technical requirements and integration needs with existing Twilio systems, (3) Authority to evaluate ROI impact on account management and revenue retention. Technical Account Managers at this level often manage strategic accounts and would be direct power users of sales intelligence tools. The deal size of $250K is substantial but within the approval threshold for senior sales leadership roles. Given that Saketh Sunki is listed as 'stakeholder', Alex as 'decision' creates a logical buyer group structure with a primary decision-maker and supporting stakeholder.",
+          "alternativeRoles": [
+            "champion",
+            "stakeholder"
+          ]
+        },
+        "aiRoleReasoning": "Alex Toor is already assigned as 'decision' and this assignment should be maintained. As a Technical Account Manager III in Sales at Twilio, Alex is highly relevant for Sales Intelligence Software evaluation. The 'III' designation indicates senior-level status, suggesting significant authority within the sales organization. For a $250K deal involving sales enablement technology, a senior TAM would typically have: (1) Budget authority or strong influence over sales tooling decisions that directly impact their workflow and customer success responsibilities, (2) Deep understanding of technical requirements and integration needs with existing Twilio systems, (3) Authority to evaluate ROI impact on account management and revenue retention. Technical Account Managers at this level often manage strategic accounts and would be direct power users of sales intelligence tools. The deal size of $250K is substantial but within the approval threshold for senior sales leadership roles. Given that Saketh Sunki is listed as 'stakeholder', Alex as 'decision' creates a logical buyer group structure with a primary decision-maker and supporting stakeholder.",
+        "fullProfile": {
+          "id": 397305527,
+          "parent_id": 397305527,
+          "created_at": "2016-08-10T11:16:38.000Z",
+          "updated_at": "2025-12-01T14:15:37.712771Z",
+          "checked_at": "2025-12-02T03:27:02.191494Z",
+          "changed_at": "2025-12-01T14:15:37.712771Z",
+          "experience_change_last_identified_at": null,
+          "is_deleted": 0,
+          "is_parent": 1,
+          "public_profile_id": 129053273,
+          "linkedin_url": "https://www.linkedin.com/in/alex-toor-73527737",
+          "linkedin_shorthand_names": [
+            "alex-toor-73527737",
+            "alextoor"
+          ],
+          "historical_ids": [
+            397305527
+          ],
+          "full_name": "Alex Toor",
+          "first_name": "Alex",
+          "first_name_initial": "A",
+          "middle_name": null,
+          "middle_name_initial": null,
+          "last_name": "Toor",
+          "last_name_initial": "T",
+          "headline": "SaaS Support Extraordinaire",
+          "summary": "• 10 years in tech-related customer service providing top-notch white glove style service…",
+          "picture_url": "https://static.licdn.com/aero-v1/sc/h/9c8pery4andzj6ohjkjp54ma2",
+          "location_country": "United States",
+          "location_country_iso2": "US",
+          "location_country_iso3": "USA",
+          "location_full": "Atlanta, Georgia, United States",
+          "location_regions": [
+            "Americas",
+            "Northern America",
+            "AMER"
+          ],
+          "location_city": "Atlanta",
+          "location_state": "Georgia",
+          "interests": [],
+          "inferred_skills": [
+            "apis",
+            "cloud",
+            "sms",
+            "voip",
+            "reports",
+            "rollout",
+            "coaching",
+            "messaging",
+            "sla",
+            "processing",
+            "testing",
+            "liaison",
+            "sales",
+            "zendesk",
+            "mailchimp",
+            "crm",
+            "salesforce",
+            "commerce",
+            "apple",
+            "saas",
+            "management",
+            "reporting",
+            "responsible",
+            "jira",
+            "engineering",
+            "software",
+            "procurement",
+            "customer service",
+            "customer support",
+            "best practices",
+            "technical support",
+            "customer satisfaction"
+          ],
+          "historical_skills": [
+            "creative writing",
+            "entertainment",
+            "video games",
+            "screenwriting",
+            "blogging",
+            "social media",
+            "ios",
+            "playstation",
+            "social networking",
+            "outstanding people skills",
+            "marketing",
+            "sales",
+            "graphic design",
+            "directing",
+            "playwriting",
+            "public relations",
+            "arts",
+            "writing",
+            "performing arts",
+            "acting",
+            "theatre",
+            "apple ios",
+            "sony playstation",
+            "microsoft office"
+          ],
+          "connections_count": 500,
+          "followers_count": 756,
+          "services": null,
+          "primary_professional_email": "al@twilio.com",
+          "primary_professional_email_status": "matched_email",
+          "professional_emails_collection": [
+            {
+              "professional_email": "al@twilio.com",
+              "professional_email_status": "matched_email",
+              "order_of_priority": 1
+            },
+            {
+              "professional_email": "alex@twilio.com",
+              "professional_email_status": "matched_email",
+              "order_of_priority": 2
+            }
+          ],
+          "is_working": 1,
+          "active_experience_company_id": 9684159,
+          "active_experience_title": "Technical Account Manager III",
+          "active_experience_description": "• Dedicated account manager providing premium, thorough support for high profile accounts that specifically pay for a top tier of specialized service • Working with APIs to understand and solve issues with cloud solutions and network connectivity regarding SMS, MMS, Email, and VoIP technologies • Creating regular status reports for multiple clients, meeting one-on-one remotely to address any and all needs that may occur during campaign rollout • Continuously collaborating with… Show more",
+          "active_experience_department": "Sales",
+          "active_experience_management_level": "Manager",
+          "is_decision_maker": 0,
+          "total_experience_duration_months": 128,
+          "total_experience_duration_months_breakdown_department": [
+            {
+              "department": "Customer Service",
+              "total_experience_duration_months": 35
+            },
+            {
+              "department": "Sales",
+              "total_experience_duration_months": 41
+            },
+            {
+              "department": "Engineering and Technical",
+              "total_experience_duration_months": 7
+            },
+            {
+              "department": "Other",
+              "total_experience_duration_months": 45
+            }
+          ],
+          "total_experience_duration_months_breakdown_management_level": [
+            {
+              "management_level": "Manager",
+              "total_experience_duration_months": 41
+            },
+            {
+              "management_level": "Specialist",
+              "total_experience_duration_months": 87
+            }
+          ],
+          "experience": [
+            {
+              "active_experience": 1,
+              "position_title": "Technical Account Manager III",
+              "department": "Sales",
+              "management_level": "Manager",
+              "location": null,
+              "description": "• Dedicated account manager providing premium, thorough support for high profile accounts that specifically pay for a top tier of specialized service • Working with APIs to understand and solve issues with cloud solutions and network connectivity regarding SMS, MMS, Email, and VoIP technologies • Creating regular status reports for multiple clients, meeting one-on-one remotely to address any and all needs that may occur during campaign rollout • Continuously collaborating with… Show more",
+              "date_from": "July 2022",
+              "date_from_year": 2022,
+              "date_from_month": 7,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 41,
+              "company_id": 9684159,
+              "company_name": "Twilio",
+              "company_type": "Public Company",
+              "company_founded_year": 2008,
+              "company_followers_count": 429380,
+              "company_website": "https://www.twilio.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/teamtwilio"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/twilio"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/twilio-inc-",
+              "company_logo_url": "https://media.licdn.com/dms/image/v2/D560BAQEmISp-ciExQw/company-logo_100_100/B56ZYyhH7TGoAU-/0/1744604267044/twilio_inc__logo?e=2147483647&v=beta&t=ihMyPYEiafphmOZPbz9geedt58IwlTeVtLE6xNMwuD4",
+              "company_size_range": "5001-10,000 employees",
+              "company_employees_count": 6596,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "communication apis",
+                "telecommunications",
+                "api",
+                "cloud communications",
+                "saas",
+                "telephony",
+                "sms",
+                "voice",
+                "voip",
+                "gdpr",
+                "whatsapp",
+                "messaging",
+                "technology",
+                "artificial-intelligence",
+                "cloud",
+                "cloud-platforms",
+                "customer-experience",
+                "cybersecurity",
+                "enterprise-software",
+                "enterprise software",
+                "mobile apps",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 4896125000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 4458036224,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": 0.17320107069752794,
+              "company_last_funding_round_date": "2021-07-28",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "101 Spear St; 5th Floor; San Francisco, California 94105, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "San Francisco",
+              "company_hq_state": "California",
+              "company_hq_street": "101 Spear St; 5th Floor",
+              "company_hq_zipcode": "94105",
+              "company_last_updated_at": "2025-12-05",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NYSE",
+                  "ticker": "TWLO"
+                },
+                {
+                  "exchange": null,
+                  "ticker": "TWLO"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 1
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Customer Support Engineer",
+              "department": "Customer Service",
+              "management_level": "Specialist",
+              "location": "Remote",
+              "description": "• Crucial member of a two person support department for an ambitious SaaS management startup reporting directly to the VP of Product • Responsible for investigating, replicating, and filing priority reports for bugs and feature requests working with JIRA, Retool, and the rest of the Atlassian suite • Attended daily Engineering stand-ups to communicate and collaborate directly with the developers of our robust IT management and software procurement application",
+              "date_from": "November 2021",
+              "date_from_year": 2021,
+              "date_from_month": 11,
+              "date_to": "July 2022",
+              "date_to_year": 2022,
+              "date_to_month": 7,
+              "duration_months": 8,
+              "company_id": 32585177,
+              "company_name": "Vendr",
+              "company_type": "Privately Held",
+              "company_founded_year": 2019,
+              "company_followers_count": 24717,
+              "company_website": "https://www.vendr.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/savewithvendr"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/vendrhq",
+                "https://www.twitter.com/vendrhq?lang=en"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/vendr-services",
+              "company_logo_url": null,
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 225,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "software buying",
+                "procurement",
+                "saas",
+                "software pricing",
+                "software renewals",
+                "it strategy",
+                "software services",
+                "procurement automation",
+                "software negotiations",
+                "integrations",
+                "price benchmarks",
+                "free",
+                "technology",
+                "cloud-services",
+                "data-management",
+                "platform",
+                "information technology",
+                "logistics",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 55000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -23.728813559322035,
+              "company_last_funding_round_date": "2022-06-16",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "501 Boylston St; 10th Floor; Boston, Massachusetts 02116, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Boston",
+              "company_hq_state": "Massachusetts",
+              "company_hq_street": "501 Boylston St; 10th Floor",
+              "company_hq_zipcode": "02116",
+              "company_last_updated_at": "2025-12-06",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 2
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Technical Support Engineer",
+              "department": "Engineering and Technical",
+              "management_level": "Specialist",
+              "location": "Remote",
+              "description": "• Troubleshooted customer issues and requests by taking ownership of them through to resolution whilst working towards internal SLA targets and goals • Identified customer requirements and prioritize issues accordingly • Managed customer expectations for technical questions by reproducing bugs and processing feature requests • Regular testing sessions with beta products, serving as a liaison between QA, Sales, Customer Success, and Development teams",
+              "date_from": "March 2021",
+              "date_from_year": 2021,
+              "date_from_month": 3,
+              "date_to": "October 2021",
+              "date_to_year": 2021,
+              "date_to_month": 10,
+              "duration_months": 7,
+              "company_id": 10935299,
+              "company_name": "Vizlib",
+              "company_type": "Privately Held",
+              "company_founded_year": 2016,
+              "company_followers_count": 17774,
+              "company_website": "https://www.vizlib.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/vizlib"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/vizlib",
+                "https://www.twitter.com/insightsoftware"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/vizlib",
+              "company_logo_url": null,
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 39,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "technology/software",
+                "other analytics software",
+                "vizlib",
+                "other analytics",
+                "computers electronics and technology > programming and developer software",
+                "qlik sense",
+                "extensions",
+                "qlik",
+                "javascript",
+                "angular",
+                "visualisations",
+                "d3",
+                "qlik sense extensions",
+                "data visualisation",
+                "analytics",
+                "business intelligence",
+                "dataviz",
+                "dashboards",
+                "visual analytics",
+                "data analytics",
+                "analytics solutions",
+                "no code solutions",
+                "project planning",
+                "professional services",
+                "customer stories",
+                "embedded analytics",
+                "data visualization",
+                "information technology",
+                "internet",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 5700000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -33.33333333333333,
+              "company_last_funding_round_date": "2018-12-14",
+              "company_last_funding_round_amount_raised": 280000,
+              "company_hq_full_address": "25 North Row, Mayfair; London, England W1K 6DJ, GB",
+              "company_hq_country": "United Kingdom",
+              "company_hq_regions": [
+                "Europe",
+                "Northern Europe",
+                "EMEA"
+              ],
+              "company_hq_country_iso2": "GB",
+              "company_hq_country_iso3": "GBR",
+              "company_hq_city": "London",
+              "company_hq_state": "England",
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": "2025-12-06",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 3
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Premium Customer Support Specialist",
+              "department": "Customer Service",
+              "management_level": "Specialist",
+              "location": "Atlanta, Georgia, United States",
+              "description": "• Promoted to highest tier of support 9 months into joining the company • Founding member of the phone support team, offering a new premium service to high end clients, coaching customers through high level technical issues in an easy to comprehend manner • Developed resources such as wikis, FAQs, and flowcharts outlining team initiatives, best practices, common scenarios, and canned messaging",
+              "date_from": "April 2019",
+              "date_from_year": 2019,
+              "date_from_month": 4,
+              "date_to": "October 2020",
+              "date_to_year": 2020,
+              "date_to_month": 10,
+              "duration_months": 18,
+              "company_id": 88348563,
+              "company_name": "Mailchimp",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 209724,
+              "company_website": "https://www.mailchimp.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/mailchimp"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/mailchimp"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/mailchimp",
+              "company_logo_url": null,
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 1651,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "marketing and automation",
+                "email marketing software",
+                "intuit mailchimp email marketing",
+                "ai writing assistant",
+                "email marketing",
+                "email deliverability",
+                "transactional email",
+                "email testing",
+                "marketing automation",
+                "e-commerce email marketing",
+                "crm",
+                "analytics",
+                "marketing platform",
+                "small business marketing",
+                "e-commerce",
+                "social media marketing",
+                "automation",
+                "audience management",
+                "technology",
+                "email-marketing",
+                "platform",
+                "information technology",
+                "internet",
+                "marketing",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 850000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 800000000,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": -7.868303571428571,
+              "company_last_funding_round_date": "2018-07-01",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "675 Ponce De Leon Ave. NE; 5000; Atlanta, GA 30308, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "atlanta",
+              "company_hq_state": "Georgia",
+              "company_hq_street": "675 Ponce De Leon Ave. NE; 5000",
+              "company_hq_zipcode": "30308",
+              "company_last_updated_at": "2025-11-20",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 4
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Customer Support Technician",
+              "department": "Customer Service",
+              "management_level": "Specialist",
+              "location": "Atlanta, Georgia, United States",
+              "description": "• Provided in-depth technical support via Zendesk in both email and live chat for the entire Mailchimp CRM platform along with hundreds of integrations such as Zapier, Salesforce, and most e-commerce platforms • Consistently ranked in top 5 agents per month in customer satisfaction scores and ticket totals • Excelled month after month in fast-paced, high tech environment at one of Atlanta's largest tech companies",
+              "date_from": "July 2018",
+              "date_from_year": 2018,
+              "date_from_month": 7,
+              "date_to": "April 2019",
+              "date_to_year": 2019,
+              "date_to_month": 4,
+              "duration_months": 9,
+              "company_id": 88348563,
+              "company_name": "Mailchimp",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 209724,
+              "company_website": "https://www.mailchimp.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/mailchimp"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/mailchimp"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/mailchimp",
+              "company_logo_url": null,
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 1651,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "marketing and automation",
+                "email marketing software",
+                "intuit mailchimp email marketing",
+                "ai writing assistant",
+                "email marketing",
+                "email deliverability",
+                "transactional email",
+                "email testing",
+                "marketing automation",
+                "e-commerce email marketing",
+                "crm",
+                "analytics",
+                "marketing platform",
+                "small business marketing",
+                "e-commerce",
+                "social media marketing",
+                "automation",
+                "audience management",
+                "technology",
+                "email-marketing",
+                "platform",
+                "information technology",
+                "internet",
+                "marketing",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 850000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 800000000,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": -7.868303571428571,
+              "company_last_funding_round_date": "2018-07-01",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "675 Ponce De Leon Ave. NE; 5000; Atlanta, GA 30308, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "atlanta",
+              "company_hq_state": "Georgia",
+              "company_hq_street": "675 Ponce De Leon Ave. NE; 5000",
+              "company_hq_zipcode": "30308",
+              "company_last_updated_at": "2025-11-20",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 5
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Expert",
+              "department": "Other",
+              "management_level": "Specialist",
+              "location": "Atlanta, Georgia, United States",
+              "description": "• Provided white glove customer service with at home delivery and personalized set-up of consumer tech products from Apple, DJI, Sonos, and more • Managed my own schedule around appointment based visits, traveling across the state on a day-to-day basis • Founding member of the Atlanta market for a brand new, fast-paced start-up founded by Genius Bar creator Ron Johnson with frequent levels of change in practices and policies",
+              "date_from": "July 2016",
+              "date_from_year": 2016,
+              "date_from_month": 7,
+              "date_to": "December 2017",
+              "date_to_year": 2017,
+              "date_to_month": 12,
+              "duration_months": 17,
+              "company_id": 6466601,
+              "company_name": "Enjoy Technology, Inc.",
+              "company_type": "Public Company",
+              "company_founded_year": 2014,
+              "company_followers_count": 46555,
+              "company_website": "https://www.enjoy.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/goenjoyco"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/goenjoy"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/enjoy-inc-",
+              "company_logo_url": null,
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 548,
+              "company_industry": "Retail",
+              "company_categories_and_keywords": [
+                "customer service",
+                "retail",
+                "mobile retail",
+                "mobile store",
+                "customer experience",
+                "personal commerce",
+                "technology",
+                "retail sales",
+                "the smart last mile",
+                "delivery",
+                "mobile apps",
+                "shopping",
+                "software"
+              ],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -10.361842105263158,
+              "company_last_funding_round_date": "2021-10-18",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "2483 Hillview Avenue; Palo Alto, CA 94304, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Palo Alto",
+              "company_hq_state": "California",
+              "company_hq_street": "2483 Hillview Avenue",
+              "company_hq_zipcode": "94304",
+              "company_last_updated_at": "2025-12-03",
+              "company_stock_ticker": [],
+              "company_is_b2b": null,
+              "order_in_profile": 6
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Specialist",
+              "department": "Other",
+              "management_level": "Specialist",
+              "location": "Alpharetta, Georgia, United States",
+              "description": "• Worked on both sales floor and technical back end of store providing a high level of customer service and technical knowledge to customers of all backgrounds • Thrived in busy sales environment, consistently exceeding sales goals and upsell expectations • Assisted with admin work when Genius team was overloaded, calling customers to set appointments and pick-ups",
+              "date_from": "March 2014",
+              "date_from_year": 2014,
+              "date_from_month": 3,
+              "date_to": "July 2016",
+              "date_to_year": 2016,
+              "date_to_month": 7,
+              "duration_months": 28,
+              "company_id": 9073671,
+              "company_name": "Apple",
+              "company_type": "Public Company",
+              "company_founded_year": 1976,
+              "company_followers_count": 17985935,
+              "company_website": "https://www.apple.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/apple"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/apple"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/apple",
+              "company_logo_url": null,
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 164266,
+              "company_industry": "Computers and Electronics Manufacturing",
+              "company_categories_and_keywords": [
+                "electronics",
+                "innovative product development",
+                "world-class operations",
+                "retail",
+                "telephone support",
+                "apple",
+                "iphone",
+                "mac",
+                "ipad",
+                "apple watch",
+                "technology",
+                "application-software",
+                "consumer-electronics",
+                "consumer-software",
+                "platform",
+                "wearables"
+              ],
+              "company_annual_revenue_source_5": 416161000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 391034994688,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": 0.23798481778906003,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1 Apple Park Way; Cupertino, California 95014, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Cupertino",
+              "company_hq_state": "California",
+              "company_hq_street": "1 Apple Park Way",
+              "company_hq_zipcode": "95014",
+              "company_last_updated_at": "2025-11-14",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NASDAQ",
+                  "ticker": "AAPL"
+                },
+                {
+                  "exchange": null,
+                  "ticker": "AAPL"
+                }
+              ],
+              "company_is_b2b": 0,
+              "order_in_profile": 7
+            }
+          ],
+          "projected_base_salary_p25": null,
+          "projected_base_salary_median": null,
+          "projected_base_salary_p75": null,
+          "projected_base_salary_period": null,
+          "projected_base_salary_currency": null,
+          "projected_base_salary_updated_at": null,
+          "projected_additional_salary": [],
+          "projected_additional_salary_period": null,
+          "projected_additional_salary_currency": null,
+          "projected_additional_salary_updated_at": null,
+          "projected_total_salary_p25": null,
+          "projected_total_salary_median": null,
+          "projected_total_salary_p75": null,
+          "projected_total_salary_period": null,
+          "projected_total_salary_currency": null,
+          "projected_total_salary_updated_at": null,
+          "last_graduation_date": 2014,
+          "education_degrees": [
+            "Freshman"
+          ],
+          "education": [
+            {
+              "degree": "Freshman",
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/columbus-state-university",
+              "institution_name": "Columbus State University",
+              "institution_full_address": "4225 University Ave; Columbus, GA 31907-5645, US",
+              "institution_country_iso2": "US",
+              "institution_country_iso3": "USA",
+              "institution_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "institution_city": "columbus",
+              "institution_state": "Georgia",
+              "institution_street": "4225 University Ave",
+              "institution_zipcode": "31907-5645",
+              "institution_logo_url": "https://media.licdn.com/dms/image/v2/C560BAQEn800ZA9LzOg/company-logo_100_100/company-logo_100_100/0/1631310644971?e=2147483647&v=beta&t=KE0_WBhJVNe5NsGfjk_4IFZgQBsioa78uByX8bwygH8",
+              "date_from_year": 2013,
+              "date_to_year": 2014,
+              "activities_and_societies": null,
+              "order_in_profile": 1
+            }
+          ],
+          "recommendations_count": 2,
+          "recommendations": [
+            {
+              "recommendation": "“Alex has a heart for people, always has a great attitude, and he gets very passionate about his work. As I have worked with him he has shown me that he is serious about his business and takes pride in his service. ”",
+              "referee_full_name": "Myles Young",
+              "referee_url": "https://www.linkedin.com/in/youngmy",
+              "order_in_profile": 1
+            },
+            {
+              "recommendation": "“I had the pleasure of working with Alex at Apple for many years. His drive for results and customer focus are not only top notch, it’s the the energy he carries and the ability to spread it amongst a team that I have personally seen make many impacts. Alex is honest, trustworthy, dedicated to his craft, and this has created some amazing long term professional relationships! ”",
+              "referee_full_name": "Beason Wilkes",
+              "referee_url": "https://www.linkedin.com/in/beasonwilkes",
+              "order_in_profile": 2
+            }
+          ],
+          "activity": [
+            {
+              "activity_url": "https://www.linkedin.com/posts/alextoor_dei-layoffs-needajob-activity-7071894827742744577-8-OQ",
+              "title": "Sometimes tragedy strikes... and then it strikes again.  I tend to be pretty private on social media, when it comes to my personal life.  But…",
+              "action": "Shared by",
+              "order_in_profile": 1
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/candace-grundy_this-past-friday-after-8-years-at-intuit-activity-7061399289385660416-dEs7",
+              "title": "This past Friday, after 8+ years at Intuit Mailchimp, I logged off for the last time. To say it has been bittersweet would be an understatement. I…",
+              "action": "Liked by",
+              "order_in_profile": 2
+            }
+          ],
+          "awards": [],
+          "courses": [],
+          "certifications": [
+            {
+              "title": "Apple Certified Associate - Mac Integration 10.12",
+              "issuer": "Apple",
+              "issuer_url": "https://www.linkedin.com/company/apple",
+              "credential_id": null,
+              "certificate_url": "https://i7lp.integral7.com/durango/do/pr/prSearchResultDetail?ownername=apple&E3EAFEF0E33085858ED8F4537A799104=D845EE9E83F2453B743B76F8CEE56431&BF5792ACDD2C07080B097C9B2768BE90=6445AE02C4E46C4197E43EFA6579FEB5&trk=public_profile_certification-title",
+              "certificate_logo_url": "https://media.licdn.com/dms/image/v2/C560BAQHdAaarsO-eyA/company-logo_100_100/company-logo_100_100/0/1630637844948/apple_logo?e=2147483647&v=beta&t=p0JNmv2WB0EMMQgvzl9R8TaXgzEaDraGS4MWR0IawjQ",
+              "date_from": "Jan 2018",
+              "date_from_year": 2018,
+              "date_from_month": 1,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "order_in_profile": 1
+            }
+          ],
+          "languages": [
+            {
+              "language": "English",
+              "proficiency": "Native or bilingual proficiency",
+              "order_in_profile": 1
+            }
+          ],
+          "patents_count": null,
+          "patents_topics": [],
+          "patents": [],
+          "publications_count": null,
+          "publications_topics": [],
+          "publications": [],
+          "projects_count": null,
+          "projects_topics": [],
+          "projects": [],
+          "organizations": [],
+          "github_url": null,
+          "github_username": null,
+          "github_mapping_confidence": null,
+          "github_contributions_count": null,
+          "github_repos_summary": [],
+          "profile_root_field_changes_summary": [
+            {
+              "field_name": "follower_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-08-30 21:02:17.235145"
+            },
+            {
+              "field_name": "summary",
+              "change_type": "updated",
+              "last_changed_at": "2025-12-01 14:15:37.712771"
+            },
+            {
+              "field_name": "deleted",
+              "change_type": "updated",
+              "last_changed_at": "2025-08-30 21:02:17.235145"
+            },
+            {
+              "field_name": "summary",
+              "change_type": "new",
+              "last_changed_at": "2025-03-19 03:48:09.736339"
+            },
+            {
+              "field_name": "recommendations_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-10-15 16:30:53.902740"
+            }
+          ],
+          "profile_collection_field_changes_summary": [
+            {
+              "field_name": "activity",
+              "last_changed_at": "2025-08-30 21:02:17.235145"
+            },
+            {
+              "field_name": "certifications",
+              "last_changed_at": "2025-10-15 16:30:53.902740"
+            },
+            {
+              "field_name": "recommendations",
+              "last_changed_at": "2025-10-15 16:30:53.902740"
+            },
+            {
+              "field_name": "experience",
+              "last_changed_at": "2025-12-01 14:15:37.712771"
+            },
+            {
+              "field_name": "education",
+              "last_changed_at": "2025-12-01 14:15:37.712771"
+            }
+          ],
+          "experience_recently_started": [],
+          "experience_recently_closed": []
+        },
+        "enrichedAt": "2025-12-12T21:58:27.968Z",
+        "emailVerified": false,
+        "emailConfidence": 0,
+        "emailVerificationDetails": [],
+        "emailVerificationCost": 0,
+        "emailSource": "unverified",
+        "phoneVerified": false,
+        "phoneConfidence": 0,
+        "phoneVerificationDetails": [],
+        "phoneVerificationCost": 0,
+        "phoneSource": "unverified",
+        "phoneType": "unknown",
+        "phoneMetadata": {},
+        "mobilePhone": null,
+        "workPhone": null,
+        "directDialPhone": null,
+        "painPoints": [
+          {
+            "title": "Inadequate Account Intelligence for Technical Consultations",
+            "description": "As a Technical Account Manager handling complex API integrations and cloud communications, Alex likely struggles to access real-time technical stack intelligence and technology adoption signals about enterprise accounts. Without deep visibility into prospects' current infrastructure, integration challenges, and competitive tool usage, technical discovery calls become inefficient and generic.",
+            "rootCause": "Fragmented data sources fail to consolidate technical firmographics, technology stack data, and buying signals into a unified view for technical sales conversations.",
+            "frequency": "daily",
+            "impact": "This results in longer technical sales cycles as TAMs spend extra time on discovery rather than solution-focused conversations. It also leads to misaligned product recommendations and higher rates of technical objections late in the deal cycle that could have been addressed earlier.",
+            "urgency": "high",
+            "urgencyDrivers": "Twilio operates in a highly competitive CPaaS market where technical differentiation and speed-to-value are critical. Missing technical context early costs deals to competitors like Vonage or MessageBird who demonstrate faster technical fit.",
+            "relatedMetrics": [
+              "Time to First Value (technical onboarding)",
+              "Technical Discovery Call Quality Score",
+              "Deal Velocity (days in technical evaluation)",
+              "Win Rate Against Specific Competitors"
+            ]
+          },
+          {
+            "title": "Limited Visibility into Multi-Product Cross-Sell Opportunities",
+            "description": "Given Twilio's extensive product portfolio (SMS, Voice, Email, Video, etc.), Alex likely lacks consolidated intelligence on which existing accounts have expansion potential across product lines. Without unified sales intelligence showing usage patterns, pain points, and trigger events across the customer base, valuable upsell opportunities remain hidden until customers churn or seek alternatives.",
+            "rootCause": "Disconnected customer data systems and lack of behavioral buying signals prevent proactive identification of accounts ready for product expansion conversations.",
+            "frequency": "weekly",
+            "impact": "This leads to reactive account management where expansion discussions only happen during renewal conversations or QBRs rather than at optimal trigger moments. Revenue expansion targets are missed as competitors fill gaps in the customer's communication stack that Twilio already offers.",
+            "urgency": "high",
+            "urgencyDrivers": "In SaaS, expansion revenue from existing customers is 3-5x more efficient than new logo acquisition. With economic pressure on customer acquisition costs, missing cross-sell signals directly impacts revenue targets and account retention.",
+            "relatedMetrics": [
+              "Net Revenue Retention (NRR)",
+              "Product Adoption Rate per Account",
+              "Cross-Sell Attach Rate",
+              "Time to Expansion from Initial Purchase"
+            ]
+          },
+          {
+            "title": "Insufficient Early Warning System for Churn Risk",
+            "description": "Alex needs to identify technical and business warning signs before accounts enter at-risk status, but likely lacks predictive intelligence that combines usage decline, competitive evaluation activity, and organizational changes. Current CRM data and support ticket analysis provide lagging indicators rather than the forward-looking signals needed for proactive intervention at the Technical Account Manager level.",
+            "rootCause": "Traditional account health scoring relies on historical usage metrics and manual reporting rather than external signals like hiring freezes, technology stack changes, or competitive vendor engagement.",
+            "frequency": "monthly",
+            "impact": "Churn prevention becomes reactive firefighting rather than strategic intervention, often catching problems too late in the decision cycle. This results in higher customer acquisition cost burden as the team replaces lost revenue rather than compounding growth through retention.",
+            "urgency": "medium",
+            "urgencyDrivers": "",
+            "relatedMetrics": [
+              "Gross Revenue Retention (GRR)",
+              "Churn Rate (Logo and Revenue)",
+              "Customer Health Score Accuracy",
+              "Proactive Outreach Success Rate",
+              "Time from Risk Identification to Mitigation"
+            ]
+          },
+          {
+            "title": "Inefficient Account Prioritization Across Large Portfolio",
+            "description": "With Twilio's scale and Alex's likely responsibility for dozens of technical accounts, determining which accounts deserve immediate attention versus ongoing nurture is challenging without AI-driven prioritization. Manual account scoring based on contract value alone misses high-potential accounts showing buying signals or underestimates risk in seemingly stable accounts experiencing silent dissatisfaction.",
+            "rootCause": "Absence of intent data and predictive analytics forces TAMs to rely on subjective judgment and lagging indicators to allocate their limited time across diverse account portfolios.",
+            "frequency": "weekly",
+            "impact": "High-value opportunities receive insufficient technical guidance while resources are wasted on low-potential accounts, creating an inefficient allocation of technical expertise. This misprioritization directly affects quota attainment as the highest-revenue opportunities don't receive proportional attention.",
+            "urgency": "medium",
+            "urgencyDrivers": "As Twilio scales, TAM-to-customer ratios worsen, making intelligent prioritization increasingly critical. Missing a $100K expansion because time was spent on a $10K account that wasn't ready to buy represents significant opportunity cost.",
+            "relatedMetrics": [
+              "Revenue per Technical Account Manager",
+              "Account Coverage Ratio",
+              "Pipeline Generation per TAM",
+              "Opportunity Win Rate by Account Tier",
+              "Activity-to-Outcome Correlation"
+            ]
+          },
+          {
+            "title": "Fragmented Competitive Intelligence During Technical Evaluations",
+            "description": "When prospects are evaluating Twilio against competitors like Vonage, Plivo, or Sinch, Alex likely struggles to access real-time competitive intelligence about what alternatives the prospect is considering. This information gap prevents proactive differentiation and leaves TAMs unprepared for technical bake-offs, resulting in generic positioning rather than targeted competitive strategies.",
+            "rootCause": "Sales intelligence tools don't surface digital footprints, technology evaluation signals, or competitive vendor engagement happening outside of direct prospect communication.",
+            "frequency": "weekly",
+            "impact": "Deals are lost to competitors because technical positioning wasn't tailored to the specific competitive context the buyer was evaluating. Post-loss analysis reveals gaps that could have been addressed if competitive intelligence had been available during technical discovery and proof-of-concept phases.",
+            "urgency": "high",
+            "urgencyDrivers": "CPaaS market consolidation and competitive pricing pressure mean that differentiation in technical evaluations is increasingly narrow. Knowing which competitors are in play allows for surgical competitive strategies rather than broad, less-effective positioning.",
+            "relatedMetrics": [
+              "Win Rate in Competitive Deals",
+              "Win/Loss Ratio by Competitor",
+              "Technical Evaluation Conversion Rate",
+              "Deal Cycle Length (Competitive vs. Sole Source)",
+              "Competitive Displacement Rate"
+            ]
+          }
+        ]
+      }
+    ],
+    "costs": {
+      "preview": 1.3,
+      "collect": 1,
+      "total": 2.3,
+      "email": 0,
+      "phone": 0
+    },
+    "buyerGroupSizing": {
+      "constraints": {
+        "min": 1,
+        "max": 2,
+        "ideal": 2,
+        "reasoning": "Limited employee data available (2 found) - using available candidates",
+        "acceptSinglePerson": true,
+        "dataLimited": true
+      },
+      "validation": {
+        "valid": true,
+        "score": 95,
+        "reasoning": "Size 1 is within acceptable range (1-2)"
+      },
+      "recommendation": {
+        "action": "accept",
+        "message": "Buyer group size is appropriate",
+        "priority": "low"
+      }
+    }
+  }
+}

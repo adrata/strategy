@@ -1,0 +1,124 @@
+{
+  "$schema": "./product-config-schema.json",
+  "_description": "Template for configuring OBP for any product. Copy this file and customize for your product.",
+
+  "product": {
+    "name": "Your Product Name",
+    "company": "Your Company",
+    "category": "compliance",
+    "tagline": "One-line description of what you do",
+    "problemStatement": "The core problem you solve for customers",
+    "quickWinMetric": "Key metric that shows value (e.g., '50% faster onboarding')",
+    "averageDealSize": 50000,
+    "typicalSalesCycle": "30-90 days"
+  },
+
+  "targetBuyer": {
+    "primaryDepartments": ["security", "compliance"],
+    "championTitles": [
+      "CISO", "Head of Security", "VP Security",
+      "Head of Compliance", "Director of Security"
+    ],
+    "economicBuyerTitles": [
+      "CFO", "CTO", "CEO", "COO"
+    ],
+    "targetCompanySize": {
+      "min": 50,
+      "max": 5000,
+      "sweet_spot": { "min": 200, "max": 1000 }
+    },
+    "targetFundingStages": ["series_a", "series_b", "series_c"],
+    "targetIndustries": [
+      "B2B SaaS", "FinTech", "HealthTech", "Enterprise Software"
+    ]
+  },
+
+  "pullSignals": {
+    "triggers": [
+      {
+        "name": "New Leader",
+        "description": "New security/compliance leader in last 90 days",
+        "weight": 0.30,
+        "urgencyMultiplier": 1.5
+      },
+      {
+        "name": "Ratio Imbalance",
+        "description": "Target department understaffed vs healthy benchmarks",
+        "weight": 0.25,
+        "urgencyMultiplier": 1.3
+      },
+      {
+        "name": "Hypergrowth",
+        "description": "Company growing faster than department can scale",
+        "weight": 0.20,
+        "urgencyMultiplier": 1.2
+      },
+      {
+        "name": "Post-Funding",
+        "description": "Recent funding creating professionalization pressure",
+        "weight": 0.15,
+        "urgencyMultiplier": 1.4
+      },
+      {
+        "name": "Enterprise Motion",
+        "description": "Upmarket push requiring certifications/mature processes",
+        "weight": 0.10,
+        "urgencyMultiplier": 1.1
+      }
+    ],
+    "disqualifiers": [
+      "Already using competitor product",
+      "Company too small (under minimum)",
+      "Company too large (over maximum)",
+      "Wrong industry vertical",
+      "No budget authority identified"
+    ]
+  },
+
+  "competitors": {
+    "direct": ["Competitor A", "Competitor B"],
+    "indirect": ["Manual processes", "Consultants", "Build in-house"],
+    "matureCompanies": [
+      "Companies known for having excellent version of what you sell"
+    ]
+  },
+
+  "ratios": {
+    "_description": "Healthy staffing ratios for target departments",
+    "primary_department_to_company": {
+      "healthy": { "min": 0.015, "max": 0.025 },
+      "concerning": { "min": 0.008, "max": 0.015 },
+      "critical": { "max": 0.008 }
+    },
+    "primary_department_to_engineering": {
+      "healthy": { "min": 0.05, "max": 0.10 },
+      "concerning": { "min": 0.02, "max": 0.05 },
+      "critical": { "max": 0.02 }
+    }
+  },
+
+  "messaging": {
+    "valueProps": [
+      "Value proposition 1",
+      "Value proposition 2",
+      "Value proposition 3"
+    ],
+    "objectionHandling": {
+      "price": "How to handle price objections",
+      "build_vs_buy": "How to handle 'we can build this' objection",
+      "timing": "How to handle 'not the right time' objection",
+      "competitor": "How to handle competitor comparison"
+    },
+    "socialProof": [
+      "Customer testimonial or case study reference"
+    ]
+  },
+
+  "reportBranding": {
+    "primaryColor": "#2563EB",
+    "secondaryColor": "#1E40AF",
+    "accentColor": "#3B82F6",
+    "logo": null,
+    "companyWebsite": "https://yourcompany.com"
+  }
+}

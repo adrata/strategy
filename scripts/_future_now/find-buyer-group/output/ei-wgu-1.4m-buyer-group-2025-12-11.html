@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buyer Group Intelligence | E&I Cooperative Services to WGU | $1.4M</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* E&I Cooperative Services Brand Colors */
+    :root {
+      --primary: #003c71;      /* E&I Navy Blue */
+      --secondary: #0077c8;    /* E&I Bright Blue */
+      --accent: #00a651;       /* E&I Green */
+      --warning: #f7941d;      /* E&I Orange */
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-900: #111827;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--white);
+      color: var(--gray-900);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+    
+    .page { max-width: 800px; margin: 0 auto; padding: 48px 40px; }
+    
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: 32px;
+    }
+    
+    .header-left h1 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 4px;
+    }
+    
+    .header-left h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    
+    .deal-size {
+      text-align: right;
+    }
+    
+    .deal-size .amount {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .deal-size .label {
+      font-size: 11px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .context-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .context-box {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    
+    .context-box h3 {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .context-box dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 12px;
+      font-size: 12px;
+    }
+    
+    .context-box dt {
+      color: var(--gray-500);
+    }
+    
+    .context-box dd {
+      color: var(--gray-900);
+      font-weight: 500;
+    }
+    
+    .key-insight {
+      background: var(--gray-900);
+      color: var(--white);
+      padding: 20px 24px;
+      border-radius: 8px;
+      margin-bottom: 40px;
+    }
+    
+    .key-insight h4 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 8px;
+    }
+    
+    .key-insight p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .key-insight strong {
+      color: #7dd3fc;  /* Light blue for contrast on dark background */
+    }
+    
+    .section {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--gray-200);
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--gray-900);
+    }
+    
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 20px;
+    }
+    
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--gray-200);
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    
+    .stat-box {
+      background: var(--white);
+      padding: 14px 10px;
+      text-align: center;
+    }
+    
+    .stat-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 4px;
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .profiles-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .profile-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      padding: 18px;
+      border-radius: 8px;
+    }
+    
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .profile-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    
+    .profile-title {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+    
+    .profile-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    
+    .role-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: white;
+      border-radius: 4px;
+    }
+    
+    .verified-badge {
+      font-size: 10px;
+      color: #166534;
+      font-weight: 500;
+    }
+    
+    .research-needed {
+      font-size: 10px;
+      color: var(--warning);
+      font-weight: 500;
+    }
+    
+    .profile-logic {
+      font-size: 12px;
+      color: var(--gray-700);
+      line-height: 1.6;
+      background: var(--gray-50);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    
+    .profile-logic strong {
+      color: var(--primary);
+    }
+    
+    .pain-points {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #fefce8;
+      border-radius: 6px;
+      border-left: 3px solid #ca8a04;
+    }
+    
+    .pain-points strong {
+      color: #854d0e;
+    }
+    
+    .pain-list {
+      margin-top: 8px;
+      margin-left: 16px;
+      line-height: 1.5;
+    }
+    
+    .pain-list li {
+      margin-bottom: 6px;
+    }
+    
+    .profile-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+    
+    .linkedin-link {
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .no-linkedin {
+      color: var(--gray-400);
+    }
+    
+    .influence {
+      color: var(--gray-400);
+    }
+    
+    .strategy-list { list-style: none; }
+    
+    .strategy-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .strategy-item:last-child { border-bottom: none; }
+    
+    .strategy-number {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    
+    .strategy-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--gray-900);
+    }
+    
+    .strategy-text {
+      font-size: 12px;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+    
+    .footer {
+      text-align: center;
+      padding-top: 32px;
+      margin-top: 40px;
+      border-top: 1px solid var(--gray-200);
+      font-size: 10px;
+      color: var(--gray-400);
+    }
+    
+    .page-break { page-break-before: always; padding-top: 40px; }
+    
+    @media print {
+      * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+      .page { padding: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header-bar">
+      <div class="header-left">
+        <h1>Buyer Group Intelligence</h1>
+        <h2>E&I Cooperative Services to WGU</h2>
+      </div>
+      <div class="deal-size">
+        <div class="amount">$1.4M</div>
+        <div class="label">Enterprise Retention Platform</div>
+      </div>
+    </div>
+    
+    <div class="context-grid">
+      <div class="context-box">
+        <h3>Seller: E&I Cooperative Services</h3>
+        <dl>
+          <dt>Type</dt><dd>Nonprofit purchasing cooperative</dd>
+          <dt>Founded</dt><dd>1934</dd>
+          <dt>Members</dt><dd>6,200+ institutions</dd>
+          <dt>Contracts</dt><dd>215+ competitively bid</dd>
+          <dt>Recognition</dt><dd>2024 CIPS Award Winner</dd>
+        </dl>
+      </div>
+      <div class="context-box">
+        <h3>Buyer: Western Governors University</h3>
+        <dl>
+          <dt>Students</dt><dd>192,613 enrolled</dd>
+          <dt>FY25 Degrees</dt><dd>59,358 awarded</dd>
+          <dt>Retention</dt><dd>62% first-year rate</dd>
+          <dt>Employment</dt><dd>94% of graduates</dd>
+          <dt>Underserved</dt><dd>67% of student body</dd>
+        </dl>
+      </div>
+    </div>
+    
+    <div class="key-insight">
+      <h4>Decision Authority at $1.4M</h4>
+      <p><strong>This requires CEO and Provost approval.</strong> Scott Pulsipher (President) is ultimate decision maker. Dr. Courtney Hills McBeth (Provost) is academic co-decision maker. CFO validates ROI. CIO approves architecture. Board may require visibility. Multi-threaded 6+ month engagement required.</p>
+    </div>
+    
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-label">Buyer Group</div>
+        <div class="stat-value">9</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Decision</div>
+        <div class="stat-value">2</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Champions</div>
+        <div class="stat-value">2</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Blockers</div>
+        <div class="stat-value">3</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Stakeholders</div>
+        <div class="stat-value">2</div>
+      </div>
+    </div>
+    
+    <div class="section page-break">
+      <h2 class="section-title">Buyer Group Profiles</h2>
+      <p class="section-subtitle">9 stakeholders for $1.4M enterprise investment</p>
+      
+      <div class="profiles-grid">
+        
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Scott D. Pulsipher</div>
+              <div class="profile-title">President and Chief Executive Officer</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #003c71;">DECISION MAKER</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Ultimate decision maker for $1.4M investment. President since April 2016. Led growth from ~75,000 to 192,000+ students. Prior: 20+ years at Amazon, Sterling Commerce, startups. MBA from Harvard, B.A. from BYU. Chairman of Presidents Forum, ACE board member. Board visibility likely required at this investment level.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Mission Scale: 192,000 Students, 67% Underserved:</strong> WGU's mission is expanding access to affordable, quality education. 67% of students are from underserved populations. Every student who doesn't complete represents mission failure.</li><li><strong>Financial Sustainability at $7,150 Tuition:</strong> WGU's tuition is ~40% below comparable institutions. Low-cost model depends on retention for financial sustainability.</li><li><strong>Competitive Positioning Against For-Profits:</strong> Online education is crowded. WGU differentiates through outcomes: 94% employment, 84% in field. Retention and completion rates are competitive proof points.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/scott-pulsipher-5735143/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="influence">Confidence: 99%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Dr. Courtney Hills McBeth</div>
+              <div class="profile-title">Chief Academic Officer and Provost</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #003c71;">DECISION MAKER</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Academic co-decision maker for $1.4M. Joined January 2024 from Strada Education Foundation (SVP, Chief Program Officer) where she led education-workforce transformation. Ph.D. Higher Education Management from UPenn. Former University of Utah leadership. Oversees 80+ programs across Schools of Health, Education, Technology, Business.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Academic Quality and Accreditation Standing:</strong> Provost owns academic outcomes. WGU holds regional accreditation from NWCCU. Retention and graduation rates are accreditation metrics.</li><li><strong>Workforce Alignment (Strada Background):</strong> Dr. McBeth's Strada experience focused on education-workforce connection. Retention to completion means graduates entering workforce with credentials.</li><li><strong>CBE Model Integrity:</strong> Competency-based education is WGU's differentiator. Retention tools must align with CBE philosophy—measuring competency mastery, not seat time.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/courtney-hills-mcbeth-34973b2/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="influence">Confidence: 95%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Debbie Fowler, J.D.</div>
+              <div class="profile-title">Senior Vice President of Academic Delivery</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #00a651;">CHAMPION</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Primary internal champion. Oversees 2,900 faculty/staff serving 192,000+ students. Previously SVP Student Success (title changed January 2024). 30+ years higher ed experience. J.D. from USD, B.A. from Rice. Executive Sponsor of NSLS. Her team will implement and operationalize the platform.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Operational Capacity at 60:1 Ratio:</strong> 192,000 students / 2,900 faculty-staff = ~66:1 ratio. Program Mentors cannot individually assess risk for all students weekly.</li><li><strong>Multi-Barrier Student Support:</strong> 67% of students face systemic barriers: first-generation, low-income, rural, working adults. Barriers are academic AND non-academic (financial, personal, work-life).</li><li><strong>Faculty Tool Adoption:</strong> 2,900 faculty/staff need intuitive tools. Complex platforms fail. Adoption determines ROI.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/debbie-fowler-a86a949b/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="influence">Confidence: 98%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Dr. Stacey Ludwig Johnson</div>
+              <div class="profile-title">Senior Vice President and Executive Dean, School of Education</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #00a651;">CHAMPION</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Peer champion with deep institutional credibility. 25+ years at WGU since 1998 (started as Manager of Student Services & Registrar). Ph.D. from University of Colorado. Leads nation's largest nonprofit accredited school of education. Pioneer in CBE. Her endorsement carries significant weight.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Education Program Retention Patterns:</strong> School of Education students have unique requirements: field experience, practicum, licensure exams. Retention patterns differ from other schools.</li><li><strong>CBE Model Expertise:</strong> Dr. Ludwig Johnson helped build WGU's CBE model. She can validate that retention tools align with competency-based philosophy.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/stacey-ludwig-johnson-0bba1715/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="influence">Confidence: 90%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">David Morales, MBA</div>
+              <div class="profile-title">Senior Vice President of Technology and Chief Information Officer</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #f7941d;">BLOCKER</span>
+              <span class="verified-badge">Verified</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Critical technical gatekeeper. CIO since November 2018. Previously 15+ years at Walmart (Senior Director of Engineering for cloud systems). MBA from WGU. Leads IT infrastructure, product management, cloud services. Driving AI/ML investment at WGU. Must approve architecture for $1.4M platform.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Enterprise Integration Architecture:</strong> WGU operates custom CBE platform, student information system, and enterprise data warehouse. $1.4M platform must integrate via enterprise APIs.</li><li><strong>AI/ML Strategy Alignment:</strong> David is building AI capabilities across WGU (chatbots, predictive models, personalization). External platform should leverage, not duplicate, internal AI investments.</li><li><strong>Security, Privacy, Compliance:</strong> FERPA compliance, SOC 2, data encryption, audit trails. 192,000 student records require enterprise-grade security.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <a href="https://www.linkedin.com/in/moralesdavid/" class="linkedin-link" target="_blank">LinkedIn Profile</a>
+            <span class="influence">Confidence: 95%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">Chief Financial Officer</div>
+              <div class="profile-title">CFO / VP Finance</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #f7941d;">BLOCKER</span>
+              <span class="research-needed">To Identify</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Financial gatekeeper. At $1.4M, CFO approval is mandatory. Must validate ROI model, budget fit, payment terms. WGU does not publicly name CFO—identify through engagement.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>ROI Validation and Payback Period:</strong> $1.4M requires rigorous ROI model. CFO will calculate: retention improvement → tuition revenue → payback period.</li><li><strong>Budget Cycle Alignment:</strong> Major purchases align with WGU fiscal year. Multi-year commitment requires budget planning.</li><li><strong>Contract Terms and Risk:</strong> Finance reviews indemnification, liability caps, termination clauses, payment terms.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <span class="no-linkedin">LinkedIn TBD</span>
+            <span class="influence">Confidence: 92%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">General Counsel</div>
+              <div class="profile-title">General Counsel / VP Legal</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #f7941d;">BLOCKER</span>
+              <span class="research-needed">To Identify</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Legal gatekeeper. At $1.4M, legal review is mandatory. Reviews contract terms, liability, data privacy agreements, vendor risk assessment.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Contract Terms and Liability:</strong> Legal reviews indemnification, limitation of liability, termination rights, IP ownership.</li><li><strong>Data Privacy and Compliance:</strong> FERPA, state privacy laws, data processing agreements, breach notification procedures.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <span class="no-linkedin">LinkedIn TBD</span>
+            <span class="influence">Confidence: 85%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">David Grow</div>
+              <div class="profile-title">Chief Operating Officer</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #0077c8;">STAKEHOLDER</span>
+              <span class="research-needed">To Identify</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> Operational stakeholder. As COO, oversees university-wide operational efficiency. $1.4M platform impacts workflows across enrollment, advising, student services. His buy-in ensures smooth cross-functional implementation.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Operational Efficiency:</strong> Retention platform must improve, not complicate, operational workflows for 2,900 staff.</li><li><strong>Cross-Functional Coordination:</strong> Retention touches enrollment, advising, financial aid, academics. COO ensures functions work together.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <span class="no-linkedin">LinkedIn TBD</span>
+            <span class="influence">Confidence: 85%</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-left">
+              <div class="profile-name">VP/Dean, School of Business</div>
+              <div class="profile-title">Senior Vice President and Executive Dean, School of Business</div>
+            </div>
+            <div class="profile-right">
+              <span class="role-pill" style="background: #0077c8;">STAKEHOLDER</span>
+              <span class="research-needed">To Identify</span>
+            </div>
+          </div>
+          <div class="profile-logic">
+            <strong>Role Rationale:</strong> School stakeholder. Business school is major enrollment driver. Dean cares about retention in their programs. Enterprise platform must serve all schools.
+          </div>
+          
+          <div class="pain-points">
+            <strong>Key Pain Points:</strong>
+            <ul class="pain-list">
+              <li><strong>Business Program Retention:</strong> Business students are often working professionals with competing demands. Retention strategies must account for adult learner needs.</li>
+            </ul>
+          </div>
+          
+          <div class="profile-footer">
+            <span class="no-linkedin">LinkedIn TBD</span>
+            <span class="influence">Confidence: 75%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section page-break">
+      <h2 class="section-title">Enterprise Engagement Strategy</h2>
+      <p class="section-subtitle">Multi-threaded approach for $1.4M approval</p>
+      
+      <ul class="strategy-list">
+        <li class="strategy-item">
+          <div class="strategy-number">1</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Build Debbie Fowler as Internal Champion</div>
+            <div class="strategy-text">Debbie must advocate before engaging CEO. Her 2,900 faculty/staff will use the platform daily. Win her through retention workshops, pilot proposals, and mission alignment. She will orchestrate internal consensus.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">2</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Engage Provost McBeth on Academic Vision</div>
+            <div class="strategy-text">Dr. McBeth (new January 2024) is shaping academic strategy. Connect to her Strada background—education-workforce alignment. Position retention as enabling both access and outcomes. She's co-decision maker.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">3</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Technical Deep-Dive with CIO Morales</div>
+            <div class="strategy-text">Schedule architecture review with David's team early. Demonstrate CBE platform integration, AI/ML alignment, security certifications (SOC 2, FERPA). His approval is mandatory. Don't surprise him late in cycle.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">4</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Build Bulletproof ROI Model for CFO</div>
+            <div class="strategy-text">$1.4M / $7,150 tuition = 196 students to break even. At 192,000 students with 62% retention, 0.10% improvement = 192 students. Build 3-year model showing 5-10x ROI with sensitivity analysis.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">5</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Executive Briefing for CEO Pulsipher</div>
+            <div class="strategy-text">Once champions align, request executive briefing with Scott. Lead with mission impact (access + completion for 67% underserved), then scale (192,000 students), then ROI. Reference E&I's cooperative model and higher ed focus.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">6</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Proactive Legal and Procurement Engagement</div>
+            <div class="strategy-text">Share standard contract terms early with General Counsel. Address FERPA, data processing, liability proactively. Leverage E&I's competitive bid process to streamline procurement. Slow legal = slow deal.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="footer">
+      E&I Cooperative Services | Western Governors University | $1.4M Enterprise Retention Platform | December 11, 2025
+    </div>
+  </div>
+</body>
+</html>

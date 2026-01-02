@@ -3,6 +3,25 @@
  * 
  * Assigns buyer group roles appropriate for deal size and company size tier
  * Uses lowercase enum values: decision, champion, stakeholder, blocker, introducer
+ * 
+ * SALES ORG SEGMENT AWARENESS (added from Snowflake buyer group audit):
+ * =====================================================================
+ * When targeting sales orgs, we must distinguish between:
+ * 
+ * HUNTERS (acquisition-focused) - INCLUDE:
+ * - Commercial segment (startups, digital-native)
+ * - SMB segment (high-volume new business)
+ * - Acquisition roles
+ * 
+ * FARMERS (expansion-focused) - EXCLUDE:
+ * - Strategic Account Executives (Majors segment - badged at one client)
+ * - Global Account Executives (named accounts)
+ * - Major Account Executives
+ * - Key Account Managers
+ * - Expansion roles
+ * 
+ * This distinction was learned from Snowflake where the pipeline incorrectly
+ * included Strategic AEs who are farmers, not hunters.
  */
 
 const { 
@@ -145,11 +164,26 @@ class RoleAssignment {
         }
       }
       
-      // Introducers: Customer-facing, Sales, Account Management - only if qualified
+      // Introducers: Sales and Business Development ONLY - NOT Account Management or Customer Success
+      // Account Managers manage existing customers, not new business acquisition
+      // Customer Success is also existing customer focused
+      // FARMER ROLES EXCLUDED (added from Snowflake audit):
+      // - Strategic Account Executives are FARMERS (badged at one client, expansion only)
+      // - Global Account, Named Account, Major Account = FARMERS
+      const isFarmerRole = titleLower.includes('strategic account') || 
+                          titleLower.includes('global account') ||
+                          titleLower.includes('named account') ||
+                          titleLower.includes('major account') ||
+                          titleLower.includes('key account manager') ||
+                          (titleLower.includes('expansion') && !titleLower.includes('commercial'));
+      
       if (role === 'stakeholder' && counts.introducer < targets.introducer && 
-          (titleLower.includes('sales') || titleLower.includes('account') || 
-           titleLower.includes('customer success') || titleLower.includes('business development') ||
-           deptLower.includes('sales') || deptLower.includes('customer success'))) {
+          (titleLower.includes('sales') || titleLower.includes('business development') ||
+           titleLower.includes('sdr') || titleLower.includes('bdr') ||
+           deptLower.includes('sales') || deptLower.includes('business development')) &&
+          !titleLower.includes('account manager') && !titleLower.includes('customer success') &&
+          !deptLower.includes('account management') && !deptLower.includes('customer success') &&
+          !isFarmerRole) { // NEW: Exclude farmer roles
         const roleConfidence = Math.min((emp.scores?.influence || 7) * 10, 100);
         if (roleConfidence >= confidenceThresholds.introducer) {
           role = 'introducer';
@@ -440,10 +474,12 @@ class RoleAssignment {
                        title.includes('sr manager');
     
     // Relevant department for advocacy
+    // EXCLUDED: Product roles - they build products, they don't buy sales tools
     const relevantDept = deptLower.includes('sales') || 
                         deptLower.includes('revenue') || 
                         deptLower.includes('operations') ||
-                        deptLower.includes('product') ||
+                        deptLower.includes('business development') ||
+                        deptLower.includes('sales enablement') ||
                         (isAccountingFinance && this.isAccountingFinanceRelevantForChampion());
     
     // Strong champion potential score
@@ -477,22 +513,26 @@ class RoleAssignment {
    * @returns {boolean} True if potential introducer
    */
   isIntroducer(title, dept, scores) {
-    // Customer-facing roles
-    const customerFacing = title.includes('customer') || 
-                          title.includes('account') ||
-                          title.includes('relationship') ||
-                          dept.includes('customer success');
+    // EXCLUDED: Account Management and Customer Success (existing customer focus, not acquisition)
+    if (title.includes('account manager') || 
+        title.includes('customer success') ||
+        dept.includes('account management') ||
+        dept.includes('customer success')) {
+      return false;
+    }
     
-    // Strong network influence
+    // Strong network influence required
     const strongNetwork = scores.influence > 7;
     
-    // Sales or business development background
+    // Sales or business development background (NOT account management)
     const salesBackground = dept.includes('sales') || 
                           dept.includes('business development') ||
                           title.includes('sales') ||
-                          title.includes('business development');
+                          title.includes('business development') ||
+                          title.includes('sdr') ||
+                          title.includes('bdr');
     
-    return (customerFacing || salesBackground) && strongNetwork;
+    return salesBackground && strongNetwork;
   }
 
   /**
@@ -901,15 +941,13 @@ class RoleAssignment {
     
     let reasoning = `Selected as Introducer for relationship building: `;
     
-    // Customer-facing roles
+    // Sales and Business Development roles only (NOT Account Management or Customer Success)
     if (deptLower.includes('sales') || titleLower.includes('sales')) {
       reasoning += `Sales professionals have strong internal networks and relationship skills. `;
-    } else if (deptLower.includes('customer success') || titleLower.includes('customer success')) {
-      reasoning += `Customer success teams understand user needs and adoption patterns. `;
-    } else if (titleLower.includes('account')) {
-      reasoning += `Account managers facilitate introductions and stakeholder connections. `;
     } else if (titleLower.includes('business development')) {
       reasoning += `Business development professionals excel at relationship building. `;
+    } else if (titleLower.includes('sdr') || titleLower.includes('bdr')) {
+      reasoning += `SDR/BDR roles have strong outbound relationship skills. `;
     }
     
     // Network influence

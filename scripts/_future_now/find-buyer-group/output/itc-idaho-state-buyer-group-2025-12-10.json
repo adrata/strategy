@@ -1,0 +1,229 @@
+{
+  "context": {
+    "seller": {
+      "name": "ITC Systems",
+      "website": "https://itcsystems.com",
+      "logo": "https://itcsystems.com/wp-content/uploads/2023/01/ITC-Logo.png",
+      "tagline": "Integrated Transaction Control",
+      "product": "OneCard Campus Solutions",
+      "valueProposition": "Unified credential management platform consolidating identity, access, payments, and services into a single solution",
+      "solutions": [
+        "OneCard Solutions - Unified credential management",
+        "Point of Sale & Mobile Ordering",
+        "Print & Copy Management (GoPrint)",
+        "Access Control with mobile credentials",
+        "Vending & Laundry Solutions",
+        "ID Cards & Credentials"
+      ]
+    },
+    "buyer": {
+      "name": "Idaho State University",
+      "website": "https://www.isu.edu",
+      "industry": "Higher Education",
+      "size": "~12,000 students",
+      "location": "Pocatello, Idaho",
+      "relevantDivisions": [
+        "Information Technology Services",
+        "Auxiliary Services",
+        "Finance & Business Office",
+        "Student Affairs",
+        "Campus Security"
+      ]
+    },
+    "generatedAt": "2025-12-10T21:29:31.194Z"
+  },
+  "dealSize": 250000,
+  "buyerGroup": {
+    "totalMembers": 8,
+    "members": [
+      {
+        "name": "Paula Renae Scott",
+        "title": "Chief Information Officer",
+        "department": "Information Technology Services",
+        "role": "decision",
+        "roleConfidence": 95,
+        "roleReasoning": "CIO with 30+ years IT experience in higher education. Ultimate technology decision maker. Previously CIO at University of Montana.",
+        "linkedin": "https://www.linkedin.com/in/paula-renae-scott-13172452/",
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Legacy System Integration Challenges",
+            "description": "Managing multiple disconnected systems for student ID, access control, dining, and payments creates operational inefficiency and poor user experience.",
+            "impact": "Students and staff must carry multiple credentials; IT team spends excessive time maintaining integrations.",
+            "urgency": "high"
+          },
+          {
+            "title": "Mobile Credential Adoption Pressure",
+            "description": "Students expect mobile-first experiences. Current physical card systems feel outdated compared to peer institutions.",
+            "impact": "Risk of appearing technologically behind, affecting student recruitment and satisfaction.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "Lisa Lewis Mangum",
+        "title": "Associate CIO of Strategic Technology",
+        "department": "Information Technology Services",
+        "role": "champion",
+        "roleConfidence": 90,
+        "roleReasoning": "Oversees enterprise applications, project management, and IT contract review. Key influencer who evaluates solutions and manages vendor relationships.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Enterprise Application Complexity",
+            "description": "Managing integrations between student information systems, ERP, and campus services requires significant resources.",
+            "impact": "Technical debt accumulates; new projects are delayed by integration requirements.",
+            "urgency": "high"
+          },
+          {
+            "title": "Contract and Vendor Management",
+            "description": "Multiple vendors for different campus services creates procurement complexity and reduces negotiating power.",
+            "impact": "Higher total cost of ownership; inconsistent service levels across systems.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "Lowell Richards",
+        "title": "Associate Vice President for Student Affairs",
+        "department": "Student Affairs",
+        "role": "decision",
+        "roleConfidence": 92,
+        "roleReasoning": "Oversees auxiliary operations including dining, bookstore, and campus services. Has budget authority for auxiliary technology investments.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Declining Dining Revenue Capture",
+            "description": "Without modern POS and mobile ordering, campus dining loses revenue to off-campus alternatives and delivery apps.",
+            "impact": "Reduced meal plan utilization; lower auxiliary revenue that supports campus operations.",
+            "urgency": "high"
+          },
+          {
+            "title": "Cash Handling Costs and Security",
+            "description": "Legacy cash-based systems in vending, laundry, and some dining locations create security risks and operational overhead.",
+            "impact": "Labor costs for cash collection; theft and loss risks; poor user experience.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "Jennifer Steele",
+        "title": "Vice President for Finance and University Planning",
+        "department": "Finance",
+        "role": "decision",
+        "roleConfidence": 88,
+        "roleReasoning": "CFO-equivalent role with budget authority for major university investments. Final approval required for significant technology purchases.",
+        "linkedin": null,
+        "email": "jennifersteele@isu.edu",
+        "phone": "(208) 282-4277",
+        "painPoints": [
+          {
+            "title": "Lack of Unified Financial Reporting",
+            "description": "Disparate transaction systems make it difficult to get comprehensive view of campus commerce and auxiliary revenues.",
+            "impact": "Delayed financial reporting; difficulty in budget planning and forecasting.",
+            "urgency": "medium"
+          },
+          {
+            "title": "Total Cost of Ownership Concerns",
+            "description": "Multiple point solutions from different vendors create hidden costs in maintenance, training, and integration.",
+            "impact": "Budget overruns; difficulty justifying technology investments.",
+            "urgency": "medium"
+          }
+        ]
+      },
+      {
+        "name": "Nicholas Shiosaki",
+        "title": "Interim Chief Information Security Officer",
+        "department": "Information Technology Services",
+        "role": "blocker",
+        "roleConfidence": 85,
+        "roleReasoning": "Security gatekeeper who must approve any system handling student data and campus access. Could block or delay if security concerns not addressed.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Access Control Security Gaps",
+            "description": "Legacy access control systems may not meet modern security standards or provide adequate audit trails.",
+            "impact": "Campus safety concerns; compliance risks with student privacy regulations.",
+            "urgency": "high"
+          },
+          {
+            "title": "Credential Management Vulnerabilities",
+            "description": "Physical cards can be lost, stolen, or duplicated. Need for more secure, revocable credentials.",
+            "impact": "Unauthorized access incidents; liability exposure.",
+            "urgency": "high"
+          }
+        ]
+      },
+      {
+        "name": "Nyk Vail",
+        "title": "Director of Technology Support",
+        "department": "Information Technology Services",
+        "role": "stakeholder",
+        "roleConfidence": 80,
+        "roleReasoning": "Manages IT support services and will be responsible for supporting any new campus card system. Key technical evaluator. Started Aug 2024, 17 years higher ed experience from BYU-Idaho.",
+        "linkedin": null,
+        "email": "nykvail@isu.edu",
+        "phone": "(208) 282-5760",
+        "painPoints": [
+          {
+            "title": "Support Ticket Volume from Legacy Systems",
+            "description": "Outdated systems generate more support requests from students and staff struggling with usability issues.",
+            "impact": "IT support team overwhelmed; slower response times; frustrated users.",
+            "urgency": "medium"
+          },
+          {
+            "title": "Training and Documentation Gaps",
+            "description": "Multiple systems require separate training; institutional knowledge loss when staff turn over.",
+            "impact": "Longer onboarding; inconsistent service quality.",
+            "urgency": "low"
+          }
+        ]
+      },
+      {
+        "name": "Russell Mayer",
+        "title": "Budget Director",
+        "department": "Finance",
+        "role": "stakeholder",
+        "roleConfidence": 75,
+        "roleReasoning": "Involved in budget allocation and financial planning. Will need to approve budget line items for major technology investments.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Budget Cycle Timing Constraints",
+            "description": "Major technology purchases must align with university budget cycles and approval processes.",
+            "impact": "Projects can be delayed by missing budget windows.",
+            "urgency": "low"
+          }
+        ]
+      },
+      {
+        "name": "Kathy Hoffman",
+        "title": "Interim Director for Infrastructure Services",
+        "department": "Information Technology Services",
+        "role": "stakeholder",
+        "roleConfidence": 78,
+        "roleReasoning": "Responsible for IT infrastructure that will support campus card system. Technical stakeholder for implementation planning.",
+        "linkedin": null,
+        "email": null,
+        "phone": null,
+        "painPoints": [
+          {
+            "title": "Infrastructure Capacity Planning",
+            "description": "Need to ensure network and server infrastructure can support new campus-wide systems.",
+            "impact": "Performance issues; reliability concerns.",
+            "urgency": "medium"
+          }
+        ]
+      }
+    ]
+  }
+}

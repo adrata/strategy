@@ -1,0 +1,179 @@
+{
+  "success": true,
+  "company": "Example Company",
+  "pullScore": 65,
+  "classification": {
+    "category": "HIGH_CONSIDERATION",
+    "description": "Strong tensions present - likely to act soon",
+    "score": 65
+  },
+  "executiveSummary": "**PULL Score: 65/100 (HIGH_CONSIDERATION)**\n\nSarah Chen (Head of Security) joined 45 days ago from Stripe. They have 45 days left in their \"prove myself\" window and are likely experiencing \"ratio shock\" - the gap between Stripe's mature security program and what exists here.\n\n**The Dynamic:** Sarah Chen knows what good looks like. They're in a 30-day window to demonstrate value. Sarah Chen is in a 45-day window to prove value, came from a mature security program, and is experiencing ratio shock. They KNOW the solution exists and will champion it internally.",
+  "champion": {
+    "name": "Sarah Chen",
+    "title": "Head of Security",
+    "tenure": "45 days",
+    "windowRemaining": "45 days",
+    "previousCompany": "Stripe",
+    "previousTitle": "Security Engineering Manager",
+    "urgencyLevel": 85,
+    "knowledgeLevel": "informed",
+    "insight": "Came from Stripe - experiencing ratio shock, knows the right solution"
+  },
+  "tensions": {
+    "ratio": {
+      "score": 50,
+      "implication": "Security team is stretched - efficiency gains would help",
+      "data": {
+        "security_to_company": {
+          "actual": 0.011428571428571429,
+          "actualLabel": "1:88",
+          "healthy": {
+            "min": 0.015,
+            "max": 0.025
+          },
+          "healthyLabel": "1:40 to 1:67"
+        },
+        "security_to_engineering": {
+          "actual": 0.06666666666666667,
+          "actualLabel": "1:15",
+          "healthy": {
+            "min": 0.05,
+            "max": 0.1,
+            "label": "1:10 to 1:20"
+          },
+          "healthyLabel": "1:10 to 1:20"
+        }
+      }
+    },
+    "leadership": {
+      "score": 75,
+      "implication": "Sarah Chen (Head of Security) is in prove-myself window with 45 days remaining. Came from Stripe - experiencing \"ratio shock\" and knows the right solution.",
+      "champions": 2
+    },
+    "growth": {
+      "score": 70,
+      "implication": "Department falling behind - needs force multipliers",
+      "companyGrowth": 35
+    },
+    "resource": {
+      "score": 75,
+      "implication": "series b company in deployment phase - investor pressure to professionalize operations and show traction",
+      "fundingStage": "series_b"
+    },
+    "reporting": {
+      "score": 50,
+      "implication": "Security reports to CTO - Technical excellence, engineering productivity, platform reliability. Likely objection: \"Can we build this ourselves? Does it integrate well?\""
+    }
+  },
+  "predictions": {
+    "buyingProbability": 81,
+    "actionWindow": {
+      "windows": [
+        {
+          "type": "champion_window",
+          "daysRemaining": 45,
+          "urgency": "high",
+          "description": "Sarah Chen's 90-day window closes in 45 days"
+        },
+        {
+          "type": "post_funding",
+          "phase": "deployment",
+          "urgency": "high",
+          "description": "Post-funding deployment phase - capital available, pressure to show progress"
+        },
+        {
+          "type": "fiscal_calendar",
+          "quarter": "Q4",
+          "pattern": "budget_flush",
+          "urgency": "moderate",
+          "description": "Use it or lose it - get this approved before year end"
+        }
+      ],
+      "primaryWindow": {
+        "type": "champion_window",
+        "daysRemaining": 45,
+        "urgency": "high",
+        "description": "Sarah Chen's 90-day window closes in 45 days"
+      },
+      "optimalTiming": "Act within 45 days"
+    },
+    "decisionPath": {
+      "champion": "Sarah Chen",
+      "reportsTo": "CTO",
+      "mandate": "technical",
+      "budgetAuthority": "moderate",
+      "approvalSpeed": "moderate",
+      "stakeholders": [
+        {
+          "role": "Champion",
+          "person": "Sarah Chen",
+          "need": "Quick win to prove value",
+          "objection": "Implementation complexity, time to value"
+        },
+        {
+          "role": "Budget Authority",
+          "person": "CTO",
+          "need": "Technical excellence, team productivity",
+          "objection": "Can we build this ourselves? Does it integrate well?"
+        }
+      ],
+      "decisionCriteria": [
+        "Integration quality",
+        "Engineering productivity",
+        "Technical excellence"
+      ]
+    },
+    "behavioralPatterns": [
+      {
+        "principle": "anchoring",
+        "description": "New leaders anchor on their previous company's approach",
+        "application": "Sarah Chen will anchor on Stripe's approach",
+        "tactic": "Reference how Stripe or similar companies handle this"
+      },
+      {
+        "principle": "loss_aversion",
+        "description": "Pain of loss is 2x stronger than pleasure of equivalent gain",
+        "application": "Frame around what they lose by not acting, not just what they gain",
+        "tactic": "Quantify the cost of inaction: \"Every month without SOC 2 is X enterprise deals at risk\""
+      },
+      {
+        "principle": "scarcity",
+        "description": "Limited availability increases perceived value",
+        "application": "Only 45 days left in Sarah Chen's action window",
+        "tactic": "Emphasize the closing window: \"To show results before your 90-day mark...\""
+      }
+    ]
+  },
+  "strategy": {
+    "pitchAngle": {
+      "do": "\"7 FTE savings + hit your deadline\" (CTO language)",
+      "avoid": "Digital transformation (too long), Best-in-class security (not CFO concern)"
+    },
+    "openingLine": "\"Coming from Stripe, you've seen what good looks like. How are you finding the gap at Example Company?\"",
+    "keyInsight": "Sarah Chen is in a 45-day window to prove value, came from a mature security program, and is experiencing ratio shock. They KNOW the solution exists and will champion it internally.",
+    "objections": [
+      {
+        "source": "CTO",
+        "objection": "Can we build this ourselves? Does it integrate well?",
+        "response": "Technical demo with integration focus"
+      },
+      {
+        "source": "Technical",
+        "objection": "Can't we build this ourselves?",
+        "response": "Calculate eng time cost vs. tool cost. \"Your engineers cost $200/hr - is compliance their best use?\""
+      }
+    ],
+    "timing": {
+      "urgency": "high",
+      "daysToAct": 30,
+      "rationale": [
+        "Sarah Chen's 90-day window closes in 45 days",
+        "High buying probability - direct approach warranted"
+      ],
+      "bestApproach": "direct_outreach"
+    }
+  },
+  "internalDialogue": "Scene: Weekly executive meeting at Example Company, 45 days after Sarah Chen joined as Head of Security\n\nCTO: Sarah Chen, the board is asking about our security compliance timeline. Where are we?\n\nSARAH [internal]: At Stripe we had 1:40 to 1:67 security ratio. Here it's 1:88. There's no way we hit our goals with this team size.\n\nSARAH: We're making progress, but I have to be honest - my team is stretched thin. We're supporting 350 people with 4 security engineers. At Stripe, that ratio was 3x better.\n\nCTO: We can't hire more headcount right now - we committed to 18-month runway.\n\nSARAH [internal]: This is the moment. I either fight for tools or drown in manual work. I've seen this work before - I know what's possible.\n\nSARAH: I'm not asking for headcount. At Stripe, we used automation to do 80% of compliance evidence collection. One platform replaced what would have been 2-3 full-time people. The math works out to significant savings versus hiring.\n\nCTO: What's the platform cost?\n\nSARAH: About $50K annually. Net savings of $100K+, plus we actually hit our deadline.\n\nCEO: And this worked at Stripe?\n\nSARAH: We got SOC 2 Type II in 4 months. Companies doing it manually take 12-18 months.\n\nCTO: Put together a proposal. I want to see the ROI breakdown.",
+  "analyzedAt": "2025-12-19T19:36:57.847Z",
+  "orgDataSource": "coresignal"
+}

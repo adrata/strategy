@@ -18,7 +18,7 @@ export default function ClientLayout({
   }, []);
 
   return (
-    <div className="min-h-screen font-sans antialiased bg-background text-foreground overflow-x-hidden overflow-y-auto transition-colors duration-300">
+    <div className="font-sans antialiased bg-background text-foreground transition-colors duration-300">
       {children}
     </div>
   );

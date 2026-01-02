@@ -1,0 +1,201 @@
+{
+  "success": true,
+  "company": "Example Company",
+  "pullScore": 65,
+  "classification": {
+    "category": "HIGH_CONSIDERATION",
+    "description": "Strong tensions present - likely to act soon",
+    "score": 65
+  },
+  "executiveSummary": "**PULL Score: 65/100 (HIGH_CONSIDERATION)**\n\nSarah Chen (Head of Security) joined 45 days ago from Stripe. They have 45 days left in their \"prove myself\" window and are likely experiencing \"ratio shock\" - the gap between Stripe's mature security program and what exists here.\n\n**The Dynamic:** Sarah Chen knows what good looks like. They're in a 30-day window to demonstrate value. They will champion a solution that helps them show quick progress.",
+  "champion": {
+    "name": "Sarah Chen",
+    "title": "Head of Security",
+    "tenure": "45 days",
+    "windowRemaining": "45 days",
+    "previousCompany": "Stripe",
+    "previousTitle": "Security Engineering Manager",
+    "urgencyLevel": 85,
+    "knowledgeLevel": "informed",
+    "insight": "Came from Stripe - experiencing ratio shock, knows the right solution"
+  },
+  "tensions": {
+    "ratio": {
+      "score": 50,
+      "implication": "Security team is stretched - efficiency gains would help",
+      "data": {
+        "security_to_company": {
+          "actual": 0.011428571428571429,
+          "actualLabel": "1:88",
+          "healthy": {
+            "min": 0.015,
+            "max": 0.025
+          },
+          "healthyLabel": "1:40 to 1:67"
+        },
+        "security_to_engineering": {
+          "actual": 0.06666666666666667,
+          "actualLabel": "1:15",
+          "healthy": {
+            "min": 0.05,
+            "max": 0.1,
+            "label": "1:10 to 1:20"
+          },
+          "healthyLabel": "1:10 to 1:20"
+        }
+      }
+    },
+    "leadership": {
+      "score": 75,
+      "implication": "Sarah Chen (Head of Security) is in prove-myself window with 45 days remaining. Came from Stripe - experiencing \"ratio shock\" and knows the right solution.",
+      "champions": 6
+    },
+    "growth": {
+      "score": 70,
+      "implication": "Department falling behind - needs force multipliers",
+      "companyGrowth": 35
+    },
+    "resource": {
+      "score": 75,
+      "implication": "series b company in deployment phase - investor pressure to professionalize operations and show traction",
+      "fundingStage": "series_b"
+    },
+    "reporting": {
+      "score": 50,
+      "implication": "Security reports to CTO - Technical excellence, engineering productivity, platform reliability. Likely objection: \"Can we build this ourselves? Does it integrate well?\""
+    }
+  },
+  "predictions": {
+    "buyingProbability": 81,
+    "actionWindow": {
+      "windows": [
+        {
+          "type": "champion_window",
+          "daysRemaining": 45,
+          "urgency": "high",
+          "description": "Sarah Chen's 90-day window closes in 45 days"
+        },
+        {
+          "type": "post_funding",
+          "phase": "deployment",
+          "urgency": "high",
+          "description": "Post-funding deployment phase - capital available, pressure to show progress"
+        },
+        {
+          "type": "fiscal_calendar",
+          "quarter": "Q4",
+          "pattern": "budget_flush",
+          "urgency": "moderate",
+          "description": "Use it or lose it - get this approved before year end"
+        }
+      ],
+      "primaryWindow": {
+        "type": "champion_window",
+        "daysRemaining": 45,
+        "urgency": "high",
+        "description": "Sarah Chen's 90-day window closes in 45 days"
+      },
+      "optimalTiming": "Act within 45 days"
+    },
+    "decisionPath": {
+      "champion": "Sarah Chen",
+      "reportsTo": "CTO",
+      "mandate": "technical",
+      "budgetAuthority": "moderate",
+      "approvalSpeed": "moderate",
+      "stakeholders": [
+        {
+          "role": "Champion",
+          "person": "Sarah Chen",
+          "need": "Quick win to prove value",
+          "objection": "Implementation complexity, time to value"
+        },
+        {
+          "role": "Budget Authority",
+          "person": "CTO",
+          "need": "Technical excellence, team productivity",
+          "objection": "Can we build this ourselves? Does it integrate well?"
+        }
+      ],
+      "decisionCriteria": [
+        "Integration quality",
+        "Engineering productivity",
+        "Technical excellence"
+      ]
+    },
+    "behavioralPatterns": [
+      {
+        "principle": "anchoring",
+        "description": "New leaders anchor on their previous company's approach",
+        "application": "Sarah Chen will anchor on Stripe's approach",
+        "tactic": "Reference how Stripe or similar companies handle this"
+      },
+      {
+        "principle": "loss_aversion",
+        "description": "Pain of loss is 2x stronger than pleasure of equivalent gain",
+        "application": "Frame around what they lose by not acting, not just what they gain",
+        "tactic": "Quantify the cost of inaction: \"Every month without SOC 2 is X enterprise deals at risk\""
+      },
+      {
+        "principle": "scarcity",
+        "description": "Limited availability increases perceived value",
+        "application": "Only 45 days left in Sarah Chen's action window",
+        "tactic": "Emphasize the closing window: \"To show results before your 90-day mark...\""
+      }
+    ]
+  },
+  "strategy": {
+    "pitchAngle": {
+      "primary": {
+        "audience": "CTO",
+        "message": "Technical excellence, engineering productivity, platform reliability",
+        "format": "integration_demo"
+      },
+      "secondary": [
+        {
+          "audience": "Sarah Chen",
+          "message": "Quick win for your first 90 days - show security progress without adding headcount",
+          "format": "time_to_value"
+        },
+        {
+          "audience": "Sarah Chen",
+          "message": "Bring Stripe-level security operations here",
+          "format": "benchmark"
+        }
+      ],
+      "avoid": [
+        "Digital transformation (too long)",
+        "Best-in-class security (not CFO language)",
+        "Compliance as a checkbox (diminishes value)",
+        "Long implementation timelines"
+      ],
+      "openingAngle": "\"As the new Head of Security, what's your biggest priority in the first 90 days?\""
+    },
+    "openingLine": null,
+    "keyInsight": null,
+    "objections": [
+      {
+        "source": "CTO",
+        "objection": "Can we build this ourselves? Does it integrate well?",
+        "response": "Technical demo with integration focus"
+      },
+      {
+        "source": "Technical",
+        "objection": "Can't we build this ourselves?",
+        "response": "Calculate eng time cost vs. tool cost. \"Your engineers cost $200/hr - is compliance their best use?\""
+      }
+    ],
+    "timing": {
+      "urgency": "high",
+      "daysToAct": 30,
+      "rationale": [
+        "Sarah Chen's 90-day window closes in 45 days",
+        "High buying probability - direct approach warranted"
+      ],
+      "bestApproach": "direct_outreach"
+    }
+  },
+  "internalDialogue": "## SCENE: Conference Room B - Weekly Security Review\n*Wednesday, 2:47 PM. Sarah Chen sits across from Marcus Rivera (CTO) and Lisa Park (VP Engineering). Laptops open, coffee getting cold.*\n\n**SARAH:** So we're at 72% completion on our SOC 2 readiness assessment. [God, this is painful. At Stripe we would have been done by now.] The challenge is evidence collection - we're manually screenshotting access logs, chasing down policy acknowledgments from different teams...\n\n**MARCUS:** That's progress though, right? We're ahead of where most Series B companies are. [Sarah seems stressed. Maybe the transition is harder than we thought.]\n\n**SARAH:** Marcus, we're burning 15-20 hours a week on compliance grunt work. That's half my team's capacity. [I have 45 days left to prove I can scale this properly. This manual approach will kill us.] And when we get our first enterprise prospect asking for SOC 2 Type II...\n\n**LISA:** How long until we're compliant?\n\n**SARAH:** At this pace? 12-18 months for the full cycle. [This is embarrassing. I need to say something.] Look, I've been through this before. There are platforms that can automate 80% of this compliance work - continuous evidence collection, automated policy workflows...\n\n**MARCUS:** [Here we go. Another tool purchase.] Hold on. Can't we build some internal scripts? Maybe integrate with our existing monitoring stack? I don't love adding another vendor when we're trying to show path to profitability.\n\n**SARAH:** [He's thinking like an engineer, not a business leader.] I get the build-versus-buy instinct. But Marcus, think about the opportunity cost. [Deep breath. Make this about business impact, not technical elegance.] Every week my team spends taking screenshots is a week we're not hardening our infrastructure or building security into the product. \n\n**LISA:** What's the business case?\n\n**SARAH:** Revenue enablement. Our biggest pipeline deals are asking for SOC 2. Sales told me we've already had two prospects push because we couldn't provide compliance documentation. [This is my moment.] If we can get compliant in 4 months instead of 18, that's potentially millions in revenue we can close this year.\n\n**MARCUS:** [Damn. She's right about the revenue impact.] What kind of platforms are you talking about?\n\n**SARAH:** [Finally.] Automated compliance platforms - they integrate with our existing tools, continuously collect evidence, manage the audit process. Think of it as infrastructure for trust, not just another security tool.\n\n**MARCUS:** Send me some options. Let's see what the integration story looks like and what this costs us versus building internally.\n\n**SARAH:** [Victory. Small, but I'll take it.] I'll have a brief on your desk by Friday.",
+  "analyzedAt": "2025-12-19T19:37:43.720Z",
+  "orgDataSource": "coresignal"
+}

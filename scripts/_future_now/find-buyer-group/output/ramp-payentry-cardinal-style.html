@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buyer Group Intelligence | Ramp → PayEntry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --primary: #1A1A1A;
+  --primary-dark: #000000;
+  --accent: #FCC732;
+  --text-on-primary: #FCC732;
+  --decision: #dc2626;
+  --champion: #16a34a;
+  --blocker: #f97316;
+  --stakeholder: #3b82f6;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --bg: #ffffff;
+  --bg-muted: #f8fafc;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 48px;
+}
+
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 48px;
+}
+
+.cover-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.cover-title {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.cover-subtitle {
+  font-size: 18px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 48px;
+}
+
+.stat-box {
+  background: var(--bg);
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 24px;
+}
+
+.hero-stat {
+  background: var(--bg);
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.hero-stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.hero-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.section {
+  padding: 48px 0;
+  border-top: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.opportunity-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.benefit-card {
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.benefit-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--primary);
+}
+
+.benefit-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.composition {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.comp-item {
+  background: var(--bg);
+  padding: 20px;
+  text-align: center;
+}
+
+.comp-value {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.comp-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.profile-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.profile-info {
+  margin-bottom: 12px;
+}
+
+.profile-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.profile-title {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: white;
+  border-radius: 4px;
+}
+
+.phone {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.linkedin-link {
+  font-size: 11px;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.linkedin-link:hover {
+  text-decoration: underline;
+}
+
+.influence {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.phone-section {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.phone-section h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.phone-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.phone-list {
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.phone-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 160px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+
+.phone-row:last-child {
+  border-bottom: none;
+}
+
+.phone-name {
+  font-weight: 600;
+}
+
+.phone-role {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.phone-number {
+  font-family: 'SF Mono', monospace;
+  font-size: 13px;
+  color: var(--primary);
+  text-align: right;
+}
+
+.strategy-list {
+  list-style: none;
+}
+
+.strategy-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.strategy-item:last-child {
+  border-bottom: none;
+}
+
+.strategy-number {
+  width: 32px;
+  height: 32px;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.strategy-content {
+  flex: 1;
+}
+
+.strategy-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.strategy-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.footer {
+  text-align: center;
+  padding-top: 48px;
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-logo {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+
+.page-break {
+  page-break-before: always;
+  break-before: page;
+}
+
+@media print {
+  * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+  body { background: white !important; }
+  .page { padding: 32px; }
+  .cover { min-height: auto; padding-bottom: 24px; }
+  .section { padding: 32px 0; }
+  .page-break { page-break-before: always; }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <!-- Cover Page -->
+    <div class="cover">
+      <div class="cover-header">
+        <div class="label">Buyer Group Intelligence</div>
+        <h1 class="cover-title">Your path into PayEntry</h1>
+        <p class="cover-subtitle">4 key stakeholders identified, mapped, and ready for coordinated outreach. This is your complete buyer group for closing PayEntry.</p>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Seller</div>
+          <div class="stat-value">Ramp</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Target Account</div>
+          <div class="stat-value">PayEntry</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Deal Size</div>
+          <div class="stat-value">$50K</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Product</div>
+          <div class="stat-value">Expense Management</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Generated</div>
+          <div class="stat-value">Dec 16, 2025</div>
+        </div>
+      </div>
+      
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value">4</div>
+          <div class="hero-stat-label">Buyer Group</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">1</div>
+          <div class="hero-stat-label">Decision Makers</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">2</div>
+          <div class="hero-stat-label">Champions</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">0</div>
+          <div class="hero-stat-label">Blockers</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">2</div>
+          <div class="hero-stat-label">Direct Phones</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- The Opportunity -->
+    <div class="section page-break">
+      <h2 class="section-title">The Opportunity</h2>
+      <p class="section-subtitle">Why This Account Matters</p>
+      
+      <p class="opportunity-text">PayEntry is a leading payroll and HCM solutions provider serving businesses across the United States. Their recent merger with Corporate Payroll Services has expanded their operations significantly, creating the perfect timing for Ramp's expense management and corporate card solutions.</p>
+      <p class="opportunity-text">With growing client demands and operational complexity, PayEntry needs streamlined expense management to maintain competitive advantage. Ramp's platform offers automated expense reporting, real-time spend visibility, and seamless integration with existing payroll systems.</p>
+      
+      <div class="benefits-grid">
+        
+        <div class="benefit-card">
+          <div class="benefit-title">Seamless Payroll Integration</div>
+          <div class="benefit-text">Integrate expense data directly into payroll processing for accurate reimbursements and tax compliance.</div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-title">Real-Time Spend Visibility</div>
+          <div class="benefit-text">Give clients complete visibility into corporate spending with automated categorization and reporting.</div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-title">Automated Expense Policies</div>
+          <div class="benefit-text">Reduce manual review with AI-powered policy enforcement and approval workflows.</div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-title">Cost Reduction</div>
+          <div class="benefit-text">Save on processing costs and eliminate late fees with automated bill pay and smart payment scheduling.</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Buyer Group Composition -->
+    <div class="section page-break">
+      <h2 class="section-title">Buyer Group Composition</h2>
+      
+      <div class="composition">
+        <div class="comp-item">
+          <div class="comp-value" style="color: var(--decision);">1</div>
+          <div class="comp-label">Decision Makers</div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-value" style="color: var(--champion);">2</div>
+          <div class="comp-label">Champions</div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-value" style="color: var(--blocker);">0</div>
+          <div class="comp-label">Blockers</div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-value" style="color: var(--stakeholder);">1</div>
+          <div class="comp-label">Stakeholders</div>
+        </div>
+      </div>
+      
+      <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Buyer Group Profiles</h3>
+      
+      <div class="profiles-grid">
+        
+      <div class="profile-card">
+        <div class="profile-info">
+          <div class="profile-name">Cherrise Newman</div>
+          <div class="profile-title">Vice President Operations</div>
+        </div>
+        <div class="profile-meta">
+          <span class="role-badge" style="background: #dc2626;">DECISION MAKER</span>
+          <span class="phone">+1 909-510-1305</span>
+          <a href="https://www.linkedin.com/in/cherrise-newman-cpp-49702898" class="linkedin-link" target="_blank">LinkedIn</a>
+        </div>
+        <div class="influence">Influence: 10/10</div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-info">
+          <div class="profile-name">Christina Thompson St. Clair</div>
+          <div class="profile-title">Vice President Of Sales</div>
+        </div>
+        <div class="profile-meta">
+          <span class="role-badge" style="background: #16a34a;">CHAMPION</span>
+          
+          <a href="https://www.linkedin.com/in/christina-thompson-st-clair-1b32a2b6" class="linkedin-link" target="_blank">LinkedIn</a>
+        </div>
+        <div class="influence">Influence: 10/10</div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-info">
+          <div class="profile-name">Jody Meredith</div>
+          <div class="profile-title">Buisness Development Manager</div>
+        </div>
+        <div class="profile-meta">
+          <span class="role-badge" style="background: #16a34a;">CHAMPION</span>
+          
+          <a href="https://www.linkedin.com/in/jody-meredith-580b8446" class="linkedin-link" target="_blank">LinkedIn</a>
+        </div>
+        <div class="influence">Influence: 6/10</div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-info">
+          <div class="profile-name">Steve A.</div>
+          <div class="profile-title">Vice President</div>
+        </div>
+        <div class="profile-meta">
+          <span class="role-badge" style="background: #3b82f6;">STAKEHOLDER</span>
+          <span class="phone">+1 616-813-1078</span>
+          <a href="https://www.linkedin.com/in/steve-a-066a585" class="linkedin-link" target="_blank">LinkedIn</a>
+        </div>
+        <div class="influence">Influence: 8/10</div>
+      </div>
+      </div>
+      
+      <div class="phone-section"><h3>Verified Phone Numbers</h3><p class="phone-subtitle">Direct dial contacts for immediate outreach</p><div class="phone-list">
+    <div class="phone-row">
+      <span class="phone-name">Cherrise Newman</span>
+      <span class="phone-role">DECISION MAKER</span>
+      <span class="phone-number">+1 909-510-1305</span>
+    </div>
+    <div class="phone-row">
+      <span class="phone-name">Steve A.</span>
+      <span class="phone-role">STAKEHOLDER</span>
+      <span class="phone-number">+1 616-813-1078</span>
+    </div></div></div>
+    </div>
+    
+    <!-- Recommended Strategy -->
+    <div class="section page-break">
+      <h2 class="section-title">Recommended Strategy</h2>
+      <p class="section-subtitle">Multi-Thread Enterprise Approach</p>
+      <p class="opportunity-text" style="margin-bottom: 24px;">
+        Execute coordinated outreach to build momentum across the organization. Lead with pain, follow with champions, and engage blockers early.
+      </p>
+      
+      <ul class="strategy-list">
+        
+        <li class="strategy-item">
+          <div class="strategy-number">1</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Target CFO and VP Finance with ROI</div>
+            <div class="strategy-text">Lead with cost savings and operational efficiency. Ramp customers save an average of 5% on spend through automated controls and negotiated vendor rates.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">2</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Engage Operations & Product Teams</div>
+            <div class="strategy-text">Demonstrate how Ramp integrates seamlessly with existing payroll systems and can be offered as a value-add service to PayEntry clients.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">3</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Address Compliance Early</div>
+            <div class="strategy-text">Proactively share SOC 2 Type II certification and financial compliance documentation to prevent late-stage blockers.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">4</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Build Partnership Opportunity</div>
+            <div class="strategy-text">Position as a strategic partnership where PayEntry can offer Ramp's expense management to their client base as an upsell opportunity.</div>
+          </div>
+        </li>
+        <li class="strategy-item">
+          <div class="strategy-number">5</div>
+          <div class="strategy-content">
+            <div class="strategy-title">Enable Technical Evaluation</div>
+            <div class="strategy-text">Provide API documentation and sandbox access for the product team to evaluate integration capabilities.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-logo">RAMP</div>
+    </div>
+  </div>
+</body>
+</html>

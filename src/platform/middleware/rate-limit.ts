@@ -119,3 +119,49 @@ export const USERNAME_VALIDATION_RATE_LIMIT: RateLimitConfig = {
   windowMs: 60 * 1000 // 1 minute
 };
 
+<<<<<<< Updated upstream
+=======
+/**
+ * Rate limit config for sign-in attempts
+ * 5 attempts per 15 minutes per IP (industry standard for brute force prevention)
+ * In development, use a higher limit to prevent frustration
+ */
+export const SIGN_IN_RATE_LIMIT: RateLimitConfig = {
+  maxRequests: process.env.NODE_ENV === 'development' ? 20 : 5,
+  windowMs: process.env.NODE_ENV === 'development' ? 5 * 60 * 1000 : 15 * 60 * 1000 // 5 min in dev, 15 min in prod
+};
+
+/**
+ * Rate limit config for password reset requests
+ * 3 requests per hour per IP
+ */
+export const PASSWORD_RESET_RATE_LIMIT: RateLimitConfig = {
+  maxRequests: 3,
+  windowMs: 60 * 60 * 1000 // 1 hour
+};
+
+/**
+ * Clear rate limit for a specific IP address
+ * Useful for development or when legitimate users are rate-limited
+ */
+export function clearRateLimitForIp(ip: string): void {
+  const key = `rate-limit:${ip}`;
+  rateLimitStore.delete(key);
+}
+
+/**
+ * Clear all rate limits (use with caution - mainly for development)
+ */
+export function clearAllRateLimits(): void {
+  rateLimitStore.clear();
+}
+
+/**
+ * Get rate limit status for an IP (for debugging)
+ */
+export function getRateLimitStatus(ip: string): RateLimitEntry | null {
+  const key = `rate-limit:${ip}`;
+  return rateLimitStore.get(key) || null;
+}
+
+>>>>>>> Stashed changes

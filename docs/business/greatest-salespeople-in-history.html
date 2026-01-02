@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Greatest Salespeople in History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background: #fff; color: #111; line-height: 1.7; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 36px; font-weight: 700; margin-bottom: 8px; }
+        .subtitle { color: #666; margin-bottom: 48px; font-size: 18px; }
+        h2 { font-size: 22px; font-weight: 700; margin: 64px 0 8px; color: #111; }
+        h2 span { color: #999; font-weight: 400; font-size: 16px; }
+        .person { padding: 32px 0; border-bottom: 1px solid #eee; }
+        .person:last-child { border-bottom: none; }
+        .name { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 4px; }
+        .title { font-size: 13px; color: #888; margin-bottom: 16px; }
+        .hook { font-size: 22px; font-weight: 700; color: #111; line-height: 1.4; margin-bottom: 16px; }
+        .story { font-size: 15px; color: #333; line-height: 1.8; }
+        .lesson { background: #f5f5f5; padding: 16px; border-radius: 8px; margin-top: 16px; }
+        .lesson strong { display: block; font-size: 12px; color: #666; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .lesson p { font-size: 15px; color: #111; font-weight: 600; }
+        .quote { background: #f9f9f9; padding: 24px; margin: 32px 0; border-left: 3px solid #111; font-style: italic; }
+        .quote cite { display: block; margin-top: 8px; font-style: normal; font-weight: 600; font-size: 14px; }
+        .stat { display: inline-block; background: #111; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 8px; margin-bottom: 8px; }
+        
+        /* Audio Player Styles */
+        .audio-player {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #fff;
+        }
+        .audio-player button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .audio-player button:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
+        .audio-player button svg { width: 24px; height: 24px; fill: #fff; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .audio-controls { display: flex; gap: 8px; }
+        .speed-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn.active { background: #fff; color: #11998e; }
+    </style>
+</head>
+<body>
+
+<!-- Audio Player -->
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this article</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="audio-controls">
+        <button class="speed-btn" onclick="setSpeed(0.75)">0.75x</button>
+        <button class="speed-btn active" onclick="setSpeed(1)">1x</button>
+        <button class="speed-btn" onclick="setSpeed(1.25)">1.25x</button>
+        <button class="speed-btn" onclick="setSpeed(1.5)">1.5x</button>
+    </div>
+</div>
+
+<h1>The Greatest Salespeople in History</h1>
+<p class="subtitle">The stories. The hooks. The lessons.</p>
+
+<div class="quote">
+    "Everyone lives by selling something."
+    <cite>— Robert Louis Stevenson</cite>
+</div>
+
+<!-- ============================================== -->
+<h2>The Pioneers</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">John Henry Patterson</div>
+    <div class="title">Founder, NCR | 1844-1922</div>
+    <div class="hook">In 1884, salesmen were seen as con artists. By 1920, they ran America's biggest companies. One man changed everything.</div>
+    <div class="story">
+        Patterson bought a failing cash register company. His salesmen were untrained, unscripted, and unpredictable. Sales were random. So he did something radical: he wrote a script. Every word. Every gesture. Every objection handled.
+        <br><br>
+        He built a "sales school" where reps practiced until perfect. He invented territories, quotas, and sales conventions. He was fired for being too controlling—twice.
+        <br><br>
+        But here's what matters: Thomas Watson Sr. (IBM), Charles Kettering (Delco), and 50+ future CEOs all trained under Patterson. He didn't just build a company. He built a profession.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Selling can be taught. Script it. Practice it. Perfect it.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Thomas Watson Sr.</div>
+    <div class="title">Founder of IBM | 1874-1956</div>
+    <div class="hook">He was fired at 40. Then he built the most valuable company in the world.</div>
+    <div class="story">
+        Watson learned everything at NCR under Patterson. They had a falling out. Watson was fired.
+        <br><br>
+        At 40, he joined a tiny company called Computing-Tabulating-Recording. He renamed it IBM. And he did one thing differently: his salesmen didn't pitch products. They solved problems.
+        <br><br>
+        "THINK" signs hung in every office. Dark suits. White shirts. Perfect posture. IBM salesmen didn't look like salesmen. They looked like executives. Because that's who they were selling to.
+        <br><br>
+        The result? IBM dominated computing for 50 years. Not because of better technology. Because of better selling.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Look like your customer. Think like your customer. Be the advisor, not the vendor.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Elmer Wheeler</div>
+    <div class="title">"America's Greatest Salesman" | 1903-1968</div>
+    <div class="hook">He tested 105,000 phrases on 19 million customers. Then he found the 5 words that changed everything.</div>
+    <div class="story">
+        Wheeler was obsessed with one question: What words actually work?
+        <br><br>
+        He tested everything. Headlines. Openers. Closes. Objection handlers. On 19 million real customers. The data revealed patterns nobody expected.
+        <br><br>
+        His most famous finding: "Don't sell the steak—sell the sizzle."
+        <br><br>
+        Emotion beats logic. Every time. Woolworth's implemented his phrases and saw 300% sales increase. His book sold millions. All from testing words.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Sell the sizzle, not the steak. Test your words. The right phrase can 10x results.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>The Record Breakers</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">Joe Girard</div>
+    <div class="title">Guinness World Record Holder | 1928-2019</div>
+    <span class="stat">13,001 cars sold</span>
+    <span class="stat">6 per day average</span>
+    <div class="hook">Most car salesmen sell 10 cars a month. Joe Girard sold 6 per day. For 15 years straight. His secret cost $0.50 per customer.</div>
+    <div class="story">
+        Girard sent 13,000 greeting cards every month. Birthday cards. Holiday cards. "I like you" cards. Just because.
+        <br><br>
+        Every customer got a handwritten note. Every buyer got a follow-up call. Every referral got a thank you.
+        <br><br>
+        He called it "Girard's Law of 250": Every person knows 250 people who might attend their wedding or funeral. Win one customer, impress them, you have access to 250 more. Disappoint one, 250 hear about it.
+        <br><br>
+        13,001 cars. One relationship at a time.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Every customer is worth 250 referrals. Treat them that way.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Ben Feldman</div>
+    <div class="title">New York Life Insurance | 1912-1993</div>
+    <span class="stat">$1.8 billion in policies</span>
+    <div class="hook">He was 5'4" with a lisp. He worked in a town of 20,000 people. He outsold 1,500 of the company's 1,800 offices. Combined.</div>
+    <div class="story">
+        East Liverpool, Ohio. Population 20,000. No skyscrapers. No Fortune 500 companies. Just Ben Feldman, selling life insurance.
+        <br><br>
+        He didn't sell policies. He sold fear. Specific, vivid fear.
+        <br><br>
+        "What happens to your family at 8am Monday if you don't come home Sunday night?"
+        <br><br>
+        He worked 7 days a week, 52 weeks a year, for 50 years. When asked his secret, he said one word: "Work."
+        <br><br>
+        In his peak years, he sold more than entire agencies in New York and Chicago. From a town smaller than most suburbs.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Sell the pain of not buying. Make them feel the consequences of inaction.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Erica Feidner</div>
+    <div class="title">"The Piano Matchmaker" | 1990s-2000s</div>
+    <span class="stat">$150,000+ average sale</span>
+    <div class="hook">She sold $150,000 pianos to the world's pickiest customers. Her sales pitch? She didn't have one.</div>
+    <div class="story">
+        Concert pianists will play the same instrument for 40 years. They don't buy a piano. They marry one.
+        <br><br>
+        Feidner understood this. She never pitched. Never pushed. Never mentioned price until asked. She let musicians play every piano in the showroom. For hours. For days. For weeks.
+        <br><br>
+        She called herself a "matchmaker." Her job wasn't selling. It was listening.
+        <br><br>
+        Billy Joel. Lang Lang. Symphony orchestras. They all bought from Erica. Because she found them the one.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>For major purchases, be a matchmaker. Help them find what they already want.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>The Door-to-Door Legends</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">Alfred Fuller</div>
+    <div class="title">Founder, Fuller Brush Company | 1885-1973</div>
+    <span class="stat">25,000 salespeople at peak</span>
+    <div class="hook">He couldn't hold a job. He failed at everything. So at 21, he started making brushes in his basement. Then he knocked on every door in Boston.</div>
+    <div class="story">
+        Fuller had a problem: nobody wanted to buy brushes from a stranger.
+        <br><br>
+        So he gave them away. A free brush at every door. Whether they bought or not.
+        <br><br>
+        The gift created obligation. The demonstration created desire. The follow-up created sales.
+        <br><br>
+        "The Fuller Brush Man" became an American icon. 25,000 salespeople. $130 million in revenue. All from giving before asking.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Give before you ask. A free sample opens every door.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Anna Bissell</div>
+    <div class="title">First Female CEO of a Major Corporation | 1846-1934</div>
+    <div class="hook">Her husband invented the carpet sweeper. Then he died. At 43, she became America's first female CEO. Her competitors said she'd fail within a year.</div>
+    <div class="story">
+        1889. Women didn't run companies. They weren't supposed to.
+        <br><br>
+        Anna Bissell didn't care. She'd been selling sweepers door-to-door alongside her husband for years. She knew the business better than anyone.
+        <br><br>
+        Her secret: never explain what the product does. Show it. She'd walk into a home, sweep the carpet in front of them, and let the results speak.
+        <br><br>
+        She expanded to Europe. She opened factories. The brand still exists 130 years later. All because she understood: demonstration beats explanation.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Show, don't tell. A demonstration is worth a thousand words.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">David H. McConnell</div>
+    <div class="title">Founder, Avon | 1858-1937</div>
+    <span class="stat">6 million salespeople today</span>
+    <div class="hook">He was a door-to-door book salesman who couldn't sell books. So he gave away free perfume samples. The samples outsold the books. He never sold another book again.</div>
+    <div class="story">
+        McConnell noticed something strange: housewives didn't want his books. They wanted the free perfume he gave with each purchase.
+        <br><br>
+        So he switched. But he had another insight: women trusted other women. Especially in 1886, when inviting a male stranger into your home was unusual.
+        <br><br>
+        He hired women. Only women. Called them "Avon Ladies."
+        <br><br>
+        Today: 6 million Avon representatives worldwide. One of the largest sales forces in history. All because he listened to what customers actually wanted.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Hire people who look like your customers. Trust is easier when the seller feels familiar.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>The Empire Builders</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">Madam C.J. Walker</div>
+    <div class="title">America's First Self-Made Female Millionaire | 1867-1919</div>
+    <span class="stat">First female millionaire</span>
+    <span class="stat">20,000+ sales agents</span>
+    <div class="hook">Born to former slaves. Orphaned at 7. Widowed at 20. Earning $1.50/day as a washerwoman. She became the first self-made female millionaire in American history. Here's how.</div>
+    <div class="story">
+        Sarah Breedlove was losing her hair. Stress. Malnutrition. Bad products. She experimented until she found formulas that worked.
+        <br><br>
+        Then she sold them. Door-to-door. Demonstrating on herself. Telling her own story.
+        <br><br>
+        She didn't just sell hair care. She sold transformation. She sold hope. She sold "if I can do it, you can too."
+        <br><br>
+        She built a network of 20,000+ "Walker Agents"—Black women selling to Black women. She made them financially independent. She changed their lives.
+        <br><br>
+        When she died at 51, she was worth over $1 million. Today that's $15 million. All from a $1.50/day washerwoman.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Your story is your greatest asset. Authenticity sells.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Mary Kay Ash</div>
+    <div class="title">Founder, Mary Kay Cosmetics | 1918-2001</div>
+    <span class="stat">$3B+ annual revenue</span>
+    <span class="stat">Pink Cadillacs</span>
+    <div class="hook">At 45, she was passed over for promotion. The job went to a man she had trained. She quit. Then she built a $3 billion empire to prove them wrong.</div>
+    <div class="story">
+        Mary Kay spent 25 years in direct sales. She was good. Really good. But the men kept getting promoted over her.
+        <br><br>
+        So she retired and wrote a book about her dream company. Then she realized: why not just build it?
+        <br><br>
+        With $5,000, she started Mary Kay Cosmetics. Her philosophy: "God first, family second, career third." And: "Praise people to success."
+        <br><br>
+        The pink Cadillacs weren't just cars. They were symbols. Proof that women could succeed. Proof that recognition matters more than money.
+        <br><br>
+        3.5 million consultants. Billions in revenue. The woman they wouldn't promote built something bigger than all of them.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Recognition is more powerful than money. Make your sellers feel celebrated.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Estée Lauder</div>
+    <div class="title">Founder, Estée Lauder Companies | 1906-2004</div>
+    <span class="stat">$15B+ company today</span>
+    <div class="hook">She had no stores. No advertising budget. No investors. She had one thing: she would personally put cream on a stranger's face at a department store counter. Nobody could say no.</div>
+    <div class="story">
+        Lauder understood something profound: skin care is intimate. You can't describe how a cream feels. You have to feel it.
+        <br><br>
+        So she touched people. Literally. She'd approach women, apply product herself, massage it in. An intimate moment with a stranger.
+        <br><br>
+        She invented "gift with purchase." Buy one thing, get another free. It's now standard. She invented it.
+        <br><br>
+        At 80, she still worked the counters. Still touching faces. Still closing sales.
+        <br><br>
+        "Telephone, telegraph, tell a woman," she said. She understood word-of-mouth before it had a name.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Get the product into their hands. Free samples create customers.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Ray Kroc</div>
+    <div class="title">Founder, McDonald's Corporation | 1902-1984</div>
+    <span class="stat">Started at 52</span>
+    <span class="stat">$190B+ empire today</span>
+    <div class="hook">At 52, Ray Kroc was a milkshake machine salesman. A failing one. Then he visited a hamburger stand that was using 8 of his machines at once. He had to know why.</div>
+    <div class="story">
+        The McDonald brothers had a system. Fast. Efficient. Consistent. Kroc saw it differently.
+        <br><br>
+        He didn't see hamburgers. He saw a business that could be copied. Everywhere.
+        <br><br>
+        He convinced the brothers to let him franchise it. Then he bought them out. For $2.7 million. They thought they'd won.
+        <br><br>
+        Kroc didn't sell food. He sold a turnkey business. Every franchisee was a customer buying a complete system.
+        <br><br>
+        Today: 40,000+ locations. $190 billion market cap. The milkshake machine salesman built it all because he knew what he was really selling.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Don't sell the product—sell the system. The business model is the product.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Colonel Harland Sanders</div>
+    <div class="title">Founder, Kentucky Fried Chicken | 1890-1980</div>
+    <span class="stat">Started at 65</span>
+    <span class="stat">1,009 rejections</span>
+    <div class="hook">He was 65 years old. Broke. His restaurant had just failed. His first Social Security check was $105. He used it to start selling fried chicken recipes out of his car. He was rejected 1,009 times.</div>
+    <div class="story">
+        A new highway bypassed Sanders' restaurant. Business died. At 65, he was done.
+        <br><br>
+        But he had one thing: a fried chicken recipe people loved. So he got in his car and drove to restaurants.
+        <br><br>
+        His pitch: "Let me cook chicken in your kitchen. If you like it, pay me 5 cents per chicken sold."
+        <br><br>
+        He slept in his car. Ate in diners. Got rejected. Over. And over. And over.
+        <br><br>
+        1,009 restaurants said no. Number 1,010 said yes.
+        <br><br>
+        By 1964, he had 600 franchises. He sold the company for $2 million and became the face of KFC until his death.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>1,009 rejections mean nothing if #1,010 says yes. Keep. Going.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>The Entertainers</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">Ron Popeil</div>
+    <div class="title">"The King of Infomercials" | 1935-2021</div>
+    <span class="stat">$2B+ in sales</span>
+    <div class="hook">"But wait, there's more!" Those four words made Ron Popeil a billionaire. He didn't invent the infomercial. He perfected it.</div>
+    <div class="story">
+        Popeil learned sales on Chicago's Maxwell Street, pitching to crowds. Every infomercial was that same pitch, broadcast to millions.
+        <br><br>
+        His formula was simple:<br>
+        1. Show the problem<br>
+        2. Demonstrate the solution<br>
+        3. Stack the bonuses<br>
+        4. Create urgency<br>
+        5. Make it easy to buy
+        <br><br>
+        Veg-O-Matic. Pocket Fisherman. Showtime Rotisserie. Over $2 billion in sales. From a guy who started on a street corner.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Selling is entertainment. Make it a show.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Joe Ades</div>
+    <div class="title">"The Gentleman Peeler" | 1934-2009</div>
+    <div class="hook">He sold $5 vegetable peelers on the streets of Manhattan. He wore $2,000 Savile Row suits. He lived in a luxury apartment. He dined at the finest restaurants. From $5 peelers.</div>
+    <div class="story">
+        Joe Ades didn't sell peelers. He sold a performance.
+        <br><br>
+        "It'll julienne, it'll shred, it'll make a rose out of a tomato. Watch this!"
+        <br><br>
+        His British accent. His tailored suits. His theatrical flourishes. People didn't buy because they needed peelers. They bought because they wanted to have met Joe Ades.
+        <br><br>
+        He made millions. From $5 peelers. In Union Square.
+        <br><br>
+        His funeral drew hundreds. For a vegetable peeler salesman.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>People buy the experience, not the product. Charisma makes anything valuable.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Billy Mays</div>
+    <div class="title">TV Pitchman | 1958-2009</div>
+    <span class="stat">OxiClean, Mighty Putty, Kaboom</span>
+    <div class="hook">He was the loudest man on television. People mocked him. Comedians parodied him. He didn't care. He was too busy selling $1 billion in products.</div>
+    <div class="story">
+        "HI, BILLY MAYS HERE!"
+        <br><br>
+        That voice. That beard. That energy. You couldn't ignore him. That was the point.
+        <br><br>
+        Mays started on the Atlantic City Boardwalk. Same streets as Joe Ades. He learned that in a world of boring, energy wins.
+        <br><br>
+        His volume wasn't a gimmick. It was strategy. Attention is the first sale. If they don't notice you, they can't buy from you.
+        <br><br>
+        OxiClean alone did $1 billion. All because he refused to be ignored.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Energy is contagious. Stand out by being impossible to ignore.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>The Strategists</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">King Camp Gillette</div>
+    <div class="title">Founder, Gillette | 1855-1932</div>
+    <div class="hook">He gave away 3.5 million razors for free. It was the most profitable decision in business history.</div>
+    <div class="story">
+        Gillette had a problem: his razors were too good. People only needed to buy one.
+        <br><br>
+        So he flipped the model. Sell razors cheap—or give them away. Make money on the blades.
+        <br><br>
+        During World War I, he gave a free razor to every American soldier. 3.5 million razors. 36 million blades.
+        <br><br>
+        When those soldiers came home, they were Gillette customers for life. Every one of them needed blades.
+        <br><br>
+        Today we call it "razor and blades." Printers/ink. Consoles/games. Keurig/pods. Gillette invented it.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Give away the razor, sell the blades. Optimize for lifetime value.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Dale Carnegie</div>
+    <div class="title">Author, "How to Win Friends and Influence People" | 1888-1955</div>
+    <span class="stat">30 million copies sold</span>
+    <div class="hook">He failed as an actor. Failed as a salesman. Failed as a novelist. At 24, he was teaching public speaking at a YMCA for $2 per class. That class became a 30-million-copy book.</div>
+    <div class="story">
+        Carnegie's principles seem obvious now. That's because he made them obvious.
+        <br><br>
+        Be genuinely interested in others. Smile. Remember names. Listen more than you talk. Make people feel important.
+        <br><br>
+        Before Carnegie, nobody had written this down. After Carnegie, every sales training program borrowed from him.
+        <br><br>
+        Warren Buffett credits Carnegie's course with transforming his life. He still has the certificate on his wall.
+        <br><br>
+        30 million copies. 89 years in print. The failed actor taught the world to sell.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Be genuinely interested in other people. Influence follows interest.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">David Ogilvy</div>
+    <div class="title">"Father of Advertising" | 1911-1999</div>
+    <div class="hook">Before he was the "Father of Advertising," he sold cooking stoves door-to-door in Scotland. The manual he wrote for that job was called "the finest sales instruction ever written" by Fortune magazine.</div>
+    <div class="story">
+        Ogilvy sold AGA cooking stoves. Big, expensive, complicated stoves. To skeptical Scottish housewives.
+        <br><br>
+        His rules: Don't sit until invited. Don't smoke unless offered. Never wear a hat. Study your customer's business.
+        <br><br>
+        And his most important rule: "The more you tell, the more you sell."
+        <br><br>
+        He brought these principles to advertising. Rolls-Royce: "At 60 miles an hour, the loudest noise comes from the electric clock." Long copy. Detailed facts. Respect for the reader's intelligence.
+        <br><br>
+        Ogilvy & Mather became one of the world's great agencies. All built on lessons from door-to-door sales.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>The more you tell, the more you sell. Never underestimate the customer's intelligence.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>The Modern Masters</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">Zig Ziglar</div>
+    <div class="title">Motivational Sales Legend | 1926-2012</div>
+    <span class="stat">Millions attended his seminars</span>
+    <div class="hook">He sold pots and pans door-to-door. He was mediocre. Then a manager told him he could be great. That belief changed everything.</div>
+    <div class="story">
+        Ziglar was struggling. Barely making quota. Ready to quit.
+        <br><br>
+        A regional manager saw something in him. Told him: "You could be a great one." Nobody had ever said that before.
+        <br><br>
+        Ziglar went from mediocre to national champion. Then he spent 50 years telling others the same thing: You can be great.
+        <br><br>
+        "You can have everything in life you want if you will just help enough other people get what they want."
+        <br><br>
+        That belief—that sales is about helping—made him the most beloved sales trainer in history.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Help enough people get what they want, and you'll get what you want.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Mark Benioff</div>
+    <div class="title">Founder & CEO, Salesforce | 1964-</div>
+    <span class="stat">$200B+ market cap</span>
+    <div class="hook">He threw parties where guests smashed software CDs with hammers. He hired protesters to picket competitor conferences. He turned B2B software into a movement.</div>
+    <div class="story">
+        Benioff learned sales at Oracle. Larry Ellison told him: "You have a salesman's personality." He wasn't wrong.
+        <br><br>
+        At Salesforce, Benioff didn't sell software. He sold rebellion. "No Software" was the tagline. Software CDs were the enemy. Cloud was the future.
+        <br><br>
+        He staged fake protests outside Siebel conferences. He created an enemy and positioned Salesforce as the alternative.
+        <br><br>
+        Enterprise software became tribal. Emotional. Us vs. them. It wasn't supposed to work.
+        <br><br>
+        $200 billion market cap says otherwise.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Don't sell products—sell movements. Create an enemy and be the alternative.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>The Unlikely Sellers</h2>
+<!-- ============================================== -->
+
+<div class="person">
+    <div class="name">Sara Blakely</div>
+    <div class="title">Founder, Spanx | 1971-</div>
+    <span class="stat">Sold fax machines for 7 years</span>
+    <span class="stat">Youngest self-made female billionaire</span>
+    <div class="hook">She sold fax machines door-to-door for 7 years. Doors slammed in her face daily. Gates closed on her car. She was escorted out by security. It was the best training she ever got.</div>
+    <div class="story">
+        Blakely's fax machine territory was Florida. Hot. Humid. Nobody wanted to buy.
+        <br><br>
+        She learned to love rejection. To expect it. To push through it. Every "no" was practice for the next "yes."
+        <br><br>
+        When she invented Spanx, she cold-called Neiman Marcus. Got laughed at. Got a meeting anyway. Demonstrated the product in the bathroom—on herself.
+        <br><br>
+        She kept her fax machine job for two years after launching. Did her own PR. Hand-delivered products.
+        <br><br>
+        Youngest self-made female billionaire. All because door-to-door taught her that rejection is just practice.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Rejection is training. Get rejected early and often. It builds tolerance.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Mark Cuban</div>
+    <div class="title">Billionaire Investor | 1958-</div>
+    <span class="stat">Sold garbage bags at age 12</span>
+    <div class="hook">At 12 years old, he wanted basketball shoes. His dad said earn them. So he went door-to-door selling garbage bags. He learned more in that summer than in four years of business school.</div>
+    <div class="story">
+        No fancy product. No technology. Just garbage bags and a kid who wanted basketball shoes.
+        <br><br>
+        Cuban learned the basics: find customers, make a pitch, handle rejection, close. He learned that nobody buys on the first visit. He learned to follow up.
+        <br><br>
+        Later, he got fired from a computer store for closing a deal instead of opening the store. He started his own company. Sold it for $6 million.
+        <br><br>
+        Then Broadcast.com. Sold to Yahoo for $5.7 billion.
+        <br><br>
+        "Sales cures all," he says. "If you're a great salesperson, you can always find a job."
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Sales cures all. Learn to sell and you'll never go hungry.</p>
+    </div>
+</div>
+
+<div class="person">
+    <div class="name">Barbara Corcoran</div>
+    <div class="title">Founder, The Corcoran Group | 1949-</div>
+    <span class="stat">$1,000 loan to $6B empire</span>
+    <div class="hook">She failed at 20 jobs before age 23. She couldn't spell. She couldn't write. Her boyfriend gave her $1,000 and dumped her for her secretary. She turned that $1,000 into a $6 billion real estate empire. Partly out of spite.</div>
+    <div class="story">
+        When her boyfriend left, he told her she'd never succeed without him.
+        <br><br>
+        Corcoran didn't get sad. She got competitive. She decided to build something bigger than anything he could imagine.
+        <br><br>
+        Her genius was PR. She created "The Corcoran Report"—a marketing piece disguised as market research. Newspapers quoted it. She staged newsworthy events. She manufactured attention.
+        <br><br>
+        "The difference between successful people and everyone else is that successful people just keep getting up."
+        <br><br>
+        She sold The Corcoran Group for $66 million. Her ex watched.
+    </div>
+    <div class="lesson">
+        <strong>The Lesson</strong>
+        <p>Attention is the first sale. Create news, don't wait for it.</p>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<h2>What They All Have in Common</h2>
+<!-- ============================================== -->
+
+<div class="lesson" style="margin-top: 48px;">
+    <strong>1. They were rejected thousands of times</strong>
+    <p>Sanders: 1,009 nos. Blakely: doors slammed daily. Corcoran: failed at 20 jobs. They kept going anyway.</p>
+</div>
+
+<div class="lesson">
+    <strong>2. They showed, not told</strong>
+    <p>Fuller demonstrated brushes. Bissell swept carpets. Popeil peeled vegetables. The product in action sells itself.</p>
+</div>
+
+<div class="lesson">
+    <strong>3. They made it personal</strong>
+    <p>Walker told her own story. Girard sent 13,000 cards monthly. Feidner spent hours listening. Relationships drive everything.</p>
+</div>
+
+<div class="lesson">
+    <strong>4. They sold the transformation</strong>
+    <p>Feldman sold family protection. Mary Kay sold confidence. Blakely sold how you feel in your clothes. Outcomes, not features.</p>
+</div>
+
+<div class="lesson">
+    <strong>5. They gave first</strong>
+    <p>Fuller gave free brushes. Gillette gave free razors. Lauder gave free samples. Reciprocity works.</p>
+</div>
+
+<div class="lesson">
+    <strong>6. They stood out</strong>
+    <p>Billy Mays was loud. Joe Ades was elegant. Benioff was rebellious. In a world of boring, different wins.</p>
+</div>
+
+<div class="lesson">
+    <strong>7. They systemized success</strong>
+    <p>Patterson created training. Watson built processes. Kroc franchised a system. The best salespeople are also the best teachers.</p>
+</div>
+
+<div class="lesson">
+    <strong>8. They saw sales as the ultimate skill</strong>
+    <p>Every billionaire here—Cuban, Blakely, Kroc, Benioff—credits sales as their foundation. It unlocks everything else.</p>
+</div>
+
+<div class="quote" style="margin-top: 48px; background: #111; color: #fff; border-left-color: #fff;">
+    "Nothing happens until somebody sells something."
+    <cite>— Thomas Watson Sr., IBM</cite>
+</div>
+
+<script>
+// Audio Player using Web Speech API
+let utterance = null;
+let isPlaying = false;
+let currentSpeed = 1;
+
+function getDocumentText() {
+    const content = document.body.cloneNode(true);
+    const player = content.querySelector('.audio-player');
+    if (player) player.remove();
+    const scripts = content.querySelectorAll('script, style');
+    scripts.forEach(s => s.remove());
+    return content.innerText;
+}
+
+function toggleAudio() {
+    if (isPlaying) {
+        window.speechSynthesis.pause();
+        isPlaying = false;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused';
+    } else {
+        if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+        } else {
+            const text = getDocumentText();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentSpeed;
+            utterance.pitch = 1;
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Google') || v.lang.startsWith('en'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.onend = () => {
+                isPlaying = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Finished';
+            };
+            window.speechSynthesis.speak(utterance);
+        }
+        isPlaying = true;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing...';
+    }
+}
+
+function setSpeed(speed) {
+    currentSpeed = speed;
+    document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    if (utterance) utterance.rate = speed;
+    if (isPlaying) {
+        window.speechSynthesis.cancel();
+        const text = getDocumentText();
+        utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = currentSpeed;
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+</script>
+
+</body>
+</html>

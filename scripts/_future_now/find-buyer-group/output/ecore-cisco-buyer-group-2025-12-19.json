@@ -1,0 +1,733 @@
+{
+  "context": {
+    "seller": {
+      "name": "eCore Services",
+      "website": "https://ecoreservice.com",
+      "product": "B2B Data Enrichment Platform",
+      "valueProposition": "200M+ contacts, 95%+ accuracy, real-time job change tracking, SOC 2 certified",
+      "keyFeatures": [
+        "200M+ B2B contacts",
+        "80M+ verified emails",
+        "70M+ mobile numbers",
+        "95%+ data accuracy",
+        "Real-time job change alerts",
+        "CRM data cleansing",
+        "Daily automated refresh"
+      ],
+      "brandColors": {
+        "primary": "#BB1985",
+        "secondary": "#DD5E4D",
+        "accent": "#F79421"
+      }
+    },
+    "buyer": {
+      "name": "Cisco Systems",
+      "website": "https://www.cisco.com",
+      "industry": "Technology / Networking",
+      "employeeCount": 86000,
+      "keyLeadership": [
+        {
+          "name": "Carrie Palin",
+          "title": "SVP & Chief Marketing Officer"
+        },
+        {
+          "name": "Rebecca Stone",
+          "title": "SVP Global Revenue Marketing"
+        },
+        {
+          "name": "Chad Reese",
+          "title": "Digital Marketing Platforms & Activation"
+        },
+        {
+          "name": "Rune Olslund",
+          "title": "Experience Strategy and Digital Studio"
+        }
+      ]
+    },
+    "discoveredAt": "2025-12-19T15:04:39.214Z"
+  },
+  "company": {
+    "name": "Cisco Systems",
+    "website": "https://www.cisco.com",
+    "linkedinUrl": "https://www.linkedin.com/company/moto-cisco-systems",
+    "industry": "Unknown",
+    "employeeCount": 100
+  },
+  "product": {
+    "name": "B2B Data Enrichment Platform",
+    "description": "Enterprise contact database with 200M+ contacts, 95%+ accuracy, real-time job change tracking, and CRM data cleansing",
+    "category": "sales",
+    "dealSize": 250000,
+    "dealSizeRange": {
+      "min": 150000,
+      "max": 400000
+    }
+  },
+  "buyerGroup": {
+    "totalMembers": 3,
+    "members": [
+      {
+        "name": "Rostislav Papa",
+        "title": "Strategic Account Manager",
+        "department": "Sales",
+        "role": "champion",
+        "roleConfidence": 64,
+        "roleReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+        "email": "",
+        "phone": "+7 812 313-62-75",
+        "linkedin": "https://www.linkedin.com/in/rostislav-papa-05a9a247",
+        "influenceScore": 3,
+        "painPoints": [
+          {
+            "title": "Incomplete Account Intelligence for Strategic Deals",
+            "description": "As a Strategic Account Manager handling enterprise-level deals at Cisco, Rostislav likely struggles with incomplete or outdated data on key decision-makers, organizational structures, and buying committees within target accounts. This information gap makes it difficult to map stakeholders, understand reporting lines, and identify champions for complex, multi-stakeholder sales cycles typical in enterprise technology sales.",
+            "rootCause": "Fragmented data sources and manual research processes fail to provide comprehensive, real-time intelligence on strategic accounts with multiple decision-makers and complex organizational structures.",
+            "frequency": "daily",
+            "impact": "Leads to missed opportunities to engage the right stakeholders at the right time, resulting in elongated sales cycles and potentially lost deals worth significant revenue. Without complete account intelligence, Rostislav may waste time pursuing the wrong contacts or miss critical influencers who could accelerate deal progression.",
+            "urgency": "high",
+            "urgencyDrivers": "Strategic accounts represent high-value opportunities where competitive pressure is intense and timing is critical. Missing key stakeholder information could mean losing deals to competitors who have better intelligence, directly impacting quarterly quotas and annual revenue targets.",
+            "relatedMetrics": [
+              "Sales cycle length",
+              "Win rate on strategic accounts",
+              "Deal slippage rate",
+              "Stakeholder engagement coverage",
+              "Pipeline velocity"
+            ]
+          },
+          {
+            "title": "Inability to Prioritize High-Value Account Outreach",
+            "description": "Without enriched firmographic and technographic data, Rostislav likely faces challenges identifying which accounts within his territory represent the highest revenue potential and best fit for Cisco's solutions. Manual account scoring and prioritization consumes valuable selling time that could be spent on actual customer engagement and relationship building.",
+            "rootCause": "Lack of automated data enrichment means account qualification relies on time-consuming manual research, preventing systematic prioritization based on comprehensive buying signals and account characteristics.",
+            "frequency": "weekly",
+            "impact": "Results in suboptimal territory coverage where time is spent on lower-potential accounts while high-value opportunities receive insufficient attention. This misallocation of effort directly impacts quota attainment and prevents maximization of territory revenue potential, especially critical in strategic account management where focus is paramount.",
+            "urgency": "high",
+            "urgencyDrivers": "As a Strategic Account Manager likely managing a limited number of high-value accounts, improper prioritization can mean the difference between making or missing quota. Every hour spent on the wrong accounts represents lost opportunity cost in a role where relationship depth matters significantly.",
+            "relatedMetrics": [
+              "Quota attainment percentage",
+              "Average deal size",
+              "Account penetration rate",
+              "Revenue per account",
+              "Time spent on qualified opportunities"
+            ]
+          },
+          {
+            "title": "Stale CRM Data Undermining Account Strategy",
+            "description": "Rostislav's CRM likely contains outdated contact information, incorrect job titles, and missing data fields that undermine his ability to execute strategic account plans effectively. This forces him to manually verify and update information before each outreach, significantly reducing the time available for actual selling activities and relationship development with key stakeholders.",
+            "rootCause": "Manual data entry processes and lack of automated enrichment lead to data decay, where contact changes, role transitions, and organizational restructures aren't reflected in the system in real-time.",
+            "frequency": "daily",
+            "impact": "Causes embarrassing outreach mistakes (contacting people who've left the company, using wrong titles), damages professional credibility, and wastes significant time on administrative data hygiene tasks. These errors can harm existing strategic relationships and create negative first impressions with new contacts, directly affecting deal progression and customer trust.",
+            "urgency": "medium",
+            "urgencyDrivers": "While not immediately catastrophic, data quality issues create cumulative damage to professional reputation and customer relationships over time. In strategic account management where trust and credibility are foundational, repeated data errors can jeopardize long-term account value and expansion opportunities.",
+            "relatedMetrics": [
+              "CRM data accuracy rate",
+              "Time spent on data cleanup",
+              "Email bounce rate",
+              "Contact response rate",
+              "Account relationship health score"
+            ]
+          },
+          {
+            "title": "Limited Visibility into Account Expansion Opportunities",
+            "description": "Without comprehensive data enrichment showing cross-functional stakeholders, departmental needs, and technology stack details, Rostislav likely misses opportunities to expand Cisco's footprint within existing strategic accounts. Identifying white space and cross-sell/upsell opportunities requires manual investigation rather than systematic intelligence that reveals expansion potential.",
+            "rootCause": "Lack of enriched organizational hierarchy data and buying center intelligence prevents systematic identification of new departments, business units, and stakeholders who could benefit from additional Cisco solutions.",
+            "frequency": "monthly",
+            "impact": "Results in lower account penetration rates and missed revenue expansion opportunities within the existing install base, where selling is typically easier and more profitable than new logo acquisition. This is particularly costly given that strategic account managers are measured heavily on account growth and expansion, not just initial deal closure.",
+            "urgency": "medium",
+            "urgencyDrivers": "Account expansion is typically a key performance metric for strategic account managers, and missing these opportunities affects both short-term revenue goals and long-term account development objectives. As competition intensifies, failing to deepen relationships across the account creates vulnerability to competitive displacement.",
+            "relatedMetrics": [
+              "Net revenue retention rate",
+              "Cross-sell/upsell revenue",
+              "Account growth percentage",
+              "Product adoption breadth",
+              "Customer lifetime value"
+            ]
+          },
+          {
+            "title": "Inefficient Competitive Intelligence for Strategic Positioning",
+            "description": "Rostislav likely lacks systematic intelligence about which competitors are already deployed within his strategic accounts, their relationship strength, and contract renewal timing. This information gap makes it difficult to craft differentiated positioning strategies, anticipate competitive threats, and identify displacement opportunities within his account portfolio.",
+            "rootCause": "Absence of enriched technographic data and competitive intelligence integration means competitive landscape information must be gathered anecdotally through conversations rather than systematically through data enrichment.",
+            "frequency": "weekly",
+            "impact": "Leads to reactive rather than proactive competitive strategies, where Rostislav learns about competitive threats too late to effectively counter them. This reduces win rates against competitors and makes it harder to justify premium pricing or differentiate Cisco's value proposition in competitive situations, directly affecting both deal size and close rates.",
+            "urgency": "medium",
+            "urgencyDrivers": "In enterprise technology sales, competitive dynamics can shift quickly, and early intelligence provides significant advantage in deal strategy. While not an immediate crisis, lack of competitive visibility creates sustained disadvantage in win rate performance and strategic positioning effectiveness.",
+            "relatedMetrics": [
+              "Competitive win rate",
+              "Competitive displacement rate",
+              "Average discount percentage",
+              "Deal risk assessment accuracy",
+              "Time to identify competitive threats"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Steve Kaminski",
+        "title": "Sales Deal Manager-Sales Operations Manager",
+        "department": "Sales",
+        "role": "champion",
+        "roleConfidence": 64,
+        "roleReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+        "email": "",
+        "phone": "+1 512-484-9185",
+        "linkedin": "https://www.linkedin.com/in/steve-kaminski-8193187",
+        "influenceScore": 3,
+        "painPoints": [
+          {
+            "title": "Inaccurate CRM Data Stalling Deal Progression",
+            "description": "As a Sales Deal Manager at Cisco, Steve likely manages complex, high-value enterprise deals that require accurate contact and account information to move through sales stages. Outdated or incomplete prospect data in the CRM causes delays in deal qualification, miscommunication with decision-makers, and missed opportunities to engage key stakeholders at critical moments.",
+            "rootCause": "Manual data entry by sales reps, lack of automated data enrichment processes, and natural data decay across enterprise accounts with high personnel turnover.",
+            "frequency": "daily",
+            "impact": "Deal cycles extend by 20-30% due to time wasted chasing incorrect contacts or researching account hierarchies manually. Sales ops spends 10-15 hours weekly cleansing data reactively instead of supporting strategic deal execution.",
+            "urgency": "high",
+            "urgencyDrivers": "Cisco's enterprise sales environment demands precise account intelligence for deals averaging $250K+. Quarter-end pressure requires accurate pipeline forecasting, and incorrect data directly impacts revenue attainment and sales team productivity metrics.",
+            "relatedMetrics": [
+              "Average Deal Cycle Length",
+              "Win Rate",
+              "CRM Data Accuracy Rate",
+              "Sales Rep Productivity",
+              "Pipeline Coverage Ratio",
+              "Forecast Accuracy"
+            ]
+          },
+          {
+            "title": "Inability to Identify True Decision-Makers Efficiently",
+            "description": "Complex B2B technology purchases at enterprise accounts involve multiple stakeholders across IT, procurement, finance, and business units. Without enriched organizational data showing reporting structures, job changes, and buying committee composition, Steve's sales teams waste valuable time engaging the wrong contacts or missing critical influencers.",
+            "rootCause": "Lack of real-time organizational hierarchy data and job change alerts within existing sales tools, forcing reps to rely on outdated LinkedIn research and tribal knowledge.",
+            "frequency": "weekly",
+            "impact": "Sales reps spend 30-40% of their time on research instead of selling, while deals stall in procurement or get blocked by unidentified technical stakeholders. This inefficiency directly reduces quota attainment and increases cost-per-deal metrics that Steve must report on.",
+            "urgency": "high",
+            "urgencyDrivers": "Cisco competes in a crowded technology market where speed-to-engagement determines deal outcomes. Sales operations must enable reps to identify and reach decision-makers faster than competitors to maintain market share and hit aggressive growth targets.",
+            "relatedMetrics": [
+              "Time to First Meeting",
+              "Stakeholder Engagement Rate",
+              "Sales Cycle Velocity",
+              "Rep Selling Time Percentage",
+              "Cost per Acquisition",
+              "Multi-threading Success Rate"
+            ]
+          },
+          {
+            "title": "Poor Lead Routing Due to Incomplete Firmographics",
+            "description": "Without comprehensive company data including employee count, revenue, technology stack, and buying signals, Steve's operations team struggles to route leads to appropriate sales reps and prioritize accounts effectively. This leads to misaligned territory assignments, wasted effort on poor-fit prospects, and lost opportunities with high-value accounts that receive delayed or inappropriate follow-up.",
+            "rootCause": "Fragmented data sources requiring manual research, lack of automated enrichment at lead capture, and insufficient integration between marketing automation and CRM systems.",
+            "frequency": "daily",
+            "impact": "15-25% of inbound leads get misrouted or deprioritized incorrectly, causing revenue leakage and conflict between sales teams. Enterprise accounts may receive SMB-focused outreach, damaging Cisco's brand perception and reducing conversion rates by 30-40%.",
+            "urgency": "medium",
+            "urgencyDrivers": "As Cisco scales operations, inefficient lead routing compounds costs and creates territory disputes that damage sales team morale. Compliance requirements for accurate account assignment become critical as deal sizes increase.",
+            "relatedMetrics": [
+              "Lead Response Time",
+              "Lead-to-Opportunity Conversion Rate",
+              "Territory Coverage Balance",
+              "Account Prioritization Accuracy",
+              "Sales Team Utilization Rate",
+              "Revenue per Lead"
+            ]
+          },
+          {
+            "title": "Compliance Risks from Outdated Contact Preferences",
+            "description": "Steve's focus on compliance suggests he manages risks around data privacy regulations (GDPR, CCPA) and contact preferences. Without enriched data showing opt-out status, communication preferences, and regulatory jurisdiction, Cisco's sales outreach risks violations that could result in fines, legal issues, and reputational damage in enterprise markets where trust is paramount.",
+            "rootCause": "Siloed consent management systems, lack of real-time preference updates across sales tools, and insufficient data governance processes for managing contact data across multiple acquisition sources.",
+            "frequency": "weekly",
+            "impact": "Each compliance violation risks fines up to €20M or 4% of revenue under GDPR, while damaged relationships with enterprise accounts can eliminate multi-million dollar pipeline opportunities. Legal and compliance teams must conduct time-consuming audits that slow sales operations.",
+            "urgency": "high",
+            "urgencyDrivers": "Regulatory scrutiny on enterprise tech companies is increasing, and Cisco's brand reputation depends on ethical data practices. A single high-profile compliance incident could trigger board-level attention and operational restrictions.",
+            "relatedMetrics": [
+              "Compliance Violation Rate",
+              "Data Privacy Audit Results",
+              "Opt-out/Unsubscribe Rate",
+              "Legal Risk Exposure",
+              "Email Deliverability Rate",
+              "Consent Coverage Percentage"
+            ]
+          },
+          {
+            "title": "Inefficient Account-Based Marketing Execution at Scale",
+            "description": "To drive profitability in enterprise deals, Steve likely supports ABM initiatives requiring precise targeting of specific accounts and personas. Without enriched data providing technographic insights, intent signals, and account relationship mapping, the sales and marketing teams cannot personalize outreach effectively or coordinate multi-channel campaigns, resulting in generic messaging that fails to resonate with technical buyers.",
+            "rootCause": "Disconnected martech stack lacking unified account intelligence, insufficient budget for multiple point solutions, and manual processes that don't scale across hundreds of target accounts.",
+            "frequency": "monthly",
+            "impact": "ABM campaigns generate 40-50% lower engagement rates without proper enrichment, wasting marketing budget and reducing pipeline contribution. Sales teams receive poor-quality MQLs that don't match ICP criteria, creating friction between sales and marketing organizations.",
+            "urgency": "medium",
+            "urgencyDrivers": "Cisco's shift to subscription-based models requires more sophisticated buyer engagement and longer-term relationship building. Competitive pressure demands differentiated, personalized outreach that demonstrates understanding of prospect challenges.",
+            "relatedMetrics": [
+              "ABM Engagement Rate",
+              "Marketing Sourced Pipeline",
+              "Account Penetration Rate",
+              "Campaign ROI",
+              "MQL to SQL Conversion Rate",
+              "Customer Acquisition Cost"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Mridul Arora",
+        "title": "CEO Founder",
+        "department": "C-Suite",
+        "role": "stakeholder",
+        "roleConfidence": 75,
+        "roleReasoning": "Added for technical coverage",
+        "email": "",
+        "phone": "",
+        "linkedin": "https://www.linkedin.com/in/mridul-arora-7a6269135",
+        "influenceScore": 10,
+        "painPoints": [
+          {
+            "title": "Incomplete CRM Data Hampering Sales Velocity",
+            "description": "As CEO of a 100-person organization, Mridul likely faces challenges with sales teams operating on incomplete or outdated contact and company data in their CRM. This creates friction in the sales process as reps spend valuable time manually researching prospects instead of selling, leading to longer sales cycles and missed revenue opportunities.",
+            "rootCause": "Lack of automated data enrichment infrastructure causes data decay and gaps in critical prospect information needed for effective outreach.",
+            "frequency": "daily",
+            "impact": "Sales team productivity drops by 20-30% as reps manually research contact information, job titles, and company details. Revenue targets are missed due to slower pipeline velocity and lower contact rates with decision-makers.",
+            "urgency": "high",
+            "urgencyDrivers": "With a $250K+ deal size, every delayed deal or lost opportunity significantly impacts quarterly revenue. As CEO, board and investor pressure to demonstrate consistent growth makes sales efficiency critical.",
+            "relatedMetrics": [
+              "Sales cycle length",
+              "Lead-to-opportunity conversion rate",
+              "Sales rep productivity (calls/meetings per day)",
+              "Data completeness percentage in CRM",
+              "Cost per lead acquisition"
+            ]
+          },
+          {
+            "title": "Unreliable TAM and Market Sizing Data",
+            "description": "Without accurate, enriched company and market data, Mridul struggles to confidently identify Total Addressable Market and prioritize which segments offer the highest revenue potential. This leads to inefficient resource allocation across sales and marketing teams, with efforts spread too thin or focused on low-value prospects.",
+            "rootCause": "Static, non-enriched databases lack real-time firmographic data (revenue, employee count, technology stack, growth signals) needed for precise market segmentation.",
+            "frequency": "monthly",
+            "impact": "Go-to-market strategy becomes guesswork rather than data-driven, resulting in 30-40% of sales effort wasted on poor-fit accounts. Strategic planning and investor communications lack confidence without reliable market intelligence.",
+            "urgency": "high",
+            "urgencyDrivers": "As a founder-CEO, demonstrating clear market strategy to investors and board is essential for fundraising and valuation. Misallocated resources directly impact burn rate and runway in competitive markets.",
+            "relatedMetrics": [
+              "Total Addressable Market (TAM) accuracy",
+              "Ideal Customer Profile (ICP) match rate",
+              "Win rate by segment",
+              "Customer Acquisition Cost (CAC)",
+              "Sales team quota attainment"
+            ]
+          },
+          {
+            "title": "Poor Account-Based Marketing Target Identification",
+            "description": "Without comprehensive data enrichment, Mridul's team cannot effectively identify and prioritize high-value target accounts that match their ideal customer profile. Marketing campaigns reach the wrong audiences, and sales teams waste time pursuing accounts that will never convert, damaging unit economics.",
+            "rootCause": "Insufficient technographic, firmographic, and intent data prevents accurate scoring and prioritization of accounts most likely to purchase.",
+            "frequency": "weekly",
+            "impact": "Marketing spend efficiency drops with 50-60% of budget directed at poorly-qualified accounts, increasing CAC significantly. Sales and marketing misalignment grows as leads passed to sales fail to convert, creating organizational friction.",
+            "urgency": "medium",
+            "urgencyDrivers": "",
+            "relatedMetrics": [
+              "Marketing Qualified Lead (MQL) to SQL conversion rate",
+              "Cost per MQL",
+              "Account engagement score",
+              "Pipeline coverage ratio",
+              "Marketing ROI"
+            ]
+          },
+          {
+            "title": "Competitive Intelligence Blind Spots Losing Deals",
+            "description": "As CEO, Mridul needs visibility into competitive dynamics, but without enriched data showing which technologies prospects currently use, competitive battlecards remain generic. Sales teams enter conversations unprepared for competitive objections, losing deals to competitors who better understand the replacement landscape.",
+            "rootCause": "Absence of technographic and competitive install-base data prevents tailored positioning and competitive displacement strategies.",
+            "frequency": "weekly",
+            "impact": "Win rates suffer as 30-40% of competitive deals are lost due to ineffective positioning and inability to demonstrate clear differentiation from incumbent solutions. Deal cycles extend as sales teams scramble to gather competitive intelligence mid-opportunity.",
+            "urgency": "medium",
+            "urgencyDrivers": "Urgency increases when losing multiple competitive deals or when specific competitors gain market share. Critical during quarterly business reviews when win/loss analysis reveals competitive weaknesses.",
+            "relatedMetrics": [
+              "Competitive win rate",
+              "Win/loss ratio by competitor",
+              "Average deal size against competitors",
+              "Sales cycle length (competitive vs non-competitive)",
+              "Competitive displacement rate"
+            ]
+          },
+          {
+            "title": "Executive Stakeholder Mapping Gaps Stalling Enterprise Deals",
+            "description": "For high-value B2B deals, Mridul's sales team needs to identify and engage multiple stakeholders within target accounts, but incomplete organizational charts and contact data create blind spots. Deals stall in late stages when unknown decision-makers emerge with objections, or opportunities are lost because key influencers were never engaged.",
+            "rootCause": "Limited relationship intelligence and organizational hierarchy data prevents comprehensive multi-threading strategies essential for complex B2B sales.",
+            "frequency": "monthly",
+            "impact": "25-35% of late-stage opportunities stall or are lost due to incomplete stakeholder engagement, directly impacting quarterly forecasts and revenue predictability. Sales cycles for enterprise deals extend by 30-60 days as teams reactively identify new stakeholders mid-process.",
+            "urgency": "high",
+            "urgencyDrivers": "With $250K deal sizes, each lost enterprise opportunity materially impacts quarterly numbers. CEO credibility with board depends on forecast accuracy, making late-stage deal slippage particularly painful.",
+            "relatedMetrics": [
+              "Late-stage win rate",
+              "Forecast accuracy",
+              "Average stakeholders engaged per deal",
+              "Deal slippage rate",
+              "Time to close (enterprise segment)"
+            ]
+          }
+        ]
+      }
+    ],
+    "cohesionScore": 38,
+    "coverage": {
+      "primary": true,
+      "technical": true,
+      "risk": false,
+      "financial": false,
+      "details": {
+        "primary": {
+          "covered": [
+            "Sales"
+          ],
+          "missing": [
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "Rostislav Papa",
+              "title": "Strategic Account Manager",
+              "department": "Sales"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [
+            "IT"
+          ],
+          "missing": [
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": [
+            {
+              "function": "IT",
+              "name": "Mridul Arora",
+              "title": "CEO Founder",
+              "department": "C-Suite"
+            }
+          ]
+        },
+        "risk": {
+          "covered": [],
+          "missing": [
+            "Security",
+            "Legal",
+            "Compliance"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      }
+    }
+  },
+  "report": {
+    "id": "report_1766156163909_qkc98lxj8",
+    "generatedAt": "2025-12-19T15:00:14.198Z",
+    "executiveSummary": "Identified 3-person buyer group for Cisco Systems ($250,000 deal) with 38% cohesion score. Group includes 0 decision maker(s), 2 champion(s), and comprehensive cross-functional coverage. Research methodology validated 3 final members from 100 initial candidates.",
+    "researchMethodology": {
+      "approach": "Double-waterfall discovery with multi-dimensional scoring",
+      "stages": [
+        {
+          "stage": 1,
+          "name": "Company Intelligence",
+          "description": "Database-first company research with Coresignal API fallback",
+          "result": "Optimal search parameters calculated"
+        },
+        {
+          "stage": 2,
+          "name": "Wide Preview Search",
+          "description": "Cross-departmental employee discovery using Coresignal Preview API",
+          "result": "100 employees discovered across all functions"
+        },
+        {
+          "stage": 3,
+          "name": "Smart Scoring",
+          "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+          "result": "Top candidates identified before expensive collect API"
+        },
+        {
+          "stage": 4,
+          "name": "Role Assignment",
+          "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+          "result": "Appropriate roles assigned based on deal size"
+        },
+        {
+          "stage": 5,
+          "name": "Cross-Functional Validation",
+          "description": "Stakeholder completeness validation across all relevant functions",
+          "result": "Missing stakeholders added for comprehensive coverage"
+        },
+        {
+          "stage": 6,
+          "name": "Full Profile Collection",
+          "description": "Coresignal Collect API for final buyer group members only",
+          "result": "Complete profiles for final buyer group"
+        },
+        {
+          "stage": 7,
+          "name": "Cohesion Analysis",
+          "description": "Multi-factor cohesion validation",
+          "result": "38% cohesion score with detailed analysis"
+        }
+      ],
+      "searchParameters": {
+        "searchSize": 100,
+        "maxPreviewPages": 5,
+        "buyerGroupSize": {
+          "min": 6,
+          "max": 9,
+          "ideal": 8
+        },
+        "companySize": 100,
+        "industry": "Unknown",
+        "searchStrategy": "comprehensive",
+        "filteringLevel": "none"
+      },
+      "dataSources": [
+        "Coresignal API",
+        "Internal Database",
+        "AI Analysis"
+      ],
+      "confidenceLevel": 53
+    },
+    "companyIntelligence": {
+      "employeeCount": 100,
+      "revenue": 0,
+      "industry": "Unknown",
+      "growthRate": 0,
+      "activeHiring": 0,
+      "fundingStage": "bootstrapped",
+      "dataSource": "default",
+      "lastUpdated": "2025-12-19T14:56:06.445Z",
+      "insights": [
+        "Company size: Medium",
+        "Growth trajectory: Stable",
+        "Hiring activity: Limited",
+        "Funding status: bootstrapped"
+      ]
+    },
+    "buyerGroupJustification": [
+      {
+        "name": "Rostislav Papa",
+        "title": "Strategic Account Manager",
+        "department": "Sales",
+        "role": "champion",
+        "confidence": "64%",
+        "detailedReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+        "keyInsights": [
+          "Seniority score: 3/10",
+          "Champion potential: 16/25",
+          "Influence score: 3/10",
+          "Network: 202 connections",
+          "Relevance: 30%"
+        ],
+        "addedForCoverage": false,
+        "justification": "**Rostislav Papa (Strategic Account Manager) - CHAMPION**\n\n**Operational Leadership**: Manager-level leaders implement solutions and influence team adoption.\n**Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 202 connections\n- Role Confidence: 64%\n"
+      },
+      {
+        "name": "Steve Kaminski",
+        "title": "Sales Deal Manager-Sales Operations Manager",
+        "department": "Sales",
+        "role": "champion",
+        "confidence": "64%",
+        "detailedReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+        "keyInsights": [
+          "Seniority score: 3/10",
+          "Champion potential: 16/25",
+          "Influence score: 3/10",
+          "Network: 500 connections",
+          "Relevance: 95%"
+        ],
+        "addedForCoverage": false,
+        "justification": "**Steve Kaminski (Sales Deal Manager-Sales Operations Manager) - CHAMPION**\n\n**Operational Leadership**: Manager-level leaders implement solutions and influence team adoption.\n**Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 500 connections\n- Role Confidence: 64%\n"
+      },
+      {
+        "name": "Mridul Arora",
+        "title": "CEO Founder",
+        "department": "C-Suite",
+        "role": "stakeholder",
+        "confidence": "75%",
+        "detailedReasoning": "Added for technical coverage",
+        "keyInsights": [
+          "Seniority score: 10/10",
+          "Champion potential: 0/25",
+          "Influence score: 10/10",
+          "Network: 0 connections",
+          "Relevance: 30%"
+        ],
+        "addedForCoverage": true,
+        "justification": "**Mridul Arora (CEO Founder) - STAKEHOLDER**\n\n**Project Impact**: **Influence Potential**: High influence score indicates cross-functional impact potential.\n\n**Selection Criteria**:\n- Seniority Score: 10/10\n- Influence Score: 10/10\n- Network Size: 0 connections\n- Role Confidence: 75%\n"
+      }
+    ],
+    "crossFunctionalCoverage": {
+      "summary": {
+        "primaryCovered": true,
+        "technicalCovered": true,
+        "riskCovered": false,
+        "financialCovered": false,
+        "overallScore": 50
+      },
+      "byFunction": {
+        "primary": {
+          "covered": [
+            "Sales"
+          ],
+          "missing": [
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "Rostislav Papa",
+              "title": "Strategic Account Manager",
+              "department": "Sales"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [
+            "IT"
+          ],
+          "missing": [
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": [
+            {
+              "function": "IT",
+              "name": "Mridul Arora",
+              "title": "CEO Founder",
+              "department": "C-Suite"
+            }
+          ]
+        },
+        "risk": {
+          "covered": [],
+          "missing": [
+            "Security",
+            "Legal",
+            "Compliance"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      },
+      "gaps": [
+        "Risk management",
+        "Financial approval"
+      ],
+      "recommendations": [
+        "Add Security/Legal stakeholder for risk management",
+        "Add Finance stakeholder for budget approval"
+      ]
+    },
+    "cohesionAnalysis": {
+      "overallScore": 38,
+      "confidence": "VERY_LOW",
+      "factors": {
+        "reportingProximity": {
+          "score": 10,
+          "explanation": "Executive reporting relationships"
+        },
+        "departmentClustering": {
+          "score": 33,
+          "explanation": "Department collaboration patterns"
+        },
+        "seniorityBalance": {
+          "score": 76,
+          "explanation": "Appropriate seniority distribution"
+        },
+        "geographicAlignment": {
+          "score": 75,
+          "explanation": "Location-based collaboration"
+        },
+        "functionalInterdependence": {
+          "score": 0,
+          "explanation": "Cross-functional work relationships"
+        }
+      },
+      "reasoning": "Limited reporting proximity; Departments may not collaborate regularly; Well-balanced seniority levels; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from adjacent departments",
+        "Consider adding members from interdependent functions",
+        "Overall cohesion could be improved with better stakeholder selection"
+      ]
+    },
+    "championAnalysis": {
+      "count": 2,
+      "champions": [
+        {
+          "name": "Rostislav Papa",
+          "title": "Strategic Account Manager",
+          "department": "Sales",
+          "championScore": 16,
+          "advocacyPotential": "Medium",
+          "internalInfluence": "Medium",
+          "networkStrength": 202
+        },
+        {
+          "name": "Steve Kaminski",
+          "title": "Sales Deal Manager-Sales Operations Manager",
+          "department": "Sales",
+          "championScore": 16,
+          "advocacyPotential": "Medium",
+          "internalInfluence": "Medium",
+          "networkStrength": 500
+        }
+      ],
+      "analysis": "Good champion potential with solid advocacy capabilities"
+    },
+    "costEfficiency": {
+      "methodology": "Double-waterfall approach (preview then collect)",
+      "costs": {
+        "preview": 10,
+        "collect": 3,
+        "total": 0
+      },
+      "comparison": {
+        "naiveApproach": 100,
+        "smartApproach": 0,
+        "savings": 100,
+        "savingsPercentage": 100
+      },
+      "efficiency": {
+        "previewToCollectRatio": 3,
+        "costPerFinalMember": 0
+      }
+    },
+    "qualityMetrics": {
+      "averageConfidence": 68,
+      "averageInfluence": 5.3,
+      "averageRelevance": 52,
+      "decisionMakerCount": 0,
+      "championCount": 2,
+      "stakeholderCount": 1,
+      "blockerCount": 0,
+      "introducerCount": 0,
+      "qualityGrade": "D"
+    },
+    "recommendations": [
+      "Consider improving buyer group cohesion through better stakeholder selection",
+      "Critical: Add appropriate decision maker for deal size",
+      "Consider adding more stakeholders for comprehensive coverage"
+    ]
+  },
+  "costs": {
+    "preview": 10,
+    "collect": 3,
+    "total": 13.02,
+    "email": 0,
+    "phone": 0.02
+  },
+  "metadata": {
+    "generatedAt": "2025-12-19T15:04:39.215Z",
+    "pipelineVersion": "1.0",
+    "workspaceId": "01KCVHRPJF2M27AD03SPQFFYWV"
+  }
+}

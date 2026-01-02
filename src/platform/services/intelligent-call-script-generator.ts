@@ -182,24 +182,46 @@ How are things going on your end?`,
     const discoveryQuestions = this.getDiscoveryQuestions(context);
 
     return {
-      title: "Discovery Questions",
-      content: `I'd love to learn more about ${context.leadCompany} and your current situation.
+      title: "PULL Discovery Framework",
+      content: `## THE GOAL: Fill out their PULL framework
 
-${discoveryQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n\n")}
+PULL = Blocked Demand = Unavoidable Project meets Unworkable Options
 
-[LISTEN ACTIVELY - Take notes on their responses]
-[ASK FOLLOW-UP QUESTIONS: "Tell me more about that..." / "How is that impacting..."]`,
+**START HERE - Ask why they took the call:**
+"Before we dive in, I'm curious - what made you take this call today? What were you hoping to get out of it?"
+
+[Their answer often reveals P (Project) and sometimes U (Urgency)]
+
+**FILL OUT THE PULL FRAMEWORK:**
+
+P = PROJECT: What's on their to-do list being prioritized NOW?
+${discoveryQuestions[0]}
+
+U = URGENCY: Why must they act NOW vs. later?
+${discoveryQuestions[1]}
+
+L = LIST: What options are they considering?
+${discoveryQuestions[2]}
+
+L = LIMITATIONS: Why aren't current options good enough?
+${discoveryQuestions[3]}
+
+[PUT QUESTION MARKS NEXT TO THINGS YOU DON'T FULLY UNDERSTAND]
+[IF THEY ANSWER VAGUELY: "Tell me more about that..." / "Help me understand..."]
+[IF YOU CAN'T FIND PULL: "Huh, seems like you're all set then?"]
+
+**WHEN PULL IS IDENTIFIED: Only pitch what fits their PULL - nothing more!**`,
       duration: "5-8 minutes",
       keyPoints: [
-        "Ask open-ended questions",
-        "Listen more than you talk",
-        "Uncover pain points",
-        "Understand their priorities",
+        "Start with 'Why did you take this call?'",
+        "Fill out P-U-L-L through questions",
+        "Put ? next to unclear answers",
+        "Only pitch what fits their PULL",
       ],
       alternatives: [
-        "Adjust questions based on their role",
-        "Dive deeper into hot topics",
-        "Keep moving if they give short answers",
+        "If no PULL found: They won't buy right now - that's OK",
+        "If partial PULL: Dig deeper on missing components",
+        "If clear PULL: Move to pitch that fits their specific need",
       ],
     };
   }
@@ -371,15 +393,23 @@ Thanks for your time today, ${context.leadName}. Looking forward to continuing t
   }
 
   private static getDiscoveryQuestions(context: CallScriptContext): string[] {
-    const baseQuestions = [
-      `What's your biggest priority right now as ${context.leadTitle}?`,
-      `What challenges are you facing in ${context.leadIndustry || "your industry"} that keep you up at night?`,
-      `How are you currently handling [relevant business process]?`,
-      `What would need to change for you to consider a new approach?`,
-      `If you could wave a magic wand and fix one thing about your current situation, what would it be?`,
+    // PULL Framework Discovery Questions
+    // Each question targets a specific PULL component
+    const pullQuestions = [
+      // P = PROJECT: What's on their to-do list being prioritized NOW?
+      `"What specific initiative or project is driving this conversation? What are you trying to accomplish?"`,
+
+      // U = URGENCY: Why must they act NOW vs. later?
+      `"Of all the things you could focus on, why is this a priority right now? What's creating the pressure to act?"`,
+
+      // L = LIST: What options are they considering?
+      `"What have you tried or looked into so far? What other approaches are you considering?"`,
+
+      // L = LIMITATIONS: Why aren't current options good enough?
+      `"What's preventing you from just using what you have? What's missing or not working?"`,
     ];
 
-    return baseQuestions;
+    return pullQuestions;
   }
 
   private static getValuePropositions(context: CallScriptContext): string[] {

@@ -1,0 +1,297 @@
+{
+  "productContext": {
+    "productName": "Adrata Compliance Automation",
+    "productCategory": "compliance",
+    "dealSize": 100000,
+    "primaryProblem": "Companies need SOC 2, ISO 27001, HIPAA compliance but the process is manual, painful, and expensive",
+
+    "relevantRoles": [
+      "VP of Engineering",
+      "VP of Security",
+      "CISO",
+      "Head of Compliance",
+      "Director of Security",
+      "Director of IT",
+      "CTO",
+      "Director of Engineering"
+    ],
+
+    "projectKeywords": [
+      "SOC 2",
+      "SOC2",
+      "ISO 27001",
+      "HIPAA",
+      "compliance",
+      "security audit",
+      "information security",
+      "security certification",
+      "enterprise ready",
+      "enterprise customers"
+    ],
+
+    "relevantLeadershipTitles": [
+      "VP Security",
+      "VP Engineering",
+      "CISO",
+      "Head of Security",
+      "Director Security",
+      "CTO"
+    ],
+
+    "urgencyDrivers": [
+      "Enterprise customer requiring SOC 2",
+      "Series A/B funding requiring compliance",
+      "Upcoming security audit",
+      "Lost deal due to lack of compliance",
+      "Board mandate for security certification",
+      "New CISO hired",
+      "Rapid growth creating security gaps"
+    ],
+
+    "limitedCompetitors": [
+      "spreadsheets",
+      "manual processes",
+      "consultants only"
+    ],
+
+    "competitorTools": [
+      "Vanta",
+      "Drata",
+      "Secureframe",
+      "Laika",
+      "Thoropass"
+    ],
+
+    "strongMarkets": [
+      "Computer Software / SaaS",
+      "FinTech",
+      "Healthcare / HealthTech"
+    ],
+
+    "industryPainPatterns": {
+      "fintech": {
+        "strength": 85,
+        "evidence": "Financial regulations require SOC 2 Type II and often additional certifications",
+        "reasoning": "Can't serve financial institutions without compliance - creates immediate urgency"
+      },
+      "healthcare": {
+        "strength": 80,
+        "evidence": "HIPAA compliance is legally required for handling patient data",
+        "reasoning": "Regulatory requirement creates non-negotiable demand"
+      },
+      "saas": {
+        "strength": 75,
+        "evidence": "Enterprise customers require SOC 2 before signing contracts",
+        "reasoning": "Compliance is a sales blocker - direct revenue impact creates urgency"
+      }
+    }
+  },
+
+  "pullFramework": {
+    "typicalProjects": [
+      "Getting SOC 2 Type II certified",
+      "Achieving ISO 27001 certification",
+      "Becoming enterprise-ready for large customers",
+      "Scaling security processes for growth",
+      "Preparing for security audit"
+    ],
+
+    "urgencyDrivers": [
+      {
+        "driver": "Enterprise customer requiring SOC 2 to close deal",
+        "intensity": "high",
+        "timeframe": "30-90 days typically",
+        "discoveryQuestion": "Are there any deals waiting on your compliance certification?"
+      },
+      {
+        "driver": "Recent funding round with compliance requirements",
+        "intensity": "high",
+        "timeframe": "90-180 days post-funding",
+        "discoveryQuestion": "Did compliance come up during your recent funding discussions?"
+      },
+      {
+        "driver": "New CISO/Security leader hired",
+        "intensity": "medium",
+        "timeframe": "First 90 days of new role",
+        "discoveryQuestion": "What's driving the focus on security right now?"
+      },
+      {
+        "driver": "Upcoming renewal audit",
+        "intensity": "high",
+        "timeframe": "60-90 days before audit",
+        "discoveryQuestion": "When is your next audit cycle?"
+      }
+    ],
+
+    "directCompetitors": [
+      "Vanta",
+      "Drata",
+      "Secureframe",
+      "Laika",
+      "Thoropass"
+    ],
+
+    "indirectAlternatives": [
+      "Hiring a compliance consultant ($50-100K+)",
+      "Building an in-house compliance team",
+      "Using spreadsheets and manual processes",
+      "Hiring an auditor to do everything"
+    ],
+
+    "statusQuoOption": "Continue with manual processes and spreadsheets",
+
+    "competitorLimitations": [
+      {
+        "competitor": "Manual/Spreadsheets",
+        "limitations": [
+          "Doesn't scale with growth",
+          "Error-prone and time-consuming",
+          "No continuous monitoring",
+          "Evidence collection is painful"
+        ],
+        "differentiator": "Automated evidence collection and continuous monitoring"
+      },
+      {
+        "competitor": "Consultants only",
+        "limitations": [
+          "Very expensive ($50-100K+)",
+          "Point-in-time, not continuous",
+          "Knowledge leaves when they leave",
+          "Long timelines"
+        ],
+        "differentiator": "Automated platform with expert guidance at fraction of cost"
+      }
+    ],
+
+    "statusQuoLimitations": [
+      "Manual evidence collection takes 100+ hours",
+      "No visibility into compliance posture",
+      "Scrambling before every audit",
+      "Can't prove compliance to customers quickly",
+      "Security team burned out on compliance tasks"
+    ],
+
+    "qualifyingSignals": [
+      "Currently talking to enterprise customers",
+      "Recently raised funding",
+      "Hired or looking to hire security/compliance person",
+      "Lost a deal due to lack of SOC 2",
+      "Using spreadsheets for compliance tracking",
+      "Audit coming up in next 90 days"
+    ],
+
+    "disqualifyingSignals": [
+      "Very early stage (pre-revenue, no enterprise interest)",
+      "Already have mature compliance program",
+      "No plans for enterprise customers",
+      "No security-sensitive data",
+      "Budget not available for 12+ months"
+    ]
+  },
+
+  "discoveryQuestions": [
+    {
+      "question": "Before we dive in - what made you take this call today? What were you hoping to get out of it?",
+      "pullComponent": "project",
+      "purpose": "Understand their immediate priority",
+      "followUps": [
+        "Tell me more about that initiative...",
+        "How long has this been on your radar?",
+        "What would success look like?"
+      ],
+      "goodAnswer": "They mention SOC 2, enterprise customers, compliance certification, or security audit",
+      "badAnswer": "Just exploring, boss told me to take the call, no specific project"
+    },
+    {
+      "question": "Of all the things you could focus on right now, why is compliance a priority? What's driving the timing?",
+      "pullComponent": "urgency",
+      "purpose": "Understand why NOW",
+      "followUps": [
+        "What happens if you don't have this in place by [timeline]?",
+        "Are there deals waiting on this?",
+        "Who else is feeling this pressure?"
+      ],
+      "goodAnswer": "Enterprise deal waiting, audit coming up, board mandate, lost deal due to lack of compliance",
+      "badAnswer": "No specific timeline, nice to have, sometime next year"
+    },
+    {
+      "question": "What have you looked into so far? What approaches are you considering?",
+      "pullComponent": "list",
+      "purpose": "Understand their options",
+      "followUps": [
+        "What did you think of [competitor]?",
+        "Have you considered building this in-house?",
+        "What would you need from a consultant vs. a platform?"
+      ],
+      "goodAnswer": "They've evaluated Vanta/Drata, talked to consultants, understand the options",
+      "badAnswer": "Haven't looked at anything, this is the first call"
+    },
+    {
+      "question": "What's preventing you from just using spreadsheets or hiring a consultant to handle this?",
+      "pullComponent": "limitations",
+      "purpose": "Understand why alternatives aren't good enough",
+      "followUps": [
+        "How much time is your team spending on this today?",
+        "What's the cost of continuing with the current approach?",
+        "What would need to be different about a solution for it to work for you?"
+      ],
+      "goodAnswer": "Spreadsheets don't scale, consultants too expensive, need continuous compliance",
+      "badAnswer": "Current approach is working fine, no real pain"
+    }
+  ],
+
+  "markets": [
+    {
+      "name": "Computer Software / SaaS",
+      "industry": "Computer Software",
+      "characteristics": {
+        "b2b": true,
+        "highGrowth": true,
+        "techForward": true
+      },
+      "hiringSignalStrength": "high",
+      "fundingTransparency": "high",
+      "linkedinActivity": "high",
+      "estimatedCompanies": 50000
+    },
+    {
+      "name": "FinTech",
+      "industry": "Financial Technology",
+      "characteristics": {
+        "b2b": true,
+        "regulated": true,
+        "highGrowth": true,
+        "techForward": true
+      },
+      "hiringSignalStrength": "high",
+      "fundingTransparency": "high",
+      "linkedinActivity": "high",
+      "estimatedCompanies": 15000
+    },
+    {
+      "name": "Healthcare / HealthTech",
+      "industry": "Healthcare",
+      "characteristics": {
+        "b2b": true,
+        "regulated": true,
+        "highGrowth": true
+      },
+      "hiringSignalStrength": "high",
+      "fundingTransparency": "high",
+      "linkedinActivity": "high",
+      "estimatedCompanies": 20000
+    },
+    {
+      "name": "Information Technology",
+      "industry": "Information Technology and Services",
+      "characteristics": {
+        "b2b": true,
+        "techForward": true
+      },
+      "hiringSignalStrength": "high",
+      "fundingTransparency": "high",
+      "linkedinActivity": "high",
+      "estimatedCompanies": 100000
+    }
+  ]
+}

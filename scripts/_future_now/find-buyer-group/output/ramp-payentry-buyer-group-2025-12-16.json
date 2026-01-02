@@ -1,0 +1,99 @@
+{
+  "context": {
+    "seller": {
+      "name": "Ramp",
+      "website": "https://ramp.com",
+      "product": "Spend Management Platform",
+      "valueProposition": "Time is money. Save both. - Corporate cards, expense management, AP automation, and accounting automation.",
+      "keyMetrics": {
+        "customers": "50,000+",
+        "savings": "$2B+ saved for customers",
+        "timeSaved": "20M+ hours saved"
+      }
+    },
+    "buyer": {
+      "name": "PayEntry",
+      "legalName": "MPAY LLC DBA Payentry",
+      "website": "https://www.payentry.com",
+      "industry": "Payroll & Human Capital Management",
+      "founded": 1994,
+      "relevantContext": [
+        "Recent merger with Corporate Payroll Services (Sept 2025)",
+        "Partnership with California Trucking Association",
+        "Growing through M&A - needs scalable financial operations"
+      ]
+    },
+    "dealSize": 150000,
+    "generatedAt": "2025-12-16T19:07:41.025Z"
+  },
+  "buyerGroup": {
+    "totalMembers": 4,
+    "members": [
+      {
+        "name": "Cherrise Newman",
+        "title": "Vice President Operations",
+        "department": "Operations",
+        "role": "decision",
+        "roleConfidence": 100,
+        "roleReasoning": "Selected as Decision Maker for $150,000 deal: High product relevance (25%) and department fit (10/10) for sales software. CEO/President has ultimate budget authority for all company purchases.",
+        "email": "",
+        "phone": "+1 909-510-1305",
+        "linkedin": "https://www.linkedin.com/in/cherrise-newman-cpp-49702898",
+        "verified": false
+      },
+      {
+        "name": "Christina Thompson St. Clair",
+        "title": "Vice President Of Sales",
+        "department": "Sales",
+        "role": "champion",
+        "roleConfidence": 100,
+        "roleReasoning": "Selected as Introducer for relationship building: Sales professionals have strong internal networks and relationship skills. Strong network (500+ connections) enables internal introductions. Can facilitate connections between sales team and internal stakeholders.",
+        "email": "",
+        "phone": "",
+        "linkedin": "https://www.linkedin.com/in/christina-thompson-st-clair-1b32a2b6",
+        "verified": false
+      },
+      {
+        "name": "Jody Meredith",
+        "title": "Buisness Development Manager",
+        "department": "Sales",
+        "role": "champion",
+        "roleConfidence": 64,
+        "roleReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+        "email": "",
+        "phone": "",
+        "linkedin": "https://www.linkedin.com/in/jody-meredith-580b8446",
+        "verified": false
+      },
+      {
+        "name": "Steve A.",
+        "title": "Vice President",
+        "department": "C-Suite",
+        "role": "stakeholder",
+        "roleConfidence": 75,
+        "roleReasoning": "Added for technical coverage",
+        "email": "",
+        "phone": "+1 616-813-1078",
+        "linkedin": "https://www.linkedin.com/in/steve-a-066a585",
+        "verified": false
+      }
+    ]
+  },
+  "company": {
+    "name": "Payentry",
+    "website": "https://www.payentry.com",
+    "employeeCount": 83,
+    "industry": "Software Development"
+  },
+  "costs": {
+    "preview": 2,
+    "collect": 4,
+    "total": 6.02,
+    "email": 0,
+    "phone": 0.02
+  },
+  "metadata": {
+    "pipelineVersion": "1.0",
+    "workspaceId": "01KCM8MK2R9FZT7HN242PVN182"
+  }
+}
