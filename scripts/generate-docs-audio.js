@@ -65,6 +65,7 @@ const DOCS = [
   
   // Talks
   'docs/talks/software-era-of-ai.html',
+  'docs/talks/urgency-profits.html',
 ];
 
 // Extract text content from HTML
