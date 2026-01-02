@@ -15,38 +15,42 @@ const ELEVENLABS_API_KEY = '6cd0b1a66c70e335ae812cdc6e9ff5c23211f6e373de9dc5602f
 const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1';
 
 // Voice IDs - Using high-quality ElevenLabs voices
+// NOTE: Currently using single narrator voice for cohesive audiobook experience
+// TODO: Find character voices that better complement the narrator tone
+const NARRATOR_VOICE_ID = 'uf0ZrRtyyJlbbGIn43uD'; // Premium male audiobook voice
+
 const VOICES = {
   // Niko (Narrator) - User-selected premium voice for audiobook narration
   narrator: {
-    id: 'uf0ZrRtyyJlbbGIn43uD', // User-specified premium male voice
+    id: NARRATOR_VOICE_ID,
     name: 'Niko (Narrator)',
     description: 'First-person narrator, VP of Sales - premium audiobook voice'
   },
   
-  // Marco Valenti - CEO, authoritative commanding
+  // Marco Valenti - CEO (using narrator voice for now)
   marco: {
-    id: 'VR6AewLTigWG4xSOukaG', // "American Bold" - Strong, commanding American voice
+    id: NARRATOR_VOICE_ID, // TODO: Find commanding voice that matches narrator tone
     name: 'Marco Valenti',
     description: 'CEO, commanding presence'
   },
   
-  // Sofia Chen - CFO, professional female
+  // Sofia Chen - CFO (using narrator voice for now)
   sofia: {
-    id: 'EXAVITQu4vr4xnSDxMaL', // "American Friendly" - Soft, friendly voice
+    id: NARRATOR_VOICE_ID, // TODO: Find professional female voice that matches tone
     name: 'Sofia Chen',
     description: 'CFO, precise, data-driven'
   },
   
-  // Dr. Eli Voss - Physicist mentor, British professional
+  // Dr. Eli Voss - Physicist mentor (using narrator voice for now)
   eli: {
-    id: 'N2lVS1w4EtoT3dr4eOWO', // "British Professional" - Clear British diction
+    id: NARRATOR_VOICE_ID, // TODO: Find mentor voice that matches tone
     name: 'Dr. Eli Voss',
     description: 'Physicist turned consultant, Socratic wisdom'
   },
   
-  // Adrian Marchetti - Customer CTO, energetic
+  // Adrian Marchetti - Customer CTO (using narrator voice for now)
   adrian: {
-    id: 'TxGEqnHWrfWFTfGW9XjX', // "American Energetic" - Young, energetic American
+    id: NARRATOR_VOICE_ID, // TODO: Find energetic voice that matches tone
     name: 'Adrian Marchetti',
     description: 'Customer CTO, enthusiastic'
   }
