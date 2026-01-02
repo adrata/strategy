@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competition Is for Losers | Peter Thiel</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="Competition Is for Losers | Peter Thiel">
+    <meta property="og:description" content="Monopolies make money. Competitive markets don't. Peter Thiel on why the best businesses escape competition entirely.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+            --monopoly-green: #059669;
+            --competition-red: #dc2626;
+        }
+        body.dark-mode {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 8px; }
+        .author { font-size: 15px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+        .date { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h2:first-of-type { margin-top: 32px; border-top: none; padding-top: 0; }
+        h3 { font-size: 20px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .intro-box p { margin-bottom: 0; }
+        
+        .pull-quote { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px 32px; margin: 32px 0; font-size: 22px; font-weight: 500; line-height: 1.5; color: var(--text); }
+        
+        .key-insight { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 28px; border-radius: 12px; margin: 32px 0; }
+        .key-insight h3 { color: #fff; margin-top: 0; font-size: 20px; }
+        .key-insight p { color: rgba(255,255,255,0.9); margin-bottom: 0; }
+        
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0; }
+        @media (max-width: 600px) { .comparison-grid { grid-template-columns: 1fr; } }
+        
+        .comparison-card { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 24px; }
+        .comparison-card.monopoly { border-color: var(--monopoly-green); }
+        .comparison-card.competition { border-color: var(--competition-red); }
+        .comparison-card h4 { font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .comparison-card.monopoly h4 { color: var(--monopoly-green); }
+        .comparison-card.competition h4 { color: var(--competition-red); }
+        .comparison-card p { font-size: 15px; margin-bottom: 0; }
+        .comparison-card ul { margin: 12px 0 0 20px; font-size: 14px; }
+        .comparison-card li { margin-bottom: 6px; color: var(--text-muted); }
+        
+        .lie-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .lie-box h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
+        .lie-box p { font-size: 15px; margin-bottom: 0; }
+        .lie-example { background: var(--code-bg); padding: 16px; border-radius: 8px; margin-top: 12px; font-size: 14px; color: var(--text-muted); }
+        
+        .value-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        @media (max-width: 500px) { .value-comparison { grid-template-columns: 1fr; } }
+        .value-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+        .value-card .industry { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+        .value-card .metric { font-size: 32px; font-weight: 800; color: var(--accent); }
+        .value-card .label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        
+        .strategy-list { list-style: none; margin: 24px 0; }
+        .strategy-list li { padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 14px; }
+        .strategy-list .number { width: 28px; height: 28px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .strategy-list .content { flex: 1; }
+        .strategy-list h5 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+        .strategy-list p { font-size: 14px; margin: 0; color: var(--text-muted); }
+        
+        .last-mover-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+        @media (max-width: 600px) { .last-mover-grid { grid-template-columns: 1fr; } }
+        .last-mover-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+        .last-mover-card .company { font-size: 20px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+        .last-mover-card .desc { font-size: 12px; color: var(--text-muted); }
+        
+        .newsletter-widget { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; padding: 32px; margin: 48px 0; color: #fff; }
+        body.dark-mode .newsletter-widget { background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%); border: 1px solid #333; }
+        .newsletter-widget h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+        .newsletter-widget p { color: #ccc; font-size: 14px; margin-bottom: 20px; }
+        .newsletter-form { display: flex; gap: 12px; }
+        @media (max-width: 500px) { .newsletter-form { flex-direction: column; } }
+        .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid #444; border-radius: 8px; background: #111; color: #fff; font-size: 14px; }
+        .newsletter-form input::placeholder { color: #666; }
+        .newsletter-form button { background: var(--accent); border: none; padding: 14px 24px; border-radius: 8px; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .newsletter-form button:hover { background: #ff6d00; }
+        
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; }
+        
+        .share-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 14px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .share-btn svg { width: 14px; height: 14px; }
+        
+        @media (max-width: 600px) {
+            body { padding: 24px 16px; font-size: 16px; }
+            h1 { font-size: 32px; }
+            h2 { font-size: 24px; }
+            .audio-player { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <a href="../../" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Library
+    </a>
+    
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">External Article</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href).then(() => { this.innerHTML = '<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M20 6L9 17l-5-5\'/></svg> Copied!'; setTimeout(() => { this.innerHTML = '<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13\'/></svg> Share'; }, 2000); })">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                Share
+            </button>
+            <button class="theme-toggle" onclick="document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');">
+                <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
+    </div>
+    
+    <h1>Competition Is for Losers</h1>
+    <p class="subtitle">Why the best businesses escape competition entirely</p>
+    <p class="author">By Peter Thiel</p>
+    <p class="date">Stanford University Lecture</p>
+    
+    <div class="audio-player">
+        <button id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this article</div>
+            <div class="audio-status" id="audioStatus">Click to play</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu()">
+                <span id="speedLabel">1x</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(0.75)">0.75x</div>
+                <div class="speed-option active" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="intro-box">
+        <p>What does competition actually look like in the startup world? How can young businesses be competitive? And is our society's relationship with competition healthy? Peter Thiel, co-founder of PayPal and early investor in Facebook, answered these questions during his Stanford University lecture.</p>
+    </div>
+    
+    <h2>Creating Value vs. Capturing Value</h2>
+    
+    <p>Compare the airline industry to the search industry. By size, airlines seem more important. But look at profit margins, and the picture flips entirely.</p>
+    
+    <div class="value-comparison">
+        <div class="value-card">
+            <div class="industry">Airlines</div>
+            <div class="metric">~$200B</div>
+            <div class="label">Revenue (but razor-thin margins)</div>
+        </div>
+        <div class="value-card">
+            <div class="industry">Google</div>
+            <div class="metric">4x</div>
+            <div class="label">Market cap of all airlines combined</div>
+        </div>
+    </div>
+    
+    <p>Airlines make money, go bankrupt, get recapitalized, and repeat the cycle. The combined market capitalization of the entire airline industry is close to just a quarter of Google's. Even though search is a much smaller industry than air travel, it's actually more valuable.</p>
+    
+    <div class="pull-quote">
+        "You have to create something of value and capture some fraction of the value you've created."
+    </div>
+    
+    <p>This is the fundamental equation of business: <strong>creating value</strong> is not the same as <strong>capturing value</strong>. Airlines create enormous value for society. They just don't capture much of it.</p>
+    
+    <h2>The Binary World of Business</h2>
+    
+    <p>Thiel sees the business world as a binary. On one end: industries that are perfectly competitive. On the other end: monopolies. "There is shockingly little that is in between."</p>
+    
+    <div class="comparison-grid">
+        <div class="comparison-card monopoly">
+            <h4>Monopolies</h4>
+            <p>More stable, long-term businesses with more capital. If you get a creative monopoly for inventing something new, it often means you've created something really valuable.</p>
+            <ul>
+                <li>High profit margins</li>
+                <li>Pricing power</li>
+                <li>Long-term durability</li>
+                <li>Capital to reinvest</li>
+            </ul>
+        </div>
+        <div class="comparison-card competition">
+            <h4>Perfect Competition</h4>
+            <p>Easy to model and efficient in a static world. But perfect competition doesn't make money when a lot of competition is involved.</p>
+            <ul>
+                <li>All firms sell identical products</li>
+                <li>No one controls price</li>
+                <li>Small market shares</li>
+                <li>Freedom of entry and exit</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h2>The Lies We Tell</h2>
+    
+    <p>Both monopolies and non-monopolies are tempted to lie, but in opposite directions.</p>
+    
+    <div class="lie-box">
+        <h4>Monopolies Pretend to Have Lots of Competition</h4>
+        <p>They don't want the government to regulate them, so they won't call themselves a monopoly. They position themselves in expansive markets where there's "competition everywhere."</p>
+        <div class="lie-example">
+            <strong>Example:</strong> Google has 66% market share in search. But you'll never hear them describe themselves as a search engine. They call themselves an "advertising company" or a "technology company." The technology market is valued at close to $1 trillion, so suddenly they're competing with car companies, Apple, Microsoft, and Amazon.
+        </div>
+    </div>
+    
+    <div class="lie-box">
+        <h4>Non-Monopolies Pretend to Have No Competition</h4>
+        <p>Companies in highly competitive industries say they're doing something unique to attract capital. They define their market as narrowly as possible to seem like they have a monopoly.</p>
+        <div class="lie-example">
+            <strong>Example:</strong> A new restaurant (notoriously bad investments) rebrands as "the only British food restaurant in Palo Alto." That's too small of a market. But the way they talk about it, they seem to have a monopoly.
+        </div>
+    </div>
+    
+    <div class="key-insight">
+        <h3>The Distortion</h3>
+        <p>"In a world where monopolists pretend not to have monopolies and non-monopolies pretend to have monopolies, it seems like the difference between the two is very small. But in reality, the real difference is vast. These lies produce a distortion of the business world."</p>
+    </div>
+    
+    <h2>Go After Small Markets</h2>
+    
+    <p>If you're a startup, you want to have a monopoly. But how do you get there?</p>
+    
+    <ol class="strategy-list">
+        <li>
+            <span class="number">1</span>
+            <div class="content">
+                <h5>Start with a really small market</h5>
+                <p>The biggest mistake is going after a giant market from the get-go. That signifies you haven't defined categories correctly.</p>
+            </div>
+        </li>
+        <li>
+            <span class="number">2</span>
+            <div class="content">
+                <h5>Take over said market</h5>
+                <p>Dominate your niche completely before expanding.</p>
+            </div>
+        </li>
+        <li>
+            <span class="number">3</span>
+            <div class="content">
+                <h5>Expand in concentric circles</h5>
+                <p>Move into adjacent markets once you've won the first one.</p>
+            </div>
+        </li>
+    </ol>
+    
+    <p>Even Amazon started with just a bookstore. Their selling point was that they had all the books in the world for sale online. After they established themselves as a bookstore, they expanded into different types of e-commerce.</p>
+    
+    <div class="pull-quote">
+        "You don't want to be the fourth online pet food company. You don't want to be the tenth solar panel company. All unhappy companies are alike because they failed to escape the essential sameness in competition."
+    </div>
+    
+    <h2>Last Mover Advantage</h2>
+    
+    <p>Thiel disagrees with Silicon Valley's notion that you need to be the first mover. Instead, you need to be the <strong>best</strong> and the <strong>last</strong>.</p>
+    
+    <div class="last-mover-grid">
+        <div class="last-mover-card">
+            <div class="company">Microsoft</div>
+            <div class="desc">Last operating system (for decades)</div>
+        </div>
+        <div class="last-mover-card">
+            <div class="company">Google</div>
+            <div class="desc">Last search engine</div>
+        </div>
+        <div class="last-mover-card">
+            <div class="company">Facebook</div>
+            <div class="desc">Last social network</div>
+        </div>
+    </div>
+    
+    <p>Why do last movers succeed? Because most of the value in these companies exists far in the future.</p>
+    
+    <p>When Thiel was at PayPal in 2001, they were growing at 100% per year. But three quarters of the business value as of 2001 came from cash flows in 2011 and beyond. For companies like Airbnb, Twitter, and Facebook, the math says 85% of value comes from cash flows in 2024 and beyond.</p>
+    
+    <div class="key-insight">
+        <h3>Durability Over Growth</h3>
+        <p>We need to stop overvaluing growth and undervaluing durability. Everybody wants a eureka moment. But unless your breakthrough is the final breakthrough, you won't last. You need to think about who will be the leading company 10 to 20 years from now.</p>
+    </div>
+    
+    <h2>Why Competition Is for "Losers"</h2>
+    
+    <p>Not every successful invention makes the inventor rich. Scientists are seldom adequately rewarded for their advances. Einstein wasn't a billionaire.</p>
+    
+    <p>The rationale is that scientists aren't interested in money. But Thiel questions this: if people at Twitter make billions, does that mean Twitter is worth more than anything Einstein did? This type of rationalization is dangerous.</p>
+    
+    <div class="pull-quote">
+        "We think of losers as people who are slow on the track team or don't get into the right schools. But maybe the competition itself is off. It's no longer a form of validation."
+    </div>
+    
+    <p>Thiel sees competition as both an intellectual and psychological blind spot. We're attracted to competition. We find it reassuring when other people do things. This is problematic.</p>
+    
+    <h3>Thiel's Personal Story</h3>
+    
+    <p>In eighth grade, a friend wrote in his yearbook: "I know you're going to get into Stanford." He did, attending Stanford Law School, then ending up at a big New York law firm.</p>
+    
+    <p>"From the outside everybody wanted to get in, and on the inside everybody wanted to leave."</p>
+    
+    <p>He left after seven months. His colleagues applauded him, even though for him it was a simple choice.</p>
+    
+    <div class="key-insight">
+        <h3>The Core Insight</h3>
+        <p>"So much of people's identities got wrapped up in winning these competitions that they somehow lost sight of what was important, what was valuable."</p>
+    </div>
+    
+    <h2>Key Takeaways for Sales Leaders</h2>
+    
+    <ol class="strategy-list">
+        <li>
+            <span class="number">1</span>
+            <div class="content">
+                <h5>Creating value is not capturing value</h5>
+                <p>Your product might be incredibly valuable. The question is: can you capture the value you create, or does competition give it all away?</p>
+            </div>
+        </li>
+        <li>
+            <span class="number">2</span>
+            <div class="content">
+                <h5>Define your market honestly</h5>
+                <p>If you're a monopoly, don't advertise it. If you're in a competitive market, don't pretend you have a monopoly.</p>
+            </div>
+        </li>
+        <li>
+            <span class="number">3</span>
+            <div class="content">
+                <h5>Dominate small markets first</h5>
+                <p>Own your niche completely, then expand. Going after big markets too early means too much competition.</p>
+            </div>
+        </li>
+        <li>
+            <span class="number">4</span>
+            <div class="content">
+                <h5>Be the last, not the first</h5>
+                <p>First mover advantage is overrated. What matters is being the best and most durable.</p>
+            </div>
+        </li>
+        <li>
+            <span class="number">5</span>
+            <div class="content">
+                <h5>Question competition itself</h5>
+                <p>Don't assume competition validates your path. Sometimes the tournament doesn't make sense.</p>
+            </div>
+        </li>
+    </ol>
+    
+    <div class="newsletter-widget">
+        <h3>Adrata Intelligence</h3>
+        <p>Strategic insights on building monopoly-like market positions, delivered weekly.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').innerHTML = 'Subscribed!'; this.querySelector('input').value = '';">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit">
+                Subscribe
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        // Theme initialization
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        
+        let audio = null;
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        let isPlaying = false;
+        let currentSpeed = 1;
+        let useWebSpeech = false;
+        
+        const MP3_URL = 'competition-is-for-losers.mp3';
+        
+        function toggleAudio() {
+            if (!audio && !useWebSpeech) {
+                audio = new Audio(MP3_URL);
+                audio.playbackRate = currentSpeed;
+                
+                audio.addEventListener('canplaythrough', () => {
+                    audio.play();
+                    isPlaying = true;
+                    updateUI();
+                });
+                
+                audio.addEventListener('error', () => {
+                    audio = null;
+                    useWebSpeech = true;
+                    startWebSpeech();
+                });
+                
+                audio.addEventListener('ended', () => {
+                    isPlaying = false;
+                    updateUI();
+                });
+                
+                audio.addEventListener('timeupdate', () => {
+                    const mins = Math.floor(audio.currentTime / 60);
+                    const secs = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+                    document.getElementById('audioStatus').textContent = `${mins}:${secs}`;
+                });
+                
+                audio.load();
+                document.getElementById('audioStatus').textContent = 'Loading...';
+                return;
+            }
+            
+            if (useWebSpeech) {
+                if (isPlaying) {
+                    synth.cancel();
+                    isPlaying = false;
+                } else {
+                    startWebSpeech();
+                }
+            } else if (audio) {
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                } else {
+                    audio.play();
+                    isPlaying = true;
+                }
+            }
+            updateUI();
+        }
+        
+        function startWebSpeech() {
+            const text = document.body.innerText.substring(0, 10000);
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = currentSpeed;
+            utterance.onend = () => { isPlaying = false; updateUI(); };
+            synth.speak(utterance);
+            isPlaying = true;
+            document.getElementById('audioStatus').textContent = 'Using browser voice';
+            updateUI();
+        }
+        
+        function updateUI() {
+            const btn = document.getElementById('playBtn');
+            if (isPlaying) {
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#e65100"/><rect x="14" y="4" width="4" height="16" fill="#e65100"/></svg>';
+            } else {
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#e65100"/></svg>';
+            }
+        }
+        
+        function toggleSpeedMenu() {
+            document.getElementById('speedMenu').classList.toggle('open');
+        }
+        
+        function setSpeed(speed) {
+            currentSpeed = speed;
+            document.getElementById('speedLabel').textContent = speed + 'x';
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            if (audio) audio.playbackRate = speed;
+            if (utterance) utterance.rate = speed;
+            toggleSpeedMenu();
+        }
+        
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.speed-dropdown')) {
+                document.getElementById('speedMenu').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
+
