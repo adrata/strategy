@@ -128,7 +128,7 @@ Required environment variables:
 
 ## Database Schema
 
-Uses `prisma/schema-streamlined.prisma` with:
+Uses `prisma/schema.prisma` with:
 - `BuyerGroups`: Main buyer group records
 - `BuyerGroupMembers`: Individual member records
 - `people`: Enhanced with buyer group role fields

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #0a0512 0%, #150a20 100%);
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .glow {
+      position: absolute;
+      top: -200px;
+      right: -100px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #9c27b0 0%, transparent 70%);
+      opacity: 0.15;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 40px;
+      letter-spacing: 0.05em;
+    }
+    h1 {
+      font-size: 64px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+    }
+    h1 span { color: #ce93d8; }
+    p {
+      font-size: 28px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 32px;
+      max-width: 700px;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="logo">ADRATA</div>
+  <h1>Their Product Is Worse. Their <span>Win Rate</span> Is Better.</h1>
+  <p>They're finding the buyer first. See what they know that your team doesn't.</p>
+</body>
+</html>
+

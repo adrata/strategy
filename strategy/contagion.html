@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagion | 150+ Psychological Growth Tactics</title>
+    <link rel="icon" type="image/x-icon" href="favicon.svg">
+    <meta property="og:title" content="Contagion | User Growth Hacking">
+    <meta property="og:description" content="Turn One User Into Many — With Science. 150+ psychological growth tactics for viral growth.">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: #fff; color: #1a1a1a; line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        .audio-player { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #e65100; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #ff6d00; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #fff; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.7; }
+        .audio-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; }
+        .audio-select option { color: #333; }
+        .readable-content span.word { cursor: pointer; border-radius: 2px; transition: background 0.15s; }
+        .readable-content span.word:hover { background: rgba(230, 81, 0, 0.08); }
+        .readable-content span.word.speaking { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: #fff; padding: 2px 4px; margin: 0 -4px; border-radius: 3px; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3); }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #e65100; margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: #666; margin-bottom: 32px; }
+        .hero-quote { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); color: #fff; padding: 24px; border-radius: 8px; margin: 24px 0; }
+        .hero-quote blockquote { font-size: 18px; font-style: italic; margin-bottom: 8px; }
+        .hero-quote cite { font-style: normal; font-size: 14px; opacity: 0.8; }
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid #eee; }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: #333; }
+        p { margin-bottom: 16px; color: #333; }
+        .viral-equation { background: #fff5f0; border-left: 4px solid #e65100; padding: 20px; margin: 24px 0; font-family: monospace; font-size: 15px; }
+        .viral-equation strong { color: #e65100; }
+        .tactic { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 16px; margin: 12px 0; }
+        .tactic-name { font-weight: 700; color: #e65100; margin-bottom: 4px; }
+        .tactic-desc { font-size: 14px; color: #444; }
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        th { background: #1a1a1a; color: #fff; padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+        .section-card { background: #f8f8f8; padding: 16px; border-radius: 8px; }
+        .section-card h4 { margin-top: 0; color: #e65100; }
+        .priority-tier { background: #e65100; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 8px; }
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 6px; }
+        .insight { background: #fff5f0; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid #e65100; }
+    </style>
+</head>
+<body>
+
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this document</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <select class="audio-select" id="speedSelect" onchange="setSpeed(this.value)">
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+    </select>
+</div>
+
+<div class="readable-content" id="content">
+<div class="doc-type">VP Sales</div>
+<h1>Contagion</h1>
+<div class="subtitle">150+ Psychological Growth Tactics — Turn One User Into Many</div>
+
+<div class="hero-quote">
+    <blockquote>"The end goal of every growth hacker is to build a self-perpetuating marketing machine that reaches millions by itself."</blockquote>
+    <cite>— Ryan Holiday</cite>
+</div>
+
+<div class="viral-equation">
+    <strong>THE VIRAL EQUATION</strong><br><br>
+    K &gt; 1.0 = Viral (each user brings more than one)<br>
+    Target: <strong>25%</strong> invite rate × <strong>40%</strong> accept rate<br><br>
+    <strong>K = invite rate × accept rate × users per invite</strong>
+</div>
+
+<div class="insight">
+    <strong>WHY VP SALES IS DIFFERENT:</strong> Average tenure 17-19 months. Only 43% hit quota. They share what helps them survive. Growth must feel like GAINING insight, not being marketed to.
+</div>
+
+<h2>Section 1: Viral Loops</h2>
+
+<div class="tactic"><div class="tactic-name">Personal Referral Links</div><div class="tactic-desc">Every user gets unique URL. Show "X referrals to next reward" to accelerate invites (Goal Gradient).</div></div>
+<div class="tactic"><div class="tactic-name">Two-Sided Rewards</div><div class="tactic-desc">"Your colleague gets 20% off, you get Pipeline Score unlock." Exploits Reciprocity.</div></div>
+<div class="tactic"><div class="tactic-name">Invite-to-Unlock</div><div class="tactic-desc">Free tier gets 3 diagnostics. Invite 2 colleagues = unlock 5 more (Partial Unlock psychology).</div></div>
+<div class="tactic"><div class="tactic-name">Waitlist Jump</div><div class="tactic-desc">"Move from #847 to #12 by referring 3 friends." Scarcity + Endowed Progress + Goal Gradient.</div></div>
+<div class="tactic"><div class="tactic-name">Job Change Detection</div><div class="tactic-desc">Reps change jobs every 18-24 months. Detect LinkedIn changes: "Bring your Score to your new role!"</div></div>
+
+<h2>Section 2: Shareable Outputs</h2>
+
+<div class="tactic"><div class="tactic-name">Pipeline Exposure Score Card</div><div class="tactic-desc">Beautiful visual with their score vs benchmark. "Powered by [Brand]" footer. Designed for LinkedIn.</div></div>
+<div class="tactic"><div class="tactic-name">Win Celebration Cards</div><div class="tactic-desc">Auto-generate "I closed a $X deal!" cards for LinkedIn. One-click share.</div></div>
+<div class="tactic"><div class="tactic-name">Weekly Stats Cards</div><div class="tactic-desc">"47 calls, 12 meetings, $120K pipeline added" — shareable like Spotify Wrapped.</div></div>
+<div class="tactic"><div class="tactic-name">Achievement Badges</div><div class="tactic-desc">"100 Deals Analyzed" — shareable badges. Pseudo-Set Framing—collect the full set.</div></div>
+
+<h2>Section 3: "Powered By" Everywhere</h2>
+
+<div class="section-grid">
+    <div class="section-card"><h4>Document Footer</h4><p style="font-size: 14px; margin-bottom: 0;">Every external doc has "Powered by [Brand]" with link.</p></div>
+    <div class="section-card"><h4>Export Watermarks</h4><p style="font-size: 14px; margin-bottom: 0;">Free tier exports have small watermark. Paid removes it.</p></div>
+    <div class="section-card"><h4>Calendar Booking</h4><p style="font-size: 14px; margin-bottom: 0;">Scheduling confirmations show branding.</p></div>
+    <div class="section-card"><h4>Meeting Notes</h4><p style="font-size: 14px; margin-bottom: 0;">Auto-generated summaries have footer.</p></div>
+</div>
+
+<h2>Section 4: Free Tools (Prosumer)</h2>
+
+<div class="section-grid">
+    <div class="section-card"><h4>Pipeline Score Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">5 questions → score. Partial Unlock.</p></div>
+    <div class="section-card"><h4>ROI Calculator</h4><p style="font-size: 14px; margin-bottom: 0;">Their numbers = IKEA Effect ownership.</p></div>
+    <div class="section-card"><h4>AI Cold Email Writer</h4><p style="font-size: 14px; margin-bottom: 0;">Free tier has branding on output.</p></div>
+    <div class="section-card"><h4>Chrome Extension</h4><p style="font-size: 14px; margin-bottom: 0;">Shows intel on any website. Every browse = exposure.</p></div>
+</div>
+
+<h2>Section 5: Gamification</h2>
+
+<div class="tactic"><div class="tactic-name">Daily Streaks</div><div class="tactic-desc">Duolingo-style. Loss Aversion—don't break the streak.</div></div>
+<div class="tactic"><div class="tactic-name">XP and Levels</div><div class="tactic-desc">Earn XP for activities. Level up unlocks features.</div></div>
+<div class="tactic"><div class="tactic-name">Random Reward Drops</div><div class="tactic-desc">Variable Rewards—unpredictability increases engagement.</div></div>
+
+<h2>Archetype-Specific Growth</h2>
+
+<table>
+    <tr><th>Archetype</th><th>Why They Share</th><th>Best Tactics</th></tr>
+    <tr><td>Anxious Elite</td><td>Validates expertise</td><td>Certification, Advisory Board</td></tr>
+    <tr><td>Worried Darling</td><td>Private recommendations</td><td>Private groups, 1:1 referrals</td></tr>
+    <tr><td>Stressed Performer</td><td>Proves their case</td><td>Benchmark reports, ROI calculators</td></tr>
+    <tr><td>Panicking Star</td><td>Speed of solution</td><td>Win cards, Speed badges</td></tr>
+    <tr><td>Hungry Underdog</td><td>Secret weapon found</td><td>David vs Goliath content</td></tr>
+</table>
+
+<h2>Implementation Priority</h2>
+
+<div style="margin: 24px 0;">
+    <div class="priority-tier">TIER 1: WEEK 1-2</div>
+    <ul><li>Share buttons everywhere</li><li>"Powered by" footer</li><li>Referral link in onboarding</li><li>Confetti on milestones</li></ul>
+</div>
+
+<div style="margin: 24px 0;">
+    <div class="priority-tier">TIER 2: WEEK 3-6</div>
+    <ul><li>Two-sided referral program</li><li>Win celebration cards</li><li>Pipeline Score free tool</li></ul>
+</div>
+
+<div class="insight">
+    <strong>THE GROWTH EQUATION</strong><br>
+    Growth = (Value Delivered × Shareability × Triggers) / Friction
+</div>
+</div><!-- end readable-content -->
+
+<script>
+let utterance = null;
+let isPlaying = false;
+let isPaused = false;
+let currentSpeed = 1;
+let wordSpans = [];
+let currentWordIndex = 0;
+let pausedAtIndex = 0;
+
+function prepareContent() {
+    const content = document.getElementById('content');
+    const elements = content.querySelectorAll('p, li, td, blockquote, .tactic-desc');
+    elements.forEach(el => {
+        if (el.dataset.processed) return;
+        el.dataset.processed = 'true';
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+        const textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+        textNodes.forEach(node => {
+            const words = node.textContent.split(/(\s+)/);
+            const fragment = document.createDocumentFragment();
+            words.forEach(word => {
+                if (word.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'word';
+                    span.textContent = word;
+                    span.onclick = (e) => { e.stopPropagation(); startFromWord(span); };
+                    fragment.appendChild(span);
+                    wordSpans.push(span);
+                } else {
+                    fragment.appendChild(document.createTextNode(word));
+                }
+            });
+            node.parentNode.replaceChild(fragment, node);
+        });
+    });
+}
+
+function getBestVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = ['Samantha', 'Alex', 'Ava', 'Karen', 'Daniel', 'Google US', 'Google UK'];
+    for (const name of preferred) {
+        const match = voices.find(v => v.name.includes(name));
+        if (match) return match;
+    }
+    return voices.find(v => v.lang.startsWith('en')) || voices[0];
+}
+
+function getTextFromIndex(startIndex) {
+    return wordSpans.slice(startIndex).map(s => s.textContent).join(' ');
+}
+
+function highlightWord(index) {
+    wordSpans.forEach(s => s.classList.remove('speaking'));
+    if (index >= 0 && index < wordSpans.length) {
+        const span = wordSpans[index];
+        span.classList.add('speaking');
+        span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        currentWordIndex = index;
+    }
+}
+
+function startFromWord(span) {
+    const index = wordSpans.indexOf(span);
+    if (index === -1) return;
+    currentWordIndex = index;
+    pausedAtIndex = index;
+    window.speechSynthesis.cancel();
+    isPaused = false;
+    const text = getTextFromIndex(index);
+    utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = currentSpeed;
+    utterance.voice = getBestVoice();
+    utterance.onboundary = (event) => {
+        if (event.name === 'word') {
+            highlightWord(currentWordIndex);
+            currentWordIndex++;
+        }
+    };
+    utterance.onend = () => {
+        isPlaying = false;
+        isPaused = false;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Finished';
+        wordSpans.forEach(s => s.classList.remove('speaking'));
+        currentWordIndex = 0;
+    };
+    window.speechSynthesis.speak(utterance);
+    isPlaying = true;
+    document.getElementById('playIcon').style.display = 'none';
+    document.getElementById('pauseIcon').style.display = 'block';
+    document.getElementById('audioStatus').textContent = 'Playing... click any word to jump';
+}
+
+function toggleAudio() {
+    if (isPlaying && !isPaused) {
+        window.speechSynthesis.pause();
+        isPaused = true;
+        pausedAtIndex = currentWordIndex;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused - click to resume';
+    } else if (isPaused) {
+        window.speechSynthesis.resume();
+        isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing... click any word to jump';
+    } else {
+        const startIndex = pausedAtIndex > 0 ? pausedAtIndex : 0;
+        startFromWord(wordSpans[startIndex] || wordSpans[0]);
+    }
+}
+
+function setSpeed(speed) {
+    currentSpeed = parseFloat(speed);
+    if (isPlaying) {
+        const restartIndex = currentWordIndex;
+        window.speechSynthesis.cancel();
+        isPaused = false;
+        setTimeout(() => startFromWord(wordSpans[restartIndex] || wordSpans[0]), 100);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    prepareContent();
+    document.body.addEventListener('click', (e) => {
+        if (e.target.closest('.audio-player') || e.target.closest('.word') || e.target.closest('a') || e.target.closest('button') || e.target.closest('select')) return;
+        toggleAudio();
+    });
+});
+
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+</script>
+</body>
+</html>
+

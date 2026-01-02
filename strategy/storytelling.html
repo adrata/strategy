@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storytelling | Hook → Story → Offer</title>
+    <link rel="icon" type="image/x-icon" href="favicon.svg">
+    <meta property="og:title" content="Storytelling | Hook → Story → Offer">
+    <meta property="og:description" content="The Science of Stories That Convert. Master the frameworks used by Russell Brunson and Donald Miller.">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: #fff; color: #1a1a1a; line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        .audio-player { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player button { background: #e65100; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player button:hover { background: #ff6d00; transform: scale(1.05); }
+        .audio-player button svg { width: 20px; height: 20px; fill: #fff; margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.7; }
+        .audio-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; }
+        .audio-select option { color: #333; }
+        .readable-content span.word { cursor: pointer; border-radius: 2px; transition: background 0.15s; }
+        .readable-content span.word:hover { background: rgba(230, 81, 0, 0.08); }
+        .readable-content span.word.speaking { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: #fff; padding: 2px 4px; margin: 0 -4px; border-radius: 3px; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3); }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #e65100; margin-bottom: 8px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: #666; margin-bottom: 24px; }
+        .hero-quote { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); color: #fff; padding: 32px; border-radius: 8px; margin: 32px 0 48px; }
+        .hero-quote blockquote { font-size: 18px; font-style: italic; line-height: 1.6; margin-bottom: 12px; }
+        .hero-quote cite { font-style: normal; font-weight: 600; font-size: 14px; opacity: 0.8; }
+        h2 { font-size: 28px; font-weight: 700; margin: 64px 0 16px; padding-top: 32px; border-top: 1px solid #eee; }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: #333; }
+        h4 { font-size: 16px; font-weight: 700; margin: 24px 0 8px; color: #555; }
+        p { margin-bottom: 16px; color: #333; }
+        .core-truth { background: #fff5f0; border-left: 4px solid #e65100; padding: 24px; margin: 24px 0; }
+        .core-truth h4 { color: #e65100; margin-top: 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
+        .stat { background: #f8f8f8; padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 32px; font-weight: 800; color: #e65100; }
+        .stat-label { font-size: 13px; color: #666; margin-top: 4px; }
+        .framework { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .framework-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #e65100; margin-bottom: 16px; }
+        .hook-type { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px; margin: 12px 0; }
+        .hook-name { font-weight: 700; color: #e65100; margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        th { background: #1a1a1a; color: #fff; padding: 12px 16px; text-align: left; font-weight: 600; }
+        td { padding: 12px 16px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .story-shape { background: #fff; border: 2px solid #e65100; border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .shape-title { font-size: 18px; font-weight: 700; color: #e65100; margin-bottom: 8px; }
+        .shape-arc { font-size: 14px; color: #666; font-style: italic; margin-bottom: 16px; }
+        .vp-story { background: #f5f5f5; padding: 20px; border-radius: 6px; margin: 16px 0; font-style: italic; color: #444; line-height: 1.8; }
+        .best-for { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .archetype-tag { background: #e65100; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .script { background: #1a1a1a; color: #fff; padding: 24px; border-radius: 8px; margin: 24px 0; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
+        .script-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #e65100; margin-bottom: 12px; }
+        .checklist { background: #f8f8f8; padding: 24px; border-radius: 8px; margin: 24px 0; }
+        .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; }
+        .check-box { width: 20px; height: 20px; border: 2px solid #e65100; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+        .ultimate-test { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); color: #fff; padding: 32px; border-radius: 8px; margin: 48px 0; text-align: center; }
+        .ultimate-test h3 { color: #fff; margin-bottom: 16px; }
+        .ultimate-test p { color: rgba(255,255,255,0.9); max-width: 600px; margin: 0 auto; }
+        .end-quote { text-align: center; padding: 48px 0; border-top: 1px solid #eee; margin-top: 48px; }
+        .end-quote blockquote { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+        ul { margin-left: 24px; margin-bottom: 24px; }
+        li { margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+<div class="audio-player">
+    <button id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this document</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <select class="audio-select" id="speedSelect" onchange="setSpeed(this.value)">
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+    </select>
+</div>
+
+<div class="readable-content" id="content">
+<div class="doc-type">VP Sales</div>
+<h1>Storytelling</h1>
+<div class="subtitle">Hook → Story → Offer</div>
+<p style="font-size: 18px; color: #666;">The Science of Stories That Convert</p>
+
+<div class="hero-quote">
+    <blockquote>"Stories are the keys to belief. If I can identify people's false beliefs and tell stories that show them the truth, I don't need to sell them anything."</blockquote>
+    <cite>— Russell Brunson</cite>
+</div>
+
+<div class="core-truth">
+    <h4>THE CORE TRUTH</h4>
+    <p style="margin-bottom: 0;">People don't buy logically. They buy emotionally, then justify with logic. Your story creates the emotional experience that shifts belief.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat"><div class="stat-number">5%</div><div class="stat-label">Remember statistics</div></div>
+    <div class="stat"><div class="stat-number">63%</div><div class="stat-label">Remember stories</div></div>
+    <div class="stat"><div class="stat-number">7</div><div class="stat-label">Brain regions activated</div></div>
+    <div class="stat"><div class="stat-number">8.4x</div><div class="stat-label">More likely to pay premium</div></div>
+</div>
+
+<h2>Part 1: The Master Framework</h2>
+<h3>HOOK → STORY → OFFER</h3>
+
+<div class="hook-type"><div class="hook-name">CURIOSITY HOOK</div><p style="margin-bottom: 0;">"The one thing killing your pipeline that nobody's talking about."</p></div>
+<div class="hook-type"><div class="hook-name">EMPATHY HOOK</div><p style="margin-bottom: 0;">"You're hitting your calls. Your team is working. But the deals keep slipping."</p></div>
+<div class="hook-type"><div class="hook-name">PROMISE HOOK</div><p style="margin-bottom: 0;">"How one VP went from 67% to 112% in 90 days without hiring."</p></div>
+
+<table>
+    <tr><th>Story Element</th><th>What It Does</th></tr>
+    <tr><td><strong>BACKSTORY</strong></td><td>Show you were once like them</td></tr>
+    <tr><td><strong>THE WALL</strong></td><td>The obstacle that stopped them</td></tr>
+    <tr><td><strong>EPIPHANY</strong></td><td>The aha moment (the CORE)</td></tr>
+    <tr><td><strong>THE PLAN</strong></td><td>What they did next</td></tr>
+    <tr><td><strong>ACHIEVEMENT</strong></td><td>The external result</td></tr>
+    <tr><td><strong>TRANSFORMATION</strong></td><td>The internal change</td></tr>
+</table>
+
+<h2>Part 2: The 6 Story Shapes</h2>
+
+<div class="story-shape">
+    <div class="shape-title">MAN IN HOLE (Fall → Rise)</div>
+    <div class="shape-arc">Things are okay → something goes wrong → they climb out better than before</div>
+    <div class="vp-story">"Marcus was killing it—President's Club two years straight. Then he took the VP role. Six months in, 71% of quota. His best rep quit. Then he discovered the pattern: 80% of deals slipping because he couldn't see the buying committee. Once he mapped stakeholders, Q3: 118%."</div>
+    <div class="best-for"><span class="archetype-tag">Stressed Performer</span><span class="archetype-tag">Desperate Hitter</span></div>
+</div>
+
+<div class="story-shape">
+    <div class="shape-title">CINDERELLA (Rise → Fall → Rise)</div>
+    <div class="shape-arc">Starts low → gets a gift → loses everything → rises higher than before</div>
+    <div class="vp-story">"Sarah came from nothing. SDR to AE to VP in 8 years. Then the market turned. One quarter away from being let go. Rock bottom. That's when she rebuilt everything—new process, new tools. Not only did she survive, she became the case study."</div>
+    <div class="best-for"><span class="archetype-tag">Rebuilding Leader</span><span class="archetype-tag">Worried Darling</span></div>
+</div>
+
+<h2>Part 3: StoryBrand — You Are the Guide</h2>
+<p><strong>Donald Miller:</strong> "Customers aren't looking for another hero. They're looking for a guide." You are Yoda. They are Luke.</p>
+
+<table>
+    <tr><th>Element</th><th>VP Sales Application</th></tr>
+    <tr><td>A Character</td><td>VP wants to hit number and keep their job</td></tr>
+    <tr><td>Has a Problem</td><td>Pipeline keeps slipping, can't see why</td></tr>
+    <tr><td>Meets a Guide</td><td>YOU appear with empathy + authority</td></tr>
+    <tr><td>Who Gives Plan</td><td>3-step process to fix pipeline visibility</td></tr>
+    <tr><td>Calls to Action</td><td>"Book your Pipeline Score call"</td></tr>
+    <tr><td>Helps Avoid Failure</td><td>Miss number, lose job, start over</td></tr>
+    <tr><td>Ends in Success</td><td>Hit 120%, President's Club, job security</td></tr>
+</table>
+
+<h2>Part 4: Breaking False Beliefs</h2>
+
+<div class="framework">
+    <div class="framework-title">The Belief-Breaking Formula</div>
+    <p><strong>Step 1:</strong> Name their false belief ("You probably think...")</p>
+    <p><strong>Step 2:</strong> Validate it ("I thought the same thing...")</p>
+    <p><strong>Step 3:</strong> Tell the Epiphany Bridge story ("Until I discovered...")</p>
+    <p style="margin-bottom: 0;"><strong>Step 4:</strong> Introduce the new belief ("Now I know that...")</p>
+</div>
+
+<h2>Part 5: Scripts</h2>
+
+<h3>Cold Outreach (60 seconds)</h3>
+<div class="script"><div class="script-label">Script</div>"Quick question: Do you know your pipeline's real exposure score?
+
+We just worked with a VP at [similar company] who thought their pipeline was healthy. Turns out 43% of their 'committed' deals had hidden blockers. Once they could see it—went from 78% to 114% in one quarter.
+
+I built a 5-minute diagnostic that shows your exposure. Worth a look?"</div>
+
+<div class="ultimate-test">
+    <h3>THE ULTIMATE TEST</h3>
+    <p>If you can tell your story and the listener says, "That sounds exactly like me," you've won. Stories don't convince. They resonate.</p>
+</div>
+
+<div class="end-quote">
+    <blockquote>"The one who tells the best story wins."</blockquote>
+    <cite>— Russell Brunson</cite>
+</div>
+</div><!-- end readable-content -->
+
+<script>
+let utterance = null;
+let isPlaying = false;
+let isPaused = false;
+let currentSpeed = 1;
+let wordSpans = [];
+let currentWordIndex = 0;
+let pausedAtIndex = 0;
+
+function prepareContent() {
+    const content = document.getElementById('content');
+    const elements = content.querySelectorAll('p, li, td, blockquote, .vp-story');
+    elements.forEach(el => {
+        if (el.dataset.processed) return;
+        el.dataset.processed = 'true';
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+        const textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+        textNodes.forEach(node => {
+            const words = node.textContent.split(/(\s+)/);
+            const fragment = document.createDocumentFragment();
+            words.forEach(word => {
+                if (word.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'word';
+                    span.textContent = word;
+                    span.onclick = (e) => { e.stopPropagation(); startFromWord(span); };
+                    fragment.appendChild(span);
+                    wordSpans.push(span);
+                } else {
+                    fragment.appendChild(document.createTextNode(word));
+                }
+            });
+            node.parentNode.replaceChild(fragment, node);
+        });
+    });
+}
+
+function getBestVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = ['Samantha', 'Alex', 'Ava', 'Karen', 'Daniel', 'Google US', 'Google UK'];
+    for (const name of preferred) {
+        const match = voices.find(v => v.name.includes(name));
+        if (match) return match;
+    }
+    return voices.find(v => v.lang.startsWith('en')) || voices[0];
+}
+
+function getTextFromIndex(startIndex) {
+    return wordSpans.slice(startIndex).map(s => s.textContent).join(' ');
+}
+
+function highlightWord(index) {
+    wordSpans.forEach(s => s.classList.remove('speaking'));
+    if (index >= 0 && index < wordSpans.length) {
+        const span = wordSpans[index];
+        span.classList.add('speaking');
+        span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        currentWordIndex = index;
+    }
+}
+
+function startFromWord(span) {
+    const index = wordSpans.indexOf(span);
+    if (index === -1) return;
+    currentWordIndex = index;
+    pausedAtIndex = index;
+    window.speechSynthesis.cancel();
+    isPaused = false;
+    const text = getTextFromIndex(index);
+    utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = currentSpeed;
+    utterance.voice = getBestVoice();
+    utterance.onboundary = (event) => {
+        if (event.name === 'word') {
+            highlightWord(currentWordIndex);
+            currentWordIndex++;
+        }
+    };
+    utterance.onend = () => {
+        isPlaying = false;
+        isPaused = false;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Finished';
+        wordSpans.forEach(s => s.classList.remove('speaking'));
+        currentWordIndex = 0;
+    };
+    window.speechSynthesis.speak(utterance);
+    isPlaying = true;
+    document.getElementById('playIcon').style.display = 'none';
+    document.getElementById('pauseIcon').style.display = 'block';
+    document.getElementById('audioStatus').textContent = 'Playing... click any word to jump';
+}
+
+function toggleAudio() {
+    if (isPlaying && !isPaused) {
+        window.speechSynthesis.pause();
+        isPaused = true;
+        pausedAtIndex = currentWordIndex;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused - click to resume';
+    } else if (isPaused) {
+        window.speechSynthesis.resume();
+        isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing... click any word to jump';
+    } else {
+        const startIndex = pausedAtIndex > 0 ? pausedAtIndex : 0;
+        startFromWord(wordSpans[startIndex] || wordSpans[0]);
+    }
+}
+
+function setSpeed(speed) {
+    currentSpeed = parseFloat(speed);
+    if (isPlaying) {
+        const restartIndex = currentWordIndex;
+        window.speechSynthesis.cancel();
+        isPaused = false;
+        setTimeout(() => startFromWord(wordSpans[restartIndex] || wordSpans[0]), 100);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    prepareContent();
+    document.body.addEventListener('click', (e) => {
+        if (e.target.closest('.audio-player') || e.target.closest('.word') || e.target.closest('a') || e.target.closest('button') || e.target.closest('select')) return;
+        toggleAudio();
+    });
+});
+
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+</script>
+</body>
+</html>
+
