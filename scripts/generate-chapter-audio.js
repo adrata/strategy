@@ -14,43 +14,42 @@ const path = require('path');
 const ELEVENLABS_API_KEY = '6cd0b1a66c70e335ae812cdc6e9ff5c23211f6e373de9dc5602fecb3e0842946';
 const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1';
 
-// Voice IDs - Using high-quality ElevenLabs voices
-// NOTE: Currently using single narrator voice for cohesive audiobook experience
-// TODO: Find character voices that better complement the narrator tone
-const NARRATOR_VOICE_ID = 'uf0ZrRtyyJlbbGIn43uD'; // Premium male audiobook voice
+// Voice IDs - Two complementary voices for cohesive audiobook
+const NARRATOR_VOICE_ID = 'uf0ZrRtyyJlbbGIn43uD'; // Premium male audiobook voice (Niko)
+const CHARACTER_VOICE_ID = 'TxGEqnHWrfWFTfGW9XjX'; // American Energetic - similar tone, slight variety
 
 const VOICES = {
-  // Niko (Narrator) - User-selected premium voice for audiobook narration
+  // Niko (Narrator) - First-person narrator, VP of Sales
   narrator: {
     id: NARRATOR_VOICE_ID,
     name: 'Niko (Narrator)',
-    description: 'First-person narrator, VP of Sales - premium audiobook voice'
+    description: 'First-person narrator, VP of Sales'
   },
   
-  // Marco Valenti - CEO (using narrator voice for now)
+  // Marco Valenti - CEO
   marco: {
-    id: NARRATOR_VOICE_ID, // TODO: Find commanding voice that matches narrator tone
+    id: CHARACTER_VOICE_ID,
     name: 'Marco Valenti',
     description: 'CEO, commanding presence'
   },
   
-  // Sofia Chen - CFO (using narrator voice for now)
+  // Sofia Chen - CFO
   sofia: {
-    id: NARRATOR_VOICE_ID, // TODO: Find professional female voice that matches tone
+    id: CHARACTER_VOICE_ID,
     name: 'Sofia Chen',
     description: 'CFO, precise, data-driven'
   },
   
-  // Dr. Eli Voss - Physicist mentor (using narrator voice for now)
+  // Dr. Eli Voss - Physicist mentor
   eli: {
-    id: NARRATOR_VOICE_ID, // TODO: Find mentor voice that matches tone
+    id: CHARACTER_VOICE_ID,
     name: 'Dr. Eli Voss',
     description: 'Physicist turned consultant, Socratic wisdom'
   },
   
-  // Adrian Marchetti - Customer CTO (using narrator voice for now)
+  // Adrian Marchetti - Customer CTO
   adrian: {
-    id: NARRATOR_VOICE_ID, // TODO: Find energetic voice that matches tone
+    id: CHARACTER_VOICE_ID,
     name: 'Adrian Marchetti',
     description: 'Customer CTO, enthusiastic'
   }
