@@ -215,23 +215,38 @@ function initCopyMenu() {
         // Create a wrapper div for copy menu and theme toggle
         const wrapper = document.createElement('div');
         wrapper.className = 'header-actions';
-        themeToggle.parentNode.insertBefore(wrapper, themeToggle);
+        
+        // Find the parent that contains the toggle (could be page-header or breadcrumb row)
+        const parent = themeToggle.parentNode;
+        
+        // Insert wrapper where the toggle currently is
+        parent.insertBefore(wrapper, themeToggle);
         wrapper.innerHTML = menuHtml;
         wrapper.appendChild(themeToggle);
+        
+        // Ensure the wrapper is positioned at the end (right side) of its parent
+        if (parent.lastChild !== wrapper) {
+            parent.appendChild(wrapper);
+        }
     }
     
     // Add styles
     const style = document.createElement('style');
     style.textContent = `
         .header-actions {
+            position: fixed;
+            top: 48px;
+            right: 24px;
             display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            flex-shrink: 0;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
         }
-        /* Override page-header to top-align buttons with breadcrumb */
-        .page-header {
-            align-items: flex-start !important;
+        @media (max-width: 768px) {
+            .header-actions {
+                top: 24px;
+                right: 16px;
+            }
         }
         .copy-menu {
             position: relative;
