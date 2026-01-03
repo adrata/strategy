@@ -143,15 +143,17 @@ function initCopyMenu() {
                 </button>
             </div>
             <div class="copy-dropdown" id="copyDropdown">
-                <a class="copy-option" href="#" onclick="openInClaude(event)">
+                <button class="copy-option" onclick="copyPageDirect(event)">
                     <div class="option-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                     </div>
                     <div class="option-content">
-                        <div class="option-title">Open in Claude <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
-                        <div class="option-desc">Ask questions about this page</div>
+                        <div class="option-title">Copy page</div>
+                        <div class="option-desc">Copy as Markdown for LLMs</div>
                     </div>
-                </a>
+                </button>
+                
+                <div class="copy-divider"></div>
                 
                 <a class="copy-option" href="#" onclick="openInChatGPT(event)">
                     <div class="option-icon">
@@ -159,6 +161,16 @@ function initCopyMenu() {
                     </div>
                     <div class="option-content">
                         <div class="option-title">Open in ChatGPT <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+                        <div class="option-desc">Ask questions about this page</div>
+                    </div>
+                </a>
+                
+                <a class="copy-option" href="#" onclick="openInClaude(event)">
+                    <div class="option-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="option-content">
+                        <div class="option-title">Open in Claude <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
                         <div class="option-desc">Ask questions about this page</div>
                     </div>
                 </a>
@@ -172,18 +184,6 @@ function initCopyMenu() {
                         <div class="option-desc">Ask questions about this page</div>
                     </div>
                 </a>
-                
-                <div class="copy-divider"></div>
-                
-                <button class="copy-option" onclick="copyPageDirect(event)">
-                    <div class="option-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    </div>
-                    <div class="option-content">
-                        <div class="option-title">Copy as Markdown</div>
-                        <div class="option-desc">Copy page for pasting into any AI</div>
-                    </div>
-                </button>
             </div>
         </div>
     `;
