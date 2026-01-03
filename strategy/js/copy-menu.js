@@ -130,67 +130,58 @@ function showToast(message, duration = 3000) {
 function initCopyMenu() {
     const menuHtml = `
         <div class="copy-menu">
-            <button class="copy-btn" onclick="toggleCopyMenu(event)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-                <span>Copy</span>
-                <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
+            <div class="copy-btn-group">
+                <button class="copy-main-btn" onclick="copyPageDirect(event)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span class="copy-label">Copy page</span>
+                </button>
+                <button class="copy-dropdown-btn" onclick="toggleCopyMenu(event)">
+                    <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+            </div>
             <div class="copy-dropdown" id="copyDropdown">
-                <button class="copy-option primary" onclick="copyAsText()">
+                <button class="copy-option" onclick="copyPageDirect(event)">
                     <div class="option-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                     </div>
-                    <div>
-                        <div class="option-title">Copy</div>
-                        <div class="option-desc">Copy to clipboard</div>
+                    <div class="option-content">
+                        <div class="option-title">Copy page</div>
+                        <div class="option-desc">Copy page as Markdown for LLMs</div>
                     </div>
                 </button>
                 
-                <div class="copy-divider"></div>
-                <div class="dropdown-header">Open in AI</div>
-                
-                <a class="copy-option" href="#" onclick="openInClaude(event)">
-                    <div class="option-icon claude">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+                <a class="copy-option" href="#" onclick="openInChatGPT(event)">
+                    <div class="option-icon chatgpt">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.2a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z"/></svg>
                     </div>
-                    <div>
-                        <div class="option-title">Ask Claude</div>
-                        <div class="option-desc">Recommended</div>
+                    <div class="option-content">
+                        <div class="option-title">Open in ChatGPT <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+                        <div class="option-desc">Ask questions about this page</div>
                     </div>
                 </a>
                 
-                <a class="copy-option" href="#" onclick="openInChatGPT(event)">
-                    <div class="option-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+                <a class="copy-option" href="#" onclick="openInClaude(event)">
+                    <div class="option-icon claude">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                     </div>
-                    <div>
-                        <div class="option-title">Ask ChatGPT</div>
+                    <div class="option-content">
+                        <div class="option-title">Open in Claude <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+                        <div class="option-desc">Ask questions about this page</div>
                     </div>
                 </a>
                 
                 <a class="copy-option" href="#" onclick="openInPerplexity(event)">
-                    <div class="option-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <div class="option-icon perplexity">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8l6-4-6-4z"/><path d="M12 2v8l-6-4 6-4z"/><path d="M12 22v-8l6 4-6 4z"/><path d="M12 22v-8l-6 4 6-4z"/><circle cx="12" cy="12" r="3"/></svg>
                     </div>
-                    <div>
-                        <div class="option-title">Ask Perplexity</div>
+                    <div class="option-content">
+                        <div class="option-title">Open in Perplexity <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+                        <div class="option-desc">Ask questions about this page</div>
                     </div>
                 </a>
-                
-                <div class="copy-divider"></div>
-                
-                <button class="copy-option" onclick="copyAsMarkdown()">
-                    <div class="option-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/></svg>
-                    </div>
-                    <div>
-                        <div class="option-title">Copy as Markdown</div>
-                        <div class="option-desc">For AI prompts</div>
-                    </div>
-                </button>
             </div>
         </div>
     `;
@@ -219,13 +210,20 @@ function initCopyMenu() {
             position: relative;
             z-index: 100;
         }
-        .copy-btn {
+        .copy-btn-group {
             display: flex;
             align-items: center;
-            gap: 6px;
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
+            overflow: hidden;
+        }
+        .copy-main-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: none;
             padding: 8px 12px;
             color: var(--text);
             font-size: 13px;
@@ -234,9 +232,22 @@ function initCopyMenu() {
             font-family: inherit;
             transition: all 0.15s;
         }
-        .copy-btn:hover { background: var(--border); }
-        .copy-btn .chevron { transition: transform 0.2s; }
-        .copy-menu.open .copy-btn .chevron { transform: rotate(180deg); }
+        .copy-main-btn:hover { background: var(--border); }
+        .copy-dropdown-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-left: 1px solid var(--border);
+            padding: 8px 10px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .copy-dropdown-btn:hover { background: var(--border); color: var(--text); }
+        .copy-dropdown-btn .chevron { transition: transform 0.2s; }
+        .copy-menu.open .copy-dropdown-btn .chevron { transform: rotate(180deg); }
         
         .copy-dropdown {
             position: absolute;
@@ -302,10 +313,15 @@ function initCopyMenu() {
             flex-shrink: 0;
         }
         .option-icon svg { color: var(--text-muted); }
-        .option-icon.claude { background: rgba(230, 81, 0, 0.15); }
-        .option-icon.claude svg { color: #e65100; }
+        .option-icon.chatgpt { background: rgba(16, 163, 127, 0.12); }
+        .option-icon.chatgpt svg { color: #10a37f; }
+        .option-icon.claude { background: rgba(217, 119, 87, 0.12); }
+        .option-icon.claude svg { color: #d97757; }
+        .option-icon.perplexity { background: rgba(32, 178, 170, 0.12); }
+        .option-icon.perplexity svg { color: #20b2aa; }
         
-        .option-title { font-size: 14px; font-weight: 500; }
+        .option-title { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+        .option-title svg { opacity: 0.5; }
         .option-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
         
         .copy-divider { height: 1px; background: var(--border); margin: 8px 0; }
@@ -323,6 +339,27 @@ function initCopyMenu() {
 function toggleCopyMenu(e) {
     e.stopPropagation();
     document.querySelector('.copy-menu')?.classList.toggle('open');
+}
+
+function copyPageDirect(e) {
+    if (e) e.stopPropagation();
+    const content = document.querySelector('#content') || document.body;
+    const prompt = getAIPrompt();
+    const md = htmlToMarkdown(content);
+    const fullText = prompt + md;
+    copyToClipboard(fullText);
+    
+    // Update button to show "Copied" feedback
+    const label = document.querySelector('.copy-label');
+    if (label) {
+        const originalText = label.textContent;
+        label.textContent = 'Copied';
+        setTimeout(() => {
+            label.textContent = originalText;
+        }, 2000);
+    }
+    
+    document.querySelector('.copy-menu')?.classList.remove('open');
 }
 
 function copyAsText() {
