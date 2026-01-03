@@ -195,15 +195,26 @@ function initCopyMenu() {
         </div>
     `;
     
-    // Find the theme toggle and insert before it
+    // Find the theme toggle and wrap both in a flex container
     const themeToggle = document.querySelector('.theme-toggle');
     if (themeToggle) {
-        themeToggle.insertAdjacentHTML('beforebegin', menuHtml);
+        // Create a wrapper div for copy menu and theme toggle
+        const wrapper = document.createElement('div');
+        wrapper.className = 'header-actions';
+        themeToggle.parentNode.insertBefore(wrapper, themeToggle);
+        wrapper.innerHTML = menuHtml;
+        wrapper.appendChild(themeToggle);
     }
     
     // Add styles
     const style = document.createElement('style');
     style.textContent = `
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
         .copy-menu {
             position: relative;
             z-index: 100;
