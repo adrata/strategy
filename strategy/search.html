@@ -696,6 +696,9 @@ function checkForBundle(query) {
 
 searchInput.addEventListener('input', (e) => {
     clearTimeout(debounceTimer);
+    // Reset selection immediately when typing (before debounce)
+    selectedIndex = -1;
+    clearAllSelections();
     debounceTimer = setTimeout(() => performSearch(e.target.value), 50);
     
     // Check for bundle keywords
@@ -706,7 +709,7 @@ searchInput.addEventListener('input', (e) => {
 });
 
 function performSearch(query) {
-    selectedIndex = -1; // Reset keyboard navigation
+    // Don't reset selectedIndex here - it's already reset in the input handler
     if (!query.trim()) {
         showEmptyState();
         return;
