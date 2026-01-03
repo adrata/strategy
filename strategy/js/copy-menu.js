@@ -139,15 +139,26 @@ function initCopyMenu() {
                 <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="copy-dropdown" id="copyDropdown">
-                <div class="dropdown-header">Ask AI about this document</div>
+                <button class="copy-option primary" onclick="copyAsText()">
+                    <div class="option-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </div>
+                    <div>
+                        <div class="option-title">Copy</div>
+                        <div class="option-desc">Copy to clipboard</div>
+                    </div>
+                </button>
                 
-                <a class="copy-option primary" href="#" onclick="openInClaude(event)">
+                <div class="copy-divider"></div>
+                <div class="dropdown-header">Open in AI</div>
+                
+                <a class="copy-option" href="#" onclick="openInClaude(event)">
                     <div class="option-icon claude">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
                     </div>
                     <div>
                         <div class="option-title">Ask Claude</div>
-                        <div class="option-desc">Recommended — paste and ask questions</div>
+                        <div class="option-desc">Recommended</div>
                     </div>
                 </a>
                 
@@ -157,7 +168,6 @@ function initCopyMenu() {
                     </div>
                     <div>
                         <div class="option-title">Ask ChatGPT</div>
-                        <div class="option-desc">Paste and ask questions</div>
                     </div>
                 </a>
                 
@@ -167,19 +177,18 @@ function initCopyMenu() {
                     </div>
                     <div>
                         <div class="option-title">Ask Perplexity</div>
-                        <div class="option-desc">Paste and ask questions</div>
                     </div>
                 </a>
                 
                 <div class="copy-divider"></div>
                 
-                <button class="copy-option" onclick="copyAsText()">
+                <button class="copy-option" onclick="copyAsMarkdown()">
                     <div class="option-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/></svg>
                     </div>
                     <div>
-                        <div class="option-title">Copy as text</div>
-                        <div class="option-desc">Copy to clipboard</div>
+                        <div class="option-title">Copy as Markdown</div>
+                        <div class="option-desc">For AI prompts</div>
                     </div>
                 </button>
             </div>
@@ -311,7 +320,17 @@ function copyAsText() {
     const content = document.querySelector('#content') || document.body;
     const md = htmlToMarkdown(content);
     copyToClipboard(md);
-    showToast('✓ Copied! You can paste this into any app.');
+    showToast('✓ Copied!');
+    document.querySelector('.copy-menu')?.classList.remove('open');
+}
+
+function copyAsMarkdown() {
+    const content = document.querySelector('#content') || document.body;
+    const prompt = getAIPrompt();
+    const md = htmlToMarkdown(content);
+    const fullText = prompt + md;
+    copyToClipboard(fullText);
+    showToast('✓ Copied as Markdown with AI prompt!');
     document.querySelector('.copy-menu')?.classList.remove('open');
 }
 
