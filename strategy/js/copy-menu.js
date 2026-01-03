@@ -3,7 +3,14 @@
  * Optimized for non-technical users to easily ask AI about documents
  */
 
-// Generate a smart prompt for AI
+// Get the production URL for the current page
+function getProdUrl() {
+    const path = window.location.pathname;
+    // Convert localhost or any domain to production URL
+    return `https://adrata.github.io/strategy${path.startsWith('/strategy') ? path.replace('/strategy', '') : path}`;
+}
+
+// Generate a smart prompt for AI (with document content)
 function getAIPrompt() {
     const title = document.querySelector('h1')?.textContent || document.title;
     return `I'm sharing a document called "${title}" below. Please read through it so I can ask you questions about it.
@@ -13,6 +20,12 @@ After you've read it, let me know you're ready and I'll ask my questions. My goa
 ---
 
 `;
+}
+
+// Generate a URL-based prompt for AI platforms that support ?q= parameter
+function getUrlPrompt() {
+    const url = getProdUrl();
+    return `Read from ${url} so I can ask questions about it.`;
 }
 
 // Convert HTML content to clean Markdown for AI consumption
@@ -385,19 +398,12 @@ function copyAsMarkdown() {
 
 function openInClaude(e) {
     e.preventDefault();
-    const content = document.querySelector('#content') || document.body;
-    const prompt = getAIPrompt();
-    const md = htmlToMarkdown(content);
-    const fullText = prompt + md;
-    
-    // Use Claude's URL query parameter to pre-fill the prompt
-    const encodedPrompt = encodeURIComponent(fullText);
+    const prompt = getUrlPrompt();
+    const encodedPrompt = encodeURIComponent(prompt);
     const claudeUrl = `https://claude.ai/new?q=${encodedPrompt}`;
     
-    copyToClipboard(fullText);
-    showToast('✓ Opening Claude with document...', 3000);
-    setTimeout(() => window.open(claudeUrl, '_blank'), 300);
     document.querySelector('.copy-menu')?.classList.remove('open');
+    window.open(claudeUrl, '_blank');
 }
 
 function openInChatGPT(e) {
@@ -407,23 +413,20 @@ function openInChatGPT(e) {
     const md = htmlToMarkdown(content);
     const fullText = prompt + md;
     
+    // ChatGPT doesn't support URL parameters, so copy content and open
     copyToClipboard(fullText);
-    showToast('✓ Copied! Opening ChatGPT...<br><span style="opacity:0.7">Press Ctrl+V (or Cmd+V) to paste</span>', 4000);
-    setTimeout(() => window.open('https://chat.openai.com/', '_blank'), 600);
     document.querySelector('.copy-menu')?.classList.remove('open');
+    window.open('https://chat.openai.com/', '_blank');
 }
 
 function openInPerplexity(e) {
     e.preventDefault();
-    const content = document.querySelector('#content') || document.body;
-    const prompt = getAIPrompt();
-    const md = htmlToMarkdown(content);
-    const fullText = prompt + md;
+    const prompt = getUrlPrompt();
+    const encodedPrompt = encodeURIComponent(prompt);
+    const perplexityUrl = `https://www.perplexity.ai/?q=${encodedPrompt}`;
     
-    copyToClipboard(fullText);
-    showToast('✓ Copied! Opening Perplexity...<br><span style="opacity:0.7">Press Ctrl+V (or Cmd+V) to paste</span>', 4000);
-    setTimeout(() => window.open('https://www.perplexity.ai/', '_blank'), 600);
     document.querySelector('.copy-menu')?.classList.remove('open');
+    window.open(perplexityUrl, '_blank');
 }
 
 // Auto-initialize when DOM is ready
