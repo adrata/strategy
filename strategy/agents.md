@@ -206,3 +206,49 @@ strategy/
 - **Strategy content**: `adrata/strategy` (GitHub Pages site)
 
 Always push strategy content to `adrata/strategy` for GitHub Pages deployment.
+
+## Cache Busting
+
+Users won't clear their browser cache, so we need strategies to ensure they get the latest version of files.
+
+### When to Cache Bust
+- JavaScript files that have been updated (e.g., `copy-menu.js`)
+- CSS that has changed significantly
+- Critical HTML updates that users must see immediately
+
+### Methods
+
+**1. Query String Versioning (Preferred)**
+Add a version query parameter to file references:
+```html
+<script src="../../js/copy-menu.js?v=2"></script>
+<link rel="stylesheet" href="styles.css?v=1.2">
+```
+Increment the version number when the file changes.
+
+**2. Timestamp Versioning**
+For frequently updated files, use a timestamp:
+```html
+<script src="../../js/copy-menu.js?t=20260103"></script>
+```
+
+**3. File Renaming (Breaking Changes)**
+For major updates, rename the file:
+```
+copy-menu.js → copy-menu-v2.js
+```
+
+### Implementation Checklist
+1. When updating shared JS (like `copy-menu.js`), update the version parameter in ALL HTML files that reference it
+2. Use grep to find all references: `grep -r "copy-menu.js" strategy/`
+3. Increment version: `?v=1` → `?v=2`
+
+### GitHub Pages Cache
+GitHub Pages has a 10-minute cache. After pushing:
+- Wait 10 minutes for changes to propagate
+- Or use hard refresh (Cmd+Shift+R / Ctrl+Shift+R) to bypass cache
+
+### Current Versioned Files
+- `js/copy-menu.js` — Copy menu functionality (version in query string)
+
+When making significant updates to shared JS files, always bump the version number in all referencing HTML files.
