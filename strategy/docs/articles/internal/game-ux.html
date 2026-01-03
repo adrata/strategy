@@ -267,6 +267,7 @@
         function handleShare(e) { e.preventDefault(); const email = e.target.querySelector('input').value; const subject = encodeURIComponent('The 6 Game UX Lenses'); const body = encodeURIComponent('Check out this UX framework: ' + window.location.href); window.open(`mailto:${email}?subject=${subject}&body=${body}`); e.target.innerHTML = '<p style="color: var(--accent); font-weight: 600;">Sent!</p>'; }
     </script>
 </div>
+<a href="../../../search.html" class="back-link" style="display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:14px;text-decoration:none;margin-top:48px;padding:12px 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Search</a>
 <script src="../../../js/copy-menu.js"></script>
 </body>
 </html>
