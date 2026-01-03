@@ -754,6 +754,9 @@ function displayResults(results, query) {
             </a>
         `;
     }).join('');
+    
+    // Add hover listeners to sync with keyboard navigation
+    addHoverListeners('.result-card');
 }
 
 
@@ -873,6 +876,24 @@ document.addEventListener('keydown', (e) => {
 function clearAllSelections() {
     document.querySelectorAll('.keyboard-selected').forEach(el => el.classList.remove('keyboard-selected'));
 }
+
+function addHoverListeners(selector) {
+    document.querySelectorAll(selector).forEach((card, index) => {
+        card.addEventListener('mouseenter', () => {
+            clearAllSelections();
+            selectedIndex = index;
+            card.classList.add('keyboard-selected');
+        });
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('keyboard-selected');
+        });
+    });
+}
+
+// Add hover listeners to featured cards on load
+document.addEventListener('DOMContentLoaded', () => {
+    addHoverListeners('.featured-card');
+});
 
 // Theme toggle
 function toggleTheme() { 
