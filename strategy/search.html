@@ -191,18 +191,26 @@
             box-shadow: 0 0 0 4px rgba(230,81,0,0.15);
         }
         
-        /* Bundle Unlock Effect - Text turns orange */
+        /* Bundle Unlock Effect - Gradient text with glow */
         #searchInput.bundle-unlocked {
-            color: #ff6d00 !important;
-            -webkit-text-fill-color: #ff6d00 !important;
+            color: #fb923c !important;
+            -webkit-text-fill-color: transparent !important;
+            background: linear-gradient(90deg, #e65100 0%, #fb923c 50%, #fbbf24 100%);
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
             font-weight: 600;
             border-color: #e65100 !important;
-            caret-color: #ff6d00;
-            box-shadow: 0 0 0 4px rgba(230,81,0,0.15);
+            caret-color: #fb923c;
+            box-shadow: 0 0 0 4px rgba(230,81,0,0.15), 0 0 20px rgba(251,146,60,0.3);
+            text-shadow: 0 0 30px rgba(251,146,60,0.5);
         }
         [data-theme="dark"] #searchInput.bundle-unlocked {
-            color: #ff6d00 !important;
-            -webkit-text-fill-color: #ff6d00 !important;
+            color: #fb923c !important;
+            -webkit-text-fill-color: transparent !important;
+            background: linear-gradient(90deg, #e65100 0%, #fb923c 50%, #fbbf24 100%);
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            text-shadow: 0 0 40px rgba(251,146,60,0.6);
         }
         .bundle-badge {
             position: absolute;
