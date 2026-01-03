@@ -205,9 +205,7 @@ function initCopyMenu() {
     const style = document.createElement('style');
     style.textContent = `
         .copy-menu {
-            position: fixed;
-            top: 24px;
-            right: 72px;
+            position: relative;
             z-index: 100;
         }
         .copy-btn {
