@@ -345,13 +345,20 @@ function copyPageDirect(e) {
     const fullText = prompt + md;
     copyToClipboard(fullText);
     
-    // Update button to show "Copied" feedback
+    // Update button to show "Copied" feedback with checkmark icon
     const label = document.querySelector('.copy-label');
-    if (label) {
+    const iconSvg = document.querySelector('.copy-main-btn svg');
+    if (label && iconSvg) {
         const originalText = label.textContent;
+        const originalIcon = iconSvg.outerHTML;
+        
         label.textContent = 'Copied';
+        // Replace with Lucide check icon
+        iconSvg.outerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+        
         setTimeout(() => {
             label.textContent = originalText;
+            document.querySelector('.copy-main-btn svg').outerHTML = originalIcon;
         }, 2000);
     }
     
