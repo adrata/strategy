@@ -225,9 +225,13 @@ function initCopyMenu() {
     style.textContent = `
         .header-actions {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
             flex-shrink: 0;
+        }
+        /* Override page-header to top-align buttons with breadcrumb */
+        .page-header {
+            align-items: flex-start !important;
         }
         .copy-menu {
             position: relative;
