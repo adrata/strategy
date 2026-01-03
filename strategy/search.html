@@ -192,9 +192,17 @@
         }
         
         /* Bundle Unlock Effect - Text turns orange */
-        .search-box.bundle-unlocked {
-            color: #e65100;
+        #searchInput.bundle-unlocked {
+            color: #ff6d00 !important;
+            -webkit-text-fill-color: #ff6d00 !important;
             font-weight: 600;
+            border-color: #e65100 !important;
+            caret-color: #ff6d00;
+            box-shadow: 0 0 0 4px rgba(230,81,0,0.15);
+        }
+        [data-theme="dark"] #searchInput.bundle-unlocked {
+            color: #ff6d00 !important;
+            -webkit-text-fill-color: #ff6d00 !important;
         }
         .search-box::placeholder {
             color: var(--text-muted);
@@ -587,17 +595,17 @@
 const documents = [
     // Foundations
     { title: "VP Sales Archetypes", description: "Psychological profiles and targeting matrices for VP of Sales buyers. Performance trajectories, organizational dynamics, and messaging strategies.", category: "Foundations", path: "docs/foundations/archetypes.html", keywords: ["psychology", "buyer", "vp sales", "matrix", "targeting"] },
-    { title: "The 10 Archetypes", description: "Ranked personas with celebrity references, tech adoption language, and conversion strategies. For humans and AI agents.", category: "Foundations", path: "docs/foundations/archetypes-persona.html", keywords: ["personas", "archetypes", "celebrity", "ica", "language", "adoption", "context-bundle"] },
+    { title: "The 10 Archetypes", description: "Ranked personas with celebrity references, tech adoption language, and conversion strategies. For humans and AI agents.", category: "Foundations", path: "docs/foundations/archetypes-persona.html", keywords: ["personas", "archetypes", "celebrity", "ica", "language", "adoption", "context-bundle", "context bundle"] },
     { title: "Buyer Group Archetypes", description: "Psychology profiles for every stakeholder in the enterprise buying committee. CFO, Legal, Procurement, IT, Peer VP approaches.", category: "Foundations", path: "docs/foundations/buyer-group-archetypes.html", keywords: ["buyer group", "cfo", "legal", "procurement", "psychology", "enterprise"] },
     { title: "Greatest Salespeople in History", description: "Lessons from legendary salespeople throughout history. Patterns, techniques, and timeless principles that work.", category: "Foundations", path: "docs/foundations/greatest-salespeople.html", keywords: ["history", "sales", "legends", "techniques"] },
     { title: "History of Sales Technology", description: "From rolodex to AI agents. The evolution of sales technology and what it means for the future.", category: "Foundations", path: "docs/foundations/history-of-sales-technology.html", keywords: ["history", "technology", "crm", "evolution"] },
     
     // Standards (for AI agents and humans)
-    { title: "Universal Standards", description: "Core standards for all Adrata content. Voice, archetypes, language calibration. Upload with any task.", category: "Standards", path: "docs/standards/universal-standards.html", keywords: ["standards", "voice", "tone", "style", "ai", "agent", "context-bundle"] },
-    { title: "Hook Standards", description: "How to write hooks that stop VPs at 6 AM. 5 patterns with archetype-specific examples.", category: "Standards", path: "docs/standards/hook-standards.html", keywords: ["hooks", "headlines", "attention", "writing", "context-bundle"] },
-    { title: "Offer Standards", description: "Creating offers that generate PULL. Earned trust, differentiation, archetype alignment.", category: "Standards", path: "docs/standards/offer-standards.html", keywords: ["offers", "pull", "trust", "lead magnet", "context-bundle"] },
-    { title: "Conversion Standards", description: "Website and landing page conversion benchmarks. CTAs by archetype, form design, LinkedIn outreach.", category: "Standards", path: "docs/standards/conversion-standards.html", keywords: ["conversion", "landing", "cta", "forms", "linkedin", "context-bundle"] },
-    { title: "HTML Design Standards", description: "Visual design system. MiSans font, color variables, spacing, components. CSS template for new docs.", category: "Standards", path: "docs/standards/html-design-standards.html", keywords: ["html", "css", "design", "template", "visual", "context-bundle"] },
+    { title: "Universal Standards", description: "Core standards for all Adrata content. Voice, archetypes, language calibration. Upload with any task.", category: "Standards", path: "docs/standards/universal-standards.html", keywords: ["standards", "voice", "tone", "style", "ai", "agent", "context-bundle", "context bundle"] },
+    { title: "Hook Standards", description: "How to write hooks that stop VPs at 6 AM. 5 patterns with archetype-specific examples.", category: "Standards", path: "docs/standards/hook-standards.html", keywords: ["hooks", "headlines", "attention", "writing", "context-bundle", "context bundle"] },
+    { title: "Offer Standards", description: "Creating offers that generate PULL. Earned trust, differentiation, archetype alignment.", category: "Standards", path: "docs/standards/offer-standards.html", keywords: ["offers", "pull", "trust", "lead magnet", "context-bundle", "context bundle"] },
+    { title: "Conversion Standards", description: "Website and landing page conversion benchmarks. CTAs by archetype, form design, LinkedIn outreach.", category: "Standards", path: "docs/standards/conversion-standards.html", keywords: ["conversion", "landing", "cta", "forms", "linkedin", "context-bundle", "context bundle"] },
+    { title: "HTML Design Standards", description: "Visual design system. MiSans font, color variables, spacing, components. CSS template for new docs.", category: "Standards", path: "docs/standards/html-design-standards.html", keywords: ["html", "css", "design", "template", "visual", "context-bundle", "context bundle"] },
     
     // Strategy
     { title: "Website Conversion", description: "Complete conversion strategy for the Adrata website. Psychological triggers, offer structure, and funnel optimization.", category: "Strategy", path: "docs/strategy/conversion.html", keywords: ["conversion", "website", "funnel", "psychology"] },
@@ -679,7 +687,7 @@ const featuredDocs = document.getElementById('featuredDocs');
 const searchWrapper = document.getElementById('searchWrapper');
 
 // Bundle keywords that trigger the special unlock effect
-const bundleKeywords = ['context-bundle', 'bundle', 'standards-bundle', 'ai-context'];
+const bundleKeywords = ['context bundle', 'context-bundle', 'bundle', 'standards-bundle', 'ai-context'];
 
 let debounceTimer;
 
