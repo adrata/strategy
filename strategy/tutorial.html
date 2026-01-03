@@ -441,8 +441,8 @@
         
         <div class="demo-box">
             <div class="try-it">Try it now</div>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Press any number key 1-4:</p>
-            <div class="demo-cards" id="demoCards2">
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Press any number key 1-6:</p>
+            <div class="demo-cards" id="demoCards2" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
                 <div class="demo-card" data-num="1">
                     <span class="badge">1</span>
                     <div class="demo-card-title">Demand Generation</div>
@@ -455,13 +455,23 @@
                 </div>
                 <div class="demo-card" data-num="3">
                     <span class="badge">3</span>
-                    <div class="demo-card-title">The Science of Offers</div>
+                    <div class="demo-card-title">Offer Strategy</div>
                     <div class="demo-card-desc">Press 3 to open</div>
                 </div>
                 <div class="demo-card" data-num="4">
                     <span class="badge">4</span>
-                    <div class="demo-card-title">AI Agents Guide</div>
+                    <div class="demo-card-title">What Are AI Agents?</div>
                     <div class="demo-card-desc">Press 4 to open</div>
+                </div>
+                <div class="demo-card" data-num="5">
+                    <span class="badge">5</span>
+                    <div class="demo-card-title">Chapter 1: The Number</div>
+                    <div class="demo-card-desc">Press 5 to open</div>
+                </div>
+                <div class="demo-card" data-num="6">
+                    <span class="badge">6</span>
+                    <div class="demo-card-title">Pipeline Forecast</div>
+                    <div class="demo-card-desc">Press 6 to open</div>
                 </div>
             </div>
             <p id="success4" style="color: var(--accent); font-size: 14px; margin-top: 12px; display: none;">
@@ -583,7 +593,7 @@ document.addEventListener('keydown', (e) => {
     }
     
     // Step 4: Number key demo
-    if (currentStep === 4 && e.key >= '1' && e.key <= '4') {
+    if (currentStep === 4 && e.key >= '1' && e.key <= '6') {
         e.preventDefault();
         const cards = document.querySelectorAll('#demoCards2 .demo-card');
         cards.forEach(c => c.classList.remove('selected'));
