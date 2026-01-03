@@ -41,6 +41,11 @@
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        /* Smooth theme transitions */
+        *, *::before, *::after {
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
         body {
             font-family: 'MiSans', -apple-system, sans-serif;
             background: var(--bg);
