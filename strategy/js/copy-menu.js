@@ -144,6 +144,9 @@ function initCopyMenu() {
             </div>
             <div class="copy-dropdown" id="copyDropdown">
                 <a class="copy-option" href="#" onclick="openInClaude(event)">
+                    <div class="option-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
                     <div class="option-content">
                         <div class="option-title">Open in Claude <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
                         <div class="option-desc">Ask questions about this page</div>
@@ -151,6 +154,9 @@ function initCopyMenu() {
                 </a>
                 
                 <a class="copy-option" href="#" onclick="openInChatGPT(event)">
+                    <div class="option-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    </div>
                     <div class="option-content">
                         <div class="option-title">Open in ChatGPT <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
                         <div class="option-desc">Ask questions about this page</div>
@@ -158,6 +164,9 @@ function initCopyMenu() {
                 </a>
                 
                 <a class="copy-option" href="#" onclick="openInPerplexity(event)">
+                    <div class="option-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </div>
                     <div class="option-content">
                         <div class="option-title">Open in Perplexity <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
                         <div class="option-desc">Ask questions about this page</div>
@@ -167,6 +176,9 @@ function initCopyMenu() {
                 <div class="copy-divider"></div>
                 
                 <button class="copy-option" onclick="copyPageDirect(event)">
+                    <div class="option-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </div>
                     <div class="option-content">
                         <div class="option-title">Copy as Markdown</div>
                         <div class="option-desc">Copy page for pasting into any AI</div>
@@ -292,6 +304,18 @@ function initCopyMenu() {
         }
         .copy-option.primary .option-title { color: #e65100; }
         
+        .option-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .option-icon svg { color: var(--text-muted); }
+        
         .option-title { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
         .option-title svg { opacity: 0.5; }
         .option-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
@@ -359,9 +383,13 @@ function openInClaude(e) {
     const md = htmlToMarkdown(content);
     const fullText = prompt + md;
     
+    // Use Claude's URL query parameter to pre-fill the prompt
+    const encodedPrompt = encodeURIComponent(fullText);
+    const claudeUrl = `https://claude.ai/new?q=${encodedPrompt}`;
+    
     copyToClipboard(fullText);
-    showToast('✓ Copied! Opening Claude...<br><span style="opacity:0.7">Press Ctrl+V (or Cmd+V) to paste</span>', 4000);
-    setTimeout(() => window.open('https://claude.ai/new', '_blank'), 600);
+    showToast('✓ Opening Claude with document...', 3000);
+    setTimeout(() => window.open(claudeUrl, '_blank'), 300);
     document.querySelector('.copy-menu')?.classList.remove('open');
 }
 
