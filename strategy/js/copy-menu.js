@@ -426,12 +426,24 @@ if (document.readyState === 'loading') {
     initCopyMenu();
 }
 
-// Global keyboard shortcut: Press / to go to search from any page
+// Global keyboard shortcuts for all pages
 document.addEventListener('keydown', (e) => {
     // Don't trigger if user is typing in an input
     const isTyping = document.activeElement?.tagName === 'INPUT' || 
                      document.activeElement?.tagName === 'TEXTAREA' ||
                      document.activeElement?.isContentEditable;
+    
+    // Left arrow = browser back
+    if (e.key === 'ArrowLeft' && !isTyping) {
+        e.preventDefault();
+        history.back();
+    }
+    
+    // Right arrow = browser forward
+    if (e.key === 'ArrowRight' && !isTyping) {
+        e.preventDefault();
+        history.forward();
+    }
     
     if (e.key === '/' && !isTyping) {
         e.preventDefault();
