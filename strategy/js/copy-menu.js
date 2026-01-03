@@ -377,3 +377,30 @@ if (document.readyState === 'loading') {
 } else {
     initCopyMenu();
 }
+
+// Global keyboard shortcut: Press / to go to search from any page
+document.addEventListener('keydown', (e) => {
+    // Don't trigger if user is typing in an input
+    const isTyping = document.activeElement?.tagName === 'INPUT' || 
+                     document.activeElement?.tagName === 'TEXTAREA' ||
+                     document.activeElement?.isContentEditable;
+    
+    if (e.key === '/' && !isTyping) {
+        e.preventDefault();
+        // Navigate to search page (calculate relative path based on current location)
+        const path = window.location.pathname;
+        let searchPath = 'search.html';
+        
+        // Count directory depth to build correct relative path
+        const depth = (path.match(/\//g) || []).length - 1;
+        if (path.includes('/docs/')) {
+            searchPath = '../../search.html';
+        } else if (path.includes('/book/') || path.includes('/reports/')) {
+            searchPath = '../search.html';
+        } else if (path.includes('/strategy/') && !path.includes('/docs/')) {
+            searchPath = 'search.html';
+        }
+        
+        window.location.href = searchPath;
+    }
+});
