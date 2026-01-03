@@ -100,128 +100,6 @@
         }
         .tutorial-btn svg { width: 16px; height: 16px; }
         
-        /* Tutorial Modal */
-        .tutorial-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-        }
-        .tutorial-overlay.active { opacity: 1; visibility: visible; }
-        .tutorial-modal {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 520px;
-            margin: 24px;
-            overflow: hidden;
-            transform: scale(0.95);
-            transition: transform 0.2s ease;
-        }
-        .tutorial-overlay.active .tutorial-modal { transform: scale(1); }
-        .tutorial-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
-        }
-        .tutorial-header h3 { font-size: 18px; font-weight: 600; }
-        .tutorial-close {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .tutorial-close:hover { color: var(--text); }
-        .tutorial-body { padding: 24px; }
-        .tutorial-step {
-            display: none;
-        }
-        .tutorial-step.active { display: block; }
-        .tutorial-step-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .tutorial-step-icon svg { width: 28px; height: 28px; color: #fff; stroke: #fff; }
-        .tutorial-step h4 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
-        .tutorial-step p { color: var(--text-muted); line-height: 1.6; font-size: 15px; margin-bottom: 8px; }
-        .tutorial-step .highlight { color: var(--accent); font-weight: 600; }
-        .tutorial-demo {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-        .tutorial-demo .typed { color: var(--text); font-weight: 500; }
-        .tutorial-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 24px;
-            border-top: 1px solid var(--border);
-            background: var(--card-bg);
-        }
-        .tutorial-dots {
-            display: flex;
-            gap: 6px;
-        }
-        .tutorial-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--border);
-            transition: all 0.2s;
-        }
-        .tutorial-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
-        .tutorial-nav {
-            display: flex;
-            gap: 12px;
-        }
-        .tutorial-nav button {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.15s;
-        }
-        .tutorial-nav .secondary {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-        .tutorial-nav .secondary:hover { background: var(--card-bg); }
-        .tutorial-nav .primary {
-            background: var(--accent);
-            border: none;
-            color: #fff;
-        }
-        .tutorial-nav .primary:hover { background: var(--accent-light); }
-        
         .theme-toggle {
             background: transparent;
             border: none;
@@ -593,108 +471,15 @@
         <span>Adrata</span>
     </a>
     <div class="header-actions">
-        <button class="tutorial-btn" onclick="openTutorial()" title="Tutorial">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-        </button>
+        <a href="tutorial.html" class="tutorial-btn" title="Learn Search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+        </a>
         <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
             <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
             <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
         </button>
     </div>
 </header>
-
-<!-- Tutorial Modal -->
-<div class="tutorial-overlay" id="tutorialOverlay" onclick="closeTutorialOnOverlay(event)">
-    <div class="tutorial-modal" onclick="event.stopPropagation()">
-        <div class="tutorial-header">
-            <h3>Welcome to Adrata Search</h3>
-            <button class="tutorial-close" onclick="closeTutorial()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-        </div>
-        <div class="tutorial-body">
-            <!-- Step 1: Intro -->
-            <div class="tutorial-step active" data-step="1">
-                <div class="tutorial-step-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </div>
-                <h4>The fastest way to find documents</h4>
-                <p>Adrata Search is your command center. Instead of browsing folders, just type what you're looking for.</p>
-                <p>Press <span class="highlight">/</span> from anywhere to jump straight here.</p>
-                <div class="tutorial-demo">
-                    <span class="typed">demand</span> → Demand Hypotheses, Demand Generation...
-                </div>
-            </div>
-            
-            <!-- Step 2: Finding docs -->
-            <div class="tutorial-step" data-step="2">
-                <div class="tutorial-step-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                </div>
-                <h4>Find any document instantly</h4>
-                <p>Type any word and results appear instantly. Search by <span class="highlight">title</span>, <span class="highlight">topic</span>, or <span class="highlight">keyword</span>.</p>
-                <p>Use number keys <span class="highlight">1-6</span> to open popular docs without typing.</p>
-                <div class="tutorial-demo">
-                    <span class="typed">archetypes</span> → VP Sales Archetypes<br>
-                    <span class="typed">ai agents</span> → What Are AI Agents?
-                </div>
-            </div>
-            
-            <!-- Step 3: Bundles -->
-            <div class="tutorial-step" data-step="3">
-                <div class="tutorial-step-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                </div>
-                <h4>Smart bundles and clusters</h4>
-                <p>Search clusters related documents together. Looking for <span class="highlight">context-bundle</span>? You'll get all the standards docs for AI agents.</p>
-                <p>Share any search as a link — the recipient sees the same clustered results.</p>
-                <div class="tutorial-demo">
-                    <span class="typed">context-bundle</span> → All standards docs for AI
-                </div>
-            </div>
-            
-            <!-- Step 4: Done -->
-            <div class="tutorial-step" data-step="4">
-                <div class="tutorial-step-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                </div>
-                <h4>You're ready</h4>
-                <p>That's all you need to get started. Just type and find.</p>
-                <p style="margin-top: 16px;">Want to move even faster? Learn the keyboard shortcuts for power users.</p>
-            </div>
-            
-            <!-- Step 5: Shortcuts -->
-            <div class="tutorial-step" data-step="5">
-                <div class="tutorial-step-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h8M6 16h.01M10 16h.01M14 16h.01M18 16h.01"/></svg>
-                </div>
-                <h4>Keyboard shortcuts</h4>
-                <p>Navigate like a pro with these shortcuts:</p>
-                <div class="tutorial-demo" style="display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; align-items: center;">
-                    <span class="typed" style="font-family: inherit; background: var(--border); padding: 4px 8px; border-radius: 4px; font-size: 12px;">/</span> <span>Focus search from anywhere</span>
-                    <span class="typed" style="font-family: inherit; background: var(--border); padding: 4px 8px; border-radius: 4px; font-size: 12px;">1-6</span> <span>Open popular documents</span>
-                    <span class="typed" style="font-family: inherit; background: var(--border); padding: 4px 8px; border-radius: 4px; font-size: 12px;">↑ ↓</span> <span>Navigate search results</span>
-                    <span class="typed" style="font-family: inherit; background: var(--border); padding: 4px 8px; border-radius: 4px; font-size: 12px;">Enter</span> <span>Open selected result</span>
-                    <span class="typed" style="font-family: inherit; background: var(--border); padding: 4px 8px; border-radius: 4px; font-size: 12px;">Esc</span> <span>Clear search</span>
-                </div>
-            </div>
-        </div>
-        <div class="tutorial-footer">
-            <div class="tutorial-dots">
-                <div class="tutorial-dot active" data-dot="1"></div>
-                <div class="tutorial-dot" data-dot="2"></div>
-                <div class="tutorial-dot" data-dot="3"></div>
-                <div class="tutorial-dot" data-dot="4"></div>
-                <div class="tutorial-dot" data-dot="5"></div>
-            </div>
-            <div class="tutorial-nav">
-                <button class="secondary" id="tutorialBack" onclick="prevStep()" style="display:none;">Back</button>
-                <button class="secondary" id="tutorialSkip" onclick="skipToShortcuts()" style="display:none;">Learn Shortcuts</button>
-                <button class="primary" id="tutorialNext" onclick="nextStep()">Next</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <main class="search-container" id="searchContainer">
     <div class="branding" id="branding">
@@ -1062,80 +847,11 @@ function toggleTheme() {
     localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
 }
 
-// Tutorial Modal
-let currentStep = 1;
-const totalSteps = 5;
-
-function openTutorial() {
-    currentStep = 1;
-    updateTutorialStep();
-    document.getElementById('tutorialOverlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeTutorial() {
-    document.getElementById('tutorialOverlay').classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-function closeTutorialOnOverlay(e) {
-    if (e.target === e.currentTarget) closeTutorial();
-}
-
-function nextStep() {
-    if (currentStep === totalSteps) {
-        closeTutorial();
-        return;
-    }
-    currentStep++;
-    updateTutorialStep();
-}
-
-function prevStep() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateTutorialStep();
-    }
-}
-
-function skipToShortcuts() {
-    currentStep = 5;
-    updateTutorialStep();
-}
-
-function updateTutorialStep() {
-    // Update active step
-    document.querySelectorAll('.tutorial-step').forEach(step => {
-        step.classList.toggle('active', parseInt(step.dataset.step) === currentStep);
-    });
-    
-    // Update dots
-    document.querySelectorAll('.tutorial-dot').forEach(dot => {
-        dot.classList.toggle('active', parseInt(dot.dataset.dot) === currentStep);
-    });
-    
-    // Update back button
-    document.getElementById('tutorialBack').style.display = currentStep > 1 ? 'block' : 'none';
-    
-    // Show "Learn Shortcuts" button only on step 4
-    document.getElementById('tutorialSkip').style.display = currentStep === 4 ? 'block' : 'none';
-    
-    // Update next button
-    const nextBtn = document.getElementById('tutorialNext');
-    if (currentStep === 4) {
-        nextBtn.textContent = 'Get Started';
-    } else if (currentStep === totalSteps) {
-        nextBtn.textContent = 'Done';
-    } else {
-        nextBtn.textContent = 'Next';
-    }
-}
-
-// Show tutorial on first visit
+// Redirect to tutorial on first visit
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('tutorialSeen')) {
-        setTimeout(() => openTutorial(), 500);
         localStorage.setItem('tutorialSeen', 'true');
+        window.location.href = 'tutorial.html';
     }
 });
 
