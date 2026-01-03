@@ -191,38 +191,10 @@
             box-shadow: 0 0 0 4px rgba(230,81,0,0.15);
         }
         
-        /* Bundle Unlock Effect */
+        /* Bundle Unlock Effect - Text turns orange */
         .search-box.bundle-unlocked {
-            border-color: #e65100;
-            background: linear-gradient(135deg, rgba(230,81,0,0.08) 0%, rgba(255,152,0,0.08) 100%);
-            box-shadow: 0 0 0 4px rgba(230,81,0,0.25), 0 0 30px rgba(255,152,0,0.3), 0 0 60px rgba(230,81,0,0.15);
-            animation: bundlePulse 2s ease-in-out infinite;
-        }
-        @keyframes bundlePulse {
-            0%, 100% { box-shadow: 0 0 0 4px rgba(230,81,0,0.25), 0 0 30px rgba(255,152,0,0.3), 0 0 60px rgba(230,81,0,0.15); }
-            50% { box-shadow: 0 0 0 6px rgba(230,81,0,0.35), 0 0 40px rgba(255,152,0,0.4), 0 0 80px rgba(230,81,0,0.2); }
-        }
-        .bundle-badge {
-            position: absolute;
-            top: -10px;
-            right: 16px;
-            background: linear-gradient(135deg, #e65100 0%, #ff9800 100%);
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 8px rgba(230,81,0,0.4);
-            opacity: 0;
-            transform: translateY(5px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-        .search-wrapper.bundle-active .bundle-badge {
-            opacity: 1;
-            transform: translateY(0);
+            color: #e65100;
+            font-weight: 600;
         }
         .search-box::placeholder {
             color: var(--text-muted);
@@ -528,7 +500,6 @@
     </div>
     
     <div class="search-wrapper" id="searchWrapper">
-        <span class="bundle-badge">Bundle Unlocked</span>
         <input 
             type="text" 
             class="search-box" 
@@ -717,10 +688,8 @@ function checkForBundle(query) {
     const isBundle = bundleKeywords.some(keyword => lowerQuery.includes(keyword));
     
     if (isBundle) {
-        searchWrapper.classList.add('bundle-active');
         searchInput.classList.add('bundle-unlocked');
     } else {
-        searchWrapper.classList.remove('bundle-active');
         searchInput.classList.remove('bundle-unlocked');
     }
 }
@@ -797,7 +766,6 @@ function showEmptyState() {
 function clearSearch() {
     searchInput.value = '';
     clearBtn.classList.remove('visible');
-    searchWrapper.classList.remove('bundle-active');
     searchInput.classList.remove('bundle-unlocked');
     showEmptyState();
     searchInput.focus();
