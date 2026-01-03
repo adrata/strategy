@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Standards | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; --highlight-bg: #fff5f0; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; --highlight-bg: #1a1008; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { font-size: 17px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; }
+        p { margin-bottom: 14px; color: var(--text-secondary); }
+        ul { margin: 12px 0 12px 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        .box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .box.accent { border-left: 4px solid var(--accent); background: var(--highlight-bg); }
+        .principle { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 24px; border-radius: 8px; margin: 24px 0; }
+        .principle p { color: #fff; margin: 0; font-size: 18px; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        th, td { padding: 12px; border: 1px solid var(--border); text-align: left; }
+        th { background: var(--card-bg); font-weight: 600; }
+        .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+        .do-box, .dont-box { padding: 20px; border-radius: 8px; }
+        .do-box { background: var(--highlight-bg); border: 1px solid var(--accent); }
+        .dont-box { background: var(--card-bg); border: 1px solid var(--border); }
+        .do-box h4 { color: var(--accent); margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .dont-box h4 { color: var(--text-muted); margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .do-box ul, .dont-box ul { list-style: none; margin: 0; font-size: 14px; }
+        .do-box li::before { content: "→ "; color: var(--accent); }
+        .dont-box li::before { content: "× "; color: var(--text-muted); }
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; } .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; } [data-theme="light"] .theme-toggle .moon { display: block; }
+        @media (max-width: 600px) { .do-dont { grid-template-columns: 1fr; } }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Standards</span>
+    </div>
+
+    <h1>Offer Standards</h1>
+    <div class="subtitle">How to create offers that generate PULL. Reference for humans and AI agents.</div>
+
+    <div class="box accent">
+        <p style="margin:0;"><strong>Step 0:</strong> Which archetype? Every offer must align with the emotional driver of a specific archetype. Their enemy is the problem; the offer is the solution they can't get elsewhere. See <a href="../foundations/archetypes-persona.html" style="color: var(--accent);">Archetypes Persona</a>.</p>
+    </div>
+
+    <div class="principle">
+        <p>The Offer Test: Can they do this themselves?</p>
+    </div>
+
+    <p>If yes, the offer won't create PULL. If no—if only we can deliver it at this speed and quality—they have a reason to engage.</p>
+
+    <h2>The 4 Offer Principles</h2>
+
+    <h3>1. Align with Emotional Drivers</h3>
+    <p>Every archetype has a core fear (enemy). The offer must address that specific fear, not a generic pain point.</p>
+    <ul>
+        <li><strong>Anxious Elite:</strong> Fear = Pipeline Exposure → Offer = visibility into what they don't see</li>
+        <li><strong>Worried Darling:</strong> Fear = Golden Trap → Offer = protection without public admission</li>
+        <li><strong>Stressed Performer:</strong> Fear = Silent Slip → Offer = ammunition for leadership</li>
+    </ul>
+
+    <h3>2. Don't Demand Unearned Trust</h3>
+    <p>A stranger asking to "audit your pipeline" requires trust they haven't built.</p>
+    
+    <div class="do-dont">
+        <div class="do-box">
+            <h4>Earned Trust</h4>
+            <ul>
+                <li>"Give us 5 accounts, we'll map the buying committees"</li>
+                <li>"We do the work—you keep it regardless"</li>
+                <li>"No CRM access. Just account names."</li>
+            </ul>
+        </div>
+        <div class="dont-box">
+            <h4>Unearned Trust</h4>
+            <ul>
+                <li>"Let us audit your pipeline"</li>
+                <li>"Connect your CRM for a health check"</li>
+                <li>"Share your deal data for analysis"</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>3. Don't Offer What They Can Do Internally</h3>
+    <p>"We'll review your tech stack" → "I'll just have ops do that."</p>
+    <p>"We'll map buying committees with 90% accuracy in 48 hours" → They literally cannot do this.</p>
+
+    <h3>4. Differentiation is Everything</h3>
+    <p>The offer must leverage something only Adrata can do. Our differentiator: instantly map any buying committee with pain intelligence and personal archetypes for each stakeholder.</p>
+
+    <h2>Offer → Archetype Match</h2>
+    <table>
+        <tr><th>Archetype</th><th>Core Fear</th><th>Best Offer</th></tr>
+        <tr><td>Anxious Elite</td><td>Pipeline Exposure</td><td>Deal Rescue: who killed stalled deals</td></tr>
+        <tr><td>Worried Darling</td><td>Golden Trap</td><td>5 Accounts, 48 Hours: protect what you have</td></tr>
+        <tr><td>Stressed Performer</td><td>Silent Slip</td><td>Deal Rescue: ammunition for leadership</td></tr>
+        <tr><td>Rebuilding Leader</td><td>Miss Pattern</td><td>Account Ambush: break into new accounts</td></tr>
+        <tr><td>Hungry Underdog</td><td>Resource Gap</td><td>Account Ambush: unfair advantage</td></tr>
+        <tr><td>Frustrated Fighter</td><td>Marketing Failure</td><td>5 Accounts: self-service pipeline gen</td></tr>
+    </table>
+
+    <h2>Offer Validation Test</h2>
+    <div class="box">
+        <p><strong>Ask:</strong> Would a VP of Sales forward this to their CEO as proof they're doing something about the problem?</p>
+        <p style="margin:0;">Would they tell a peer about it? If the offer creates something they'd share or use immediately, it works.</p>
+    </div>
+
+    <h2>Related Standards</h2>
+    <p><a href="universal-standards.html" style="color: var(--accent);">Universal Standards</a> · <a href="hook-standards.html" style="color: var(--accent);">Hook Standards</a> · <a href="../strategy/offers.html" style="color: var(--accent);">Full Offer Strategy</a></p>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

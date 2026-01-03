@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecasting Policy | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f5f5f5;
+            --accent: #e65100;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #888;
+            --border: #2a2a2a;
+            --card-bg: #141414;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'MiSans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 17px;
+            padding: 48px 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .header-content { flex: 1; }
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .doc-type {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+        
+        h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 48px 0 16px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        
+        h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 28px 0 12px;
+            color: var(--text);
+        }
+        
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        /* Conviction Scale */
+        .conviction-scale {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .conviction-level {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        @media (max-width: 600px) {
+            .conviction-level { grid-template-columns: 1fr; }
+        }
+        
+        .conviction-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .conviction-badge.bankable { background: var(--accent); color: #fff; }
+        .conviction-badge.guaranteed { background: var(--accent); color: #fff; }
+        .conviction-badge.average { background: rgba(230,81,0,0.15); color: var(--accent); border: 1px solid var(--accent); }
+        .conviction-badge.toss-up { background: var(--card-bg); color: #888; border: 1px solid #666; }
+        .conviction-badge.low { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        
+        .conviction-details h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+        .conviction-details p { margin: 0; font-size: 15px; }
+        .conviction-details .example { font-size: 13px; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+        
+        /* Required Fields */
+        .fields-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+        }
+        
+        .fields-table th,
+        .fields-table td {
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .fields-table th {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            background: var(--card-bg);
+        }
+        
+        .fields-table td {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+        
+        .fields-table .field-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .fields-table .required {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        
+        /* Example Card */
+        .example-deal {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .example-deal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .example-deal-name { font-size: 20px; font-weight: 700; color: var(--text); }
+        .example-deal-value { font-size: 18px; font-weight: 700; color: var(--accent); }
+        
+        .example-deal-fields {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .example-field {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 12px;
+            font-size: 14px;
+        }
+        
+        .example-field-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        
+        .example-field-value { color: var(--text-secondary); }
+        
+        /* Key Principle Box */
+        .principle-box {
+            background: rgba(230,81,0,0.08);
+            border-left: 4px solid var(--accent);
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .principle-box h4 {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .principle-box p { margin: 0; font-size: 15px; }
+        
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            text-decoration: none;
+            margin-top: 48px;
+            padding: 12px 0;
+        }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; }
+        
+        @media (max-width: 600px) {
+            body { padding: 24px 16px; }
+            h1 { font-size: 28px; }
+            .example-field { grid-template-columns: 1fr; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Playbooks</span>
+    </div>
+
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Playbook</div>
+            <h1>Forecasting Policy</h1>
+            <p class="subtitle">How we talk about deals, what data we need, and what conviction means</p>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="principle-box">
+        <h4>The Goal of Forecasting</h4>
+        <p>We forecast to make decisions, not to create busywork. Every field we ask for should help us understand: Should we invest more time here? When will this close? What's blocking it?</p>
+    </div>
+
+    <h2>Conviction Levels</h2>
+    <p>We use plain language to describe deal likelihood. No percentages. Words that mean the same thing to everyone.</p>
+
+    <div class="conviction-scale">
+        <div class="conviction-level">
+            <span class="conviction-badge bankable">Bankable</span>
+            <div class="conviction-details">
+                <h4>It's happening</h4>
+                <p>Verbal commit, signed, or so close we'd bet on it. Champion is bought in, budget is approved, timeline is clear.</p>
+                <div class="example">"They've already started onboarding. Just waiting on signature."</div>
+            </div>
+        </div>
+
+        <div class="conviction-level">
+            <span class="conviction-badge guaranteed">Guaranteed</span>
+            <div class="conviction-details">
+                <h4>100% if conditions are met</h4>
+                <p>Deal will definitely close if a specific condition is true. Often used for conditional deals (e.g., "if we do this for free, they're in").</p>
+                <div class="example">"If free: guaranteed. If $15K: low."</div>
+            </div>
+        </div>
+
+        <div class="conviction-level">
+            <span class="conviction-badge average">Average</span>
+            <div class="conviction-details">
+                <h4>Good momentum, growing conviction</h4>
+                <p>Champion engaged, product fit is there, but still working through process. Could close this quarter with the right push.</p>
+                <div class="example">"Phil loved the report and wants to talk more. Conviction growing."</div>
+            </div>
+        </div>
+
+        <div class="conviction-level">
+            <span class="conviction-badge toss-up">Toss Up</span>
+            <div class="conviction-details">
+                <h4>Could go either way</h4>
+                <p>Champion sees value but there's friction. Internal pushback, competing priorities, or unresolved objections. This is a LOW confidence deal.</p>
+                <div class="example">"Dennis liked it but another rep pushed back. Coordinating next call."</div>
+            </div>
+        </div>
+
+        <div class="conviction-level">
+            <span class="conviction-badge low">Low</span>
+            <div class="conviction-details">
+                <h4>Not likely right now</h4>
+                <p>Early stage, stalled, or significant blockers. Worth tracking but don't count on it. Needs a breakthrough to move forward.</p>
+                <div class="example">"Introduced to CEO but haven't met yet. Former contact left the company."</div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Required Data Per Deal</h2>
+    <p>Every deal in the pipeline needs these fields. No exceptions. If you can't fill a field, that tells us something about the deal.</p>
+
+    <table class="fields-table">
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>What It Is</th>
+                <th>Required</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="field-name">Company Name</td>
+                <td>The account name</td>
+                <td class="required">Yes</td>
+            </tr>
+            <tr>
+                <td class="field-name">Deal Value</td>
+                <td>Upfront + recurring. Use ranges if uncertain ($40-60K)</td>
+                <td class="required">Yes</td>
+            </tr>
+            <tr>
+                <td class="field-name">Cash Collected</td>
+                <td>Money already in the bank from this deal</td>
+                <td class="required">Yes</td>
+            </tr>
+            <tr>
+                <td class="field-name">Conviction</td>
+                <td>Bankable, Guaranteed, Average, Toss Up, or Low</td>
+                <td class="required">Yes</td>
+            </tr>
+            <tr>
+                <td class="field-name">Reason to Buy</td>
+                <td>Why do they need this? What problem are we solving?</td>
+                <td class="required">Yes</td>
+            </tr>
+            <tr>
+                <td class="field-name">Champion</td>
+                <td>Who is your internal advocate?</td>
+                <td>Recommended</td>
+            </tr>
+            <tr>
+                <td class="field-name">Notes</td>
+                <td>Context, blockers, next steps, anything that explains the conviction level</td>
+                <td>Recommended</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Example: Well-Documented Deal</h2>
+    
+    <div class="example-deal">
+        <div class="example-deal-header">
+            <div class="example-deal-name">Navi Nurses</div>
+            <div class="example-deal-value">$20K + $4K/mo</div>
+        </div>
+        <div class="example-deal-fields">
+            <div class="example-field">
+                <span class="example-field-label">Cash Collected</span>
+                <span class="example-field-value">$24K</span>
+            </div>
+            <div class="example-field">
+                <span class="example-field-label">Conviction</span>
+                <span class="example-field-value"><span class="conviction-badge bankable" style="padding: 4px 10px; font-size: 11px;">Bankable</span></span>
+            </div>
+            <div class="example-field">
+                <span class="example-field-label">Reason to Buy</span>
+                <span class="example-field-value">Need database for Ideal Navi Patient, need Speedrun CRM, and need Campaign (Adrata Marketing platform)</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>Example: Conditional Deal</h2>
+    
+    <div class="example-deal">
+        <div class="example-deal-header">
+            <div class="example-deal-name">Cardinal Gray</div>
+            <div class="example-deal-value">$0 - $15K/yr</div>
+        </div>
+        <div class="example-deal-fields">
+            <div class="example-field">
+                <span class="example-field-label">Cash Collected</span>
+                <span class="example-field-value">$0</span>
+            </div>
+            <div class="example-field">
+                <span class="example-field-label">Conviction</span>
+                <span class="example-field-value">If free: <span class="conviction-badge guaranteed" style="padding: 4px 10px; font-size: 11px;">Guaranteed</span> | If $5K-$15K: <span class="conviction-badge low" style="padding: 4px 10px; font-size: 11px;">Low</span></span>
+            </div>
+            <div class="example-field">
+                <span class="example-field-label">Reason to Buy</span>
+                <span class="example-field-value">15 target accounts, no enterprise sales experience, needs buyer groups for net new and expansion plays</span>
+            </div>
+            <div class="example-field">
+                <span class="example-field-label">Notes</span>
+                <span class="example-field-value">Likely $0 in exchange for YC intros and qualified self-onboard feedback</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>Prospects vs. Deals</h2>
+    <p>A <strong>Prospect</strong> is a company we're interested in but haven't qualified yet. No pipeline value, no conviction rating. Just a name on a list.</p>
+    <p>A <strong>Deal</strong> has a value, a conviction level, and a reason to buy. The moment you can articulate why they'd buy and what they'd pay, it becomes a deal.</p>
+
+    <div class="principle-box">
+        <h4>The "Reason to Buy" Test</h4>
+        <p>If you can't explain why they need this in one sentence, it's not a deal yet. "They seem interested" is not a reason to buy. "They're launching a new product and need Speedrun for their reps" is.</p>
+    </div>
+
+    <a href="../../search.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Search
+    </a>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        });
+    </script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

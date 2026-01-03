@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Group Archetypes | Enterprise Sales Psychology</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Buyer Group Archetypes">
+    <meta property="og:description" content="Psychology profiles for every stakeholder in the enterprise buying committee.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f9f9f9;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+            --success: var(--accent);
+            --danger: #666;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #141414;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 28px 0 12px; color: var(--text); }
+        h4 { font-size: 14px; font-weight: 600; margin: 16px 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        /* Buyer Group Grid */
+        .buyer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0; }
+        .buyer-mini { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .buyer-mini:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .buyer-mini .icon { font-size: 28px; margin-bottom: 8px; }
+        .buyer-mini .name { font-weight: 600; font-size: 13px; color: var(--text); }
+        .buyer-mini .role { font-size: 11px; color: var(--text-muted); }
+        
+        /* Archetype Card */
+        .archetype-card { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 28px; margin: 24px 0; }
+        .archetype-card.highlight { border-color: var(--accent); }
+        .archetype-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .archetype-icon { width: 56px; height: 56px; background: var(--accent); color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+        .archetype-title { flex: 1; }
+        .archetype-title h3 { margin: 0; color: var(--text); }
+        .archetype-title .subtitle { font-size: 14px; color: var(--text-muted); margin: 4px 0 0 0; }
+        
+        .archetype-section { margin: 20px 0; }
+        
+        /* Trait Grid */
+        .trait-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
+        .trait { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+        .trait .label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .trait .value { font-size: 14px; color: var(--text); font-weight: 500; }
+        
+        /* Fear/Want Box */
+        .psychology-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 16px 0; }
+        .psychology-box { padding: 16px; border-radius: 8px; }
+        .psychology-box.fears { background: var(--card-bg); border: 1px solid var(--danger); }
+        .psychology-box.wants { background: rgba(230,81,0,0.08); border: 1px solid var(--success); }
+        .psychology-box h4 { margin: 0 0 8px 0; }
+        .psychology-box.fears h4 { color: var(--danger); }
+        .psychology-box.wants h4 { color: var(--success); }
+        .psychology-box ul { margin: 0; }
+        .psychology-box li { font-size: 14px; }
+        
+        /* Talk Track */
+        .talk-track { background: linear-gradient(135deg, rgba(230,81,0,0.1) 0%, rgba(255,109,0,0.05) 100%); border: 1px solid var(--accent); border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+        .talk-track h4 { color: var(--text); margin: 0 0 8px 0; }
+        .talk-track p { margin: 0; font-style: italic; color: var(--text); }
+        
+        /* Quick Reference Table */
+        .quick-ref { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 13px; }
+        .quick-ref th { background: var(--card-bg); color: var(--text-muted); padding: 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; border: 1px solid var(--border); }
+        .quick-ref td { padding: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text-secondary); vertical-align: top; }
+        .quick-ref td.role { font-weight: 600; color: var(--text); }
+        
+        /* Info Box */
+        .info-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 24px 0; }
+        .info-box.accent { border-left: 4px solid var(--accent); }
+        
+        @media (max-width: 768px) {
+            .buyer-grid { grid-template-columns: repeat(2, 1fr); }
+            .trait-grid, .psychology-grid { grid-template-columns: 1fr; }
+        }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Buyer Psychology</div>
+        <h1>Buyer Group Archetypes</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Foundations</span>
+    </div>
+</div>
+<div class="subtitle">Psychology profiles for every stakeholder in the enterprise buying committee</div>
+
+<div class="info-box accent">
+    <p style="margin:0;">Enterprise deals don't close because one person said yes. They close because <strong>no one said no</strong>. Each stakeholder has different fears, different goals, and different definitions of success. Master these archetypes to navigate any buying committee.</p>
+</div>
+
+<!-- Quick Overview -->
+<div class="buyer-grid">
+    <div class="buyer-mini"><div class="icon">$</div><div class="name">The CFO</div><div class="role">Budget Holder</div></div>
+    <div class="buyer-mini"><div class="icon">L</div><div class="name">The Legal Lead</div><div class="role">Risk Mitigator</div></div>
+    <div class="buyer-mini"><div class="icon">P</div><div class="name">Procurement</div><div class="role">Process Guardian</div></div>
+    <div class="buyer-mini"><div class="icon">S</div><div class="name">IT Security</div><div class="role">Gatekeeper</div></div>
+    <div class="buyer-mini"><div class="icon">V</div><div class="name">Peer VP</div><div class="role">Territory Protector</div></div>
+    <div class="buyer-mini"><div class="icon">C</div><div class="name">The Champion</div><div class="role">Internal Seller</div></div>
+</div>
+
+<!-- CFO -->
+<div class="archetype-card highlight">
+    <div class="archetype-header">
+        <div class="archetype-icon">$</div>
+        <div class="archetype-title">
+            <h3>The CFO</h3>
+            <div class="subtitle">Budget Holder • Decision Ratifier • ROI Gatekeeper</div>
+        </div>
+    </div>
+    
+    <div class="trait-grid">
+        <div class="trait"><div class="label">Primary Concern</div><div class="value">Return on Investment</div></div>
+        <div class="trait"><div class="label">Decision Style</div><div class="value">Data-driven, conservative</div></div>
+        <div class="trait"><div class="label">Influence Level</div><div class="value">Can veto any deal</div></div>
+        <div class="trait"><div class="label">Meeting Preference</div><div class="value">Short, numbers-focused</div></div>
+    </div>
+    
+    <div class="psychology-grid">
+        <div class="psychology-box fears">
+            <h4>Fears</h4>
+            <ul>
+                <li>Wasted budget on shelfware</li>
+                <li>Looking foolish to the board</li>
+                <li>Hidden costs that balloon</li>
+                <li>Unquantifiable "soft" benefits</li>
+            </ul>
+        </div>
+        <div class="psychology-box wants">
+            <h4>Wants</h4>
+            <ul>
+                <li>Clear payback period (ideally <6 months)</li>
+                <li>Measurable, defensible ROI</li>
+                <li>Predictable costs, no surprises</li>
+                <li>Reference customers in similar situations</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="talk-track">
+        <h4>Winning Talk Track</h4>
+        <p>"Based on your current [metric], we project a [X]% improvement, translating to [$Y] in additional revenue over 12 months. With a [$Z] investment, that's a [N]x return. We break even at month [M]. Here's how three similar companies performed..."</p>
+    </div>
+</div>
+
+<!-- Legal -->
+<div class="archetype-card">
+    <div class="archetype-header">
+        <div class="archetype-icon">L</div>
+        <div class="archetype-title">
+            <h3>The Legal Lead</h3>
+            <div class="subtitle">Contract Reviewer • Risk Assessor • Liability Shield</div>
+        </div>
+    </div>
+    
+    <div class="trait-grid">
+        <div class="trait"><div class="label">Primary Concern</div><div class="value">Contractual Risk</div></div>
+        <div class="trait"><div class="label">Decision Style</div><div class="value">Cautious, thorough</div></div>
+        <div class="trait"><div class="label">Influence Level</div><div class="value">Can delay indefinitely</div></div>
+        <div class="trait"><div class="label">Meeting Preference</div><div class="value">Document-focused, async OK</div></div>
+    </div>
+    
+    <div class="psychology-grid">
+        <div class="psychology-box fears">
+            <h4>Fears</h4>
+            <ul>
+                <li>Liability exposure</li>
+                <li>Non-standard terms they'll regret</li>
+                <li>Data breaches or compliance violations</li>
+                <li>Being blamed when things go wrong</li>
+            </ul>
+        </div>
+        <div class="psychology-box wants">
+            <h4>Wants</h4>
+            <ul>
+                <li>Standard MSA with minimal redlines</li>
+                <li>Clear data handling and DPA</li>
+                <li>Reasonable limitation of liability</li>
+                <li>Quick turnaround on their questions</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="talk-track">
+        <h4>Winning Talk Track</h4>
+        <p>"We use a standard enterprise MSA that's been reviewed by [X] Fortune 500 legal teams. Our DPA is GDPR and CCPA compliant. Here's our SOC 2 Type II report. Most customers complete legal review in 5-7 days. Happy to schedule a call with your team to address any specific concerns."</p>
+    </div>
+</div>
+
+<!-- Procurement -->
+<div class="archetype-card">
+    <div class="archetype-header">
+        <div class="archetype-icon">P</div>
+        <div class="archetype-title">
+            <h3>Procurement</h3>
+            <div class="subtitle">Process Enforcer • Vendor Manager • Cost Optimizer</div>
+        </div>
+    </div>
+    
+    <div class="trait-grid">
+        <div class="trait"><div class="label">Primary Concern</div><div class="value">Process Compliance</div></div>
+        <div class="trait"><div class="label">Decision Style</div><div class="value">By-the-book, structured</div></div>
+        <div class="trait"><div class="label">Influence Level</div><div class="value">Can force competitive bid</div></div>
+        <div class="trait"><div class="label">Meeting Preference</div><div class="value">Formal, documented</div></div>
+    </div>
+    
+    <div class="psychology-grid">
+        <div class="psychology-box fears">
+            <h4>Fears</h4>
+            <ul>
+                <li>Audit findings on process violations</li>
+                <li>Being bypassed or undermined</li>
+                <li>Paying more than they should</li>
+                <li>Vendor lock-in without leverage</li>
+            </ul>
+        </div>
+        <div class="psychology-box wants">
+            <h4>Wants</h4>
+            <ul>
+                <li>Clear pricing with no hidden fees</li>
+                <li>Competitive quotes (even if pro forma)</li>
+                <li>Standard vendor onboarding flow</li>
+                <li>Multi-year discount for commitment</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="talk-track">
+        <h4>Winning Talk Track</h4>
+        <p>"We're happy to go through your standard vendor qualification process. Here's our W-9, insurance certificates, and completed security questionnaire. Our pricing is transparent—no hidden fees. For multi-year commitments, we offer [X]% discount. What else do you need to keep this on track?"</p>
+    </div>
+</div>
+
+<!-- IT Security -->
+<div class="archetype-card">
+    <div class="archetype-header">
+        <div class="archetype-icon">S</div>
+        <div class="archetype-title">
+            <h3>IT Security</h3>
+            <div class="subtitle">Technical Gatekeeper • Risk Analyst • Integration Owner</div>
+        </div>
+    </div>
+    
+    <div class="trait-grid">
+        <div class="trait"><div class="label">Primary Concern</div><div class="value">Security & Integration Risk</div></div>
+        <div class="trait"><div class="label">Decision Style</div><div class="value">Technical, skeptical</div></div>
+        <div class="trait"><div class="label">Influence Level</div><div class="value">Hard veto on security grounds</div></div>
+        <div class="trait"><div class="label">Meeting Preference</div><div class="value">Technical deep-dive</div></div>
+    </div>
+    
+    <div class="psychology-grid">
+        <div class="psychology-box fears">
+            <h4>Fears</h4>
+            <ul>
+                <li>Data breaches they'll be blamed for</li>
+                <li>Shadow IT and uncontrolled access</li>
+                <li>Integration nightmares</li>
+                <li>Another tool to maintain and secure</li>
+            </ul>
+        </div>
+        <div class="psychology-box wants">
+            <h4>Wants</h4>
+            <ul>
+                <li>SOC 2, ISO 27001 compliance</li>
+                <li>SSO integration (SAML/OIDC)</li>
+                <li>Clear data residency and encryption</li>
+                <li>API documentation and sandboxes</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="talk-track">
+        <h4>Winning Talk Track</h4>
+        <p>"We're SOC 2 Type II certified, here's our report. Data is encrypted at rest (AES-256) and in transit (TLS 1.3). We support SAML SSO with your identity provider. All data stays in [region], no third-party processing. Here's our security whitepaper and API docs. Want to schedule a technical architecture review?"</p>
+    </div>
+</div>
+
+<!-- Peer VP -->
+<div class="archetype-card">
+    <div class="archetype-header">
+        <div class="archetype-icon">V</div>
+        <div class="archetype-title">
+            <h3>Peer VP</h3>
+            <div class="subtitle">Territory Protector • Political Player • Potential Ally</div>
+        </div>
+    </div>
+    
+    <div class="trait-grid">
+        <div class="trait"><div class="label">Primary Concern</div><div class="value">Impact on Their World</div></div>
+        <div class="trait"><div class="label">Decision Style</div><div class="value">Political, relationship-driven</div></div>
+        <div class="trait"><div class="label">Influence Level</div><div class="value">Can rally opposition quietly</div></div>
+        <div class="trait"><div class="label">Meeting Preference</div><div class="value">1:1 or small group</div></div>
+    </div>
+    
+    <div class="psychology-grid">
+        <div class="psychology-box fears">
+            <h4>Fears</h4>
+            <ul>
+                <li>Their team being disrupted</li>
+                <li>Losing budget to another VP's initiative</li>
+                <li>Looking unsupportive if it succeeds</li>
+                <li>Being left out of credit if it works</li>
+            </ul>
+        </div>
+        <div class="psychology-box wants">
+            <h4>Wants</h4>
+            <ul>
+                <li>To be consulted, not informed</li>
+                <li>Clear boundaries on scope</li>
+                <li>Shared credit for success</li>
+                <li>No additional work for their team</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="talk-track">
+        <h4>Winning Talk Track</h4>
+        <p>"We wanted to get your input before moving forward. This is [Champion]'s initiative, but it will touch [your area]. Our goal is to make your team's job easier, not harder. What concerns would you want us to address? How can we make sure this is a win for your team too?"</p>
+    </div>
+</div>
+
+<!-- The Champion -->
+<div class="archetype-card highlight">
+    <div class="archetype-header">
+        <div class="archetype-icon">C</div>
+        <div class="archetype-title">
+            <h3>The Champion</h3>
+            <div class="subtitle">Internal Seller • Project Owner • Success Dependent</div>
+        </div>
+    </div>
+    
+    <div class="trait-grid">
+        <div class="trait"><div class="label">Primary Concern</div><div class="value">Making This Work</div></div>
+        <div class="trait"><div class="label">Decision Style</div><div class="value">Committed, needs ammunition</div></div>
+        <div class="trait"><div class="label">Influence Level</div><div class="value">Drives the deal forward</div></div>
+        <div class="trait"><div class="label">Meeting Preference</div><div class="value">Prep calls, strategy sessions</div></div>
+    </div>
+    
+    <div class="psychology-grid">
+        <div class="psychology-box fears">
+            <h4>Fears</h4>
+            <ul>
+                <li>Staking reputation on failure</li>
+                <li>Losing momentum internally</li>
+                <li>Being unable to answer objections</li>
+                <li>You making them look bad</li>
+            </ul>
+        </div>
+        <div class="psychology-box wants">
+            <h4>Wants</h4>
+            <ul>
+                <li>Win to accelerate their career</li>
+                <li>Ammunition for every objection</li>
+                <li>To be the hero of the story</li>
+                <li>Partner, not vendor relationship</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="talk-track">
+        <h4>Winning Talk Track</h4>
+        <p>"You're going to be the one presenting this internally. Let's make sure you have everything you need. What objections are you anticipating? Who's the toughest stakeholder? Let me give you the exact data points that worked with [similar customer]. You're not alone in this—we'll prep you for every meeting."</p>
+    </div>
+</div>
+
+<!-- Quick Reference -->
+<h2>Quick Reference Matrix</h2>
+
+<table class="quick-ref">
+    <tr>
+        <th>Role</th>
+        <th>Lead With</th>
+        <th>Avoid</th>
+        <th>Key Metric</th>
+    </tr>
+    <tr>
+        <td class="role">CFO</td>
+        <td>ROI, payback period</td>
+        <td>Vague "productivity gains"</td>
+        <td>$ return per $ invested</td>
+    </tr>
+    <tr>
+        <td class="role">Legal</td>
+        <td>Compliance, standard terms</td>
+        <td>Rushing or pressure</td>
+        <td>Days to contract close</td>
+    </tr>
+    <tr>
+        <td class="role">Procurement</td>
+        <td>Process, transparency</td>
+        <td>End-runs or bypasses</td>
+        <td>Competitive positioning</td>
+    </tr>
+    <tr>
+        <td class="role">IT Security</td>
+        <td>Certifications, architecture</td>
+        <td>Handwaving on security</td>
+        <td>Security questionnaire score</td>
+    </tr>
+    <tr>
+        <td class="role">Peer VP</td>
+        <td>Collaboration, shared credit</td>
+        <td>Territorial language</td>
+        <td>Impact on their metrics</td>
+    </tr>
+    <tr>
+        <td class="role">Champion</td>
+        <td>Partnership, ammunition</td>
+        <td>Making them look uninformed</td>
+        <td>Internal meeting success rate</td>
+    </tr>
+</table>
+
+<div class="info-box accent">
+    <h4 style="margin-top:0; color:var(--accent);">The Golden Rule</h4>
+    <p style="margin-bottom:0;">Every stakeholder has a reason to say no and a reason to say yes. Your job is to find their specific reason to say yes and eliminate their specific reason to say no. Generic pitches hit neither.</p>
+</div>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

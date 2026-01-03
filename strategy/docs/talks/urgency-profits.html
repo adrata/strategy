@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +25,7 @@
             --highlight-bg: #fff5f0;
             --code-bg: #f4f4f4;
         }
-        body.dark-mode {
+        [data-theme="dark"] {
             --bg: #0a0a0a;
             --text: #e5e5e5;
             --text-secondary: #ccc;
@@ -38,20 +38,24 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
         
-        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
         .header-content { flex: 1; }
-        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
         .theme-toggle:hover { color: var(--text); }
         .theme-toggle svg { width: 20px; height: 20px; }
         .theme-toggle .sun { display: block; }
         .theme-toggle .moon { display: none; }
-        body.dark-mode .theme-toggle .sun { display: none; }
-        body.dark-mode .theme-toggle .moon { display: block; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
         
-        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
-        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
-        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player .play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
         .audio-info { flex: 1; }
         .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
         .audio-status { font-size: 12px; opacity: 0.9; }
@@ -59,25 +63,25 @@
         .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
         .speed-btn:hover { background: rgba(255,255,255,0.3); }
         .speed-btn svg { width: 12px; height: 12px; }
-        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
         .speed-menu.open { display: block; }
         .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
         .speed-option:hover { background: var(--card-bg); }
         .speed-option.active { background: var(--accent); color: #fff; }
         
-        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
-        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
-        .speaker { font-size: 16px; color: var(--accent); font-weight: 600; margin-bottom: 24px; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.15; margin-bottom: 12px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; }
+        .speaker { font-size: 16px; color: var(--accent); font-weight: 600; margin-bottom: 28px; }
         
         h2 { font-size: 28px; font-weight: 700; margin: 64px 0 16px; padding-top: 32px; border-top: 1px solid var(--border); }
         h2:first-of-type { margin-top: 32px; border-top: none; padding-top: 0; }
-        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--accent); }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--text); }
         p { margin-bottom: 16px; color: var(--text-secondary); }
         
         .intro { font-size: 20px; line-height: 1.7; margin-bottom: 32px; }
         
-        .pull-quote { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px 32px; margin: 32px 0; font-size: 20px; font-style: italic; color: var(--text); }
+        .pull-quote { background: var(--card-bg); border-left: 4px solid var(--border); padding: 24px 32px; margin: 32px 0; font-size: 20px; font-style: italic; color: var(--text); }
         
         .key-point { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; }
         .key-point h3 { color: #fff; margin-top: 0; font-size: 24px; }
@@ -86,22 +90,22 @@
         .key-point li { padding: 8px 0; font-weight: 500; }
         
         .concept-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
-        .concept-card h4 { color: var(--accent); margin: 0 0 12px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+        .concept-card h4 { color: var(--text); margin: 0 0 12px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
         .concept-card p { margin-bottom: 0; }
         
         .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
         @media (max-width: 700px) { .comparison-grid { grid-template-columns: 1fr; } }
         
         .urgency-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-        .urgency-card.good { border-color: #059669; background: rgba(5, 150, 105, 0.05); }
-        .urgency-card.bad { border-color: #dc2626; background: rgba(220, 38, 38, 0.05); }
+        .urgency-card.good { border-color: var(--accent); background: rgba(230, 81, 0, 0.08); }
+        .urgency-card.bad { border-color: #666; background: var(--card-bg); }
         .urgency-card h4 { margin: 0 0 12px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-        .urgency-card.good h4 { color: #059669; }
-        .urgency-card.bad h4 { color: #dc2626; }
+        .urgency-card.good h4 { color: var(--text); }
+        .urgency-card.bad h4 { color: #666; }
         .urgency-card p { color: var(--text-muted); font-size: 14px; margin: 0; }
         
         ul.takeaway-list { list-style: none; margin: 24px 0; }
-        ul.takeaway-list li { padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; color: var(--text-secondary); font-size: 16px; display: flex; align-items: flex-start; gap: 12px; }
+        ul.takeaway-list li { padding: 14px 18px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; color: var(--text-secondary); font-size: 16px; display: flex; align-items: flex-start; gap: 12px; }
         ul.takeaway-list li::before { content: "→"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
         
         .formula-box { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center; }
@@ -122,7 +126,7 @@
         .stat-card .label { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
         
         .newsletter-widget { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; padding: 32px; margin: 48px 0; color: #fff; }
-        body.dark-mode .newsletter-widget { background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%); border: 1px solid #333; }
+        [data-theme="dark"] .newsletter-widget { background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%); border: 1px solid #333; }
         .newsletter-widget h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #fff; }
         .newsletter-widget p { color: #ccc; font-size: 14px; margin-bottom: 20px; }
         .newsletter-form { display: flex; gap: 12px; }
@@ -132,7 +136,18 @@
         .newsletter-form button { background: var(--accent); border: none; padding: 14px 24px; border-radius: 8px; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
         .newsletter-form button:hover { background: #ff6d00; }
         
-        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+        .share-widget { background: #f5f5f5; border-radius: 12px; padding: 32px; margin: 48px 0; }
+        [data-theme="dark"] .share-widget { background: #1a1a1a; border: 1px solid #333; }
+        .share-widget h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .share-widget p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+        .share-form { display: flex; gap: 12px; max-width: 400px; }
+        .share-form input { flex: 1; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 14px; }
+        .share-form input::placeholder { color: var(--text-muted); }
+        .share-form button { background: var(--accent); border: none; width: 48px; height: 48px; border-radius: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .share-form button:hover { background: #ff6d00; }
+        .share-form button svg { width: 20px; height: 20px; }
+        
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 14px; text-decoration: none; margin-top: 32px; padding: 12px 0; }
         .back-link:hover { color: var(--accent); }
         .back-link svg { width: 16px; height: 16px; }
         
@@ -142,14 +157,14 @@
             h2 { font-size: 24px; }
             .audio-player { flex-wrap: wrap; }
         }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
     </style>
 </head>
 <body>
-    <a href="../" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Back to Library
-    </a>
-    
     <div class="page-header">
         <div class="header-content">
             <div class="doc-type">Talk Transcript</div>
@@ -161,10 +176,16 @@
             <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
             <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
         </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Talks</span>
+    </div>
     </div>
 
     <div class="audio-player">
-        <button id="playBtn" onclick="toggleAudio()">
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()">
             <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
         </button>
         <div class="audio-info">
@@ -177,11 +198,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="speed-menu" id="speedMenu">
-                <div class="speed-option" onclick="setSpeed(0.75)">0.75x</div>
-                <div class="speed-option active" onclick="setSpeed(1)">1x</div>
-                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
                 <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
-                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
             </div>
         </div>
     </div>
@@ -389,28 +409,38 @@
         <li><strong>Play the long game.</strong> Your reputation for honest selling compounds over time. Short-term manipulation creates long-term drag.</li>
     </ul>
 
-    <div class="newsletter-widget">
-        <h3>Adrata Sales Intelligence</h3>
-        <p>Weekly insights on closing more deals with better intelligence, not more pressure.</p>
-        <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').innerHTML = 'Subscribed!'; this.querySelector('input').value = '';">
-            <input type="email" placeholder="Enter your email" required>
+    <div class="share-widget">
+        <h3>Know someone who'd find this useful?</h3>
+        <p>Send this article to a colleague</p>
+        <form class="share-form" onsubmit="event.preventDefault(); const email = this.querySelector('input').value; const subject = encodeURIComponent('Worth reading: Increase Your Profits with Urgency'); const body = encodeURIComponent('Thought you might find this interesting:\n\n' + window.location.href); window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body; this.querySelector('input').value = '';">
+            <input type="email" placeholder="Their email" required>
             <button type="submit">
-                Subscribe
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
         </form>
     </div>
 
+    <a href="../../search.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Search
+    </a>
+
     <script>
         // Theme
-        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        const theme = localStorage.getItem('theme') || 'dark'; document.documentElement.setAttribute('data-theme', theme);
         
         let audio = null;
         let synth = window.speechSynthesis;
         let utterance = null;
         let isPlaying = false;
-        let currentSpeed = 1;
+        let currentSpeed = parseFloat(localStorage.getItem('audioSpeed')) || 2;
         let useWebSpeech = false;
+        
+        // Initialize UI with saved speed
+        document.getElementById('speedLabel').textContent = currentSpeed + 'x';
+        document.querySelectorAll('.speed-option').forEach(opt => {
+            opt.classList.toggle('active', opt.textContent === currentSpeed + 'x');
+        });
         
         const MP3_URL = 'urgency-profits.mp3';
         
@@ -492,9 +522,11 @@
         
         function setSpeed(speed) {
             currentSpeed = speed;
+            localStorage.setItem('audioSpeed', speed);
             document.getElementById('speedLabel').textContent = speed + 'x';
-            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.speed-option').forEach(opt => {
+                opt.classList.toggle('active', opt.textContent === speed + 'x');
+            });
             if (audio) audio.playbackRate = speed;
             if (utterance) utterance.rate = speed;
             toggleSpeedMenu();
@@ -506,6 +538,7 @@
             }
         });
     </script>
+<script src="../../js/copy-menu.js"></script>
 </body>
 </html>
 

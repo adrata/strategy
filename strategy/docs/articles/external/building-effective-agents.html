@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Building Effective Agents | Anthropic Engineering</title>
-    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
     <meta property="og:title" content="Building Effective Agents">
     <meta property="og:description" content="Simple, composable patterns for LLM agents. The most successful implementations use simple patterns rather than complex frameworks.">
     <meta property="og:type" content="article">
@@ -26,7 +26,7 @@
             --highlight-bg: #fff5f0;
             --workflow-bg: #f0f4f8;
         }
-        body.dark-mode {
+        [data-theme="dark"] {
             --bg: #0a0a0a;
             --text: #e5e5e5;
             --text-secondary: #ccc;
@@ -40,20 +40,24 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
         
-        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .header-content { flex: 1; }
-        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
         .theme-toggle:hover { color: var(--text); }
         .theme-toggle svg { width: 20px; height: 20px; }
         .theme-toggle .sun { display: block; }
         .theme-toggle .moon { display: none; }
-        body.dark-mode .theme-toggle .sun { display: none; }
-        body.dark-mode .theme-toggle .moon { display: block; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
         
-        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
-        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
-        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player .play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
         .audio-info { flex: 1; }
         .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
         .audio-status { font-size: 12px; opacity: 0.9; }
@@ -61,7 +65,7 @@
         .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
         .speed-btn:hover { background: rgba(255,255,255,0.3); }
         .speed-btn svg { width: 12px; height: 12px; }
-        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
         .speed-menu.open { display: block; }
         .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
         .speed-option:hover { background: var(--card-bg); }
@@ -82,7 +86,7 @@
         .definition-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
         @media (max-width: 600px) { .definition-grid { grid-template-columns: 1fr; } }
         .definition-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
-        .definition-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .definition-card h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
         .definition-card p { font-size: 14px; margin-bottom: 0; }
         
         .workflow-diagram { background: var(--workflow-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center; }
@@ -93,9 +97,9 @@
         .workflow-arrow { color: var(--text-muted); font-size: 20px; }
         
         .section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; }
-        .section-card h3 { margin-top: 0; color: var(--accent); }
+        .section-card h3 { margin-top: 0; color: var(--text); }
         
-        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        .insight { background: var(--card-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--border); }
         
         ul, ol { margin-left: 24px; margin-bottom: 16px; }
         li { margin-bottom: 8px; color: var(--text-secondary); }
@@ -106,36 +110,41 @@
         
         .workflow-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
         .workflow-section h3 { margin-top: 0; color: var(--text); font-size: 20px; }
-        .workflow-section h4 { font-size: 15px; font-weight: 700; color: var(--accent); margin: 20px 0 8px; }
+        .workflow-section h4 { font-size: 15px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
         
-        .example-list { background: var(--highlight-bg); border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .example-list { background: var(--card-bg); border-radius: 8px; padding: 16px; margin: 16px 0; }
         .example-list h5 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 12px; }
         .example-list ul { margin-bottom: 0; }
         
         .principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
         .principle-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
-        .principle-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .principle-card h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
         .principle-card p { font-size: 14px; margin-bottom: 0; }
         
-        .appendix { background: var(--highlight-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 24px; margin: 32px 0; }
-        .appendix h3 { color: var(--accent); margin-top: 0; }
+        .appendix { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .appendix h3 { color: var(--text); margin-top: 0; }
         
         .credits { background: var(--card-bg); padding: 20px; border-radius: 8px; margin: 32px 0; font-size: 14px; }
         .credits strong { color: var(--text); }
         
         /* Newsletter Section */
         .newsletter-section { margin-top: 64px; }
-        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
-        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box { background: #f5f5f5; border-radius: 16px; padding: 40px; }
+        [data-theme="dark"] .newsletter-box { background: #1a1a1a; border: 1px solid #333; }
         .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
         .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
         .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
         .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
         .newsletter-form input::placeholder { color: var(--text-muted); }
-        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
         .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
         .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
         .newsletter-disclaimer { font-size: 12px; color: var(--text-muted); margin-top: 16px; }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -150,12 +159,18 @@
         <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
         <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
     </button>
+    
+    <div class="breadcrumb">
+        <a href="../../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">External</span>
+    </div>
 </div>
 <div class="subtitle">We've worked with dozens of teams building LLM agents across industries. Consistently, the most successful implementations use simple, composable patterns rather than complex frameworks.</div>
 <div class="date">Published Dec 19, 2024</div>
 
 <div class="audio-player">
-    <button id="playBtn" onclick="toggleAudio()">
+    <button class="play-btn" id="playBtn" onclick="toggleAudio()">
         <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </button>
@@ -165,17 +180,17 @@
     </div>
     <div class="speed-dropdown">
         <button class="speed-btn" onclick="toggleSpeedMenu(event)">
-            <span id="speedLabel">1.5x</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            <span id="speedLabel">2x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="speed-menu" id="speedMenu">
-            <div class="speed-option" onclick="setSpeed(1)">1x</div>
-            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
-            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
-            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+            
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
             <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
             <div class="speed-option" onclick="setSpeed(3)">3x</div>
-            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
         </div>
     </div>
 </div>
@@ -525,7 +540,7 @@
 
 <audio id="audioElement" preload="auto" style="display:none;"><source src="building-effective-agents.mp3" type="audio/mpeg"></audio>
 <script>
-let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = parseFloat(localStorage.getItem('audioSpeed')) || 2;
 const audioEl = document.getElementById('audioElement');
 audioEl.onerror = () => { audioMode = 'speech'; };
 
@@ -545,12 +560,14 @@ function toggleSpeechAudio() {
     else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; utterance.onerror = (e) => { if (e.error !== 'interrupted') document.getElementById('audioStatus').textContent = 'Error'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; setTimeout(() => { if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } }, 100); }
 }
 
-function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
+function setSpeed(speed) {
+            localStorage.setItem('audioSpeed', speed); speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; else if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; isPaused = false; setTimeout(toggleAudio, 100); } }
 function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
-function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function toggleTheme() { const html = document.documentElement; const isDark = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', isDark ? 'light' : 'dark'); localStorage.setItem('theme', isDark ? 'light' : 'dark'); }
 function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the next article when it\'s ready.</p>'; } }
 
-document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+document.addEventListener('DOMContentLoaded', () => { const savedSpd = localStorage.getItem('audioSpeed') || '2'; document.getElementById('speedLabel').textContent = savedSpd + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.toggle('active', opt.textContent === savedSpd + 'x')); const theme = localStorage.getItem('theme') || 'dark'; document.documentElement.setAttribute('data-theme', theme); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
 </script>
+<script src="../../../js/copy-menu.js"></script>
 </body>
 </html>

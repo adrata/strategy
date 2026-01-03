@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push, Pull, and PULL | Why Business Theory is Stuck</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="Push, Pull, and PULL">
+    <meta property="og:description" content="Why startups aren't intuitive = why business theory is stuck. From Taylor's Scientific Management to Toyota's Pull system to Jobs to be Done.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; --accent-light: #ff6d00; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 720px; margin: 0 auto; }
+        
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.15; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); font-weight: 400; margin-bottom: 8px; line-height: 1.4; }
+        .byline { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+        
+        h2 { font-size: 26px; font-weight: 700; margin: 56px 0 20px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 16px; color: var(--text); }
+        p { margin-bottom: 20px; color: var(--text-secondary); }
+        
+        .lead { font-size: 20px; line-height: 1.7; color: var(--text); margin-bottom: 28px; }
+        
+        /* Diagrams */
+        .diagram { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 32px 0; text-align: center; }
+        .diagram-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+        .diagram-flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .diagram-box { background: var(--bg); border: 2px solid var(--border); padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; }
+        .diagram-box.highlight { border-color: var(--accent); color: var(--accent); }
+        .diagram-box.customer { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .diagram-arrow { color: var(--text-muted); font-size: 16px; }
+        .diagram-caption { font-size: 13px; color: var(--text-muted); margin-top: 16px; font-style: italic; }
+        
+        /* Pull Quotes */
+        .pull-quote { font-size: 24px; font-weight: 600; line-height: 1.4; color: var(--text); margin: 40px 0; padding: 24px 0; border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); }
+        
+        /* Info Boxes */
+        .info-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; }
+        .info-box p { margin-bottom: 0; }
+        .info-box p + p { margin-top: 12px; }
+        
+        /* Example Box */
+        .example-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 28px 0; }
+        .example-box h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .example-box ul { margin: 0; padding-left: 20px; }
+        .example-box li { margin-bottom: 8px; font-size: 15px; }
+        
+        /* Highlight */
+        .highlight { color: var(--text); font-weight: 600; }
+        .accent { color: var(--accent); font-weight: 600; }
+        
+        /* Lists */
+        ul, ol { margin-left: 24px; margin-bottom: 20px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        /* Footnotes */
+        .footnotes { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--border); }
+        .footnotes h4 { font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        .footnotes ol { font-size: 14px; color: var(--text-muted); }
+        .footnotes li { margin-bottom: 12px; }
+        
+        sup { color: var(--accent); font-weight: 600; }
+        
+        blockquote { border-left: 3px solid var(--accent); padding-left: 20px; margin: 28px 0; font-style: italic; color: var(--text-muted); }
+        
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        @media (max-width: 640px) {
+            h1 { font-size: 28px; }
+            .pull-quote { font-size: 20px; }
+            .diagram-flow { flex-direction: column; }
+            .diagram-arrow { transform: rotate(90deg); }
+        }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Business Theory</div>
+        <h1>Push, Pull, and PULL</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">External</span>
+    </div>
+</div>
+<p class="subtitle">Why startups aren't intuitive = why business theory is stuck</p>
+<p class="byline">Rob Fitzpatrick · January 2, 2026</p>
+
+<p class="lead">I think you and I are capable of building magical, world-changing companies. The next Apple, NVIDIA, Airbnb, Starbucks, or perhaps the companies that make today's giants look quaint.</p>
+
+<p>The main thing that's preventing us from building such a company, I believe, is what's in our heads: <span class="highlight">The craft of building wonderful companies is unintuitive (and therefore, nearly impossible) given the way we've been taught to see the world.</span> This is a function of business theory being stuck.</p>
+
+<p>Now, you might be thinking - "But Rob, how on Earth can business thinking possibly be stuck? After all, Harvard Business School teaches a class on happiness - clearly we must have solved business theory if this is the case!" No, business theory is not solved, and in fact it has been stagnant for over a century.</p>
+
+<p>Business theory last made real progress in 1911 - the year when Frederick Winslow Taylor's groundbreaking book, <em>The Principles of Scientific Management</em>, was published. This is the most recent great work of paradigm-creating theory in business, the foundation upon which basically all modern business thinking has been built.</p>
+
+<p>The problem is that Scientific Management's model of the physics of business is <span class="accent">incomplete</span>. Because of this, the way we think the world works does not reflect the way the world actually works. This has many consequences, but most relevant to us is it makes startups unintelligible. It's why copying successful startups' playbooks doesn't work, success seems random or magical, selling is unnatural, and "build something people want" sounds obvious but feels impossible.</p>
+
+<h2>Taylor's Model</h2>
+
+<p>When we look at a factory, this is what we see:</p>
+
+<div class="diagram">
+    <div class="diagram-title">The Push Model (Taylor, 1911)</div>
+    <div class="diagram-flow">
+        <div class="diagram-box">Step 1</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Step 2</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Step 3</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Customer</div>
+    </div>
+    <div class="diagram-caption">Each step pushes its output to the next step, and out to customers.</div>
+</div>
+
+<p>Frederick Winslow Taylor saw Midvale Steel Company this way in the late 19th century. He also noticed that each step in the factory was managed very loosely, where each trade decided how to handle their step in the production process.</p>
+
+<p>Taylor decided he could make each step more efficient and effective, so that it could push more output to the next step. He was effective to an almost unfathomable degree. In <em>Scientific Management</em> he details his redesign of the simplest job composed of a single task: lifting a ~90-pound piece of pig iron, carrying it a few yards, and putting it down. <span class="highlight">Taylor was able to improve the approach to this simple task in a way that nearly 4x'ed output per worker</span> (12.5 tons → 47 tons per day).</p>
+
+<p>This ushered in business as we know it today, enabling mass production and the rise of the professional manager.</p>
+
+<p>And then.</p>
+
+<h2>Push vs. Pull</h2>
+
+<p>Fast forward about half a century from Scientific Management. Something inconceivable was happening. Over the span of two decades, Japan had emerged from postwar rubble and was now absolutely dominating global manufacturing.</p>
+
+<div class="info-box">
+    <p>A Lexus took fewer man-hours in its <em>entire</em> end-to-end assembly process than a top-of-the-line German luxury car spent getting all its assembly errors reworked <em>after</em> assembly was "complete."<sup>1</sup></p>
+</div>
+
+<p>Japanese cars were significantly cheaper, and more fuel-efficient, and higher quality than all other cars on the market. In fact, they were so superior to American-made ones that the Japanese government self-imposed export restrictions to try to let American car companies catch up.<sup>2</sup> Think about how insane this is.</p>
+
+<p>What was the difference between Japanese manufacturing and everyone else? When asked by an American executive why the Japanese were so good at manufacturing, Taiichi Ohno, the legendary engineer from Toyota, said: <span class="accent">"We learned it from you!"</span><sup>3</sup></p>
+
+<p>Ohno had visited Ford's production plants. He was inspired by the exact factory that Taylor's ideas had created. When he looked at Ford's factory, Ohno understood the physics of the factory differently… which caused him to understand the physics of business differently.</p>
+
+<h3>The Push Model</h3>
+
+<p>We are taught to see the factory the way Taylor saw it: as a production line that we act on. We are the main causal actors in this model. Our plans, goals, intentions, and actions make things happen. This is the "push" model: We "push" products through the factory and out to customers. <span class="highlight">We cause production to happen.</span></p>
+
+<div class="diagram">
+    <div class="diagram-title">Push: We cause production</div>
+    <div class="diagram-flow">
+        <div class="diagram-box highlight">Us (Plans)</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Factory</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Customer</div>
+    </div>
+</div>
+
+<p>This seems obviously true. Of course we cause stuff to happen! But, as it turns out, this is only locally true.</p>
+
+<h3>The Pull Model</h3>
+
+<p>Ohno saw things differently: The factory, in his mind, worked like a supermarket: When you pull a milk carton off the shelf, a new one shows up right behind it. The same causal structure is true for all manufacturing, even for things as complicated as cars. A customer purchase starts the production process, and the customer must get exactly what they order, at the quality they expect, basically instantly.</p>
+
+<div class="diagram">
+    <div class="diagram-title">Pull: Customers cause production</div>
+    <div class="diagram-flow">
+        <div class="diagram-box customer">Customer (Demand)</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Factory</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Delivery</div>
+    </div>
+    <div class="diagram-caption">In Ohno's mind, the whole business exists to deliver the carton of milk you want the moment you reach for it on the shelf.</div>
+</div>
+
+<p><span class="highlight">"Push" and "pull" are incompatible ways of understanding the physics of business.</span> This turns out to be massively important: they generate businesses that look and act totally different.</p>
+
+<div class="pull-quote">
+In "pull", customer pull is the causal force in business. In "push", we don't perceive the customer's order as the highest-level constraint.
+</div>
+
+<p>In "push", what forcing function keeps our plans and goals from being unrealistic or drifting away from delivering for customers? In the case of American car manufacturers, they optimized for hitting production plans, and when production plans were missed or had second-order consequences (e.g., quality issues, excessive inventory, wrong "mix" of production), they misdiagnosed their problems as execution problems and layered on more management, more measurement, etc. <span class="accent">"Push" caused them to evolve to be bureaucratic and sluggish.</span></p>
+
+<p>In the case of modern startups, we often optimize for the product idea we want to exist; when customers don't buy, we misdiagnose it as a messaging problem, a sales problem, or a "we need to build more" problem - the real problem is invisible to us. Inside the "push" model, where we don't see customers as the primary constraint, <span class="highlight">it is impossible for us to correctly understand why the business isn't working.</span></p>
+
+<p>So, by default, "push" causes failed startups, bloated bureaucracies, bad customer experiences, and bad products. We behave as if customers are an afterthought, despite any and all slogans about customer centricity and quality. It is only by heroic effort, usually by a (highly disagreeable) founder, that this does not happen under "push".</p>
+
+<p>This entropy is not endemic to the "pull" model, because "pull" forces us to focus on customers and ask one question repeatedly - <span class="accent">"Did we deliver what they ordered, to their expectations?"</span> This generated all the manufacturing process innovations out of Japan you've heard of - Lean, Kanban, SMED, etc.</p>
+
+<div class="info-box">
+    <p>The distinction between "push" and "pull" represents a foundational evolution to business theory, <strong>roughly equivalent to the Copernican revolution</strong>. It enables modern business to evolve from the default state of "disappointing the customer" to one of "not disappointing the customer."</p>
+</div>
+
+<p>Because this is not understood, the "push" model is still the dominant business paradigm today. We think our plans and intentions cause outcomes; if it works in our head, it will work in the world. Marketing and sales are things done <em>to</em> the market, to convince them to want the product we've created. We are just one killer offer, one unbelievable value prop, one more feature, one psychology hack, one growth tactic away from success. <span class="highlight">This is a seductive fantasy, and it's the water we swim in.</span></p>
+
+<p>We have to evolve past "push". But "pull" is not enough, either.</p>
+
+<h2>Pull vs. PULL</h2>
+
+<p>The "pull" model shifts our optimizing function from "hitting our plans" to "delivering what the customer orders." But does the customer order represent what customers want? Or is there something upstream of the customer order that we should really be optimizing for?</p>
+
+<p>Bob Moesta won't admit this, but he is behind a shocking percentage of successful new products in recent decades. His big insight is that <span class="accent">customer orders are "requests for supply", they are not "what customers want"</span> - they are not demand.</p>
+
+<div class="example-box">
+    <h4>Example: Why Feature Requests Aren't Demand</h4>
+    <ul>
+        <li>A customer of a project management software submits a feature request for a "permissions feature" - so it seems like she has demand for a permissions feature</li>
+        <li>But when interviewed, she explains that a contractor on one of her projects archived the project, not realizing doing this would archive the project for <em>everybody</em>. Everybody on the project freaked out, and this caused her to submit the feature request</li>
+        <li><strong>Her real demand:</strong> "prevent one person from unknowingly archiving the project for everybody"</li>
+        <li>This demand can be solved with a complex "permissions feature" (months to build), or a simple pop-up saying "are you sure? this will archive for everybody" (hours to build AND better-fit supply)</li>
+    </ul>
+</div>
+
+<p>Now we can actually see the demand side. This demand side causes feature requests, but it's the same thing that causes purchases. The demand side is, roughly, <span class="highlight">"what a customer is trying to achieve in their life."</span> It is not "desire for a product", it is product-agnostic. But demand creates the customer order, it causes it.</p>
+
+<p><span class="accent">Demand is causal:</span> The demand side generates the customer order… if and only if our supply fits their demand.</p>
+
+<p>So: Businesses need to optimize for demand, helping a customer achieve this thing they're trying to accomplish in their life. This is upstream of their order, our production process, and our product.</p>
+
+<p>If we ignore demand and just focus on the customer order via the (lowercase) "pull" model, we can produce what customers order at high quality and low cost. But as we've seen in the "feature request" example above, how likely is the customer's order to fit their true demand?</p>
+
+<p>Very, very unlikely. At best, we will produce Toyota Corollas: solid products that compete admirably on price and quality, that win because the bar is low. <span class="highlight">What we build with the "pull" model alone can't possess the mystical power of an early iPhone, an early Starbucks store, an early Tesla Model S</span> - products that actually stirred your soul, that "fit" some deep need you couldn't quite articulate, that make you feel like someone finally understood you and built something just for you.</p>
+
+<div class="diagram">
+    <div class="diagram-title">PULL: Demand causes everything</div>
+    <div class="diagram-flow">
+        <div class="diagram-box customer">Demand</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Customer Order</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Production</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Delivery</div>
+    </div>
+    <div class="diagram-caption">The true model of the physics of business.</div>
+</div>
+
+<div class="pull-quote">
+There is no law of physics that says products can't be high quality, affordable, and magical.
+</div>
+
+<p>In fact, capitalism is structured to massively reward these kinds of products - the fact that this is not happening in so many parts of the economy is a symptom of business theory being stuck.</p>
+
+<p>Every entrepreneur, deep down, wants to build something wonderful. Something that customers rave about, something that dominates the market because customers rip it out of our hands. We can't do this if we're operating with the wrong model of the physics of business - <span class="accent">we need to focus on demand.</span></p>
+
+<p>Bob Moesta created the Jobs to be Done theory to try to explain demand; I created the PULL framework because I seem to be too dumb to understand Jobs to be Done.</p>
+
+<p>So we wind up with the (uppercase) PULL model, which, I think, finally focuses us on the right thing. This is, I think, the true model of the physics of business. When we embrace it, building something magical becomes less unintuitive. We finally understand how to "build something people want." It ain't easy, but at least we aren't ass-backwards.</p>
+
+<div class="footnotes">
+    <h4>Footnotes</h4>
+    <ol>
+        <li>This and other pieces of this section come from John Seddon's book, <em>Freedom from Command and Control</em>. Chapters 1-2 should be required reading.</li>
+        <li>For a detailed history of this, check out <em>The Reckoning</em>.</li>
+        <li>Again, <em>Freedom from Command and Control</em>. I'm going to keep referencing it until you read it.</li>
+    </ol>
+</div>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+<script src="../../../js/copy-menu.js"></script>
+</body>
+</html>
+

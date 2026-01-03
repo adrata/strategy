@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adrata Content Standards | Voice, Tone & Style Guide</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Adrata Content Standards">
+    <meta property="og:description" content="The complete reference for creating Adrata content. Voice, tone, hooks, stories, offers, and archetypes.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666;
+            --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; --highlight-bg: #fff5f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999;
+            --border: #333; --card-bg: #1a1a1a; --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
+        .page-header { margin-bottom: 40px; }
+        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+        
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); z-index: 100; }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .toc h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; }
+        .toc ul { list-style: none; margin: 0; columns: 2; column-gap: 32px; }
+        .toc li { padding: 6px 0; font-size: 14px; }
+        .toc a { color: var(--text-secondary); text-decoration: none; }
+        .toc a:hover { color: var(--accent); }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 64px 0 20px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--text); }
+        h4 { font-size: 16px; font-weight: 700; margin: 28px 0 8px; color: var(--text-muted); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul, ol { margin: 16px 0 16px 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .principle { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 32px; border-radius: 12px; margin: 32px 0; }
+        .principle p { color: #fff; font-size: 20px; font-weight: 600; margin: 0; }
+        .principle .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; margin-bottom: 8px; }
+        
+        .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+        .do-box, .dont-box { padding: 24px; border-radius: 8px; }
+        .do-box { background: var(--highlight-bg); border: 1px solid var(--accent); }
+        .dont-box { background: var(--card-bg); border: 1px solid var(--border); }
+        .do-box h4, .dont-box h4 { margin: 0 0 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .do-box h4 { color: var(--accent); }
+        .dont-box h4 { color: var(--text-muted); }
+        .do-box ul, .dont-box ul { margin: 0; list-style: none; }
+        .do-box li, .dont-box li { font-size: 14px; padding: 4px 0; }
+        .do-box li::before { content: "→ "; color: var(--accent); }
+        .dont-box li::before { content: "× "; color: var(--text-muted); }
+        
+        .example { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 20px 0; }
+        .example-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 12px; }
+        .example-text { font-size: 16px; color: var(--text); line-height: 1.7; }
+        .example-note { font-size: 13px; color: var(--text-muted); margin-top: 12px; font-style: italic; }
+        
+        .archetype { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; }
+        .archetype-name { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .archetype-enemy { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+        .archetype-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 16px; }
+        .archetype-offer { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 14px; }
+        .archetype-offer strong { color: var(--text); }
+        
+        .checklist { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .checklist h4 { margin: 0 0 16px; color: var(--text); }
+        .checklist ul { list-style: none; margin: 0; }
+        .checklist li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist li::before { content: "□ "; color: var(--accent); font-weight: 700; }
+        
+        .voice-trait { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .voice-trait:last-child { border-bottom: none; }
+        .voice-trait .trait { font-weight: 700; color: var(--text); font-size: 15px; }
+        .voice-trait .desc { font-size: 14px; color: var(--text-secondary); }
+        
+        .question-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 20px 24px; margin: 24px 0; }
+        .question-box p { margin: 0; font-size: 16px; color: var(--text); }
+        
+        .test { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .test-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+        .test-question { font-size: 16px; color: var(--text); font-weight: 600; }
+        
+        .hook-type { margin: 20px 0; }
+        .hook-type h4 { margin-bottom: 8px; }
+        .hook-example { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 16px; font-size: 15px; color: var(--text); font-style: italic; margin: 8px 0; }
+        
+        .matrix { margin: 24px 0; }
+        .matrix-row { display: grid; grid-template-columns: 160px 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .matrix-row.header { font-weight: 700; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; background: var(--card-bg); padding: 12px; margin: 0 -24px; width: calc(100% + 48px); }
+        .matrix-row .archetype-col { font-weight: 600; color: var(--text); }
+        
+        @media (max-width: 700px) {
+            .do-dont { grid-template-columns: 1fr; }
+            .toc ul { columns: 1; }
+            .voice-trait { grid-template-columns: 1fr; gap: 4px; }
+            .matrix-row { grid-template-columns: 1fr; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Internal</span>
+    </div>
+    
+    <div class="page-header">
+        <h1>Content Standards</h1>
+        <div class="subtitle">The complete reference for creating Adrata content. For humans and AI agents. Use this to one-shot the best possible output.</div>
+    </div>
+
+    <div id="content">
+        <div class="toc">
+            <h3>Contents</h3>
+            <ul>
+                <li><a href="#voice">1. Voice & Tone</a></li>
+                <li><a href="#hooks">2. Hooks</a></li>
+                <li><a href="#stories">3. Stories</a></li>
+                <li><a href="#offers">4. Offers</a></li>
+                <li><a href="#archetypes">5. Archetypes (ICA)</a></li>
+                <li><a href="#strategy-docs">6. Strategy Documents</a></li>
+                <li><a href="#checklist">7. Pre-Publish Checklist</a></li>
+            </ul>
+        </div>
+
+        <div class="principle">
+            <div class="label">Core Principle</div>
+            <p>We write for VPs of Sales in survival mode. They don't want education—they want validation, ammunition, and quick wins. Every piece of content must feel like GAINING insight, not being sold to.</p>
+        </div>
+
+        <h2 id="voice">1. Voice & Tone</h2>
+        
+        <p>Our voice is modeled on Q4: Chapter 1. Study it before creating any narrative content.</p>
+
+        <h3>Voice Traits</h3>
+        
+        <div class="voice-trait">
+            <div class="trait">Visceral</div>
+            <div class="desc">Emotions land physically. "The thought lands in my chest like a stone." Not: "I felt worried."</div>
+        </div>
+        <div class="voice-trait">
+            <div class="trait">Specific</div>
+            <div class="desc">Exact numbers, names, times. "$18.4 million. 88 days. 6:47 AM." Not: "A large target over the next few months."</div>
+        </div>
+        <div class="voice-trait">
+            <div class="trait">First-Person</div>
+            <div class="desc">The reader IS the VP of Sales. They see themselves in every scene. "I swing my legs out of bed."</div>
+        </div>
+        <div class="voice-trait">
+            <div class="trait">Show, Don't Tell</div>
+            <div class="desc">Reveal psychology through actions and scenes. Marco stops making eye contact = tension, without saying "things were tense."</div>
+        </div>
+        <div class="voice-trait">
+            <div class="trait">Questions that Pull</div>
+            <div class="desc">End sections with questions that create curiosity. "And what happens when I finally ask?"</div>
+        </div>
+        <div class="voice-trait">
+            <div class="trait">Varied Rhythm</div>
+            <div class="desc">Short punchy sentences. Then longer ones that build tension. "The numbers haven't changed overnight. They never do."</div>
+        </div>
+
+        <h3>Tone Guidelines</h3>
+
+        <div class="do-dont">
+            <div class="do-box">
+                <h4>Do</h4>
+                <ul>
+                    <li>Write like a trusted peer, not a vendor</li>
+                    <li>Acknowledge the pressure they're under</li>
+                    <li>Use "we" when discussing shared challenges</li>
+                    <li>Let tension sit—don't rush to resolve it</li>
+                    <li>Make them feel seen, not sold</li>
+                </ul>
+            </div>
+            <div class="dont-box">
+                <h4>Don't</h4>
+                <ul>
+                    <li>Sound like marketing copy</li>
+                    <li>Use buzzwords (synergy, leverage, empower)</li>
+                    <li>Oversimplify their problems</li>
+                    <li>Promise outcomes we can't deliver</li>
+                    <li>Lecture or explain things they already know</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="example">
+            <div class="example-label">Example: Q4 Opening</div>
+            <div class="example-text">"The email arrives at 6:47 AM. I'm already awake. I've been awake since 4:30, running the numbers in my head for the hundredth time. $18.4 million. That's the Q4 target the board approved. $18.4 million in new bookings across 88 days."</div>
+            <div class="example-note">Immediate immersion. Specific time. The anxiety is shown, not stated. The math is precise. We're in their head from sentence one.</div>
+        </div>
+
+        <h2 id="hooks">2. Hooks</h2>
+
+        <p>The first sentence determines whether they read the rest. Hooks create an open loop that demands resolution.</p>
+
+        <h3>Hook Patterns That Work</h3>
+
+        <div class="hook-type">
+            <h4>The Arrival</h4>
+            <p>Something happens. Time, place, action. Immediate scene.</p>
+            <div class="hook-example">"The email arrives at 6:47 AM."</div>
+        </div>
+
+        <div class="hook-type">
+            <h4>The Number</h4>
+            <p>A specific, surprising, or weighted number.</p>
+            <div class="hook-example">"$4.2 million against $18.4 million. The coverage ratio isn't just bad—it's mathematically impossible."</div>
+        </div>
+
+        <div class="hook-type">
+            <h4>The Confession</h4>
+            <p>Vulnerability that creates trust and curiosity.</p>
+            <div class="hook-example">"I lost a $150K deal last month. Here's the mistake I'll never make again."</div>
+        </div>
+
+        <div class="hook-type">
+            <h4>The Reversal</h4>
+            <p>Conventional wisdom is wrong. Set up the expectation, then break it.</p>
+            <div class="hook-example">"Everyone says discovery is about asking great questions. Everyone is wrong."</div>
+        </div>
+
+        <div class="hook-type">
+            <h4>The Question</h4>
+            <p>A question they can't answer but desperately want to.</p>
+            <div class="hook-example">"Who besides your champion has to approve this purchase?"</div>
+        </div>
+
+        <div class="test">
+            <div class="test-label">Hook Test</div>
+            <div class="test-question">Would a VP of Sales stop scrolling to read this? If they're at 23% pipeline coverage and checking their phone at 6 AM, does this hook grab them?</div>
+        </div>
+
+        <h2 id="stories">3. Stories</h2>
+
+        <p>Stories are the delivery vehicle for insight. A fact is forgettable. A story that reveals the fact is unforgettable.</p>
+
+        <h3>Story Structure</h3>
+
+        <ol>
+            <li><strong>Scene:</strong> Time, place, sensory detail. Ground them in a moment.</li>
+            <li><strong>Tension:</strong> Something is at stake. A gap between what they want and what they have.</li>
+            <li><strong>Turn:</strong> A moment of realization. Something shifts.</li>
+            <li><strong>Insight:</strong> What they now understand that they didn't before.</li>
+        </ol>
+
+        <div class="example">
+            <div class="example-label">Example: The Sofia Question</div>
+            <div class="example-text">
+                <p>"Sofia asks the question that breaks something open in my mind.</p>
+                <p>'On the Garrison deal—the $2.1 million one—who besides the CTO has to approve this purchase?'</p>
+                <p>I pause. 'Adrian is the decision maker.'</p>
+                <p>'The CTO makes $2.1 million purchase decisions alone at a 4,000-person financial services company?'</p>
+                <p>I open my mouth. Close it."</p>
+            </div>
+            <div class="example-note">Scene (boardroom), Tension (the math doesn't work), Turn (Sofia's question), Insight (Adrian isn't the decision maker). The reader realizes it at the same moment as the protagonist.</div>
+        </div>
+
+        <h3>Story Principles</h3>
+
+        <ul>
+            <li><strong>Specificity creates credibility.</strong> "Adrian Marchetti, CTO" not "a senior leader."</li>
+            <li><strong>Dialogue reveals character.</strong> "Don't worry about all that. I'll handle it internally." One line tells you everything about the deal's real status.</li>
+            <li><strong>Let readers draw conclusions.</strong> Don't explain the insight—show the scene and let them feel it.</li>
+            <li><strong>Earned emotion.</strong> If you haven't built the scene, the emotion won't land.</li>
+        </ul>
+
+        <h2 id="offers">4. Offers</h2>
+
+        <p>Offers are how we earn the right to a conversation. The goal is PULL—they rip the offer out of our hands because they need it.</p>
+
+        <div class="principle">
+            <div class="label">The Offer Test</div>
+            <p>Can they do this themselves? If yes, the offer won't create pull. If no—if only we can deliver it at this speed and quality—they have a reason to engage.</p>
+        </div>
+
+        <h3>Offer Principles</h3>
+
+        <h4>1. Align with Emotional Drivers</h4>
+        <p>Every archetype has a core fear (enemy). The offer must address that specific fear, not a generic pain point.</p>
+
+        <h4>2. Don't Demand Unearned Trust</h4>
+        <p>A stranger asking to "audit your pipeline" requires trust they haven't built. An offer to "map the buying committee for 5 of your accounts in 48 hours" requires only access to public information and account names.</p>
+
+        <div class="do-dont">
+            <div class="do-box">
+                <h4>Earned Trust</h4>
+                <ul>
+                    <li>"Give us 5 accounts, we'll map the buying committees"</li>
+                    <li>"We'll do the work—you keep the output regardless"</li>
+                    <li>"No CRM access needed. Just account names."</li>
+                </ul>
+            </div>
+            <div class="dont-box">
+                <h4>Unearned Trust</h4>
+                <ul>
+                    <li>"Let us audit your pipeline"</li>
+                    <li>"Connect your CRM for a health check"</li>
+                    <li>"Share your deal data for analysis"</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4>3. Don't Offer What They Can Do Internally</h4>
+        <p>"We'll review your tech stack" → "I'll just have my ops person do that."</p>
+        <p>"We'll map buying committees with 90% accuracy in 48 hours" → They literally cannot do this.</p>
+
+        <h4>4. Differentiation is Everything</h4>
+        <p>The offer must leverage something only Adrata can do. Our differentiator: instantly map any buying committee with pain intelligence and personal archetypes for each stakeholder.</p>
+
+        <div class="test">
+            <div class="test-label">Offer Validation</div>
+            <div class="test-question">Would a VP of Sales forward this to their CEO as proof they're doing something about the problem? Would they tell a peer about it? If the offer creates something they'd share or use immediately, it works.</div>
+        </div>
+
+        <h3>Offer → Archetype Match</h3>
+
+        <div class="matrix">
+            <div class="matrix-row header">
+                <span>Archetype</span>
+                <span>Core Fear (Enemy)</span>
+                <span>Best Offer</span>
+            </div>
+            <div class="matrix-row">
+                <span class="archetype-col">Anxious Elite</span>
+                <span>Pipeline Exposure—what they don't see will destroy them</span>
+                <span>Deal Rescue: who killed stalled deals, who can revive them</span>
+            </div>
+            <div class="matrix-row">
+                <span class="archetype-col">Worried Darling</span>
+                <span>Golden Trap—success that's actually fragile</span>
+                <span>5 Accounts, 48 Hours: protect what you have</span>
+            </div>
+            <div class="matrix-row">
+                <span class="archetype-col">Stressed Performer</span>
+                <span>Silent Slip—deals dying while chasing new pipeline</span>
+                <span>Deal Rescue: ammunition for leadership</span>
+            </div>
+            <div class="matrix-row">
+                <span class="archetype-col">Rebuilding Leader</span>
+                <span>Miss Pattern—inherited a broken machine</span>
+                <span>Account Ambush: break into new accounts fast</span>
+            </div>
+            <div class="matrix-row">
+                <span class="archetype-col">Hungry Comeback</span>
+                <span>Resource Gap—competing 1v10 on budget</span>
+                <span>Account Ambush: unfair advantage on target accounts</span>
+            </div>
+        </div>
+
+        <h2 id="archetypes">5. Archetypes (ICA)</h2>
+
+        <p>Ideal Customer Archetypes (ICA) are psychological profiles, not demographics. Each has a name, an enemy (core fear), and a specific emotional driver.</p>
+
+        <h3>The Core Archetypes</h3>
+
+        <div class="archetype">
+            <div class="archetype-name">The Anxious Elite</div>
+            <div class="archetype-enemy">Enemy: Pipeline Exposure — What they don't see will destroy them</div>
+            <div class="archetype-desc">Crushed it before. Now pipeline is drying up and they can't figure out why. Sophisticated, skeptical, suspects something is wrong but can't pinpoint it. Needs validation of gut instinct, not education.</div>
+            <div class="archetype-offer"><strong>Converts because:</strong> We validate their suspicion. They already know something's off—we prove it with data they can't get elsewhere.</div>
+        </div>
+
+        <div class="archetype">
+            <div class="archetype-name">The Worried Darling</div>
+            <div class="archetype-enemy">Enemy: Golden Trap — Success that's actually fragile, one quarter from collapse</div>
+            <div class="archetype-desc">Hitting numbers but knows it's luck/timing, not system. Can't admit vulnerability publicly. Needs private, confidential solutions.</div>
+            <div class="archetype-offer"><strong>Converts because:</strong> We become their secret weapon. Private intelligence that protects without exposing.</div>
+        </div>
+
+        <div class="archetype">
+            <div class="archetype-name">The Stressed Performer</div>
+            <div class="archetype-enemy">Enemy: Silent Slip — Deals quietly dying while everyone focuses on new pipeline</div>
+            <div class="archetype-desc">Working hard but feels like running in sand. Needs ammunition to justify resources, headcount, attention from leadership.</div>
+            <div class="archetype-offer"><strong>Converts because:</strong> We give them data they can take to their CEO. Proof that the problem is real and solvable.</div>
+        </div>
+
+        <div class="archetype">
+            <div class="archetype-name">The Rebuilding Leader</div>
+            <div class="archetype-enemy">Enemy: Miss Pattern — Inherited a broken machine, needs to prove previous regime was wrong</div>
+            <div class="archetype-desc">Has mandate and resources. Wants to prove they're different. Looking for partners, not vendors.</div>
+            <div class="archetype-offer"><strong>Converts because:</strong> Motivated + resourced = ideal buyer. They WANT to spend to prove their approach works.</div>
+        </div>
+
+        <div class="archetype">
+            <div class="archetype-name">The Hungry Comeback</div>
+            <div class="archetype-enemy">Enemy: Resource Gap — Competing against teams 10x their size with 1/10th the budget</div>
+            <div class="archetype-desc">Scrappy, ambitious, chip on shoulder. Wants unfair advantages. Willing to try unconventional approaches.</div>
+            <div class="archetype-offer"><strong>Converts because:</strong> We offer the unfair advantage. "The thing your bigger competitors don't know."</div>
+        </div>
+
+        <h3>Using Archetypes</h3>
+
+        <ul>
+            <li><strong>Every piece of content should target 1-2 archetypes.</strong> Generic content converts nobody.</li>
+            <li><strong>Lead with their enemy.</strong> Name the fear before offering the solution.</li>
+            <li><strong>Match offer to archetype.</strong> Don't offer "break into new accounts" to someone with a full pipeline—offer "protect what you have."</li>
+            <li><strong>Speak their language.</strong> The Anxious Elite doesn't want education. The Rebuilding Leader wants partnership.</li>
+        </ul>
+
+        <h2 id="strategy-docs">6. Strategy Documents</h2>
+
+        <p>Strategy documents propose new approaches. They must answer fundamental questions upfront—don't make readers dig for the decision-relevant information.</p>
+
+        <h3>Required Sections</h3>
+
+        <div class="question-box">
+            <p><strong>Open with:</strong> What is the specific recommendation? State it in one sentence before explaining.</p>
+        </div>
+
+        <h4>Fundamental Questions (Answer These Upfront)</h4>
+
+        <ol>
+            <li><strong>What are we recommending?</strong> — Clear, specific recommendation in one sentence.</li>
+            <li><strong>Why now?</strong> — What changed that makes this the right move today?</li>
+            <li><strong>What's the alternative?</strong> — What happens if we don't do this? What's the status quo cost?</li>
+            <li><strong>What's the evidence?</strong> — Data, benchmarks, research that supports this recommendation.</li>
+            <li><strong>What are the risks?</strong> — Be honest. What could go wrong? How do we mitigate?</li>
+            <li><strong>What does success look like?</strong> — Specific metrics. How will we know it's working?</li>
+            <li><strong>What's the ask?</strong> — Resources, budget, time, approval needed.</li>
+        </ol>
+
+        <div class="example">
+            <div class="example-label">Example: LinkedIn Outbound Strategy</div>
+            <div class="example-text">
+                <p><strong>Recommendation:</strong> While ads ramp up, prioritize organic content + warm DMs over cold calling. Warm outreach converts 10x higher than cold.</p>
+                <p><strong>Why now:</strong> Ads take 5 weeks to generate pipeline. We have capacity now. Cold calling success rates have dropped to 2.3% (down from 4.8% last year).</p>
+                <p><strong>Alternative:</strong> Continue cold calling at 2.3% success rate, burning rep time with diminishing returns.</p>
+                <p><strong>Evidence:</strong> LinkedIn research: 61% higher conversion when prospects see organic + paid content vs. paid alone. Warm DM response: 15-25% vs. cold: 1-3%.</p>
+            </div>
+        </div>
+
+        <h3>Format Standards</h3>
+
+        <ul>
+            <li><strong>Executive summary first.</strong> The busy reader should get the core message in 30 seconds.</li>
+            <li><strong>Progressive disclosure.</strong> Summary → Evidence → Details → Appendix.</li>
+            <li><strong>Scannable.</strong> Use headers, bullets, bold for key points. No walls of text.</li>
+            <li><strong>Specific numbers.</strong> "$18.4M" not "significant revenue." "61% higher" not "much better."</li>
+            <li><strong>Link to supporting docs.</strong> Don't duplicate—reference the full playbook, the archetype doc, etc.</li>
+        </ul>
+
+        <h2 id="checklist">7. Pre-Publish Checklist</h2>
+
+        <div class="checklist">
+            <h4>Before Publishing Any Content</h4>
+            <ul>
+                <li>Does the hook stop a stressed VP at 6 AM?</li>
+                <li>Is this for 1-2 specific archetypes, not everyone?</li>
+                <li>Does it name their enemy (core fear)?</li>
+                <li>Is there something they literally can't do themselves?</li>
+                <li>Does it feel like gaining insight, not being sold to?</li>
+                <li>Are all numbers specific, not vague?</li>
+                <li>Have I shown, not told?</li>
+                <li>Would they forward this to a peer?</li>
+                <li>Does the offer require only earned trust?</li>
+                <li>Is the CTA clear and low-friction?</li>
+            </ul>
+        </div>
+
+        <div class="checklist">
+            <h4>Strategy Document Checklist</h4>
+            <ul>
+                <li>Is the recommendation stated in one sentence at the top?</li>
+                <li>Have I answered "why now"?</li>
+                <li>Have I stated the alternative (status quo cost)?</li>
+                <li>Is evidence specific and sourced?</li>
+                <li>Have I acknowledged risks honestly?</li>
+                <li>Is success measurable with specific metrics?</li>
+                <li>Is the ask clear?</li>
+            </ul>
+        </div>
+
+        <div class="principle" style="margin-top: 48px;">
+            <div class="label">The Ultimate Test</div>
+            <p>If a VP of Sales at 23% pipeline coverage reads this at 6 AM, do they feel more capable, more informed, and more confident in their next move? If yes, publish it. If no, rewrite it.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() { 
+            const html = document.documentElement; 
+            const isDark = html.getAttribute('data-theme') === 'dark'; 
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+            localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+        }
+        document.addEventListener('DOMContentLoaded', () => { 
+            const theme = localStorage.getItem('theme') || 'dark'; 
+            document.documentElement.setAttribute('data-theme', theme); 
+        });
+    </script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

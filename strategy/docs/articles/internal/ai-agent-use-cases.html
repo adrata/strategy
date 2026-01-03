@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Use Cases | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="AI Agent Use Cases for Sales">
+    <meta property="og:description" content="25 practical AI agent use cases for sales teams, with implementation complexity and ROI estimates.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; --accent-light: #ff6d00; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .byline { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 28px 0 12px; color: var(--text); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .use-case-grid { display: grid; gap: 16px; margin: 24px 0; }
+        .use-case { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start; }
+        .use-case-number { width: 32px; height: 32px; background: var(--accent); color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .use-case-content h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .use-case-content p { font-size: 14px; margin: 0; }
+        .use-case-meta { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; min-width: 100px; }
+        .meta-tag { font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; text-transform: uppercase; }
+        .meta-tag.easy { background: rgba(230,81,0,0.15); color: var(--accent); }
+        .meta-tag.medium { background: rgba(230,81,0,0.3); color: var(--accent); }
+        .meta-tag.hard { background: var(--accent); color: #fff; }
+        .meta-tag.roi { background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); }
+        
+        .category-header { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin: 32px 0 16px; display: flex; align-items: center; gap: 12px; }
+        .category-icon { width: 24px; height: 24px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; }
+        .category-title { font-size: 18px; font-weight: 700; color: var(--text); }
+        
+        .info-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 24px 0; }
+        .info-box h4 { color: var(--text); margin: 0 0 8px 0; font-size: 14px; }
+        
+        @media (max-width: 640px) {
+            .use-case { grid-template-columns: 1fr; }
+            .use-case-meta { flex-direction: row; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="breadcrumb">
+    <a href="../../../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">AI Agents</span>
+</div>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Practical Guide</div>
+        <h1>AI Agent Use Cases</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+
+
+<p>Here are 25 practical AI agent use cases for sales teams, organized by function. Each includes implementation complexity and estimated ROI to help you prioritize.</p>
+
+<div class="info-box">
+    <h4>How to Use This Guide</h4>
+    <p style="margin:0;">Start with "Easy" use cases that have high time savings. Build confidence and infrastructure before tackling "Hard" use cases. Most teams should implement 3-5 agents before expanding.</p>
+</div>
+
+<!-- Prospecting -->
+<div class="category-header">
+    <span class="category-icon">1</span>
+    <span class="category-title">Prospecting & Research</span>
+</div>
+
+<div class="use-case-grid">
+    <div class="use-case">
+        <span class="use-case-number">1</span>
+        <div class="use-case-content">
+            <h4>Lead Research Agent</h4>
+            <p>Takes a company name, researches across multiple sources, produces structured briefing with tech stack, recent news, hiring signals, and talking points.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">15 min/lead</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">2</span>
+        <div class="use-case-content">
+            <h4>ICP Scoring Agent</h4>
+            <p>Evaluates leads against your ICP criteria, scores them 1-100, explains reasoning, and recommends next action (pursue, nurture, disqualify).</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">5 min/lead</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">3</span>
+        <div class="use-case-content">
+            <h4>Contact Discovery Agent</h4>
+            <p>Given a target account, finds relevant contacts, enriches with email/phone, identifies org structure and decision-making hierarchy.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">20 min/account</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">4</span>
+        <div class="use-case-content">
+            <h4>Trigger Event Monitor</h4>
+            <p>Continuously monitors accounts for trigger events (funding, hiring, exec changes, tech adoption) and alerts with context.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag hard">Hard</span>
+            <span class="meta-tag roi">2-5 opps/week</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">5</span>
+        <div class="use-case-content">
+            <h4>Competitive Intelligence Agent</h4>
+            <p>Researches competitors mentioned by prospects, produces battle cards, identifies switching triggers and objection handlers.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">30 min/competitor</span>
+        </div>
+    </div>
+</div>
+
+<!-- Outreach -->
+<div class="category-header">
+    <span class="category-icon">2</span>
+    <span class="category-title">Outreach & Engagement</span>
+</div>
+
+<div class="use-case-grid">
+    <div class="use-case">
+        <span class="use-case-number">6</span>
+        <div class="use-case-content">
+            <h4>Email Personalization Agent</h4>
+            <p>Takes prospect data and template, produces highly personalized email with relevant hooks, social proof, and clear CTA.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">10 min/email</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">7</span>
+        <div class="use-case-content">
+            <h4>Sequence Optimization Agent</h4>
+            <p>Analyzes sequence performance, A/B tests subject lines and messaging, recommends improvements based on reply patterns.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">10-20% lift</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">8</span>
+        <div class="use-case-content">
+            <h4>LinkedIn Message Agent</h4>
+            <p>Crafts personalized LinkedIn connection requests and InMails based on prospect's profile, posts, and shared connections.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">8 min/message</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">9</span>
+        <div class="use-case-content">
+            <h4>Multi-Channel Orchestrator</h4>
+            <p>Coordinates outreach across email, LinkedIn, phone, and ads. Adjusts timing and channel based on engagement signals.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag hard">Hard</span>
+            <span class="meta-tag roi">2x response rate</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">10</span>
+        <div class="use-case-content">
+            <h4>Follow-Up Scheduler</h4>
+            <p>Monitors email opens/clicks, suggests optimal follow-up timing, drafts contextual follow-up messages.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">5 min/follow-up</span>
+        </div>
+    </div>
+</div>
+
+<!-- Meeting Prep -->
+<div class="category-header">
+    <span class="category-icon">3</span>
+    <span class="category-title">Meeting Preparation</span>
+</div>
+
+<div class="use-case-grid">
+    <div class="use-case">
+        <span class="use-case-number">11</span>
+        <div class="use-case-content">
+            <h4>Pre-Call Brief Agent</h4>
+            <p>Generates comprehensive pre-call briefs 30 minutes before meetings. Includes company context, attendee profiles, talking points, and potential objections.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">20 min/meeting</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">12</span>
+        <div class="use-case-content">
+            <h4>Demo Customizer</h4>
+            <p>Analyzes prospect's industry, use case, and pain points. Recommends demo flow, features to highlight, and relevant case studies.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">30 min/demo</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">13</span>
+        <div class="use-case-content">
+            <h4>Objection Prep Agent</h4>
+            <p>Based on deal context, predicts likely objections and prepares tailored responses with supporting data and references.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">15 min/call</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">14</span>
+        <div class="use-case-content">
+            <h4>Stakeholder Mapper</h4>
+            <p>Identifies all stakeholders in a deal, their likely concerns, influence level, and recommended engagement strategy for each.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">45 min/deal</span>
+        </div>
+    </div>
+</div>
+
+<!-- Post-Meeting -->
+<div class="category-header">
+    <span class="category-icon">4</span>
+    <span class="category-title">Post-Meeting & Follow-Up</span>
+</div>
+
+<div class="use-case-grid">
+    <div class="use-case">
+        <span class="use-case-number">15</span>
+        <div class="use-case-content">
+            <h4>Call Summary Agent</h4>
+            <p>Processes call recordings, extracts key insights, action items, and objections. Updates CRM automatically.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">15 min/call</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">16</span>
+        <div class="use-case-content">
+            <h4>Follow-Up Drafter</h4>
+            <p>Based on meeting notes, drafts personalized follow-up email with summary, next steps, and relevant resources attached.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">10 min/email</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">17</span>
+        <div class="use-case-content">
+            <h4>Proposal Generator</h4>
+            <p>Takes deal parameters (scope, pricing, timeline), generates customized proposal document with relevant case studies.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">1 hr/proposal</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">18</span>
+        <div class="use-case-content">
+            <h4>ROI Calculator Agent</h4>
+            <p>Builds custom ROI models based on prospect's data. Produces professional business case documents for internal selling.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">2 hrs/deal</span>
+        </div>
+    </div>
+</div>
+
+<!-- Pipeline -->
+<div class="category-header">
+    <span class="category-icon">5</span>
+    <span class="category-title">Pipeline & Forecasting</span>
+</div>
+
+<div class="use-case-grid">
+    <div class="use-case">
+        <span class="use-case-number">19</span>
+        <div class="use-case-content">
+            <h4>Deal Health Monitor</h4>
+            <p>Continuously assesses deal health based on engagement, stakeholder activity, and timeline. Alerts on at-risk deals.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">Prevents slippage</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">20</span>
+        <div class="use-case-content">
+            <h4>Forecast Analyst</h4>
+            <p>Analyzes pipeline data, historical patterns, and deal signals. Produces probability-weighted forecast with confidence intervals.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag hard">Hard</span>
+            <span class="meta-tag roi">+15% accuracy</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">21</span>
+        <div class="use-case-content">
+            <h4>Next Best Action</h4>
+            <p>For each deal, recommends the optimal next action based on deal stage, engagement patterns, and what's worked before.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag medium">Medium</span>
+            <span class="meta-tag roi">Faster velocity</span>
+        </div>
+    </div>
+</div>
+
+<!-- Admin -->
+<div class="category-header">
+    <span class="category-icon">6</span>
+    <span class="category-title">Admin & Operations</span>
+</div>
+
+<div class="use-case-grid">
+    <div class="use-case">
+        <span class="use-case-number">22</span>
+        <div class="use-case-content">
+            <h4>CRM Hygiene Agent</h4>
+            <p>Audits CRM data quality, fills in missing fields, dedupes records, standardizes formatting, flags stale data.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">5 hrs/week</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">23</span>
+        <div class="use-case-content">
+            <h4>Activity Logger</h4>
+            <p>Automatically logs emails, calls, and meetings to CRM. Extracts key details and categorizes activities.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag easy">Easy</span>
+            <span class="meta-tag roi">30 min/day</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">24</span>
+        <div class="use-case-content">
+            <h4>Territory Planner</h4>
+            <p>Analyzes account data, rep capacity, and historical performance. Recommends territory assignments and account prioritization.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag hard">Hard</span>
+            <span class="meta-tag roi">Quarterly planning</span>
+        </div>
+    </div>
+    
+    <div class="use-case">
+        <span class="use-case-number">25</span>
+        <div class="use-case-content">
+            <h4>Coaching Analyst</h4>
+            <p>Reviews call recordings, identifies coaching opportunities, benchmarks against top performers, generates skill development plans.</p>
+        </div>
+        <div class="use-case-meta">
+            <span class="meta-tag hard">Hard</span>
+            <span class="meta-tag roi">+20% performance</span>
+        </div>
+    </div>
+</div>
+
+<h2>Implementation Priority</h2>
+
+<p>Based on complexity and impact, here's the recommended order:</p>
+
+<div class="info-box">
+    <h4>Start Here (Week 1-2)</h4>
+    <p style="margin-bottom:8px;"><strong>#1 Lead Research</strong> · <strong>#15 Call Summary</strong> · <strong>#16 Follow-Up Drafter</strong></p>
+    <p style="margin:0; font-size:14px; color:var(--text-muted);">Low risk, high frequency, immediate time savings. Build confidence before expanding.</p>
+</div>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+</div>
+<script src="../../../js/copy-menu.js"></script>
+</body>
+</html>
+

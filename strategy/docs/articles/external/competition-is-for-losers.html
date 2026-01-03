@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,11 +23,12 @@
             --card-bg: #fafafa;
             --code-bg: #f5f5f5;
             --accent: #e65100;
+            --accent-light: #ff6d00;
             --highlight-bg: #fff5f0;
-            --monopoly-green: #059669;
-            --competition-red: #dc2626;
+            --monopoly-green: var(--accent);
+            --competition-red: #666;
         }
-        body.dark-mode {
+        [data-theme="dark"] {
             --bg: #0a0a0a;
             --text: #e5e5e5;
             --text-secondary: #ccc;
@@ -40,38 +41,43 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
         
-        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
-        .header-content { flex: 1; }
-        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
-        .theme-toggle:hover { color: var(--text); }
-        .theme-toggle svg { width: 20px; height: 20px; }
-        .theme-toggle .sun { display: block; }
-        .theme-toggle .moon { display: none; }
-        body.dark-mode .theme-toggle .sun { display: none; }
-        body.dark-mode .theme-toggle .moon { display: block; }
+        .page-header { padding: 32px 0 24px; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        .title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         
-        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
-        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
-        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
-        .audio-info { flex: 1; }
-        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-        .audio-status { font-size: 12px; opacity: 0.9; }
+        .theme-toggle { width: 40px; height: 40px; background: transparent; border: none; outline: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-shrink: 0; }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
+        /* Light mode: show moon (to switch to dark) */
+        .theme-toggle .moon { display: block; }
+        .theme-toggle .sun { display: none; }
+        /* Dark mode: show sun (to switch to light) */
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); padding: 14px 18px; border-radius: 8px; display: flex; align-items: center; gap: 12px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .audio-player .play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; min-width: 0; }
+        .audio-title { font-weight: 600; font-size: 13px; margin-bottom: 1px; }
+        .audio-status { font-size: 11px; opacity: 0.9; }
         .speed-dropdown { position: relative; }
         .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
         .speed-btn:hover { background: rgba(255,255,255,0.3); }
         .speed-btn svg { width: 12px; height: 12px; }
-        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
         .speed-menu.open { display: block; }
         .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
         .speed-option:hover { background: var(--card-bg); }
         .speed-option.active { background: var(--accent); color: #fff; }
         
-        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-        h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
-        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 8px; }
-        .author { font-size: 15px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
-        .date { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; }
+        .subtitle { font-size: 16px; color: var(--text-muted); font-style: italic; margin-bottom: 8px; }
+        .author { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+        .date { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
         
         h2 { font-size: 28px; font-weight: 700; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
         h2:first-of-type { margin-top: 32px; border-top: none; padding-top: 0; }
@@ -81,7 +87,7 @@
         .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
         .intro-box p { margin-bottom: 0; }
         
-        .pull-quote { background: var(--highlight-bg); border-left: 4px solid var(--accent); padding: 24px 32px; margin: 32px 0; font-size: 22px; font-weight: 500; line-height: 1.5; color: var(--text); }
+        .pull-quote { background: var(--card-bg); border-left: 4px solid var(--border); padding: 24px 32px; margin: 32px 0; font-size: 22px; font-weight: 500; line-height: 1.5; color: var(--text); }
         
         .key-insight { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 28px; border-radius: 12px; margin: 32px 0; }
         .key-insight h3 { color: #fff; margin-top: 0; font-size: 20px; }
@@ -101,7 +107,7 @@
         .comparison-card li { margin-bottom: 6px; color: var(--text-muted); }
         
         .lie-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
-        .lie-box h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
+        .lie-box h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
         .lie-box p { font-size: 15px; margin-bottom: 0; }
         .lie-example { background: var(--code-bg); padding: 16px; border-radius: 8px; margin-top: 12px; font-size: 14px; color: var(--text-muted); }
         
@@ -125,24 +131,19 @@
         .last-mover-card .company { font-size: 20px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
         .last-mover-card .desc { font-size: 12px; color: var(--text-muted); }
         
-        .newsletter-widget { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; padding: 32px; margin: 48px 0; color: #fff; }
-        body.dark-mode .newsletter-widget { background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%); border: 1px solid #333; }
-        .newsletter-widget h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #fff; }
-        .newsletter-widget p { color: #ccc; font-size: 14px; margin-bottom: 20px; }
-        .newsletter-form { display: flex; gap: 12px; }
-        @media (max-width: 500px) { .newsletter-form { flex-direction: column; } }
-        .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid #444; border-radius: 8px; background: #111; color: #fff; font-size: 14px; }
-        .newsletter-form input::placeholder { color: #666; }
-        .newsletter-form button { background: var(--accent); border: none; padding: 14px 24px; border-radius: 8px; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-        .newsletter-form button:hover { background: #ff6d00; }
-        
-        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 24px; }
-        .back-link:hover { color: var(--accent); }
-        .back-link svg { width: 16px; height: 16px; }
-        
-        .share-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 14px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); font-weight: 500; }
-        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .share-btn svg { width: 14px; height: 14px; }
+        .share-widget { background: #f5f5f5; border-radius: 12px; padding: 28px 32px; margin: 56px 0 32px; }
+        [data-theme="dark"] .share-widget { background: #1a1a1a; border: 1px solid #333; }
+        .share-widget h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+        .share-widget p { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
+        .share-form { display: flex; gap: 0; }
+        @media (max-width: 500px) { .share-form { flex-direction: column; gap: 12px; } }
+        .share-form input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px 0 0 8px; background: var(--bg); color: var(--text); font-size: 14px; }
+        @media (max-width: 500px) { .share-form input { border-radius: 8px; } }
+        .share-form input::placeholder { color: var(--text-muted); }
+        .share-form button { background: var(--accent); border: none; padding: 12px 16px; border-radius: 0 8px 8px 0; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        @media (max-width: 500px) { .share-form button { border-radius: 8px; padding: 12px 20px; } }
+        .share-form button:hover { background: #ff6d00; }
+        .share-form button svg { width: 20px; height: 20px; }
         
         @media (max-width: 600px) {
             body { padding: 24px 16px; font-size: 16px; }
@@ -150,57 +151,59 @@
             h2 { font-size: 24px; }
             .audio-player { flex-wrap: wrap; }
         }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
     </style>
 </head>
 <body>
-    <a href="../../" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Back to Library
-    </a>
+
+<div class="page-header">
+    <div class="doc-type">External Article</div>
+    <div class="title-row">
+        <h1>Competition Is for Losers</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
     
-    <div class="page-header">
-        <div class="header-content">
-            <div class="doc-type">External Article</div>
-        </div>
-        <div style="display: flex; gap: 8px;">
-            <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href).then(() => { this.innerHTML = '<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M20 6L9 17l-5-5\'/></svg> Copied!'; setTimeout(() => { this.innerHTML = '<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13\'/></svg> Share'; }, 2000); })">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-                Share
-            </button>
-            <button class="theme-toggle" onclick="document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');">
-                <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </button>
-        </div>
+    <div class="breadcrumb">
+        <a href="../../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">External</span>
     </div>
-    
-    <h1>Competition Is for Losers</h1>
+    </div>
     <p class="subtitle">Why the best businesses escape competition entirely</p>
     <p class="author">By Peter Thiel</p>
     <p class="date">Stanford University Lecture</p>
     
     <div class="audio-player">
-        <button id="playBtn" onclick="toggleAudio()">
-            <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </button>
         <div class="audio-info">
             <div class="audio-title">Listen to this article</div>
-            <div class="audio-status" id="audioStatus">Click to play</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
         </div>
         <div class="speed-dropdown">
-            <button class="speed-btn" onclick="toggleSpeedMenu()">
-                <span id="speedLabel">1x</span>
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">2x</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="speed-menu" id="speedMenu">
-                <div class="speed-option" onclick="setSpeed(0.75)">0.75x</div>
-                <div class="speed-option active" onclick="setSpeed(1)">1x</div>
-                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
                 <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
-                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
             </div>
         </div>
     </div>
+</div>
     
     <div class="intro-box">
         <p>What does competition actually look like in the startup world? How can young businesses be competitive? And is our society's relationship with competition healthy? Peter Thiel, co-founder of PayPal and early investor in Facebook, answered these questions during his Stanford University lecture.</p>
@@ -410,27 +413,42 @@
         </li>
     </ol>
     
-    <div class="newsletter-widget">
-        <h3>Adrata Intelligence</h3>
-        <p>Strategic insights on building monopoly-like market positions, delivered weekly.</p>
-        <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').innerHTML = 'Subscribed!'; this.querySelector('input').value = '';">
-            <input type="email" placeholder="Enter your email" required>
+    <div class="share-widget">
+        <h3>Know someone who'd find this useful?</h3>
+        <p>Send this article to a colleague</p>
+        <form class="share-form" onsubmit="event.preventDefault(); const email = this.querySelector('input').value; const subject = encodeURIComponent('Worth reading: Competition Is for Losers'); const body = encodeURIComponent('Thought you might find this interesting:\n\n' + window.location.href); window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body; this.querySelector('input').value = '';">
+            <input type="email" placeholder="Their email" required>
             <button type="submit">
-                Subscribe
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
         </form>
     </div>
     
     <script>
-        // Theme initialization
-        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        // Theme initialization - default to light
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved) {
+                document.documentElement.setAttribute('data-theme', saved);
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        }
+        initTheme();
         
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        }
+        
+        // Audio player
         let audio = null;
         let synth = window.speechSynthesis;
         let utterance = null;
         let isPlaying = false;
-        let currentSpeed = 1;
+        let currentSpeed = parseFloat(localStorage.getItem('audioSpeed')) || 2;
         let useWebSpeech = false;
         
         const MP3_URL = 'competition-is-for-losers.mp3';
@@ -460,7 +478,7 @@
                 audio.addEventListener('timeupdate', () => {
                     const mins = Math.floor(audio.currentTime / 60);
                     const secs = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
-                    document.getElementById('audioStatus').textContent = `${mins}:${secs}`;
+                    document.getElementById('audioStatus').textContent = mins + ':' + secs;
                 });
                 
                 audio.load();
@@ -503,22 +521,24 @@
             if (isPlaying) {
                 btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#e65100"/><rect x="14" y="4" width="4" height="16" fill="#e65100"/></svg>';
             } else {
-                btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#e65100"/></svg>';
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#e65100"/></svg>';
             }
         }
         
-        function toggleSpeedMenu() {
+        function toggleSpeedMenu(e) {
+            e.stopPropagation();
             document.getElementById('speedMenu').classList.toggle('open');
         }
         
         function setSpeed(speed) {
+            localStorage.setItem('audioSpeed', speed);
             currentSpeed = speed;
             document.getElementById('speedLabel').textContent = speed + 'x';
             document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
             event.target.classList.add('active');
             if (audio) audio.playbackRate = speed;
             if (utterance) utterance.rate = speed;
-            toggleSpeedMenu();
+            document.getElementById('speedMenu').classList.remove('open');
         }
         
         document.addEventListener('click', (e) => {
@@ -527,6 +547,7 @@
             }
         });
     </script>
+<script src="../../../js/copy-menu.js"></script>
 </body>
 </html>
 

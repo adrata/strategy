@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Dare Greatly | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <meta property="og:title" content="To Dare Greatly | Adrata">
+    <meta property="og:description" content="A letter to the sales leaders who refuse to accept the way things have always been done.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fafafa;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #f5f5f5;
+            --text-secondary: #d4d4d4;
+            --text-muted: #888;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'MiSans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 18px;
+            min-height: 100vh;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: transparent;
+            border: none;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            z-index: 100;
+        }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 22px; height: 22px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        /* Hero */
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 32px;
+        }
+        
+        .hero-title {
+            font-size: clamp(48px, 10vw, 96px);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 50%, var(--text) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 24px);
+            color: var(--text-muted);
+            max-width: 600px;
+            font-weight: 400;
+        }
+        
+        /* Content */
+        .content {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 40px 32px 120px;
+        }
+        
+        .letter-header {
+            margin-bottom: 48px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(128,128,128,0.2);
+        }
+        
+        .letter-to {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .letter-audience {
+            font-size: 20px;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        p {
+            margin-bottom: 28px;
+            color: var(--text-secondary);
+        }
+        
+        .lead {
+            font-size: 22px;
+            line-height: 1.7;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .highlight {
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        .accent {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        /* Pull Quote */
+        .pull-quote {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text);
+            margin: 56px 0;
+            padding: 32px 0;
+            border-top: 2px solid var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        /* Section Break */
+        .section-break {
+            text-align: center;
+            margin: 56px 0;
+            color: var(--accent);
+            font-size: 24px;
+            letter-spacing: 8px;
+        }
+        
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(230,81,0,0.1) 0%, rgba(255,109,0,0.05) 100%);
+            border: 1px solid rgba(230,81,0,0.3);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 56px 0;
+            text-align: center;
+        }
+        
+        .cta-section h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+        
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .cta-button:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        /* Signature */
+        .signature {
+            margin-top: 64px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(128,128,128,0.2);
+        }
+        
+        .signature-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .signature-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* List */
+        .manifesto-list {
+            list-style: none;
+            margin: 32px 0;
+            padding: 0;
+        }
+        
+        .manifesto-list li {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .manifesto-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 16px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        @media (max-width: 640px) {
+            .hero { min-height: 50vh; padding: 60px 24px; }
+            .content { padding: 32px 24px 80px; }
+            .pull-quote { font-size: 22px; }
+            .cta-section { padding: 32px 24px; }
+        }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+</button>
+    
+    <div class="breadcrumb">
+        <a href="../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Manifesto.html</span>
+    </div>
+
+<section class="hero">
+    <h1 class="hero-title">To Dare Greatly</h1>
+    <p class="hero-subtitle">A letter to the sales leaders who refuse to accept the way things have always been done.</p>
+</section>
+
+<main class="content">
+    <div class="letter-header">
+        <div class="letter-to">To</div>
+        <div class="letter-audience">The VPs who carry the number. The leaders who build the future.</div>
+    </div>
+    
+    <p class="lead">You know the weight. The number that follows you into every meeting, every forecast call, every sleepless night. The expectation that you'll do more with less. That you'll somehow make it work.</p>
+    
+    <p>Everyone else is optimizing the old playbook. More emails. More calls. More reps. More dashboards tracking more metrics that don't move the needle. They're running faster on the same treadmill, wondering why they're not getting anywhere.</p>
+    
+    <p>But you see something they don't.</p>
+    
+    <p>You see that the game is about to change. Not gradually. <span class="highlight">Completely.</span></p>
+    
+    <div class="pull-quote">
+        The leaders who will define the next decade of sales aren't waiting for permission. They're building now.
+    </div>
+    
+    <p>The best sales leaders in history—the ones who built legendary teams and transformed industries—didn't follow best practices. They <span class="accent">created</span> them. They saw around corners. They bet on the future before it was obvious.</p>
+    
+    <p>Right now, we're at one of those moments. AI isn't just another tool in the stack. It's a fundamental shift in what's possible. The question isn't whether it will transform sales. The question is: <span class="highlight">will you be the one who leads that transformation, or the one who gets left behind?</span></p>
+    
+    <div class="section-break">• • •</div>
+    
+    <p>We started Adrata because we believe the future of sales belongs to a new kind of leader. Not the one with the biggest team or the fattest budget. The one with the clearest vision and the courage to act on it.</p>
+    
+    <p>We believe in:</p>
+    
+    <ul class="manifesto-list">
+        <li><span class="highlight">Building, not buying.</span> The best competitive advantages can't be purchased from a vendor catalog.</li>
+        <li><span class="highlight">Speed over perfection.</span> The market rewards those who move fast and iterate, not those who wait for certainty.</li>
+        <li><span class="highlight">Compounding advantages.</span> Every AI-powered workflow you build today makes tomorrow's workflows more powerful.</li>
+        <li><span class="highlight">Human leverage.</span> The goal isn't to replace your team—it's to make each person 10x more effective.</li>
+        <li><span class="highlight">Ownership over outsourcing.</span> Your sales intelligence is too important to rent from someone else's platform.</li>
+    </ul>
+    
+    <p>This isn't about technology for technology's sake. It's about what technology <em>enables</em>: A VP of Sales who can finally focus on strategy instead of firefighting. A team that spends time with customers instead of CRMs. A pipeline built on insight instead of volume.</p>
+    
+    <div class="pull-quote">
+        The credit belongs to the one who is actually in the arena, whose face is marred by dust and sweat and blood.
+    </div>
+    
+    <p>Theodore Roosevelt wrote those words over a century ago. They're more relevant today than ever. The critics will doubt. The skeptics will wait. The comfortable will optimize their spreadsheets.</p>
+    
+    <p>But you—the one reading this—you're different. You didn't get to where you are by playing it safe. You got here by taking calculated risks when others hesitated. By seeing opportunity where others saw obstacles.</p>
+    
+    <p>That instinct? It's telling you something right now.</p>
+    
+    <div class="section-break">• • •</div>
+    
+    <p>We're not building just another sales tool. We're building the infrastructure for what sales becomes. And we're looking for partners—not customers—who want to build it with us.</p>
+    
+    <p>The leaders who join us now won't just get early access to technology. They'll <span class="highlight">shape what that technology becomes</span>. Their challenges will inform our roadmap. Their wins will prove what's possible. Their stories will inspire the next wave.</p>
+    
+    <p>This is how movements start. Not with a product launch, but with a small group of believers who see the future before everyone else and have the courage to act.</p>
+    
+    <div class="cta-section">
+        <h3>Build the future with us.</h3>
+        <p>We're looking for 50 founding partners—sales leaders who want to help shape what AI-powered sales becomes.</p>
+        <a href="mailto:ross@adrata.com" class="cta-button">Get in Touch</a>
+    </div>
+    
+    <p>The next great sales organizations aren't going to out-spam their competition. They're going to out-think them, out-build them, and ultimately out-perform them by orders of magnitude.</p>
+    
+    <p>That future is being written right now. By people who dare greatly.</p>
+    
+    <p><span class="accent">The question is: will you be one of them?</span></p>
+    
+    <div class="signature">
+        <div class="signature-name">Ross Sylvester</div>
+        <div class="signature-title">CEO, Adrata</div>
+    </div>
+</main>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+<script src="../js/copy-menu.js"></script>
+</body>
+</html>
+

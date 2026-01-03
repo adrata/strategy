@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Practical Guide to Building Agents | OpenAI</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="A Practical Guide to Building Agents">
+    <meta property="og:description" content="OpenAI's comprehensive guide to building AI agents. Frameworks for use cases, agent design patterns, orchestration, and guardrails.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; --accent-light: #ff6d00; --code-bg: #1e1e1e; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; --code-bg: #141414; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .byline { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 56px 0 20px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h2:first-of-type { border-top: none; padding-top: 0; margin-top: 40px; }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text); }
+        h4 { font-size: 15px; font-weight: 700; margin: 24px 0 8px; color: var(--text); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        /* TOC */
+        .toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin: 32px 0; }
+        .toc h4 { margin: 0 0 16px 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .toc ul { margin: 0; list-style: none; }
+        .toc li { margin-bottom: 8px; }
+        .toc a { color: var(--text); text-decoration: none; font-weight: 500; }
+        .toc a:hover { color: var(--accent); }
+        
+        /* Key Points */
+        .key-point { display: flex; gap: 16px; margin: 16px 0; }
+        .key-number { width: 32px; height: 32px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .key-content { flex: 1; }
+        .key-content strong { color: var(--text); }
+        
+        /* Info Boxes */
+        .info-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 20px 24px; margin: 24px 0; border-radius: 0 8px 8px 0; }
+        .info-box h4 { margin: 0 0 8px 0; color: var(--text); font-size: 14px; }
+        .info-box p:last-child { margin-bottom: 0; }
+        
+        /* Concept Cards */
+        .concept-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; }
+        .concept-card h4 { margin: 0 0 12px 0; color: var(--text); font-size: 16px; }
+        
+        /* Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        .data-table th { background: var(--card-bg); color: var(--text-muted); padding: 12px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--border); }
+        .data-table td { padding: 14px 16px; border: 1px solid var(--border); background: var(--bg); color: var(--text-secondary); vertical-align: top; }
+        .data-table td:first-child { font-weight: 600; color: var(--text); white-space: nowrap; }
+        
+        /* Code Blocks */
+        .code-block { background: var(--code-bg); color: #d4d4d4; border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: inherit; font-size: 13px; overflow-x: auto; line-height: 1.5; }
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .function { color: #dcdcaa; }
+        
+        /* Diagram */
+        .diagram { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; text-align: center; }
+        .diagram-title { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        .diagram-flow { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .diagram-box { background: var(--bg); border: 2px solid var(--border); padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+        .diagram-box.highlight { border-color: var(--accent); color: var(--accent); }
+        .diagram-arrow { color: var(--text-muted); font-size: 18px; }
+        
+        /* Section Intro */
+        .section-intro { font-size: 18px; color: var(--text); margin-bottom: 24px; line-height: 1.6; }
+        
+        /* Guardrails Grid */
+        .guardrails-grid { display: grid; gap: 16px; margin: 24px 0; }
+        .guardrail-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; }
+        .guardrail-item h5 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 6px 0; }
+        .guardrail-item p { font-size: 14px; margin: 0; }
+        
+        blockquote { border-left: 3px solid var(--accent); padding-left: 20px; margin: 24px 0; font-style: italic; color: var(--text-muted); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        @media (max-width: 640px) {
+            h1 { font-size: 28px; }
+            .diagram-flow { flex-direction: column; }
+            .diagram-arrow { transform: rotate(90deg); }
+        }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">OpenAI Guide</div>
+        <h1>A Practical Guide to Building Agents</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">External</span>
+    </div>
+</div>
+<p class="byline">OpenAI · 2025</p>
+
+<p class="section-intro">Large language models are becoming increasingly capable of handling complex, multi-step tasks. Advances in reasoning, multimodality, and tool use have unlocked a new category of LLM-powered systems known as agents.</p>
+
+<p>This guide is designed for product and engineering teams exploring how to build their first agents, distilling insights from numerous customer deployments into practical and actionable best practices. It includes frameworks for identifying promising use cases, clear patterns for designing agent logic and orchestration, and best practices to ensure your agents run safely, predictably, and effectively.</p>
+
+<div class="toc">
+    <h4>Contents</h4>
+    <ul>
+        <li><a href="#what-is-agent">What is an agent?</a></li>
+        <li><a href="#when-to-build">When should you build an agent?</a></li>
+        <li><a href="#design-foundations">Agent design foundations</a></li>
+        <li><a href="#orchestration">Orchestration</a></li>
+        <li><a href="#guardrails">Guardrails</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+    </ul>
+</div>
+
+<h2 id="what-is-agent">What is an Agent?</h2>
+
+<p>While conventional software enables users to streamline and automate workflows, agents are able to perform the same workflows on the users' behalf with a high degree of independence.</p>
+
+<div class="info-box">
+    <h4>Definition</h4>
+    <p><strong>Agents are systems that independently accomplish tasks on your behalf.</strong></p>
+</div>
+
+<p>A workflow is a sequence of steps that must be executed to meet the user's goal, whether that's resolving a customer service issue, booking a restaurant reservation, committing a code change, or generating a report.</p>
+
+<p>Applications that integrate LLMs but don't use them to control workflow execution—think simple chatbots, single-turn LLMs, or sentiment classifiers—are not agents.</p>
+
+<p>More concretely, an agent possesses core characteristics that allow it to act reliably and consistently on behalf of a user:</p>
+
+<div class="key-point">
+    <span class="key-number">1</span>
+    <div class="key-content">
+        <strong>LLM-Driven Workflow Execution:</strong> It leverages an LLM to manage workflow execution and make decisions. It recognizes when a workflow is complete and can proactively correct its actions if needed. In case of failure, it can halt execution and transfer control back to the user.
+    </div>
+</div>
+
+<div class="key-point">
+    <span class="key-number">2</span>
+    <div class="key-content">
+        <strong>Tool Access:</strong> It has access to various tools to interact with external systems—both to gather context and to take actions—and dynamically selects the appropriate tools depending on the workflow's current state, always operating within clearly defined guardrails.
+    </div>
+</div>
+
+<h2 id="when-to-build">When Should You Build an Agent?</h2>
+
+<p>Building agents requires rethinking how your systems make decisions and handle complexity. Unlike conventional automation, agents are uniquely suited to workflows where traditional deterministic and rule-based approaches fall short.</p>
+
+<p>Consider the example of payment fraud analysis. A traditional rules engine works like a checklist, flagging transactions based on preset criteria. In contrast, an LLM agent functions more like a seasoned investigator, evaluating context, considering subtle patterns, and identifying suspicious activity even when clear-cut rules aren't violated.</p>
+
+<p>As you evaluate where agents can add value, prioritize workflows that have previously resisted automation:</p>
+
+<table class="data-table">
+    <tr>
+        <th>Criteria</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Complex decision-making</td>
+        <td>Workflows involving nuanced judgment, exceptions, or context-sensitive decisions. For example: refund approval in customer service workflows.</td>
+    </tr>
+    <tr>
+        <td>Difficult-to-maintain rules</td>
+        <td>Systems that have become unwieldy due to extensive and intricate rulesets, making updates costly or error-prone. For example: performing vendor security reviews.</td>
+    </tr>
+    <tr>
+        <td>Heavy reliance on unstructured data</td>
+        <td>Scenarios that involve interpreting natural language, extracting meaning from documents, or interacting with users conversationally. For example: processing a home insurance claim.</td>
+    </tr>
+</table>
+
+<p>Before committing to building an agent, validate that your use case can meet these criteria clearly. Otherwise, a deterministic solution may suffice.</p>
+
+<h2 id="design-foundations">Agent Design Foundations</h2>
+
+<p>In its most fundamental form, an agent consists of three core components:</p>
+
+<table class="data-table">
+    <tr>
+        <th>Component</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Model</td>
+        <td>The LLM powering the agent's reasoning and decision-making</td>
+    </tr>
+    <tr>
+        <td>Tools</td>
+        <td>External functions or APIs the agent can use to take action</td>
+    </tr>
+    <tr>
+        <td>Instructions</td>
+        <td>Explicit guidelines and guardrails defining how the agent behaves</td>
+    </tr>
+</table>
+
+<p>Here's what this looks like in code when using OpenAI's Agents SDK:</p>
+
+<div class="code-block">
+<span class="keyword">weather_agent</span> = Agent(
+    name=<span class="string">"Weather agent"</span>,
+    instructions=<span class="string">"You are a helpful agent who can talk to users about the weather."</span>,
+    tools=[get_weather],
+)
+</div>
+
+<h3>Selecting Your Models</h3>
+
+<p>Different models have different strengths and tradeoffs related to task complexity, latency, and cost. You might want to consider using a variety of models for different tasks in the workflow.</p>
+
+<p>Not every task requires the smartest model—a simple retrieval or intent classification task may be handled by a smaller, faster model, while harder tasks like deciding whether to approve a refund may benefit from a more capable model.</p>
+
+<div class="info-box">
+    <h4>Model Selection Principles</h4>
+    <ol>
+        <li>Set up evals to establish a performance baseline</li>
+        <li>Focus on meeting your accuracy target with the best models available</li>
+        <li>Optimize for cost and latency by replacing larger models with smaller ones where possible</li>
+    </ol>
+</div>
+
+<h3>Defining Tools</h3>
+
+<p>Tools extend your agent's capabilities by using APIs from underlying applications or systems. For legacy systems without APIs, agents can rely on computer-use models to interact directly with those applications and systems through web and application UIs—just as a human would.</p>
+
+<table class="data-table">
+    <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Examples</th>
+    </tr>
+    <tr>
+        <td>Data</td>
+        <td>Enable agents to retrieve context and information necessary for executing the workflow.</td>
+        <td>Query transaction databases or systems like CRMs, read PDF documents, or search the web.</td>
+    </tr>
+    <tr>
+        <td>Action</td>
+        <td>Enable agents to interact with systems to take actions such as adding new information to databases, updating records, or sending messages.</td>
+        <td>Send emails and texts, update a CRM record, hand-off a customer service ticket to a human.</td>
+    </tr>
+    <tr>
+        <td>Orchestration</td>
+        <td>Agents themselves can serve as tools for other agents—see the Manager Pattern.</td>
+        <td>Refund agent, Research agent, Writing agent.</td>
+    </tr>
+</table>
+
+<h3>Configuring Instructions</h3>
+
+<p>High-quality instructions are essential for any LLM-powered app, but especially critical for agents. Clear instructions reduce ambiguity and improve agent decision-making, resulting in smoother workflow execution and fewer errors.</p>
+
+<div class="guardrails-grid">
+    <div class="guardrail-item">
+        <h5>Use existing documents</h5>
+        <p>When creating routines, use existing operating procedures, support scripts, or policy documents to create LLM-friendly routines.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Prompt agents to break down tasks</h5>
+        <p>Providing smaller, clearer steps from dense resources helps minimize ambiguity and helps the model better follow instructions.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Define clear actions</h5>
+        <p>Make sure every step in your routine corresponds to a specific action or output. Being explicit about the action leaves less room for errors.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Capture edge cases</h5>
+        <p>Real-world interactions often create decision points. A robust routine anticipates common variations and includes instructions on how to handle them.</p>
+    </div>
+</div>
+
+<h2 id="orchestration">Orchestration</h2>
+
+<p>With the foundational components in place, you can consider orchestration patterns to enable your agent to execute workflows effectively.</p>
+
+<p>While it's tempting to immediately build a fully autonomous agent with complex architecture, customers typically achieve greater success with an incremental approach.</p>
+
+<p>Orchestration patterns fall into two categories:</p>
+
+<div class="key-point">
+    <span class="key-number">1</span>
+    <div class="key-content">
+        <strong>Single-agent systems:</strong> A single model equipped with appropriate tools and instructions executes workflows in a loop.
+    </div>
+</div>
+
+<div class="key-point">
+    <span class="key-number">2</span>
+    <div class="key-content">
+        <strong>Multi-agent systems:</strong> Workflow execution is distributed across multiple coordinated agents.
+    </div>
+</div>
+
+<h3>Single-Agent Systems</h3>
+
+<p>A single agent can handle many tasks by incrementally adding tools, keeping complexity manageable and simplifying evaluation and maintenance.</p>
+
+<div class="diagram">
+    <div class="diagram-title">Single Agent Architecture</div>
+    <div class="diagram-flow">
+        <div class="diagram-box">Input</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box highlight">Agent + Tools</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Output</div>
+    </div>
+</div>
+
+<p>Every orchestration approach needs the concept of a 'run', typically implemented as a loop that lets agents operate until an exit condition is reached. Common exit conditions include tool calls, a certain structured output, errors, or reaching a maximum number of turns.</p>
+
+<h3>When to Consider Multiple Agents</h3>
+
+<p>Our general recommendation is to maximize a single agent's capabilities first. More agents can provide intuitive separation of concepts, but can introduce additional complexity and overhead.</p>
+
+<p>Practical guidelines for splitting agents include:</p>
+
+<table class="data-table">
+    <tr>
+        <td>Complex logic</td>
+        <td>When prompts contain many conditional statements (multiple if-then-else branches), and prompt templates get difficult to scale, consider dividing each logical segment across separate agents.</td>
+    </tr>
+    <tr>
+        <td>Tool overload</td>
+        <td>The issue isn't solely the number of tools, but their similarity or overlap. Some implementations successfully manage more than 15 well-defined, distinct tools while others struggle with fewer than 10 overlapping tools.</td>
+    </tr>
+</table>
+
+<h3>Multi-Agent Patterns</h3>
+
+<h4>Manager Pattern</h4>
+
+<p>The manager pattern empowers a central LLM—the "manager"—to orchestrate a network of specialized agents seamlessly through tool calls. The manager intelligently delegates tasks to the right agent at the right time, effortlessly synthesizing the results into a cohesive interaction.</p>
+
+<div class="diagram">
+    <div class="diagram-title">Manager Pattern</div>
+    <div class="diagram-flow">
+        <div class="diagram-box">User Request</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box highlight">Manager Agent</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box">Specialized Agents</div>
+    </div>
+</div>
+
+<p>This pattern is ideal for workflows where you only want one agent to control workflow execution and have access to the user.</p>
+
+<h4>Decentralized Pattern</h4>
+
+<p>In a decentralized pattern, agents can 'handoff' workflow execution to one another. Handoffs are a one-way transfer that allow an agent to delegate to another agent.</p>
+
+<div class="diagram">
+    <div class="diagram-title">Decentralized Pattern</div>
+    <div class="diagram-flow">
+        <div class="diagram-box">Triage Agent</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-box highlight">Sales Agent</div>
+        <div class="diagram-arrow">↔</div>
+        <div class="diagram-box">Support Agent</div>
+    </div>
+</div>
+
+<p>This pattern is especially effective for scenarios like conversation triage, or whenever you prefer specialized agents to fully take over certain tasks without the original agent needing to remain involved.</p>
+
+<h2 id="guardrails">Guardrails</h2>
+
+<p>Well-designed guardrails help you manage data privacy risks (for example, preventing system prompt leaks) or reputational risks (for example, enforcing brand-aligned model behavior).</p>
+
+<p>Think of guardrails as a layered defense mechanism. While a single one is unlikely to provide sufficient protection, using multiple, specialized guardrails together creates more resilient agents.</p>
+
+<h3>Types of Guardrails</h3>
+
+<div class="guardrails-grid">
+    <div class="guardrail-item">
+        <h5>Relevance classifier</h5>
+        <p>Ensures agent responses stay within the intended scope by flagging off-topic queries.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Safety classifier</h5>
+        <p>Detects unsafe inputs (jailbreaks or prompt injections) that attempt to exploit system vulnerabilities.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>PII filter</h5>
+        <p>Prevents unnecessary exposure of personally identifiable information by vetting model output.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Moderation</h5>
+        <p>Flags harmful or inappropriate inputs (hate speech, harassment, violence) to maintain safe, respectful interactions.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Tool safeguards</h5>
+        <p>Assess the risk of each tool by assigning a rating—low, medium, or high—based on factors like reversibility and financial impact.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Rules-based protections</h5>
+        <p>Simple deterministic measures (blocklists, input length limits, regex filters) to prevent known threats.</p>
+    </div>
+    <div class="guardrail-item">
+        <h5>Output validation</h5>
+        <p>Ensures responses align with brand values via prompt engineering and content checks.</p>
+    </div>
+</div>
+
+<h3>Building Guardrails</h3>
+
+<p>Set up guardrails that address the risks you've already identified for your use case and layer in additional ones as you uncover new vulnerabilities.</p>
+
+<div class="info-box">
+    <h4>Guardrail Development Heuristic</h4>
+    <ol>
+        <li>Focus on data privacy and content safety</li>
+        <li>Add new guardrails based on real-world edge cases and failures you encounter</li>
+        <li>Optimize for both security and user experience, tweaking your guardrails as your agent evolves</li>
+    </ol>
+</div>
+
+<h3>Plan for Human Intervention</h3>
+
+<p>Human intervention is a critical safeguard enabling you to improve an agent's real-world performance without compromising user experience. It's especially important early in deployment, helping identify failures, uncover edge cases, and establish a robust evaluation cycle.</p>
+
+<p>Two primary triggers typically warrant human intervention:</p>
+
+<ul>
+    <li><strong>Exceeding failure thresholds:</strong> Set limits on agent retries or actions. If the agent exceeds these limits, escalate to human intervention.</li>
+    <li><strong>High-risk actions:</strong> Actions that are sensitive, irreversible, or have high stakes should trigger human oversight until confidence in the agent's reliability grows.</li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Agents mark a new era in workflow automation, where systems can reason through ambiguity, take action across tools, and handle multi-step tasks with a high degree of autonomy. Unlike simpler LLM applications, agents execute workflows end-to-end, making them well-suited for use cases that involve complex decisions, unstructured data, or brittle rule-based systems.</p>
+
+<p>To build reliable agents, start with strong foundations: pair capable models with well-defined tools and clear, structured instructions. Use orchestration patterns that match your complexity level, starting with a single agent and evolving to multi-agent systems only when needed.</p>
+
+<p>Guardrails are critical at every stage, from input filtering and tool use to human-in-the-loop intervention, helping ensure agents operate safely and predictably in production.</p>
+
+<div class="info-box">
+    <h4>Key Takeaways</h4>
+    <ul style="margin-bottom:0;">
+        <li>Start small, validate with real users, and grow capabilities over time</li>
+        <li>Use the most capable model first, then optimize for cost/latency</li>
+        <li>Single-agent systems before multi-agent complexity</li>
+        <li>Layer guardrails as you discover edge cases</li>
+        <li>Plan for human intervention from day one</li>
+    </ul>
+</div>
+
+<p>The path to successful deployment isn't all-or-nothing. With the right foundations and an iterative approach, agents can deliver real business value—automating not just tasks, but entire workflows with intelligence and adaptability.</p>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+<script src="../../../js/copy-menu.js"></script>
+</body>
+</html>
+

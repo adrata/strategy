@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adrata Briefs</title>
+    <link rel="icon" type="image/x-icon" href="favicon.svg">
+    <meta property="og:title" content="Adrata Briefs">
+    <meta property="og:description" content="Sales enablement briefs, playbooks, and guides from Adrata.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f8f8f8;
+            --code-bg: #f5f5f5;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #888;
+            --border: #222;
+            --card-bg: #111;
+            --code-bg: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'MiSans', -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6; 
+            font-size: 16px;
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; }
+        .logo { 
+            font-size: 20px; 
+            font-weight: 800; 
+            color: var(--text); 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .logo svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 2; }
+        .theme-toggle { 
+            background: transparent; 
+            border: none; 
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            color: var(--text-muted); 
+        }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+
+        .page-title {
+            margin-bottom: 48px;
+        }
+        .page-title h1 { 
+            font-size: 42px; 
+            font-weight: 800; 
+            line-height: 1.1; 
+            margin-bottom: 12px;
+        }
+        .page-title h1 span { color: var(--accent); }
+        .page-title p { 
+            font-size: 18px; 
+            color: var(--text-muted); 
+            line-height: 1.6; 
+        }
+
+        .briefs-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 20px; 
+        }
+        
+        .brief-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            padding: 28px 32px; 
+            text-decoration: none; 
+            color: inherit; 
+            display: block; 
+            transition: all 0.2s ease; 
+        }
+        .brief-card:hover { 
+            border-color: var(--accent); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        [data-theme="dark"] .brief-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        
+        .brief-card.featured { 
+            background: linear-gradient(135deg, var(--accent) 0%, #ff6d00 100%);
+            border: none;
+            padding: 40px;
+        }
+        .brief-card.featured .date,
+        .brief-card.featured h2,
+        .brief-card.featured .description,
+        .brief-card.featured .read-more { 
+            color: #fff; 
+        }
+        .brief-card.featured .description { opacity: 0.9; }
+        .brief-card.featured .date { opacity: 0.85; }
+        .brief-card.featured:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(230,81,0,0.3);
+        }
+        
+        .brief-card .date { 
+            font-size: 12px; 
+            color: var(--text-muted); 
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .brief-card h2 { 
+            font-size: 24px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: var(--text); 
+            border-top: none; 
+            padding-top: 0; 
+        }
+        .brief-card.featured h2 { 
+            font-size: 32px; 
+        }
+        .brief-card .description { 
+            font-size: 15px; 
+            color: var(--text-secondary); 
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .brief-card .read-more { 
+            font-size: 14px; 
+            color: var(--accent); 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
+        .brief-card.featured .read-more { color: #fff; }
+        .brief-card .read-more svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+        .secondary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .secondary-grid .brief-card h2 {
+            font-size: 20px;
+        }
+        .secondary-grid .brief-card .description {
+            font-size: 14px;
+        }
+
+        .back-link { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: var(--text-muted); 
+            font-size: 14px; 
+            text-decoration: none; 
+            margin-top: 48px; 
+        }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+        @media (max-width: 600px) {
+            .container { padding: 32px 16px; }
+            .page-title h1 { font-size: 32px; }
+            .brief-card.featured { padding: 28px; }
+            .brief-card.featured h2 { font-size: 26px; }
+            .secondary-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="briefs.html" class="logo">
+                <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                <span>Briefs</span>
+            </a>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+                <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg class="moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            </button>
+        </div>
+
+        <div class="page-title">
+            <h1><span>Adrata</span> Briefs</h1>
+            <p>Sales enablement briefs, playbooks, and tactical guides. Read or listen on the go.</p>
+        </div>
+
+        <div class="briefs-grid">
+            <!-- Featured Brief -->
+            <a href="briefs/2025-01-objection-playbook.html" class="brief-card featured">
+                <div class="date">January 2025</div>
+                <h2>The Objection Playbook</h2>
+                <div class="description">Battle-tested responses to the 12 most common sales objections. Recognize the pattern, understand the real concern, and respond with confidence.</div>
+                <div class="read-more">
+                    Read Brief
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+            </a>
+
+            <!-- Secondary Briefs -->
+            <div class="secondary-grid">
+                <a href="briefs/2025-01-discovery-questions.html" class="brief-card">
+                    <div class="date">January 2025</div>
+                    <h2>Discovery Questions</h2>
+                    <div class="description">Questions that uncover needs and build momentum. From current state assessment to decision-making process.</div>
+                    <div class="read-more">
+                        Read Brief
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+
+                <a href="briefs/2025-01-social-proof-credibility.html" class="brief-card">
+                    <div class="date">January 2025</div>
+                    <h2>Social Proof &amp; Credibility</h2>
+                    <div class="description">Customer success metrics, testimonials, and proof points that generate interest through validation.</div>
+                    <div class="read-more">
+                        Read Brief
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+
+                <a href="briefs/2025-01-demo-wow-moments.html" class="brief-card">
+                    <div class="date">January 2025</div>
+                    <h2>Demo Wow Moments</h2>
+                    <div class="description">Features that generate excitement. The 3-act demo structure and specific wow moments with scripts.</div>
+                    <div class="read-more">
+                        Read Brief
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+
+                <a href="briefs/2025-01-conversation-starters.html" class="brief-card">
+                    <div class="date">January 2025</div>
+                    <h2>Conversation Starters</h2>
+                    <div class="description">Opening lines and hooks that break through the noise and get prospects engaged from the first message.</div>
+                    <div class="read-more">
+                        Read Brief
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+
+                <a href="briefs/2025-01-interest-building-framework.html" class="brief-card">
+                    <div class="date">January 2025</div>
+                    <h2>Interest Building Framework</h2>
+                    <div class="description">How to build and maintain interest throughout the sales cycle. From first touch to close.</div>
+                    <div class="read-more">
+                        Read Brief
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+
+                <a href="briefs/2025-01-pain-point-solution-playbook.html" class="brief-card">
+                    <div class="date">January 2025</div>
+                    <h2>Pain Point Solution Playbook</h2>
+                    <div class="description">Mapping prospect pain points to specific solutions. How to connect problems to your product.</div>
+                    <div class="read-more">
+                        Read Brief
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+
+                <a href="briefs/2025-01-storytelling-guide.html" class="brief-card">
+                    <div class="date">January 2025</div>
+                    <h2>Storytelling Guide</h2>
+                    <div class="description">How to use stories to sell. Customer success stories, case studies, and narrative frameworks.</div>
+                    <div class="read-more">
+                        Read Brief
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <a href="search.html" class="back-link">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Search
+        </a>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        });
+    </script>
+</body>
+</html>

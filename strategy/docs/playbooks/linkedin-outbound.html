@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Outbound | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="LinkedIn Outbound Strategy">
+    <meta property="og:description" content="Warm beats cold 10x. Organic + paid converts 61% better than paid alone.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666;
+            --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; --highlight-bg: #fff5f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999;
+            --border: #333; --card-bg: #1a1a1a; --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
+        .page-header { margin-bottom: 40px; }
+        h1 { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); }
+        
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 56px 0 20px; }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--text); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul { margin: 16px 0 16px 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .hero-stat { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 40px; border-radius: 12px; margin: 32px 0; text-align: center; }
+        .hero-stat .number { font-size: 72px; font-weight: 800; line-height: 1; }
+        .hero-stat .label { font-size: 18px; margin-top: 8px; opacity: 0.9; }
+        .hero-stat .source { font-size: 13px; opacity: 0.7; margin-top: 12px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-card .value { font-size: 32px; font-weight: 800; color: var(--accent); }
+        .stat-card .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        
+        .compare-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; margin: 32px 0; background: var(--border); border-radius: 8px; overflow: hidden; }
+        .compare-cell { background: var(--bg); padding: 16px; }
+        .compare-cell.header { background: var(--card-bg); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        .compare-cell .rate { font-size: 24px; font-weight: 800; color: var(--accent); }
+        .compare-cell .type { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+        
+        .priority-stack { margin: 32px 0; }
+        .priority-item { display: grid; grid-template-columns: 50px 1fr 100px; gap: 16px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; align-items: center; }
+        .priority-item.top { border-color: var(--accent); background: var(--highlight-bg); }
+        .priority-num { font-size: 28px; font-weight: 800; color: var(--accent); }
+        .priority-activity { font-weight: 600; color: var(--text); }
+        .priority-why { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+        .priority-time { font-size: 14px; color: var(--text-muted); text-align: right; }
+        
+        .template { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 20px 0; }
+        .template-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 4px; }
+        .template-use { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+        .template-msg { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 16px; font-size: 15px; color: var(--text); line-height: 1.6; }
+        
+        .theme-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 16px 0; }
+        .theme-card h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+        .theme-card ul { margin: 0; list-style: none; }
+        .theme-card li { padding: 4px 0; font-size: 14px; }
+        .theme-card li::before { content: "→ "; color: var(--accent); }
+        
+        .flywheel { margin: 32px 0; }
+        .flywheel-step { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 8px; padding: 16px 0; align-items: center; }
+        .flywheel-in { text-align: right; font-size: 14px; color: var(--text-secondary); }
+        .flywheel-arrow { text-align: center; color: var(--accent); font-size: 20px; }
+        .flywheel-out { font-weight: 600; color: var(--text); font-size: 14px; }
+        .flywheel-out.highlight { color: var(--accent); }
+        
+        .checklist { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .checklist h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; }
+        .checklist ul { list-style: none; margin: 0; }
+        .checklist li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist li::before { content: "→ "; color: var(--accent); font-weight: 700; }
+        
+        .warning { background: var(--card-bg); border-left: 4px solid var(--text-muted); padding: 20px 24px; margin: 32px 0; }
+        .warning h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+        .warning ul { margin: 0; }
+        .warning li { font-size: 14px; }
+        
+        .cold-context { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 32px 0; }
+        .cold-context h4 { margin-bottom: 12px; color: var(--text); }
+        .cold-context .stats { display: flex; gap: 24px; margin: 16px 0; flex-wrap: wrap; }
+        .cold-context .stats div { font-size: 14px; }
+        .cold-context .stats strong { color: var(--accent); }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 36px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .compare-row { grid-template-columns: 1fr; }
+            .priority-item { grid-template-columns: 40px 1fr; }
+            .priority-time { display: none; }
+            .flywheel-step { grid-template-columns: 1fr; text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Playbooks</span>
+    </div>
+    
+    <div class="page-header">
+        <h1>LinkedIn Outbound</h1>
+        <div class="subtitle">Warm beats cold 10x. The playbook for while ads ramp up.</div>
+    </div>
+
+    <div id="content">
+        <div class="hero-stat">
+            <div class="number">61%</div>
+            <div class="label">higher conversion when prospects see organic + paid content vs. paid alone</div>
+            <div class="source">— LinkedIn Marketing Solutions Research</div>
+        </div>
+
+        <p>While ads ramp up and before calendars are full, the highest-leverage activity is organic LinkedIn content + warm DMs. This doesn't compete with paid—it makes paid more effective.</p>
+
+        <h2>The Warm vs. Cold Gap</h2>
+        
+        <p>The data is unambiguous:</p>
+
+        <div class="compare-row">
+            <div class="compare-cell header">Outreach Type</div>
+            <div class="compare-cell header">Response Rate</div>
+            <div class="compare-cell header">Multiplier</div>
+            
+            <div class="compare-cell"><span class="type">Cold LinkedIn DM</span></div>
+            <div class="compare-cell"><span class="rate">1-3%</span></div>
+            <div class="compare-cell">Baseline</div>
+            
+            <div class="compare-cell"><span class="type">Warm LinkedIn DM</span></div>
+            <div class="compare-cell"><span class="rate">10-20%</span></div>
+            <div class="compare-cell" style="color: var(--accent); font-weight: 600;">7-10x</div>
+            
+            <div class="compare-cell"><span class="type">Engagement-First</span></div>
+            <div class="compare-cell"><span class="rate">15-25%</span></div>
+            <div class="compare-cell" style="color: var(--accent); font-weight: 600;">10x+</div>
+        </div>
+
+        <p><strong>Why warm works:</strong> You're not a stranger. They've seen your name, your content, your professional context. Trust is established before the ask.</p>
+
+        <h2>Daily Activity Stack</h2>
+        
+        <p>Priority-ordered. Do in this order:</p>
+
+        <div class="priority-stack">
+            <div class="priority-item top">
+                <div class="priority-num">1</div>
+                <div>
+                    <div class="priority-activity">Post organic content (personal profile)</div>
+                    <div class="priority-why">Creates warm prospects, boosts ad performance, builds brand</div>
+                </div>
+                <div class="priority-time">30 min</div>
+            </div>
+            <div class="priority-item top">
+                <div class="priority-num">2</div>
+                <div>
+                    <div class="priority-activity">Engage with ICP content (like, comment)</div>
+                    <div class="priority-why">Warms up prospects before DM, gets you visible</div>
+                </div>
+                <div class="priority-time">30 min</div>
+            </div>
+            <div class="priority-item top">
+                <div class="priority-num">3</div>
+                <div>
+                    <div class="priority-activity">Warm DMs to engaged prospects</div>
+                    <div class="priority-why">10-20% response vs 1-3% cold</div>
+                </div>
+                <div class="priority-time">60 min</div>
+            </div>
+            <div class="priority-item">
+                <div class="priority-num">4</div>
+                <div>
+                    <div class="priority-activity">Connection requests</div>
+                    <div class="priority-why">Expands network for future warm outreach</div>
+                </div>
+                <div class="priority-time">30 min</div>
+            </div>
+            <div class="priority-item">
+                <div class="priority-num">5</div>
+                <div>
+                    <div class="priority-activity">Cold calling (warm list priority)</div>
+                    <div class="priority-why">Best used on prospects who've seen content/ads</div>
+                </div>
+                <div class="priority-time">As needed</div>
+            </div>
+        </div>
+
+        <h2>Content That Works</h2>
+        
+        <p>Themes that resonate with VP Sales:</p>
+
+        <div class="theme-card">
+            <h4>Deal Slippage & Pipeline Risk</h4>
+            <ul>
+                <li>"3 signals a deal is about to stall that most AEs miss"</li>
+                <li>"Why your Q4 pipeline is lying to you"</li>
+            </ul>
+        </div>
+
+        <div class="theme-card">
+            <h4>Buying Committee Complexity</h4>
+            <ul>
+                <li>"Why your champion might be your biggest risk"</li>
+                <li>"The stakeholder you're not talking to (but should be)"</li>
+            </ul>
+        </div>
+
+        <div class="theme-card">
+            <h4>Contrarian Takes</h4>
+            <ul>
+                <li>"Unpopular opinion: Multi-threading is taught wrong"</li>
+                <li>"The worst sales advice I ever received (and followed)"</li>
+            </ul>
+        </div>
+
+        <h3>Posting Cadence</h3>
+        <ul>
+            <li><strong>Minimum:</strong> 2-3 posts per week</li>
+            <li><strong>Best times:</strong> Tuesday-Wednesday, 10 AM - 12 PM</li>
+            <li><strong>Format priority:</strong> Video > Carousel > Text with image > Text only</li>
+        </ul>
+
+        <h2>DM Templates</h2>
+
+        <div class="template">
+            <div class="template-label">Post Engagement</div>
+            <div class="template-use">When they liked or commented on your post</div>
+            <div class="template-msg">Hey [First Name] – saw you liked my post on [topic]. Curious what resonated? Always looking to learn what's top of mind for sales leaders right now.</div>
+        </div>
+
+        <div class="template">
+            <div class="template-label">Comment Follow-Up</div>
+            <div class="template-use">When they left a thoughtful comment</div>
+            <div class="template-msg">[First Name] – really appreciated your comment on [specific point]. That's exactly the perspective I was hoping to hear. Would love to continue the conversation if you're open to it.</div>
+        </div>
+
+        <div class="template">
+            <div class="template-label">Profile View</div>
+            <div class="template-use">When they viewed your profile</div>
+            <div class="template-msg">Hey [First Name] – noticed you checked out my profile. I work with VPs of Sales at [industry] companies on [brief value prop]. Was there something specific that caught your eye?</div>
+        </div>
+
+        <div class="template">
+            <div class="template-label">Multi-Engagement → Meeting</div>
+            <div class="template-use">When they've engaged multiple times</div>
+            <div class="template-msg">[First Name] – I've noticed you engaging with a few of my posts on [theme]. Seems like [problem] might be on your radar. We help VPs of Sales get visibility into buying committees before deals stall. Worth a 15-minute chat?</div>
+        </div>
+
+        <div class="template">
+            <div class="template-label">Follow-Up (No Response)</div>
+            <div class="template-use">2-5 days after initial message</div>
+            <div class="template-msg">[First Name] – just circling back. I know VPs of Sales are slammed. If now's not right, no worries. But if [problem] is something you're wrestling with, happy to share how we've helped teams like yours.</div>
+        </div>
+
+        <h2>The Organic + Paid Flywheel</h2>
+        
+        <p>How organic activity creates air cover for paid:</p>
+
+        <div class="flywheel">
+            <div class="flywheel-step">
+                <div class="flywheel-in">Prospect sees ad cold</div>
+                <div class="flywheel-arrow">→</div>
+                <div class="flywheel-out">Baseline conversion</div>
+            </div>
+            <div class="flywheel-step">
+                <div class="flywheel-in">Prospect saw your content → then sees ad</div>
+                <div class="flywheel-arrow">→</div>
+                <div class="flywheel-out highlight">+61% conversion lift</div>
+            </div>
+            <div class="flywheel-step">
+                <div class="flywheel-in">Engaged with AE → got warm DM → sees ad</div>
+                <div class="flywheel-arrow">→</div>
+                <div class="flywheel-out">Ad = reinforcement, not introduction</div>
+            </div>
+            <div class="flywheel-step">
+                <div class="flywheel-in">Saw ad → AE sends warm DM</div>
+                <div class="flywheel-arrow">→</div>
+                <div class="flywheel-out">"I saw you might be interested..." feels relevant</div>
+            </div>
+        </div>
+
+        <h2>Where Cold Calling Fits</h2>
+
+        <div class="cold-context">
+            <h4>Cold Calling Works Best as a Follow-Up Channel</h4>
+            <p>Not as primary activity. A prospect who saw your ad → then your content → then gets a call? That's warm.</p>
+            <div class="stats">
+                <div><strong>2.3%</strong> cold call success rate (2025)</div>
+                <div><strong>71%</strong> more effective calls 4-5 PM</div>
+                <div><strong>50%</strong> higher success Wednesday vs Mon/Tue</div>
+                <div><strong>28%</strong> higher conversion with multi-touch</div>
+            </div>
+        </div>
+
+        <h2>This Week</h2>
+
+        <div class="checklist">
+            <h4>Actions</h4>
+            <ul>
+                <li>Post 2-3x from personal profile</li>
+                <li>30 min/day engaging with VP of Sales content</li>
+                <li>Track who engages with your content</li>
+                <li>DM anyone who likes/comments within 24-48 hours</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <h4>What Not to Do</h4>
+            <ul>
+                <li><strong>Don't mass-DM cold.</strong> Generic templates don't work.</li>
+                <li><strong>Don't pitch immediately.</strong> Build rapport first.</li>
+                <li><strong>Don't give up after one touch.</strong> Multi-step sequences boost response 50%+.</li>
+                <li><strong>Don't treat channels as separate.</strong> Coordinate content, DMs, and ads.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() { 
+            const html = document.documentElement; 
+            const isDark = html.getAttribute('data-theme') === 'dark'; 
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+            localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+        }
+        document.addEventListener('DOMContentLoaded', () => { 
+            const theme = localStorage.getItem('theme') || 'dark'; 
+            document.documentElement.setAttribute('data-theme', theme); 
+        });
+    </script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>

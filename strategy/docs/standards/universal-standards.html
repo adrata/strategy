@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Standards | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Adrata Universal Standards">
+    <meta property="og:description" content="Core standards for all Adrata content. Upload with any task as context.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { font-size: 17px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; }
+        p { margin-bottom: 14px; color: var(--text-secondary); }
+        ul { margin: 12px 0 12px 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        .box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .box.accent { border-left: 4px solid var(--accent); }
+        .box h4 { font-size: 14px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+        code { background: var(--card-bg); padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; } .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; } [data-theme="light"] .theme-toggle .moon { display: block; }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Standards</span>
+    </div>
+
+    <h1>Universal Standards</h1>
+    <div class="subtitle">Core standards for all Adrata content. Upload this with any task as context for AI or human reference.</div>
+
+    <div class="box accent">
+        <h4>Step 0: Always Start Here</h4>
+        <p style="margin:0;"><strong>Which archetype(s) is this targeting?</strong> Every piece of content must target 1-2 specific archetypes. Generic content converts nobody. Reference the <a href="../foundations/archetypes-persona.html" style="color: var(--accent);">Archetypes Persona</a> document.</p>
+    </div>
+
+    <h2>Voice Principles</h2>
+    <p>Our voice is modeled on Q4: Chapter 1. Core traits:</p>
+    <ul>
+        <li><strong>Visceral:</strong> Emotions land physically. "The thought lands in my chest like a stone."</li>
+        <li><strong>Specific:</strong> Exact numbers, names, times. "$18.4 million. 88 days."</li>
+        <li><strong>First-Person:</strong> Reader IS the VP of Sales. They see themselves in every scene.</li>
+        <li><strong>Show, Don't Tell:</strong> Reveal psychology through actions and scenes.</li>
+        <li><strong>Questions that Pull:</strong> End with curiosity-creating questions.</li>
+    </ul>
+
+    <h2>Language by Archetype</h2>
+    <div class="box">
+        <p><strong>Innovators</strong> (Anxious Elite, Frustrated Fighter, Rebuilding Leader):</p>
+        <p style="margin:0;">Use: "AI Agents", "Autonomous Intelligence", "Buying Committee Mapping"</p>
+    </div>
+    <div class="box">
+        <p><strong>Early Adopters</strong> (Worried Darling, Hungry Underdog, Stretched Striver):</p>
+        <p style="margin:0;">Use: "AI Sales Intelligence", "Predictive Deal Health", "Force Multiplier"</p>
+    </div>
+    <div class="box">
+        <p><strong>Early Majority</strong> (Stressed Performer, Recovering Performer):</p>
+        <p style="margin:0;">Use: "Buyer Intelligence", "Revenue Intelligence", "Pipeline Analytics"</p>
+    </div>
+    <div class="box">
+        <p><strong>Late Majority</strong> (Scrambling Politician, Sweating Target):</p>
+        <p style="margin:0;">Use: "CRM Intelligence", "Enterprise Proven", "Quick Wins"</p>
+    </div>
+
+    <h2>Formatting Standards</h2>
+    <ul>
+        <li>Font: MiSans (always)</li>
+        <li>Accent color: <code>#e65100</code> (orange)</li>
+        <li>Default theme: Dark mode</li>
+        <li>Max width: 800-900px</li>
+        <li>No emojis in strategy docs</li>
+        <li>Use Lucide icons if icons needed</li>
+    </ul>
+
+    <h2>Pre-Publish Checklist</h2>
+    <ul>
+        <li>Which 1-2 archetypes does this target?</li>
+        <li>Does the hook stop a stressed VP at 6 AM?</li>
+        <li>Does it name their enemy (core fear)?</li>
+        <li>Is there something they literally can't do themselves?</li>
+        <li>Does it feel like gaining insight, not being sold to?</li>
+        <li>Are all numbers specific, not vague?</li>
+        <li>Would they forward this to a peer?</li>
+    </ul>
+
+    <h2>Related Standards</h2>
+    <ul>
+        <li><a href="hook-standards.html" style="color: var(--accent);">Hook Standards</a> — How to write hooks that convert</li>
+        <li><a href="offer-standards.html" style="color: var(--accent);">Offer Standards</a> — How to create offers that create PULL</li>
+        <li><a href="conversion-standards.html" style="color: var(--accent);">Conversion Standards</a> — Website and funnel conversion</li>
+        <li><a href="../foundations/archetypes-persona.html" style="color: var(--accent);">Archetypes Persona</a> — All 10 ICAs with language guides</li>
+    </ul>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

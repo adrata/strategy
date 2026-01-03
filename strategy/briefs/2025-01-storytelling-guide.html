@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storytelling Guide | Adrata Brief</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #888; --border: #2a2a2a; --card-bg: #141414; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .byline { font-size: 14px; color: var(--text-muted); margin-top: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .byline .author { font-weight: 600; color: var(--text-secondary); }
+        .byline .dot { color: var(--border); }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 24px 0 12px; color: var(--text); }
+        h4 { font-size: 15px; font-weight: 700; margin: 16px 0 8px; color: var(--text-muted); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        .framework-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .framework-box h3 { margin-top: 0; }
+        .framework-steps { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+        .framework-step { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg); border-radius: 8px; }
+        .step-num { width: 28px; height: 28px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+        .step-text { font-size: 15px; }
+        .story-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .story-card h3 { margin-top: 0; }
+        .story-content { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 16px 0; font-size: 15px; font-style: italic; color: var(--text-secondary); line-height: 1.8; }
+        .when-to-use { background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-top: 12px; }
+        .when-to-use h4 { margin-top: 0; margin-bottom: 8px; }
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        .newsletter-box { background: #f5f5f5; border-radius: 12px; padding: 32px; margin-top: 48px; }
+        [data-theme="dark"] .newsletter-box { background: #1a1a1a; border: 1px solid #333; }
+        .newsletter-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .newsletter-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+        .newsletter-form { display: flex; gap: 12px; max-width: 400px; }
+        .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 14px; }
+        .newsletter-form button { background: var(--accent); border: none; width: 48px; height: 48px; border-radius: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .newsletter-form button svg { width: 20px; height: 20px; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 14px; text-decoration: none; margin-top: 32px; }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+        @media (max-width: 600px) { body { padding: 24px 16px; } h1 { font-size: 28px; } }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="../briefs.html">Briefs</a>
+        <span class="separator">/</span>
+        <span class="current">January 2025</span>
+    </div>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Brief</div>
+            <h1>Storytelling Guide</h1>
+            <div class="subtitle">Before/After Scenarios That Build Interest</div>
+            <p class="byline"><span class="author">Adrata</span><span class="dot">·</span><span>January 2025</span></p>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+    <div class="audio-player">
+        <button class="play-btn" onclick="toggleAudio()" id="playBtn">
+            <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16" fill="var(--accent)"/><rect x="14" y="4" width="4" height="16" fill="var(--accent)"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this brief</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)"><span id="speedLabel">2x</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div class="framework-box">
+            <h3>The Transformation Arc</h3>
+            <p>Every great sales story follows this structure:</p>
+            <div class="framework-steps">
+                <div class="framework-step"><span class="step-num">1</span><span class="step-text"><strong>Relatable Character</strong> - They see themselves</span></div>
+                <div class="framework-step"><span class="step-num">2</span><span class="step-text"><strong>Specific Problem</strong> - They feel the pain</span></div>
+                <div class="framework-step"><span class="step-num">3</span><span class="step-text"><strong>Crisis Moment</strong> - Emotional peak</span></div>
+                <div class="framework-step"><span class="step-num">4</span><span class="step-text"><strong>Discovery</strong> - Hope appears</span></div>
+                <div class="framework-step"><span class="step-num">5</span><span class="step-text"><strong>Transformation</strong> - Proof it works</span></div>
+                <div class="framework-step"><span class="step-num">6</span><span class="step-text"><strong>New Reality</strong> - What's possible</span></div>
+            </div>
+        </div>
+
+        <div class="story-card">
+            <h3>Story #1: "The Friday Afternoon Panic"</h3>
+            <div class="story-content">"Let me tell you about Sarah. She's a VP of Sales at a mid-sized company - probably a lot like yours. Every Friday afternoon around 3pm, she'd get that sinking feeling in her stomach. Why? Because she knew Monday's board meeting was coming, and she still had to build the pipeline report.
+
+One Friday, her CRM crashed during export. She spent the next 4 hours manually piecing together data from emails and spreadsheets. By 7pm, she finally had something presentable. She missed her daughter's soccer game. Again.
+
+That's when she found us. Now? She clicks one button, and within 30 seconds, she has a real-time pipeline view that updates automatically. Last Friday at 4:55pm, the CEO asked for numbers. She handled it in 3 clicks and still made it to the soccer game.
+
+Sound familiar?"</div>
+            <div class="when-to-use">
+                <h4>When to Use:</h4>
+                <ul>
+                    <li>Prospects who mention work-life balance</li>
+                    <li>Anyone who's dealt with last-minute chaos</li>
+                    <li>VPs and Directors of Sales</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="story-card">
+            <h3>Story #2: "The Growth Ceiling"</h3>
+            <div class="story-content">"I was talking to Mike, a CRO, last quarter. He told me something interesting: 'We could be doing 50% more volume, but I can't hire fast enough to keep up with the admin work.'
+
+He was stuck. Every new deal meant more coordination chaos. His team was maxed out. He couldn't scale without adding headcount, but the margins didn't support it.
+
+Three months after implementing our system, he's doing 60% more volume with the SAME team. His secret? His reps went from spending 15 hours/week on admin to 45 minutes. That freed up 14+ hours per person to actually sell.
+
+What would an extra 60% in volume mean for your business?"</div>
+            <div class="when-to-use">
+                <h4>When to Use:</h4>
+                <ul>
+                    <li>Growth-minded leaders</li>
+                    <li>Companies hiring or considering hiring</li>
+                    <li>Anyone mentioning capacity constraints</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="story-card">
+            <h3>Story #3: "The Competitive Advantage"</h3>
+            <div class="story-content">"Two companies in the same market. Similar size, similar product. Company A takes 45-60 days to close. Company B takes 28-35 days. Guess who gets more referrals?
+
+Company B's secret? They eliminated the data bottleneck. While Company A is still chasing down context, Company B has everything they need in one view. That 2-3 week difference? That's the competitive advantage.
+
+Buyers remember who moves faster. And they tell their network."</div>
+            <div class="when-to-use">
+                <h4>When to Use:</h4>
+                <ul>
+                    <li>Competitive market conversations</li>
+                    <li>Prospects who mention winning/losing deals</li>
+                    <li>Companies focused on velocity</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>Story Elements That Hook</h2>
+        <ul>
+            <li><strong>Specific details</strong> - "47 deals, 4 hours, Friday at 3pm"</li>
+            <li><strong>Emotional moments</strong> - "panic, relief, transformation"</li>
+            <li><strong>Clear before/after</strong> - "chaos → calm"</li>
+            <li><strong>Relatable stakes</strong> - "missed the soccer game"</li>
+        </ul>
+    </div>
+    <div class="newsletter-box">
+        <h3>Know someone who'd find this useful?</h3>
+        <p>Send this brief to a colleague</p>
+        <form class="newsletter-form" onsubmit="return false;">
+            <input type="email" placeholder="Their email">
+            <button type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </form>
+    </div>
+    <a href="../briefs.html" class="back-link"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Briefs</a>
+    <script>
+        let speechRate = parseFloat(localStorage.getItem('audioSpeed') || 2); let utterance = null; let isPlaying = false;
+        function toggleTheme() { const html = document.documentElement; const isDark = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', isDark ? 'light' : 'dark'); localStorage.setItem('theme', isDark ? 'light' : 'dark'); }
+        function toggleAudio() { if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; } else { const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; window.speechSynthesis.speak(utterance); isPlaying = true; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; } }
+        function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+        function setSpeed(speed) { speechRate = speed; localStorage.setItem('audioSpeed', speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (isPlaying) { window.speechSynthesis.cancel(); toggleAudio(); } }
+        document.addEventListener('DOMContentLoaded', () => { const savedTheme = localStorage.getItem('theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } document.getElementById('speedLabel').textContent = speechRate + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speechRate + 'x'); }); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) { document.getElementById('speedMenu').classList.remove('open'); } }); });
+    </script>
+</body>
+</html>
+

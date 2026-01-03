@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Starters | Adrata Brief</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #888; --border: #2a2a2a; --card-bg: #141414; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .byline { font-size: 14px; color: var(--text-muted); margin-top: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .byline .author { font-weight: 600; color: var(--text-secondary); }
+        .byline .dot { color: var(--border); }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 24px 0 12px; color: var(--text); }
+        h4 { font-size: 15px; font-weight: 700; margin: 16px 0 8px; color: var(--text-muted); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        .template-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .template-card h3 { margin-top: 0; }
+        .template-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 12px 0; font-size: 15px; font-style: italic; color: var(--text-secondary); white-space: pre-line; }
+        .subject-lines { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+        .subject-line { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 14px; }
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        .newsletter-box { background: #f5f5f5; border-radius: 12px; padding: 32px; margin-top: 48px; }
+        [data-theme="dark"] .newsletter-box { background: #1a1a1a; border: 1px solid #333; }
+        .newsletter-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .newsletter-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+        .newsletter-form { display: flex; gap: 12px; max-width: 400px; }
+        .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 14px; }
+        .newsletter-form button { background: var(--accent); border: none; width: 48px; height: 48px; border-radius: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .newsletter-form button svg { width: 20px; height: 20px; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 14px; text-decoration: none; margin-top: 32px; }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+        @media (max-width: 600px) { body { padding: 24px 16px; } h1 { font-size: 28px; } }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="../briefs.html">Briefs</a>
+        <span class="separator">/</span>
+        <span class="current">January 2025</span>
+    </div>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Brief</div>
+            <h1>Conversation Starters</h1>
+            <div class="subtitle">Open Any Conversation With Confidence</div>
+            <p class="byline"><span class="author">Adrata</span><span class="dot">·</span><span>January 2025</span></p>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+    <div class="audio-player">
+        <button class="play-btn" onclick="toggleAudio()" id="playBtn">
+            <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16" fill="var(--accent)"/><rect x="14" y="4" width="4" height="16" fill="var(--accent)"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this brief</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)"><span id="speedLabel">2x</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <h2>Cold Outreach (Email/LinkedIn)</h2>
+
+        <div class="template-card">
+            <h3>Subject Lines That Get Opened</h3>
+            <div class="subject-lines">
+                <div class="subject-line">"Quick question about [Company Name]'s sales process"</div>
+                <div class="subject-line">"Saw you're hiring - scaling pains?"</div>
+                <div class="subject-line">"47 deals → 1 click"</div>
+            </div>
+        </div>
+
+        <div class="template-card">
+            <h3>Email Template #1: Problem-Aware</h3>
+            <div class="template-box">Hi [Name],
+
+Quick question - when a deal goes silent 30 days before quarter end, what's your backup plan?
+
+Most VPs of Sales we work with were spending 10+ hours/week chasing data. Now they spend 20 minutes.
+
+Worth a 15-minute conversation?
+
+[Your Name]</div>
+        </div>
+
+        <div class="template-card">
+            <h3>Email Template #2: Growth-Focused</h3>
+            <div class="template-box">Hi [Name],
+
+Noticed [Company Name] is expanding. Congrats!
+
+Quick question: How are you planning to handle 2x the volume without 2x the coordination headaches?
+
+Three companies in [Industry] solved this problem last quarter. Want to see how?
+
+[Your Name]</div>
+        </div>
+
+        <h2>Referral Introductions</h2>
+
+        <div class="template-card">
+            <h3>When Someone Introduces You</h3>
+            <div class="template-box">"[Referrer] mentioned you're dealing with pipeline visibility challenges. They said the same thing before we helped them increase forecast accuracy by 35%. Mind if I show you what we did?"</div>
+        </div>
+
+        <div class="template-card">
+            <h3>When You're Asking for a Referral</h3>
+            <div class="template-box">"Who else do you know in sales leadership who's frustrated with data silos? I'd love to help them the way we helped you."</div>
+        </div>
+
+        <h2>Event/Networking Openers</h2>
+
+        <div class="template-card">
+            <h3>At Industry Events</h3>
+            <ul>
+                <li>"What's the biggest operational challenge you're facing right now?"</li>
+                <li>"How many deals are you managing? How are you tracking engagement?"</li>
+                <li>"If you could automate one thing in your sales process, what would it be?"</li>
+            </ul>
+        </div>
+
+        <div class="template-card">
+            <h3>The Follow-Up</h3>
+            <div class="template-box">"You mentioned [pain point] at the conference. I've been thinking about that - we just helped someone with the exact same issue. Got 10 minutes this week?"</div>
+        </div>
+
+        <h2>Follow-Up Sequences</h2>
+
+        <div class="template-card">
+            <h3>After Initial Contact (No Response)</h3>
+            <h4>Day 3:</h4>
+            <div class="template-box">"[Name] - following up on my note about pipeline intelligence. Bad timing? Or not a priority right now?"</div>
+            <h4>Day 7:</h4>
+            <div class="template-box">"Last one, I promise! Quick question: If I could show you how to save 10 hours/week on reporting, would that be worth 15 minutes?"</div>
+        </div>
+
+        <div class="template-card">
+            <h3>After Demo (Moving to Close)</h3>
+            <h4>Day 1:</h4>
+            <div class="template-box">"Thanks for your time today! What was the most interesting part for you?"</div>
+            <h4>Day 3:</h4>
+            <div class="template-box">"Been thinking about your comment on [pain point]. Here's how [similar client] solved that exact issue..."</div>
+        </div>
+    </div>
+    <div class="newsletter-box">
+        <h3>Know someone who'd find this useful?</h3>
+        <p>Send this brief to a colleague</p>
+        <form class="newsletter-form" onsubmit="return false;">
+            <input type="email" placeholder="Their email">
+            <button type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </form>
+    </div>
+    <a href="../briefs.html" class="back-link"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Briefs</a>
+    <script>
+        let speechRate = parseFloat(localStorage.getItem('audioSpeed') || 2); let utterance = null; let isPlaying = false;
+        function toggleTheme() { const html = document.documentElement; const isDark = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', isDark ? 'light' : 'dark'); localStorage.setItem('theme', isDark ? 'light' : 'dark'); }
+        function toggleAudio() { if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; } else { const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; window.speechSynthesis.speak(utterance); isPlaying = true; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; } }
+        function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+        function setSpeed(speed) { speechRate = speed; localStorage.setItem('audioSpeed', speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (isPlaying) { window.speechSynthesis.cancel(); toggleAudio(); } }
+        document.addEventListener('DOMContentLoaded', () => { const savedTheme = localStorage.getItem('theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } document.getElementById('speedLabel').textContent = speechRate + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speechRate + 'x'); }); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) { document.getElementById('speedMenu').classList.remove('open'); } }); });
+    </script>
+</body>
+</html>
+

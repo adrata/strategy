@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 10 VP of Sales Archetypes | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="The 10 VP of Sales Archetypes">
+    <meta property="og:description" content="Ranked personas with psychology, language, and conversion strategies. For humans and AI agents.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666;
+            --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; --highlight-bg: #fff5f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999;
+            --border: #333; --card-bg: #141414; --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 1000px; margin: 0 auto; }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
+        .page-header { margin-bottom: 48px; }
+        h1 { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+        
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); z-index: 100; }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .intro { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 48px; }
+        .intro p { margin: 0; color: var(--text-secondary); font-size: 15px; }
+        .intro strong { color: var(--text); }
+        
+        /* Persona Cards */
+        .persona { display: grid; grid-template-columns: 200px 1fr; gap: 32px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 24px; position: relative; }
+        .persona.tier1 { border-color: var(--accent); background: var(--highlight-bg); }
+        
+        .persona-rank { position: absolute; top: -12px; left: 24px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+        .persona.tier1 .persona-rank { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); }
+        
+        .persona-image { width: 200px; height: 250px; border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, var(--card-bg) 0%, var(--border) 100%); position: relative; }
+        .persona-image img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%); }
+        .persona-image .celeb-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 16px 12px 12px; }
+        .persona-image .think-of { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.7); margin-bottom: 2px; }
+        .persona-image .celeb-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3; }
+        
+        .persona-content { flex: 1; }
+        .persona-name { font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+        .persona-enemy { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+        .persona-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; }
+        
+        .persona-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .meta-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+        .meta-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
+        .meta-value { font-size: 14px; color: var(--text); font-weight: 600; }
+        .meta-value.innovator { color: var(--accent); }
+        
+        .persona-language { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .language-header { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+        .language-do { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .language-do span { background: var(--highlight-bg); border: 1px solid var(--accent); color: var(--text); font-size: 12px; padding: 4px 10px; border-radius: 4px; font-weight: 500; }
+        .language-dont { font-size: 13px; color: var(--text-muted); }
+        .language-dont strong { color: var(--text-secondary); }
+        
+        .persona-hook { background: var(--bg); border-left: 3px solid var(--accent); padding: 12px 16px; font-size: 14px; font-style: italic; color: var(--text); }
+        
+        .persona-celebrity { font-size: 12px; color: var(--text-muted); margin-top: 16px; display: flex; align-items: center; gap: 8px; }
+        .persona-celebrity strong { color: var(--text-secondary); }
+        
+        /* Mobile */
+        @media (max-width: 700px) {
+            .persona { grid-template-columns: 1fr; }
+            .persona-image { width: 100%; height: 200px; }
+            .persona-meta { grid-template-columns: 1fr; }
+            h1 { font-size: 36px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Personas</span>
+    </div>
+    
+    <div class="page-header">
+        <h1>The 10 Archetypes</h1>
+        <div class="subtitle">Our Archetypes for VP of Sales. Ranked by conversion potential. Each with psychology, language calibration, and hook strategy.</div>
+    </div>
+
+    <div class="intro">
+        <p><strong>How to use this document:</strong> Every piece of content, every ad, every offer should target 1-2 specific archetypes. Use their language. Name their enemy. Match your tech framing to their adoption profile. Innovators want "AI Agents." Late majority wants "Enhanced CRM." Meet them where they are.</p>
+    </div>
+
+    <!-- #1: Anxious Elite -->
+    <div class="persona tier1">
+        <div class="persona-rank">#1 Priority</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face" alt="The Anxious Elite">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Jon Hamm as Don Draper</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Anxious Elite</div>
+            <div class="persona-enemy">Enemy: Pipeline Exposure — what they don't see will destroy them</div>
+            <div class="persona-desc">Hit their number, but pipeline is slipping. Has budget, credibility, and board visibility. Sophisticated, skeptical, suspects something is wrong but can't pinpoint it. Needs validation of gut instinct, not education. They already know — they need proof.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value innovator">Innovator / Early Adopter</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">Maximum — ego on the line</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>AI Agents</span>
+                    <span>Autonomous Intelligence</span>
+                    <span>Buying Committee Mapping</span>
+                    <span>Deal Intelligence</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> "CRM enhancement", "sales enablement", "pipeline management" — too basic, they'll tune out</div>
+            </div>
+            
+            <div class="persona-hook">"You hit your number. Your pipeline says you won't again. Here's what the top 1% do differently."</div>
+            
+        </div>
+    </div>
+
+    <!-- #2: Worried Darling -->
+    <div class="persona tier1">
+        <div class="persona-rank">#2 Priority</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face" alt="The Worried Darling">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Ryan Gosling in The Big Short</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Worried Darling</div>
+            <div class="persona-enemy">Enemy: Golden Trap — success that's actually fragile, one quarter from collapse</div>
+            <div class="persona-desc">All the support in the world. CEO's favorite. But they know it's luck or timing, not system. Can't admit vulnerability publicly — would shatter the image. Needs private, confidential solutions. They become your secret weapon.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value innovator">Early Adopter</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">High — fear of embarrassment</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>AI Sales Intelligence</span>
+                    <span>Predictive Deal Health</span>
+                    <span>Hidden Risk Detection</span>
+                    <span>Stealth Advantage</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> Anything that sounds like "fixing a problem" — they can't publicly admit they have one</div>
+            </div>
+            
+            <div class="persona-hook">"Everyone expects you to win. Only you see the cracks. Stay untouchable."</div>
+            
+        </div>
+    </div>
+
+    <!-- #3: Stressed Performer -->
+    <div class="persona tier1">
+        <div class="persona-rank">#3 Priority</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&crop=face" alt="The Stressed Performer">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">McConaughey in Wolf of Wall Street</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Stressed Performer</div>
+            <div class="persona-enemy">Enemy: Silent Slip — deals quietly dying while everyone focuses on new pipeline</div>
+            <div class="persona-desc">Decent resources. Watching pipeline thin. Feels like running in sand — working harder but not gaining. Needs ammunition to justify resources to leadership. Wants proof they can take to their CEO.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value">Early Majority / Pragmatist</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">High — stress building</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>Buyer Intelligence</span>
+                    <span>Deal Visibility</span>
+                    <span>Pipeline Analytics</span>
+                    <span>Revenue Intelligence</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> "AI Agents" (too futuristic), "disruption" — they want proven, not experimental</div>
+            </div>
+            
+            <div class="persona-hook">"Your pipeline doesn't lie. Q1 is coming. Act now or explain later."</div>
+            
+        </div>
+    </div>
+
+    <!-- #4: Stretched Striver -->
+    <div class="persona">
+        <div class="persona-rank">#4</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=500&fit=crop&crop=face" alt="The Stretched Striver">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Miles Teller in Whiplash</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Stretched Striver</div>
+            <div class="persona-enemy">Enemy: Resource Gap — competing against teams 10x their size with 1/10th the budget</div>
+            <div class="persona-desc">Marketing wants to help but budget is tight. Grinding harder than anyone, but system isn't scaling. Needs ROI-proven tactics, not experiments. Will try unconventional if it's cheap and proven.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value">Early Adopter — driven by necessity</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">High — needs leverage</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>Force Multiplier</span>
+                    <span>AI-Powered Efficiency</span>
+                    <span>Do More With Less</span>
+                    <span>Unfair Advantage</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> Enterprise pricing language, "comprehensive platforms" — they can't afford it</div>
+            </div>
+            
+            <div class="persona-hook">"Tight budget? Tighter pipeline? Here's how underdogs generate demand without spend."</div>
+            
+        </div>
+    </div>
+
+    <!-- #5: Rebuilding Leader -->
+    <div class="persona">
+        <div class="persona-rank">#5</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=500&fit=crop&crop=face" alt="The Rebuilding Leader">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Michael B. Jordan in Creed</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Rebuilding Leader</div>
+            <div class="persona-enemy">Enemy: Miss Pattern — inherited a broken machine, needs to prove previous regime was wrong</div>
+            <div class="persona-desc">Missed Q4 but has mandate and resources. New in role or new regime. Wants to prove they're different. Looking for partners, not vendors. They WANT to spend to prove their approach works.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value innovator">Innovator — wants to be first</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">High — has mandate to act</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>AI Agents</span>
+                    <span>Next-Gen Sales</span>
+                    <span>Strategic Partnership</span>
+                    <span>Transformation</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> "Incremental improvement", "optimization" — they want revolution, not evolution</div>
+            </div>
+            
+            <div class="persona-hook">"Q4 was a miss. Q1 is your redemption. Here's the playbook for leaders who build different."</div>
+            
+        </div>
+    </div>
+
+    <!-- #6: Scrambling Politician -->
+    <div class="persona">
+        <div class="persona-rank">#6</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1480429370612-73ce0061c15a?w=400&h=500&fit=crop&crop=face" alt="The Scrambling Politician">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Kevin Spacey in House of Cards</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Scrambling Politician</div>
+            <div class="persona-enemy">Enemy: Exposure — surviving on relationships, but results are slipping and cover is thinning</div>
+            <div class="persona-desc">Got here through political savvy. Knows the right people. But numbers are starting to betray them. Needs a win — something to point to. Conservative buyer, wants safety over innovation.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value">Late Majority — needs social proof</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">Medium-High — needs cover</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>CRM Intelligence</span>
+                    <span>Enterprise Trusted</span>
+                    <span>Fortune 500 Proven</span>
+                    <span>Industry Standard</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> "Cutting edge", "AI Agents", "disruptive" — too risky for their brand</div>
+            </div>
+            
+            <div class="persona-hook">"Politics got you here. Only pipeline keeps you here. The playbook top performers won't share."</div>
+            
+        </div>
+    </div>
+
+    <!-- #7: Frustrated Fighter -->
+    <div class="persona">
+        <div class="persona-rank">#7</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=500&fit=crop&crop=face" alt="The Frustrated Fighter">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Alec Baldwin in Glengarry Glen Ross</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Frustrated Fighter</div>
+            <div class="persona-enemy">Enemy: Marketing Failure — has budget but marketing isn't delivering leads</div>
+            <div class="persona-desc">Angry and motivated. Has resources but feels abandoned by marketing. Wants to build own pipeline engine. Distrusts vendors but respects results. Will buy if you prove you're different.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value innovator">Innovator — willing to try anything</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">High — frustrated into action</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>Sales-Led Growth</span>
+                    <span>AI Agents for Sales</span>
+                    <span>Zero Marketing Dependency</span>
+                    <span>Direct Pipeline Generation</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> "Marketing alignment", "funnel optimization" — they blame marketing</div>
+            </div>
+            
+            <div class="persona-hook">"Marketing isn't coming to save you. Here's how sales leaders build their own pipeline engine."</div>
+            
+        </div>
+    </div>
+
+    <!-- #8: Hungry Underdog -->
+    <div class="persona">
+        <div class="persona-rank">#8</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=500&fit=crop&crop=face" alt="The Hungry Underdog">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Jonah Hill in Moneyball</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Hungry Underdog</div>
+            <div class="persona-enemy">Enemy: The Establishment — bigger competitors with 10x resources who underestimate them</div>
+            <div class="persona-desc">Missed but building momentum with scrappy tactics. Chip on shoulder. Coachable, hungry. Will out-execute anyone if given the tools. Best long-term customer — loyal when you help them win.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value innovator">Early Adopter — needs edge</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">Medium — hungry but patient</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>Unfair Advantage</span>
+                    <span>Moneyball for Sales</span>
+                    <span>Outperform the Big Guys</span>
+                    <span>Scrappy Intelligence</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> Enterprise pricing, "comprehensive suite" — they need point solutions that punch above weight</div>
+            </div>
+            
+            <div class="persona-hook">"No budget. No problem. The scrappy sales leader's guide to outperforming teams 10x your size."</div>
+            
+        </div>
+    </div>
+
+    <!-- #9: Recovering Performer -->
+    <div class="persona">
+        <div class="persona-rank">#9</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&h=500&fit=crop&crop=face" alt="The Recovering Performer">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Brad Pitt in Moneyball</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Recovering Performer</div>
+            <div class="persona-enemy">Enemy: The Miss — can't let it define them, must prove it was an aberration</div>
+            <div class="persona-desc">Missed but has support and is rebuilding. Optimistic, open to new ideas. More coachable than successful peers. Wants proven frameworks they can execute. Lower ego, higher learning velocity.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value">Early Majority — open but careful</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">Medium — rebuilding momentum</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>Buyer Intelligence</span>
+                    <span>Proven Playbooks</span>
+                    <span>Revenue Intelligence</span>
+                    <span>Data-Driven Sales</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> "Revolutionary", "cutting edge" — they want reliable, not risky</div>
+            </div>
+            
+            <div class="persona-hook">"You missed. Now you're building. Here's how to make Q1 your comeback story."</div>
+            
+        </div>
+    </div>
+
+    <!-- #10: Sweating Target -->
+    <div class="persona">
+        <div class="persona-rank">#10</div>
+        <div class="persona-image">
+            <img src="https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&h=500&fit=crop&crop=face" alt="The Sweating Target">
+            <div class="celeb-overlay">
+                <div class="think-of">Think of</div>
+                <div class="celeb-name">Leonardo DiCaprio in Wolf of Wall Street</div>
+            </div>
+        </div>
+        <div class="persona-content">
+            <div class="persona-name">The Sweating Target</div>
+            <div class="persona-enemy">Enemy: The Clock — hit number but pipeline is dying and seat is at risk</div>
+            <div class="persona-desc">Hit their number but pipeline is empty. Seat is at risk. Maximum urgency but may lack pull to buy quickly. Conservative by nature — wants safe, proven solutions. Short-term focused.</div>
+            
+            <div class="persona-meta">
+                <div class="meta-box">
+                    <div class="meta-label">Tech Adoption</div>
+                    <div class="meta-value">Late Majority — wants safety</div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-label">Urgency Level</div>
+                    <div class="meta-value">Maximum — survival mode</div>
+                </div>
+            </div>
+            
+            <div class="persona-language">
+                <div class="language-header">Language That Converts</div>
+                <div class="language-do">
+                    <span>Immediate Pipeline</span>
+                    <span>Quick Wins</span>
+                    <span>Proven Results</span>
+                    <span>Fast Implementation</span>
+                </div>
+                <div class="language-dont"><strong>Avoid:</strong> Long-term strategy, "transformation", "AI Agents" — they need results this quarter, not next year</div>
+            </div>
+            
+            <div class="persona-hook">"Your number won't save you if pipeline is empty. This is the quarter that matters."</div>
+            
+        </div>
+    </div>
+
+    <script src="../../js/copy-menu.js"></script>
+    <script>
+        function toggleTheme() { 
+            const html = document.documentElement; 
+            const isDark = html.getAttribute('data-theme') === 'dark'; 
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+            localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+        }
+        document.addEventListener('DOMContentLoaded', () => { 
+            const theme = localStorage.getItem('theme') || 'dark'; 
+            document.documentElement.setAttribute('data-theme', theme); 
+        });
+    </script>
+</body>
+</html>
+

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +27,7 @@
             --moat-blue: #1565c0;
             --moat-blue-light: #e3f2fd;
         }
-        body.dark-mode {
+        [data-theme="dark"] {
             --bg: #0a0a0a;
             --text: #e5e5e5;
             --text-secondary: #ccc;
@@ -41,20 +41,24 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
         
-        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .header-content { flex: 1; }
-        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
         .theme-toggle:hover { color: var(--text); }
         .theme-toggle svg { width: 20px; height: 20px; }
         .theme-toggle .sun { display: block; }
         .theme-toggle .moon { display: none; }
-        body.dark-mode .theme-toggle .sun { display: none; }
-        body.dark-mode .theme-toggle .moon { display: block; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
         
-        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
-        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
-        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player .play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
         .audio-info { flex: 1; }
         .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
         .audio-status { font-size: 12px; opacity: 0.9; }
@@ -62,7 +66,7 @@
         .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
         .speed-btn:hover { background: rgba(255,255,255,0.3); }
         .speed-btn svg { width: 12px; height: 12px; }
-        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
         .speed-menu.open { display: block; }
         .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
         .speed-option:hover { background: var(--card-bg); }
@@ -84,20 +88,20 @@
         .epigraph { font-style: italic; color: var(--text-muted); padding: 24px; margin: 32px 0; text-align: center; font-size: 20px; line-height: 1.6; }
         .epigraph .attribution { font-size: 14px; font-style: normal; margin-top: 12px; display: block; }
         
-        .key-insight { background: var(--highlight-bg); padding: 20px 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .key-insight { background: var(--card-bg); padding: 20px 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--border); }
         .key-insight strong { color: var(--accent); display: block; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
         
         .moat-box { background: var(--moat-blue-light); padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid var(--moat-blue); }
         .moat-box h4 { color: var(--moat-blue); font-size: 16px; margin-bottom: 12px; }
-        body.dark-mode .moat-box { border-color: #2196f3; }
-        body.dark-mode .moat-box h4 { color: #64b5f6; }
+        [data-theme="dark"] .moat-box { border-color: #2196f3; }
+        [data-theme="dark"] .moat-box h4 { color: #64b5f6; }
         
         .factor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
         @media (max-width: 600px) { .factor-grid { grid-template-columns: 1fr; } }
         
         .factor-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; }
         .factor-card::before { content: attr(data-number); position: absolute; top: 16px; right: 16px; font-size: 48px; font-weight: 800; color: var(--accent); opacity: 0.15; line-height: 1; }
-        .factor-card h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
+        .factor-card h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
         .factor-card p { font-size: 14px; margin-bottom: 0; }
         
         .comparison-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
@@ -119,17 +123,17 @@
         .case-study .company { color: var(--accent); }
         .case-study .versus { color: var(--text-muted); font-weight: 400; }
         
-        .formula-box { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 24px 0; font-family: 'SF Mono', 'Fira Code', monospace; text-align: center; }
+        .formula-box { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 24px 0; font-family: inherit; text-align: center; }
         .formula-box .formula { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
         .formula-box .explanation { font-size: 13px; color: var(--text-muted); }
         
         .scorecard { background: var(--card-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 32px 0; }
-        .scorecard h3 { color: var(--accent); margin-top: 0; text-align: center; margin-bottom: 20px; }
+        .scorecard h3 { color: var(--text); margin-top: 0; text-align: center; margin-bottom: 20px; }
         .scorecard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         @media (max-width: 600px) { .scorecard-grid { grid-template-columns: 1fr; } }
         .scorecard-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 8px; }
         .scorecard-check { width: 24px; height: 24px; border-radius: 50%; background: #e8f5e9; color: #2e7d32; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-        body.dark-mode .scorecard-check { background: #1b3d1f; }
+        [data-theme="dark"] .scorecard-check { background: #1b3d1f; }
         .scorecard-label { font-size: 14px; font-weight: 500; }
         
         ul, ol { margin-left: 24px; margin-bottom: 16px; }
@@ -138,7 +142,7 @@
         blockquote { border-left: 3px solid var(--accent); padding-left: 20px; margin: 24px 0; font-style: italic; color: var(--text-muted); }
         
         .newsletter-widget { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; padding: 32px; margin: 48px 0; color: #fff; }
-        body.dark-mode .newsletter-widget { background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%); border: 1px solid #333; }
+        [data-theme="dark"] .newsletter-widget { background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%); border: 1px solid #333; }
         .newsletter-widget h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #fff; }
         .newsletter-widget p { color: #ccc; font-size: 14px; margin-bottom: 20px; }
         .newsletter-form { display: flex; gap: 12px; }
@@ -149,42 +153,34 @@
         .newsletter-form button:hover { background: #ff6d00; }
         .newsletter-form button svg { width: 16px; height: 16px; }
         
-        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 24px; }
-        .back-link:hover { color: var(--accent); }
-        .back-link svg { width: 16px; height: 16px; }
-        
-        .share-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 14px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); font-weight: 500; }
-        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .share-btn svg { width: 14px; height: 14px; }
-        
         @media (max-width: 600px) {
             body { padding: 24px 16px; font-size: 16px; }
             h1 { font-size: 28px; }
             h2 { font-size: 20px; }
             .audio-player { flex-wrap: wrap; }
         }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
     </style>
 </head>
 <body>
-    <a href="../../" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Back to Library
-    </a>
-    
     <div class="page-header">
         <div class="header-content">
             <div class="doc-type">External Article</div>
         </div>
-        <div style="display: flex; gap: 8px;">
-            <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href).then(() => { this.innerHTML = '<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M20 6L9 17l-5-5\'/></svg> Copied!'; setTimeout(() => { this.innerHTML = '<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13\'/></svg> Share'; }, 2000); })">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-                Share
-            </button>
-            <button class="theme-toggle" onclick="document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');">
+        <button class="theme-toggle" onclick="document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');">
                 <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                 <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
-        </div>
+    
+    <div class="breadcrumb">
+        <a href="../../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">External</span>
+    </div>
     </div>
     
     <h1>All Revenue is Not Created Equal</h1>
@@ -193,7 +189,7 @@
     <p class="date">May 24, 2011</p>
     
     <div class="audio-player">
-        <button id="playBtn" onclick="toggleAudio()">
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()">
             <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
         </button>
         <div class="audio-info">
@@ -206,11 +202,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div class="speed-menu" id="speedMenu">
-                <div class="speed-option" onclick="setSpeed(0.75)">0.75x</div>
-                <div class="speed-option active" onclick="setSpeed(1)">1x</div>
-                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
                 <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
-                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
             </div>
         </div>
     </div>
@@ -452,13 +447,12 @@
     
     <p>Many hot companies with lofty private valuations would not score well on the 10X scorecard. Over the next 12-18 months, as they test public markets with truly liquid marketplaces, we gain a better appreciation for real valuation.</p>
     
-    <div class="newsletter-widget">
-        <h3>Adrata Intelligence</h3>
-        <p>Strategic insights on AI-powered revenue intelligence, delivered weekly.</p>
-        <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').innerHTML = 'Subscribed!'; this.querySelector('input').value = '';">
-            <input type="email" placeholder="Enter your email" required>
+    <div class="share-widget">
+        <h3>Know someone who'd find this useful?</h3>
+        <p>Send this article to a colleague</p>
+        <form class="share-form" onsubmit="event.preventDefault(); const email = this.querySelector('input').value; const subject = encodeURIComponent('Worth reading: All Revenue is Not Created Equal: The Keys to the 10X Revenue Club'); const body = encodeURIComponent('Thought you might find this interesting:\n\n' + window.location.href); window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body; this.querySelector('input').value = '';">
+            <input type="email" placeholder="Their email" required>
             <button type="submit">
-                Subscribe
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
         </form>
@@ -466,13 +460,13 @@
     
     <script>
         // Theme initialization
-        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        const theme = localStorage.getItem('theme') || 'dark'; document.documentElement.setAttribute('data-theme', theme);
         
         let audio = null;
         let synth = window.speechSynthesis;
         let utterance = null;
         let isPlaying = false;
-        let currentSpeed = 1;
+        let currentSpeed = parseFloat(localStorage.getItem('audioSpeed')) || 2;
         let useWebSpeech = false;
         
         const MP3_URL = '10x-revenue-club.mp3';
@@ -556,6 +550,7 @@
         }
         
         function setSpeed(speed) {
+            localStorage.setItem('audioSpeed', speed);
             currentSpeed = speed;
             document.getElementById('speedLabel').textContent = speed + 'x';
             document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
@@ -571,6 +566,7 @@
             }
         });
     </script>
+<script src="../../../js/copy-menu.js"></script>
 </body>
 </html>
 

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hook Standards | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { font-size: 17px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; }
+        p { margin-bottom: 14px; color: var(--text-secondary); }
+        .box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .box.accent { border-left: 4px solid var(--accent); }
+        .example { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin: 12px 0; font-size: 15px; font-style: italic; color: var(--text); }
+        .hook-type { margin: 24px 0; }
+        .hook-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        th, td { padding: 12px; border: 1px solid var(--border); text-align: left; }
+        th { background: var(--card-bg); font-weight: 600; }
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; } .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; } [data-theme="light"] .theme-toggle .moon { display: block; }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Standards</span>
+    </div>
+
+    <h1>Hook Standards</h1>
+    <div class="subtitle">How to write hooks that stop VPs of Sales at 6 AM. Reference for humans and AI agents.</div>
+
+    <div class="box accent">
+        <p style="margin:0;"><strong>Step 0:</strong> Which archetype(s)? Each archetype has a specific enemy (core fear). The hook must name or evoke that enemy. See <a href="../foundations/archetypes-persona.html" style="color: var(--accent);">Archetypes Persona</a>.</p>
+    </div>
+
+    <h2>The Hook Test</h2>
+    <p>Would a VP of Sales at 23% pipeline coverage, checking their phone at 6 AM, stop scrolling to read this? If no, rewrite.</p>
+
+    <h2>The 5 Hook Patterns</h2>
+
+    <div class="hook-type">
+        <div class="hook-label">1. The Arrival</div>
+        <p>Something happens. Time, place, action. Immediate scene. No preamble.</p>
+        <div class="example">"The email arrives at 6:47 AM. I'm already awake."</div>
+        <p><strong>Best for:</strong> Story-based content, narrative articles, Q4-style writing</p>
+    </div>
+
+    <div class="hook-type">
+        <div class="hook-label">2. The Number</div>
+        <p>A specific, surprising, or emotionally weighted number.</p>
+        <div class="example">"$4.2 million against $18.4 million. The coverage ratio isn't just bad—it's mathematically impossible."</div>
+        <p><strong>Best for:</strong> Strategy docs, data-driven content, anyone who respects hard numbers</p>
+    </div>
+
+    <div class="hook-type">
+        <div class="hook-label">3. The Confession</div>
+        <p>Vulnerability that creates trust and curiosity. Admission of failure or fear.</p>
+        <div class="example">"I lost a $150K deal last month. Here's the mistake I'll never make again."</div>
+        <p><strong>Best for:</strong> Rebuilding Leader, Recovering Performer, Hungry Underdog archetypes</p>
+    </div>
+
+    <div class="hook-type">
+        <div class="hook-label">4. The Reversal</div>
+        <p>Conventional wisdom is wrong. Set up the expectation, then break it.</p>
+        <div class="example">"Everyone says discovery is about asking great questions. Everyone is wrong."</div>
+        <p><strong>Best for:</strong> Frustrated Fighter, Anxious Elite—people who distrust conventional wisdom</p>
+    </div>
+
+    <div class="hook-type">
+        <div class="hook-label">5. The Question</div>
+        <p>A question they can't answer but desperately want to.</p>
+        <div class="example">"Who besides your champion has to approve this purchase?"</div>
+        <p><strong>Best for:</strong> Any archetype—the question should match their specific fear</p>
+    </div>
+
+    <h2>Hooks by Archetype</h2>
+    <table>
+        <tr><th>Archetype</th><th>Their Enemy</th><th>Hook Pattern</th></tr>
+        <tr><td>Anxious Elite</td><td>Pipeline Exposure</td><td>"You hit your number. Your pipeline says you won't again."</td></tr>
+        <tr><td>Worried Darling</td><td>Golden Trap</td><td>"Everyone expects you to win. Only you see the cracks."</td></tr>
+        <tr><td>Stressed Performer</td><td>Silent Slip</td><td>"Your pipeline doesn't lie. Q1 is coming."</td></tr>
+        <tr><td>Stretched Striver</td><td>Resource Gap</td><td>"Tight budget? Tighter pipeline? Here's how underdogs win."</td></tr>
+        <tr><td>Rebuilding Leader</td><td>Miss Pattern</td><td>"Q4 was a miss. Q1 is your story to write."</td></tr>
+        <tr><td>Frustrated Fighter</td><td>Marketing Failure</td><td>"Marketing isn't coming to save you."</td></tr>
+        <tr><td>Hungry Underdog</td><td>The Establishment</td><td>"No budget. No problem. How to outperform teams 10x your size."</td></tr>
+    </table>
+
+    <h2>Hook Failures</h2>
+    <div class="box">
+        <p><strong>Avoid:</strong></p>
+        <ul style="margin-top: 8px; list-style: none; margin-left: 0;">
+            <li>× Generic opening ("In today's fast-paced world...")</li>
+            <li>× Question with obvious answer ("Want more pipeline?")</li>
+            <li>× Promising without specificity ("Game-changing insights")</li>
+            <li>× Sounding like marketing copy</li>
+            <li>× Starting with "We" or your company name</li>
+        </ul>
+    </div>
+
+    <h2>Related Standards</h2>
+    <p><a href="universal-standards.html" style="color: var(--accent);">Universal Standards</a> · <a href="offer-standards.html" style="color: var(--accent);">Offer Standards</a> · <a href="../foundations/archetypes-persona.html" style="color: var(--accent);">Archetypes Persona</a></p>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

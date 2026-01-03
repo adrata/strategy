@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Stages | Psychology-Driven Pipeline</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Sales Stages | Psychology-Driven Pipeline">
+    <meta property="og:description" content="5-stage pipeline with clear gates, archetype psychology, and Fast Pass for accelerated deals.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f9f9f9;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+            --success: #16a34a;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #141414;
+            --success: #22c55e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 28px 0 12px; color: var(--text); }
+        h4 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        /* Pipeline Visual */
+        .pipeline-visual { display: flex; gap: 4px; margin: 32px 0; overflow-x: auto; }
+        .pipeline-step { flex: 1; min-width: 140px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 12px; text-align: center; position: relative; }
+        .pipeline-step::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 18px; }
+        .pipeline-step:last-child::after { display: none; }
+        .pipeline-step.active { border-color: var(--accent); background: rgba(230,81,0,0.1); }
+        .pipeline-step .number { font-size: 24px; font-weight: 800; color: var(--accent); }
+        .pipeline-step .name { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 4px; }
+        .pipeline-step .duration { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        
+        /* Stage Card */
+        .stage-card { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 28px; margin: 24px 0; }
+        .stage-card.highlight { border-color: var(--accent); }
+        .stage-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .stage-number { width: 48px; height: 48px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; flex-shrink: 0; }
+        .stage-title { flex: 1; }
+        .stage-title h3 { margin: 0; color: var(--text); }
+        .stage-title .duration { font-size: 13px; color: var(--text-muted); }
+        
+        .stage-section { margin: 20px 0; }
+        .stage-section h4 { margin-bottom: 12px; }
+        
+        /* Gate Box */
+        .gate-box { background: linear-gradient(135deg, rgba(230,81,0,0.15) 0%, rgba(255,109,0,0.08) 100%); border: 1px solid var(--accent); border-radius: 8px; padding: 16px 20px; margin: 20px 0; }
+        .gate-box h4 { color: var(--text); margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px; }
+        .gate-box h4::before { content: '→'; color: var(--accent); }
+        .gate-box ul { margin-bottom: 0; }
+        .gate-box li { color: var(--text); }
+        
+        /* Psychology Box */
+        .psychology-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 16px 0; }
+        .psychology-box h4 { color: var(--text); margin: 0 0 8px 0; }
+        
+        /* Archetype Tags */
+        .archetype-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .archetype-tag { background: var(--bg); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+        .archetype-tag.primary { border-color: var(--accent); color: var(--accent); }
+        
+        /* Fast Pass Section */
+        .fast-pass { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: #fff; border-radius: 12px; padding: 28px; margin: 32px 0; }
+        .fast-pass h2 { color: #fff; border: none; padding: 0; margin: 0 0 16px 0; }
+        .fast-pass p { color: rgba(255,255,255,0.9); }
+        .fast-pass ul { color: rgba(255,255,255,0.9); }
+        .fast-pass li { color: rgba(255,255,255,0.9); }
+        .fast-pass-visual { display: flex; align-items: center; gap: 12px; margin: 20px 0; padding: 16px; background: rgba(255,255,255,0.15); border-radius: 8px; }
+        .fast-pass-visual .step { padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 6px; font-weight: 600; font-size: 13px; }
+        .fast-pass-visual .arrow { font-size: 20px; }
+        .fast-pass-visual .step.skipped { opacity: 0.4; text-decoration: line-through; }
+        .fast-pass-visual .step.active { background: #fff; color: var(--accent); }
+        
+        /* Info Box */
+        .info-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 24px 0; }
+        .info-box.accent { border-left: 4px solid var(--accent); }
+        
+        /* Link */
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        @media (max-width: 768px) {
+            .pipeline-visual { flex-wrap: wrap; }
+            .pipeline-step::after { display: none; }
+        }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Sales Playbook</div>
+        <h1>Sales Stages</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Playbooks</span>
+    </div>
+</div>
+<div class="subtitle">Psychology-driven pipeline with clear gates and Fast Pass for accelerated deals</div>
+
+<!-- Pipeline Overview -->
+<div class="pipeline-visual">
+    <div class="pipeline-step active">
+        <div class="number">1</div>
+        <div class="name">Offer</div>
+        <div class="duration">20 min</div>
+    </div>
+    <div class="pipeline-step">
+        <div class="number">2</div>
+        <div class="name">Strategy</div>
+        <div class="duration">45 min</div>
+    </div>
+    <div class="pipeline-step">
+        <div class="number">3</div>
+        <div class="name">Buyer Group</div>
+        <div class="duration">60 min</div>
+    </div>
+    <div class="pipeline-step">
+        <div class="number">4</div>
+        <div class="name">Negotiate</div>
+        <div class="duration">30 min</div>
+    </div>
+    <div class="pipeline-step">
+        <div class="number">5</div>
+        <div class="name">Won</div>
+        <div class="duration">Signed</div>
+    </div>
+</div>
+
+<p>Each stage has a specific purpose, exit criteria (gates), and psychological approach based on our <a href="../foundations/archetypes.html">VP Sales Archetypes</a> and <a href="../foundations/buyer-group-archetypes.html">Buyer Group Archetypes</a>.</p>
+
+<!-- Fast Pass -->
+<div class="fast-pass">
+    <h2>Fast Pass</h2>
+    <p>Some deals don't need the full process. When the decision-maker is on the first call and ready to buy, we skip directly to Close. Like bumping a critical bug to the top of the Jira backlog—some deals deserve priority treatment.</p>
+    
+    <div class="fast-pass-visual">
+        <div class="step active">Offer</div>
+        <div class="arrow">→</div>
+        <div class="step skipped">Strategy</div>
+        <div class="arrow">→</div>
+        <div class="step skipped">Buyer Group</div>
+        <div class="arrow">→</div>
+        <div class="step active">Negotiate</div>
+        <div class="arrow">→</div>
+        <div class="step active">Won</div>
+    </div>
+    
+    <h4 style="color:#fff; margin-top:20px;">Fast Pass Criteria</h4>
+    <ul>
+        <li><strong>Decision Authority:</strong> They can sign without approval</li>
+        <li><strong>Budget Confirmed:</strong> "We have budget allocated"</li>
+        <li><strong>Timeline Urgent:</strong> "We need this by [specific date]"</li>
+        <li><strong>Problem Acute:</strong> Clear pain they've been trying to solve</li>
+        <li><strong>Champion = Buyer:</strong> No internal selling required</li>
+    </ul>
+    <p style="margin-bottom:0;"><strong>Trigger phrase:</strong> "Can we just get started? I don't need to involve anyone else."</p>
+</div>
+
+<!-- Stage 1: Offer -->
+<div class="stage-card highlight">
+    <div class="stage-header">
+        <div class="stage-number">1</div>
+        <div class="stage-title">
+            <h3>Offer Meeting</h3>
+            <div class="duration">20 minutes • First contact</div>
+        </div>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Purpose</h4>
+        <p>Deliver on the promise that got them to book. Qualify ruthlessly. Create urgency through insight, not pressure.</p>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Structure</h4>
+        <ul>
+            <li><strong>0-3 min:</strong> Rapport + confirm why they booked</li>
+            <li><strong>3-10 min:</strong> Deliver the offer (assessment, insight, value)</li>
+            <li><strong>10-15 min:</strong> Discovery—understand their specific situation</li>
+            <li><strong>15-20 min:</strong> Bridge to Strategy or disqualify</li>
+        </ul>
+    </div>
+    
+    <div class="psychology-box">
+        <h4>Psychology by Archetype</h4>
+        <div class="archetype-tags">
+            <span class="archetype-tag primary">Desperate Closer</span>
+            <span class="archetype-tag">Rising Star</span>
+            <span class="archetype-tag">Steady Performer</span>
+        </div>
+        <ul>
+            <li><strong>Desperate Closer:</strong> Lead with urgency validation. "You're right to be worried. Here's what the data shows..." They need to feel understood, not pitched.</li>
+            <li><strong>Rising Star:</strong> Frame as acceleration. "You're already outperforming. This is about 10x, not 2x." Feed their ambition.</li>
+            <li><strong>Steady Performer:</strong> Lead with risk mitigation. "You're doing well. Let's make sure Q4 doesn't surprise you." Safety first.</li>
+        </ul>
+    </div>
+    
+    <div class="gate-box">
+        <h4>Gate to Stage 2</h4>
+        <ul>
+            <li>Confirmed pain: They articulated a specific problem</li>
+            <li>Timeline exists: There's a reason this matters NOW</li>
+            <li>Budget plausible: Not a clear mismatch</li>
+            <li>Authority mapped: Know who else needs to be involved</li>
+            <li>Strategy meeting scheduled: Date on calendar</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Stage 2: Strategy -->
+<div class="stage-card">
+    <div class="stage-header">
+        <div class="stage-number">2</div>
+        <div class="stage-title">
+            <h3>Strategy Meeting</h3>
+            <div class="duration">45 minutes • Building the case</div>
+        </div>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Purpose</h4>
+        <p>Co-create the business case. Quantify the problem. Design what working together looks like. Make them the hero of their own transformation story.</p>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Structure</h4>
+        <ul>
+            <li><strong>0-5 min:</strong> Recap and validate understanding</li>
+            <li><strong>5-20 min:</strong> Deep dive—current state, desired state, gap</li>
+            <li><strong>20-35 min:</strong> Solution mapping—how we bridge the gap together</li>
+            <li><strong>35-45 min:</strong> ROI framework and buyer group identification</li>
+        </ul>
+    </div>
+    
+    <div class="psychology-box">
+        <h4>Psychology by Archetype</h4>
+        <div class="archetype-tags">
+            <span class="archetype-tag primary">Desperate Closer</span>
+            <span class="archetype-tag">Rising Star</span>
+            <span class="archetype-tag">Steady Performer</span>
+        </div>
+        <ul>
+            <li><strong>Desperate Closer:</strong> Focus on speed to value. "Here's how we get wins in week 1." They can't wait 6 months.</li>
+            <li><strong>Rising Star:</strong> Show the career impact. "When this works, you become the executive who transformed sales." Feed the narrative.</li>
+            <li><strong>Steady Performer:</strong> Emphasize de-risking. "We'll run this in parallel. No disruption to what's working." Safety blanket.</li>
+        </ul>
+    </div>
+    
+    <div class="gate-box">
+        <h4>Gate to Stage 3</h4>
+        <ul>
+            <li>ROI quantified: Specific dollar impact articulated</li>
+            <li>Buyer group identified: Names, not roles</li>
+            <li>Champion committed: They'll internal sell</li>
+            <li>Objections surfaced: Know what blocks exist</li>
+            <li>Buyer group meeting scheduled: Date on calendar</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Stage 3: Buyer Group -->
+<div class="stage-card">
+    <div class="stage-header">
+        <div class="stage-number">3</div>
+        <div class="stage-title">
+            <h3>Buyer Group Meeting</h3>
+            <div class="duration">60 minutes • Expanding the room</div>
+        </div>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Purpose</h4>
+        <p>Align all stakeholders on value. Address each buyer's specific concerns. Turn the buyer group into advocates, not obstacles.</p>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Structure</h4>
+        <ul>
+            <li><strong>0-10 min:</strong> Introductions + champion frames the opportunity</li>
+            <li><strong>10-25 min:</strong> Present the business case (ROI, timeline, risk)</li>
+            <li><strong>25-45 min:</strong> Address each stakeholder's concerns</li>
+            <li><strong>45-60 min:</strong> Align on next steps and proposal review</li>
+        </ul>
+    </div>
+    
+    <div class="psychology-box">
+        <h4>Psychology by Buyer Group Role</h4>
+        <p>See <a href="../foundations/buyer-group-archetypes.html">Buyer Group Archetypes</a> for deep profiles. Key approaches:</p>
+        <ul>
+            <li><strong>CFO/Finance:</strong> Lead with ROI and payback period. "Break-even in 90 days. 4x return in year one."</li>
+            <li><strong>Legal/Procurement:</strong> Lead with compliance and risk. "SOC 2 certified. Standard MSA. No data exposure."</li>
+            <li><strong>IT/Security:</strong> Lead with integration and security. "API-first. Your data stays in your environment."</li>
+            <li><strong>Other VPs:</strong> Lead with collaboration. "This makes your team's job easier, not harder."</li>
+        </ul>
+    </div>
+    
+    <div class="gate-box">
+        <h4>Gate to Stage 4</h4>
+        <ul>
+            <li>All stakeholders heard: No silent objectors</li>
+            <li>Concerns addressed: Nothing unresolved</li>
+            <li>Budget confirmed: Finance nodded</li>
+            <li>Timeline agreed: Everyone aligned on start date</li>
+            <li>Proposal requested: "Send us the numbers"</li>
+            <li>Negotiate meeting scheduled: Date on calendar</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Stage 4: Negotiate -->
+<div class="stage-card">
+    <div class="stage-header">
+        <div class="stage-number">4</div>
+        <div class="stage-title">
+            <h3>Negotiate Meeting</h3>
+            <div class="duration">30 minutes • Proposal, pricing, terms</div>
+        </div>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Purpose</h4>
+        <p>Review the proposal. Finalize pricing and terms. Handle commercial objections. Get alignment on the path to signature.</p>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Structure</h4>
+        <ul>
+            <li><strong>0-5 min:</strong> Confirm nothing has changed since buyer group</li>
+            <li><strong>5-15 min:</strong> Walk through proposal—scope, timeline, pricing</li>
+            <li><strong>15-25 min:</strong> Address pricing questions, negotiate terms if needed</li>
+            <li><strong>25-30 min:</strong> Align on next steps to signature</li>
+        </ul>
+    </div>
+    
+    <div class="psychology-box">
+        <h4>Negotiation Psychology</h4>
+        <ul>
+            <li><strong>Anchor high:</strong> Start with your standard pricing. Give ground strategically, not reflexively.</li>
+            <li><strong>Trade, don't cave:</strong> If they want discount, get something back (longer term, case study, referral).</li>
+            <li><strong>Assume the deal:</strong> "When we kick off next Monday..." not "If you decide to move forward..."</li>
+            <li><strong>Remove friction:</strong> Digital signature ready. No "send it over and I'll print it."</li>
+            <li><strong>Handle the pause:</strong> Silence after asking for signature is fine. Don't fill it.</li>
+        </ul>
+    </div>
+    
+    <div class="gate-box">
+        <h4>Gate to Stage 5</h4>
+        <ul>
+            <li>Terms agreed: Pricing and scope finalized</li>
+            <li>Signature obtained: Contract signed</li>
+            <li>Payment processed: Or payment terms confirmed</li>
+            <li>Kickoff scheduled: Implementation start date set</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Stage 5: Won -->
+<div class="stage-card">
+    <div class="stage-header">
+        <div class="stage-number">5</div>
+        <div class="stage-title">
+            <h3>Won / Signed</h3>
+            <div class="duration">Closed deal</div>
+        </div>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Definition</h4>
+        <p>Contract signed. Payment confirmed or terms agreed. Deal is closed-won. Handoff to implementation.</p>
+    </div>
+    
+    <div class="stage-section">
+        <h4>Immediate Actions</h4>
+        <ul>
+            <li>Send welcome package within 1 hour</li>
+            <li>Schedule kickoff call within 24 hours</li>
+            <li>Introduce customer success manager</li>
+            <li>Update CRM with full deal details</li>
+            <li>Celebrate internally (ring the bell)</li>
+        </ul>
+    </div>
+    
+    <div class="info-box accent">
+        <h4>Why This Matters</h4>
+        <p style="margin-bottom:0;">The experience immediately after signing sets the tone for the entire relationship. Speed and professionalism now creates advocates later.</p>
+    </div>
+</div>
+
+<!-- Stage Velocity -->
+<h2>Stage Velocity Targets</h2>
+
+<div class="info-box">
+    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+        <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 0; font-weight:600;">Offer → Strategy</td>
+            <td style="padding:12px 0; text-align:right;">3-5 days</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 0; font-weight:600;">Strategy → Buyer Group</td>
+            <td style="padding:12px 0; text-align:right;">5-7 days</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 0; font-weight:600;">Buyer Group → Negotiate</td>
+            <td style="padding:12px 0; text-align:right;">3-5 days</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 0; font-weight:600;">Negotiate → Won</td>
+            <td style="padding:12px 0; text-align:right;">Same day</td>
+        </tr>
+        <tr>
+            <td style="padding:12px 0; font-weight:700; color:var(--accent);">Total Cycle (Standard)</td>
+            <td style="padding:12px 0; text-align:right; font-weight:700; color:var(--accent);">14-21 days</td>
+        </tr>
+        <tr>
+            <td style="padding:12px 0; font-weight:700; color:var(--success);">Fast Pass</td>
+            <td style="padding:12px 0; text-align:right; font-weight:700; color:var(--success);">1-3 days</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Objection Playbook | Adrata Brief</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #888; --border: #2a2a2a; --card-bg: #141414; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .byline { font-size: 14px; color: var(--text-muted); margin-top: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .byline .author { font-weight: 600; color: var(--text-secondary); }
+        .byline .dot { color: var(--border); }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 24px 0 12px; color: var(--text); }
+        h4 { font-size: 15px; font-weight: 700; margin: 16px 0 8px; color: var(--text-muted); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        .objection-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .objection-card h3 { margin-top: 0; color: var(--accent); font-size: 18px; }
+        .objection-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+        .objection-text { font-size: 16px; font-style: italic; color: var(--text); margin-bottom: 16px; padding: 12px 16px; background: var(--bg); border-radius: 8px; border-left: 3px solid var(--accent); }
+        .real-concern { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+        .real-concern h4 { margin: 0 0 4px 0; color: var(--text-muted); font-size: 12px; }
+        .real-concern p { margin: 0; font-size: 15px; color: var(--text-secondary); }
+        .response { background: var(--bg); border-left: 3px solid var(--accent); padding: 16px; margin-top: 12px; }
+        .response h4 { margin: 0 0 8px 0; color: var(--accent); font-size: 13px; }
+        .response p { margin: 0; font-size: 15px; color: var(--text-secondary); font-style: italic; }
+        .intro-box { background: var(--accent); color: #fff; padding: 24px; border-radius: 12px; margin: 24px 0; }
+        .intro-box p { color: #fff; margin: 0; font-size: 16px; }
+        .newsletter-box { background: #f5f5f5; border-radius: 12px; padding: 32px; margin-top: 48px; }
+        [data-theme="dark"] .newsletter-box { background: #1a1a1a; border: 1px solid #333; }
+        .newsletter-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .newsletter-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+        .newsletter-form { display: flex; gap: 12px; max-width: 400px; }
+        .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 14px; }
+        .newsletter-form button { background: var(--accent); border: none; width: 48px; height: 48px; border-radius: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .newsletter-form button svg { width: 20px; height: 20px; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 14px; text-decoration: none; margin-top: 32px; }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+        @media (max-width: 600px) { body { padding: 24px 16px; } h1 { font-size: 28px; } }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="../briefs.html">Briefs</a>
+        <span class="separator">/</span>
+        <span class="current">January 2025</span>
+    </div>
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Brief</div>
+            <h1>The Objection Playbook</h1>
+            <div class="subtitle">Battle-Tested Responses to the 12 Most Common Sales Objections</div>
+            <p class="byline"><span class="author">Adrata</span><span class="dot">·</span><span>January 2025</span></p>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+    <div class="audio-player">
+        <button class="play-btn" onclick="toggleAudio()" id="playBtn">
+            <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16" fill="var(--accent)"/><rect x="14" y="4" width="4" height="16" fill="var(--accent)"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this brief</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)"><span id="speedLabel">2x</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div class="intro-box">
+            <p>Objections aren't roadblocks—they're signposts. Every objection tells you what the buyer is really worried about. Master these responses and you'll turn resistance into momentum.</p>
+        </div>
+
+        <h2>Timing &amp; Priority Objections</h2>
+
+        <div class="objection-card">
+            <h3>1. "We're not ready yet"</h3>
+            <div class="objection-text">"This sounds interesting, but we're not ready to make a change right now."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I don't see enough urgency to prioritize this over everything else on my plate.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"I hear that a lot. Can I ask—what would need to change for this to become a priority? Is it timing, or is there something specific you'd need to see first?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>2. "We need to wait until next quarter/year"</h3>
+            <div class="objection-text">"Let's revisit this in Q2. We have too much going on right now."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I'm overwhelmed and this feels like more work, not less.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"What if I told you that every week you wait, you're losing roughly [X hours/Y dollars] to the problem you described? Would it be worth 30 minutes to see if we could start fixing that now instead of later?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>3. "Send me some information"</h3>
+            <div class="objection-text">"Just send me an email with more details and I'll take a look."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I want to get off this call politely.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"Happy to. But honestly, a generic deck won't tell you if this actually solves your problem. What if we do 15 minutes where I can show you exactly how it works for [their specific use case]? If it's not a fit, I'll tell you."</p>
+            </div>
+        </div>
+
+        <h2>Cost &amp; Value Objections</h2>
+
+        <div class="objection-card">
+            <h3>4. "It's too expensive"</h3>
+            <div class="objection-text">"We don't have the budget for this right now."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I don't see how the value exceeds the cost yet.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"Help me understand—is it that the price is too high, or that you're not sure it's worth the investment? Because if I can show you a 3x return in the first 90 days, would that change the equation?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>5. "We already have a solution"</h3>
+            <div class="objection-text">"We're using [Competitor] and it's working fine."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>Switching feels risky and I don't want to admit we made a bad choice.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"That's great—you've already validated the need. Out of curiosity, if you could wave a magic wand and fix one thing about your current setup, what would it be?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>6. "We can build this ourselves"</h3>
+            <div class="objection-text">"Our engineering team could probably build something similar."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I'm not sure if this is a core competency or a distraction.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"You definitely could. The question is: should you? What's your engineering team's hourly rate? And what else would they be building if they weren't building this? We've spent 3 years and $10M getting this right. Is that where you want to invest?"</p>
+            </div>
+        </div>
+
+        <h2>Authority &amp; Decision Objections</h2>
+
+        <div class="objection-card">
+            <h3>7. "I need to talk to my team"</h3>
+            <div class="objection-text">"Let me discuss this internally and get back to you."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I'm not the only decision maker, or I'm not sure how to sell this internally.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"That makes sense. Who else would need to be involved? Would it help if I joined that conversation to answer any technical or ROI questions directly?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>8. "I'm not the right person"</h3>
+            <div class="objection-text">"You should really be talking to [someone else]."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I don't have authority, or I don't want to deal with this.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"I appreciate you pointing me in the right direction. Before I reach out to them, would you mind sharing what you think their biggest priority is right now? That way I can make sure I'm not wasting their time."</p>
+            </div>
+        </div>
+
+        <h2>Trust &amp; Risk Objections</h2>
+
+        <div class="objection-card">
+            <h3>9. "I've never heard of you"</h3>
+            <div class="objection-text">"You're a small company. How do I know you'll be around in 2 years?"</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I'm worried about the risk of betting on an unproven vendor.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"Fair question. We're backed by [investors], we have [X customers] including [notable names], and our retention rate is [Y%]. But the real answer is: would you rather be customer #500 at a big company where you're a number, or customer #50 at a company where we'll bend over backwards to make you successful?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>10. "We tried something like this before"</h3>
+            <div class="objection-text">"We implemented a similar tool last year and it failed."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I got burned and I don't want to get burned again.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"I'm sorry to hear that. What went wrong? Was it the tool itself, the implementation, or adoption? Because if I can show you specifically how we've solved for those exact failure points, would that be worth 15 minutes?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>11. "This seems too good to be true"</h3>
+            <div class="objection-text">"How do I know this actually works?"</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>I've been oversold before and I'm skeptical of vendor claims.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"I'd be skeptical too. Here's what I'd suggest: Let's run a pilot. You pick the use case, we'll set success metrics together, and if we don't hit them, you walk away. No risk. Would that work?"</p>
+            </div>
+        </div>
+
+        <div class="objection-card">
+            <h3>12. "I need to think about it"</h3>
+            <div class="objection-text">"Let me sleep on it and I'll get back to you."</div>
+            <div class="real-concern">
+                <h4>What They Really Mean</h4>
+                <p>Something is holding me back but I'm not sure what—or I don't want to tell you.</p>
+            </div>
+            <div class="response">
+                <h4>Your Response</h4>
+                <p>"Of course. Can I ask—what specifically do you want to think about? Is it the fit, the timing, or something else? I'd rather address it now than have you wondering."</p>
+            </div>
+        </div>
+    </div>
+    <div class="newsletter-box">
+        <h3>Know someone who'd find this useful?</h3>
+        <p>Send this brief to a colleague</p>
+        <form class="newsletter-form" onsubmit="return false;">
+            <input type="email" placeholder="Their email">
+            <button type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </form>
+    </div>
+    <a href="../briefs.html" class="back-link"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Briefs</a>
+    <script>
+        let speechRate = parseFloat(localStorage.getItem('audioSpeed') || 2); let utterance = null; let isPlaying = false;
+        function toggleTheme() { const html = document.documentElement; const isDark = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', isDark ? 'light' : 'dark'); localStorage.setItem('theme', isDark ? 'light' : 'dark'); }
+        function toggleAudio() { if (isPlaying) { window.speechSynthesis.cancel(); isPlaying = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Paused'; } else { const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; window.speechSynthesis.speak(utterance); isPlaying = true; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Playing...'; } }
+        function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
+        function setSpeed(speed) { speechRate = speed; localStorage.setItem('audioSpeed', speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (isPlaying) { window.speechSynthesis.cancel(); toggleAudio(); } }
+        document.addEventListener('DOMContentLoaded', () => { const savedTheme = localStorage.getItem('theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } document.getElementById('speedLabel').textContent = speechRate + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speechRate + 'x'); }); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) { document.getElementById('speedMenu').classList.remove('open'); } }); });
+    </script>
+</body>
+</html>
+

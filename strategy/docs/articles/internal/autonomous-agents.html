@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Agents | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="Make Your Own Autonomous Agent">
+    <meta property="og:description" content="How to build autonomous AI agents that work independently, make decisions, and complete complex multi-step tasks.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; --accent-light: #ff6d00; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 720px; margin: 0 auto; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .byline { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 28px 0 12px; color: var(--text); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        .info-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 24px 0; }
+        .info-box h4 { color: var(--text); margin: 0 0 8px 0; font-size: 14px; }
+        .warning-box { background: rgba(230,81,0,0.1); border: 1px solid var(--accent); border-radius: 12px; padding: 20px; margin: 24px 0; }
+        .warning-box h4 { color: var(--text); margin: 0 0 8px 0; }
+        .code-block { background: #1a1a1a; color: #e5e5e5; border-radius: 8px; padding: 16px 20px; margin: 16px 0; font-family: inherit; font-size: 13px; overflow-x: auto; }
+        [data-theme="light"] .code-block { background: #2d2d2d; }
+        .level-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 16px 0; }
+        .level-card h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .level-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+        .level-badge.l1 { background: rgba(230,81,0,0.15); color: var(--accent); }
+        .level-badge.l2 { background: rgba(230,81,0,0.3); color: var(--accent); }
+        .level-badge.l3 { background: var(--accent); color: #fff; }
+        blockquote { border-left: 3px solid var(--accent); padding-left: 20px; margin: 24px 0; font-style: italic; color: var(--text-muted); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="breadcrumb">
+    <a href="../../../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">AI Agents</span>
+</div>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Advanced Guide</div>
+        <h1>Make Your Own Autonomous Agent</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+
+
+<p>An autonomous agent operates with minimal human intervention. You give it a goal, and it figures out how to achieve it—making decisions, recovering from errors, and adapting to unexpected situations.</p>
+
+<p>This is the end state we're all working toward. But getting there requires understanding the progression from simple agents to truly autonomous systems.</p>
+
+<div class="warning-box">
+    <h4>Prerequisites</h4>
+    <p style="margin:0;">This guide assumes you've already built basic agents. If you haven't, start with <a href="build-your-first-ai-agent.html">Build Your First AI Agent</a> and come back when you have 2-3 working agents in production.</p>
+</div>
+
+<h2>The Autonomy Spectrum</h2>
+
+<p>Autonomy isn't binary. There's a spectrum from fully-supervised to fully-autonomous:</p>
+
+<div class="level-card">
+    <h4><span class="level-badge l1">Level 1</span> Supervised Agents</h4>
+    <p>Human approves every action before execution. Agent suggests, human decides.</p>
+    <ul style="margin:0;">
+        <li>Human reviews each email before sending</li>
+        <li>Human approves each CRM update</li>
+        <li>Low risk, low efficiency</li>
+    </ul>
+</div>
+
+<div class="level-card">
+    <h4><span class="level-badge l2">Level 2</span> Semi-Autonomous Agents</h4>
+    <p>Agent executes routine actions independently. Escalates edge cases to humans.</p>
+    <ul style="margin:0;">
+        <li>Sends follow-up emails automatically</li>
+        <li>Flags unusual situations for review</li>
+        <li>Human handles exceptions</li>
+    </ul>
+</div>
+
+<div class="level-card">
+    <h4><span class="level-badge l3">Level 3</span> Autonomous Agents</h4>
+    <p>Agent operates independently for extended periods. Human oversight is periodic, not per-action.</p>
+    <ul style="margin:0;">
+        <li>Runs entire outreach sequences</li>
+        <li>Makes decisions about when/how to engage</li>
+        <li>Reports results, not individual actions</li>
+    </ul>
+</div>
+
+<h2>The Three Pillars of Autonomy</h2>
+
+<h3>1. Robust Decision-Making</h3>
+
+<p>Autonomous agents need to make good decisions without human oversight. This requires:</p>
+
+<ul>
+    <li><strong>Clear decision criteria:</strong> Explicit rules for when to do what</li>
+    <li><strong>Confidence thresholds:</strong> Only act when confidence is high</li>
+    <li><strong>Escalation paths:</strong> Know when to ask for help</li>
+</ul>
+
+<div class="code-block">
+# Decision framework example
+def decide_action(context: dict) -> tuple[str, float]:
+    """Returns (action, confidence)"""
+    
+    # High confidence actions
+    if context['email_opened'] and context['link_clicked']:
+        return ('send_follow_up', 0.95)
+    
+    # Medium confidence - needs criteria
+    if context['no_response_days'] > 5:
+        if context['engagement_score'] > 50:
+            return ('try_different_channel', 0.75)
+        else:
+            return ('pause_sequence', 0.80)
+    
+    # Low confidence - escalate
+    if context['deal_value'] > 100000:
+        return ('escalate_to_human', 1.0)
+    
+    return ('continue_sequence', 0.70)
+
+# Only act if confidence exceeds threshold
+action, confidence = decide_action(context)
+if confidence >= CONFIDENCE_THRESHOLD:
+    execute(action)
+else:
+    escalate(action, confidence)
+</div>
+
+<h3>2. Error Recovery</h3>
+
+<p>Things will go wrong. Autonomous agents need to handle failures gracefully:</p>
+
+<ul>
+    <li><strong>Retry logic:</strong> Transient failures should be retried</li>
+    <li><strong>Fallback actions:</strong> Alternative paths when primary fails</li>
+    <li><strong>State preservation:</strong> Don't lose progress on failures</li>
+    <li><strong>Circuit breakers:</strong> Stop before causing damage</li>
+</ul>
+
+<div class="code-block">
+# Error recovery pattern
+MAX_RETRIES = 3
+FALLBACK_ACTIONS = ['alternative_tool', 'simplified_approach', 'escalate']
+
+def execute_with_recovery(action, context, attempt=0):
+    try:
+        result = execute(action, context)
+        return result
+    except TransientError as e:
+        if attempt < MAX_RETRIES:
+            wait(exponential_backoff(attempt))
+            return execute_with_recovery(action, context, attempt + 1)
+        return try_fallback(action, context)
+    except CriticalError as e:
+        log_error(e, context)
+        return escalate_immediately(action, context, e)
+
+def try_fallback(original_action, context):
+    for fallback in FALLBACK_ACTIONS:
+        try:
+            return execute(fallback, context)
+        except:
+            continue
+    return escalate_immediately(original_action, context, "All fallbacks failed")
+</div>
+
+<h3>3. Self-Monitoring</h3>
+
+<p>Autonomous agents need to know when they're not performing well:</p>
+
+<ul>
+    <li><strong>Performance metrics:</strong> Track success rates over time</li>
+    <li><strong>Drift detection:</strong> Notice when patterns change</li>
+    <li><strong>Resource monitoring:</strong> Don't exceed budgets or rate limits</li>
+    <li><strong>Anomaly alerts:</strong> Flag unusual behavior</li>
+</ul>
+
+<div class="code-block">
+class AgentMonitor:
+    def __init__(self, agent_id):
+        self.agent_id = agent_id
+        self.metrics = MetricsStore(agent_id)
+        
+    def record_action(self, action, result, duration):
+        self.metrics.record({
+            'action': action,
+            'success': result.success,
+            'duration': duration,
+            'timestamp': now()
+        })
+        
+        # Check for anomalies
+        if self.detect_drift():
+            self.alert('Performance drift detected')
+        
+        if self.error_rate_high():
+            self.pause_agent()
+            self.alert('Error rate exceeded threshold')
+    
+    def detect_drift(self) -> bool:
+        recent = self.metrics.last_n(100)
+        historical = self.metrics.last_n(1000)[:-100]
+        return statistical_difference(recent, historical) > DRIFT_THRESHOLD
+    
+    def error_rate_high(self) -> bool:
+        recent = self.metrics.last_n(50)
+        error_rate = sum(1 for m in recent if not m['success']) / len(recent)
+        return error_rate > ERROR_THRESHOLD
+</div>
+
+<h2>Building an Autonomous SDR Agent</h2>
+
+<p>Let's build a real example: an SDR agent that handles outbound prospecting autonomously.</p>
+
+<h3>Agent Responsibilities</h3>
+
+<ul>
+    <li>Research and prioritize leads from a target list</li>
+    <li>Craft personalized outreach sequences</li>
+    <li>Send emails and LinkedIn messages at optimal times</li>
+    <li>Handle replies (positive, negative, questions)</li>
+    <li>Book meetings on the calendar</li>
+    <li>Update CRM with all activities</li>
+</ul>
+
+<h3>Autonomy Boundaries</h3>
+
+<p>Even autonomous agents need boundaries:</p>
+
+<div class="info-box">
+    <h4>Agent CAN Do Automatically</h4>
+    <ul style="margin:0;">
+        <li>Research prospects and score them</li>
+        <li>Send first-touch emails (within templates)</li>
+        <li>Send follow-ups (predefined sequences)</li>
+        <li>Log activities to CRM</li>
+        <li>Respond to simple questions</li>
+    </ul>
+</div>
+
+<div class="warning-box">
+    <h4>Agent MUST Escalate</h4>
+    <ul style="margin:0;">
+        <li>Deals over $50K (requires human touch)</li>
+        <li>Negative responses mentioning competitors</li>
+        <li>Requests that deviate from pricing</li>
+        <li>Any uncertainty about how to respond</li>
+    </ul>
+</div>
+
+<h3>State Machine Architecture</h3>
+
+<p>Autonomous agents work best as state machines with clear transitions:</p>
+
+<div class="code-block">
+STATES = {
+    'new_lead': {
+        'actions': ['research', 'score'],
+        'transitions': {
+            'qualified': 'outreach_pending',
+            'unqualified': 'disqualified'
+        }
+    },
+    'outreach_pending': {
+        'actions': ['craft_sequence', 'schedule_send'],
+        'transitions': {
+            'sequence_created': 'in_sequence'
+        }
+    },
+    'in_sequence': {
+        'actions': ['send_next', 'monitor_engagement'],
+        'transitions': {
+            'positive_reply': 'conversation',
+            'negative_reply': 'nurture',
+            'no_response': 'sequence_complete',
+            'meeting_booked': 'meeting_scheduled'
+        }
+    },
+    'conversation': {
+        'actions': ['respond', 'qualify', 'book_meeting'],
+        'transitions': {
+            'meeting_booked': 'meeting_scheduled',
+            'not_interested': 'nurture',
+            'needs_escalation': 'escalated'
+        }
+    }
+    # ... more states
+}
+</div>
+
+<h2>Safety Guardrails</h2>
+
+<p>Before deploying an autonomous agent, implement these safeguards:</p>
+
+<ol>
+    <li><strong>Rate limits:</strong> Maximum actions per hour/day</li>
+    <li><strong>Budget caps:</strong> Maximum spend (API costs, credits)</li>
+    <li><strong>Content filters:</strong> Review outgoing content</li>
+    <li><strong>Kill switch:</strong> Immediate pause capability</li>
+    <li><strong>Audit logs:</strong> Complete record of all actions</li>
+    <li><strong>Rollback:</strong> Ability to undo recent actions</li>
+</ol>
+
+<blockquote>
+"An autonomous agent should be like a self-driving car: it handles routine situations independently, but has clear protocols for edge cases and the ability to stop safely at any time."
+</blockquote>
+
+<h2>Monitoring Dashboard</h2>
+
+<p>Every autonomous agent needs a monitoring dashboard showing:</p>
+
+<ul>
+    <li><strong>Activity feed:</strong> Real-time stream of actions taken</li>
+    <li><strong>Performance metrics:</strong> Success rates, response rates, meetings booked</li>
+    <li><strong>Escalation queue:</strong> Items needing human attention</li>
+    <li><strong>Resource usage:</strong> API calls, costs, rate limits</li>
+    <li><strong>Health status:</strong> Green/yellow/red for each agent</li>
+</ul>
+
+<h2>Deployment Strategy</h2>
+
+<p>Don't go from zero to fully autonomous overnight:</p>
+
+<ol>
+    <li><strong>Week 1-2:</strong> Deploy as Level 1 (approve all actions)</li>
+    <li><strong>Week 3-4:</strong> Graduate to Level 2 (auto-approve routine, review edge cases)</li>
+    <li><strong>Month 2:</strong> Expand autonomous scope based on performance</li>
+    <li><strong>Month 3+:</strong> Full Level 3 with periodic human review</li>
+</ol>
+
+<p>At each stage, measure error rates and customer feedback before expanding autonomy.</p>
+
+<h2>When to Build vs. Buy</h2>
+
+<p>Building autonomous agents requires significant engineering investment. Consider building if:</p>
+
+<ul>
+    <li>Your use case is unique to your business</li>
+    <li>You have engineering resources</li>
+    <li>Off-the-shelf solutions don't fit</li>
+    <li>You need deep customization</li>
+</ul>
+
+<p>Consider buying/using platforms if:</p>
+
+<ul>
+    <li>Standard sales workflows fit your needs</li>
+    <li>You want faster time-to-value</li>
+    <li>You don't have dedicated AI engineering</li>
+</ul>
+
+<p>The Adrata platform provides autonomous agent capabilities specifically designed for sales teams, so you can focus on configuration rather than infrastructure.</p>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+</div>
+<script src="../../../js/copy-menu.js"></script>
+</body>
+</html>
+

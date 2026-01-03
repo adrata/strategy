@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interest-Building Framework | Adrata Brief</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <meta property="og:title" content="Interest-Building Framework">
+    <meta property="og:description" content="5 proven approaches to spark curiosity and build momentum with prospects.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f5f5f5;
+            --accent: #e65100;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #888;
+            --border: #2a2a2a;
+            --card-bg: #141414;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+        .byline { font-size: 14px; color: var(--text-muted); margin-top: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .byline .author { font-weight: 600; color: var(--text-secondary); }
+        .byline .dot { color: var(--border); }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .audio-player .play-btn:hover { background: #f5f5f5; }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 24px 0 12px; color: var(--text); }
+        h4 { font-size: 15px; font-weight: 700; margin: 16px 0 8px; color: var(--text-muted); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .approach-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .approach-card h3 { margin-top: 0; color: var(--text); }
+        .approach-card .when { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; padding: 8px 12px; background: var(--bg); border-radius: 6px; display: inline-block; }
+        .approach-card .formula { font-size: 15px; font-weight: 600; color: var(--accent); margin-bottom: 16px; }
+        
+        .example-lines { margin: 16px 0; }
+        .example-line { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 8px; font-size: 15px; font-style: italic; color: var(--text-secondary); }
+        
+        .power-phrases { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .power-phrase { background: var(--accent); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .matrix-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        .matrix-table th, .matrix-table td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .matrix-table th { font-weight: 700; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; background: var(--card-bg); }
+        .matrix-table td { color: var(--text-secondary); }
+        
+        .checklist { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .checklist h3 { margin-top: 0; }
+        .checklist li { list-style: none; margin-left: 0; padding-left: 28px; position: relative; }
+        .checklist li::before { content: ""; position: absolute; left: 0; top: 6px; width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 4px; }
+        
+        .newsletter-box { background: #f5f5f5; border-radius: 12px; padding: 32px; margin-top: 48px; }
+        [data-theme="dark"] .newsletter-box { background: #1a1a1a; border: 1px solid #333; }
+        .newsletter-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .newsletter-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+        .newsletter-form { display: flex; gap: 12px; max-width: 400px; }
+        .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 14px; }
+        .newsletter-form button { background: var(--accent); border: none; width: 48px; height: 48px; border-radius: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .newsletter-form button:hover { background: #ff6d00; }
+        .newsletter-form button svg { width: 20px; height: 20px; }
+        
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 14px; text-decoration: none; margin-top: 32px; }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+        
+        @media (max-width: 600px) {
+            body { padding: 24px 16px; }
+            h1 { font-size: 28px; }
+            .approach-card { padding: 20px; }
+            .newsletter-form { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="../briefs.html">
+            
+            Briefs
+        </a>
+        <span class="separator">/</span>
+        <span class="current">January 2025</span>
+    </div>
+
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Brief</div>
+            <h1>Interest-Building Framework</h1>
+            <div class="subtitle">5 Proven Approaches to Spark Curiosity &amp; Build Momentum</div>
+            <p class="byline"><span class="author">Adrata</span><span class="dot">·</span><span>January 2025</span></p>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <div class="audio-player">
+        <button class="play-btn" onclick="toggleAudio()" id="playBtn">
+            <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16" fill="var(--accent)"/><rect x="14" y="4" width="4" height="16" fill="var(--accent)"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this brief</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">2x</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content">
+        <p>Every prospect is different. Some respond to pain, others to vision, and some need proof before they'll engage. This framework gives you <strong>5 different entry points</strong> to build interest based on where your prospect is mentally.</p>
+
+        <div class="approach-card">
+            <h3>Approach 1: Problem-First (Pain-Based Entry)</h3>
+            <div class="when">When to use: Prospect mentions challenges, seems frustrated, or you know their pain points</div>
+            <div class="formula">The Formula: Acknowledge → Agitate → Amplify</div>
+            
+            <h4>Opening Lines That Work</h4>
+            <div class="example-lines">
+                <div class="example-line">"Most sales leaders we talk to are drowning in data but starving for insights. How much time does your team spend in spreadsheets each week?"</div>
+                <div class="example-line">"I'm curious - when a deal goes dark 30 days before quarter end, what's your backup plan?"</div>
+                <div class="example-line">"You know that sinking feeling when your forecast is off by 40% and the board is asking questions? Yeah, we built this specifically for that."</div>
+            </div>
+
+            <h4>The Conversation Flow</h4>
+            <ul>
+                <li><strong>Start with their pain</strong> (they'll nod along)</li>
+                <li><strong>Quantify the cost</strong> ("How much does a missed forecast cost you?")</li>
+                <li><strong>Paint the alternative</strong> ("What if that never happened again?")</li>
+            </ul>
+
+            <h4>Power Phrases</h4>
+            <div class="power-phrases">
+                <span class="power-phrase">"Let me guess..."</span>
+                <span class="power-phrase">"The worst part is..."</span>
+                <span class="power-phrase">"Here's what most people don't realize..."</span>
+            </div>
+        </div>
+
+        <div class="approach-card">
+            <h3>Approach 2: Vision-First (Possibility-Based Entry)</h3>
+            <div class="when">When to use: Prospect is growth-minded, forward-thinking, or mentions scaling</div>
+            <div class="formula">The Formula: Paint the Future → Show the Gap → Bridge It</div>
+            
+            <h4>Opening Lines That Work</h4>
+            <div class="example-lines">
+                <div class="example-line">"Imagine closing 50% more deals next quarter without hiring a single person. That's what happens when your CRM actually works for you."</div>
+                <div class="example-line">"What if your team could handle 3x the volume without the chaos? That's not a fantasy - three of your competitors are already doing it."</div>
+                <div class="example-line">"Picture this: It's Friday at 4:55pm. Your CEO asks for a pipeline update. Instead of panic, you click one button and it's done."</div>
+            </div>
+
+            <h4>Power Phrases</h4>
+            <div class="power-phrases">
+                <span class="power-phrase">"Imagine if..."</span>
+                <span class="power-phrase">"What would it mean for your business if..."</span>
+                <span class="power-phrase">"The top performers in your industry are already..."</span>
+            </div>
+        </div>
+
+        <div class="approach-card">
+            <h3>Approach 3: Proof-First (Evidence-Based Entry)</h3>
+            <div class="when">When to use: Skeptical prospects, analytical types, or when you have strong case studies</div>
+            <div class="formula">The Formula: Share Results → Show Similarity → Offer Same Outcome</div>
+            
+            <h4>Opening Lines That Work</h4>
+            <div class="example-lines">
+                <div class="example-line">"Last month, a VP of Sales went from 12 hours/week on reporting to 20 minutes. Want to know how?"</div>
+                <div class="example-line">"We just helped a company your size increase win rates by 34% while cutting sales cycle by half. Curious why?"</div>
+                <div class="example-line">"Three companies in your space are using this. They're closing deals 2 weeks faster on average."</div>
+            </div>
+
+            <h4>Power Phrases</h4>
+            <div class="power-phrases">
+                <span class="power-phrase">"We just helped..."</span>
+                <span class="power-phrase">"They were skeptical too, until..."</span>
+                <span class="power-phrase">"The numbers don't lie..."</span>
+            </div>
+        </div>
+
+        <div class="approach-card">
+            <h3>Approach 4: Question-First (Discovery-Based Entry)</h3>
+            <div class="when">When to use: Building relationships, networking events, or when you need to qualify</div>
+            <div class="formula">The Formula: Ask → Listen → Reflect → Offer</div>
+            
+            <h4>Opening Lines That Work</h4>
+            <div class="example-lines">
+                <div class="example-line">"Quick question - how are you currently handling pipeline visibility when you have 50+ deals in play?"</div>
+                <div class="example-line">"I'm curious about your process - when a rep goes quiet on a deal, who's responsible for catching it?"</div>
+                <div class="example-line">"Walk me through what happens when a buyer ghosts you mid-cycle. How long does that typically take to recover?"</div>
+            </div>
+
+            <h4>Power Questions</h4>
+            <div class="power-phrases">
+                <span class="power-phrase">"What's the most frustrating part of..."</span>
+                <span class="power-phrase">"How much time does your team spend on..."</span>
+                <span class="power-phrase">"If you could wave a magic wand..."</span>
+            </div>
+        </div>
+
+        <div class="approach-card">
+            <h3>Approach 5: Story-First (Narrative-Based Entry)</h3>
+            <div class="when">When to use: Building rapport, casual conversations, or when you need to be memorable</div>
+            <div class="formula">The Formula: Relatable Scenario → Crisis Moment → Resolution → Invitation</div>
+            
+            <h4>Opening Lines That Work</h4>
+            <div class="example-lines">
+                <div class="example-line">"Let me tell you about Sarah. She's a VP of Sales who was manually tracking 47 deals in a spreadsheet. One Friday, her biggest deal went silent. She spent 4 hours hunting for context. Now? She gets an alert the moment engagement drops."</div>
+                <div class="example-line">"I was talking to a CRO last week. She told me she almost lost her best AE because the admin burden was too much. Three months after implementing our system, that AE is now training two new hires."</div>
+            </div>
+
+            <h4>Story Elements That Hook</h4>
+            <ul>
+                <li><strong>Specific details</strong> (47 deals, 4 hours, Friday at 3pm)</li>
+                <li><strong>Emotional moments</strong> (panic, relief, transformation)</li>
+                <li><strong>Clear before/after</strong> (chaos → calm)</li>
+            </ul>
+        </div>
+
+        <h2>Choosing Your Approach</h2>
+
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>Prospect Type</th>
+                    <th>Best Approach</th>
+                    <th>Why</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Frustrated/Stressed</td>
+                    <td>Problem-First</td>
+                    <td>They're already feeling the pain</td>
+                </tr>
+                <tr>
+                    <td>Growth-Oriented</td>
+                    <td>Vision-First</td>
+                    <td>They think in possibilities</td>
+                </tr>
+                <tr>
+                    <td>Analytical/Skeptical</td>
+                    <td>Proof-First</td>
+                    <td>They need evidence</td>
+                </tr>
+                <tr>
+                    <td>Curious/Open</td>
+                    <td>Question-First</td>
+                    <td>They'll tell you what they need</td>
+                </tr>
+                <tr>
+                    <td>Relationship-Builder</td>
+                    <td>Story-First</td>
+                    <td>They connect through narratives</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="checklist">
+            <h3>Pre-Conversation Checklist</h3>
+            <ul>
+                <li>Do I know which approach fits this prospect?</li>
+                <li>Have I prepared 2-3 opening lines?</li>
+                <li>Do I have a specific story/stat/question ready?</li>
+                <li>Can I pivot if this approach doesn't land?</li>
+                <li>Am I ready to listen more than I talk?</li>
+            </ul>
+            <p style="margin-top: 16px; margin-bottom: 0; font-size: 14px;"><strong>Remember:</strong> The goal isn't to pitch - it's to build enough interest that they ASK you to tell them more.</p>
+        </div>
+    </div>
+
+    <div class="newsletter-box">
+        <h3>Know someone who'd find this useful?</h3>
+        <p>Send this brief to a colleague</p>
+        <form class="newsletter-form" onsubmit="return false;">
+            <input type="email" placeholder="Their email">
+            <button type="submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </form>
+    </div>
+
+    <a href="../briefs.html" class="back-link">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Briefs
+    </a>
+
+    <script>
+        let speechRate = parseFloat(localStorage.getItem('audioSpeed') || 2);
+        let utterance = null;
+        let isPlaying = false;
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        function toggleAudio() {
+            if (isPlaying) {
+                window.speechSynthesis.cancel();
+                isPlaying = false;
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+                document.getElementById('audioStatus').textContent = 'Paused';
+            } else {
+                const content = document.getElementById('content').innerText;
+                utterance = new SpeechSynthesisUtterance(content);
+                utterance.rate = speechRate;
+                utterance.onend = () => {
+                    isPlaying = false;
+                    document.getElementById('playIcon').style.display = 'block';
+                    document.getElementById('pauseIcon').style.display = 'none';
+                    document.getElementById('audioStatus').textContent = 'Click play to start';
+                };
+                window.speechSynthesis.speak(utterance);
+                isPlaying = true;
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+            }
+        }
+
+        function toggleSpeedMenu(e) {
+            e.stopPropagation();
+            document.getElementById('speedMenu').classList.toggle('open');
+        }
+
+        function setSpeed(speed) {
+            speechRate = speed;
+            localStorage.setItem('audioSpeed', speed);
+            document.getElementById('speedLabel').textContent = speed + 'x';
+            document.querySelectorAll('.speed-option').forEach(opt => {
+                opt.classList.toggle('active', opt.textContent === speed + 'x');
+            });
+            document.getElementById('speedMenu').classList.remove('open');
+            if (isPlaying) {
+                window.speechSynthesis.cancel();
+                toggleAudio();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+            document.getElementById('speedLabel').textContent = speechRate + 'x';
+            document.querySelectorAll('.speed-option').forEach(opt => {
+                opt.classList.toggle('active', opt.textContent === speechRate + 'x');
+            });
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.speed-dropdown')) {
+                    document.getElementById('speedMenu').classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

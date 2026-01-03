@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Strategy | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Offer Strategy">
+    <meta property="og:description" content="The only question that matters: Can they do this themselves?">
+    <meta property="og:type" content="article">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666;
+            --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; --highlight-bg: #fff5f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999;
+            --border: #333; --card-bg: #1a1a1a; --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
+        .page-header { margin-bottom: 40px; }
+        h1 { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
+        
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        h2 { font-size: 28px; font-weight: 700; margin: 56px 0 20px; }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 12px; color: var(--text); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .hero-quote { font-size: 32px; font-weight: 700; line-height: 1.3; color: var(--text); margin: 48px 0; }
+        .hero-quote span { color: var(--accent); }
+        
+        .principle { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 24px; margin: 32px 0; }
+        .principle p { margin: 0; font-size: 16px; }
+        .principle strong { color: var(--text); }
+        
+        .stats-row { display: flex; gap: 32px; margin: 32px 0; flex-wrap: wrap; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 48px; font-weight: 800; color: var(--accent); line-height: 1; }
+        .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        
+        .offer { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 32px 0; }
+        .offer-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+        .offer h3 { margin: 0 0 16px; font-size: 24px; }
+        .offer-pitch { font-size: 18px; font-style: italic; color: var(--text); border-left: 3px solid var(--accent); padding-left: 16px; margin: 20px 0; }
+        .offer-details { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+        .offer-detail h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+        .offer-detail ul { list-style: none; margin: 0; }
+        .offer-detail li { padding: 4px 0; font-size: 14px; color: var(--text-secondary); }
+        .offer-detail li::before { content: "→ "; color: var(--accent); }
+        
+        .matrix { margin: 32px 0; }
+        .matrix-row { display: grid; grid-template-columns: 140px 1fr 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .matrix-row.header { font-weight: 700; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .matrix-row:last-child { border-bottom: none; }
+        .archetype { font-weight: 600; color: var(--text); }
+        
+        .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 32px 0; }
+        .compare-box { padding: 24px; border-radius: 8px; }
+        .compare-box.fail { background: var(--card-bg); border: 1px solid var(--border); }
+        .compare-box.win { background: var(--highlight-bg); border: 1px solid var(--accent); }
+        .compare-box h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .compare-box.fail h4 { color: var(--text-muted); }
+        .compare-box.win h4 { color: var(--accent); }
+        .compare-box ul { list-style: none; margin: 0; font-size: 14px; }
+        .compare-box li { padding: 4px 0; color: var(--text-secondary); }
+        
+        .final { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); color: #fff; padding: 48px; border-radius: 12px; margin: 56px 0; text-align: center; }
+        .final h2 { color: #fff; margin: 0 0 16px; }
+        .final p { color: rgba(255,255,255,0.9); font-size: 18px; margin: 0; }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 36px; }
+            .hero-quote { font-size: 24px; }
+            .stats-row { flex-direction: column; gap: 24px; }
+            .offer-details { grid-template-columns: 1fr; }
+            .matrix-row { grid-template-columns: 1fr; gap: 4px; }
+            .compare { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Offers</span>
+    </div>
+
+    <div class="page-header">
+        <h1>Offer Strategy</h1>
+        <div class="subtitle">The only question that matters: Can they do this themselves?</div>
+    </div>
+
+    <div id="content">
+        <p class="hero-quote">"Why would a VP of Sales get on a call with us—and what can we provide to ensure they <span>book AND show</span>?"</p>
+
+        <p>Most B2B offers fail because they answer the wrong question. They answer "What sounds valuable?" instead of "What can we give them that they literally cannot get anywhere else?"</p>
+
+        <div class="principle">
+            <p>A VP of Sales evaluating an offer will ask four questions:</p>
+            <p style="margin-top: 12px;"><strong>1.</strong> Why would I trust you to do this for me?</p>
+            <p><strong>2.</strong> Why would I share my data with a stranger?</p>
+            <p><strong>3.</strong> Why wouldn't I just do this myself?</p>
+            <p><strong>4.</strong> Is this a pitch disguised as value?</p>
+            <p style="margin-top: 12px;">Effective offers must pass all four. The only way: offer something they genuinely cannot do themselves—or cannot do at the speed and quality you can deliver.</p>
+        </div>
+
+        <h2>What Adrata Can Do That Reps Can't</h2>
+        
+        <p>Adrata can instantly map the exact buying committee for any target account—Champion, Decision Maker, Blocker, Stakeholders—with pain intelligence and personal archetypes for each buyer.</p>
+
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value">30%</div>
+                <div class="stat-label">of rep time spent on research</div>
+        </div>
+            <div class="stat">
+                <div class="stat-value">60%</div>
+                <div class="stat-label">accuracy (manual)</div>
+        </div>
+            <div class="stat">
+                <div class="stat-value">90%</div>
+                <div class="stat-label">accuracy (Adrata)</div>
+        </div>
+            <div class="stat">
+                <div class="stat-value">48h</div>
+                <div class="stat-label">delivery time</div>
+        </div>
+        </div>
+
+        <p>The offer isn't "let us analyze your pipeline." The offer is <strong>"let us DO THE WORK that's eating 30% of your reps' time—faster and better than they ever could."</strong></p>
+
+        <h2>The Five Offers</h2>
+
+        <div class="offer">
+            <div class="offer-badge">Flagship</div>
+            <h3>5 Accounts, 48 Hours</h3>
+            <p class="offer-pitch">"Give us 5 accounts you're trying to close or break into. In 48 hours, we'll hand you the complete buying committee for each—Champion, Decision Maker, Blockers, Stakeholders—with pain intelligence and communication style for every person. Free. No strings."</p>
+            <div class="offer-details">
+                <div class="offer-detail">
+                    <h4>What They Get</h4>
+                    <ul>
+                        <li>Complete buying committee map per account</li>
+                        <li>Classification: Champion / DM / Blocker / Stakeholder</li>
+                        <li>Pain intelligence per stakeholder</li>
+                        <li>Personal archetype & communication style</li>
+                        <li>Influence map: who has power</li>
+                    </ul>
+        </div>
+                <div class="offer-detail">
+                    <h4>Why It Creates Pull</h4>
+                    <ul>
+                        <li>They cannot do this themselves</li>
+                        <li>Output is immediately actionable</li>
+                        <li>It's real work, not a pitch</li>
+                        <li>No catch—they keep it regardless</li>
+                    </ul>
+        </div>
+        </div>
+        </div>
+
+        <div class="offer">
+            <div class="offer-badge">Pre-Pipeline</div>
+            <h3>The Account Ambush</h3>
+            <p class="offer-pitch">"Give us 3 accounts you've been trying to break into. We'll map the buying committee and tell you exactly who to call, what they care about, and how to get in—before you make a single dial."</p>
+            <div class="offer-details">
+                <div class="offer-detail">
+                    <h4>What They Get</h4>
+                    <ul>
+                        <li>Who to call first (and why)</li>
+                        <li>Who the actual decision maker is</li>
+                        <li>Potential blockers & how to neutralize</li>
+                        <li>The pain that will resonate</li>
+                    </ul>
+        </div>
+                <div class="offer-detail">
+                    <h4>Best For</h4>
+                    <ul>
+                        <li>VPs with thin pipeline needing logos</li>
+                        <li>Hungry Comeback archetype</li>
+                        <li>Frustrated Fighter archetype</li>
+                    </ul>
+        </div>
+        </div>
+        </div>
+
+        <div class="offer">
+            <div class="offer-badge">Stalled Pipeline</div>
+            <h3>The Deal Rescue</h3>
+            <p class="offer-pitch">"Give us 3 deals that have gone dark or stalled. We'll tell you who killed them, who can revive them, and exactly what to say to get them moving again."</p>
+            <div class="offer-details">
+                <div class="offer-detail">
+                    <h4>What They Get</h4>
+                    <ul>
+                        <li>The likely blocker (who killed it)</li>
+                        <li>Stakeholders they missed</li>
+                        <li>Who can revive it (champion path)</li>
+                        <li>Re-engagement strategy</li>
+                    </ul>
+        </div>
+                <div class="offer-detail">
+                    <h4>Best For</h4>
+                    <ul>
+                        <li>Anxious Elite archetype</li>
+                        <li>Stressed Performer archetype</li>
+                        <li>Anyone with pipeline that's not moving</li>
+                    </ul>
+        </div>
+        </div>
+        </div>
+
+        <div class="offer">
+            <div class="offer-badge">Capacity Play</div>
+            <h3>The Rep Multiplier</h3>
+            <p class="offer-pitch">"Your reps spend 30% of their time researching accounts. Pick one rep's entire territory—we'll map every buying committee in 72 hours. See what happens when they spend 100% of their time selling."</p>
+            <div class="offer-details">
+                <div class="offer-detail">
+                    <h4>What They Get</h4>
+                    <ul>
+                        <li>All accounts in one rep's territory (up to 50)</li>
+                        <li>Priority ranking by accessibility</li>
+                        <li>"Ready to sell" package per account</li>
+                    </ul>
+        </div>
+                <div class="offer-detail">
+                    <h4>Gate</h4>
+                    <ul>
+                        <li>Requires 30-min strategy call first</li>
+                        <li>Best for enterprise / high-intent</li>
+                        <li>Demonstrates full Adrata potential</li>
+                    </ul>
+        </div>
+        </div>
+        </div>
+
+        <div class="offer">
+            <div class="offer-badge">Competitive Intel</div>
+            <h3>Beat Your Competitor</h3>
+            <p class="offer-pitch">"Give us 3 deals where you're competing head-to-head. We'll tell you which stakeholders your competitor is probably talking to—and which ones they're missing that you can win."</p>
+            <div class="offer-details">
+                <div class="offer-detail">
+                    <h4>What They Get</h4>
+                    <ul>
+                        <li>Full buying committee map</li>
+                        <li>Likely competitor engagement pattern</li>
+                        <li>Underserved stakeholders (your opportunity)</li>
+                        <li>Winning strategy: who to engage, how</li>
+                    </ul>
+        </div>
+                <div class="offer-detail">
+                    <h4>Best For</h4>
+                    <ul>
+                        <li>Anyone with active competitive deals</li>
+                        <li>Anxious Elite who can't afford to lose</li>
+                        <li>Panicking Star needing quick wins</li>
+                    </ul>
+        </div>
+        </div>
+        </div>
+
+        <h2>Archetype → Offer Match</h2>
+        
+        <div class="matrix">
+            <div class="matrix-row header">
+                <span>Archetype</span>
+                <span>Primary Offer</span>
+                <span>Why</span>
+        </div>
+            <div class="matrix-row">
+                <span class="archetype">Anxious Elite</span>
+                <span>Deal Rescue</span>
+                <span>Has pipeline, needs it to move</span>
+        </div>
+            <div class="matrix-row">
+                <span class="archetype">Worried Darling</span>
+                <span>5 Accounts, 48 Hours</span>
+                <span>Has budget, wants protection</span>
+        </div>
+            <div class="matrix-row">
+                <span class="archetype">Stressed Performer</span>
+                <span>Deal Rescue</span>
+                <span>Pipeline thinning, needs velocity</span>
+        </div>
+            <div class="matrix-row">
+                <span class="archetype">Rebuilding Leader</span>
+                <span>Account Ambush</span>
+                <span>Needs new pipeline, fresh start</span>
+        </div>
+            <div class="matrix-row">
+                <span class="archetype">Hungry Comeback</span>
+                <span>Account Ambush</span>
+                <span>Scrappy, needs unfair advantage</span>
+        </div>
+            <div class="matrix-row">
+                <span class="archetype">Frustrated Fighter</span>
+                <span>5 Accounts, 48 Hours</span>
+                <span>Doesn't need marketing, needs intel</span>
+        </div>
+        </div>
+
+        <h2>What Fails vs. What Works</h2>
+        
+        <div class="compare">
+            <div class="compare-box fail">
+                <h4>Offers That Fail</h4>
+                <ul>
+                    <li>"Let us analyze your pipeline"</li>
+                    <li>Diagnosis (they know the problem)</li>
+                    <li>Generic insight available elsewhere</li>
+                    <li>"Trust us, we're experts"</li>
+                    <li>Pitch disguised as value</li>
+                </ul>
+        </div>
+            <div class="compare-box win">
+                <h4>Offers That Create Pull</h4>
+                <ul>
+                    <li>"We'll DO the work your reps spend weeks on"</li>
+                    <li>Solution (they can't do this themselves)</li>
+                    <li>Proprietary intel on THEIR accounts</li>
+                    <li>"Here's $5,000 worth of work, free"</li>
+                    <li>Value that naturally leads to product</li>
+                </ul>
+        </div>
+        </div>
+
+        <h2>Why Show Rates Go Up</h2>
+        
+        <p>These offers inherently drive higher show rates:</p>
+        
+        <p><strong>Commitment device:</strong> They have to provide account names, which creates investment before the call.</p>
+        
+        <p><strong>Tangible deliverable:</strong> They know exactly what they're getting (buying committee maps), not a vague "consultation."</p>
+        
+        <p><strong>Immediate utility:</strong> The output is usable the day they receive it.</p>
+        
+        <p><strong>No pitch expectation:</strong> It's framed as "we'll do work for you," not "we'll tell you about our product."</p>
+
+        <div class="final">
+            <h2>The Core Principle</h2>
+            <p>Don't offer to think for them. Offer to WORK for them.<br><br>Every offer should pass this test: "Is this something they literally cannot do themselves, or cannot do at this speed and quality?" If the answer is no, the offer won't create pull.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() { 
+            const html = document.documentElement; 
+            const isDark = html.getAttribute('data-theme') === 'dark'; 
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+            localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+        }
+        document.addEventListener('DOMContentLoaded', () => { 
+            const theme = localStorage.getItem('theme') || 'dark'; 
+            document.documentElement.setAttribute('data-theme', theme); 
+        });
+    </script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Design Standards | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; --highlight-bg: #fff5f0; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; --highlight-bg: #1a1008; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { font-size: 17px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; }
+        p { margin-bottom: 14px; color: var(--text-secondary); }
+        ul { margin: 12px 0 12px 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        code { background: var(--card-bg); padding: 2px 6px; border-radius: 4px; font-size: 14px; font-family: 'SF Mono', Monaco, monospace; }
+        pre { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; font-size: 13px; margin: 16px 0; }
+        .color-swatch { display: inline-block; width: 20px; height: 20px; border-radius: 4px; vertical-align: middle; margin-right: 8px; border: 1px solid var(--border); }
+        .box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .box.accent { border-left: 4px solid var(--accent); }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        th, td { padding: 12px; border: 1px solid var(--border); text-align: left; }
+        th { background: var(--card-bg); font-weight: 600; }
+        .theme-toggle { position: fixed; top: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: block; } .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; } [data-theme="light"] .theme-toggle .moon { display: block; }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Standards</span>
+    </div>
+
+    <h1>HTML Design Standards</h1>
+    <div class="subtitle">Visual consistency for all Adrata strategy documents. Copy this CSS as the foundation for any new HTML file.</div>
+
+    <h2>Typography</h2>
+    
+    <h3>Font Family</h3>
+    <p>Always use <strong>MiSans</strong> as the primary font. Include these CDN links in every document:</p>
+    <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css"&gt;</pre>
+
+    <h3>Type Scale</h3>
+    <table>
+        <tr><th>Element</th><th>Size</th><th>Weight</th><th>Usage</th></tr>
+        <tr><td>h1</td><td>42px</td><td>800</td><td>Page title</td></tr>
+        <tr><td>h2</td><td>24px</td><td>700</td><td>Section headers</td></tr>
+        <tr><td>h3</td><td>18px</td><td>700</td><td>Subsections</td></tr>
+        <tr><td>body</td><td>16-17px</td><td>400</td><td>Paragraph text</td></tr>
+        <tr><td>small/meta</td><td>13-14px</td><td>500</td><td>Labels, captions</td></tr>
+    </table>
+
+    <h2>Colors</h2>
+
+    <h3>CSS Variables (Required)</h3>
+    <pre>:root {
+    --bg: #fff;
+    --text: #1a1a1a;
+    --text-secondary: #333;
+    --text-muted: #666;
+    --border: #e5e5e5;
+    --card-bg: #fafafa;
+    --accent: #e65100;
+    --highlight-bg: #fff5f0;
+}
+
+[data-theme="dark"] {
+    --bg: #0a0a0a;
+    --text: #e5e5e5;
+    --text-secondary: #ccc;
+    --text-muted: #999;
+    --border: #333;
+    --card-bg: #1a1a1a;
+    --highlight-bg: #1a1008;
+}</pre>
+
+    <h3>Accent Color</h3>
+    <p><span class="color-swatch" style="background: #e65100;"></span><code>#e65100</code> — Use for links, buttons, highlights, borders on important boxes. This is the only accent color.</p>
+
+    <h3>What NOT to Use</h3>
+    <ul>
+        <li>No green, blue, purple, or other accent colors</li>
+        <li>No hardcoded grays—always use CSS variables</li>
+        <li>No emojis in strategy documents</li>
+    </ul>
+
+    <h2>Layout</h2>
+
+    <h3>Container</h3>
+    <pre>body {
+    max-width: 800px;  /* or 900px for dense content */
+    margin: 0 auto;
+    padding: 48px 24px;
+}</pre>
+
+    <h3>Spacing</h3>
+    <ul>
+        <li><strong>h2 sections:</strong> 48px top margin, 24px top padding, border-top</li>
+        <li><strong>Paragraphs:</strong> 14-16px margin-bottom</li>
+        <li><strong>Cards/boxes:</strong> 20-24px padding</li>
+    </ul>
+
+    <h2>Components</h2>
+
+    <h3>Theme Toggle (Required)</h3>
+    <pre>&lt;button class="theme-toggle" onclick="toggleTheme()"&gt;
+    &lt;svg class="sun"&gt;...&lt;/svg&gt;
+    &lt;svg class="moon"&gt;...&lt;/svg&gt;
+&lt;/button&gt;
+
+&lt;script&gt;
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () =&gt; { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+&lt;/script&gt;</pre>
+
+    <h3>Info Box</h3>
+    <pre>.box { 
+    background: var(--card-bg); 
+    border: 1px solid var(--border); 
+    border-radius: 8px; 
+    padding: 20px; 
+    margin: 20px 0; 
+}
+.box.accent { border-left: 4px solid var(--accent); }</pre>
+
+    <h3>Breadcrumb</h3>
+    <pre>.breadcrumb { font-size: 13px; margin-bottom: 16px; }
+.breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }</pre>
+
+    <h2>Default Theme</h2>
+    <div class="box accent">
+        <p style="margin:0;"><strong>Always default to dark mode.</strong> Set <code>data-theme="dark"</code> on the html element.</p>
+    </div>
+
+    <h2>Favicon</h2>
+    <pre>&lt;link rel="icon" type="image/x-icon" href="../../favicon.svg"&gt;</pre>
+    <p>Adjust path based on document location in folder structure.</p>
+
+    <h2>Template</h2>
+    <p>Copy this boilerplate for any new document:</p>
+    <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en" data-theme="dark"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Document Title | Adrata&lt;/title&gt;
+    &lt;link rel="icon" type="image/x-icon" href="../../favicon.svg"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css"&gt;
+    &lt;style&gt;
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #fafafa; --accent: #e65100; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { font-size: 17px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        p { margin-bottom: 14px; color: var(--text-secondary); }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Document Title&lt;/h1&gt;
+    &lt;div class="subtitle"&gt;Subtitle here&lt;/div&gt;
+    
+    &lt;!-- Content --&gt;
+    
+    &lt;script&gt;
+        function toggleTheme() { 
+            const html = document.documentElement; 
+            const isDark = html.getAttribute('data-theme') === 'dark'; 
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+            localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+        }
+        document.addEventListener('DOMContentLoaded', () =&gt; { 
+            const theme = localStorage.getItem('theme') || 'dark'; 
+            document.documentElement.setAttribute('data-theme', theme); 
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <h2>Related</h2>
+    <p><a href="universal-standards.html" style="color: var(--accent);">Universal Standards</a> (voice/tone) · <a href="../internal-docs/content-standards.html" style="color: var(--accent);">Content Standards</a> (full guide)</p>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H1 2026 Blitzscale | Revenue Strategy</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="H1 2026 Blitzscale Strategy">
+    <meta property="og:description" content="Enterprise + Prosumer + Cold: Three-channel revenue strategy with full cost model.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f9f9f9;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+            --highlight: #ff8c00;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #141414;
+            --highlight: #ff9500;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; padding: 48px 24px; max-width: 1200px; margin: 0 auto; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 20px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 16px; font-weight: 700; margin: 28px 0 12px; color: var(--text); }
+        h4 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        /* Summary Cards */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+        .summary-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .summary-card.highlight { border-color: var(--accent); background: linear-gradient(135deg, rgba(230,81,0,0.1) 0%, rgba(255,109,0,0.05) 100%); }
+        .summary-card .label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .summary-card .value { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1.1; }
+        .summary-card .value.accent { color: var(--accent); }
+        .summary-card .value.highlight { color: var(--highlight); }
+        .summary-card .subtext { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        
+        /* Channel Tabs */
+        .channel-tabs { display: flex; gap: 8px; margin: 32px 0 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+        .channel-tab { padding: 12px 24px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; }
+        .channel-tab:hover { color: var(--text); }
+        .channel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        
+        .channel-content { display: none; }
+        .channel-content.active { display: block; }
+        
+        /* Data Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin: 16px 0 32px; font-size: 13px; }
+        .data-table th { background: var(--card-bg); color: var(--text-muted); padding: 10px 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--border); }
+        .data-table th.num { text-align: right; }
+        .data-table td { padding: 10px 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text-secondary); }
+        .data-table td.num { text-align: right; font-family: inherit; font-size: 12px; }
+        .data-table td.metric { font-weight: 600; color: var(--text); }
+        .data-table td.highlight { background: rgba(230,81,0,0.1); color: var(--accent); font-weight: 700; }
+        .data-table td.highlight-text { color: var(--highlight); font-weight: 600; }
+        .data-table tr:hover td { background: var(--card-bg); }
+        .data-table .section-header { background: var(--card-bg); font-weight: 700; color: var(--text); }
+        .data-table .section-header td { border-top: 2px solid var(--border); }
+        
+        /* Metric Rows */
+        .metric-row { display: grid; grid-template-columns: 200px repeat(7, 1fr); gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; margin: 16px 0; }
+        .metric-row > div { background: var(--bg); padding: 12px; }
+        .metric-row .label-cell { background: var(--card-bg); font-weight: 600; font-size: 13px; }
+        .metric-row .value-cell { text-align: right; font-family: inherit; font-size: 13px; }
+        
+        /* Cost Breakdown */
+        .cost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 24px 0; }
+        .cost-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .cost-card h4 { margin-top: 0; color: var(--text); }
+        .cost-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .cost-item:last-child { border-bottom: none; }
+        .cost-item .name { color: var(--text-secondary); }
+        .cost-item .amount { font-family: inherit; color: var(--text); font-weight: 500; }
+        .cost-total { display: flex; justify-content: space-between; padding: 12px 0 0; margin-top: 8px; border-top: 2px solid var(--accent); font-weight: 700; }
+        .cost-total .amount { color: var(--accent); font-size: 18px; }
+        
+        /* Info Box */
+        .info-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 24px 0; }
+        .info-box.accent { border-left: 4px solid var(--accent); }
+        .info-box h4 { margin-top: 0; color: var(--text); }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .cost-grid { grid-template-columns: 1fr; }
+            .data-table { font-size: 11px; }
+            .data-table th, .data-table td { padding: 6px 8px; }
+        }
+        @media (max-width: 640px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .channel-tabs { flex-wrap: wrap; }
+        }
+        
+        /* Scrollable table wrapper */
+        .table-wrapper { overflow-x: auto; margin: 16px 0; }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Internal Strategy</div>
+        <h1>H1 2026 Blitzscale</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Internal</span>
+    </div>
+</div>
+<div class="subtitle">Three-Channel Revenue Strategy: LinkedIn Enterprise + Instagram Prosumer + Enterprise Cold Calling</div>
+
+<!-- Executive Summary -->
+<div class="summary-grid">
+    <div class="summary-card highlight">
+        <div class="label">H1 Total Revenue</div>
+        <div class="value accent">$18.1M</div>
+        <div class="subtext">Enterprise + Prosumer + Cold</div>
+    </div>
+    <div class="summary-card">
+        <div class="label">Total Ad Spend</div>
+        <div class="value">$475K</div>
+        <div class="subtext">Enterprise + Prosumer</div>
+    </div>
+    <div class="summary-card">
+        <div class="label">Blended ROAS</div>
+        <div class="value highlight">38.2x</div>
+        <div class="subtext">Revenue / Ad Spend</div>
+    </div>
+    <div class="summary-card">
+        <div class="label">Net Cash H1</div>
+        <div class="value highlight">$3.18M</div>
+        <div class="subtext">After all costs</div>
+    </div>
+</div>
+
+<!-- Channel Tabs -->
+<div class="channel-tabs">
+    <button class="channel-tab active" onclick="showChannel('overview')">Overview</button>
+    <button class="channel-tab" onclick="showChannel('enterprise')">LinkedIn Enterprise</button>
+    <button class="channel-tab" onclick="showChannel('prosumer')">Instagram Prosumer</button>
+    <button class="channel-tab" onclick="showChannel('cold')">Enterprise Cold Calling</button>
+    <button class="channel-tab" onclick="showChannel('costs')">Cost Model</button>
+</div>
+
+<!-- Overview (Combined Results) - First Tab -->
+<div id="overview" class="channel-content active">
+    <div class="info-box accent" style="margin-bottom:32px;">
+        <h4 style="margin-top:0;">Executive Summary</h4>
+        <p>This document outlines our H1 2026 revenue strategy across three complementary channels: <strong>LinkedIn Enterprise Ads</strong> for high-value B2B deals, <strong>Instagram Prosumer Ads</strong> for affordable subscription revenue, and <strong>Enterprise Cold Calling</strong> for zero-cost pipeline generation.</p>
+        <p style="margin-bottom:0;">The strategy is designed to be self-funding: enterprise cash flow funds prosumer acquisition, while cold calling provides a risk-free baseline. Combined, we project <strong>$18.1M revenue</strong> on <strong>$475K ad spend</strong> with <strong>$3.2M net cash</strong> by end of H1.</p>
+    </div>
+
+    <h3>H1 Combined Results</h3>
+    <p>All three channels together, with compensation split and net cash flow.</p>
+    
+    <div class="summary-grid">
+        <div class="summary-card highlight">
+            <div class="label">Total Revenue</div>
+            <div class="value accent">$18.15M</div>
+            <div class="subtext">All channels combined</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Total Ad Spend</div>
+            <div class="value">$475K</div>
+            <div class="subtext">LinkedIn + Instagram</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Total GP</div>
+            <div class="value">$14.55M</div>
+            <div class="subtext">80-90% gross margin</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Cumulative Cash</div>
+            <div class="value highlight">$5.2M+</div>
+            <div class="subtext">After all costs</div>
+        </div>
+    </div>
+    
+    <div class="table-wrapper">
+    <table class="data-table">
+        <tr>
+            <th>Metric</th>
+            <th class="num">Jan</th>
+            <th class="num">Feb</th>
+            <th class="num">Mar</th>
+            <th class="num">Apr</th>
+            <th class="num">May</th>
+            <th class="num">Jun</th>
+            <th class="num">H1 Total</th>
+        </tr>
+        <tr class="section-header"><td colspan="8">Revenue by Channel</td></tr>
+        <tr>
+            <td class="metric">LinkedIn Enterprise</td>
+            <td class="num">$0</td>
+            <td class="num">$125,000</td>
+            <td class="num">$630,000</td>
+            <td class="num">$2,340,000</td>
+            <td class="num">$6,105,000</td>
+            <td class="num">$8,040,000</td>
+            <td class="num">$17,240,000</td>
+        </tr>
+        <tr>
+            <td class="metric">Instagram Prosumer MRR</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">$30,000</td>
+            <td class="num">$84,500</td>
+            <td class="num">$178,700</td>
+            <td class="num">$293,200</td>
+        </tr>
+        <tr>
+            <td class="metric">Enterprise Cold Calling</td>
+            <td class="num">$0</td>
+            <td class="num">$66,500</td>
+            <td class="num">$98,000</td>
+            <td class="num">$126,000</td>
+            <td class="num">$154,000</td>
+            <td class="num">$168,000</td>
+            <td class="num">$612,500</td>
+        </tr>
+        <tr>
+            <td class="metric" style="font-weight:800;">Total Revenue</td>
+            <td class="num highlight">$0</td>
+            <td class="num highlight">$191,500</td>
+            <td class="num highlight">$728,000</td>
+            <td class="num highlight">$2,496,000</td>
+            <td class="num highlight">$6,343,500</td>
+            <td class="num highlight">$8,386,700</td>
+            <td class="num highlight">$18,145,700</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Costs & Profit</td></tr>
+        <tr>
+            <td class="metric">Total Ad Spend</td>
+            <td class="num">$5,000</td>
+            <td class="num">$15,000</td>
+            <td class="num">$40,000</td>
+            <td class="num">$100,000</td>
+            <td class="num">$140,000</td>
+            <td class="num">$175,000</td>
+            <td class="num">$475,000</td>
+        </tr>
+        <tr>
+            <td class="metric">Total Gross Profit</td>
+            <td class="num">$0</td>
+            <td class="num">$153,200</td>
+            <td class="num">$582,400</td>
+            <td class="num">$1,999,800</td>
+            <td class="num">$5,083,250</td>
+            <td class="num">$6,727,230</td>
+            <td class="num highlight">$14,545,880</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Compensation (30% Each)</td></tr>
+        <tr>
+            <td class="metric">Dan (30%)</td>
+            <td class="num">$0</td>
+            <td class="num">$57,450</td>
+            <td class="num">$218,400</td>
+            <td class="num">$748,800</td>
+            <td class="num">$1,903,050</td>
+            <td class="num">$2,516,010</td>
+            <td class="num">$5,443,710</td>
+        </tr>
+        <tr>
+            <td class="metric">Ross (30%)</td>
+            <td class="num">$0</td>
+            <td class="num">$57,450</td>
+            <td class="num">$218,400</td>
+            <td class="num">$748,800</td>
+            <td class="num">$1,903,050</td>
+            <td class="num">$2,516,010</td>
+            <td class="num">$5,443,710</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Net Results</td></tr>
+        <tr>
+            <td class="metric">Net Cash</td>
+            <td class="num">-$5,000</td>
+            <td class="num">$23,300</td>
+            <td class="num">$105,600</td>
+            <td class="num">$402,200</td>
+            <td class="num">$1,137,150</td>
+            <td class="num">$1,520,210</td>
+            <td class="num highlight">$3,183,460</td>
+        </tr>
+        <tr>
+            <td class="metric" style="font-weight:800;">Cumulative Cash</td>
+            <td class="num highlight-text">-$5,000</td>
+            <td class="num highlight-text">$18,300</td>
+            <td class="num highlight-text">$123,900</td>
+            <td class="num highlight-text">$526,100</td>
+            <td class="num highlight-text">$1,663,250</td>
+            <td class="num highlight-text">$3,183,460</td>
+            <td class="num highlight-text">$5,194,310</td>
+        </tr>
+    </table>
+    </div>
+    
+    <div class="info-box accent">
+        <h4>Cash Flow Validation</h4>
+        <p style="margin-bottom:0;">By April, we have $526K cumulative cash. Instagram Prosumer spend in Apr-Jun is $135K total. <strong>Enterprise cash fully funds prosumer acquisition.</strong> Cold calling provides risk-free baseline with zero ad spend.</p>
+    </div>
+</div>
+
+<!-- Enterprise Channel -->
+<div id="enterprise" class="channel-content">
+    <h3>LinkedIn Enterprise Ads</h3>
+    <p>B2B LinkedIn advertising targeting VP Sales. $5K→$100K ad spend ramp, 40% close rate, $20K→$60K deal size progression. 5-week lag from spend to close.</p>
+    
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="label">H1 Revenue</div>
+            <div class="value">$17.24M</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Customers</div>
+            <div class="value">320</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">True ROAS</div>
+            <div class="value highlight">80.4x</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">GP (80%)</div>
+            <div class="value">$13.79M</div>
+        </div>
+    </div>
+    
+    <div class="table-wrapper">
+    <table class="data-table">
+        <tr>
+            <th>Metric</th>
+            <th class="num">Jan</th>
+            <th class="num">Feb</th>
+            <th class="num">Mar</th>
+            <th class="num">Apr</th>
+            <th class="num">May</th>
+            <th class="num">Jun</th>
+            <th class="num">H1 Total</th>
+        </tr>
+        <tr class="section-header"><td colspan="8">Investment</td></tr>
+        <tr>
+            <td class="metric">Ad Spend</td>
+            <td class="num">$5,000</td>
+            <td class="num">$15,000</td>
+            <td class="num">$40,000</td>
+            <td class="num">$80,000</td>
+            <td class="num">$100,000</td>
+            <td class="num">$100,000</td>
+            <td class="num highlight">$340,000</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Pipeline</td></tr>
+        <tr>
+            <td class="metric">Customers Closed</td>
+            <td class="num">0</td>
+            <td class="num">5</td>
+            <td class="num">18</td>
+            <td class="num">52</td>
+            <td class="num">111</td>
+            <td class="num">134</td>
+            <td class="num highlight">320</td>
+        </tr>
+        <tr>
+            <td class="metric">Deal Size</td>
+            <td class="num">$20,000</td>
+            <td class="num">$25,000</td>
+            <td class="num">$35,000</td>
+            <td class="num">$45,000</td>
+            <td class="num">$55,000</td>
+            <td class="num">$60,000</td>
+            <td class="num">—</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Revenue</td></tr>
+        <tr>
+            <td class="metric">Revenue</td>
+            <td class="num">$0</td>
+            <td class="num">$125,000</td>
+            <td class="num">$630,000</td>
+            <td class="num">$2,340,000</td>
+            <td class="num">$6,105,000</td>
+            <td class="num">$8,040,000</td>
+            <td class="num highlight">$17,240,000</td>
+        </tr>
+        <tr>
+            <td class="metric">Gross Profit (80%)</td>
+            <td class="num">$0</td>
+            <td class="num">$100,000</td>
+            <td class="num">$504,000</td>
+            <td class="num">$1,872,000</td>
+            <td class="num">$4,884,000</td>
+            <td class="num">$6,432,000</td>
+            <td class="num highlight">$13,792,000</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">ROAS (5-Week Lag Adjusted)</td></tr>
+        <tr>
+            <td class="metric">True ROAS</td>
+            <td class="num">0.0x</td>
+            <td class="num highlight-text">25.0x</td>
+            <td class="num highlight-text">42.0x</td>
+            <td class="num highlight-text">58.5x</td>
+            <td class="num highlight-text">76.3x</td>
+            <td class="num highlight-text">80.4x</td>
+            <td class="num highlight-text">80.4x</td>
+        </tr>
+    </table>
+    </div>
+    
+    <div class="info-box accent">
+        <h4>Key Insight: Revenue Lags Spend</h4>
+        <p style="margin-bottom:0;">True ROAS = This month's revenue ÷ Last month's spend. Naive same-month ROAS is misleading because deals take 5 weeks to close.</p>
+    </div>
+    
+    <div class="info-box" style="margin-top:24px;">
+        <h4 style="margin-top:0;">Organic Content Multiplier</h4>
+        <p style="margin-bottom:8px;">LinkedIn research shows prospects exposed to <strong>both organic and paid content convert 61% higher</strong> than paid-only. Key tactics while ads ramp:</p>
+        <ul style="font-size:14px; color:var(--text-secondary); margin-bottom:8px;">
+            <li>AEs post 2-3x/week from personal profiles (30 min/day)</li>
+            <li>Engage with ICP content (30 min/day) → warm DM (10-20% response vs 1-3% cold)</li>
+            <li>Boost top organic posts as Thought Leader Ads (carry social proof into paid)</li>
+        </ul>
+        <p style="font-size:14px; color:var(--text-muted); margin:0;">Full playbook: <a href="../playbooks/linkedin-outbound.html" style="color:var(--accent);">LinkedIn Outbound Strategy</a></p>
+    </div>
+</div>
+
+<!-- Prosumer Channel -->
+<div id="prosumer" class="channel-content">
+    <h3>Instagram Prosumer Ads</h3>
+    <p>Instagram advertising for affordable subscription product. $20K→$75K aggressive spend starting April (funded by enterprise cash). 90% gross margin and $2K LTV.</p>
+    
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="label">H1 MRR</div>
+            <div class="value">$293K</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Active Subs</div>
+            <div class="value">2,932</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">LTV:CAC</div>
+            <div class="value highlight">26.2x</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">CAC</div>
+            <div class="value">$73</div>
+        </div>
+    </div>
+    
+    <div class="table-wrapper">
+    <table class="data-table">
+        <tr>
+            <th>Metric</th>
+            <th class="num">Jan</th>
+            <th class="num">Feb</th>
+            <th class="num">Mar</th>
+            <th class="num">Apr</th>
+            <th class="num">May</th>
+            <th class="num">Jun</th>
+            <th class="num">H1 Total</th>
+        </tr>
+        <tr class="section-header"><td colspan="8">Investment</td></tr>
+        <tr>
+            <td class="metric">Ad Spend</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">$20,000</td>
+            <td class="num">$40,000</td>
+            <td class="num">$75,000</td>
+            <td class="num highlight">$135,000</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Subscribers</td></tr>
+        <tr>
+            <td class="metric">New Paid Subs</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">300</td>
+            <td class="num">560</td>
+            <td class="num">984</td>
+            <td class="num highlight">1,844</td>
+        </tr>
+        <tr>
+            <td class="metric">Active Subs (Cumulative)</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">300</td>
+            <td class="num">845</td>
+            <td class="num">1,787</td>
+            <td class="num">2,932</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Revenue</td></tr>
+        <tr>
+            <td class="metric">MRR</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">$30,000</td>
+            <td class="num">$84,500</td>
+            <td class="num">$178,700</td>
+            <td class="num highlight">$293,200</td>
+        </tr>
+        <tr>
+            <td class="metric">Gross Profit (90%)</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">$27,000</td>
+            <td class="num">$76,050</td>
+            <td class="num">$160,830</td>
+            <td class="num highlight">$263,880</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Unit Economics</td></tr>
+        <tr>
+            <td class="metric">CAC</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">$67</td>
+            <td class="num">$71</td>
+            <td class="num">$76</td>
+            <td class="num">$73 avg</td>
+        </tr>
+        <tr>
+            <td class="metric">LTV:CAC</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td class="num highlight-text">30.0x</td>
+            <td class="num highlight-text">28.0x</td>
+            <td class="num highlight-text">26.2x</td>
+            <td class="num highlight-text">26.2x</td>
+        </tr>
+    </table>
+    </div>
+    
+    <div class="info-box accent">
+        <h4>LTV Calculation</h4>
+        <p style="margin-bottom:0;">LTV = $100 MRR ÷ 5% monthly churn = <strong>$2,000 per subscriber</strong>. With $73 CAC, that's a 26x+ return on every acquired user.</p>
+    </div>
+</div>
+
+<!-- Cold Outbound Channel -->
+<div id="cold" class="channel-content">
+    <h3>Enterprise Cold Calling</h3>
+    <p>Outbound calling to enterprise prospects. Zero ad spend—pure margin contribution. 1 person SDR/AE hybrid, 176 hours/month, 12 calls/hour with power dialer. 35-40% close rate on qualified meetings.</p>
+    
+    <div class="info-box accent" style="margin-bottom: 24px;">
+        <h4 style="margin-top:0;">Strategic Context</h4>
+        <p style="margin-bottom:8px;"><strong>Cold calling works best as a follow-up channel</strong> after digital touchpoints, not as a primary standalone activity. Reps using cold calls alongside email and LinkedIn see 28% higher conversion rates.</p>
+        <p style="margin-bottom:0;">Key insight: 57% of C-level and VP-level buyers prefer phone contact—they hate <em>bad</em> cold calls, not all cold calls. Best times: 4-5 PM (71% more effective than mid-day), Wednesday (50% higher success than Mon/Tue).</p>
+    </div>
+    
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="label">H1 Revenue</div>
+            <div class="value">$612K</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Customers</div>
+            <div class="value">15</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Ad Spend</div>
+            <div class="value highlight">$0</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Net Cash</div>
+            <div class="value">$122K</div>
+        </div>
+    </div>
+    
+    <div class="table-wrapper">
+    <table class="data-table">
+        <tr>
+            <th>Metric</th>
+            <th class="num">Jan</th>
+            <th class="num">Feb</th>
+            <th class="num">Mar</th>
+            <th class="num">Apr</th>
+            <th class="num">May</th>
+            <th class="num">Jun</th>
+            <th class="num">H1 Total</th>
+        </tr>
+        <tr class="section-header"><td colspan="8">Time Allocation (176 hrs/mo)</td></tr>
+        <tr>
+            <td class="metric">Hours Calling</td>
+            <td class="num">146</td>
+            <td class="num">146</td>
+            <td class="num">146</td>
+            <td class="num">146</td>
+            <td class="num">146</td>
+            <td class="num">146</td>
+            <td class="num">878</td>
+        </tr>
+        <tr>
+            <td class="metric">Hours in Meetings</td>
+            <td class="num">30</td>
+            <td class="num">30</td>
+            <td class="num">30</td>
+            <td class="num">30</td>
+            <td class="num">30</td>
+            <td class="num">30</td>
+            <td class="num">178</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Calling Activity</td></tr>
+        <tr>
+            <td class="metric">Calls Made (12/hr)</td>
+            <td class="num">1,756</td>
+            <td class="num">1,756</td>
+            <td class="num">1,756</td>
+            <td class="num">1,756</td>
+            <td class="num">1,756</td>
+            <td class="num">1,756</td>
+            <td class="num highlight">10,536</td>
+        </tr>
+        <tr>
+            <td class="metric">Connects (5%)</td>
+            <td class="num">88</td>
+            <td class="num">88</td>
+            <td class="num">88</td>
+            <td class="num">88</td>
+            <td class="num">88</td>
+            <td class="num">88</td>
+            <td class="num">527</td>
+        </tr>
+        <tr>
+            <td class="metric">Meetings Booked (10%)</td>
+            <td class="num">9</td>
+            <td class="num">9</td>
+            <td class="num">9</td>
+            <td class="num">9</td>
+            <td class="num">9</td>
+            <td class="num">9</td>
+            <td class="num">53</td>
+        </tr>
+        <tr>
+            <td class="metric">Meetings Held (75% show)</td>
+            <td class="num">7</td>
+            <td class="num">7</td>
+            <td class="num">7</td>
+            <td class="num">7</td>
+            <td class="num">7</td>
+            <td class="num">7</td>
+            <td class="num">40</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">5-Week Close Waterfall</td></tr>
+        <tr>
+            <td class="metric">Close Rate</td>
+            <td class="num">35%</td>
+            <td class="num">38%</td>
+            <td class="num">40%</td>
+            <td class="num">40%</td>
+            <td class="num">40%</td>
+            <td class="num">40%</td>
+            <td class="num">—</td>
+        </tr>
+        <tr>
+            <td class="metric">Customers Closed</td>
+            <td class="num">0</td>
+            <td class="num">3</td>
+            <td class="num">3</td>
+            <td class="num">3</td>
+            <td class="num">3</td>
+            <td class="num">3</td>
+            <td class="num highlight">15</td>
+        </tr>
+        <tr class="section-header"><td colspan="8">Revenue ($20K→$60K Deals)</td></tr>
+        <tr>
+            <td class="metric">Deal Size</td>
+            <td class="num">$20,000</td>
+            <td class="num">$25,000</td>
+            <td class="num">$35,000</td>
+            <td class="num">$45,000</td>
+            <td class="num">$55,000</td>
+            <td class="num">$60,000</td>
+            <td class="num">—</td>
+        </tr>
+        <tr>
+            <td class="metric">Revenue</td>
+            <td class="num">$0</td>
+            <td class="num">$66,500</td>
+            <td class="num">$98,000</td>
+            <td class="num">$126,000</td>
+            <td class="num">$154,000</td>
+            <td class="num">$168,000</td>
+            <td class="num highlight">$612,500</td>
+        </tr>
+        <tr>
+            <td class="metric">Gross Profit (80%)</td>
+            <td class="num">$0</td>
+            <td class="num">$53,200</td>
+            <td class="num">$78,400</td>
+            <td class="num">$100,800</td>
+            <td class="num">$123,200</td>
+            <td class="num">$134,400</td>
+            <td class="num highlight">$490,000</td>
+        </tr>
+    </table>
+    </div>
+    
+    <div class="info-box accent">
+        <h4>Zero Ad Spend Advantage</h4>
+        <p style="margin-bottom:0;">Cold calling is free beyond labor. Every dollar of revenue is pure margin contribution. This channel de-risks the ad-dependent enterprise model.</p>
+    </div>
+    
+    <h4>Why This Works (Research-Backed)</h4>
+    <p>The average cold-calling success rate in 2025 is 2.3% (Cognism)—almost half of 2024. But our model assumes <strong>warm-enhanced calling</strong>:</p>
+    <ul style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">
+        <li>Prospects have seen LinkedIn ads or AE content first</li>
+        <li>We call during optimal windows (4-5 PM, Wednesday priority)</li>
+        <li>76% of top performers "always" research before calling—we have Adrata data</li>
+        <li>Multi-touch coordination: ad → content → call = 28% higher conversion</li>
+    </ul>
+    <p style="font-size:14px; color:var(--text-muted);">For the full LinkedIn organic + cold calling playbook, see: <a href="../playbooks/linkedin-outbound.html" style="color:var(--accent);">LinkedIn Outbound Strategy</a></p>
+</div>
+
+<!-- Cost Model -->
+<div id="costs" class="channel-content">
+    <h3>Full Cost Model</h3>
+    <p>Infrastructure, tooling, data enrichment, and operational costs. Cursor scales from $1K to $7K/month as we can afford it.</p>
+    
+    <div class="cost-grid">
+        <div class="cost-card">
+            <h4>Infrastructure (Monthly)</h4>
+            <div class="cost-item"><span class="name">Vercel</span><span class="amount">$400</span></div>
+            <div class="cost-item"><span class="name">AWS</span><span class="amount">$250</span></div>
+            <div class="cost-item"><span class="name">Neon (Postgres)</span><span class="amount">$200</span></div>
+            <div class="cost-item"><span class="name">Upstash (Redis)</span><span class="amount">$75</span></div>
+            <div class="cost-total"><span>Monthly Total</span><span class="amount">$925</span></div>
+        </div>
+        <div class="cost-card">
+            <h4>Tooling (Monthly)</h4>
+            <div class="cost-item"><span class="name">Cursor (Start)</span><span class="amount">$1,000</span></div>
+            <div class="cost-item"><span class="name">Cursor (Scale)</span><span class="amount">$7,000</span></div>
+            <div class="cost-item"><span class="name">AI Tokens (Medium)</span><span class="amount">$63</span></div>
+            <div class="cost-item"><span class="name">Resend + Twilio</span><span class="amount">$13</span></div>
+            <div class="cost-total"><span>Start → Scale</span><span class="amount">$1K → $8K</span></div>
+        </div>
+        <div class="cost-card">
+            <h4>Data Enrichment (Per Client)</h4>
+            <div class="cost-item"><span class="name">CoreSignal Data</span><span class="amount">$8,000</span></div>
+            <div class="cost-item"><span class="name">Email Discovery</span><span class="amount">$2,478</span></div>
+            <div class="cost-item"><span class="name">Email Verify</span><span class="amount">$595</span></div>
+            <div class="cost-item"><span class="name">Phone Enrichment</span><span class="amount">$18,750</span></div>
+            <div class="cost-item"><span class="name">Technographics</span><span class="amount">$225</span></div>
+            <div class="cost-item"><span class="name">Signals</span><span class="amount">$500</span></div>
+            <div class="cost-total"><span>Per Client Y1</span><span class="amount">$30,548</span></div>
+        </div>
+    </div>
+    
+    <h4>Data Provider Rates</h4>
+    <div class="table-wrapper">
+    <table class="data-table">
+        <tr>
+            <th>Provider</th>
+            <th>Service</th>
+            <th class="num">Cost/Record</th>
+            <th>Notes</th>
+        </tr>
+        <tr>
+            <td class="metric">CoreSignal</td>
+            <td>Company + People Data</td>
+            <td class="num">$0.08</td>
+            <td>Annual license: $150K</td>
+        </tr>
+        <tr>
+            <td class="metric">ZeroBounce</td>
+            <td>Email Verify (Primary)</td>
+            <td class="num">$0.00396</td>
+            <td>Bulk discount available</td>
+        </tr>
+        <tr>
+            <td class="metric">Prospeo</td>
+            <td>Email Discovery</td>
+            <td class="num">$0.0198</td>
+            <td>High accuracy rate</td>
+        </tr>
+        <tr>
+            <td class="metric">Lusha</td>
+            <td>Phone (Primary)</td>
+            <td class="num">$0.08</td>
+            <td>Direct dial focus</td>
+        </tr>
+        <tr>
+            <td class="metric">Prospeo</td>
+            <td>Phone (Backup)</td>
+            <td class="num">$0.0995</td>
+            <td>Fallback option</td>
+        </tr>
+        <tr>
+            <td class="metric">Wappalyzer</td>
+            <td>Technographics</td>
+            <td class="num">$0.0225</td>
+            <td>Tech stack detection</td>
+        </tr>
+        <tr>
+            <td class="metric">Crustdata</td>
+            <td>Signals</td>
+            <td class="num">$0.05</td>
+            <td>Hiring, funding, etc.</td>
+        </tr>
+    </table>
+    </div>
+    
+    <div class="info-box accent">
+        <h4>Cursor Scaling Strategy</h4>
+        <p style="margin-bottom:0;">Start at $1K/month for Cursor. Scale to $7K/month the minute cash flow allows. Every dollar into Cursor accelerates development velocity and reduces time-to-market.</p>
+    </div>
+</div>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+
+function showChannel(channelId) {
+    // Hide all content
+    document.querySelectorAll('.channel-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
+    
+    // Show selected
+    document.getElementById(channelId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>
+

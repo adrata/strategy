@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your First AI Agent | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="Build Your First AI Agent">
+    <meta property="og:description" content="A practical step-by-step guide to building your first AI agent for sales. From concept to production in one day.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; --accent-light: #ff6d00; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 720px; margin: 0 auto; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .byline { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 28px 0 12px; color: var(--text); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        .step-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: var(--accent); color: #fff; border-radius: 50%; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+        .step-card h3 { margin-top: 0; }
+        .code-block { background: #1a1a1a; color: #e5e5e5; border-radius: 8px; padding: 16px 20px; margin: 16px 0; font-family: inherit; font-size: 13px; overflow-x: auto; }
+        [data-theme="light"] .code-block { background: #2d2d2d; }
+        .info-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 24px 0; }
+        .info-box h4 { color: var(--text); margin: 0 0 8px 0; font-size: 14px; }
+        .checklist { list-style: none; margin-left: 0; }
+        .checklist li { padding-left: 28px; position: relative; }
+        .checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+        blockquote { border-left: 3px solid var(--accent); padding-left: 20px; margin: 24px 0; font-style: italic; color: var(--text-muted); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="breadcrumb">
+    <a href="../../../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">AI Agents</span>
+</div>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Practical Guide</div>
+        <h1>Build Your First AI Agent</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+
+
+<p>You don't need a team of ML engineers to build an AI agent. You don't need months of development time. You need a clear problem, the right tools, and about 4 hours.</p>
+
+<p>This guide will take you from "I've never built an agent" to "I have a working agent in production" by the end of the day. We'll build a real sales agent that actually does useful work.</p>
+
+<div class="info-box">
+    <h4>What You'll Build</h4>
+    <p style="margin:0;">A <strong>Lead Research Agent</strong> that takes a company name, researches it across multiple sources, and produces a structured briefing for your sales team. Time savings: 15-20 minutes per lead.</p>
+</div>
+
+<h2>Prerequisites</h2>
+
+<ul class="checklist">
+    <li>Basic familiarity with APIs (you've made API calls before)</li>
+    <li>An OpenAI, Anthropic, or similar API key</li>
+    <li>A code editor and terminal</li>
+    <li>2-4 hours of focused time</li>
+</ul>
+
+<h2>The 5-Step Framework</h2>
+
+<div class="step-card">
+    <span class="step-number">1</span>
+    <h3>Define the Agent's Job</h3>
+    <p>An agent is not a chatbot. An agent has a specific job with clear inputs, outputs, and success criteria.</p>
+    <p><strong>Bad definition:</strong> "An AI that helps with sales"</p>
+    <p><strong>Good definition:</strong> "An agent that takes a company name, researches their tech stack, recent news, and hiring patterns, then outputs a structured JSON briefing."</p>
+    <p>Write down:</p>
+    <ul>
+        <li><strong>Input:</strong> What does the agent receive? (Company name, URL, etc.)</li>
+        <li><strong>Output:</strong> What does it produce? (JSON, email, report, etc.)</li>
+        <li><strong>Tools:</strong> What external resources can it access? (Web search, databases, APIs)</li>
+        <li><strong>Success:</strong> How do you know it worked? (Accuracy, completeness, speed)</li>
+    </ul>
+</div>
+
+<div class="step-card">
+    <span class="step-number">2</span>
+    <h3>Choose Your Stack</h3>
+    <p>For your first agent, keep it simple. You can get fancy later.</p>
+    <p><strong>Recommended starter stack:</strong></p>
+    <ul>
+        <li><strong>LLM:</strong> Claude 3.5 Sonnet or GPT-4o (both excellent at tool use)</li>
+        <li><strong>Framework:</strong> None. Use the raw API. Frameworks add complexity you don't need yet.</li>
+        <li><strong>Language:</strong> Python or TypeScript (whichever you're faster in)</li>
+        <li><strong>Tools:</strong> Start with 2-3 tools maximum</li>
+    </ul>
+    <div class="code-block">
+# Don't do this yet:
+pip install langchain langgraph autogen crewai
+
+# Do this:
+pip install anthropic requests
+    </div>
+</div>
+
+<div class="step-card">
+    <span class="step-number">3</span>
+    <h3>Build the Tool Layer</h3>
+    <p>Tools are functions your agent can call. Each tool does one thing well.</p>
+    <div class="code-block">
+# Example: Web search tool
+def search_web(query: str) -> str:
+    """Search the web for information about a query."""
+    # Use a search API (Serper, SerpAPI, etc.)
+    response = requests.get(
+        "https://api.serper.dev/search",
+        headers={"X-API-Key": SERPER_API_KEY},
+        json={"q": query}
+    )
+    results = response.json()
+    return format_search_results(results)
+
+# Example: Company data tool  
+def get_company_info(domain: str) -> dict:
+    """Get structured company data from domain."""
+    # Use a data enrichment API
+    response = requests.get(
+        f"https://api.clearbit.com/v2/companies/find",
+        params={"domain": domain},
+        headers={"Authorization": f"Bearer {CLEARBIT_KEY}"}
+    )
+    return response.json()
+    </div>
+    <p><strong>Tool design principles:</strong></p>
+    <ul>
+        <li>Clear, descriptive function names</li>
+        <li>Docstrings that explain what the tool does</li>
+        <li>Typed parameters and return values</li>
+        <li>Error handling that returns useful messages</li>
+    </ul>
+</div>
+
+<div class="step-card">
+    <span class="step-number">4</span>
+    <h3>Build the Agent Loop</h3>
+    <p>An agent is just a loop: think → act → observe → repeat.</p>
+    <div class="code-block">
+import anthropic
+
+client = anthropic.Anthropic()
+
+def run_agent(company_name: str) -> dict:
+    messages = [
+        {"role": "user", "content": f"Research {company_name} and create a sales briefing."}
+    ]
+    
+    tools = [
+        {"name": "search_web", "description": "...", "input_schema": {...}},
+        {"name": "get_company_info", "description": "...", "input_schema": {...}},
+    ]
+    
+    while True:
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=4096,
+            tools=tools,
+            messages=messages
+        )
+        
+        # Check if agent wants to use a tool
+        if response.stop_reason == "tool_use":
+            tool_calls = [b for b in response.content if b.type == "tool_use"]
+            
+            # Execute each tool call
+            tool_results = []
+            for call in tool_calls:
+                result = execute_tool(call.name, call.input)
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": call.id,
+                    "content": result
+                })
+            
+            # Add assistant response and tool results to conversation
+            messages.append({"role": "assistant", "content": response.content})
+            messages.append({"role": "user", "content": tool_results})
+            
+        else:
+            # Agent is done, return final response
+            return extract_briefing(response.content)
+    </div>
+</div>
+
+<div class="step-card">
+    <span class="step-number">5</span>
+    <h3>Write the System Prompt</h3>
+    <p>The system prompt defines your agent's behavior. Be specific and structured.</p>
+    <div class="code-block">
+SYSTEM_PROMPT = """You are a Lead Research Agent for a B2B sales team.
+
+Your job: Research a company and produce a structured sales briefing.
+
+## Research Process
+1. Search for the company's website and basic info
+2. Look up their tech stack and recent news
+3. Find hiring patterns that indicate growth areas
+4. Identify potential pain points and opportunities
+
+## Output Format
+Return a JSON object with:
+{
+  "company_name": "...",
+  "industry": "...",
+  "employee_count": "...",
+  "tech_stack": ["...", "..."],
+  "recent_news": ["...", "..."],
+  "hiring_signals": ["...", "..."],
+  "pain_points": ["...", "..."],
+  "talking_points": ["...", "..."],
+  "recommended_approach": "..."
+}
+
+## Guidelines
+- Be thorough but efficient (use tools strategically)
+- If you can't find information, note it as "Unknown"
+- Focus on actionable insights for sales conversations
+- Prioritize recent information (last 6 months)
+"""
+    </div>
+</div>
+
+<h2>Testing Your Agent</h2>
+
+<p>Before you ship it, test with real inputs:</p>
+
+<ol>
+    <li><strong>Happy path:</strong> Test with well-known companies (Salesforce, HubSpot)</li>
+    <li><strong>Edge cases:</strong> Test with small/unknown companies</li>
+    <li><strong>Failure modes:</strong> Test with invalid inputs, API failures</li>
+    <li><strong>Speed:</strong> How long does it take? (Target: under 60 seconds)</li>
+</ol>
+
+<div class="info-box">
+    <h4>Common First-Time Mistakes</h4>
+    <ul style="margin-bottom:0;">
+        <li><strong>Too many tools:</strong> Start with 2-3. Add more only when needed.</li>
+        <li><strong>Vague prompts:</strong> Be extremely specific about what you want.</li>
+        <li><strong>No error handling:</strong> APIs fail. Handle it gracefully.</li>
+        <li><strong>Infinite loops:</strong> Set a maximum number of iterations.</li>
+    </ul>
+</div>
+
+<h2>Deploying to Production</h2>
+
+<p>For your first agent, keep deployment simple:</p>
+
+<ol>
+    <li><strong>Wrap it in an API:</strong> Use FastAPI or Express to create an endpoint</li>
+    <li><strong>Add authentication:</strong> API key or OAuth</li>
+    <li><strong>Add logging:</strong> Log every agent run for debugging</li>
+    <li><strong>Set timeouts:</strong> Maximum 2 minutes per run</li>
+    <li><strong>Deploy:</strong> Railway, Render, or AWS Lambda</li>
+</ol>
+
+<h2>What's Next?</h2>
+
+<p>Once your first agent is working, you can:</p>
+
+<ul>
+    <li>Add more tools (CRM lookup, email drafting, calendar scheduling)</li>
+    <li>Build a second agent that works with the first</li>
+    <li>Add memory so the agent learns from past research</li>
+    <li>Create a dashboard to monitor agent performance</li>
+</ul>
+
+<blockquote>
+"The best way to learn about agents is to build one. Not read about them. Not watch videos. Build one."
+</blockquote>
+
+<p>You now have everything you need to build your first AI agent. The whole process should take 2-4 hours. By tomorrow, you could have an agent saving your team 15+ minutes per lead.</p>
+
+<p>Start simple. Ship fast. Iterate from there.</p>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+</div>
+<script src="../../../js/copy-menu.js"></script>
+</body>
+</html>
+

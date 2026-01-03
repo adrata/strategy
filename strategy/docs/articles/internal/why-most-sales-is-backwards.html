@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Most Sales is Backwards | The PULL Framework</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="Why Most Sales is Backwards">
+    <meta property="og:description" content="The difference between Push, Pull, and PULL - and why understanding this changes everything about how we sell.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; --accent-light: #ff6d00; --share-bg: #f5f5f5; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; --share-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 17px; padding: 48px 24px; max-width: 720px; margin: 0 auto; }
+        
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.15; margin-bottom: 8px; }
+        .subtitle { font-size: 20px; color: var(--text-muted); font-weight: 400; margin-bottom: 8px; line-height: 1.4; }
+        .byline { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+        
+        h2 { font-size: 26px; font-weight: 700; margin: 56px 0 20px; padding-top: 32px; border-top: 1px solid var(--border); }
+        h3 { font-size: 20px; font-weight: 700; margin: 40px 0 16px; color: var(--text); }
+        p { margin-bottom: 20px; color: var(--text-secondary); }
+        
+        .lead { font-size: 20px; line-height: 1.7; color: var(--text); margin-bottom: 28px; }
+        
+        /* Model Cards */
+        .model-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin: 28px 0; }
+        .model-card.highlight { border: 2px solid var(--accent); background: rgba(230, 81, 0, 0.05); }
+        .model-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+        .model-label.accent { color: var(--accent); }
+        .model-name { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+        .model-name.accent { color: var(--accent); }
+        .model-desc { color: var(--text-secondary); margin-bottom: 16px; }
+        
+        /* Flow Diagram */
+        .flow { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+        .flow-box { background: var(--bg); border: 2px solid var(--border); padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; text-align: center; }
+        .flow-box.accent { border-color: var(--accent); color: var(--accent); }
+        .flow-box.highlight { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .flow-arrow { color: var(--text-muted); font-size: 18px; }
+        
+        /* Implication */
+        .implication { font-weight: 600; color: var(--text); padding: 12px 16px; background: var(--card-bg); border-left: 3px solid var(--accent); margin: 20px 0; font-size: 15px; }
+        
+        /* Sales Implication Box */
+        .sales-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 28px 0; }
+        .sales-box h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sales-box ul { margin: 0; padding-left: 20px; }
+        .sales-box li { margin-bottom: 8px; font-size: 15px; }
+        
+        /* Pull Quote */
+        .pull-quote { font-size: 24px; font-weight: 600; line-height: 1.4; color: var(--text); margin: 40px 0; padding: 24px 0; border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); }
+        
+        /* Comparison Table */
+        .compare-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        .compare-table th { background: var(--card-bg); padding: 12px 16px; text-align: left; font-weight: 700; border: 1px solid var(--border); color: var(--text); }
+        .compare-table th.accent { background: var(--accent); color: #fff; }
+        .compare-table td { padding: 12px 16px; border: 1px solid var(--border); vertical-align: top; color: var(--text-secondary); }
+        .compare-table tr:nth-child(even) td { background: var(--card-bg); }
+        
+        .highlight-text { color: var(--accent); font-weight: 600; }
+        
+        .share-widget { background: var(--share-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-top: 56px; }
+        .share-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .share-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+        .share-form { display: flex; gap: 8px; }
+        .share-input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg); color: var(--text); }
+        .share-btn { background: var(--accent); color: #fff; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .share-btn:hover { background: var(--accent-light); }
+        .share-btn svg { width: 18px; height: 18px; }
+        
+        @media (max-width: 640px) {
+            h1 { font-size: 28px; }
+            .pull-quote { font-size: 20px; }
+            .flow { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="breadcrumb">
+    <a href="../../../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">AI Agents</span>
+</div>
+
+<div class="page-header">
+    <div class="header-content">
+        <h1>Why Most Sales is Backwards</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<p class="subtitle">The difference between Push, Pull, and PULL - and why it changes everything about how we sell.</p>
+<p class="byline">By Adrata · January 2, 2026</p>
+
+<p class="lead">Most sales teams operate on a model that's over 100 years old - and it's fundamentally broken. Here's what you need to understand.</p>
+
+<h2>Three Models of Business</h2>
+
+<p>There are three ways to understand how a business creates value. Each represents a different theory of what causes success - and leads to completely different behaviors.</p>
+
+<div class="model-card">
+    <div class="model-label">Model 1 (1911)</div>
+    <div class="model-name">Push</div>
+    <div class="model-desc">We cause outcomes. Our plans, goals, intentions, and actions make things happen. We "push" products and messages out to customers.</div>
+    <div class="flow">
+        <div class="flow-box accent">Our Plans</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Production</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Customer</div>
+    </div>
+    <div class="implication">Sales implication: If they don't buy, we need a better pitch, better messaging, or more features.</div>
+</div>
+
+<div class="model-card">
+    <div class="model-label">Model 2 (Toyota)</div>
+    <div class="model-name">Pull</div>
+    <div class="model-desc">Customer orders cause outcomes. The customer's purchase starts the production process. We deliver exactly what they order, when they order it.</div>
+    <div class="flow">
+        <div class="flow-box accent">Customer Order</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Production</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Delivery</div>
+    </div>
+    <div class="implication">Sales implication: Focus on operational excellence. Deliver what was promised, on time, every time.</div>
+</div>
+
+<div class="model-card highlight">
+    <div class="model-label accent">Model 3 (Jobs to be Done)</div>
+    <div class="model-name accent">PULL</div>
+    <div class="model-desc">Demand causes outcomes. What customers are <strong>actually trying to achieve in their lives</strong> is upstream of everything - including their orders. Customer orders are just "requests for supply," not demand itself.</div>
+    <div class="flow">
+        <div class="flow-box highlight">Demand</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box accent">Customer Order</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Production</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Delivery</div>
+    </div>
+    <div class="implication">Sales implication: Understand what they're actually trying to achieve. Their RFP or feature request is supply-side thinking - the real demand is deeper.</div>
+</div>
+
+<h2>Why This Matters for Us</h2>
+
+<p>When a VP of Sales says "I need better CRM data" or "I need more qualified leads" - that's a <span class="highlight-text">request for supply</span>.</p>
+
+<p>The <span class="highlight-text">actual demand</span> might be: "I need to hit my number this quarter or I'm going to get fired" or "I need my team to stop wasting time on deals that won't close."</p>
+
+<div class="pull-quote">
+Feature requests and RFPs are supply-side thinking. Real demand is what someone is trying to achieve in their life.
+</div>
+
+<h3>Push vs PULL in Practice</h3>
+
+<table class="compare-table">
+    <thead>
+        <tr>
+            <th>Scenario</th>
+            <th>Push Response</th>
+            <th class="accent">PULL Response</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Prospect doesn't book a meeting</td>
+            <td>Better subject line, more follow-ups, different offer</td>
+            <td>What are they already trying to do that we could help with?</td>
+        </tr>
+        <tr>
+            <td>Demo doesn't convert</td>
+            <td>Show more features, handle objections better</td>
+            <td>What progress were they hoping to make? Did we address that?</td>
+        </tr>
+        <tr>
+            <td>Customer asks for a feature</td>
+            <td>Build the feature or explain why we can't</td>
+            <td>What situation created this request? What are they really trying to solve?</td>
+        </tr>
+        <tr>
+            <td>Deal stalls</td>
+            <td>More pressure, discount, executive escalation</td>
+            <td>What changed in their world? What forces are at play?</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>The Adrata Application</h2>
+
+<p>Our entire strategy is built on PULL thinking:</p>
+
+<div class="sales-box">
+    <h4>How We Apply PULL</h4>
+    <ul>
+        <li><strong>Archetypes:</strong> We understand the deep psychology of VPs - their fears, pressures, and what they're actually trying to achieve</li>
+        <li><strong>Demand Hypotheses:</strong> We map what VPs are already trying to do (unsuccessfully) before we ever talk about our product</li>
+        <li><strong>Offers:</strong> We match offers to situations, not personas - because the same person in different circumstances has different demand</li>
+        <li><strong>Discovery:</strong> We're not qualifying - we're understanding what forces brought them to this moment</li>
+    </ul>
+</div>
+
+<h3>The Key Insight</h3>
+
+<p>VPs of Sales aren't looking for AI tools. They're trying to hit their number, get promoted, not get fired, look good to their CEO, or finally get ahead of the chaos.</p>
+
+<p>When we understand <em>that</em> demand - not their stated feature requests - we can build and sell something they actually rip out of our hands.</p>
+
+<div class="pull-quote">
+"Build something people want" becomes obvious when you stop asking what they want and start asking what they're trying to achieve.
+</div>
+
+<div class="share-widget">
+    <div class="share-title">Know someone who'd find this useful?</div>
+    <div class="share-subtitle">Send this article to a colleague</div>
+    <form class="share-form" onsubmit="event.preventDefault(); alert('Thanks! We\'ll send them a link.');">
+        <input type="email" class="share-input" placeholder="Their email" required>
+        <button type="submit" class="share-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+    </form>
+</div>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+</div>
+<script src="../../../js/copy-menu.js"></script>
+</body>
+</html>
+

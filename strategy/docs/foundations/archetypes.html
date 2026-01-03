@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VP Sales Archetypes | Psychological Targeting Matrices</title>
+    
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    
+    <meta property="og:title" content="VP Sales Archetypes | Psychological Targeting Matrices">
+    <meta property="og:description" content="Deep psychology framework for ad conversion to meetings. 2x2, 4x4, 6x6, and 8x8 matrices mapping VP Sales psychology.">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #fafafa;
+            --table-header: #f5f5f5;
+            --table-even: #f9f9f9;
+            --accent: #e65100;
+            --highlight-bg: #fff5f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #1a1a1a;
+            --table-header: #1a1a1a;
+            --table-even: #111;
+            --highlight-bg: #1a1008;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 46px 24px 48px; max-width: 900px; margin: 0 auto; transition: background 0s, color 0s; }
+        
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player .play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; }
+        .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .audio-status { font-size: 12px; opacity: 0.9; }
+        /* Custom Speed Dropdown */
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        h4 { font-size: 15px; font-weight: 700; margin: 20px 0 8px; color: var(--text-muted); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        .context-box { background: var(--card-bg); color: var(--text-secondary); padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid var(--border); }
+        .context-box h3 { color: var(--text); margin-top: 0; }
+        
+        .matrix-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+        .matrix-table th { background: var(--table-header); color: var(--text-secondary); padding: 10px 8px; text-align: center; font-weight: 600; font-size: 12px; border: 1px solid var(--border); }
+        .matrix-table td { padding: 10px 8px; border: 1px solid var(--border); text-align: center; vertical-align: middle; font-size: 12px; background: var(--bg); color: var(--text-secondary); }
+        .matrix-table .row-header { background: var(--table-header); font-weight: 600; text-align: left; }
+        
+        .highlight-cell { background: var(--card-bg) !important; font-weight: 600; color: var(--accent); }
+        .best-target { background: var(--accent) !important; color: #fff !important; font-weight: 700; }
+        
+        .target-card { background: var(--bg); border: 2px solid var(--accent); border-radius: 8px; padding: 20px; margin: 16px 0; }
+        .target-rank { font-size: 12px; font-weight: 700; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+        .target-name { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .target-why { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+        .target-hook { background: var(--card-bg); padding: 12px; border-radius: 6px; font-size: 14px; font-style: italic; color: var(--text-secondary); }
+        
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+        th { background: var(--table-header); color: var(--text-secondary); padding: 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+        td { padding: 12px; border: 1px solid var(--border); vertical-align: top; background: var(--bg); color: var(--text-secondary); }
+        tr:nth-child(even) td { background: var(--table-even); }
+        
+        ul { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 6px; color: var(--text-secondary); }
+        
+        .insight { background: var(--card-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--border); }
+        
+        /* Word highlighting for audio */
+        .word-highlight { background: var(--accent); color: #fff; padding: 1px 3px; border-radius: 3px; }
+        
+        .tier-section { margin: 24px 0; padding: 20px; background: var(--card-bg); border-radius: 8px; }
+        .tier-title { font-weight: 700; color: var(--accent); margin-bottom: 12px; font-size: 16px; }
+        
+        .money-zone { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 32px 0; }
+        .money-zone h2 { margin-top: 0; padding-top: 0; border-top: none; }
+        
+        .axis-def { background: var(--card-bg); padding: 16px; border-radius: 8px; margin: 16px 0; font-size: 14px; }
+        .axis-def strong { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="breadcrumb">
+    <a href="../../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">VP Sales</span>
+</div>
+<div class="page-header">
+    <div class="header-content">
+        <h1>Psychological Targeting Matrices</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+<div class="subtitle">Deep Psychology Framework for Ad Conversion to Meetings</div>
+
+<div class="audio-player">
+    <button class="play-btn" id="playBtn" onclick="toggleAudio()">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="audio-info">
+        <div class="audio-title">Listen to this document</div>
+        <div class="audio-status" id="audioStatus">Click play to start</div>
+    </div>
+    <div class="speed-dropdown">
+        <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+            <span id="speedLabel">2x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+            
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
+            <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+            <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+        </div>
+    </div>
+</div>
+
+<div class="context-box">
+    <h3>Strategic Context</h3>
+    <p>These matrices map the psychological state of a VP of Sales based on performance, trajectory, and organizational dynamics. The goal is to identify the absolute best audience segments to create ads that convert to meetings.</p>
+    <p><strong>Key Success Metric:</strong> Hit their number in Q4 2025</p>
+    <p style="margin-bottom: 0;"><strong>Core Insight:</strong> PULL is everywhere. Buyers rip your product out of your hands when there's a project on their to-do list being prioritized right now, with urgency, limited options, and severe limitations in alternatives.</p>
+</div>
+
+<h2>2x2 Matrix: Foundation Framework</h2>
+<p>This is the foundational matrix mapping Q4 performance against current pipeline trajectory.</p>
+
+<table class="matrix-table">
+    <tr>
+        <th></th>
+        <th>Currently Losing</th>
+        <th>Currently Winning</th>
+    </tr>
+    <tr>
+        <td class="row-header">Winner (Hit Q4)</td>
+        <td class="best-target">"The Anxious Champion"<br>Crushed it but pipeline is drying up. Fear of becoming a one-hit wonder.</td>
+        <td>"The Untouchable"<br>Momentum + proof. Hardest to sell—they don't need you (yet).</td>
+    </tr>
+    <tr>
+        <td class="row-header">Loser (Missed Q4)</td>
+        <td>"The Drowning"<br>Failed and sinking. Desperate, open to anything, but may not have budget/pull to buy.</td>
+        <td class="highlight-cell">"The Comeback Kid"<br>Missed but turning it around. Hungry to prove it wasn't a fluke. High motivation.</td>
+    </tr>
+</table>
+
+<div class="insight">
+    <strong>Best Ad Target: Winner Losing</strong> — They have credibility, budget, and fear. Your solution could be their salvation.
+</div>
+
+<h2>4x4 Matrix: Performance × Pipeline Coverage</h2>
+
+<div class="axis-def">
+    <strong>Axis 1 - Performance Reality:</strong> Crushed It (120%+), Made It (100-119%), Missed It (80-99%), Failed (&lt;80%)<br>
+    <strong>Axis 2 - Pipeline Position:</strong> Stacked (3x+), Healthy (2-3x), Thin (1-2x), Empty (&lt;1x)
+</div>
+
+<table class="matrix-table">
+    <tr>
+        <th></th>
+        <th>Stacked (3x+)</th>
+        <th>Healthy (2-3x)</th>
+        <th>Thin (1-2x)</th>
+        <th>Empty (&lt;1x)</th>
+    </tr>
+    <tr>
+        <td class="row-header">Crushed It (120%+)</td>
+        <td>Coasting Emperor</td>
+        <td>Confident Optimizer</td>
+        <td class="highlight-cell">Nervous Champion</td>
+        <td class="best-target">Panicking Star</td>
+    </tr>
+    <tr>
+        <td class="row-header">Made It (100-119%)</td>
+        <td>Comfortable Operator</td>
+        <td>Cautious Maintainer</td>
+        <td class="highlight-cell">Anxious Performer</td>
+        <td class="best-target">Desperate Hitter</td>
+    </tr>
+    <tr>
+        <td class="row-header">Missed It (80-99%)</td>
+        <td>Lucky Survivor</td>
+        <td class="highlight-cell">Hopeful Rebuilder</td>
+        <td>Stressed Striver</td>
+        <td>Sinking Ship</td>
+    </tr>
+    <tr>
+        <td class="row-header">Failed (&lt;80%)</td>
+        <td>Confused Underperformer</td>
+        <td>Delusional Optimist</td>
+        <td>Grasping Fighter</td>
+        <td>Dead Man Walking</td>
+    </tr>
+</table>
+
+<h3>Top 4x4 Targets</h3>
+
+<div class="target-card">
+    <div class="target-rank">#1</div>
+    <div class="target-name">Panicking Star</div>
+    <div class="target-why">Crushed it last quarter but pipeline is empty. Maximum fear of falling.</div>
+    <div class="target-hook">"Your Q4 win means nothing if Q1 pipeline is empty. Here's how top performers stay on top."</div>
+</div>
+
+<div class="target-card">
+    <div class="target-rank">#2</div>
+    <div class="target-name">Desperate Hitter</div>
+    <div class="target-why">Made quota but no pipeline. Knows luck won't last.</div>
+    <div class="target-hook">"You hit your number. But was it luck or a system? Build pipeline that doesn't run dry."</div>
+</div>
+
+<div class="target-card">
+    <div class="target-rank">#3</div>
+    <div class="target-name">Anxious Performer</div>
+    <div class="target-why">Made it, thin pipeline, feeling the pressure.</div>
+    <div class="target-hook">"The pressure doesn't stop after you hit quota. Protect next quarter now."</div>
+</div>
+
+<div class="target-card">
+    <div class="target-rank">#4</div>
+    <div class="target-name">Hopeful Rebuilder</div>
+    <div class="target-why">Missed but has healthy pipeline. Hungry for redemption.</div>
+    <div class="target-hook">"Last quarter was a miss. This quarter can be your redemption story."</div>
+</div>
+
+<h2>6x6 Matrix: Performance-Trajectory × Organizational Position</h2>
+
+<div class="axis-def">
+    <strong>Axis 1 - Performance + Trajectory:</strong> Crushing & Accelerating, Hit & Holding, Hit & Slipping, Missed & Recovering, Missed & Stalling, Failed & Sinking<br>
+    <strong>Axis 2 - Organizational Position:</strong> Golden Child, Resourced Player, Political Operator, Scrappy Fighter, Island Operator, Walking Dead
+</div>
+
+<table class="matrix-table" style="font-size: 11px;">
+    <tr>
+        <th></th>
+        <th>Golden Child</th>
+        <th>Resourced</th>
+        <th>Political</th>
+        <th>Scrappy</th>
+        <th>Island</th>
+        <th>Walking Dead</th>
+    </tr>
+    <tr>
+        <td class="row-header">Crushing & Accel</td>
+        <td>Untouchable King</td>
+        <td>Scaling Machine</td>
+        <td>Power Player</td>
+        <td>Hungry Grinder</td>
+        <td>Lone Wolf Winner</td>
+        <td>—</td>
+    </tr>
+    <tr>
+        <td class="row-header">Hit & Holding</td>
+        <td>Comfortable Elite</td>
+        <td>Steady Operator</td>
+        <td>Bureaucratic Survivor</td>
+        <td>Resourceful Hitter</td>
+        <td>Isolated Achiever</td>
+        <td>—</td>
+    </tr>
+    <tr>
+        <td class="row-header">Hit & Slipping</td>
+        <td class="highlight-cell">Worried Winner</td>
+        <td class="best-target">Anxious Optimizer</td>
+        <td>Political Scrambler</td>
+        <td>Desperate Improviser</td>
+        <td>Declining Solo</td>
+        <td>Fading Star</td>
+    </tr>
+    <tr>
+        <td class="row-header">Missed & Recovering</td>
+        <td>Second Chance Star</td>
+        <td class="highlight-cell">Rebuilding Operator</td>
+        <td>Opportunistic Climber</td>
+        <td>Hungry Comeback</td>
+        <td>Grinding Fighter</td>
+        <td>Last Chance Player</td>
+    </tr>
+    <tr>
+        <td class="row-header">Missed & Stalling</td>
+        <td>Confused Favorite</td>
+        <td>Stagnant Mid-Tier</td>
+        <td>Blame Shifter</td>
+        <td>Frustrated Hustler</td>
+        <td>Burning Out</td>
+        <td>On Borrowed Time</td>
+    </tr>
+    <tr>
+        <td class="row-header">Failed & Sinking</td>
+        <td>Fallen Angel</td>
+        <td>Lost Operator</td>
+        <td>Political Casualty</td>
+        <td>Desperate Scrambler</td>
+        <td>Abandoned Soldier</td>
+        <td>Terminal</td>
+    </tr>
+</table>
+
+<h3>Top 6x6 Targets</h3>
+
+<table>
+    <tr><th>#</th><th>Persona</th><th>Why They Buy</th><th>Ad Hook</th></tr>
+    <tr><td>1</td><td><strong>Anxious Optimizer</strong></td><td>Has budget, sees the decline, needs to act NOW</td><td>"Your pipeline says Q1 is in trouble. Fix it before your CEO notices."</td></tr>
+    <tr><td>2</td><td><strong>Worried Winner</strong></td><td>Has everything but momentum is dying—ego threat</td><td>"Everyone thinks you're crushing it. Only you see the pipeline gap."</td></tr>
+    <tr><td>3</td><td><strong>Desperate Improviser</strong></td><td>Marketing support but no budget—needs ROI proof</td><td>"No budget? No problem. The scrappy guide to pipeline."</td></tr>
+    <tr><td>4</td><td><strong>Hungry Comeback</strong></td><td>Momentum + hunger + something to prove</td><td>"You missed Q4. Q1 is your story to write."</td></tr>
+</table>
+
+<h2>8x8 Matrix: Full Psychological Depth</h2>
+
+<div class="axis-def">
+    <strong>Axis 1 - Performance-Trajectory-Confidence Compound (8 States):</strong><br>
+    Dominant → Confident → Cautious → Anxious → Hopeful → Stressed → Desperate → Terminal<br><br>
+    <strong>Axis 2 - Organizational Power Position (8 States):</strong><br>
+    CEO's Favorite → Well-Resourced → Adequately Supported → Politically Connected → Under-Resourced → Misaligned → Isolated → Expendable
+</div>
+
+<table class="matrix-table" style="font-size: 10px;">
+    <tr>
+        <th></th>
+        <th>CEO's Fav</th>
+        <th>Well-Res</th>
+        <th>Adequate</th>
+        <th>Political</th>
+        <th>Under-Res</th>
+        <th>Misalign</th>
+        <th>Isolated</th>
+        <th>Expend</th>
+    </tr>
+    <tr>
+        <td class="row-header">Dominant</td>
+        <td>Untouchable</td>
+        <td>Scaling King</td>
+        <td>Efficient Winner</td>
+        <td>Power Broker</td>
+        <td>Overperforming Hero</td>
+        <td>Solo Crusher</td>
+        <td>Lone Wolf King</td>
+        <td>—</td>
+    </tr>
+    <tr>
+        <td class="row-header">Confident</td>
+        <td>Protected Star</td>
+        <td>Comfortable Leader</td>
+        <td>Steady Hand</td>
+        <td>Connected Operator</td>
+        <td>Resourceful Star</td>
+        <td>Self-Made Winner</td>
+        <td>Independent Closer</td>
+        <td>—</td>
+    </tr>
+    <tr>
+        <td class="row-header">Cautious</td>
+        <td>Nervous Favorite</td>
+        <td>Watchful Performer</td>
+        <td>Careful Planner</td>
+        <td>Cautious Politician</td>
+        <td>Prudent Operator</td>
+        <td>Wary Solo Act</td>
+        <td>Guarded Survivor</td>
+        <td>Nervous Seat-Holder</td>
+    </tr>
+    <tr>
+        <td class="row-header">Anxious</td>
+        <td class="highlight-cell">Worried Darling</td>
+        <td class="best-target">Anxious Elite</td>
+        <td class="highlight-cell">Stressed Performer</td>
+        <td>Scrambling Politician</td>
+        <td class="highlight-cell">Stretched Striver</td>
+        <td>Frustrated Fighter</td>
+        <td>Panicking Loner</td>
+        <td>Sweating Target</td>
+    </tr>
+    <tr>
+        <td class="row-header">Hopeful</td>
+        <td>Second Chance Kid</td>
+        <td class="highlight-cell">Rebuilding Leader</td>
+        <td>Recovering Performer</td>
+        <td>Opportunist</td>
+        <td>Hungry Underdog</td>
+        <td>Proving Ground</td>
+        <td>Comeback Grinder</td>
+        <td>Last Shot Player</td>
+    </tr>
+    <tr>
+        <td class="row-header">Stressed</td>
+        <td>Confused Favorite</td>
+        <td>Stagnant Leader</td>
+        <td>Stuck Performer</td>
+        <td>Slipping Politician</td>
+        <td>Stretched Thin</td>
+        <td>Fighting Alone</td>
+        <td>Burning Candle</td>
+        <td>Borrowed Time</td>
+    </tr>
+    <tr>
+        <td class="row-header">Desperate</td>
+        <td>Falling Star</td>
+        <td>Grasping Leader</td>
+        <td>Flailing Performer</td>
+        <td>Exposed Politician</td>
+        <td>Drowning Fighter</td>
+        <td>Abandoned Seller</td>
+        <td>Sinking Solo</td>
+        <td>Walking Dead</td>
+    </tr>
+    <tr>
+        <td class="row-header">Terminal</td>
+        <td>Fallen Angel</td>
+        <td>Lost Executive</td>
+        <td>Failed Performer</td>
+        <td>Political Casualty</td>
+        <td>Exhausted Soldier</td>
+        <td>Defeated Solo</td>
+        <td>Ghost</td>
+        <td>Gone</td>
+    </tr>
+</table>
+
+<div class="money-zone">
+<h2>The Money Zone: Top 10 Personas to Target</h2>
+<p>Based on the intersection of buying power (resources/pull), emotional urgency (fear/motivation), and action propensity (will actually convert).</p>
+
+<table>
+    <tr><th>#</th><th>Persona</th><th>Psychology</th><th>Perfect Ad Hook</th></tr>
+    <tr><td>1</td><td><strong>Anxious Elite</strong></td><td>Hit number but pipeline slipping. Has budget. Ego on line.</td><td>"You hit your number. Your pipeline says you won't again. Here's what the top 1% do differently."</td></tr>
+    <tr><td>2</td><td><strong>Worried Darling</strong></td><td>All the support in the world but feels the slip. Fear of embarrassment.</td><td>"Everyone expects you to win. Only you see the cracks. Stay untouchable."</td></tr>
+    <tr><td>3</td><td><strong>Stressed Performer</strong></td><td>Decent resources, watching pipeline thin, stress building.</td><td>"Your pipeline doesn't lie. Q1 is coming. Act now or explain later."</td></tr>
+    <tr><td>4</td><td><strong>Stretched Striver</strong></td><td>Marketing wants to help but budget is tight. Needs ROI-proven tactics.</td><td>"Tight budget? Tighter pipeline? Here's how underdogs generate demand without spend."</td></tr>
+    <tr><td>5</td><td><strong>Rebuilding Leader</strong></td><td>Missed Q4 but has resources and momentum. Wants to prove it was a fluke.</td><td>"Q4 was a miss. Q1 is your redemption. Here's the playbook."</td></tr>
+    <tr><td>6</td><td><strong>Scrambling Politician</strong></td><td>Surviving on relationships but results are slipping. Needs a win.</td><td>"Politics got you here. Only pipeline keeps you here."</td></tr>
+    <tr><td>7</td><td><strong>Frustrated Fighter</strong></td><td>Has budget but marketing isn't helping. Angry and motivated.</td><td>"Marketing isn't coming to save you. Here's how sales leaders build their own pipeline."</td></tr>
+    <tr><td>8</td><td><strong>Hungry Underdog</strong></td><td>Missed but building momentum with scrappy tactics. Coachable, hungry.</td><td>"No budget. No problem. The scrappy sales leader's guide to Q1 pipeline."</td></tr>
+    <tr><td>9</td><td><strong>Recovering Performer</strong></td><td>Missed but has support and is rebuilding. Optimistic, open to new ideas.</td><td>"You missed. Now you're building. Here's how to make Q1 your comeback story."</td></tr>
+    <tr><td>10</td><td><strong>Sweating Target</strong></td><td>Hit number but pipeline is dying and seat is at risk. Maximum urgency.</td><td>"Your number won't save you if pipeline is empty. This is the quarter that matters."</td></tr>
+</table>
+</div>
+
+<h2>Ad Creative Strategy by Persona Tier</h2>
+
+<div class="tier-section">
+    <div class="tier-title">Tier 1: Anxious Winners (Hit + Slipping) — FEAR OF LOSING STATUS</div>
+    <ul>
+        <li><strong>Emotional trigger:</strong> Pride protection, fear of being exposed</li>
+        <li><strong>Tone:</strong> Peer-to-peer, "I see what you see"</li>
+        <li><strong>CTA:</strong> "See what's working for VPs who refuse to slip"</li>
+        <li><strong>Proof point:</strong> Case studies of sustained performance</li>
+    </ul>
+</div>
+
+<div class="tier-section">
+    <div class="tier-title">Tier 2: Hopeful Rebuilders (Missed + Recovering) — HUNGER FOR REDEMPTION</div>
+    <ul>
+        <li><strong>Emotional trigger:</strong> Second chance narrative, proving doubters wrong</li>
+        <li><strong>Tone:</strong> Empowering, "Your story isn't over"</li>
+        <li><strong>CTA:</strong> "Get the Q1 comeback playbook"</li>
+        <li><strong>Proof point:</strong> Turnaround stories</li>
+    </ul>
+</div>
+
+<div class="tier-section">
+    <div class="tier-title">Tier 3: Under-Resourced Fighters — SCRAPPY SURVIVAL</div>
+    <ul>
+        <li><strong>Emotional trigger:</strong> Doing more with less, self-reliance</li>
+        <li><strong>Tone:</strong> Tactical, ROI-focused</li>
+        <li><strong>CTA:</strong> "Pipeline tactics that don't require budget"</li>
+        <li><strong>Proof point:</strong> Specific tactics, templates, frameworks</li>
+    </ul>
+</div>
+
+<h2>Conference-Specific Targeting</h2>
+<p>If conference attendance is your vector:</p>
+
+<table>
+    <tr><th>Persona</th><th>Conference Motivation</th><th>Ad Angle</th></tr>
+    <tr><td><strong>Anxious Elite</strong></td><td>Needs new ideas before Q1 closes</td><td>"The sessions top performers attend to stay ahead"</td></tr>
+    <tr><td><strong>Worried Darling</strong></td><td>Wants validation + edge</td><td>"What separates repeat winners from one-hit wonders"</td></tr>
+    <tr><td><strong>Rebuilding Leader</strong></td><td>Looking for turnaround tactics</td><td>"The comeback playbook: Live from [Conference]"</td></tr>
+    <tr><td><strong>Frustrated Fighter</strong></td><td>Wants to build own pipeline engine</td><td>"For sales leaders tired of waiting on marketing"</td></tr>
+    <tr><td><strong>Hungry Underdog</strong></td><td>Networking + tactics on a budget</td><td>"ROI-positive tactics from the scrappiest sales leaders"</td></tr>
+</table>
+
+<div class="insight">
+    <strong>Bottom Line:</strong> Your highest-converting audience is the <strong>Anxious Winner with resources</strong>—someone who hit their number but sees the pipeline gap opening. They have budget, credibility, and fear. They'll buy to protect their status.
+</div>
+
+</div><!-- end readable-content -->
+
+<audio id="audioElement" preload="auto" style="display:none;">
+    <source src="archetypes.mp3" type="audio/mpeg">
+</audio>
+<script>
+// Audio player - tries MP3 first, falls back to Web Speech API
+let isPlaying = false;
+let isPaused = false;
+let audioMode = 'mp3'; // 'mp3' or 'speech'
+let utterance = null;
+let speechRate = parseFloat(localStorage.getItem('audioSpeed')) || 2;
+
+const audioEl = document.getElementById('audioElement');
+
+// Check if MP3 is available
+audioEl.onerror = () => { audioMode = 'speech'; console.log('MP3 not available, using speech'); };
+
+function toggleAudio() {
+    if (audioMode === 'mp3') {
+        toggleMp3Audio();
+    } else {
+        toggleSpeechAudio();
+    }
+}
+
+function toggleMp3Audio() {
+    if (isPlaying && !isPaused) {
+        audioEl.pause();
+        isPaused = true;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused';
+    } else if (isPaused) {
+        audioEl.play();
+        isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing...';
+    } else {
+        audioEl.currentTime = 0;
+        audioEl.playbackRate = speechRate;
+        audioEl.play().then(() => {
+            isPlaying = true;
+            isPaused = false;
+            document.getElementById('playIcon').style.display = 'none';
+            document.getElementById('pauseIcon').style.display = 'block';
+            document.getElementById('audioStatus').textContent = 'Playing...';
+        }).catch(e => {
+            console.log('MP3 play failed, falling back to speech', e);
+            audioMode = 'speech';
+            toggleSpeechAudio();
+        });
+    }
+}
+
+audioEl.onended = () => {
+    isPlaying = false;
+    isPaused = false;
+    document.getElementById('playIcon').style.display = 'block';
+    document.getElementById('pauseIcon').style.display = 'none';
+    document.getElementById('audioStatus').textContent = 'Click play to start';
+};
+
+function toggleSpeechAudio() {
+    if (!('speechSynthesis' in window)) {
+        document.getElementById('audioStatus').textContent = 'Speech not supported';
+        return;
+    }
+    
+    if (isPlaying && !isPaused) {
+        window.speechSynthesis.pause();
+        isPaused = true;
+        document.getElementById('playIcon').style.display = 'block';
+        document.getElementById('pauseIcon').style.display = 'none';
+        document.getElementById('audioStatus').textContent = 'Paused';
+    } else if (isPaused) {
+        window.speechSynthesis.resume();
+        isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Playing...';
+    } else {
+        window.speechSynthesis.cancel();
+        const content = document.getElementById('content').innerText;
+        const textToSpeak = content.substring(0, 10000);
+        
+        utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.rate = speechRate;
+        utterance.onend = () => {
+            isPlaying = false; isPaused = false;
+            document.getElementById('playIcon').style.display = 'block';
+            document.getElementById('pauseIcon').style.display = 'none';
+            document.getElementById('audioStatus').textContent = 'Click play to start';
+        };
+        utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; };
+        utterance.onerror = (e) => {
+            if (e.error !== 'interrupted') {
+                document.getElementById('audioStatus').textContent = 'Error';
+            }
+        };
+        
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+        
+        window.speechSynthesis.speak(utterance);
+        isPlaying = true; isPaused = false;
+        document.getElementById('playIcon').style.display = 'none';
+        document.getElementById('pauseIcon').style.display = 'block';
+        document.getElementById('audioStatus').textContent = 'Starting...';
+        
+        setTimeout(() => {
+            if (isPlaying && document.getElementById('audioStatus').textContent === 'Starting...') {
+                window.speechSynthesis.pause();
+                window.speechSynthesis.resume();
+            }
+        }, 100);
+    }
+}
+
+function setSpeed(speed) {
+            localStorage.setItem('audioSpeed', speed);
+    speechRate = parseFloat(speed);
+    document.getElementById('speedLabel').textContent = speed + 'x';
+    document.querySelectorAll('.speed-option').forEach(opt => {
+        opt.classList.toggle('active', opt.textContent === speed + 'x');
+    });
+    document.getElementById('speedMenu').classList.remove('open');
+    if (audioMode === 'mp3') {
+        audioEl.playbackRate = speechRate;
+    } else if (isPlaying) {
+        window.speechSynthesis.cancel();
+        isPlaying = false; isPaused = false;
+        setTimeout(toggleAudio, 100);
+    }
+}
+
+function toggleSpeedMenu(e) {
+    e.stopPropagation();
+    document.getElementById('speedMenu').classList.toggle('open');
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+}
+
+document.addEventListener('DOMContentLoaded', () => { const savedSpd = localStorage.getItem('audioSpeed') || '2'; document.getElementById('speedLabel').textContent = savedSpd + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.toggle('active', opt.textContent === savedSpd + 'x')); const savedSpd = localStorage.getItem('audioSpeed') || '2'; document.getElementById('speedLabel').textContent = savedSpd + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.toggle('active', opt.textContent === savedSpd + 'x'));
+    const theme = localStorage.getItem('theme') || 'dark'; document.documentElement.setAttribute('data-theme', theme);
+    window.speechSynthesis.getVoices();
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open');
+    });
+});
+</script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>

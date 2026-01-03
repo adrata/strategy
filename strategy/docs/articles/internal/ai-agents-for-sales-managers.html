@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Agents for Sales Managers & Directors | Adrata</title>
-    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
     <meta property="og:title" content="AI Agents for Sales Managers & Directors">
     <meta property="og:description" content="How front-line sales managers can deploy AI agents to coach more effectively, run better 1:1s, and actually develop their team.">
     <meta property="og:type" content="article">
@@ -25,7 +25,7 @@
             --accent: #e65100;
             --highlight-bg: #fff5f0;
         }
-        body.dark-mode {
+        [data-theme="dark"] {
             --bg: #0a0a0a;
             --text: #e5e5e5;
             --text-secondary: #ccc;
@@ -38,42 +38,55 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 18px; padding: 48px 24px; max-width: 900px; margin: 0 auto; }
         
-        .page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .header-content { flex: 1; }
-        .theme-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
         .theme-toggle:hover { color: var(--text); }
         .theme-toggle svg { width: 20px; height: 20px; }
         .theme-toggle .sun { display: block; }
         .theme-toggle .moon { display: none; }
-        body.dark-mode .theme-toggle .sun { display: none; }
-        body.dark-mode .theme-toggle .moon { display: block; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
         
-        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
-        .audio-player button { background: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
-        .audio-player button svg { width: 20px; height: 20px; fill: #e65100; margin-left: 2px; }
+        .audio-player { background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); padding: 14px 18px; border-radius: 8px; margin-bottom: 40px; display: flex; align-items: center; gap: 14px; color: #fff; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .audio-player .play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
         .audio-info { flex: 1; }
         .audio-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
         .audio-status { font-size: 12px; opacity: 0.9; }
         .speed-dropdown { position: relative; }
         .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
         .speed-btn:hover { background: rgba(255,255,255,0.3); }
-        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
         .speed-menu.open { display: block; }
         .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
         .speed-option:hover { background: var(--card-bg); }
         .speed-option.active { background: var(--accent); color: #fff; }
         
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); font-size: 13px; font-weight: 500; }
         .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        .byline { font-size: 14px; color: var(--text-muted); margin-top: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .byline .author { font-weight: 600; color: var(--text-secondary); }
+        .byline .dot { color: var(--border); }
         h1 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
-        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5; }
+        .subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 0; line-height: 1.5; }
         
         h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
         h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
         p { margin-bottom: 16px; color: var(--text-secondary); }
         
-        .role-context { background: var(--highlight-bg); border: 2px solid var(--accent); border-radius: 12px; padding: 24px; margin: 24px 0; }
-        .role-context h3 { margin-top: 0; color: var(--accent); }
+        .role-context { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .role-context h3 { margin-top: 0; color: var(--text); }
         
         .agent-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
         .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -86,35 +99,35 @@
         .capability { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-size: 14px; }
         .capability strong { color: var(--accent); }
         
-        .use-case { background: var(--highlight-bg); border-radius: 8px; padding: 20px; margin: 16px 0; }
-        .use-case h4 { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .use-case { background: var(--card-bg); border-radius: 8px; padding: 20px; margin: 16px 0; }
+        .use-case h4 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
         .use-case p { font-size: 14px; margin-bottom: 0; }
         
         .coaching-matrix { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
         .coaching-type { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
-        .coaching-type h4 { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .coaching-type h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
         .coaching-type p { font-size: 14px; margin-bottom: 0; }
         
         ul, ol { margin-left: 24px; margin-bottom: 16px; }
         li { margin-bottom: 8px; color: var(--text-secondary); }
         
-        .insight { background: var(--highlight-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--accent); }
+        .insight { background: var(--card-bg); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 3px solid var(--border); }
         
         .one-on-one-prep { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
-        .one-on-one-prep h3 { margin-top: 0; color: var(--accent); }
+        .one-on-one-prep h3 { margin-top: 0; color: var(--text); }
         .prep-section { margin-top: 16px; padding: 16px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); }
         .prep-section h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
         .prep-section p { font-size: 14px; margin-bottom: 0; }
         
         .newsletter-section { margin-top: 64px; }
-        .newsletter-box { background: #f5f5f0; border-radius: 16px; padding: 40px; }
-        body.dark-mode .newsletter-box { background: #1a1a18; }
+        .newsletter-box { background: #f5f5f5; border-radius: 16px; padding: 40px; }
+        [data-theme="dark"] .newsletter-box { background: #1a1a1a; border: 1px solid #333; }
         .newsletter-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
         .newsletter-box .desc { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
         .newsletter-form { display: flex; align-items: center; gap: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; max-width: 480px; }
         .newsletter-form input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 10px 0; }
         .newsletter-form input::placeholder { color: var(--text-muted); }
-        .newsletter-submit { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .newsletter-submit { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
         .newsletter-submit:hover { opacity: 0.9; transform: scale(1.05); }
         .newsletter-submit svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2; fill: none; }
     </style>
@@ -122,9 +135,14 @@
 <body>
 
 <div class="readable-content" id="content">
+<div class="breadcrumb">
+    <a href="../../../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">AI Agents</span>
+</div>
 <div class="page-header">
     <div class="header-content">
-        <div class="doc-type">Adrata Agent Guide</div>
+        
         <h1>AI Agents for Sales Managers & Directors</h1>
     </div>
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
@@ -133,9 +151,10 @@
     </button>
 </div>
 <div class="subtitle">How front-line sales managers can deploy AI agents to coach more effectively, run better 1:1s, and actually develop their team—instead of spending all day in Salesforce auditing fields.</div>
+<p class="byline"><span class="author">Adrata</span><span class="dot">·</span><span>January 2, 2026</span></p>
 
 <div class="audio-player">
-    <button id="playBtn" onclick="toggleAudio()">
+    <button class="play-btn" id="playBtn" onclick="toggleAudio()">
         <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </button>
@@ -145,17 +164,17 @@
     </div>
     <div class="speed-dropdown">
         <button class="speed-btn" onclick="toggleSpeedMenu(event)">
-            <span id="speedLabel">1.5x</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            <span id="speedLabel">2x</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="speed-menu" id="speedMenu">
-            <div class="speed-option" onclick="setSpeed(1)">1x</div>
-            <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
-            <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
-            <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+            <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+            
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
             <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
             <div class="speed-option" onclick="setSpeed(3)">3x</div>
-            <div class="speed-option" onclick="setSpeed(4)">4x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
         </div>
     </div>
 </div>
@@ -354,7 +373,7 @@
 
 <audio id="audioElement" preload="auto" style="display:none;"><source src="ai-agents-for-sales-managers.mp3" type="audio/mpeg"></audio>
 <script>
-let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = 1.5;
+let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = parseFloat(localStorage.getItem('audioSpeed')) || 2;
 const audioEl = document.getElementById('audioElement');
 audioEl.onerror = () => { audioMode = 'speech'; };
 
@@ -374,13 +393,16 @@ function toggleSpeechAudio() {
     else { window.speechSynthesis.cancel(); const content = document.getElementById('content').innerText; utterance = new SpeechSynthesisUtterance(content.substring(0, 10000)); utterance.rate = speechRate; utterance.onend = () => { isPlaying = false; isPaused = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; document.getElementById('audioStatus').textContent = 'Click play to start'; }; utterance.onstart = () => { document.getElementById('audioStatus').textContent = 'Playing...'; }; const voices = window.speechSynthesis.getVoices(); if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; window.speechSynthesis.speak(utterance); isPlaying = true; isPaused = false; document.getElementById('playIcon').style.display = 'none'; document.getElementById('pauseIcon').style.display = 'block'; document.getElementById('audioStatus').textContent = 'Starting...'; }
 }
 
-function setSpeed(speed) { speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; }
+function setSpeed(speed) {
+            localStorage.setItem('audioSpeed', speed); speechRate = parseFloat(speed); document.getElementById('speedLabel').textContent = speed + 'x'; document.querySelectorAll('.speed-option').forEach(opt => { opt.classList.toggle('active', opt.textContent === speed + 'x'); }); document.getElementById('speedMenu').classList.remove('open'); if (audioMode === 'mp3') audioEl.playbackRate = speechRate; }
 function toggleSpeedMenu(e) { e.stopPropagation(); document.getElementById('speedMenu').classList.toggle('open'); }
-function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+function toggleTheme() { const html = document.documentElement; const isDark = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', isDark ? 'light' : 'dark'); localStorage.setItem('theme', isDark ? 'light' : 'dark'); }
 function subscribeNewsletter() { const email = document.getElementById('newsletterEmail').value; if (email && email.includes('@')) { document.querySelector('.newsletter-box').innerHTML = '<h3 style="color: var(--accent);">You\'re in.</h3><p style="color: var(--text-muted); margin-top: 8px;">We\'ll send you the playbook.</p>'; } }
 
-document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode'); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
+document.addEventListener('DOMContentLoaded', () => { const savedSpd = localStorage.getItem('audioSpeed') || '2'; document.getElementById('speedLabel').textContent = savedSpd + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.toggle('active', opt.textContent === savedSpd + 'x')); const theme = localStorage.getItem('theme') || 'dark'; document.documentElement.setAttribute('data-theme', theme); window.speechSynthesis.getVoices(); document.addEventListener('click', (e) => { if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); }); });
 </script>
+</div>
+<script src="../../../js/copy-menu.js"></script>
 </body>
 </html>
 

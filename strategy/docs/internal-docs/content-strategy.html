@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Strategy: Owning the Sales Intelligence Space</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.svg">
+    <meta property="og:title" content="Content Strategy: Owning the Sales Intelligence Space">
+    <meta property="og:description" content="The foundational content pillars for establishing category leadership in AI-powered sales.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f9f9f9;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+            --highlight-bg: #fff5f0;
+            --share-bg: #f5f5f5;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border: #333;
+            --card-bg: #151515;
+            --highlight-bg: #1a1008;
+            --share-bg: #1a1a1a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'MiSans', -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.85; 
+            font-size: 18px; 
+            padding: 48px 24px;
+            max-width: 900px; 
+            margin: 0 auto;
+        }
+        
+        .page-header { padding: 32px 0 24px; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; }
+        .subtitle { font-size: 16px; color: var(--text-muted); font-style: italic; margin-bottom: 24px; }
+        
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .theme-toggle .moon { display: block; }
+        .theme-toggle .sun { display: none; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        
+        .audio-player { 
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
+            padding: 14px 18px; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            color: #fff; 
+        }
+        .audio-player button.play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .audio-player button.play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player button.play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-info { flex: 1; min-width: 0; }
+        .audio-title { font-weight: 600; font-size: 13px; margin-bottom: 1px; }
+        .audio-status { font-size: 11px; opacity: 0.9; }
+        
+        .speed-dropdown { position: relative; }
+        .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 6px 10px; border-radius: 6px; color: #fff; font-size: 11px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .speed-btn:hover { background: rgba(255,255,255,0.3); }
+        .speed-btn svg { width: 12px; height: 12px; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu.open { display: block; }
+        .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
+        .speed-option:hover { background: var(--card-bg); }
+        .speed-option.active { background: var(--accent); color: #fff; }
+        
+        .readable-content { padding-top: 24px; }
+        p { margin-bottom: 20px; color: var(--text-secondary); }
+        em { font-style: italic; }
+        strong { font-weight: 600; color: var(--text); }
+        
+        h2 { font-size: 24px; font-weight: 700; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text); }
+        h2:first-of-type { margin-top: 32px; border-top: none; padding-top: 0; }
+        h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--text-secondary); }
+        h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
+        
+        .intro-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid var(--accent); }
+        .intro-box p { margin-bottom: 0; font-style: italic; }
+        
+        .pull-quote { background: var(--card-bg); border-left: 4px solid var(--border); padding: 24px 32px; margin: 32px 0; font-size: 20px; font-weight: 500; line-height: 1.5; color: var(--text); font-style: italic; }
+        
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0; }
+        @media (max-width: 600px) { .category-grid { grid-template-columns: 1fr; } }
+        
+        .category-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; border-left: 4px solid var(--accent); }
+        .category-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); margin-top: 0; }
+        .category-card p { font-size: 14px; margin-bottom: 12px; color: var(--text-muted); }
+        .category-card ul { margin: 0 0 0 16px; font-size: 14px; }
+        .category-card li { margin-bottom: 6px; color: var(--text-secondary); }
+        
+        .content-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+        .content-table th { text-align: left; padding: 12px; background: var(--card-bg); border: 1px solid var(--border); font-weight: 600; color: var(--text); }
+        .content-table td { padding: 12px; border: 1px solid var(--border); color: var(--text-secondary); }
+        .content-table tr:hover td { background: var(--card-bg); }
+        
+        .pillar-section { background: var(--card-bg); border-radius: 12px; padding: 28px; margin: 32px 0; border-left: 4px solid var(--accent); }
+        .pillar-section h3 { margin-top: 0; color: var(--text); }
+        .pillar-section p { margin-bottom: 12px; }
+        .pillar-section ul { margin: 16px 0 0 20px; }
+        .pillar-section li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .priority-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background: var(--card-bg); color: var(--accent); margin-left: 8px; }
+        
+        .timing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 32px 0; }
+        @media (max-width: 700px) { .timing-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 450px) { .timing-grid { grid-template-columns: 1fr; } }
+        .timing-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .timing-card h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+        .timing-card ul { margin: 0 0 0 16px; font-size: 13px; }
+        .timing-card li { margin-bottom: 4px; color: var(--text-secondary); }
+        
+        .role-content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        @media (max-width: 600px) { .role-content-grid { grid-template-columns: 1fr; } }
+        .role-content-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .role-content-card h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 12px; }
+        .role-content-card .format { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        .role-content-card ul { margin: 0 0 0 16px; font-size: 13px; }
+        .role-content-card li { margin-bottom: 4px; color: var(--text-secondary); }
+        
+        .idea-list { list-style: none; margin: 24px 0; padding: 0; }
+        .idea-list li { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 12px; }
+        .idea-list .idea-icon { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; font-size: 12px; font-weight: 700; }
+        .idea-list .idea-content { flex: 1; }
+        .idea-list .idea-title { font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .idea-list .idea-desc { font-size: 14px; color: var(--text-muted); }
+        
+        .share-widget { background: var(--share-bg); border-radius: 12px; padding: 28px 32px; margin: 56px 0 32px; border: 1px solid var(--border); }
+        .share-widget h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: var(--text); border: none; padding: 0; }
+        .share-widget p { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
+        .share-form { display: flex; gap: 0; }
+        @media (max-width: 500px) { .share-form { flex-direction: column; gap: 12px; } }
+        .share-form input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px 0 0 8px; background: var(--bg); color: var(--text); font-size: 14px; font-family: inherit; }
+        @media (max-width: 500px) { .share-form input { border-radius: 8px; } }
+        .share-form input::placeholder { color: var(--text-muted); }
+        .share-form button { background: var(--accent); border: none; padding: 12px 16px; border-radius: 0 8px 8px 0; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        @media (max-width: 500px) { .share-form button { border-radius: 8px; padding: 12px 20px; } }
+        .share-form button:hover { background: #ff6d00; }
+        .share-form button svg { width: 20px; height: 20px; }
+        
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        @media (max-width: 600px) {
+            body { padding: 0 16px 32px; font-size: 16px; }
+            h1 { font-size: 26px; }
+            h2 { font-size: 20px; }
+            .audio-player { flex-wrap: wrap; }
+        }
+    
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div class="doc-type">Internal Strategy</div>
+    <div class="title-row">
+        <h1>Content Strategy: Owning the Space</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+    
+    <div class="breadcrumb">
+        <a href="../../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Internal</span>
+    </div>
+    </div>
+    <div class="subtitle">The foundational content pillars for category leadership</div>
+    
+    <div class="audio-player">
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()">
+            <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="audio-info">
+            <div class="audio-title">Listen to this article</div>
+            <div class="audio-status" id="audioStatus">Click play to start</div>
+        </div>
+        <div class="speed-dropdown">
+            <button class="speed-btn" onclick="toggleSpeedMenu(event)">
+                <span id="speedLabel">2x</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="speed-menu" id="speedMenu">
+                <div class="speed-option" onclick="setSpeed(1)">1x</div>
+                <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+                
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
+                <div class="speed-option" onclick="setSpeed(3)">3x</div>
+                <div class="speed-option" onclick="setSpeed(4)">4x</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="readable-content" id="content">
+
+<div class="intro-box">
+    <p>Great companies don't just sell products. They own ideas. This document outlines the foundational content pillars that will establish Adrata as the definitive voice in AI-powered sales intelligence.</p>
+</div>
+
+<h2>The Acquired Framework: Timeless vs. Timely</h2>
+
+<p>The best content strategies balance two types of content: <strong>timeless</strong> pieces that compound in value over years, and <strong>timely</strong> pieces that capture moments and drive immediate engagement.</p>
+
+<div class="pull-quote">
+    "The best time to plant a tree was 20 years ago. The second best time is now. The same is true for foundational content."
+</div>
+
+<div class="category-grid">
+    <div class="category-card">
+        <h4>Timeless Content</h4>
+        <p>Evergreen pieces that become reference material. These compound in search value and establish authority.</p>
+        <ul>
+            <li>History of Sales Technology</li>
+            <li>The Greatest Salespeople of All Time</li>
+            <li>Sales Frameworks That Actually Work</li>
+            <li>The Psychology of Enterprise Deals</li>
+            <li>What Makes Revenue "Quality" Revenue</li>
+        </ul>
+    </div>
+    <div class="category-card">
+        <h4>Timely Content</h4>
+        <p>Pieces that capture the current moment. These drive social engagement and position us as thought leaders.</p>
+        <ul>
+            <li>AI Agent Updates from Anthropic/OpenAI</li>
+            <li>Quarterly Sales Trend Reports</li>
+            <li>Conference Recaps and Analysis</li>
+            <li>New Tool/Platform Reviews</li>
+            <li>Breaking Industry News Takes</li>
+        </ul>
+    </div>
+</div>
+
+<h2>Content by Timing: The Calendar Strategy</h2>
+
+<p>Different moments in the year call for different content. Here's how to map content to the natural rhythms of sales organizations:</p>
+
+<div class="timing-grid">
+    <div class="timing-card">
+        <h4>Q1 Start (Jan)</h4>
+        <ul>
+            <li>Annual Planning Guides</li>
+            <li>"State of AI in Sales" Report</li>
+            <li>Goal Setting Frameworks</li>
+            <li>New Year Resolutions for Sales</li>
+            <li>SKO Prep Materials</li>
+        </ul>
+    </div>
+    <div class="timing-card">
+        <h4>Q2 Push (Apr-May)</h4>
+        <ul>
+            <li>Mid-Year Checkpoint</li>
+            <li>Pipeline Health Diagnostics</li>
+            <li>Summer Slowdown Prep</li>
+            <li>Upsell/Expansion Playbooks</li>
+            <li>Team Energy Reset</li>
+        </ul>
+    </div>
+    <div class="timing-card">
+        <h4>Q3 Build (Jul-Sep)</h4>
+        <ul>
+            <li>Back-to-Business Momentum</li>
+            <li>Q4 Planning Starts Now</li>
+            <li>Budget Season Prep</li>
+            <li>Executive Engagement Guides</li>
+            <li>Deal Acceleration Tactics</li>
+        </ul>
+    </div>
+    <div class="timing-card">
+        <h4>Q4 Close (Oct-Dec)</h4>
+        <ul>
+            <li>Year-End Deal Strategies</li>
+            <li>Budget Flush Opportunities</li>
+            <li>Forecast Accuracy Deep Dives</li>
+            <li>Holiday Cadence Playbooks</li>
+            <li>Year in Review Content</li>
+        </ul>
+    </div>
+</div>
+
+<h3>Monthly Moments</h3>
+<ul>
+    <li><strong>First Week of Month:</strong> Monthly pipeline review templates, "What Top Reps Do on Day 1"</li>
+    <li><strong>Mid-Month:</strong> Deal review frameworks, coaching guides, stalled deal revival</li>
+    <li><strong>End of Month:</strong> Close plans, negotiation tactics, multi-thread urgency</li>
+    <li><strong>Quarter End:</strong> End-of-quarter strategies, CFO conversations, procurement navigation</li>
+</ul>
+
+<h2>Content Types by Role</h2>
+
+<p>Different personas consume content differently. Match the format to the audience:</p>
+
+<div class="role-content-grid">
+    <div class="role-content-card">
+        <h4>VPs / CROs</h4>
+        <div class="format">Format: Executive briefs, frameworks, board-ready insights</div>
+        <ul>
+            <li>One-page strategic frameworks</li>
+            <li>Benchmark reports with peer data</li>
+            <li>Board presentation templates</li>
+            <li>Hiring and org design guides</li>
+            <li>Investor-ready metrics decks</li>
+        </ul>
+    </div>
+    <div class="role-content-card">
+        <h4>Sales Managers</h4>
+        <div class="format">Format: Playbooks, templates, coaching scripts</div>
+        <ul>
+            <li>1:1 meeting templates</li>
+            <li>Pipeline review checklists</li>
+            <li>Rep coaching conversation guides</li>
+            <li>Team meeting agendas</li>
+            <li>Performance diagnosis frameworks</li>
+        </ul>
+    </div>
+    <div class="role-content-card">
+        <h4>AEs</h4>
+        <div class="format">Format: Tactical guides, scripts, competitive intel</div>
+        <ul>
+            <li>Discovery question banks</li>
+            <li>Competitive battle cards</li>
+            <li>Multi-threading playbooks</li>
+            <li>Proposal templates</li>
+            <li>Negotiation response scripts</li>
+        </ul>
+    </div>
+    <div class="role-content-card">
+        <h4>SDRs / BDRs</h4>
+        <div class="format">Format: Quick reads, templates, sequences</div>
+        <ul>
+            <li>Cold outreach sequences</li>
+            <li>LinkedIn messaging templates</li>
+            <li>Objection handling scripts</li>
+            <li>Persona research cheat sheets</li>
+            <li>Meeting booking tactics</li>
+        </ul>
+    </div>
+    <div class="role-content-card">
+        <h4>RevOps</h4>
+        <div class="format">Format: Technical guides, dashboards, process docs</div>
+        <ul>
+            <li>CRM configuration guides</li>
+            <li>Dashboard templates</li>
+            <li>Territory planning models</li>
+            <li>Compensation plan examples</li>
+            <li>Data hygiene playbooks</li>
+        </ul>
+    </div>
+    <div class="role-content-card">
+        <h4>Founders / CEOs</h4>
+        <div class="format">Format: Strategic frameworks, case studies</div>
+        <ul>
+            <li>First sales hire guides</li>
+            <li>Founder-led sales playbooks</li>
+            <li>Sales culture case studies</li>
+            <li>Go-to-market strategy frameworks</li>
+            <li>Fundraising + sales alignment</li>
+        </ul>
+    </div>
+</div>
+
+<h2>Creative Content Ideas: The Brainstorm List</h2>
+
+<p>Here are 50+ content ideas organized by type. Not all will be created—this is a brainstorming canvas to pull from:</p>
+
+<h3>Deep Dives (Timeless)</h3>
+<ul class="idea-list">
+    <li><div class="idea-icon">1</div><div class="idea-content"><div class="idea-title">The Complete History of CRM</div><div class="idea-desc">From Rolodex to Salesforce to AI-native platforms. The definitive timeline.</div></div></li>
+    <li><div class="idea-icon">2</div><div class="idea-content"><div class="idea-title">Sales Methodology Wars</div><div class="idea-desc">SPIN vs. Challenger vs. MEDDIC vs. Sandler. When to use what.</div></div></li>
+    <li><div class="idea-icon">3</div><div class="idea-content"><div class="idea-title">The Psychology of "Yes"</div><div class="idea-desc">Cognitive biases that close deals. Reciprocity, commitment, social proof.</div></div></li>
+    <li><div class="idea-icon">4</div><div class="idea-content"><div class="idea-title">The Buying Committee Bible</div><div class="idea-desc">Every role in B2B buying decisions. How to find, map, and influence them.</div></div></li>
+    <li><div class="idea-icon">5</div><div class="idea-content"><div class="idea-title">Compensation Design 101</div><div class="idea-desc">Quota, accelerators, clawbacks. The math behind high-performing comp plans.</div></div></li>
+</ul>
+
+<h3>Moment-Based Content (Timely)</h3>
+<ul class="idea-list">
+    <li><div class="idea-icon">6</div><div class="idea-content"><div class="idea-title">SKO Season Survival Guide</div><div class="idea-desc">What to do before, during, and after Sales Kickoff. Publish in December.</div></div></li>
+    <li><div class="idea-icon">7</div><div class="idea-content"><div class="idea-title">The Q4 Close Playbook</div><div class="idea-desc">Week-by-week guide to closing the year strong. Publish in October.</div></div></li>
+    <li><div class="idea-icon">8</div><div class="idea-content"><div class="idea-title">Budget Season Decoded</div><div class="idea-desc">When CFOs approve budgets by industry. Map your outreach accordingly.</div></div></li>
+    <li><div class="idea-icon">9</div><div class="idea-content"><div class="idea-title">Post-Dreamforce Analysis</div><div class="idea-desc">What mattered at the conference. What it means for sales teams.</div></div></li>
+    <li><div class="idea-icon">10</div><div class="idea-content"><div class="idea-title">AI Hype vs. Reality Report</div><div class="idea-desc">Monthly update on what's actually working in AI for sales.</div></div></li>
+</ul>
+
+<h3>Interactive / Tools</h3>
+<ul class="idea-list">
+    <li><div class="idea-icon">11</div><div class="idea-content"><div class="idea-title">Quota Calculator</div><div class="idea-desc">Input your numbers, get your required activity levels. Shareable widget.</div></div></li>
+    <li><div class="idea-icon">12</div><div class="idea-content"><div class="idea-title">Win Rate Analyzer</div><div class="idea-desc">Compare your win rates to benchmarks by industry and deal size.</div></div></li>
+    <li><div class="idea-icon">13</div><div class="idea-content"><div class="idea-title">Deal Velocity Simulator</div><div class="idea-desc">What happens if you shorten your cycle by 10%? Model the impact.</div></div></li>
+    <li><div class="idea-icon">14</div><div class="idea-content"><div class="idea-title">Sales Rep Archetype Quiz</div><div class="idea-desc">Are you a Hunter, Farmer, Consultant, or Closer? Find out.</div></div></li>
+    <li><div class="idea-icon">15</div><div class="idea-content"><div class="idea-title">Pipeline Coverage Calculator</div><div class="idea-desc">Input quota and pipeline. Get your health score and action plan.</div></div></li>
+</ul>
+
+<h3>Interview / Story Series</h3>
+<ul class="idea-list">
+    <li><div class="idea-icon">16</div><div class="idea-content"><div class="idea-title">First 90 Days Series</div><div class="idea-desc">How top sales leaders approached their first 90 days in a new role.</div></div></li>
+    <li><div class="idea-icon">17</div><div class="idea-content"><div class="idea-title">Turnaround Stories</div><div class="idea-desc">CROs who inherited broken teams and fixed them. Tactical details.</div></div></li>
+    <li><div class="idea-icon">18</div><div class="idea-content"><div class="idea-title">Founder Sales Confessions</div><div class="idea-desc">What founders learned from doing sales themselves. Raw insights.</div></div></li>
+    <li><div class="idea-icon">19</div><div class="idea-content"><div class="idea-title">The Lost Deal Autopsy</div><div class="idea-desc">Detailed breakdowns of deals that should have closed but didn't.</div></div></li>
+    <li><div class="idea-icon">20</div><div class="idea-content"><div class="idea-title">Day in the Life</div><div class="idea-desc">Hour-by-hour schedule of top performers. SDR, AE, Manager editions.</div></div></li>
+</ul>
+
+<h3>Contrarian Takes</h3>
+<ul class="idea-list">
+    <li><div class="idea-icon">21</div><div class="idea-content"><div class="idea-title">Why Cold Calling Is Dead (And Isn't)</div><div class="idea-desc">The data on what actually works in outbound. Contrarian but researched.</div></div></li>
+    <li><div class="idea-icon">22</div><div class="idea-content"><div class="idea-title">The Case Against SDRs</div><div class="idea-desc">When separate prospecting teams hurt more than help. Controversial.</div></div></li>
+    <li><div class="idea-icon">23</div><div class="idea-content"><div class="idea-title">Activity Metrics Are Lying to You</div><div class="idea-desc">Why more calls ≠ more revenue. What to track instead.</div></div></li>
+    <li><div class="idea-icon">24</div><div class="idea-content"><div class="idea-title">The Discovery Call Is Overrated</div><div class="idea-desc">Why leading with insight beats leading with questions.</div></div></li>
+    <li><div class="idea-icon">25</div><div class="idea-content"><div class="idea-title">Discounting Destroys Value</div><div class="idea-desc">The math on why discounts hurt more than lost deals.</div></div></li>
+</ul>
+
+<h2>The Four Content Pillars</h2>
+
+<p>To own the AI sales intelligence space, we need to establish authority across four interconnected pillars:</p>
+
+<div class="pillar-section">
+    <h3>Pillar 1: The History<span class="priority-badge">Foundation</span></h3>
+    <p>You can't know where you're going if you don't know where you've been. Historical content establishes us as students of the craft.</p>
+    <ul>
+        <li><strong>The History of Sales Technology</strong> - From handshakes to AI (completed)</li>
+        <li><strong>The Greatest Salespeople of All Time</strong> - Lessons from legends (completed)</li>
+        <li><strong>The Evolution of CRM</strong> - From Rolodex to Salesforce to what's next</li>
+        <li><strong>Sales Methodologies Through the Decades</strong> - SPIN, Challenger, MEDDIC timeline</li>
+    </ul>
+</div>
+
+<div class="pillar-section">
+    <h3>Pillar 2: The Present State<span class="priority-badge">Relevance</span></h3>
+    <p>What's happening right now in AI and sales. This is where timely content lives.</p>
+    <ul>
+        <li><strong>Building Effective Agents</strong> - Anthropic's agent architecture (completed)</li>
+        <li><strong>Deep Research Models</strong> - OpenAI's approach (completed)</li>
+        <li><strong>The AI Agent Stack for Sales</strong> - What's possible today</li>
+        <li><strong>Weekly AI Sales Intelligence Digest</strong> - Curated updates</li>
+    </ul>
+</div>
+
+<div class="pillar-section">
+    <h3>Pillar 3: The Role-Specific Guides<span class="priority-badge">Utility</span></h3>
+    <p>Practical, actionable content for specific personas. This is what people bookmark and share.</p>
+    <ul>
+        <li><strong>AI Agents for VPs/CROs</strong> - Strategic oversight (completed)</li>
+        <li><strong>AI Agents for Sales Managers</strong> - Team enablement (completed)</li>
+        <li><strong>AI Agents for SDRs/BDRs</strong> - Outbound acceleration (completed)</li>
+        <li><strong>AI Agents for AEs</strong> - Deal execution (completed)</li>
+        <li><strong>AI Agents for RevOps</strong> - Operations automation (completed)</li>
+    </ul>
+</div>
+
+<div class="pillar-section">
+    <h3>Pillar 4: The Philosophy<span class="priority-badge">Differentiation</span></h3>
+    <p>The ideas and frameworks that make Adrata unique. This is where we plant flags.</p>
+    <ul>
+        <li><strong>Competition Is for Losers</strong> - Peter Thiel's monopoly thinking (completed)</li>
+        <li><strong>10X Revenue Club</strong> - Bill Gurley on revenue quality (completed)</li>
+        <li><strong>The Sales Contagion Effect</strong> - How wins spread (completed)</li>
+        <li><strong>Demand Creation vs. Demand Capture</strong> - Category design (completed)</li>
+    </ul>
+</div>
+
+<h2>Content Formats: The Mix</h2>
+
+<p>Variety keeps audiences engaged. Here's the format palette:</p>
+
+<ul>
+    <li><strong>Long-form Articles (2,000+ words)</strong> - SEO powerhouses, reference material</li>
+    <li><strong>Quick Reads (500-800 words)</strong> - LinkedIn-friendly, shareable insights</li>
+    <li><strong>Visual Frameworks</strong> - 2x2 matrices, flowcharts, comparison tables</li>
+    <li><strong>Checklists & Templates</strong> - Downloadable, actionable, lead-gen worthy</li>
+    <li><strong>Audio Versions</strong> - Every article gets a listen option (ElevenLabs voice)</li>
+    <li><strong>Video Shorts</strong> - 60-second summaries for social</li>
+    <li><strong>Data Reports</strong> - Original research, benchmark data, trend analysis</li>
+    <li><strong>Interviews</strong> - Practitioner wisdom, real stories</li>
+</ul>
+
+<h2>The Compounding Effect</h2>
+
+<p>Here's the insight that separates good content strategies from great ones: <strong>timeless content compounds</strong>.</p>
+
+<p>When someone searches "history of sales technology" in 2027, our piece should be the definitive result. When a VP of Sales asks their team "what are the best sales frameworks?" our frameworks piece should be the answer. When a founder researches AI agents for their sales team, our role-specific guides should dominate the conversation.</p>
+
+<div class="pull-quote">
+    "Create content so good that people feel obligated to share it. Then create it so consistently that people feel obligated to subscribe."
+</div>
+
+<h3>The Distribution Strategy</h3>
+
+<p>Great content without distribution is a tree falling in the forest. Our distribution stack:</p>
+
+<ul>
+    <li><strong>SEO</strong> - Timeless content optimized for search</li>
+    <li><strong>LinkedIn</strong> - Timely content and snippets</li>
+    <li><strong>Email</strong> - Weekly digest for engaged audience</li>
+    <li><strong>Product</strong> - Content embedded in the Adrata experience</li>
+    <li><strong>Sales</strong> - Content as conversation starters</li>
+</ul>
+
+<h2>What Success Looks Like</h2>
+
+<p>In 12 months, Adrata should be known for:</p>
+
+<ol>
+    <li><strong>The definitive history</strong> - When people want to understand sales technology evolution, they come to us</li>
+    <li><strong>The practical guides</strong> - When sales leaders want to implement AI, they use our role-specific playbooks</li>
+    <li><strong>The fresh perspective</strong> - When something happens in AI/sales, people want to know what Adrata thinks</li>
+    <li><strong>The philosophical depth</strong> - When people want to think deeply about sales strategy, they reference our frameworks</li>
+</ol>
+
+<p>This isn't about content volume. It's about content <em>authority</em>. Own the ideas, and you own the category.</p>
+
+<div class="share-widget">
+    <h3>Know someone who'd find this useful?</h3>
+    <p>Send this strategy to a colleague</p>
+    <form class="share-form" onsubmit="event.preventDefault(); const email = this.querySelector('input').value; const subject = encodeURIComponent('Worth reading: Content Strategy for Sales Intelligence'); const body = encodeURIComponent('Thought you might find this interesting:\n\n' + window.location.href); window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body; this.querySelector('input').value = '';">
+        <input type="email" placeholder="Their email" required>
+        <button type="submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+    </form>
+</div>
+
+</div>
+
+<audio id="audioElement" preload="auto" style="display:none;"><source src="content-strategy.mp3" type="audio/mpeg"></audio>
+<script>
+    // Theme initialization - default to light
+    function initTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+            document.documentElement.setAttribute('data-theme', saved);
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    }
+    initTheme();
+    
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    }
+    
+    // Audio player with MP3 + Web Speech fallback
+    let isPlaying = false, isPaused = false, audioMode = 'mp3', utterance = null, speechRate = parseFloat(localStorage.getItem('audioSpeed')) || 2;
+    const audioEl = document.getElementById('audioElement');
+    audioEl.onerror = () => { audioMode = 'speech'; };
+    
+    function toggleAudio() { if (audioMode === 'mp3') toggleMp3Audio(); else toggleSpeechAudio(); }
+    
+    function toggleMp3Audio() {
+        if (isPlaying && !isPaused) { 
+            audioEl.pause(); 
+            isPaused = true; 
+            document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#e65100"/></svg>';
+            document.getElementById('audioStatus').textContent = 'Paused'; 
+        }
+        else if (isPaused) { 
+            audioEl.play(); 
+            isPaused = false; 
+            document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#e65100"/><rect x="14" y="4" width="4" height="16" fill="#e65100"/></svg>';
+            document.getElementById('audioStatus').textContent = 'Playing...'; 
+        }
+        else { 
+            audioEl.currentTime = 0; 
+            audioEl.playbackRate = speechRate; 
+            audioEl.play().then(() => { 
+                isPlaying = true; 
+                isPaused = false; 
+                document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#e65100"/><rect x="14" y="4" width="4" height="16" fill="#e65100"/></svg>';
+                document.getElementById('audioStatus').textContent = 'Playing...'; 
+            }).catch(e => { 
+                audioMode = 'speech'; 
+                toggleSpeechAudio(); 
+            }); 
+        }
+    }
+    
+    audioEl.onended = () => { 
+        isPlaying = false; 
+        isPaused = false; 
+        document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#e65100"/></svg>';
+        document.getElementById('audioStatus').textContent = 'Click play to start'; 
+    };
+    
+    audioEl.ontimeupdate = () => {
+        if (isPlaying && !isPaused) {
+            const mins = Math.floor(audioEl.currentTime / 60);
+            const secs = Math.floor(audioEl.currentTime % 60).toString().padStart(2, '0');
+            document.getElementById('audioStatus').textContent = mins + ':' + secs;
+        }
+    };
+    
+    function toggleSpeechAudio() {
+        if (!('speechSynthesis' in window)) { 
+            document.getElementById('audioStatus').textContent = 'Speech not supported'; 
+            return; 
+        }
+        if (isPlaying && !isPaused) { 
+            window.speechSynthesis.pause(); 
+            isPaused = true; 
+            document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#e65100"/></svg>';
+            document.getElementById('audioStatus').textContent = 'Paused'; 
+        }
+        else if (isPaused) { 
+            window.speechSynthesis.resume(); 
+            isPaused = false; 
+            document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#e65100"/><rect x="14" y="4" width="4" height="16" fill="#e65100"/></svg>';
+            document.getElementById('audioStatus').textContent = 'Playing...'; 
+        }
+        else { 
+            window.speechSynthesis.cancel(); 
+            const content = document.getElementById('content'); 
+            const text = content ? content.innerText.substring(0, 10000) : '';
+            utterance = new SpeechSynthesisUtterance(text); 
+            utterance.rate = speechRate; 
+            utterance.onend = () => { 
+                isPlaying = false; 
+                isPaused = false; 
+                document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#e65100"/></svg>';
+                document.getElementById('audioStatus').textContent = 'Click play to start'; 
+            }; 
+            utterance.onstart = () => { 
+                document.getElementById('audioStatus').textContent = 'Playing (browser voice)...'; 
+            }; 
+            const voices = window.speechSynthesis.getVoices(); 
+            if (voices.length > 0) utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0]; 
+            window.speechSynthesis.speak(utterance); 
+            isPlaying = true; 
+            isPaused = false; 
+            document.getElementById('playBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#e65100"/><rect x="14" y="4" width="4" height="16" fill="#e65100"/></svg>';
+            document.getElementById('audioStatus').textContent = 'Starting...'; 
+        }
+    }
+    
+    function setSpeed(speed) {
+            localStorage.setItem('audioSpeed', speed); 
+        speechRate = parseFloat(speed); 
+        document.getElementById('speedLabel').textContent = speed + 'x'; 
+        document.querySelectorAll('.speed-option').forEach(opt => { 
+            opt.classList.toggle('active', opt.textContent === speed + 'x'); 
+        }); 
+        document.getElementById('speedMenu').classList.remove('open'); 
+        if (audioMode === 'mp3') audioEl.playbackRate = speechRate; 
+    }
+    
+    function toggleSpeedMenu(e) { 
+        e.stopPropagation(); 
+        document.getElementById('speedMenu').classList.toggle('open'); 
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { const savedSpd = localStorage.getItem('audioSpeed') || '2'; document.getElementById('speedLabel').textContent = savedSpd + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.toggle('active', opt.textContent === savedSpd + 'x')); const savedSpd = localStorage.getItem('audioSpeed') || '2'; document.getElementById('speedLabel').textContent = savedSpd + 'x'; document.querySelectorAll('.speed-option').forEach(opt => opt.classList.toggle('active', opt.textContent === savedSpd + 'x')); 
+        window.speechSynthesis.getVoices(); 
+        document.addEventListener('click', (e) => { 
+            if (!e.target.closest('.speed-dropdown')) document.getElementById('speedMenu').classList.remove('open'); 
+        }); 
+    });
+</script>
+<script src="../../js/copy-menu.js"></script>
+</body>
+</html>

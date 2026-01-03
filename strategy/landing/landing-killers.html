@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,8 +68,8 @@
       --text: #111827;
       --text-secondary: #6b7280;
       --text-muted: #9ca3af;
-      --accent: #059669;
-      --accent-soft: #10b981;
+      --accent: #e65100;
+      --accent-soft: #ff6d00;
       --accent-bg: rgba(5,150,105,0.08);
       --header-bg: rgba(255,255,255,0.95);
     }
@@ -193,7 +193,7 @@
     .color-option.active { border-color: var(--text); }
     .color-option.red { background: #e53935; }
     .color-option.blue { background: #4f46e5; }
-    .color-option.green { background: #059669; }
+    .color-option.green { background: #e65100; }
     .color-option.violet { background: #7c3aed; }
     .color-option.cyan { background: #0891b2; }
     .color-option.orange { background: #ea580c; }
@@ -547,8 +547,12 @@
     .theme-toggle svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
     .theme-toggle .sun { display: block; }
     .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
     [data-theme="dark"] .theme-toggle .sun { display: block; }
     [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
     [data-theme="light"] .theme-toggle .sun { display: none; }
     [data-theme="light"] .theme-toggle .moon { display: block; }
     
@@ -1824,7 +1828,7 @@
             <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
           </div>
           <div class="chat-bubble">
-            <p style="font-size: 16px; margin-bottom: 12px;">👋 Hey! Quick question for you:</p>
+            <p style="font-size: 16px; margin-bottom: 12px;">Hey! Quick question for you:</p>
             <p style="font-size: 16px; margin-bottom: 16px;"><strong>How many deals in your pipeline right now have decision-makers you've never talked to?</strong></p>
             <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 16px;">Most VPs we talk to say 60-70%. That's why they're missing quota.</p>
             <p style="font-size: 15px; margin-bottom: 4px;">I can show you exactly who's on the buying committee for any account. What would help most?</p>
@@ -2383,9 +2387,9 @@
     
     // ========== ACCENT COLORS ==========
     const accentColors = {
-      red: { dark: '#e53935', light: '#dc2626' },
+      red: { dark: '#666', light: '#666' },
       blue: { dark: '#4f46e5', light: '#2563eb' },
-      green: { dark: '#059669', light: '#16a34a' },
+      green: { dark: '#e65100', light: '#e65100' },
       violet: { dark: '#7c3aed', light: '#7c3aed' },
       cyan: { dark: '#0891b2', light: '#0891b2' },
       orange: { dark: '#ea580c', light: '#ea580c' }
@@ -2839,7 +2843,7 @@
         followUp: "Would you like to see this in action for one of your target accounts?"
       },
       'what\'s included': {
-        message: "Every buyer group analysis includes:\n\n✅ 11+ decision-makers identified\n✅ Verified contact information\n✅ Role in the buying process\n✅ Engagement recommendations\n✅ Org chart relationships\n\nDelivered in 48 hours, not 3 weeks.",
+        message: "Every buyer group analysis includes:\n\n- 11+ decision-makers identified\n- Verified contact information\n- Role in the buying process\n- Engagement recommendations\n- Org chart relationships\n\nDelivered in 48 hours, not 3 weeks.",
         followUp: "Ready to see your first buyer group?"
       },
       'book': {

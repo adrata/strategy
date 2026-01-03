@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Are AI Agents? | Adrata</title>
+    <link rel="icon" type="image/x-icon" href="../../../favicon.svg">
+    <meta property="og:title" content="What Are AI Agents?">
+    <meta property="og:description" content="A clear explanation of what AI agents are, how they work, and why they matter for sales teams.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root { --bg: #fff; --text: #1a1a1a; --text-secondary: #333; --text-muted: #666; --border: #e5e5e5; --card-bg: #f5f5f5; --accent: #e65100; --accent-light: #ff6d00; }
+        [data-theme="dark"] { --bg: #0a0a0a; --text: #e5e5e5; --text-secondary: #ccc; --text-muted: #999; --border: #333; --card-bg: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'MiSans', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; padding: 48px 24px; max-width: 720px; margin: 0 auto; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .header-content { flex: 1; }
+        .theme-toggle { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        .breadcrumb { font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb a svg { width: 14px; height: 14px; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+        .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+        .byline { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+        h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+        h3 { font-size: 17px; font-weight: 700; margin: 28px 0 12px; color: var(--text); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        .comparison-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .comparison-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .comparison-card.old h4 { color: var(--text-muted); }
+        .comparison-card.new h4 { color: var(--text); }
+        .info-box { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 24px 0; }
+        .info-box h4 { color: var(--text); margin: 0 0 8px 0; font-size: 14px; }
+        .diagram { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 24px 0; text-align: center; }
+        .diagram-flow { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .diagram-step { background: var(--bg); border: 2px solid var(--border); padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+        .diagram-step.active { border-color: var(--accent); color: var(--accent); }
+        .diagram-arrow { color: var(--text-muted); font-size: 20px; }
+        blockquote { border-left: 3px solid var(--accent); padding-left: 20px; margin: 24px 0; font-style: italic; color: var(--text-muted); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        @media (max-width: 640px) { .comparison-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="readable-content" id="content">
+<div class="breadcrumb">
+    <a href="../../../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">AI Agents</span>
+</div>
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="doc-type">Foundations</div>
+        <h1>What Are AI Agents?</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+</div>
+
+
+<p>Everyone's talking about AI agents. Most explanations are confusing, overly technical, or filled with hype. Here's a clear, practical explanation of what AI agents actually are and why they matter.</p>
+
+<h2>The Simple Definition</h2>
+
+<p>An <strong>AI agent</strong> is software that can take actions on your behalf to accomplish a goal.</p>
+
+<p>That's it. Unlike a chatbot that just answers questions, an agent can:</p>
+
+<ul>
+    <li>Use tools (search the web, query databases, call APIs)</li>
+    <li>Make decisions about what to do next</li>
+    <li>Take multiple steps to complete a task</li>
+    <li>Learn from the results of its actions</li>
+</ul>
+
+<div class="info-box">
+    <h4>The Key Difference</h4>
+    <p style="margin:0;"><strong>Chatbot:</strong> You ask a question → It gives an answer.<br>
+    <strong>Agent:</strong> You give a goal → It figures out the steps and executes them.</p>
+</div>
+
+<h2>How Agents Work</h2>
+
+<p>Every AI agent follows the same basic loop:</p>
+
+<div class="diagram">
+    <div class="diagram-flow">
+        <div class="diagram-step active">Observe</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-step">Think</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-step">Act</div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-step">Repeat</div>
+    </div>
+</div>
+
+<ol>
+    <li><strong>Observe:</strong> The agent receives input (a goal, context, or feedback from a previous action)</li>
+    <li><strong>Think:</strong> The LLM reasons about what to do next</li>
+    <li><strong>Act:</strong> The agent uses a tool or produces output</li>
+    <li><strong>Repeat:</strong> The cycle continues until the goal is achieved</li>
+</ol>
+
+<h3>Example: Lead Research Agent</h3>
+
+<p>Let's say you give an agent the goal: "Research Acme Corp for a sales call."</p>
+
+<ol>
+    <li><strong>Think:</strong> "I need to find basic company info first."</li>
+    <li><strong>Act:</strong> Searches the web for "Acme Corp company information"</li>
+    <li><strong>Observe:</strong> Gets search results showing Acme Corp is a $50M manufacturing company</li>
+    <li><strong>Think:</strong> "Now I should look for recent news and hiring patterns."</li>
+    <li><strong>Act:</strong> Searches for "Acme Corp news 2025" and "Acme Corp jobs"</li>
+    <li><strong>Observe:</strong> Finds they just raised funding and are hiring sales people</li>
+    <li><strong>Think:</strong> "I have enough information to create a briefing."</li>
+    <li><strong>Act:</strong> Produces a structured research document</li>
+</ol>
+
+<h2>Agents vs. Other AI</h2>
+
+<div class="comparison-grid">
+    <div class="comparison-card old">
+        <h4>🗣️ Chatbots</h4>
+        <ul style="margin:0;">
+            <li>Answer questions</li>
+            <li>Single-turn interactions</li>
+            <li>No external actions</li>
+            <li>Stateless</li>
+        </ul>
+    </div>
+    <div class="comparison-card new">
+        <h4>AI Agents</h4>
+        <ul style="margin:0;">
+            <li>Accomplish goals</li>
+            <li>Multi-step workflows</li>
+            <li>Use tools and APIs</li>
+            <li>Maintain context</li>
+        </ul>
+    </div>
+</div>
+
+<div class="comparison-grid">
+    <div class="comparison-card old">
+        <h4>⚙️ Automation (RPA)</h4>
+        <ul style="margin:0;">
+            <li>Follow fixed scripts</li>
+            <li>Break on edge cases</li>
+            <li>No reasoning</li>
+            <li>Brittle</li>
+        </ul>
+    </div>
+    <div class="comparison-card new">
+        <h4>AI Agents</h4>
+        <ul style="margin:0;">
+            <li>Adapt to situations</li>
+            <li>Handle edge cases</li>
+            <li>Reason about problems</li>
+            <li>Flexible</li>
+        </ul>
+    </div>
+</div>
+
+<h2>The Three Types of Agents</h2>
+
+<h3>1. Single-Purpose Agents</h3>
+<p>Do one thing really well. Examples:</p>
+<ul>
+    <li>Lead research agent</li>
+    <li>Email drafting agent</li>
+    <li>Meeting prep agent</li>
+    <li>Data enrichment agent</li>
+</ul>
+
+<h3>2. Workflow Agents</h3>
+<p>Orchestrate multi-step processes with predefined paths. Examples:</p>
+<ul>
+    <li>Lead qualification → Research → Outreach sequence</li>
+    <li>Demo scheduled → Prep materials → Follow-up</li>
+    <li>Deal closed → Onboarding → Handoff</li>
+</ul>
+
+<h3>3. Autonomous Agents</h3>
+<p>Operate with minimal human guidance, making complex decisions. Examples:</p>
+<ul>
+    <li>SDR agents that handle entire outbound sequences</li>
+    <li>Research agents that continuously monitor accounts</li>
+    <li>Pipeline agents that proactively surface insights</li>
+</ul>
+
+<h2>Why Agents Matter for Sales</h2>
+
+<p>Sales is uniquely suited for AI agents because:</p>
+
+<ol>
+    <li><strong>High-volume, repetitive tasks:</strong> Research, data entry, follow-ups</li>
+    <li><strong>Clear success metrics:</strong> Meetings booked, deals closed</li>
+    <li><strong>Tool-heavy workflows:</strong> CRM, email, calendar, enrichment</li>
+    <li><strong>Time-sensitive:</strong> Speed matters, agents work 24/7</li>
+</ol>
+
+<blockquote>
+"The average sales rep spends 65% of their time on non-selling activities. Agents can eliminate most of that."
+</blockquote>
+
+<h2>What Agents Can't Do (Yet)</h2>
+
+<p>Be realistic about current limitations:</p>
+
+<ul>
+    <li><strong>Build relationships:</strong> Agents can prep you, but you build rapport</li>
+    <li><strong>Negotiate:</strong> Complex multi-party negotiations need humans</li>
+    <li><strong>Read the room:</strong> Emotional intelligence in live calls</li>
+    <li><strong>Handle novel situations:</strong> Truly unprecedented edge cases</li>
+    <li><strong>Be accountable:</strong> When it matters, a human is on the hook</li>
+</ul>
+
+<h2>Getting Started</h2>
+
+<p>If you're new to agents, start here:</p>
+
+<ol>
+    <li><strong>Identify one task</strong> that takes 10+ minutes and is mostly repetitive</li>
+    <li><strong>Map the steps</strong> a human would take to complete it</li>
+    <li><strong>Identify the tools</strong> needed (search, database, email, etc.)</li>
+    <li><strong>Build or buy</strong> an agent to handle it</li>
+    <li><strong>Measure the results</strong> and iterate</li>
+</ol>
+
+<p>Start with something low-risk and high-frequency. Lead research is a great first agent—it saves time on every lead and mistakes aren't catastrophic.</p>
+
+<div class="info-box">
+    <h4>Next Steps</h4>
+    <p style="margin:0;">Ready to build? Check out <a href="build-your-first-ai-agent.html">Build Your First AI Agent</a> for a step-by-step guide.</p>
+</div>
+
+<script>
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+</div>
+<script src="../../../js/copy-menu.js"></script>
+</body>
+</html>
+

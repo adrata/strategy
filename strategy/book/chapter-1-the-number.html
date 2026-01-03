@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,14 +41,19 @@
             color: var(--text); 
             line-height: 1.85; 
             font-size: 18px; 
-            padding: 0 24px 48px;
+            padding: 48px 24px;
             max-width: 900px; 
             margin: 0 auto;
         }
         
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
         /* Page Header */
         .page-header {
-            padding: 32px 0 24px;
+            padding: 0 0 24px;
         }
         
         .doc-type { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
@@ -81,8 +86,12 @@
         .theme-toggle svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
         .theme-toggle .sun { display: block; }
         .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
         [data-theme="dark"] .theme-toggle .sun { display: block; }
         [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
         [data-theme="light"] .theme-toggle .sun { display: none; }
         [data-theme="light"] .theme-toggle .moon { display: block; }
         
@@ -95,9 +104,9 @@
             gap: 12px; 
             color: #fff; 
         }
-        .audio-player button { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-        .audio-player button:hover { background: #f5f5f5; transform: scale(1.05); }
-        .audio-player button svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
+        .audio-player .play-btn { background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .audio-player .play-btn:hover { background: #f5f5f5; transform: scale(1.05); }
+        .audio-player .play-btn svg { width: 18px; height: 18px; fill: var(--accent); margin-left: 2px; }
         .audio-info { flex: 1; min-width: 0; }
         .audio-title { font-weight: 600; font-size: 13px; margin-bottom: 1px; }
         .audio-status { font-size: 11px; opacity: 0.9; }
@@ -106,7 +115,7 @@
         .speed-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 6px 10px; border-radius: 6px; color: #fff; font-size: 11px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
         .speed-btn:hover { background: rgba(255,255,255,0.3); }
         .speed-btn svg { width: 12px; height: 12px; }
-        .speed-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
+        .speed-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-width: 72px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 100; }
         .speed-menu.open { display: block; }
         .speed-option { padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text); font-weight: 500; text-align: center; }
         .speed-option:hover { background: var(--card-bg); }
@@ -161,13 +170,14 @@
         }
         
         .newsletter-box {
-            background: #f5f5f0;
+            background: #f5f5f5;
             border-radius: 16px;
             padding: 40px;
             font-family: 'MiSans', -apple-system, sans-serif;
         }
         [data-theme="dark"] .newsletter-box {
-            background: #1a1a18;
+            background: #1a1a1a;
+            border: 1px solid #333;
         }
         .newsletter-box h3 {
             font-size: 22px;
@@ -245,7 +255,7 @@
             display: block;
         }
         .thanks-state h3 {
-            color: var(--accent);
+            color: var(--text);
             font-size: 20px;
             margin-bottom: 12px;
         }
@@ -279,6 +289,12 @@
 </head>
 <body>
 
+<div class="breadcrumb">
+    <a href="../search.html">Strategy</a>
+    <span class="separator">/</span>
+    <span class="current">Book</span>
+</div>
+
 <div class="page-header">
     <div class="doc-type">Q4: A Book for Trailblazers</div>
     <div class="title-row">
@@ -291,7 +307,7 @@
     <div class="subtitle">Monday, October 5, 2026</div>
     
     <div class="audio-player">
-        <button id="playBtn" onclick="toggleAudio()">
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()">
             <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
@@ -301,14 +317,14 @@
         </div>
         <div class="speed-dropdown">
             <button class="speed-btn" onclick="toggleSpeedMenu(event)">
-                <span id="speedLabel">1.5x</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+                <span id="speedLabel">2x</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="speed-menu" id="speedMenu">
                 <div class="speed-option" onclick="setSpeed(1)">1x</div>
-                <div class="speed-option" onclick="setSpeed(1.25)">1.25x</div>
-                <div class="speed-option active" onclick="setSpeed(1.5)">1.5x</div>
-                <div class="speed-option" onclick="setSpeed(2)">2x</div>
+                <div class="speed-option" onclick="setSpeed(1.5)">1.5x</div>
+                
+                <div class="speed-option active" onclick="setSpeed(2)">2x</div>
                 <div class="speed-option" onclick="setSpeed(2.5)">2.5x</div>
                 <div class="speed-option" onclick="setSpeed(3)">3x</div>
                 <div class="speed-option" onclick="setSpeed(4)">4x</div>
@@ -556,8 +572,13 @@ if (savedTheme) {
     document.documentElement.setAttribute('data-theme', 'dark');
 }
 
-// Audio controls
-audio.playbackRate = 1.5;
+// Audio controls - load saved speed preference
+const savedSpeed = parseFloat(localStorage.getItem('audioSpeed')) || 2;
+audio.playbackRate = savedSpeed;
+document.getElementById('speedLabel').textContent = savedSpeed + 'x';
+document.querySelectorAll('.speed-option').forEach(opt => {
+    opt.classList.toggle('active', opt.textContent === savedSpeed + 'x');
+});
 
 audio.addEventListener('play', () => {
     isPlaying = true;
@@ -597,6 +618,7 @@ function toggleAudio() {
 
 function setSpeed(speed) {
     audio.playbackRate = parseFloat(speed);
+    localStorage.setItem('audioSpeed', speed);
     document.getElementById('speedLabel').textContent = speed + 'x';
     document.querySelectorAll('.speed-option').forEach(opt => {
         opt.classList.toggle('active', opt.textContent === speed + 'x');
@@ -634,5 +656,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<script src="../js/copy-menu.js"></script>
 </body>
 </html>

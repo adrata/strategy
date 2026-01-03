@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Forecast | January 2, 2026</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f5f5f5;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #888;
+            --border: #2a2a2a;
+            --card-bg: #141414;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'MiSans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 48px 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .breadcrumb .separator { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-muted); }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .header-content { flex: 1; }
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .theme-toggle:hover { color: var(--text); }
+        .theme-toggle svg { width: 20px; height: 20px; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="light"] .theme-toggle .sun { display: none; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        .doc-type {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+        
+        /* Conviction Legend */
+        .conviction-legend {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        @media (max-width: 800px) {
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .summary-grid { grid-template-columns: 1fr; }
+        }
+        
+        .summary-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .summary-card .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .summary-card .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .summary-card .value.accent { color: var(--accent); }
+        .summary-card .subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        /* Section Headers */
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 48px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        /* Deal Cards */
+        .deal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .deal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .deal-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .deal-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .deal-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        /* Conviction Badges - No percentages, just words */
+        .conviction-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .conviction-bankable {
+            background: var(--accent);
+            color: #fff;
+        }
+        .conviction-guaranteed {
+            background: var(--accent);
+            color: #fff;
+        }
+        .conviction-average {
+            background: rgba(230, 81, 0, 0.2);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+        .conviction-tossup {
+            background: rgba(107, 114, 128, 0.15);
+            color: #888;
+            border: 1px solid #666;
+        }
+        .conviction-low {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        
+        .deal-reason {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .deal-reason-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .deal-reason p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        
+        .deal-notes {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        /* Prospects Section */
+        .prospects-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        .prospect-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            text-decoration: none;
+            margin-top: 48px;
+            padding: 12px 0;
+        }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; }
+        
+        @media (max-width: 600px) {
+            body { padding: 24px 16px; }
+            h1 { font-size: 28px; }
+            .deal-header { flex-direction: column; gap: 8px; }
+            .conviction-legend { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="../search.html">Strategy</a>
+        <span class="separator">/</span>
+        <span class="current">Report</span>
+    </div>
+    
+    <div class="page-header">
+        <div class="header-content">
+            <div class="doc-type">Pipeline Report</div>
+            <h1>Forecast</h1>
+            <p class="subtitle">January 2, 2026</p>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+
+    <!-- Conviction Legend -->
+    <div class="conviction-legend">
+        <div class="legend-item">
+            <span class="conviction-badge conviction-bankable">Bankable</span>
+            <span>It's happening</span>
+        </div>
+        <div class="legend-item">
+            <span class="conviction-badge conviction-guaranteed">Guaranteed</span>
+            <span>100% if conditions met</span>
+        </div>
+        <div class="legend-item">
+            <span class="conviction-badge conviction-average">Average</span>
+            <span>Growing conviction</span>
+        </div>
+        <div class="legend-item">
+            <span class="conviction-badge conviction-tossup">Toss Up</span>
+            <span>Could go either way</span>
+        </div>
+        <div class="legend-item">
+            <span class="conviction-badge conviction-low">Low</span>
+            <span>Not likely now</span>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="label">Total Pipeline</div>
+            <div class="value accent">$120K–$175K</div>
+            <div class="subtext">5 active deals</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Bankable</div>
+            <div class="value">$24K+</div>
+            <div class="subtext">Navi Nurses</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Cash Collected</div>
+            <div class="value">$24K</div>
+            <div class="subtext">Navi Nurses upfront</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">Prospects</div>
+            <div class="value">5</div>
+            <div class="subtext">Not yet deals</div>
+        </div>
+    </div>
+
+    <h2>Active Deals</h2>
+
+    <!-- Navi Nurses -->
+    <div class="deal-card">
+        <div class="deal-header">
+            <div class="deal-name">Navi Nurses</div>
+            <div class="deal-value">$20K + $4K/mo</div>
+        </div>
+        <div class="deal-meta">
+            <span class="conviction-badge conviction-bankable">Bankable</span>
+            <div class="meta-item">$24K cash collected</div>
+        </div>
+        <div class="deal-reason">
+            <div class="deal-reason-label">Reason to Buy</div>
+            <p>Need database for Ideal Navi Patient, need Speedrun CRM, and need Campaign (Adrata Marketing platform)</p>
+        </div>
+    </div>
+
+    <!-- Cardinal Gray -->
+    <div class="deal-card">
+        <div class="deal-header">
+            <div class="deal-name">Cardinal Gray</div>
+            <div class="deal-value">$0 – $15K/yr</div>
+        </div>
+        <div class="deal-meta">
+            <div class="meta-item">If free: <span class="conviction-badge conviction-guaranteed" style="padding:4px 8px;font-size:11px;">Guaranteed</span></div>
+            <div class="meta-item">If $5-15K: <span class="conviction-badge conviction-low" style="padding:4px 8px;font-size:11px;">Low</span></div>
+        </div>
+        <div class="deal-reason">
+            <div class="deal-reason-label">Reason to Buy</div>
+            <p>15 target accounts, no enterprise sales experience, needs buyer groups for all for net new and expansion plays</p>
+        </div>
+        <div class="deal-notes">Likely $0 in exchange for YC intros and qualified self-onboard feedback</div>
+    </div>
+
+    <!-- Kiin Global -->
+    <div class="deal-card">
+        <div class="deal-header">
+            <div class="deal-name">Kiin Global</div>
+            <div class="deal-value">$40K</div>
+        </div>
+        <div class="deal-meta">
+            <span class="conviction-badge conviction-low">Low</span>
+            <div class="meta-item">Intro from former VP of Sales</div>
+        </div>
+        <div class="deal-reason">
+            <div class="deal-reason-label">Reason to Buy</div>
+            <p>All sales are currently founder-led. Need to have sales machine for reps aka need Speedrun with Buyer Group Enablement</p>
+        </div>
+        <div class="deal-notes">Yet to meet with CEO — former contact now running own company</div>
+    </div>
+
+    <!-- ITC Systems -->
+    <div class="deal-card">
+        <div class="deal-header">
+            <div class="deal-name">ITC Systems</div>
+            <div class="deal-value">$40K – $60K</div>
+        </div>
+        <div class="deal-meta">
+            <span class="conviction-badge conviction-tossup">Toss Up</span>
+            <div class="meta-item">Champion: Dennis</div>
+        </div>
+        <div class="deal-reason">
+            <div class="deal-reason-label">Reason to Buy</div>
+            <p>Sees value of reps having no wasted outreach but needs to see demo to understand true transformative value</p>
+        </div>
+        <div class="deal-notes">Champion (Dennis) liked Buyer Group report. Rep who joined pushed back on value. Coordinating next call.</div>
+    </div>
+
+    <!-- Mantra Health -->
+    <div class="deal-card">
+        <div class="deal-header">
+            <div class="deal-name">Mantra Health</div>
+            <div class="deal-value">$20K – $40K</div>
+        </div>
+        <div class="deal-meta">
+            <span class="conviction-badge conviction-average">Average</span>
+            <div class="meta-item">Champion: Phil</div>
+        </div>
+        <div class="deal-reason">
+            <div class="deal-reason-label">Reason to Buy</div>
+            <p>Launching new product, reps need Speedrun and BGE</p>
+        </div>
+        <div class="deal-notes">Phil appreciated buyer group report and wants to talk further. Launching soon.</div>
+    </div>
+
+    <h2>Prospects (Not Yet Deals)</h2>
+    
+    <div class="prospects-list">
+        <div class="prospect-item">Ramp</div>
+        <div class="prospect-item">Opkey</div>
+        <div class="prospect-item">Valence Security</div>
+        <div class="prospect-item">eCore</div>
+        <div class="prospect-item">Loftware</div>
+    </div>
+
+    <a href="../search.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Search
+    </a>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        });
+    </script>
+    <script src="../js/copy-menu.js"></script>
+</body>
+</html>

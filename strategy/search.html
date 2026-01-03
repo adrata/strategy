@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search | Adrata Strategy</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.svg">
+    <meta property="og:title" content="Adrata Search">
+    <meta property="og:description" content="Find strategy documents, playbooks, and guides instantly.">
+    <meta property="og:url" content="https://adrata.github.io/strategy/search">
+    <meta property="og:site_name" content="Adrata">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css">
+    <!-- Fuse.js for fast fuzzy search -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+    <style>
+        :root {
+            --bg: #fff;
+            --bg-elevated: #fafafa;
+            --text: #1a1a1a;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --card-bg: #f5f5f5;
+            --accent: #e65100;
+            --accent-light: #ff6d00;
+            --search-bg: #fff;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg-elevated: #111;
+            --text: #e5e5e5;
+            --text-secondary: #ccc;
+            --text-muted: #888;
+            --border: #2a2a2a;
+            --card-bg: #161616;
+            --search-bg: #141414;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'MiSans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .logo:hover { opacity: 0.8; }
+        .logo-icon {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent);
+            stroke-width: 2.5;
+            fill: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tutorial-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s ease;
+        }
+        .tutorial-btn:hover { 
+            background: var(--card-bg); 
+            border-color: var(--text-muted);
+        }
+        .tutorial-btn svg { opacity: 0.7; }
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            border-radius: 8px;
+        }
+        .theme-toggle:hover { color: var(--text); background: var(--card-bg); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: block; }
+        
+        /* Main Search Area */
+        .search-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 24px 40px;
+            transition: padding 0.3s ease;
+        }
+        .search-container.has-results {
+            padding-top: 32px;
+        }
+        
+        /* Branding */
+        .branding {
+            text-align: center;
+            margin-bottom: 40px;
+            transition: all 0.3s ease;
+        }
+        .branding.minimized {
+            margin-bottom: 24px;
+        }
+        .branding h1 {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 12px;
+            transition: font-size 0.3s ease;
+        }
+        .branding h1 .brand { color: var(--text); }
+        .branding h1 .search-word { color: var(--accent); }
+        .branding.minimized h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .branding p {
+            font-size: 16px;
+            color: var(--text-muted);
+            transition: opacity 0.3s ease;
+        }
+        .branding.minimized p {
+            display: none;
+        }
+        
+        /* Search Box */
+        .search-wrapper {
+            width: 100%;
+            max-width: 640px;
+            position: relative;
+        }
+        .search-box {
+            width: 100%;
+            background: var(--search-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 56px 18px 24px;
+            font-size: 18px;
+            font-family: inherit;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .search-box:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(230,81,0,0.15);
+        }
+        .search-box::placeholder {
+            color: var(--text-muted);
+        }
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .search-icon svg { width: 22px; height: 22px; }
+        .clear-btn {
+            position: absolute;
+            right: 52px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--card-bg);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .clear-btn.visible { display: flex; }
+        .clear-btn:hover { color: var(--text); background: var(--border); }
+        .clear-btn svg { width: 14px; height: 14px; }
+        
+        /* Quick Categories */
+        .quick-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 20px;
+            max-width: 640px;
+        }
+        .category-chip {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+        .category-chip:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .category-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        
+        /* Featured Docs */
+        .featured-docs {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 48px;
+        }
+        .featured-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 700px) {
+            .featured-grid { grid-template-columns: 1fr; }
+        }
+        .featured-card {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.15s ease;
+        }
+        .featured-card:hover, .featured-card.keyboard-selected {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(230,81,0,0.15);
+        }
+        .featured-card.keyboard-selected {
+            background: var(--highlight-bg, rgba(230,81,0,0.05));
+        }
+        .featured-card.keyboard-selected .key-badge {
+            background: var(--accent);
+            color: #fff;
+        }
+        .featured-card .key-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 22px;
+            height: 22px;
+            background: var(--border);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+        .featured-card:hover .key-badge {
+            background: var(--accent);
+            color: #fff;
+        }
+        .featured-card .category {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .featured-card .title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        .featured-card .desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Results */
+        .results-container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 32px;
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+        .results-count {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .result-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: block;
+        }
+        .result-card:hover, .result-card.keyboard-selected {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .result-card.keyboard-selected {
+            background: var(--highlight-bg, rgba(230,81,0,0.05));
+        }
+        [data-theme="dark"] .result-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .result-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .result-category {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: rgba(230,81,0,0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .result-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+        }
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        /* Keyboard hint */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        @media (max-width: 900px) {
+            .keyboard-hint { display: none; }
+        }
+        .kbd {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+        }
+        
+        @media (max-width: 640px) {
+            .branding h1 { font-size: 32px; }
+            .search-box { padding: 16px 52px 16px 20px; font-size: 16px; }
+            .keyboard-hint { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="index.html" class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        <span>Adrata</span>
+    </a>
+    <div class="header-actions">
+        <a href="tutorial.html" class="tutorial-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            <span>Tutorial</span>
+        </a>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+    </div>
+</header>
+
+<main class="search-container" id="searchContainer">
+    <div class="branding" id="branding">
+        <h1><span class="brand">Adrata</span> <span class="search-word">Search</span></h1>
+        <p>Find strategy documents, playbooks, and guides</p>
+    </div>
+    
+    <div class="search-wrapper">
+        <input 
+            type="text" 
+            class="search-box" 
+            id="searchInput" 
+            placeholder="Search documents..." 
+            autofocus
+            autocomplete="off"
+        >
+        <button class="clear-btn" id="clearBtn" onclick="clearSearch()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+        <span class="search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+    </div>
+    
+    <div class="quick-categories" id="quickCategories">
+        <span class="category-chip" onclick="searchCategory('strategy')">Strategy</span>
+        <span class="category-chip" onclick="searchCategory('playbook')">Playbooks</span>
+        <span class="category-chip" onclick="searchCategory('AI agents')">AI Agents</span>
+        <span class="category-chip" onclick="searchCategory('psychology')">Psychology</span>
+        <span class="category-chip" onclick="searchCategory('sales')">Sales</span>
+    </div>
+    
+    <div class="featured-docs" id="featuredDocs">
+        <div class="featured-label">Popular Documents</div>
+        <div class="featured-grid">
+            <a href="docs/strategy/demand.html" class="featured-card">
+                <span class="key-badge">1</span>
+                <div class="category">Strategy</div>
+                <div class="title">Demand Generation</div>
+                <div class="desc">How we create and capture demand at scale. The PULL framework.</div>
+            </a>
+            <a href="docs/foundations/archetypes.html" class="featured-card">
+                <span class="key-badge">2</span>
+                <div class="category">Foundations</div>
+                <div class="title">VP Sales Archetypes</div>
+                <div class="desc">Psychological profiles for targeting VP of Sales buyers.</div>
+            </a>
+            <a href="docs/strategy/offers.html" class="featured-card">
+                <span class="key-badge">3</span>
+                <div class="category">Strategy</div>
+                <div class="title">Offer Strategy</div>
+                <div class="desc">The only question: Can they do this themselves? 5 offers that create PULL.</div>
+            </a>
+            <a href="docs/articles/internal/what-are-ai-agents.html" class="featured-card">
+                <span class="key-badge">4</span>
+                <div class="category">AI Agents</div>
+                <div class="title">What Are AI Agents?</div>
+                <div class="desc">A clear explanation of AI agents and why they matter for sales.</div>
+            </a>
+            <a href="book/chapter-1-the-number.html" class="featured-card">
+                <span class="key-badge">5</span>
+                <div class="category">Book</div>
+                <div class="title">Chapter 1: The Number</div>
+                <div class="desc">Q4 Novel — A VP of Sales faces the impossible number.</div>
+            </a>
+            <a href="reports/forecast-2026-01-02.html" class="featured-card">
+                <span class="key-badge">6</span>
+                <div class="category">Report</div>
+                <div class="title">Pipeline Forecast</div>
+                <div class="desc">January 2, 2026 — Active deals and weighted pipeline.</div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="results-container" id="resultsContainer" style="display:none;">
+        <div class="results-header">
+            <span class="results-count" id="resultsCount"></span>
+        </div>
+        <div id="resultsList"></div>
+    </div>
+</main>
+
+<div class="keyboard-hint">
+    <span><span class="kbd">/</span> search</span>
+    <span><span class="kbd">↑↓</span> navigate</span>
+    <span><span class="kbd">←→</span> back/forward</span>
+    <span><span class="kbd">↵</span> open</span>
+    <span><span class="kbd">1</span>-<span class="kbd">6</span> quick open</span>
+</div>
+
+<script>
+// Document index for search
+const documents = [
+    // Foundations
+    { title: "VP Sales Archetypes", description: "Psychological profiles and targeting matrices for VP of Sales buyers. Performance trajectories, organizational dynamics, and messaging strategies.", category: "Foundations", path: "docs/foundations/archetypes.html", keywords: ["psychology", "buyer", "vp sales", "matrix", "targeting"] },
+    { title: "The 10 Archetypes", description: "Ranked personas with celebrity references, tech adoption language, and conversion strategies. For humans and AI agents.", category: "Foundations", path: "docs/foundations/archetypes-persona.html", keywords: ["personas", "archetypes", "celebrity", "ica", "language", "adoption", "context-bundle"] },
+    { title: "Buyer Group Archetypes", description: "Psychology profiles for every stakeholder in the enterprise buying committee. CFO, Legal, Procurement, IT, Peer VP approaches.", category: "Foundations", path: "docs/foundations/buyer-group-archetypes.html", keywords: ["buyer group", "cfo", "legal", "procurement", "psychology", "enterprise"] },
+    { title: "Greatest Salespeople in History", description: "Lessons from legendary salespeople throughout history. Patterns, techniques, and timeless principles that work.", category: "Foundations", path: "docs/foundations/greatest-salespeople.html", keywords: ["history", "sales", "legends", "techniques"] },
+    { title: "History of Sales Technology", description: "From rolodex to AI agents. The evolution of sales technology and what it means for the future.", category: "Foundations", path: "docs/foundations/history-of-sales-technology.html", keywords: ["history", "technology", "crm", "evolution"] },
+    
+    // Standards (for AI agents and humans)
+    { title: "Universal Standards", description: "Core standards for all Adrata content. Voice, archetypes, language calibration. Upload with any task.", category: "Standards", path: "docs/standards/universal-standards.html", keywords: ["standards", "voice", "tone", "style", "ai", "agent", "context-bundle"] },
+    { title: "Hook Standards", description: "How to write hooks that stop VPs at 6 AM. 5 patterns with archetype-specific examples.", category: "Standards", path: "docs/standards/hook-standards.html", keywords: ["hooks", "headlines", "attention", "writing", "context-bundle"] },
+    { title: "Offer Standards", description: "Creating offers that generate PULL. Earned trust, differentiation, archetype alignment.", category: "Standards", path: "docs/standards/offer-standards.html", keywords: ["offers", "pull", "trust", "lead magnet", "context-bundle"] },
+    { title: "Conversion Standards", description: "Website and landing page conversion benchmarks. CTAs by archetype, form design, LinkedIn outreach.", category: "Standards", path: "docs/standards/conversion-standards.html", keywords: ["conversion", "landing", "cta", "forms", "linkedin", "context-bundle"] },
+    { title: "HTML Design Standards", description: "Visual design system. MiSans font, color variables, spacing, components. CSS template for new docs.", category: "Standards", path: "docs/standards/html-design-standards.html", keywords: ["html", "css", "design", "template", "visual", "context-bundle"] },
+    
+    // Strategy
+    { title: "Website Conversion", description: "Complete conversion strategy for the Adrata website. Psychological triggers, offer structure, and funnel optimization.", category: "Strategy", path: "docs/strategy/conversion.html", keywords: ["conversion", "website", "funnel", "psychology"] },
+    { title: "Demand Generation", description: "Demand generation strategy and channels. How we create and capture demand at scale.", category: "Strategy", path: "docs/strategy/demand.html", keywords: ["demand", "generation", "marketing", "leads"] },
+    { title: "Offer Strategy", description: "The only question that matters: Can they do this themselves? 5 offers that create genuine PULL: 5 Accounts/48 Hours, Account Ambush, Deal Rescue, Rep Multiplier, Beat Your Competitor.", category: "Strategy", path: "docs/strategy/offers.html", keywords: ["offers", "value", "pull", "lead magnet", "5 accounts", "deal rescue", "buying committee"] },
+    { title: "Contagion Strategy", description: "Viral growth and contagion mechanics. How ideas and products spread through networks.", category: "Strategy", path: "docs/strategy/contagion.html", keywords: ["viral", "growth", "network", "spread"] },
+    { title: "Storytelling", description: "Strategic storytelling for sales and marketing. Narrative structures that persuade and convert.", category: "Strategy", path: "docs/strategy/storytelling.html", keywords: ["story", "narrative", "persuasion", "marketing"] },
+    { title: "Pains & Challenges", description: "Deep dive into buyer pains and challenges. Understanding what keeps VPs of Sales up at night.", category: "Strategy", path: "docs/strategy/pains-and-challenges.html", keywords: ["pain", "challenges", "problems", "buyer"] },
+    { title: "AI Capabilities", description: "Core AI capabilities and transformation potential. What becomes possible with AI-powered sales.", category: "Strategy", path: "docs/strategy/capabilities.html", keywords: ["ai", "capabilities", "transformation", "technology"] },
+    
+    // Playbooks
+    { title: "Sales Stages", description: "5-stage pipeline with psychology-driven gates. Offer → Strategy → Buyer Group → Close → Won. Includes Fast Pass for accelerated deals.", category: "Playbook", path: "docs/playbooks/sales-stages.html", keywords: ["pipeline", "stages", "gates", "close", "process"] },
+    { title: "Daily Sales Playbook", description: "Hour-by-hour playbook for maximum productivity. Outbound, follow-up, and meeting blocks.", category: "Playbook", path: "docs/playbooks/daily-sales-playbook.html", keywords: ["daily", "productivity", "schedule", "outbound"] },
+    { title: "Forecasting Policy", description: "How we talk about deals. Conviction levels (Bankable, Guaranteed, Average, Toss Up, Low), required data fields, and pipeline language.", category: "Playbook", path: "docs/playbooks/forecasting-policy.html", keywords: ["forecast", "pipeline", "conviction", "deal", "data", "policy"] },
+    { title: "Frameworks", description: "Essential sales frameworks. BANT, MEDDIC, SPIN, and modern variations for AI-era selling.", category: "Playbook", path: "docs/playbooks/frameworks.html", keywords: ["framework", "bant", "meddic", "spin", "qualification"] },
+    { title: "Operation: Destroy Dan's Calendar", description: "Demand generation goal-setting. Daily meeting capacities, pipeline stages, and weekly targets.", category: "Playbook", path: "docs/playbooks/operation-destroy-dans-calendar.html", keywords: ["meetings", "calendar", "targets", "demand"] },
+    { title: "LinkedIn Outbound", description: "Warm beats cold 10x. Daily activity stack, DM templates, content themes. 61% higher conversion with organic + paid vs paid alone.", category: "Playbook", path: "docs/playbooks/linkedin-outbound.html", keywords: ["linkedin", "outbound", "organic", "dm", "warm", "cold", "social", "content"] },
+    
+    // Internal Docs
+    { title: "H1 2026 Blitzscale", description: "Three-channel revenue strategy: LinkedIn Enterprise, Instagram Prosumer, Enterprise Cold Calling. Full cost model with $18M target.", category: "Internal", path: "docs/internal-docs/h1-2026-blitzscale.html", keywords: ["revenue", "linkedin", "instagram", "cold", "blitzscale", "2026"] },
+    { title: "Content Standards", description: "Voice, tone, style guide for all Adrata content. Hooks, stories, offers, archetypes. Reference for humans and AI agents.", category: "Internal", path: "docs/internal-docs/content-standards.html", keywords: ["voice", "tone", "style", "standards", "hooks", "stories", "offers", "archetypes", "writing"] },
+    { title: "Content Strategy", description: "Content creation strategy. Timely vs timeless, formats, distribution, and calendar.", category: "Internal", path: "docs/internal-docs/content-strategy.html", keywords: ["content", "calendar", "distribution", "marketing"] },
+    
+    // AI Agents (Internal)
+    { title: "What Are AI Agents?", description: "A clear explanation of what AI agents are, how they work, and why they matter for sales teams. Foundations of agent technology.", category: "AI Agents", path: "docs/articles/internal/what-are-ai-agents.html", keywords: ["ai", "agents", "basics", "foundations", "introduction"] },
+    { title: "Build Your First AI Agent", description: "Step-by-step guide to building your first AI agent for sales. From concept to production in one day with code examples.", category: "AI Agents", path: "docs/articles/internal/build-your-first-ai-agent.html", keywords: ["ai", "agents", "build", "tutorial", "code", "first"] },
+    { title: "AI Agent Use Cases", description: "25 practical AI agent use cases for sales teams. Implementation complexity and ROI estimates for each.", category: "AI Agents", path: "docs/articles/internal/ai-agent-use-cases.html", keywords: ["ai", "agents", "use cases", "practical", "roi"] },
+    { title: "Autonomous Agents", description: "How to build autonomous AI agents that work independently, make decisions, and complete complex multi-step tasks.", category: "AI Agents", path: "docs/articles/internal/autonomous-agents.html", keywords: ["ai", "agents", "autonomous", "advanced", "self-driving"] },
+    { title: "AI Agents for Sales Leaders", description: "Comprehensive guide for VPs and CROs using AI agents. Strategic dashboards, forecasting, and executive automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-leaders.html", keywords: ["ai", "agents", "vp", "cro", "leadership"] },
+    { title: "AI Agents for Sales Managers", description: "AI agent guide for sales managers and directors. Team performance, coaching, and pipeline management.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-managers.html", keywords: ["ai", "agents", "manager", "director", "coaching"] },
+    { title: "AI Agents for SDRs", description: "AI agent playbook for SDRs and BDRs. Prospecting, outreach, and meeting booking automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sdrs.html", keywords: ["ai", "agents", "sdr", "bdr", "prospecting"] },
+    { title: "AI Agents for Account Executives", description: "AI agent guide for AEs. Deal progression, demo prep, and closing automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-account-executives.html", keywords: ["ai", "agents", "ae", "account executive", "closing"] },
+    { title: "AI Agents for RevOps", description: "AI agent capabilities for Revenue Operations. Data, process, and system automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-revops.html", keywords: ["ai", "agents", "revops", "operations", "data"] },
+    { title: "AI Agents for Sales Teams", description: "Team-wide AI agent strategy. Collaboration, handoffs, and collective intelligence.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-teams.html", keywords: ["ai", "agents", "team", "collaboration"] },
+    { title: "PULL is Everywhere", description: "The framework that explains why products take off. PULL applies in enterprise, consumer, hardware, and deep tech.", category: "Article", path: "docs/articles/internal/pull.html", keywords: ["pull", "framework", "enterprise", "consumer", "jtbd", "sales"] },
+    
+    // External Articles
+    { title: "A Practical Guide to Building Agents", description: "OpenAI's comprehensive guide to building AI agents. Frameworks for use cases, agent design patterns, orchestration, and guardrails.", category: "Article", path: "docs/articles/external/practical-guide-to-agents.html", keywords: ["openai", "agents", "guide", "orchestration", "guardrails", "tools"] },
+    { title: "Building Effective Agents", description: "Anthropic's guide to building LLM agents. Workflows, patterns, and architectural decisions.", category: "Article", path: "docs/articles/external/building-effective-agents.html", keywords: ["anthropic", "llm", "agents", "architecture"] },
+    { title: "Long-Running Agents", description: "Anthropic's harness for agents that work across multiple context windows. Initializer and coding agents.", category: "Article", path: "docs/articles/external/long-running-agents.html", keywords: ["anthropic", "context", "long-running", "harness"] },
+    { title: "Competition Is for Losers", description: "Peter Thiel on monopoly, competition, and building valuable companies. From his Stanford lecture.", category: "Article", path: "docs/articles/external/competition-is-for-losers.html", keywords: ["thiel", "monopoly", "competition", "startup"] },
+    { title: "10X Revenue Club", description: "Bill Gurley on what makes revenue valuable. Moats, network effects, switching costs, and growth.", category: "Article", path: "docs/articles/external/10x-revenue-club.html", keywords: ["gurley", "revenue", "valuation", "moat", "network effects"] },
+    { title: "Push, Pull, and PULL", description: "Why business theory is stuck. From Taylor's Scientific Management to Toyota's Pull to Jobs to be Done. The physics of demand.", category: "Article", path: "docs/articles/external/push-pull-and-pull.html", keywords: ["pull", "push", "demand", "jtbd", "jobs to be done", "toyota", "lean"] },
+    { title: "Why Most Sales is Backwards", description: "The difference between Push, Pull, and PULL - and why understanding this changes everything about how we sell.", category: "Article", path: "docs/articles/internal/why-most-sales-is-backwards.html", keywords: ["pull", "push", "demand", "sales", "jtbd", "methodology"] },
+    
+    // Talks
+    { title: "Urgency & Profits", description: "Video transcript on using urgency to increase profits. Proven strategies for long-term success.", category: "Talks", path: "docs/talks/urgency-profits.html", keywords: ["urgency", "profits", "video", "strategy"] },
+    { title: "Software Era of AI", description: "Discussion on AI's transformation of software. What changes and what stays the same.", category: "Talks", path: "docs/talks/software-era-of-ai.html", keywords: ["ai", "software", "transformation", "future"] },
+    
+    // Book
+    { title: "Chapter 1: The Number", description: "Q4 Novel opening. A VP of Sales faces the impossible number. The pressure, the stakes, the mission.", category: "Book", path: "book/chapter-1-the-number.html", keywords: ["novel", "q4", "number", "story", "fiction"] },
+    
+    // Reports
+    { title: "Pipeline Forecast — Jan 2, 2026", description: "Active deals, weighted pipeline, and prospects. Navi Nurses, Cardinal Gray, Kiin Global, ITC Systems, Mantra Health.", category: "Report", path: "reports/forecast-2026-01-02.html", keywords: ["forecast", "pipeline", "deals", "revenue", "prospects"] },
+];
+
+// Initialize Fuse.js
+const fuse = new Fuse(documents, {
+    keys: [
+        { name: 'title', weight: 0.4 },
+        { name: 'description', weight: 0.3 },
+        { name: 'category', weight: 0.1 },
+        { name: 'keywords', weight: 0.2 }
+    ],
+    threshold: 0.4,
+    includeMatches: true,
+    minMatchCharLength: 2
+});
+
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
+const resultsContainer = document.getElementById('resultsContainer');
+const resultsList = document.getElementById('resultsList');
+const resultsCount = document.getElementById('resultsCount');
+const branding = document.getElementById('branding');
+const searchContainer = document.getElementById('searchContainer');
+const quickCategories = document.getElementById('quickCategories');
+const featuredDocs = document.getElementById('featuredDocs');
+
+let debounceTimer;
+
+searchInput.addEventListener('input', (e) => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => performSearch(e.target.value), 50);
+    
+    // Show/hide clear button
+    clearBtn.classList.toggle('visible', e.target.value.length > 0);
+});
+
+function performSearch(query) {
+    selectedIndex = -1; // Reset keyboard navigation
+    if (!query.trim()) {
+        showEmptyState();
+        return;
+    }
+    
+    const results = fuse.search(query);
+    displayResults(results, query);
+}
+
+function displayResults(results, query) {
+    // Minimize branding
+    branding.classList.add('minimized');
+    searchContainer.classList.add('has-results');
+    quickCategories.style.display = 'none';
+    featuredDocs.style.display = 'none';
+    
+    if (results.length === 0) {
+        resultsContainer.style.display = 'block';
+        resultsCount.textContent = 'No results found';
+        resultsList.innerHTML = `
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <h3>No documents found</h3>
+                <p>Try different keywords or browse categories</p>
+            </div>
+        `;
+        return;
+    }
+    
+    resultsContainer.style.display = 'block';
+    resultsCount.textContent = `${results.length} result${results.length === 1 ? '' : 's'}`;
+    
+    resultsList.innerHTML = results.map((result, index) => {
+        const doc = result.item;
+        return `
+            <a href="${doc.path}" class="result-card" data-index="${index}">
+                <div class="result-meta">
+                    <span class="result-category">${doc.category}</span>
+                </div>
+                <div class="result-title">${doc.title}</div>
+                <div class="result-description">${doc.description}</div>
+            </a>
+        `;
+    }).join('');
+}
+
+
+function showEmptyState() {
+    branding.classList.remove('minimized');
+    searchContainer.classList.remove('has-results');
+    quickCategories.style.display = 'flex';
+    featuredDocs.style.display = 'block';
+    resultsContainer.style.display = 'none';
+    resultsList.innerHTML = '';
+}
+
+function clearSearch() {
+    searchInput.value = '';
+    clearBtn.classList.remove('visible');
+    showEmptyState();
+    searchInput.focus();
+}
+
+function searchCategory(category) {
+    searchInput.value = category;
+    performSearch(category);
+    clearBtn.classList.add('visible');
+}
+
+// Keyboard shortcuts
+let selectedIndex = -1;
+
+document.addEventListener('keydown', (e) => {
+    // Focus search with /
+    if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+    }
+    
+    // Left arrow = browser back (when not typing)
+    if (e.key === 'ArrowLeft' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        history.back();
+    }
+    
+    // Right arrow = browser forward (when not typing)
+    if (e.key === 'ArrowRight' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        history.forward();
+    }
+    
+    // Clear with Escape
+    if (e.key === 'Escape') {
+        clearSearch();
+        selectedIndex = -1;
+        clearAllSelections();
+    }
+    
+    // Open selected item with Enter
+    if (e.key === 'Enter') {
+        const results = document.querySelectorAll('.result-card');
+        const featured = document.querySelectorAll('.featured-card');
+        
+        // If we have search results and something is selected
+        if (searchInput.value && selectedIndex >= 0 && results[selectedIndex]) {
+            window.location.href = results[selectedIndex].href;
+            return;
+        }
+        // If we're on featured cards and something is selected
+        if (!searchInput.value && selectedIndex >= 0 && featured[selectedIndex]) {
+            window.location.href = featured[selectedIndex].href;
+            return;
+        }
+        // Default: open first result
+        if (results.length > 0) {
+            window.location.href = results[0].href;
+        } else if (featured.length > 0 && document.activeElement === searchInput) {
+            window.location.href = featured[0].href;
+        }
+    }
+    
+    // Number keys 1-6 for featured docs (when search is not focused or empty)
+    if (document.activeElement !== searchInput && e.key >= '1' && e.key <= '6') {
+        const featured = document.querySelectorAll('.featured-card');
+        const idx = parseInt(e.key) - 1;
+        if (featured[idx]) {
+            window.location.href = featured[idx].href;
+        }
+    }
+    
+    // Arrow navigation - works for both results and featured cards
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        
+        const hasSearchResults = searchInput.value && document.querySelectorAll('.result-card').length > 0;
+        const items = hasSearchResults 
+            ? document.querySelectorAll('.result-card')
+            : document.querySelectorAll('.featured-card');
+        
+        if (items.length === 0) return;
+        
+        // Remove previous highlight
+        clearAllSelections();
+        
+        // Update index
+        if (e.key === 'ArrowDown') {
+            selectedIndex = selectedIndex < items.length - 1 ? selectedIndex + 1 : 0;
+        } else {
+            selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : items.length - 1;
+        }
+        
+        // Highlight new selection
+        if (items[selectedIndex]) {
+            items[selectedIndex].classList.add('keyboard-selected');
+            items[selectedIndex].scrollIntoView({ block: 'nearest' });
+        }
+    }
+});
+
+function clearAllSelections() {
+    document.querySelectorAll('.keyboard-selected').forEach(el => el.classList.remove('keyboard-selected'));
+}
+
+// Theme toggle
+function toggleTheme() { 
+    const html = document.documentElement; 
+    const isDark = html.getAttribute('data-theme') === 'dark'; 
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark'); 
+    localStorage.setItem('theme', isDark ? 'light' : 'dark'); 
+}
+
+document.addEventListener('DOMContentLoaded', () => { 
+    const theme = localStorage.getItem('theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', theme); 
+});
+</script>
+</body>
+</html>
+
